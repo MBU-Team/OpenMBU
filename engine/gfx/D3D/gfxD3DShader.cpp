@@ -92,6 +92,12 @@ void GFXD3DShader::initVertShader( char *vertFile, char *vertTarget )
       res = D3DXCompileShaderFromFileA( vertFile, NULL, NULL, "main", 
                                         vertTarget, D3DXSHADER_DEBUG, &code, &errorBuff, NULL );
 
+      if (res != D3D_OK)
+      {
+         res = D3DXCompileShaderFromFileA(vertFile, NULL, NULL, "main",
+                                        vertTarget, D3DXSHADER_DEBUG | D3DXSHADER_USE_LEGACY_D3DX9_31_DLL, &code, &errorBuff, NULL);
+      }
+
       if( errorBuff )
       {
          // remove \n at end of buffer
@@ -129,6 +135,11 @@ void GFXD3DShader::initVertShader( char *vertFile, char *vertTarget )
    else
    {
       res = D3DXAssembleShaderFromFileA( vertFile, 0, NULL, 0, &code, &errorBuff );
+
+      if (res != D3D_OK)
+      {
+          res = D3DXAssembleShaderFromFileA(vertFile, 0, NULL, D3DXSHADER_USE_LEGACY_D3DX9_31_DLL, &code, &errorBuff);
+      }
       
       if( res != D3D_OK )
       {
@@ -176,6 +187,12 @@ void GFXD3DShader::initPixShader( char *pixFile, char *pixTarget )
       res = D3DXCompileShaderFromFileA( pixFile, NULL, NULL, "main", pixTarget, 
                                        D3DXSHADER_DEBUG, &code, &errorBuff, NULL );
 
+      if (res != D3D_OK)
+      {
+          res = D3DXCompileShaderFromFileA(pixFile, NULL, NULL, "main", pixTarget,
+                                           D3DXSHADER_DEBUG | D3DXSHADER_USE_LEGACY_D3DX9_31_DLL, &code, &errorBuff, NULL);
+      }
+
       if( errorBuff )
       {
          // remove \n at end of buffer
@@ -212,6 +229,11 @@ void GFXD3DShader::initPixShader( char *pixFile, char *pixTarget )
    else
    {
       res = D3DXAssembleShaderFromFileA( pixFile, 0, NULL, D3DXSHADER_DEBUG, &code, &errorBuff );
+
+      if (res != D3D_OK)
+      {
+          res = D3DXAssembleShaderFromFileA(pixFile, 0, NULL, D3DXSHADER_DEBUG | D3DXSHADER_USE_LEGACY_D3DX9_31_DLL, &code, &errorBuff);
+      }
 
       if( res != D3D_OK )
       {
