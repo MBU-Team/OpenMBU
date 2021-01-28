@@ -31,7 +31,7 @@ U32 GFXD3DTextureObject::mTexCount = 0;
 #endif
 
 #ifdef TORQUE_DEBUG
-#include "dxerr9.h"
+#include "dxerr.h"
 #endif
 
 inline void D3DAssert( HRESULT hr, const char *info ) 

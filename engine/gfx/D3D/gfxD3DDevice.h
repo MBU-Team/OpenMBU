@@ -9,7 +9,7 @@
 
 //-----------------------------------------------------------------------------
 #ifdef TORQUE_DEBUG
-   #include "dxerr9.h"
+   #include "dxerr.h"
 #endif
 
 inline void D3DAssert( HRESULT hr, const char *info ) 
@@ -18,7 +18,7 @@ inline void D3DAssert( HRESULT hr, const char *info )
    if( FAILED( hr ) ) 
    {
       char buf[256];
-      dSprintf( buf, 256, "%s\n%s\n%s", DXGetErrorString9( hr ), DXGetErrorDescription9( hr ), info );
+      dSprintf( buf, 256, "%s\n%s\n%s", DXGetErrorString( hr ), DXGetErrorDescription( hr ), info );
       AssertFatal( false, buf ); 
 //      DXTrace( __FILE__, __LINE__, hr, info, true );
    }

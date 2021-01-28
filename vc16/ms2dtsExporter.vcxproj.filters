@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{533dc39f-2b2e-422f-b4ee-572d5011fb51}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Source Files\msLib">
+      <UniqueIdentifier>{522e0a37-da9d-441b-83c4-52ca8e24f386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8046d065-3e55-4e5b-b73b-3b8db8950b82}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\tools\ms2dtsExporter\DTSMilkshapeMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tools\ms2dtsExporter\DTSMilkshapeShape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tools\ms2dtsExporter\DTSPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\tools\ms2dtsExporter\DTSMilkshapeMesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tools\ms2dtsExporter\DTSMilkshapeShape.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tools\ms2dtsExporter\DTSPlugin.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tools\ms2dtsExporter\msLIB\msLib.h">
+      <Filter>Source Files\msLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tools\ms2dtsExporter\msLIB\msPlugIn.h">
+      <Filter>Source Files\msLib</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\tools\ms2dtsExporter\msLIB\msModelLib.lib">
+      <Filter>Source Files\msLib</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\tools\ms2dtsExporter\resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

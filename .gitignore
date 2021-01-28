@@ -3,6 +3,7 @@ out.*.*/
 *.user
 *.log
 example/*.exe
+example/*.ilk
 *.dso
 prefs.cs
 banlist.cs

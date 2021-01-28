@@ -18,6 +18,8 @@
 #  include "platform/platformAssert.h"
 #endif
 
+#include <new>
+
 //------------------------------------------------------------------------------
 // Endian conversions
 #ifdef TORQUE_LITTLE_ENDIAN
@@ -553,8 +555,6 @@ namespace Memory
    dsize_t getMemoryAllocated();
    void validate();
 } // namespace Memory
-
-extern void* FN_CDECL operator new(dsize_t size, void* ptr);
 
 template <class T>
 inline T* constructInPlace(T* p)

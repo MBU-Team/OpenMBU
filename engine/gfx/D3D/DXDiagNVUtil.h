@@ -47,7 +47,7 @@ DXSDK\Samples\C++\Misc\DxDiagReport
 #ifndef H_DXDIAGNVUTIL_GJ_H
 #define H_DXDIAGNVUTIL_GJ_H
 
-#undef _DEBUG
+//#undef _DEBUG
 #ifdef DUMMYDEF
 
 namespace NVDXDiagWrapper

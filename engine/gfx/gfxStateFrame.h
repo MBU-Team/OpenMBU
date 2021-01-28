@@ -45,9 +45,9 @@ class GFXStateFrame
    void init();
    void rollback();
 
-   inline void trackRenderState(U32 state, U32 value);
-   inline void trackSamplerState(U32 stage, U32 type, U32 value);
-   inline void trackTextureStageState(U32 stage, U32 type, U32 value);
+   void trackRenderState(U32 state, U32 value);
+   void trackSamplerState(U32 stage, U32 type, U32 value);
+   void trackTextureStageState(U32 stage, U32 type, U32 value);
 
 };
 

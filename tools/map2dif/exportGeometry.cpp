@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 // this define required for VC++ due to conflict with placement new in STL
-#define __PLACEMENT_NEW_INLINE
+//#define __PLACEMENT_NEW_INLINE
 #include <algorithm>
 
 #include "map2dif/editGeometry.h"

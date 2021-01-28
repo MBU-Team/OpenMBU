@@ -29,19 +29,11 @@ S32 dMemcmp(const void *ptr1, const void *ptr2, unsigned len)
    return memcmp(ptr1, ptr2, len);
 }
 
-#ifdef new
-#undef new
-#endif
-
 #if defined(TORQUE_COMPILER_MINGW)
 #include <stdlib.h>
 #endif
 
 //--------------------------------------
-void* FN_CDECL operator new(dsize_t, void* ptr)
-{
-   return (ptr);
-}
 
 void* dRealMalloc(dsize_t s)
 {
