@@ -1,0 +1,206 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(overview_main) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "800 600";
+   minExtent = "8 2";
+   visible = "1";
+      title = "Overview";
+      helpTag = "0";
+
+   new GuiControl() {
+      profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "22 51";
+      extent = "756 498";
+      minExtent = "8 2";
+      visible = "1";
+         helpTag = "0";
+
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "395 272";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "MainMenuGui.pushthread(testimonials_thread);";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 46";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Community and Testimonials\n<font:arial bold:14>The Torque has a huge community following. Hear what a few of them are saying about the Torque Game Engine.";
+            allowSelection = "1";
+               helpTag = "0";
+         };
+      };
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "395 363";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "MainMenuGui.pushthread(garagegames_thread);";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 32";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>About Garagegames\n<font:arial bold:14>So who are those GarageGames guys and why do they do what they do?";
+               helpTag = "0";
+         };
+      };
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "395 181";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "MainMenuGui.pushthread(license_thread);";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 60";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Publishing and Torque Licenses\n<font:arial bold:14>Torque Shader Indie and Commercial licenses. Publishing opportunities at GarageGames.";
+               helpTag = "0";
+         };
+      };
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "67 235";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "MainMenuGui.pushthread(products_thread);";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 32";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Products Using the Torque\n<font:arial bold:14>The Torque has been used in numerous professional games.";
+               helpTag = "0";
+         };
+      };
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "67 144";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "MainMenuGui.pushthread(tools_thread);";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 46";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Torque Tools\n<font:arial bold:14>Learn more about the Torque GUI, Terrain and World building tools.";
+               helpTag = "0";
+         };
+      };
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "67 53";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "MainMenuGui.pushthread(features_thread);";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 60";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Torque Shader Engine Features\n<font:arial bold:14>There is not enough room to list them all, but these pages should whet your appetite.";
+               helpTag = "0";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---

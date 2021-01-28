@@ -1,0 +1,12 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Terrain Texture Editor...<font:Arial:16>
+
+The Terrain Texture Editor is used to algorithmically place terrain texures based on the heightfield at the bottom of the terraformer heightfield stack.  The texture editor has three main interface elements on the right side of the screen - from top to bottom they are the operation inspector pane, the material list, and the placement operation list.
+
+Essentially, terrain materials (textures) are added with the "Add Material" button.  This will look for any texture (.png or .jpg) in a subdirectory of any directory named "terrains".  Once a material is added to the terrain, the user can select one of several placement operations that govern where that material will be placed on the terrain - they are:
+
+<font:Arial Bold:16>Place by Fractal<font:Arial:16> - Places the terrain texture randomly across the terrain based on a brownian motion fractal.
+<font:Arial Bold:16>Place by Height<font:Arial:16> - Places the texture based on an elevation filter
+<font:Arial Bold:16>Place by Slope<font:Arial:16> - Places the texture based on a slope filter
+<font:Arial Bold:16>Place by Water Level<font:Arial:16> - Places the texture based on the water level parameter in the terraform editor
+
+Pressing the "Apply" button applies the current texture operation list to the terrain file.

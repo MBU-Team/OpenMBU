@@ -1,0 +1,660 @@
+//----------------------------------------------------------------
+
+new GuiControlProfile (BackFillProfile)
+{
+   opaque = true;
+   fillColor = "0 94 94";
+   border = true;
+   borderColor = "255 128 128";
+   fontType = "Arial";
+   fontSize = 12;
+   fontColor = "0 0 0";
+   fontColorHL = "32 100 100";
+   fixedExtent = true;
+   justify = "center";
+};
+
+new GuiControl(GuiEditorGui) {
+   profile = GuiDefaultProfile;
+   position = "0 0";
+   extent = "800 600";
+   helpPage = "3. Gui Editor";
+   new GuiMenuBar(GuiEditorMenuBar) {
+      profile = "GuiMenuBarProfile";
+      horizSizing = "width";
+      vertSizing = "bottom";
+      position = "0 0";
+      extent = "800 22";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+   };
+   new GuiFrameSetCtrl()
+   {
+      position = "0 22";
+      extent = "800 578";
+      profile = "GuiButtonProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      columns = "0 640";
+      rows = "0";
+
+      new GuiControl() {
+         position = "0 0";
+         extent = "640 578";
+         minExtent = "64 64";
+         horizSizing = "width";
+         vertSizing = "height";
+         profile = GuiDefaultProfile;
+         //----------------------------------------
+         // toolbar
+         new GuiControl() {
+            profile = "GuiWindowProfile";
+            horizSizing = "width";
+            vertSizing = "bottom";
+            position = "0 0";
+            extent = "640 28";
+
+            new GuiControlListPopup(GuiEditorClassPopup)
+            {
+                  profile = "GuiEditorClassProfile";
+                  position = "8 6";
+                  extent = "180 16";
+            };
+            new GuiPopUpMenuCtrl(GuiEditorContentList)
+            {
+                  profile = "GuiEditorClassProfile";
+                  position = "196 6";
+                  extent = "180 16";
+            };
+            new GuiPopUpMenuCtrl(GuiEditorResList)
+            {
+                  profile = "GuiEditorClassProfile";
+                  position = "382 6";
+                  extent = "180 16";
+            };
+         };
+         new GuiEditorRuler(GuiEditorTopRuler) {
+            position = "10 28";
+            extent = "630 10";
+            horizSizing = "width";
+            vertSizing = "bottom";
+            profile = "GuiButtonProfile";
+            refCtrl = GuiEditorScroll;
+         };
+         new GuiEditorRuler(GuiEditorLeftRuler) {
+            position = "0 38";
+            extent = "10 540";
+            horizSizing = "right";
+            vertSizing = "height";
+            profile = "GuiButtonProfile";
+            refCtrl = GuiEditorScroll;
+         };
+         new GuiScrollCtrl(GuiEditorScroll) 
+         {
+            profile = "GuiScrollProfile";
+            position = "10 38";
+            extent = "630 540";
+            horizSizing = "width";
+            vertSizing = "height";
+            vScrollBar = "dynamic";
+            hScrollBar = "dynamic";
+
+            new GuiControl(GuiEditorRegion)
+            {
+               profile = "GuiDefaultProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "0 0";
+               extent = "640 480";
+
+               new GuiControl() // background
+               {
+                  profile = "BackFillProfile";
+		            horizSizing = "width";
+		            vertSizing = "height";
+                  position = "0 0";
+                  extent = "640 480";
+               };
+               new GuiControl(GuiEditorContent)
+               {
+                  profile = "GuiDefaultProfile";
+		            horizSizing = "width";
+		            vertSizing = "height";
+                  position = "0 0";
+                  extent = "640 480";
+               };
+               new GuiEditCtrl(GuiEditor)
+               {
+                  profile = "GuiTextEditProfile"; // so it's tabable
+		            horizSizing = "width";
+		            vertSizing = "height";
+                  position = "0 0";
+                  extent = "640 480";
+               };
+            };
+         };
+      };
+      new GuiFrameSetCtrl()
+      {
+         position = "640 0";
+         minExtent = "128 64";
+         extent = "160 600";
+         profile = "GuiButtonProfile";
+         horizSizing = "width";
+         vertSizing = "height";
+         columns = "0";
+         rows = "0 300";
+         //----------------------------------------
+         // Tree View
+		   new GuiScrollCtrl() 
+         {
+            profile = "GuiScrollProfile";
+			   minExtent = "72 64";
+			   position = "0 0";
+			   extent = "160 300";
+			   horizSizing = "width";
+			   vertSizing = "height";
+			   vScrollBar = "alwaysOn";
+			   hScrollBar = "dynamic";
+
+			   new GuiTreeViewCtrl(GuiEditorTreeView)
+            {
+               profile = "GuiTreeViewProfile";
+				   position = "0 0";
+				   horizSizing = "width";
+			   };
+		   };
+         //----------------------------------------
+         // Inspector
+         new GuiControl() { 
+            profile = "GuiInspectorBackgroundProfile";
+            horizSizing = "width";
+            vertSizing = "height";
+            position = "0 0";
+            extent = "160 300";
+            minExtent = "64 64";
+            fillColor = "128 128 128";
+         
+            new GuiButtonCtrl () {
+               profile = "GuiInspectorTypeFileNameProfile";
+   		      position = "6 3";
+   		      border = 5;
+   		      extent = "40 20";
+   		      text = "Apply";
+   		      command = "GuiEditorInspectApply();";
+   	      };
+
+   	      new GuiTextCtrl() {
+               profile = "GuiInspectorFieldProfile";
+   		      position = "52 4";
+   		      extent = "42 16";
+   		      text = "Name:";
+   	      };
+
+   	      new GuiTextEditCtrl (GuiEditorInspectName) {
+               profile = "GuiInspectorBackgroundProfile";
+   		      position = "97 4";
+   		      extent = "62 18";
+   		      text = "";
+   		      horizSizing = "width";
+   		      AltCommand = "GuiEditorInspectApply();";
+   		      vertSizing = "bottom";
+               autoSizeWidth = false;
+               autoSizeHeight = true;
+               textOffset = "0 2";
+   	      };
+
+   	      new GuiScrollCtrl() {
+               profile = "GuiScrollProfile";
+   		      position = "0 26";
+   		      extent = "160 274";
+   		      horizSizing = "width";
+   		      vertSizing = "height";
+   		      vScrollBar = "alwaysOn";
+   		      hScrollBar = "alwaysOff";
+
+   			   new GuiInspector (GuiEditorInspectFields) {
+                  useFieldGrouping = false;
+                  profile = "GuiDefaultProfile";
+   				   position = "0 0";
+   				   extent = "140 0";
+   				   horizSizing = "width";
+   				   vertSizing = "bottom";
+   		      };
+   	      };
+         };
+      };
+
+   };
+};
+
+
+//----------------------------------------
+new GuiControl(NewGuiDialog)
+{
+   profile = "GuiDialogProfile";
+   position = "0 0";
+   extent = "640 480";
+   
+	new GuiWindowCtrl()
+   {
+      profile = "GuiWindowProfile";
+		position = "220 146";
+		extent = "200 188";
+		text = "Create new GUI";
+      canMove = "false";  
+      canClose = "false";
+      canMinimize = "false";
+      canMaximize = "false";
+      horizSizing = "center";
+      vertSizing = "center";
+      
+		new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+			position = "20 28";
+			text = "GUI Name:";
+		};
+		new GuiTextEditCtrl(NewGuiDialogName)
+      {
+         profile = "GuiTextEditProfile";
+			position = "20 44";
+			extent = "160 20";
+		};
+		new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+			position = "20 68";
+			text = "Class:";
+		};
+		new GuiControlListPopup(NewGuiDialogClass)
+      {
+         profile = "GuiControlListPopupProfile";
+			position = "20 84";
+			extent = "160 20";
+		};
+		new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+			position = "56 156";
+			extent = "40 16";
+			text = "Create";
+			command = "GuiEditorCreate();";
+		};
+		new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+			position = "104 156";
+			extent = "40 16";
+			text = "Cancel";
+			command = "Canvas.popDialog(NewGuiDialog);";
+		};
+   };
+};
+
+
+//----------------------------------------
+function GuiEditorStartCreate()
+{
+   NewGuiDialogClass.setText("GuiControl");
+   NewGuiDialogClass.sort();
+   NewGuiDialogName.setValue("NewGui");
+   Canvas.pushDialog(NewGuiDialog);
+}
+
+//----------------------------------------
+function GuiEditorCreate()
+{
+   %name = NewGuiDialogName.getValue();
+   %class = NewGuiDialogClass.getText();
+   Canvas.popDialog(NewGuiDialog);
+   %obj = eval("return new " @ %class @ "(" @ %name @ ");");
+   GuiEditorOpen(%obj);
+}
+
+//----------------------------------------
+function GuiEditorSaveGui()
+{
+   %obj = GuiEditorContent.getObject(0);
+   if(%obj == -1 || %obj.getName() $= "")
+      return;
+   %name = %obj.getName() @ ".gui";
+   if ($BlockSave!=1) {
+      getSaveFilename("*.gui", "GuiEditorSaveGuiCallback", %name);
+   } else {
+      echo("To enable gui saving, make \$BlockSave=1.");
+      MessageBoxOK("Save Function Disabled","The Save GUI function has been disabled for this demo walkthrough.\n\n  If you are sure you want to make permanent GUI changes, go to the console (tilde \"~\" key) and type \"$BlockSave=0;\" first.");
+   }
+}
+
+function GuiEditorSaveGuiCallback(%name)
+{
+   %obj = GuiEditorContent.getObject(0);
+   
+   // make sure it is saved...
+   if(!%obj.save(%name))
+   {
+      MessageBoxOK("GuiEditor Save Failure", "Failed to save '" @ %name @ "'. The file may be read-only.");
+   }
+}   
+
+//----------------------------------------
+function GuiEdit(%val)
+{
+   if(%val != 0)
+      return;
+      
+   %content = Canvas.getContent();
+   
+   if(%content == GuiEditorGui.getId())
+   {
+      //GlobalActionMap.bind(mouse, button1, mouselook);
+
+      %obj = GuiEditorContent.getObject(0);
+      if(%obj != -1)
+      {
+         GuiGroup.add(%obj);
+         //Canvas.setContent(%obj);
+         Canvas.setContent($previousContent);
+      }
+      echo("Exporting Gui Editor Prefs");
+      export( "$Pref::GuiEditor::*", "./prefs.cs", false );
+      GlobalActionMap.unbind( keyboard, "delete" );
+	  
+	  $LightManager::sgInGUIEditor = false;
+   }
+   else
+   {
+      $previousContent = %content;
+      exec("./prefs.cs");
+      //GlobalActionMap.unbind(mouse, button1);
+      GuiEditorOpen(%content);
+	  
+	  $LightManager::sgInGUIEditor = true;
+   }
+}
+
+package GuiEditor_BlockDialogs
+{
+
+function GuiCanvas::pushDialog()
+{
+
+}
+
+function GuiCanvas::popDialog()
+{
+
+}
+
+};
+
+//----------------------------------------
+function GuiEditorOpen(%content)
+{
+   GuiEditorMenuBar.clearMenus();
+   GuiEditorMenuBar.addMenu("File", 0);
+   GuiEditorMenuBar.addMenuItem("File", "New GUI...", 1);
+   GuiEditorMenuBar.scriptCommand["File", 1] = "GuiEditorStartCreate();";
+   GuiEditorMenuBar.addMenuItem("File", "Save GUI...", 2);
+   GuiEditorMenuBar.scriptCommand["File", 2] = "GuiEditorSaveGui();";
+   GuiEditorMenuBar.addMenuItem("File", "-", 0);
+   GuiEditorMenuBar.addMenuItem("File", "GUI Editor Help...", 3, "F1");
+   GuiEditorMenuBar.scriptCommand["File", 3] = "getHelp(\"3. Gui Editor\");";
+   GuiEditorMenuBar.addMenuItem("File", "Toggle GUI Editor...", 4, "F10");
+   GuiEditorMenuBar.scriptCommand["File", 4] = "GuiEdit(0);";
+
+   GuiEditorMenuBar.addMenu("Edit", 1);
+   GuiEditorMenuBar.addMenuItem("Edit", "Cut", 3, "Ctrl X");
+   GuiEditorMenuBar.scriptCommand["Edit", 3] = "GuiEditor.saveSelection($GUI::clipboardFile); GuiEditor.deleteSelection();";
+   GuiEditorMenuBar.setMenuItemBitmap("Edit", "Cut", 3);
+   GuiEditorMenuBar.addMenuItem("Edit", "Copy", 4, "Ctrl C");
+   GuiEditorMenuBar.scriptCommand["Edit", 4] = "GuiEditor.saveSelection($GUI::clipboardFile);";
+   GuiEditorMenuBar.setMenuItemBitmap("Edit", "Copy", 4);
+   GuiEditorMenuBar.addMenuItem("Edit", "Paste", 5, "Ctrl V");
+   GuiEditorMenuBar.scriptCommand["Edit", 5] = "GuiEditor.loadSelection($GUI::clipboardFile);";
+   GuiEditorMenuBar.setMenuItemBitmap("Edit", "Paste", 5);
+   GuiEditorMenuBar.addMenuItem("Edit", "-", 0);
+   GuiEditorMenuBar.addMenuItem("Edit", "Select All", 6, "Ctrl A");
+   GuiEditorMenuBar.scriptCommand["Edit", 6] = "GuiEditor.selectAll();";
+
+   GuiEditorMenuBar.addMenu("Layout", 2);
+   GuiEditorMenuBar.addMenuItem("Layout", "Align Left", 1, "Ctrl L");
+   GuiEditorMenuBar.scriptCommand["Layout", 1] = "GuiEditor.Justify(0);";
+   GuiEditorMenuBar.addMenuItem("Layout", "Align Right", 2, "Ctrl R");
+   GuiEditorMenuBar.scriptCommand["Layout", 2] = "GuiEditor.Justify(2);";
+   GuiEditorMenuBar.addMenuItem("Layout", "Align Top", 3, "Ctrl T");
+   GuiEditorMenuBar.scriptCommand["Layout", 3] = "GuiEditor.Justify(3);";
+   GuiEditorMenuBar.addMenuItem("Layout", "Align Bottom", 4, "Ctrl B");
+   GuiEditorMenuBar.scriptCommand["Layout", 4] = "GuiEditor.Justify(4);";
+   GuiEditorMenuBar.addMenuItem("Layout", "-", 0);
+   GuiEditorMenuBar.addMenuItem("Layout", "Center Horizontally", 5);
+   GuiEditorMenuBar.scriptCommand["Layout", 5] = "GuiEditor.Justify(1);";
+   GuiEditorMenuBar.addMenuItem("Layout", "Space Vertically", 6);
+   GuiEditorMenuBar.scriptCommand["Layout", 6] = "GuiEditor.Justify(5);";
+   GuiEditorMenuBar.addMenuItem("Layout", "Space Horizontally", 7);
+   GuiEditorMenuBar.scriptCommand["Layout", 7] = "GuiEditor.Justify(6);";
+   GuiEditorMenuBar.addMenuItem("Layout", "-", 0);
+   GuiEditorMenuBar.addMenuItem("Layout", "Bring to Front", 8);
+   GuiEditorMenuBar.scriptCommand["Layout", 8] = "GuiEditor.BringToFront();";
+   GuiEditorMenuBar.addMenuItem("Layout", "Send to Back", 9);
+   GuiEditorMenuBar.scriptCommand["Layout", 9] = "GuiEditor.PushToBack();";
+   GuiEditorMenuBar.addMenuItem("Layout", "Lock Selection", 10);
+   GuiEditorMenuBar.scriptCommand["Layout",10] = "GuiEditorTreeView.lockSelection(true);";
+   GuiEditorMenuBar.addMenuItem("Layout", "Unlock Selection", 11);
+   GuiEditorMenuBar.scriptCommand["Layout",11] = "GuiEditorTreeView.lockSelection(false);";
+   GuiEditorMenuBar.addMenu("Move", 3);
+   GuiEditorMenuBar.addMenuItem("Move", "Nudge Left", 1, "Left");
+   GuiEditorMenuBar.scriptCommand["Move", 1] = "GuiEditor.moveSelection(-1,0);";
+   GuiEditorMenuBar.addMenuItem("Move", "Nudge Right", 2, "Right");
+   GuiEditorMenuBar.scriptCommand["Move", 2] = "GuiEditor.moveSelection(1,0);";
+   GuiEditorMenuBar.addMenuItem("Move", "Nudge Up", 3, "Up");
+   GuiEditorMenuBar.scriptCommand["Move", 3] = "GuiEditor.moveSelection(0,-1);";
+   GuiEditorMenuBar.addMenuItem("Move", "Nudge Down", 4, "Down");
+   GuiEditorMenuBar.scriptCommand["Move", 4] = "GuiEditor.moveSelection(0,1);";
+   GuiEditorMenuBar.addMenuItem("Move", "-", 0);
+   GuiEditorMenuBar.addMenuItem("Move", "Big Nudge Left", 5, "Shift Left");
+   GuiEditorMenuBar.scriptCommand["Move", 5] = "GuiEditor.moveSelection(-10,0);";
+   GuiEditorMenuBar.addMenuItem("Move", "Big Nudge Right", 6, "Shift Right");
+   GuiEditorMenuBar.scriptCommand["Move", 6] = "GuiEditor.moveSelection(10,0);";
+   GuiEditorMenuBar.addMenuItem("Move", "Big Nudge Up", 7, "Shift Up");
+   GuiEditorMenuBar.scriptCommand["Move", 7] = "GuiEditor.moveSelection(0,-10);";
+   GuiEditorMenuBar.addMenuItem("Move", "Big Nudge Down", 8, "Shift Down");
+   GuiEditorMenuBar.scriptCommand["Move", 8] = "GuiEditor.moveSelection(0,10);";
+
+
+   Canvas.setContent(GuiEditorGui);
+   while((%obj = GuiEditorContent.getObject(0)) != -1)
+      GuiGroup.add(%obj); // get rid of anything being edited
+
+   %i = 0;
+   GuiEditorContentList.clear();
+   while((%obj = GuiGroup.getObject(%i)) != -1)
+   {
+      if(%obj.getName() !$= Canvas)
+      {
+         if(%obj.getName() $= "")
+            %name = "(unnamed) - " @ %obj;
+         else
+            %name = %obj.getName() @ " - " @ %obj;
+
+         GuiEditorContentList.add(%name, %obj);
+      }
+      %i++;
+   
+      activatePackage(GuiEditor_BlockDialogs);
+      GuiEditorContent.add(%content);
+      deactivatePackage(GuiEditor_BlockDialogs);
+      GuiEditorContentList.sort();
+   }
+   
+   GuiEditorClassPopup.sort();
+   GuiEditorResList.clear();
+   GuiEditorResList.add("640 x 480", 640);
+   GuiEditorResList.add("800 x 600", 800);
+   GuiEditorResList.add("1024 x 768", 1024);
+   %ext = $Pref::GuiEditor::PreviewResolution;
+   if( %ext $= "" )
+   {
+   %ext = GuiEditorRegion.getExtent();
+   echo("extent is " @ %ext );
+   switch(getWord(%ext, 0))
+   {
+      case 640:
+         GuiEditorResList.setText("640 x 480");
+      case 800:
+         GuiEditorResList.setText("800 x 600");
+      case 1024:
+         GuiEditorResList.setText("1024 x 768");
+   }
+   }
+   else
+   {
+      GuiEditorResList.setText( getWord(%ext,0) @ " x " @ getWord(%ext, 1) );
+   }
+   if(%content.getName() $= "")
+      %name = "(unnamed) - " @ %content;
+   else
+      %name = %content.getName() @ " - " @ %content;
+   
+   GuiEditorContentList.setText(%name);
+   GuiEditorClassPopup.setText("New Control");
+   GuiEditor.setRoot(%content);
+   GuiEditorRegion.resize(0,0,getWord(%ext,0), getWord(%ext, 1));
+   GuiEditorContent.getObject(0).resize(0,0,getWord(%ext,0), getWord(%ext, 1));
+
+//   %content.resize(0,0,getWord(%ext,0), getWord(%ext, 1));
+
+   GuiEditorTreeView.open(%content);
+
+}
+
+function GuiEditorMenuBar::onMenuItemSelect(%this, %menuId, %menu, %itemId, %item)
+{
+   if(%this.scriptCommand[%menu, %itemId] !$= "")
+      eval(%this.scriptCommand[%menu, %itemId]);
+   else
+      error("No script command defined for menu " @ %menu  @ " item " @ %item);
+}
+
+//----------------------------------------
+function GuiEditorContentList::onSelect(%this, %id)
+{
+   GuiEditorOpen(%id);
+}
+
+//----------------------------------------
+function GuiEditorClassPopup::onSelect(%this, %id)
+{
+   %class = %this.getText();
+   %obj = eval("return new " @ %class @ "();");
+   GuiEditor.addNewCtrl(%obj);
+   GuiEditorClassPopup.setText("New Control");
+}
+
+function GuiEditorResList::onSelect(%this, %id)
+{
+   switch(%id)
+   {
+      case 640:
+         GuiEditorRegion.resize(0,0,640,480);
+         GuiEditorContent.getObject(0).resize(0,0,640,480);
+         $Pref::GuiEditor::PreviewResolution = "640 480";
+      case 800:
+         GuiEditorRegion.resize(0,0,800,600);
+         GuiEditorContent.getObject(0).resize(0,0,800,600);
+         $Pref::GuiEditor::PreviewResolution = "800 600";
+      case 1024:
+         GuiEditorRegion.resize(0,0,1024,768);
+         GuiEditorContent.getObject(0).resize(0,0,1024,768);
+         $Pref::GuiEditor::PreviewResolution = "1024 768";
+   }
+}
+
+//----------------------------------------
+// defines the icons to be used in the tree view control
+// provide the paths to each icon minus the file extension
+// seperate them with : 
+// the order of the icons must correspond to the bit array defined
+// in the GuiTreeViewCtrl.h
+function GuiEditorTreeView::onDefineIcons(%this)
+{
+   //%icons = "common/ui/shll_icon_passworded_hi:common/ui/shll_icon_passworded:common/ui/shll_icon_notqueried_hi:common/ui/shll_icon_notqueried:common/ui/shll_icon_favorite_hi:common/ui/shll_icon_default:";
+   //GuiEditorTreeView.buildIconTable(%icons);
+}
+
+function GuiEditorTreeView::onRightMouseDown(%this, %item, %pts, %obj)
+{
+   if(%obj)
+   {
+      GuiEditor.setCurrentAddSet(%obj);
+   }
+}
+
+function GuiEditorTreeView::onAddSelection(%this,%ctrl)
+{
+   GuiEditor.addSelection(%ctrl);
+}
+
+function GuiEditorTreeView::onRemoveSelection(%this,%ctrl)
+{
+   GuiEditorTreeView.removeSelection(%ctrl);
+}
+
+function GuiEditor::onClearSelected(%this)
+{ 
+   GuiEditorTreeView.clearSelection();
+}
+
+function GuiEditor::onAddSelected(%this,%ctrl)
+{
+   GuiEditorTreeView.addSelection(%ctrl);
+}
+
+function GuiEditor::onRemoveSelected(%this,%ctrl)
+{
+   GuiEditorTreeView.removeSelection(%ctrl); 
+}
+
+function GuiEditor::onDelete(%this)
+{
+   GuiEditorTreeView.deleteSelection();
+}
+
+function GuiEditorTreeView::onDeleteSelection(%this)
+{ 
+   GuiEditor.clearSelection();
+}
+
+function GuiEditorTreeView::onSelect(%this, %obj)
+{
+   if(isObject(%obj))
+   {
+      GuiEditorInspectFields.inspect(%obj);
+      GuiEditorInspectName.setValue(%obj.getName());
+      GuiEditor.select(%obj);
+   }
+}
+
+//----------------------------------------
+function GuiEditorInspectApply()
+{
+   GuiEditorInspectFields.setName(GuiEditorInspectName.getValue());
+}
+
+//----------------------------------------
+function GuiEditor::onSelect(%this, %ctrl)
+{  
+   GuiEditorInspectFields.inspect(%ctrl);
+   GuiEditorInspectName.setValue(%ctrl.getName());
+   GuiEditor.clearSelection();
+   GuiEditor.select(%ctrl);
+   GuiEditorTreeView.addSelection(%ctrl); 
+}
+
+//----------------------------------------
+//function GuiEditorDeleteSelected( %val ) {
+//  if( %val )
+//    GuiEditor.deleteSelection();
+//}      
+
+GlobalActionMap.bind(keyboard, "f10", GuiEdit);

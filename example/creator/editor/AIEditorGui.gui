@@ -1,0 +1,32 @@
+
+new WorldEditor(aiEdit)
+{
+   profile = "GuiDefaultProfile";
+	horizSizing = "width";
+	vertSizing = "height";
+	position = "0 0";
+	extent = "520 420";
+	minExtent = "8 8";
+	visible = "1";
+	setFirstResponder = "0";
+	modal = "1";
+   selectHandle = "./SelectHandle.png";
+   defaultHandle = "./DefaultHandle.png";
+   lockedHandle = "./LockedHandle.png";
+};
+
+//------------------------------------------------------------------------------
+
+function AIworking(%working)
+{
+   if(%working)
+   {
+      Canvas.pushDialog(AIEWorkingDlg);
+      GraphBuildProgress.setValue(0.0);
+   }
+   else
+      Canvas.popDialog(AIEWorkingDlg);
+   
+   Canvas.repaint();
+}
+

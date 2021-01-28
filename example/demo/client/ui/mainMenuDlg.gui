@@ -1,0 +1,102 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(MainMenuDlg) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "800 600";
+   minExtent = "8 8";
+   visible = "1";
+      helpTag = "0";
+      title = "Torque Shader Demo";
+
+   new GuiControl() {
+      profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "22 51";
+      extent = "756 498";
+      minExtent = "8 2";
+      visible = "1";
+         helpTag = "0";
+
+      new GuiBitmapCtrl() {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "-8 3";
+         extent = "535 502";
+         minExtent = "8 2";
+         visible = "1";
+         bitmap = "./orc";
+         wrap = "0";
+            helpTag = "0";
+      };
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "404 361";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "loadFeatureMission();";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 32";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Feature Walkthrough\n<font:arial bold:14>A 3D interactive demo of the new Torque Shader Engine, Early Adopter Release (EA-1).";
+               helpTag = "0";
+               allowSelection = "1";
+         };
+      };
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "404 260";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "MainMenuGui.pushThread(overview_thread);";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 60";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Torque Shader Engine Overview\n<font:arial bold:14>Learn about Torque features, Tools, Documentation, Licensing, Community and Publishing opportunites.";
+               helpTag = "0";
+               allowSelection = "0";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+

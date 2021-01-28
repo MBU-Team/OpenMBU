@@ -1,0 +1,32 @@
+<color:000000><font:Arial Bold:24><lmargin%:2><rmargin%:99>
+Hear what Torque developers are saying...<lmargin%:5><rmargin%:95>
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"The engine itself is a marvel of achievement and power (especially the net-code -- very impressive.) With the support of GarageGames via the ever growing documentation and forums it's more than possible to take control of the engine itself to make it do what you need."
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Mike Nelson, 21-6 Productions
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"For only $100 US currency you can join this exclusive full source code project complete with online forum tech support and eye burning state of the art graphics! Truth is I couldn't describe how pleased I am not only with the TGE but also the most excellent help I've received without sounding like a plastic faced oxy-clean spokesman. I am very impressed by the GarageGames staff and the TGE."
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Scott Schaefer
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"One of the prime questions you should ask yourself when considering an engine for your project is "Has this ever actually been used to make a game?". Torque has and in doing so it has proven itself as one of the most flexible engines ever created. The best recommendation you can have is that the engine has already shown itself capable of producing a top quality game. All in all, if you are looking for a professional engine, with professional features and unparalleled flexibility, this is the one I'd recommend."
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Phil Carlisle, Sr. Programmer, TEAM17
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"For a mere $100 dollars you can have over 200,000 lines of professional source code, updated weekly, proven in previous games, stable, backed by a dedicated community and developers, and easily sellable. It is simply amazing. If you are an indie developer, you owe it to yourself to get this engine, even if only for the learning experience. If you think I am exaggerating, feel free to hop on the IRC channel or forums and ask anyone who uses the engine."
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Josh Albrecht
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"I love the engine, and you could not touch its features with any of the other commercially available engines for less than 100K. For $100.00 you get a 128 player online game engine with both indoor, and outdoor capabilities rendered TOGETHER."
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Shawn, Anarchy Arts
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"GarageGames and the Torque Shader Engine [TGE] have enabled Badlands Games to make the jump from developing content for an existing series, to pursuing commercial development of our own game. Our developers have been extremely impressed with the quality of the engine, particularly its modularity and stability.
+
+The GarageGames team is in it for the long haul, soliciting input from development teams, and keeping the lines of communication open while constantly refining the TGE source. The community is constantly generating tutorials, sharing & improving on chunks of useful code, and has been extremely responsive and supportive.
+
+At the very affordable cost of 100.00 per developer, TGE places more than a million dollars worth of proven, Cross Platform, Engine within reach of of every talented and driven gaming hobbyist looking for their shot at the big time."
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Mychal McCabe
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"The most work for your game, you can do with scripting. i love to work with this engine. And this community is great. you have a problem with your scripts? come here and you will get the answer. really great!"
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Marco Meier
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"Torque is a great deal. Think of all you get for $100. You get a top-notch engine that was used to make a great game called Tribes 2 (the source), tools, freedom to make whatever you so desire, a publisher (GarageGames.com), and support from the community and GG themselves. Its basically a steal."
+<font:Arial Bold:16><lmargin%:5><rmargin%:100>-- Bryan "GameGamer43" Walters
+
+

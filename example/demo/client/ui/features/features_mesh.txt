@@ -1,0 +1,16 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/ss_me>
+<just:left><font:Arial Bold:18>Mesh Rendering Engine<font:Arial:16>
+<lmargin%:5>The work-horse of the Torque Shader Engine, the Mesh Rendering Engine does it all.  Use single mesh and hierarchial mesh part shapes for players, vehicles, guns, projectiles, trees, rocks, you name it.  Add multiple complex animation sequences and even blend between multiple active animations!
+
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Continuous Level-of-Detail based on a progressive mesh algorithm
+• Supports bone, mesh, texture bitmap, texture coordinate and visibilty animations.
+• Blend between multiple simutaneous animations
+• Mesh vertex deformation animation
+• Multi-bone mesh skeletal animation
+• Simple interface to multi-sequence animation manager
+• Damage detail level
+• Collision detail level
+• Projected object shadows (clipped against the environment)
+• 3DStudio Max & MilkShape exporters

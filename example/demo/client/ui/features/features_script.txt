@@ -1,0 +1,33 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/torquescript>
+<just:left><font:Arial Bold:18>Torque Script<font:Arial:16><lmargin%:5>
+Torque Script is the powerful C++ like scripting language built into the core of the Torque Shader Engine.  Torque Script reduces your development time by allowing you to quickly associate scripted logic and data to engine objects at runtime without exiting the engine. Take a look at any of the numerous .cs and .gui files that come with this demo and you will see just how extensively Torque Script can be leveraged to get your project done quickly.
+
+<font:Arial Bold:18><lmargin%:2>Feature Highlights<font:Arial:16><lmargin%:5>
+• C++ like syntax
+• Large complement of functions including math, object manipulation, fileIO, TCP/IP, etc.
+• Easily extend with plug-ins
+• Integrated Script Compiler
+• Intermediate tokenized object format
+• On-demand compilation
+• Local and Remote Debugging using built in debugger
+• Overlay Package Support
+• Easily extended from C++ or script
+
+<font:Arial Bold:18><lmargin%:2>Script Example: AI Player Task Control
+<lmargin%:5><font:Courier New:14>
+function AIPlayer::test()
+{
+   %player = AIPlayer::spawnOnPath("xasd","MissionGroup/Paths/Path2");
+   %player.mountImage(CrossbowImage,0);
+   %player.setInventory(CrossbowAmmo,1000);
+   
+   %player.pushTask("followPath(\"MissionGroup/Paths/Path2\")");
+   %player.pushTask("aimAt(\"MissionGroup/Room6/target\")");
+   %player.pushTask("wait(1)");   
+   %player.pushTask("fire(true)");
+   %player.pushTask("wait(10)");
+   %player.pushTask("fire(false)");
+   %player.pushTask("playThread(0,\"celwave\")");
+   %player.pushTask("done()");
+}
+

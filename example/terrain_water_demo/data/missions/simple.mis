@@ -1,0 +1,127 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+      musicTrack = "lush";
+      cdTrack = "2";
+      CTF_scoreLimit = "5";
+
+   new ScriptObject(MissionInfo) {
+         descLines = "2";
+         name = "Simple testbed";
+         desc0 = "For Shader Testing.";
+   };
+   new MissionArea(MissionArea) {
+      Area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new AtlasInstance2(NewTerrain) {
+      position = "-151.417 7.48933 80";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      detailTex = "~/data/terrains/details/detail1";
+      atlasFile = "~/data/terrains/arcticBlended.atlas";
+      lightMapSize = "1024";
+   };
+   new Sky(Sky) {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      materialList = "~/data/skies/sky_skybox.dml";
+      cloudHeightPer[0] = "0.349971";
+      cloudHeightPer[1] = "0.3";
+      cloudHeightPer[2] = "0.199973";
+      cloudSpeed1 = "0.0005";
+      cloudSpeed2 = "0.001";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1000";
+      fogDistance = "800";
+      fogColor = "0.6 0.6 0.7 1";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "0 0 0";
+      fogVolume2 = "0 0 0";
+      fogVolume3 = "0 0 0";
+      windVelocity = "1 1 0";
+      SkySolidColor = "0.113 0.148 0.215 0";
+      useSkyTextures = "1";
+      renderBottomTexture = "0";
+      noRenderBans = "0";
+      renderBanOffsetHeight = "10";
+      skyGlow = "0";
+      skyGlowColor = "0 0 0 0";
+         locked = "true";
+         windEffectPrecipitation = "1";
+   };
+   new Sun() {
+      direction = "0 0.954268 -0.298953";
+      color = "1 1 0.8 1";
+      ambient = "0.4 0.4 0.5 1";
+      CastsShadows = "1";
+      useBloom = "0";
+      useToneMapping = "0";
+      useDynamicRangeLighting = "0";
+      DRLHighDynamicRange = "0";
+      DRLTarget = "0.6";
+      DRLMax = "1";
+      DRLMin = "0.5";
+      DRLMultiplier = "0.9";
+      bloomCutOff = "0.8";
+      bloomAmount = "0.3";
+      bloomSeedAmount = "0.5";
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         locked = "true";
+   };
+   new WaterBlock() {
+      position = "-0.301636 -0.580643 17";
+      rotation = "1 0 0 0";
+      scale = "2048 2048 50";
+      waveDir[0] = "0 1";
+      waveDir[1] = "0.707 0.707";
+      waveDir[2] = "0.5 0.86";
+      waveDir[3] = "0.86 8.5";
+      waveSpeed[0] = "0";
+      waveSpeed[1] = "0.09";
+      waveSpeed[2] = "0.04";
+      waveSpeed[3] = "0.025";
+      waveTexScale[0] = "7.14 7.14";
+      waveTexScale[1] = "6.25 12.5";
+      waveTexScale[2] = "50 50";
+      waveTexScale[3] = "0 0";
+      reflectTexSize = "512";
+      baseColor = "5 12 22 153";
+      underwaterColor = "11 31 46 190";
+      gridSize = "100";
+      surfMaterial[0] = "Water";
+      surfMaterial[1] = "Underwater";
+      surfMaterial[2] = "Water1_1FogPass";
+      surfMaterial[3] = "WaterBlendMat";
+      surfMaterial[4] = "WaterFallback1_1";
+      fullReflect = "1";
+      clarity = "0.08";
+      fresnelBias = "0.12";
+      fresnelPower = "6";
+      renderFogMesh = "1";
+   };
+   new SimGroup(PlayerDropPoints) {
+
+      new SpawnSphere() {
+         position = "734.208 837.731 19.2223";
+         rotation = "0.03379 0.088947 0.995463 221.43";
+         scale = "0.940827 1.97505 1";
+         dataBlock = "SpawnSphereMarker";
+         Radius = "10";
+         sphereWeight = "1";
+         indoorWeight = "1";
+         outdoorWeight = "1";
+            lockCount = "0";
+            locked = "False";
+            homingCount = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+

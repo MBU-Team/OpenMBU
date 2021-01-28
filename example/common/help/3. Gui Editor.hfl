@@ -1,0 +1,40 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Gui Editor...
+
+GUI Editor Basics<font:Arial:16>
+Press the F10 key on the keyboard to toggle the GUI Editor on and off.  The GUI Editor will start editing the current main content control, minus any dialogs that may be visible.
+
+The GUI Editor is broken up into four main visual components.  In the upper left portion of the screen is the content editor, where controls can be placed, moved and resized.  In the upper right is the tree, that shows the current content control hierarchy.  The lower left panel is the tool bar, which contains functions for aligning, and spacing controls as well as creating new controls and screens.  The lower right pane is the inspector, where the currently selected control's attributes are displayed.
+
+<font:Arial Bold:20>Mouse Editing<font:Arial:16>
+Left clicking the mouse on a control in the content editor selects that control.  Once selected, a control can be moved by clicking and dragging its content area, or resized using one of the 8 black sizing knobs.  Shift-clicking on several controls allows the user to select more than one control at once.  In this case, the sizing knobs turn white, and can no longer be used to size the control, but the controls can still be moved by dragging.  Only controls that share the same parent can be selected at the same time.
+
+The parent control of the currently selected control is outlined with a yellow and blue band.  This control is known as the <spush><font:Arial Bold:16>Current Add Parent<spop>.  Any new control created from the toolbar or pasted from the clipboard will be added to this control.  The Current Add Parent control can be set manually by either left-clicking one of its children, or right-clicking the control itself.
+
+<font:Arial Bold:20>Keyboard Commands<font:Arial:16>
+The editor supports several keyboard commands and shortcuts:
+
+<spush><font:Arial Bold:16>Control-A<spop> - Select All.  Selects all the controls in the Current Add Parent.
+<spush><font:Arial Bold:16>Control-C<spop> - Copy.  Copys the currently selected control(s) to the clipboard.
+<spush><font:Arial Bold:16>Control-X<spop> - Cut.  Cuts the currently selected control(s) to the clipboard.
+<spush><font:Arial Bold:16>Control-V<spop> - Paste.  Pastes any control(s) on the clipboard into the Current Add Parent.
+<spush><font:Arial Bold:16>Arrow Keys<spop> - Movement.  Moves the current control selection one pixel in the direction of the arrow.
+<spush><font:Arial Bold:16>Shift-Arrow Keys<spop> - Movement.  Moves the current control selection ten pixels in the direction of the arrow.
+<spush><font:Arial Bold:16>Delete/Backspace<spop> - Delete.  Deletes the current control selection.
+
+<font:Arial Bold:20>Toolbar Commands<font:Arial:16>
+The toolbar has several command buttons that operate on the current selection set and creating and saving guis, as well as pop-up menus for creating new controls and changing the currently edited gui.  The functions of the buttons are described below:
+
+<spush><font:Arial Bold:16>Align Left<spop> - Aligns the left edge of all controls in the current selection set to the leftmost point of any of the selected controls.
+<spush><font:Arial Bold:16>Align Right<spop> - Aligns the right edge of all controls in the current selection set to the rightmost point of any of the selected controls.
+<spush><font:Arial Bold:16>Center Horiz<spop> - Centers horizontally all selected controls in the rectangle bounded by the current selection set.
+<spush><font:Arial Bold:16>Align Top<spop> - Aligns the top edge of all controls in the current selection set to the topmost point of any of the selected controls.
+<spush><font:Arial Bold:16>Align Bottom<spop> - Aligns the bottom edge of all controls in the current selection set to the bottommost point of any of the selected controls.
+<spush><font:Arial Bold:16>Help<spop> - Displays this help dialog.
+<spush><font:Arial Bold:16>Space Vert<spop> - Evenly spaces vertically all selected controls.
+<spush><font:Arial Bold:16>Space Horiz<spop> - Evenly spaces horizontally all selected controls.
+<spush><font:Arial Bold:16>Bring Front<spop> - Moves the selected control in front of its sibling controls.
+<spush><font:Arial Bold:16>Send Back<spop> - Moves the selected control behind its sibling controls.
+<spush><font:Arial Bold:16>New...<spop> - Brings up a dialog that allows the user to create and name a new control for editing.
+<spush><font:Arial Bold:16>Save<spop> - Brings up a dialog that allows the user to save the current content control to a file.
+<spush><font:Arial Bold:16>New Control (popup)<spop> - Displays a list of all controls that the user can create to add to the current content control.
+<spush><font:Arial Bold:16>Show GUI (popup)<spop> - Displays the name of the gui currently being edited.  Selecting this popup allows the user to choose a screen to edit from all loaded guis.

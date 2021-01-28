@@ -1,0 +1,185 @@
+//-----------------------------------------------------------------------------
+// Torque Game Engine
+// Copyright (C) GarageGames.com, Inc.
+//-----------------------------------------------------------------------------
+
+#ifndef _TORQUECONFIG_H_
+#define _TORQUECONFIG_H_
+
+//-----------------------------------------------------------------------------
+//Hi, and welcome to the Torque Config file.
+//
+//This file is a central reference for the various configuration flags that
+//you'll be using when controlling what sort of a Torque build you have. In
+//general, the information here is global for your entire codebase, applying
+//not only to your game proper, but also to all of your tools.
+//
+//This file also contains information which is used for various other needs,
+//for instance, defines indicating what engine we're building, or what version
+//we're at.
+
+/// Version number is major * 1000 + minor * 100 + revision * 10.
+/// Different engines (TGE, T2D, etc.) will have different version numbers.
+#define TORQUE_VERSION              900 // version 0.9 
+
+/// What engine are we running? The presence and value of this define are
+/// used to determine what engine (TGE, T2D, etc.) and version thereof we're
+/// running - useful if you're a content pack or other 3rd party code
+/// snippet!
+///
+//#define TORQUE_GAME_ENGINE          TORQUE_VERSION   // we are not TGE, so this isn't defined
+#define TORQUE_SHADER_ENGINE        TORQUE_VERSION
+
+/// What's the name of your game? Used in a variety of places.
+#define TORQUE_GAME_NAME            "Torque Shader Engine Demo"
+
+/// Human readable version string.
+#define TORQUE_GAME_VERSION_STRING  "Torque Demo 1.4 (TGE 1.4)"
+
+/// Define me if you want to enable multithreading support.
+#define TORQUE_MULTITHREAD
+
+/// Define me to enable unicode support.
+#define TORQUE_UNICODE
+
+//-----------------------------------------------------------------------------
+// Here we specify the build configuration defines.  These are usually 
+// defined by the build system (makefiles, visual studio, etc) and not 
+// in this file.  
+
+/// Define me to enable debug mode; enables a great number of additional
+/// sanity checks, as well as making AssertFatal and AssertWarn do something.
+/// This is usually defined by the build system.
+//#define TORQUE_DEBUG
+
+/// Define me if this is a shipping build; if defined I will instruct Torque
+/// to batten down some hatches and generally be more "final game" oriented.
+/// Notably this disables a liberal resource manager file searching, and
+/// console help strings.
+/// This is usually defined by the build system.
+//#define TORQUE_SHIPPING
+
+//-----------------------------------------------------------------------------
+// Here we specify various optional configuration defines.  If you define
+// them in this section, they will be enabled for all build configurations.
+// Thus it may be preferable to enable them only in the configuration specific
+// sections below (TORQUE_DEBUG, TORQUE_SHIPPING, etc)
+
+/// Define me if you want asserts.  This is automatically enabled if you 
+/// define TORQUE_DEBUG.  However it may be useful to enable it for 
+/// your optimized non-ship configuration (where TORQUE_DEBUG is 
+/// typically not defined).
+//#define TORQUE_ENABLE_ASSERTS
+
+/// Define me if you want to enable the profiler. 
+///    See also the TORQUE_SHIPPING block below
+//#define TORQUE_ENABLE_PROFILER
+
+/// Define me if you want the memory manager to hook into the profiler stack
+/// so that you can see where particular allocations come from when 
+/// debugging memory leaks.  This information is provided when you use the 
+/// dumpUnflaggedAllocs() function of the memory manager.
+#define TORQUE_ENABLE_PROFILE_PATH
+
+/// Define me to enable a variety of network debugging aids.
+//#define TORQUE_DEBUG_NET
+
+/// Define me to enable network bandwidth tracking at the ConsoleObject level.
+//#define TORQUE_NET_STATS
+
+/// Modify me to enable metric gathering code in the renderers.
+///
+/// 0 does nothing; higher numbers enable higher levels of metric gathering.
+//#define TORQUE_GATHER_METRICS 0
+
+/// Define me to disable the Torque Memory Manager.  Memory allocations will
+/// be handled directly by the system.  This is useful if you want to 
+/// minimize your memory footprint, since the TMM never frees pages that 
+/// it allocates.  It is also useful for debugging, since if you write 
+/// into memory that is owned by the system, you generally crash immediately
+/// (whereas with the TMM enabled, you are writing into Torque's process
+/// memory so the system might not crash at all, unless you happen to write
+/// over a memory header and TORQUE_DEBUG_GUARD is enabled, see below).
+///
+/// However, there can be a performance hit when not using the memory manager,
+/// because Torque objects often continuously allocate and free bits of memory
+/// every frame.  Some system allocators (i.e. Xbox1) do not deal with this 
+/// usage very well, leading to a cumulative framerate decrease.
+///
+/// When the TMM is off, its tools for detecting memory leaks are not 
+/// available.
+//#define TORQUE_DISABLE_MEMORY_MANAGER
+
+/// Define me if you want to enable debug guards in the memory manager.
+///
+/// Debug guards are known values placed before and after every block of
+/// allocated memory. They are checked periodically by Memory::validate(),
+/// and if they are modified (indicating an access to memory the app doesn't
+/// "own"), an error is flagged (ie, you'll see a crash in the memory 
+/// manager's validate code). Using this and a debugger, you can track down
+/// memory corruption issues quickly.
+///
+/// Debug guard requires the Torque Memory manager.
+//#define TORQUE_DEBUG_GUARD
+
+/// Define to enable multiple binds per console function in an actionmap.  
+/// With this, you can bind multiple keys to the same "jump()" function 
+/// for instance.  Without it, you need to declare multiple jump functions
+/// that do the same thing and bind them separately (this is the Torque 
+/// default).
+//#define TORQUE_ALLOW_MULTIPLE_ACTIONMAP_BINDS
+
+/// Define me to disable the password on the telnet console.  Only applies in 
+/// non-ship builds. Use for situations where you are using the telnet console 
+/// a lot and don't like typing the password over and over and OVER (i.e. xbox)
+//#define TORQUE_DISABLE_TELNET_CONSOLE_PASSWORD
+
+/// Define to disable Ogg Vorbis audio support. Libs are compiled without this by
+/// default.
+//#define TORQUE_NO_OGGVORBIS
+
+/// Define if you want nVIDIA's NVPerfHUD to work with TSE
+//#define TORQUE_NVPERFHUD
+
+/// Define to disable DSO file generation.  Note that existing DSOs will still be 
+// used by the engine.  Script files will load a bit more slowly because they need
+// to be compiled each time.
+#define TORQUE_NO_DSO_GENERATION
+
+// Used to check internal GFX state, D3D/OGL states, etc.  
+//#define TORQUE_DEBUG_RENDER
+
+
+//-----------------------------------------------------------------------------
+// Finally, we define some dependent #defines for the various build 
+// configurations. This enables some subsidiary functionality to get 
+// automatically turned on in certain configurations.
+
+#ifdef TORQUE_DEBUG
+#  define TORQUE_GATHER_METRICS 0
+#  define TORQUE_ENABLE_PROFILER
+#  define TORQUE_ENABLE_PROFILE_PATH
+#  define TORQUE_DEBUG_GUARD
+#endif
+
+#ifdef TORQUE_RELEASE
+  // If it's not DEBUG, it's a RELEASE build, put appropriate things here.
+#endif
+
+#ifdef TORQUE_SHIPPING
+ // TORQUE_SHIPPING flags here.
+#else
+   // enable the profiler by default, if we're not doing a shipping build
+#  define TORQUE_ENABLE_PROFILER
+#endif
+
+#ifdef TORQUE_LIB
+   #ifndef TORQUE_NO_OGGVORBIS
+   #define TORQUE_NO_OGGVORBIS
+   #endif
+#endif
+
+// Someday, it might make sense to do some pragma magic here so we error
+// on inconsistent flags.
+
+#endif

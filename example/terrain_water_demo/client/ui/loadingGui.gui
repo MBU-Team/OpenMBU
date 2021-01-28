@@ -1,0 +1,59 @@
+new GuiControlProfile ("LoadingGuiContentProfile")
+{
+   opaque = true;
+   fillColor = "200 200 200";
+   border = true;
+   borderColor   = "0 0 0";
+};
+
+//--- OBJECT WRITE BEGIN ---
+new GuiChunkedBitmapCtrl(LoadingGui) {
+   profile = "GuiContentProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   bitmap = "./background";
+   useVariable = "0";
+   tile = "0";
+      helpTag = "0";
+      qLineCount = "0";
+
+   new GuiControl() {
+      profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "top";
+      position = "280 430";
+      extent = "353 45";
+      minExtent = "8 8";
+      visible = "1";
+         helpTag = "0";
+
+      new GuiProgressCtrl(LoadingProgress) {
+         profile = "GuiProgressProfile";
+         horizSizing = "center";
+         vertSizing = "center";
+         position = "5 10";
+         extent = "343 25";
+         minExtent = "8 8";
+         visible = "1";
+            helpTag = "0";
+      
+         new GuiTextCtrl(LoadingProgressTxt) {
+            profile = "GuiProgressTextProfile";
+            horizSizing = "center";
+            vertSizing = "bottom";
+            position = "-4 3";
+            extent = "262 20";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            text = "LOADING MISSION";
+            maxLength = "255";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---

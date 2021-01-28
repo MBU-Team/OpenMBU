@@ -1,0 +1,11 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/tools/ss_te>
+<just:left><font:Arial Bold:18>Terrain Editing<font:Arial:16>
+<lmargin%:5>When you have finished terraforming your world with the Heightfield Generator and Texturing tools you can go in and customize areas with the 3D Terrain editing tools. Edit the terrain interactively in the 3D window using brushes to adjust heights, smooth and level the terrain.  Also use the brushes to paint textures directly on the terain in the 3D window, making it incredibly easy to customize the look of specific areas and all of course blending is handled automatically.
+
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Interactive 3D editor
+• Various brush sizes and shapes
+• Adjust terrain heights, smooth, level areas and more
+• Paint textures directly on the terrain
+

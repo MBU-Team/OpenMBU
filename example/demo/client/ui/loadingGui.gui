@@ -1,0 +1,84 @@
+new GuiControlProfile ("LoadingGuiContentProfile")
+{
+   opaque = true;
+   fillColor = "200 200 200";
+   border = true;
+   borderColor   = "0 0 0";
+};
+
+//--- OBJECT WRITE BEGIN ---
+new GuiChunkedBitmapCtrl(LoadingGui) {
+   profile = "GuiContentProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+   bitmap = "./background";
+   useVariable = "0";
+   tile = "0";
+      qLineCount = "0";
+
+   new GuiControl() {
+      profile = "GuiBevelLoweredProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "80 80";
+      extent = "480 320";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+
+      new GuiTextCtrl(LOAD_MapName) {
+         profile = "GuiMediumTextProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "22 26";
+         extent = "100 28";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         text = "Map Name";
+         maxLength = "255";
+      };
+      new GuiMLTextCtrl(LOAD_MapDescription) {
+         profile = "GuiMLTextProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "22 82";
+         extent = "440 14";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         lineSpacing = "2";
+         allowColorChars = "0";
+         maxChars = "-1";
+      };
+      new GuiProgressCtrl(LoadingProgress) {
+         profile = "GuiProgressProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "19 278";
+         extent = "442 25";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+
+         new GuiTextCtrl(LoadingProgressTxt) {
+            profile = "GuiProgressTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "-1 3";
+            extent = "441 20";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            text = "LOADING MISSION";
+            maxLength = "255";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---

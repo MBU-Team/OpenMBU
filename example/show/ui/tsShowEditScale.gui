@@ -1,0 +1,47 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TSShowEditScale)
+{
+   profile = "GuiDefaultProfile";
+   
+   new GuiWindowCtrl()
+   {
+      profile = "GuiWindowProfile";
+      position = "100 100";
+      extent = "180 100";
+      text = "Edit Scale";
+      
+      new GuiTextEditCtrl(showScale)
+      {
+         profile = "GuiTextEditProfile";
+         position = "80 20";
+         extent = "50 20";
+         altCommand = "showSetScale(threadList.getValue(),showScale.getValue()); Canvas.popDialog(TSShowEditScale);";
+      };
+
+      new GuiButtonCtrl ()
+      {
+         profile  = "GuiButtonProfile";
+         position = "20 50";
+         extent   = "60 20";
+         text = "Ok";
+         command = "showSetScale(threadList.getValue(),showScale.getValue()); Canvas.popDialog(TSShowEditScale);";
+      };
+
+      new GuiButtonCtrl ()
+      {
+         profile  = "GuiButtonProfile";
+         position = "110 50";
+         extent   = "60 20";
+         text = "Cancel";
+         command = "Canvas.popDialog(TSShowEditScale);";
+      };
+   };
+};
+//--- OBJECT WRITE END ---

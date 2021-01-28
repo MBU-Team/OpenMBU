@@ -1,0 +1,370 @@
+//------------------------------------------------------------------------------
+// Torque game definition file (.fgd) Version 1.0
+// for Worldcraft 3.+ and the Torque engine
+
+//------------------------------------------------------------------------------
+// worldspawn
+//------------------------------------------------------------------------------
+
+@SolidClass = worldspawn : "World entity"
+[
+   detail_number(integer) : "Shape's detail index" : 0
+   min_pixels(integer) : "Minimum pixels for detail" : 250
+   geometry_scale(string) : "Geometry scale" : "32.0"
+   light_geometry_scale(string) : "Lighting scale (must be a power of 2)" : "32.0"
+   ambient_color(color255) : "Ambient color" : "0 0 0"
+   emergency_ambient_color(color255) : "Emergency ambient color" : "0 0 0"
+]
+
+@SolidClass = sgLightingScaleEntity : "Synapse Gaming Lighting Scale Entity"
+[
+   light_geometry_scale(string) : "Lighting scale (must be a power of 2)" : "32.0"
+   self_illumination_color(color255) : "Self-Illumination Color" : "0 0 0"
+]
+
+// --------------------------------------
+// special classes
+// --------------------------------------
+
+@SolidClass = detail : "Detail Brush Entity"
+[
+]
+
+@SolidClass = collision : "Collision Brush Entity"
+[
+]
+
+@SolidClass = vehicle_collision : "Vehicle Collision Brush Entity"
+[
+]
+
+@SolidClass = portal : "Portal Brush Entity"
+[
+   ambient_light(choices) : "Ambient Light" : 0 =
+   [
+      0 : "Does not pass through"
+      1 : "Passes through"
+   ]
+]
+
+@PointClass = MirrorSurface : "Mirror Surface Entity"
+[
+   alpha_level(Choices) : "Translucency" : 0 =
+   [
+      0 : "Fully Mirrored"
+      1 : "Barely there"
+      2 : "Very Translucent"
+      3 : "Half-and-Half"
+      4 : "Muddy Pond"
+      5 : "Don't shave with this"
+      6 : "Use texture's alpha channel"
+   ]
+]
+
+
+//------------------------------------------------------------------------------
+// BaseClasses
+//------------------------------------------------------------------------------
+
+@BaseClass = Targetname
+[
+   name(target_source) : "Name"
+]
+
+@BaseClass = Target
+[
+   target(target_destination) : "Target"
+]
+
+//------------------------------------------------------------------------------
+
+@BaseClass = LightAnimFlags
+[
+   spawnflags(Flags) = 
+   [
+		1 : "Auto start" 	      : 1
+		2 : "Loop to end frame" : 1
+      4 : "Random frame"      : 0
+   ]
+]
+
+@BaseClass = LightAnimSpeed
+[
+   speed(choices) : "Speed" : 2 =
+   [
+      0: "Very slow"
+      1: "Slow"
+      2: "Normal"
+      3: "Fast"
+      4: "Very fast"
+   ]
+]
+
+@BaseClass = LightFalloffs
+[
+]
+
+//------------------------------------------------------------------------------
+// PointClasses - our entities
+//------------------------------------------------------------------------------
+
+@PointClass base(Targetname) = target : "Target" []
+
+@PointClass base(TargetName, LightAnimFlags) = light : "Light"
+[
+   name(target_source) : "Name"
+   state0_duration(string) : "State0 duration" : "1.0"
+   state0_color(color255) : "State0 color (R G B)" : "255 255 255"
+]
+
+//------------------------------------------------------------------------------
+
+@PointClass base(Target) = light_emitter_point : "Point emitter"
+[
+   state_index(integer) : "State index" : 0
+
+   falloff_type(choices) : "Falloff type" : 1 =
+   [
+      0 : "Distance"
+      1 : "Linear"
+   ]
+
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+   falloff3(integer) : "Falloff3" : 0
+]
+
+//------------------------------------------------------------------------------
+
+@PointClass base(light_emitter_point) = light_emitter_spot : "Spot emitter"
+[
+   direction(string) : "Direction" : "0 0 -1"
+   theta(string) : "Inner angle" : "0.2"
+   phi(string) : "Outer angle" : "0.4"
+]
+
+//------------------------------------------------------------------------------
+// Stock static lights...
+//------------------------------------------------------------------------------
+
+@PointClass = light_omni : "Omni Light"
+[
+   color(color255) : "Color (R G B)" : "255 255 255"
+
+   alarm_type(choices) : "Alarm Type" : 0 =
+   [
+      0 : "Normal only"
+      1 : "Alarm only"
+      2 : "Both Alarm and Normal"
+   ]
+
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass base(Target) = light_spot : "Spot Light"
+[
+   color(color255) : "Color (R G B)" : "255 255 255"
+
+   alarm_type(choices) : "Alarm Type" : 0 =
+   [
+      0 : "Normal only"
+      1 : "Alarm only"
+      2 : "Both Alarm and Normal"
+   ]
+
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+
+   distance1(integer) : "Inner distance" : 10
+   distance2(integer) : "Outer distance" : 100
+]
+
+//------------------------------------------------------------------------------
+// Animated lights...
+//------------------------------------------------------------------------------
+
+@PointClass base(Targetname, LightAnimSpeed, LightAnimFlags) = light_strobe : "Strobe Light"
+[
+   spawnflags(Flags) =
+   [
+      1 : "Auto start" : 1
+   ]
+   alarm_type(choices) : "Alarm Type" : 0 =
+   [
+      0 : "Normal only"
+      1 : "Alarm only"
+   ]
+
+   color1(color255) : "Color1 (R G B)" : "255 255 255"
+   color2(color255) : "Color2 (R G B)" : "0 0 0"
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass base(Targetname, LightAnimSpeed) = light_pulse : "Pulse Light"
+[
+   spawnflags(Flags) =
+   [
+      1 : "Auto start" : 1
+   ]
+   alarm_type(choices) : "Alarm Type" : 0 =
+   [
+      0 : "Normal only"
+      1 : "Alarm only"
+   ]
+
+   color1(color255) : "Color1 (R G B)" : "255 255 255"
+   color2(color255) : "Color2 (R G B)" : "0 0 0"
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass base(Targetname) = light_pulse2 : "Prog. Pulse Light"
+[
+   spawnflags(Flags) =
+   [
+      1 : "Auto start" : 1
+   ]
+   alarm_type(choices) : "Alarm Type" : 0 =
+   [
+      0 : "Normal only"
+      1 : "Alarm only"
+   ]
+
+   color1(color255) : "Color1 (R G B)" : "255 255 255"
+   color2(color255) : "Color2 (R G B)" : "0 0 0"
+
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+
+   attack(string) : "Attack" : "1.0"
+   sustain1(string) : "Sustain1" : "1.0"
+   decay(string) : "Decay" : "1.0"
+   sustain2(string) : "Sustain2" : "1.0"
+]
+
+@PointClass base(Targetname, LightAnimSpeed) = light_flicker : "Flicker Light"
+[
+   spawnflags(Flags) = 
+   [
+		1 : "Auto start" 	: 1
+   ]
+   alarm_type(choices) : "Alarm Type" : 0 =
+   [
+      0 : "Normal only"
+      1 : "Alarm only"
+   ]
+
+   color1(color255) : "Color1 (R G B)" : "255 255 255"
+   color2(color255) : "Color2 (R G B)" : "0 0 0"
+   color3(color255) : "Color3 (R G B)" : "0 0 0"
+   color4(color255) : "Color4 (R G B)" : "0 0 0"
+   color5(color255) : "Color5 (R G B)" : "0 0 0"
+
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+]
+
+@PointClass base(Targetname, Target, LightAnimSpeed) = light_runway : "Runway Light"
+[
+   color(color255) : "Color (R G B)" : "255 255 255"
+
+   spawnflags(Flags) =
+   [
+      1 : "Auto start" : 1
+   ]
+   alarm_type(choices) : "Alarm Type" : 0 =
+   [
+      0 : "Normal only"
+      1 : "Alarm only"
+   ]
+
+   pingpong(choices) : "Ping pong?" : 0 = 
+   [
+      0 : "No"
+      1 : "Yes"
+   ]
+   steps(integer) : "Steps" : 0
+
+   falloff1(integer) : "Falloff1" : 10
+   falloff2(integer) : "Falloff2" : 100
+]
+
+// --------------------------------------------------------------------------
+// Triggers, etc...
+// --------------------------------------------------------------------------
+@SolidClass = trigger : "Trigger Entity"
+[
+	name(string) : "Trigger Name" : "MustChange"
+]
+
+// --------------------------------------------------------------------------
+// Doors, elevators, etc...
+// --------------------------------------------------------------------------
+@SolidClass = Door_Elevator : "Door or Elevator"
+[
+	name(string) : "Name" : "MustChange"
+	path_name(string) : "Path subscription" : ""
+	trigger0_name(string) : "Trigger 0" : ""
+	trigger1_name(string) : "Trigger 1" : ""
+	trigger2_name(string) : "Trigger 2" : ""
+	trigger3_name(string) : "Trigger 3" : ""
+	trigger4_name(string) : "Trigger 4" : ""
+	trigger5_name(string) : "Trigger 5" : ""
+	trigger6_name(string) : "Trigger 6" : ""
+	trigger7_name(string) : "Trigger 7" : ""
+]
+
+@SolidClass = Force_Field : "Force Field"
+[
+	name(string)    : "Name" : "MustChange"
+   color(color255) : "Field color" : "125 216 232"
+	trigger0_name(string) : "Trigger 0" : ""
+	trigger1_name(string) : "Trigger 1" : ""
+	trigger2_name(string) : "Trigger 2" : ""
+	trigger3_name(string) : "Trigger 3" : ""
+	trigger4_name(string) : "Trigger 4" : ""
+	trigger5_name(string) : "Trigger 5" : ""
+	trigger6_name(string) : "Trigger 6" : ""
+	trigger7_name(string) : "Trigger 7" : ""
+]
+
+// --------------------------------------------------------------------------
+// Paths, etc...
+// --------------------------------------------------------------------------
+@PointClass = path_node : "Path Node"
+[
+   name(target_source) : "Name"
+   next_node(target_destination) : "Next Node"
+   next_time(integer) : "MS to next node" : 1000
+]
+
+@PointClass = path_start : "Path Start"
+[
+   name(target_source) : "Name"
+   next_node(target_destination) : "Next Node"
+   next_time(integer) : "MS to next node" : 1000
+]
+
+
+// --------------------------------------------------------------------------
+// Triggers, etc...
+// --------------------------------------------------------------------------
+//@SolidClass = Volume_Trigger : "Volume Trigger"
+//[
+//	team_only(choices) : "Team Activated" : 0 =
+//	[
+//		0 : "No"
+//		1 : "Yes"
+//	]
+//	trigger_name(string) : "Trigger Name" : ""
+//]
+
+// --------------------------------------------------------------------------
+// AI Special Node - for chutes and special interior cases for Bots
+// --------------------------------------------------------------------------
+@PointClass = ai_special_node : "AI Special Node"
+[
+   name(target_source) : "Name"
+]

@@ -1,0 +1,13 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/tools/ss_tt>
+<just:left><font:Arial Bold:18>Terrain Texturing<font:Arial:16>
+<lmargin%:5>Once you have your terrain created use the rule based placement tools to texture miles of terrain in an instant.  Each placement rule is based on a set of masks which when combined create a complex organic look.  Masks can be based on the heightfield slope, altitude as well as fractal distributions and frequency filters. Apply your rule set at any time and see the results instantly in the 3D view.
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• View results instantly
+• Creates realistic texture placement
+• Extremely flexible
+• Rule based texture placement
+• Rules based on slope, altitude, fractal masks and frequency filters
+ 
+
+

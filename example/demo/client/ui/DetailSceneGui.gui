@@ -1,0 +1,39 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(DetailSceneGui) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "800 600";
+   minExtent = "8 2";
+   visible = "1";
+      helpTag = "0";
+
+   new GuiControl() {
+      profile = "GuiWindowProfile";
+      horizSizing = "left";
+      vertSizing = "top";
+      position = "587 464";
+      extent = "190 30";
+      minExtent = "8 2";
+      visible = "1";
+         helpTag = "0";
+
+      new GuiSliderCtrl(DetailSceneSlider) {
+         profile = "GuiSliderProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "6 5";
+         extent = "178 21";
+         minExtent = "8 2";
+         visible = "1";
+         variable = "value";
+         altCommand = "OrcDetailScene.slider();";
+         range = "0.000000 1.000000";
+         ticks = "10";
+         value = "1";
+            helpTag = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---

@@ -1,0 +1,85 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TSShowTranDurEditDlg) {
+   profile = "GuiDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "True";
+	setFirstResponder = "False";
+	modal = "True";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "260 425";
+		extent = "181 87";
+		minExtent = "8 8";
+		visible = "True";
+		setFirstResponder = "False";
+		modal = "True";
+		helpTag = "0";
+		text = "Edit Transition Duration";
+		resizeWidth = "True";
+		resizeHeight = "True";
+		canMove = "True";
+		canClose = "True";
+		canMinimize = "True";
+		canMaximize = "True";
+		minSize = "50 50";
+
+		new GuiTextEditCtrl(showTransitionDuration) {
+			profile = "GuiTextEditProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "24 25";
+			extent = "50 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			altCommand = "$showTransitionDuration = showTransitionDuration.getValue(); transitionDurationText.setValue($showTransitionDuration); Canvas.popDialog(TSShowTranDurEditDlg);";
+			helpTag = "0";
+			historySize = "0";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "100 27";
+			extent = "60 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "$showTransitionDuration = showTransitionDuration.getValue(); transitionDurationText.setValue($showTransitionDuration); Canvas.popDialog(TSShowTranDurEditDlg);";
+			helpTag = "0";
+			text = "Ok";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "100 54";
+			extent = "60 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "Canvas.popDialog(TSShowTranDurEditDlg);";
+			helpTag = "0";
+			text = "Cancel";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

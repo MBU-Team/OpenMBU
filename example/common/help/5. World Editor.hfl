@@ -1,0 +1,53 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>World Editor...
+
+World Editor Basics<font:Arial:16>
+The World Editor has three seperate "windows" in the Mission Editor:
+World Editor - a full screen object manipulator
+World Editor Inspector - used for inspecting and editing the properties of objects
+World Editor Creator - used for creating new mission objects
+
+The World Editor main view is a view of the 3D world.  Objects in this view (interiors, shapes, markers, etc) can be manipulated with the mouse and keyboard.
+
+The following mouse and keyboard functions exist:
+
+<font:Arial Bold Italic:16>Clicking on an unselected object<font:Arial:16> - deselects all currently selected objects and selects the clicked object
+<font:Arial Bold Italic:16>Clicking in empty space<font:Arial:16> - click-drags a box around objects, and selects all objects in the box
+<font:Arial Bold Italic:16>Shift-clicking on an object<font:Arial:16> - toggles selection of the clicked object
+<font:Arial Bold Italic:16>Mouse dragging a selected object<font:Arial:16> - moves the selected objects, either on a horizontal plane, or sticking to the terrain, depending on the setting of the "Planar Movement" checkbox in the World Editor Settings dialog
+<font:Arial Bold Italic:16>Control-clicking and drag<font:Arial:16> - moves the selected objects vertically
+<font:Arial Bold Italic:16>Alt-clicking and drag<font:Arial:16> - rotates the selected objects about the vertical axis
+<font:Arial Bold Italic:16>Alt-control-clicking and drag<font:Arial:16> - scales the selected object by a face on the bounding box
+
+If gizmos are enabled in the World Editor Settings dialog, they can also be clicked and dragged:
+<font:Arial Bold Italic:16>click-drag gizmo axis<font:Arial:16> - move selection along that axis
+<font:Arial Bold Italic:16>alt-click-drag gizmo axis<font:Arial:16> - rotate selection on that axis
+<font:Arial Bold Italic:16>alt-control-click-drag gizmo axis<font:Arial:16> - scale along that axis
+
+<font:Arial Bold:20>World Menu<font:Arial:16>
+The World Menu contains world editor specific options for controlling properties of the current selection, as well as choosing where new objects are dropped.  The following list describes the world menu options:
+<font:Arial Bold:16>Lock Selection<font:Arial:16> - Locks the current selection so that it cannot be manipulated from the world editor view
+<font:Arial Bold:16>Unlock Selection<font:Arial:16> - Unlocks a locked selection
+<font:Arial Bold:16>Hide Selection<font:Arial:16> - Hides the current selection to reduce clutter while editing
+<font:Arial Bold:16>Show Selection<font:Arial:16> - Shows hidden objects in the selection
+<font:Arial Bold:16>Delete Selection<font:Arial:16> - Deletes the currently selected objects
+<font:Arial Bold:16>Camera To Selection<font:Arial:16> - Moves the camera to the selected objects
+<font:Arial Bold:16>Reset Transforms<font:Arial:16> - Resets the rotation and scale on the selected objects
+<font:Arial Bold:16>Drop Selection<font:Arial:16> - Re-drops the selected objects into the mission according to the drop rule (see below)
+<font:Arial Bold:16>Add Selection to Instant Group<font:Arial:16> - Moves the currently selected objects into the current Instant Group.
+<font:Arial Bold:16>Drop at Origin<font:Arial:16> - New objects will be created at the origin
+<font:Arial Bold:16>Drop at Camera<font:Arial:16> - New objects will be created at the camera's location
+<font:Arial Bold:16>Drop at Camera w/Rot<font:Arial:16> - New objects will be created at the camera's location with the camera's current orientation
+<font:Arial Bold:16>Drop below Camera<font:Arial:16> - New objects will be created below the camera's location
+<font:Arial Bold:16>Drop at Screen Center<font:Arial:16> - New objects will be created in the world where the view direction hits an object
+<font:Arial Bold:16>Drop at Centroid<font:Arial:16> - New objects will be created in the world at the center of the selection
+<font:Arial Bold:16>Drop to Ground<font:Arial:16> - New objects will be dropped at the terrain ground level
+
+<font:Arial Bold:20>World Editor Tree<font:Arial:16>
+The World Editor tree view is displayed in the upper right screen quadrant in both the World Editor Inspector and the World Editor Creator.  This tree displays the hierarchy of the mission data file.  Objects selected in the tree will also be selected in the main view.  There is a special group selection call the <font:Arial Bold:16>Instant Group<font:Arial:16>.  This group is where objects that are pasted are placed, as well as where objects created from the World Editor Creator are placed.  In the World Editor tree view the instant group is displayed with a grey hilight.  To change the current instant group, Alt-click on a group in the tree view.
+
+<font:Arial Bold:20>World Editor Inspector<font:Arial:16>
+The World Editor Inspector allows the user to specify properties of mission objects.  When an object is selected in Inspector mode, that object's properties will be displayed in the lower right quadrant of the screen.  Once properties are edited, clicking the apply button will set those properties into the object.  Dynamic properties can be assigned to objects with the Dynamic Fields Add button.  Dynamic fields are accessable through the scripting language and are used to add game-specific properties to mission objects.
+
+<font:Arial Bold:20>World Editor Creator<font:Arial:16>
+The World Editor Creator displays a tree view in the lower left corner of the screen.  This tree contains all objects that can be created in a mission.
+

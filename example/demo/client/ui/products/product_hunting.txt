@@ -1,0 +1,11 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/products/hunting_box><just:left>
+<font:Arial Bold:24>Field & Stream: Trophy Hunting 5
+<font:Arial Bold:16>Publisher:<font:Arial:16> Vivendi/Universal Studios
+<font:Arial Bold:16>Developer:<font:Arial:16> Dynamix
+<font:Arial Bold:16>Availability:<font:Arial:16> Most retail and online stores.
+
+Trophy Hunting 5 was the most realistic hunting simulation available when released, and still remains a leader in the genre today.  Developed at Dynamix in parallel with Tribes2, TH5 was relased in the summer of 2000.  The Trophy Hunting Team used the <font:Arial Bold:16>Torque Shader Engine<font:Arial:16> virtually as is adding only specialized tree and foliage rendering code to enable them to display densely populated forests with unprecidented visibility.
+
+<just:center><bitmap:demo/client/ui/products/hunting_ss>
+
+

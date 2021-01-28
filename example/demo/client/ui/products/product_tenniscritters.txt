@@ -1,0 +1,11 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/products/tenniscritters_box><just:left>
+<font:Arial Bold:24>Tennis Critters
+<font:Arial Bold:16>Developer:<font:Arial:16> Nerd Riot Games
+<font:Arial Bold:16>Publisher:<font:Arial:16> GarageGames
+<font:Arial Bold:16>Availability:<font:Arial:16> GarageGames.com
+
+Developed single handedly by Doyoon Kim of Nerd Riot Games in about 4 months, Tennis Critters is a "Riot" to play. Easy to learn, multi-player tennis action you can play with friends and family or alone with three tournament cups to win. Tennis Critters utilizes the Torque's interior objects rendering engine for tennis courts and shape objects for players, net, trees, rocks, etc. Custom camera controls and scriptable AI were added to complete the fun sports style game.
+
+<just:center><bitmap:demo/client/ui/products/tenniscritters_ss>
+
+

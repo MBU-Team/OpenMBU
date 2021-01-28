@@ -1,0 +1,394 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "exporter.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "exporter.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SEQUENCE_PARAMS DIALOG DISCARDABLE  0, 0, 108, 185
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_SEQ_CYCLIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    61,12,16,8
+    LTEXT           "Cyclic sequence:",IDC_STATIC,3,12,55,8
+    LTEXT           "Blend Sequence:",IDC_STATIC,3,45,56,8
+    CONTROL         "",IDC_SEQ_BLEND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    61,46,11,8
+    LTEXT           "Complete cycle:",IDC_STATIC,22,25,51,8
+    CONTROL         "",IDC_SEQ_LAST_FIRST_FRAME_SAME,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,80,26,12,8
+    LTEXT           "Use frame rate:",IDC_STATIC,3,67,49,8
+    CONTROL         "",IDC_SEQ_FRAME_RATE,"CustEdit",WS_TABSTOP,28,80,27,10
+    CONTROL         "",IDC_SEQ_NUM_FRAMES,"CustEdit",WS_TABSTOP,28,103,27,10
+    CONTROL         "",IDC_SEQ_FRAME_RATE_SPINNER,"SpinnerControl",0x0,63,79,
+                    6,11
+    CONTROL         "",IDC_SEQ_NUM_FRAMES_SPINNER,"SpinnerControl",0x0,63,
+                    102,6,11
+    CONTROL         "",IDC_SEQ_USE_FRAME_RATE,"Button",BS_AUTORADIOBUTTON,61,
+                    67,10,10
+    CONTROL         "",IDC_SEQ_USE_N_FRAMES,"Button",BS_AUTORADIOBUTTON,61,
+                    92,10,10
+    LTEXT           "Use N frames:",IDC_STATIC,3,92,46,8
+    LTEXT           "N=",IDC_STATIC,15,104,10,8
+    LTEXT           "or,",IDC_STATIC,74,80,12,11
+    CONTROL         "",IDC_SEQ_PRIORITY,"CustEdit",WS_TABSTOP,27,167,27,10
+    CONTROL         "",IDC_SEQ_PRIORITY_SPINNER,"SpinnerControl",0x0,63,166,
+                    6,11
+    LTEXT           "Sequence priority:",IDC_STATIC,3,156,58,8
+    LTEXT           "Override duration:",IDC_STATIC,4,123,57,8
+    CONTROL         "",IDC_SEQ_DURATION_OVERRIDE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,62,124,11,8
+    CONTROL         "",IDC_SEQ_DURATION,"CustEdit",WS_TABSTOP,29,138,27,10
+    CONTROL         "",IDC_SEQ_DURATION_SPINNER,"SpinnerControl",0x0,63,137,
+                    6,11
+END
+
+IDD_SEQUENCE_PARAMS2 DIALOG DISCARDABLE  0, 0, 108, 103
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Ignore ground transform:",IDC_STATIC,3,13,78,8
+    CONTROL         "",IDC_SEQ_IGNORE_GROUND_TRANSFORM,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,88,13,12,8
+    LTEXT           "Use frame rate:",IDC_STATIC,3,37,49,8
+    CONTROL         "",IDC_SEQ_GROUND_FRAME_RATE,"CustEdit",WS_TABSTOP,34,51,
+                    22,10
+    CONTROL         "",IDC_SEQ_NUM_GROUND_FRAMES,"CustEdit",WS_TABSTOP,36,77,
+                    20,10
+    CONTROL         "",IDC_SEQ_GROUND_FRAME_RATE_SPINNER,"SpinnerControl",
+                    0x0,59,51,10,10
+    CONTROL         "",IDC_SEQ_NUM_GROUND_FRAMES_SPINNER,"SpinnerControl",
+                    0x0,60,77,8,10
+    CONTROL         "",IDC_SEQ_USE_GROUND_FRAME_RATE,"Button",
+                    BS_AUTORADIOBUTTON,58,38,16,8
+    CONTROL         "",IDC_SEQ_USE_N_GROUND_FRAMES,"Button",
+                    BS_AUTORADIOBUTTON,57,67,16,8
+    LTEXT           "Use N frames:",IDC_STATIC,3,66,46,8
+    LTEXT           "or,",IDC_STATIC,75,51,17,12
+    LTEXT           "N=",IDC_STATIC,20,79,10,8
+END
+
+IDD_SEQUENCE_PARAMS3 DIALOG DISCARDABLE  0, 0, 109, 200
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_SEQ_ENABLE_MORPH_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,18,16,8
+    CONTROL         "",IDC_SEQ_ENABLE_VIS_ANIMATION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,87,29,16,8
+    CONTROL         "",IDC_SEQ_ENABLE_TRANSFORM_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,40,16,8
+    LTEXT           "Enable:",IDC_STATIC,4,6,25,8
+    LTEXT           "Morph animation:",IDC_STATIC,12,18,55,8
+    LTEXT           "Visibility animation:",IDC_STATIC,12,29,59,8
+    LTEXT           "Transform animation:",IDC_STATIC,12,40,66,8
+    CONTROL         "",IDC_SEQ_FORCE_MORPH_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,130,16,8
+    CONTROL         "",IDC_SEQ_FORCE_VIS_ANIMATION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,87,141,16,8
+    CONTROL         "",IDC_SEQ_FORCE_TRANSFORM_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,152,16,8
+    LTEXT           "Force:",IDC_STATIC,4,119,21,8
+    LTEXT           "Morph animation:",IDC_STATIC,12,130,55,8
+    LTEXT           "Visibility animation:",IDC_STATIC,12,141,59,8
+    LTEXT           "Transform animation:",IDC_STATIC,12,152,66,8
+    CONTROL         "",IDC_SEQ_FORCE_TEXTURE_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,174,16,8
+    LTEXT           "Texture animation:",IDC_STATIC,12,174,59,8
+    CONTROL         "",IDC_SEQ_ENABLE_TEXTURE_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,73,16,8
+    LTEXT           "Texture animation:",IDC_STATIC,12,73,59,8
+    CONTROL         "",IDC_SEQ_ENABLE_IFL_ANIMATION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,87,84,16,8
+    LTEXT           "IFL animation:",IDC_STATIC,12,84,45,8
+    CONTROL         "",IDC_SEQ_ENABLE_DECAL_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,95,16,8
+    LTEXT           "Decal animation:",IDC_STATIC,12,95,54,8
+    CONTROL         "",IDC_SEQ_ENABLE_DECAL_FRAME_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,106,16,8
+    LTEXT           "Decal-frame animation:",IDC_STATIC,12,106,73,8
+    CONTROL         "",IDC_SEQ_FORCE_DECAL_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,185,16,8
+    LTEXT           "Decal animation:",IDC_STATIC,12,185,54,8
+    CONTROL         "",IDC_SEQ_ENABLE_UNIFORM_SCALE_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,51,16,8
+    LTEXT           "Uniform scale anim:",IDC_STATIC,12,51,62,8
+    CONTROL         "",IDC_SEQ_ENABLE_ARBITRARY_SCALE_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,62,16,8
+    LTEXT           "Arbitrary scale anim:",IDC_STATIC,12,62,64,8
+    CONTROL         "",IDC_SEQ_FORCE_SCALE_ANIMATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,87,163,16,8
+    LTEXT           "Scale animation:",IDC_STATIC,12,163,53,8
+END
+
+IDD_UTIL_PANEL1 DIALOG DISCARDABLE  0, 0, 108, 51
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "About text...",IDC_STATIC_ABOUT,11,2,88,40
+END
+
+IDD_UTIL_PANEL2 DIALOG DISCARDABLE  0, 0, 108, 91
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_ANIMATION_DELTA,"CustEdit",WS_TABSTOP,57,50,48,9
+    LTEXT           "Animation Delta:",IDC_STATIC,2,50,52,8
+    LTEXT           "Collapse Transforms",IDC_STATIC,19,7,84,11
+    CONTROL         "",IDC_COLLAPSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,
+                    7,8,10
+    LTEXT           "Enable Sequence Export",IDC_STATIC,19,21,84,11
+    CONTROL         "",IDC_ENABLE_SEQUENCES,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,21,8,10
+    CONTROL         "",IDC_ENABLE_TWO_SIDED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,6,35,8,9
+    LTEXT           "Enable 2-sided materials",IDC_STATIC,19,35,81,12
+    CONTROL         "",IDC_BASE_TEXTURE_PATH,"CustEdit",WS_TABSTOP,9,77,91,9
+    LTEXT           "Base Texture Path:",IDC_STATIC,2,66,62,8
+END
+
+IDD_UTIL_PANEL3 DIALOG DISCARDABLE  0, 0, 108, 96
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_ALLOW_EMPTY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    5,11,8,9
+    LTEXT           "Allow Empty Subtrees",IDC_STATIC,16,11,71,11
+    CONTROL         "",IDC_ALLOW_CROSSED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,29,8,9
+    LTEXT           "Allow Crossed Details",IDC_STATIC,16,29,71,11
+    CONTROL         "",IDC_ALLOW_UNUSED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,46,8,9
+    LTEXT           "Allow Unused Meshes",IDC_STATIC,16,46,71,11
+    CONTROL         "",IDC_ALLOW_OLD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,
+                    64,8,9
+    LTEXT           "Allow Old Style Sequences",IDC_STATIC,16,64,85,12
+    CONTROL         "",IDC_REQUIRE_VICON,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,80,8,9
+    LTEXT           "Require VICON/BIP",IDC_STATIC,16,80,74,12
+END
+
+IDD_UTIL_PANEL4 DIALOG DISCARDABLE  0, 0, 108, 178
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_PASS1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,11,
+                    8,9
+    LTEXT           "Initial Node Collection",IDC_STATIC,16,11,71,11
+    CONTROL         "",IDC_PASS2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,27,
+                    8,9
+    LTEXT           "Initial Shape Construction",IDC_STATIC,16,27,85,11
+    CONTROL         "",IDC_PASS3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,44,
+                    8,9
+    LTEXT           "Node Culling",IDC_STATIC,16,44,71,11
+    CONTROL         "",IDC_NODE_STATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    5,62,8,9
+    LTEXT           "Node States",IDC_STATIC,16,62,85,12
+    CONTROL         "",IDC_OBJECT_STATES,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,78,8,9
+    LTEXT           "Object States",IDC_STATIC,16,78,74,12
+    CONTROL         "",IDC_NODE_STATE_DETAILS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,93,8,9
+    LTEXT           "Node State Details",IDC_STATIC,16,93,71,11
+    CONTROL         "",IDC_OBJECT_STATE_DETAILS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,109,8,9
+    LTEXT           "Object State Details",IDC_STATIC,16,109,85,11
+    CONTROL         "",IDC_OBJECT_OFFSETS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,126,8,9
+    LTEXT           "Object Offsets",IDC_STATIC,16,126,71,11
+    CONTROL         "",IDC_SEQUENCE_DETAILS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,143,8,9
+    LTEXT           "Sequences",IDC_STATIC,16,143,85,12
+    CONTROL         "",IDC_SHAPE_HIERARCHY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,5,159,8,9
+    LTEXT           "Shape Hierarchy",IDC_STATIC,16,159,74,12
+END
+
+IDD_UTIL_PANEL5 DIALOG DISCARDABLE  0, 0, 107, 85
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Load Default Config",IDC_CONFIG_LOAD_DEFAULT,"CustButton",
+                    WS_TABSTOP,7,8,94,13
+    CONTROL         "Save As Default Config",IDC_CONFIG_SAVE_DEFAULT,
+                    "CustButton",WS_TABSTOP,7,27,94,13
+    CONTROL         "Load Config...",IDC_CONFIG_LOAD,"CustButton",WS_TABSTOP,
+                    7,46,94,13
+    CONTROL         "Save Config...",IDC_CONFIG_SAVE,"CustButton",WS_TABSTOP,
+                    7,65,94,13
+END
+
+IDD_UTIL_PANEL1B DIALOG DISCARDABLE  0, 0, 108, 123
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Whole Shape",IDC_EXPORT_WHOLE,"CustButton",WS_TABSTOP,
+                    14,16,80,11
+    CONTROL         "Sequences",IDC_EXPORT_SEQUENCES,"CustButton",WS_TABSTOP,
+                    14,31,80,11
+    CONTROL         "Text Description",IDC_EXPORT_TEXT,"CustButton",
+                    WS_TABSTOP,14,46,80,11
+    CONTROL         " Export:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | 
+                    WS_GROUP,4,4,28,11
+    LTEXT           " General:",IDC_STATIC,4,63,30,10
+    CONTROL         "Renumber selection...",IDC_RENUMBER,"CustButton",
+                    WS_TABSTOP,14,75,80,11
+    CONTROL         "Embed Shape",IDC_EMBED,"CustButton",WS_TABSTOP,14,91,80,
+                    11
+    CONTROL         "Register Details",IDC_REGISTER_DETAILS,"CustButton",
+                    WS_TABSTOP,14,107,80,11
+END
+
+IDD_RENUMBER DIALOG DISCARDABLE  0, 0, 187, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Renumber"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
+    LTEXT           "New number:",IDC_STATIC,7,14,53,12
+    EDITTEXT        IDC_EDIT,56,13,67,14,ES_AUTOHSCROLL
+END
+
+IDD_SKINHELP_PANEL DIALOG DISCARDABLE  0, 0, 108, 156
+STYLE WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "Generated by Plugin AppWizard\nCode && design by\nRavi Karra - Kinetix",
+                    IDC_STATIC,7,7,94,36
+    CONTROL         "",1490,"CustEdit",WS_TABSTOP,29,114,35,10
+    CONTROL         "",IDC_SPIN,"SpinnerControl",0x0,65,114,7,10
+    LTEXT           "Spinner Cust Control:",IDC_STATIC,20,102,67,8
+    CTEXT           "TODO: Place panel controls here.",IDC_STATIC,15,63,78,
+                    19
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_UTIL_PANEL2, DIALOG
+    BEGIN
+        RIGHTMARGIN, 107
+    END
+
+    IDD_RENUMBER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SKINHELP_PANEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 149
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TH_3SPACE            "3Space"
+    IDS_TH_DTSFILE_LONG      "V12 3Space (DTS) File"
+    IDS_TH_DTSFILE_SHORT     "V12 DTS File"
+    IDS_TH_COPYRIGHT_COMPANY "Copyright 2001 GarageGames.com"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_TH_DTSEXP           "max2dtsExporter"
+    IDS_TH_SHAPEEXPORT      "Shape Export"
+    IDS_TH_DTSEXPORTDLL     "GarageGames V12 3Space DTS File Export DLL"
+    IDS_TH_NODATATOEXPORT   "No data to export"
+    IDS_TH_CANTCREATE       "Can't create output file"
+    IDS_TH_WRITEERROR       "Write error on file"
+    IDS_OBJ_TOO_LARGE       "Object %s is too large to export"
+    IDS_EXPORT_ERROR        "Export Error"
+    IDS_TH_AUTHOR           "Created by Clark Fagot"
+    IDS_DB_SEQUENCE         "Sequence"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DB_GENERAL          "General DTS Objects"
+    IDS_SKINHELP_PARAMS     "skin help params"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

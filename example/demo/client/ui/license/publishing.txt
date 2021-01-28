@@ -1,0 +1,31 @@
+<rmargin%:98>
+<lmargin%:2><font:Arial Bold:24>We are looking for great games!
+<lmargin%:5><font:Arial:16>If you have a game that is complete or nearly complete (even if it is not created with the Torque Shader Engine), we would like to have you consider publishing it here on GarageGames. Our standards are simple: we are looking for FUN games. We will take risks and publish games others may not be willing to, we don't require a "proven success" to believe in new and innovative games that are FUN!
+
+<lmargin%:2><font:Arial Bold:24>Why publish at GarageGames?
+<lmargin%:5><font:Arial Bold:18>HIGHEST ROYALTIES, BEST DEAL
+<lmargin%:8><font:Arial:16>• We are fair. Developers that create great games are the reason we exist, so we pay the best royalty rates, starting at 65%.
+• Increase your royalties by contributing to the community or Torque technology efforts.
+• You continue to own your Intellectual Property. 
+
+<lmargin%:5><font:Arial Bold:18>COLLABORATIVE MARKETING
+<lmargin%:8><font:Arial:16>• We get a lot of traffic and have proven our ability to sell games. Sell into one of the fastest growing player communities on the planet.
+• Additional PR, branding, and promotional opportunities customized for your game(s).
+• We make it obvious you are the developer of your product and you build your own brand along side us.
+• The best sales pages in the industry with product forums, lots of screenshots, and customer ratings. Plus, we give you the ability to edit your pages on the fly. Get close to your customers and have the ability to respond to their needs. 
+
+<lmargin%:5><font:Arial Bold:18>DIRECT DEVELOPER SUPPORT
+<lmargin%:8><font:Arial:16>Rather than charge you additional royalties in order to provide substandard support, we give you tools to do your own support. There is no better way to stay in touch with your customer.
+
+<lmargin%:5><font:Arial Bold:18>WE ARE JUST BETTER
+<lmargin%:8><font:Arial:16>• By gamers for gamers. Have your game sold by people that play games, care about games, and live games. Don't have your title "published" by some faceless corporation that is trying to leverage games to sell some other product that is not game related.
+• No spyware installer.
+• Ignition authentication library and web-check to protect your investment and allow you to set fair use on your game.
+• Collaborative not controlling, you don't get disconnected from your game. 
+
+<lmargin%:5><font:Arial Bold:18>HOW DO I SUBMIT MY GAME??
+<lmargin%:8><font:Arial:16>If you are interested in having GarageGames publish your game, here is what you have to do. Send an email to game_submissions@garagegames.com with a link to your company website, a brief description of your game, a screenshot, and a link to your demo (if available). Please do not attach demos to the email. Note: We hope you can understand that due to the number of submissions we receive, we will not be able to reply individually to every email.
+
+For more information visit our <a:www.garagegames.com/pg/publishing.php>website</a>.
+
+

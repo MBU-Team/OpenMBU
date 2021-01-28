@@ -1,0 +1,119 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TSShowLoadDlg) {
+   profile = "GuiDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "True";
+	setFirstResponder = "False";
+	modal = "True";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "100 100";
+		extent = "180 240";
+		minExtent = "8 8";
+		visible = "True";
+		setFirstResponder = "False";
+		modal = "True";
+		helpTag = "0";
+		text = "Load";
+		resizeWidth = "True";
+		resizeHeight = "True";
+		canMove = "True";
+		canClose = "True";
+		canMinimize = "True";
+		canMaximize = "True";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(TSShowLoadDlg);";
+
+		new GuiScrollCtrl() {
+			profile = "GuiScrollProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "20 35";
+			extent = "140 160";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			willFirstRespond = "True";
+			hScrollBar = "alwaysOff";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "False";
+
+			new GuiTextListCtrl(showFileList) {
+				profile = "GuiTextArrayProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "0 0";
+				extent = "64 64";
+				minExtent = "8 8";
+				visible = "True";
+				setFirstResponder = "False";
+				modal = "True";
+				altCommand = "eval($showFileCommand); Canvas.popDialog(TSShowLoadDlg);";
+				helpTag = "0";
+				enumerate = "False";
+				resizeCell = "True";
+				columns = "0";
+					noDuplicates = "false";
+			};
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "20 205";
+			extent = "60 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "eval($showFileCommand); Canvas.popDialog(TSShowLoadDlg);";
+			helpTag = "0";
+			text = "Load";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "100 205";
+			extent = "60 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "Canvas.popDialog(TSShowLoadDlg);";
+			helpTag = "0";
+			text = "Cancel";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+
+function foobar(%file)
+{
+   echo ("TODO LOAD " @ %file);   
+}   
+
+function TSShowLoadDlg::onWake(%this)
+{
+   %filespec = "*.cs";
+   getLoadFilename(%filespec, foobar);
+}   
+

@@ -1,0 +1,1308 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+   new ScriptObject(MissionInfo) {
+         desc0 = "This pre-release demo mission illustrates some of Torque Shader Engine\'s new shader capabilities.";
+         name = "Torque Shader Demo";
+         type = "DemoScene";
+   };
+   new MissionArea(MissionArea) {
+      Area = "-1024 -1024 2048 2048";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new SimGroup(environment) {
+
+      new Sky(Sky) {
+         position = "336 136 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         materialList = "~/data/skies/sky_day.dml";
+         cloudHeightPer[0] = "0.35";
+         cloudHeightPer[1] = "0.25";
+         cloudHeightPer[2] = "0.199973";
+         cloudSpeed1 = "0.002";
+         cloudSpeed2 = "0.001";
+         cloudSpeed3 = "0.003";
+         visibleDistance = "800";
+         fogDistance = "500";
+         fogColor = "0.4 0.4 0.4 1";
+         fogStorm1 = "0";
+         fogStorm2 = "1";
+         fogStorm3 = "0";
+         fogVolume1 = "100 0 169.5";
+         fogVolume2 = "150 170 250";
+         fogVolume3 = "0 0 0";
+         windVelocity = "-0.5 -0.2 0";
+         SkySolidColor = "0.64 0.148 0.215 0";
+         useSkyTextures = "1";
+         renderBottomTexture = "0";
+         noRenderBans = "0";
+         renderBanOffsetHeight = "50";
+         skyGlow = "0";
+         skyGlowColor = "-3.45166e+019 4.27673e+011 -3.45166e+019 4.27681e+011";
+            fogVolumeColor3 = "0.000000 0.000000 0.000000 1.000000";
+            locked = "true";
+            fogVolumeColor1 = "0.900000 0.900000 0.900000 1.000000";
+            fogVolumeColor2 = "0.900000 0.900000 0.900000 1.000000";
+      };
+      new Sun() {
+         direction = "0.635001 0.635001 -0.439941";
+         color = "0.6 0.6 0.4 1";
+         ambient = "0.3 0.3 0.4 1";
+         CastsShadows = "1";
+         useBloom = "1";
+         useToneMapping = "1";
+         useDynamicRangeLighting = "1";
+         DRLHighDynamicRange = "1";
+         DRLTarget = "0.65";
+         DRLMax = "1.2";
+         DRLMin = "0.5";
+         DRLMultiplier = "1.1";
+         bloomCutOff = "0.5";
+         bloomAmount = "0.15";
+         bloomSeedAmount = "1";
+            azimuth = "225";
+            rotation = "1 0 0 0";
+            locked = "true";
+            scale = "1 1 1";
+            elevation = "20";
+            position = "0 0 0";
+      };
+      new TerrainBlock(Terrain) {
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         detailTexture = "~/data/terrains/details/detail1";
+         terrainFile = "./features.ter";
+         squareSize = "8";
+         bumpScale = "1";
+         bumpOffset = "0.01";
+         zeroBumpScale = "8";
+            locked = "true";
+            position = "-1024 -1024 0";
+      };
+   };
+   new SimGroup(Paths) {
+
+      new Path(OrcAnimation) {
+         isLooping = "0";
+
+         new Marker() {
+            position = "223.12 -79.5069 185.262";
+            rotation = "0 0 1 189.076";
+            scale = "1 1 1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "228.354 -57.6871 184.422";
+            rotation = "0 0 1 53.858";
+            scale = "1 1 1";
+            seqNum = "2";
+            type = "Position Only";
+            msToNext = "1000";
+            smoothingType = "Linear";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "231.14 -53.3988 183.902";
+            rotation = "0 0 1 53.858";
+            scale = "1 1 1";
+            seqNum = "3";
+            type = "Position Only";
+            msToNext = "1000";
+            smoothingType = "Linear";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "236.226 -54.5127 184.255";
+            rotation = "0 0 1 53.858";
+            scale = "1 1 1";
+            seqNum = "4";
+            type = "Position Only";
+            msToNext = "1000";
+            smoothingType = "Linear";
+               Smoothing = "Spline";
+         };
+      };
+      new Path(CameraLoop) {
+         isLooping = "1";
+            speed = "5";
+
+         new Marker() {
+            position = "235.699 -57.1306 286.517";
+            rotation = "0.785573 -0.143574 0.601882 33.7823";
+            scale = "1 1 1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+               speed = "1";
+         };
+         new Marker() {
+            position = "233.158 -53.1221 186.745";
+            rotation = "0.145486 -0.262956 0.953776 124.359";
+            scale = "1 1 1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+               speed = "1";
+         };
+         new Marker() {
+            position = "237.553 -51.6763 185.36";
+            rotation = "-0.0294806 -0.0735755 0.996854 223.546";
+            scale = "1 1 1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+               speed = "1";
+         };
+         new Marker() {
+            position = "246.824 -56.4189 185.498";
+            rotation = "0.080733 -0.120826 0.989385 113.064";
+            scale = "1 1 1";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "257.251 -65.6066 187.579";
+            rotation = "0.0160533 -0.0292765 0.999442 122.552";
+            scale = "1 1 1";
+            seqNum = "5";
+            type = "Position Only";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "274.475 -72.7752 187.102";
+            rotation = "0.0649083 -0.0193673 0.997703 33.3003";
+            scale = "1 1 1";
+            seqNum = "6";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "296.64 -87.161 185.129";
+            rotation = "0.0407984 0.0849195 0.995552 231.123";
+            scale = "1 1 1";
+            seqNum = "7";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "317.576 -96.3005 187.981";
+            rotation = "0.330436 -0.0702849 0.941208 25.4687";
+            scale = "1 1 1";
+            seqNum = "8";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "317.142 -100.062 188.508";
+            rotation = "0.261496 0.129481 -0.95648 54.7396";
+            scale = "1 1 1";
+            seqNum = "9";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "272.735 -75.4279 187.197";
+            rotation = "-0.00742077 -0.0247273 0.999667 213.399";
+            scale = "1 1 1";
+            seqNum = "10";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "255.493 -65.7516 186.567";
+            rotation = "0.0198801 0.00996383 -0.999753 53.2511";
+            scale = "1 1 1";
+            seqNum = "11";
+            type = "Position Only";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+         new Marker() {
+            position = "248.082 -61.1887 184.798";
+            rotation = "0.0379847 0.0196336 -0.999085 54.71";
+            scale = "1 1 1";
+            seqNum = "12";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+               Smoothing = "Spline";
+         };
+      };
+      new Path(Blob1Path) {
+         isLooping = "1";
+            speed = "1";
+
+         new Marker() {
+            position = "286.26 -115.598 189.46";
+            rotation = "0.203139 0.156241 -0.966604 77.019";
+            scale = "1 1 1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "284.936 -112.262 186.834";
+            rotation = "0.869778 -0.143714 0.472051 38.5829";
+            scale = "1 1 1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "288.545 -114.437 187.903";
+            rotation = "0.000703509 -0.000910694 0.999999 104.628";
+            scale = "1 1 1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+      };
+      new Path(Blob2Path) {
+         isLooping = "1";
+            speed = "1";
+
+         new Marker() {
+            position = "278.537 -104.083 187.797";
+            rotation = "0.222296 -0.054934 0.97343 28.489";
+            scale = "1 1 1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "279.191 -108.034 188.49";
+            rotation = "0.0192318 -0.0862587 0.996087 154.958";
+            scale = "1 1 1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "275.277 -106.98 190.677";
+            rotation = "-0.0163405 -0.00915483 -0.999825 58.5284";
+            scale = "1 1 1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+      };
+      new Path(Floater1) {
+         isLooping = "1";
+            speed = "6";
+
+         new Marker() {
+            position = "244.594 -49.5463 187.064";
+            rotation = "4.70631e-005 -0.000143779 1 143.75";
+            scale = "1 1 1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "259.678 -68.3693 186.196";
+            rotation = "-0.0405643 -0.110179 0.993084 220.167";
+            scale = "1 1 1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "278.708 -77.8552 187.42";
+            rotation = "0.35737 -0.0523104 0.932497 17.8421";
+            scale = "1 1 1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "296.892 -86.3707 188.707";
+            rotation = "0.0165389 -0.0313894 0.99937 124.461";
+            scale = "1 1 1";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "319.396 -97.5508 187.272";
+            rotation = "-0.0663165 -0.262667 0.962605 207.32";
+            scale = "1 1 1";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "312.622 -98.7064 185.969";
+            rotation = "0.0120338 0.00671082 -0.999905 58.2982";
+            scale = "1 1 1";
+            seqNum = "6";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "288.506 -82.2172 189.737";
+            rotation = "0.235336 0.222987 -0.945988 90.0928";
+            scale = "1 1 1";
+            seqNum = "7";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "264.534 -69.2934 186.352";
+            rotation = "0.0104512 -0.219609 0.975532 174.684";
+            scale = "1 1 1";
+            seqNum = "8";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "239.693 -63.8239 187.966";
+            rotation = "0.25071 -0.240443 0.937727 91.2881";
+            scale = "1 1 1";
+            seqNum = "9";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "228.112 -52.5257 188.292";
+            rotation = "0.23955 -0.320548 0.916441 111.188";
+            scale = "1 1 1";
+            seqNum = "10";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+      };
+      new Path(Floater2) {
+         isLooping = "1";
+            speed = "5";
+
+         new Marker() {
+            position = "228.847 -56.7654 184.571";
+            rotation = "0.0519574 -0.0399148 0.997851 75.1836";
+            scale = "1 1 1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "237.743 -60.275 185.041";
+            rotation = "0.345672 0.0609525 -0.936374 21.3292";
+            scale = "1 1 1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "263.978 -65.8725 185.424";
+            rotation = "-0.028883 -0.0648818 0.997475 227.886";
+            scale = "1 1 1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "278.046 -80.0181 186.29";
+            rotation = "0.183754 -0.102958 0.977565 59.6395";
+            scale = "1 1 1";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "300.726 -87.4805 187.067";
+            rotation = "0.139773 0.215885 -0.966363 115.935";
+            scale = "1 1 1";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "316.943 -99.5208 189.794";
+            rotation = "0.103129 -0.138539 0.984973 107.501";
+            scale = "1 1 1";
+            seqNum = "6";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "319.203 -95.0659 185.998";
+            rotation = "0.0677223 0.054591 -0.99621 77.9574";
+            scale = "1 1 1";
+            seqNum = "7";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "302.452 -90.861 185.807";
+            rotation = "0.0249866 0.0348322 -0.999081 108.743";
+            scale = "1 1 1";
+            seqNum = "8";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "285.488 -79.4581 188.107";
+            rotation = "0.037397 0.0198786 -0.999103 56.0289";
+            scale = "1 1 1";
+            seqNum = "9";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "260.412 -69.6799 185.841";
+            rotation = "0.0458884 0.0198716 -0.998749 46.8815";
+            scale = "1 1 1";
+            seqNum = "10";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "248.145 -49.9814 185.667";
+            rotation = "0.107641 0.104038 -0.988731 88.6991";
+            scale = "1 1 1";
+            seqNum = "11";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "237.928 -46.0001 186.029";
+            rotation = "0.14201 -0.447892 0.882738 148.728";
+            scale = "1 1 1";
+            seqNum = "12";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+         new Marker() {
+            position = "230.144 -51.7109 186.255";
+            rotation = "0.86194 0.26255 -0.433737 70.1591";
+            scale = "1 1 1";
+            seqNum = "13";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Spline";
+         };
+      };
+   };
+   new ScriptGroup(ShaderLoop) {
+      class = "Scene";
+         title = "Shader Materials";
+         Path = "MissionGroup/Paths/CameraLoop";
+         description = "The engine now includes fully-integrated support for shader materials as well as a next generation shader engine.";
+   };
+   new SimGroup(Scenes) {
+
+      new ScriptGroup(WelcomeScene) {
+         class = "Scene";
+            title = "Torque Shaders";
+            description = "Welcome to the Torque shader demo! This demo illustrates some of the engine\'s new shader capabilities.";
+
+         new WayPoint(start) {
+            position = "236.192 -56.5975 185.367";
+            rotation = "0.999385 0.00416912 -0.0348059 13.6692";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+      };
+      new ScriptGroup(Intro) {
+         class = "Scene";
+            title = "New Rendering Engine";
+            description = "The engine now includes a totally new rendering engine, suitable for the most complex and demanding scenes.";
+
+         new WayPoint(start) {
+            position = "234.139 -43.6068 201.142";
+            rotation = "-0.0308336 -0.00464777 -0.999514 17.1524";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "1";
+               speed = "1";
+
+            new Marker() {
+               position = "236.192 -56.5975 185.367";
+               rotation = "0.999385 0.00416913 -0.034806 13.6692";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "233.645 -55.6653 185.939";
+               rotation = "0.331712 -0.208808 0.919982 68.7629";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "234.348 -51.537 185.886";
+               rotation = "0.03085 -0.152719 0.987788 157.431";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "237.959 -51.8247 186.466";
+               rotation = "-0.0973231 -0.241549 0.965496 222.513";
+               scale = "1 1 1";
+               seqNum = "4";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "239.695 -56.084 185.736";
+               rotation = "0.219058 0.122037 -0.96805 59.8396";
+               scale = "1 1 1";
+               seqNum = "5";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(ShaderTech) {
+         class = "Scene";
+            title = "Shader Engine";
+            description = "Rendering is now performend with a next generation shader engine which supports complex materials through procedural shader generation as well as fixed pipeline mapping.";
+
+         new WayPoint(start) {
+            position = "234.139 -43.6068 201.142";
+            rotation = "-0.0308336 -0.00464777 -0.999514 17.1524";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "4";
+
+            new Marker() {
+               position = "232.754 -49.0335 187.727";
+               rotation = "0.0567469 -0.173421 0.983212 144.331";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "234.303 -43.6677 194.395";
+               rotation = "0.0718563 0.0104231 -0.997361 16.55";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(SpecBumpScene) {
+         class = "Scene";
+            title = "Material Properties";
+            description = "The procedural shader generator supports a number of base material properties including specular highlighting and bump mapping...";
+
+         new WayPoint(start) {
+            position = "241.909 -41.3805 188.149";
+            rotation = "-0.0512538 -0.464809 0.883926 191.134";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "1";
+               speed = "4";
+
+            new Marker() {
+               position = "234.303 -43.6677 194.395";
+               rotation = "0.0718563 0.0104231 -0.997361 16.55";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "241.679 -41.5425 188.774";
+               rotation = "-0.0405967 -0.48614 0.872938 188.339";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(GlowScene) {
+         class = "Scene";
+            title = "Glow Buffers";
+            description = "Full support for glow buffers...";
+
+         new WayPoint(start) {
+            position = "263.127 -66.4382 188.066";
+            rotation = "0.0126542 -0.0395291 0.999138 144.527";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "5";
+
+            new Marker() {
+               position = "248.974 -61.2354 187.229";
+               rotation = "0.00234082 -0.00411723 0.999989 120.76";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "263.211 -66.1346 187.901";
+               rotation = "0.0299288 -0.0840349 0.996013 140.938";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(BoxScene) {
+         class = "Scene";
+            title = "Texture Animation";
+            description = "Materials can include texture coordinate animations, including scrolling, rotating, scaling and per-pixel wave.";
+
+         new WayPoint(start) {
+            position = "279.569 -46.3093 193.226";
+            rotation = "0.0560668 -0.202752 0.977624 149.744";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "6";
+
+            new Marker() {
+               position = "273.841 -74.9161 187.512";
+               rotation = "0.000174682 -4.27887e-005 1 27.5275";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "280.983 -62.4883 187.897";
+               rotation = "-0.0671814 0.014688 0.997633 24.7219";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "286.901 -61.5792 188.734";
+               rotation = "-0.396758 -0.0456164 -0.916789 14.2961";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(KnotScene) {
+         class = "Scene";
+            title = "Complex Materials";
+            description = "Complex material properties can be combined as this in this scrolling, glowing, cube mapped, bump mapped and masked specular highlighted knot.";
+
+         new WayPoint(start) {
+            position = "260.038 -85.7652 190.689";
+            rotation = "0.0148427 -0.173629 0.984699 170.377";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "1";
+               speed = "3";
+
+            new Marker() {
+               position = "260.038 -85.7652 190.689";
+               rotation = "0.0148427 -0.173629 0.984699 170.377";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "268.036 -88.5339 190.465";
+               rotation = "-0.0706405 -0.173733 0.982256 223.543";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "268.21 -99.3845 185.037";
+               rotation = "-0.270658 -0.191026 -0.943532 73.5945";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "261.151 -103.632 186.965";
+               rotation = "-0.139884 0.0210307 0.989945 17.2711";
+               scale = "1 1 1";
+               seqNum = "4";
+               type = "Position Only";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "256.014 -100.846 189.771";
+               rotation = "0.283588 -0.141929 0.948385 55.6425";
+               scale = "1 1 1";
+               seqNum = "5";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(ProceduralScene) {
+         class = "Scene";
+            title = "Code Generation";
+            description = "The procedural shader generator automatically produces over 200 optimal shaders based on various material properties and the current user hardware.";
+
+         new WayPoint(start) {
+            position = "292.679 -87.7931 186.335";
+            rotation = "0.00025825 0.000964024 1 209.993";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "3";
+
+            new Marker() {
+               position = "260.038 -85.7652 190.689";
+               rotation = "0.0148427 -0.173629 0.984699 170.377";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "257.732 -89.466 190.985";
+               rotation = "-0.211437 -0.12629 -0.969198 63.2892";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(Refraction1Scene) {
+         class = "Scene";
+            title = "Refraction";
+            description = "Full support for refraction. This first shape is using per-vertex refraction";
+
+         new WayPoint(start) {
+            position = "292.679 -87.7931 186.335";
+            rotation = "0.00025825 0.000964024 1 209.993";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "6";
+
+            new Marker() {
+               position = "293.777 -87.0273 186.036";
+               rotation = "0.00809378 0.0305301 0.999501 209.682";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "289.574 -99.4276 187.005";
+               rotation = "0.0118386 0.0398223 0.999137 213.086";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Position Only";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "291.454 -111.166 190.187";
+               rotation = "-0.0951125 -0.207573 0.973585 228.084";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(Refraction2Scene) {
+         class = "Scene";
+            title = "Refraction";
+            description = "This shape is using per-pixel refraction.";
+
+         new Path(Path) {
+            isLooping = "0";
+               speed = "6";
+
+            new Marker() {
+               position = "291.454 -111.166 190.187";
+               rotation = "-0.0951125 -0.207573 0.973585 228.084";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "284.197 -107.819 192.072";
+               rotation = "0.432852 0.299903 -0.850116 78.3608";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Position Only";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "277.171 -113.307 191.143";
+               rotation = "0.984792 -0.0336326 0.170453 22.6595";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(ReflectionScene) {
+         class = "Scene";
+            title = "Cube Map Reflection";
+            description = "The engine includes both static and dynamic cube map generation. ";
+
+         new WayPoint(start) {
+            position = "324.351 -89.8599 187.557";
+            rotation = "0.508945 -0.0590392 0.858772 15.3859";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "1";
+               speed = "4";
+
+            new Marker() {
+               position = "322.786 -85.3831 188.072";
+               rotation = "-0.047524 0.0152262 0.998754 35.5713";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "318.726 -79.1213 193.551";
+               rotation = "0.333716 -0.227468 0.914818 73.3788";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "322.759 -70.0959 191.475";
+               rotation = "0.0488715 -0.197059 0.979173 152.701";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "329.057 -68.3329 190.967";
+               rotation = "-0.0217514 -0.11857 0.992707 200.642";
+               scale = "1 1 1";
+               seqNum = "4";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "333.473 -78.7734 186.246";
+               rotation = "-0.204563 -0.118337 -0.971674 61.5348";
+               scale = "1 1 1";
+               seqNum = "5";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "330.699 -83.4027 186.952";
+               rotation = "-0.559988 -0.0788793 -0.824737 19.3843";
+               scale = "1 1 1";
+               seqNum = "6";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(CustomScene) {
+         class = "Scene";
+            title = "Custom Shaders";
+            description = "Though procedural shaders handle a large range of materials, special effects are easily added using custom shaders.";
+
+         new WayPoint(start) {
+            position = "292.679 -87.7931 186.335";
+            rotation = "0.00025825 0.000964024 1 209.993";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "5";
+
+            new Marker() {
+               position = "317.321 -93.3788 187.441";
+               rotation = "-0.0744056 0.0218019 0.99699 32.756";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "318.33 -100.179 187.202";
+               rotation = "0.197753 -0.0766518 0.97725 43.2702";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "327.497 -104.388 187.409";
+               rotation = "0.0108476 -0.0182569 0.999774 118.577";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+                  speed = "8";
+            };
+         };
+      };
+      new ScriptGroup(HallScene) {
+         class = "Scene";
+            title = "Full Integration";
+            description = "Shader materials apply consistently to all rendered sufaces, static or animating, interior or outdoors, lightmapped or not.";
+
+         new WayPoint(start) {
+            position = "234.453 -57.9362 187.872";
+            rotation = "0.769492 -0.187819 0.610414 43.5892";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "7";
+
+            new Marker() {
+               position = "327.497 -104.388 187.409";
+               rotation = "0.0108476 -0.0182569 0.999774 118.576";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+            };
+            new Marker() {
+               position = "299.197 -88.0759 185.546";
+               rotation = "-0.0812219 -0.0462381 -0.995623 59.5205";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "260.736 -66.5978 188.155";
+               rotation = "0.0642685 0.0383035 -0.997197 61.7308";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+            new Marker() {
+               position = "234.453 -57.9362 187.872";
+               rotation = "0.769492 -0.187819 0.610414 43.5892";
+               scale = "1 1 1";
+               seqNum = "4";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+            };
+         };
+      };
+      new ScriptGroup(OutdoorTransition) {
+         class = "Scene";
+            title = "The Big Outdoors";
+            description = "The Torque Engine continues to support smooth transitions to large outdoor environments.";
+
+         new WayPoint(start) {
+            position = "225.956 -57.5399 192.224";
+            rotation = "0.440942 -0.343945 0.829019 86.5117";
+            scale = "1 1 1";
+            dataBlock = "WayPointMarker";
+            team = "0";
+         };
+         new Path(Path) {
+            isLooping = "0";
+               speed = "1";
+
+            new Marker() {
+               position = "234.453 -57.9362 187.872";
+               rotation = "0.769492 -0.187819 0.610414 43.5892";
+               scale = "1 1 1";
+               seqNum = "1";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+                  speed = "2";
+            };
+            new Marker() {
+               position = "233.263 -66.9603 185.322";
+               rotation = "0.0066152 0.0252648 0.999659 209.336";
+               scale = "1 1 1";
+               seqNum = "2";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+                  speed = "5";
+            };
+            new Marker() {
+               position = "217.981 -86.6438 189.439";
+               rotation = "0.0432221 0.0812361 0.995757 235.829";
+               scale = "1 1 1";
+               seqNum = "3";
+               type = "Position Only";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+                  speed = "30";
+            };
+            new Marker() {
+               position = "128.883 -187.918 219.299";
+               rotation = "0.0630681 -0.0161166 0.997879 28.7279";
+               scale = "1 1 1";
+               seqNum = "4";
+               type = "Normal";
+               msToNext = "1000";
+               smoothingType = "Spline";
+                  Smoothing = "Spline";
+                  speed = "80";
+            };
+         };
+      };
+   };
+   new SimGroup(BigBuilding) {
+
+      new InteriorInstance() {
+         position = "247.867 -87.8537 184.414";
+         rotation = "0 0 1 28.6477";
+         scale = "1 1 1";
+         interiorFile = "~/data/interiors/test/maps/orkbase.dif";
+         showTerrainInside = "0";
+      };
+      new TSStatic() {
+         position = "262.643 -95.4929 182.942";
+         rotation = "0 0 -1 97.0127";
+         scale = "1 1 1";
+         shapeName = "~/data/shapes/test/knot.dts";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+            customAmbientSelfIllumination = "0";
+            useAdaptiveSelfIllumination = "0";
+      };
+      new Item(TestBox) {
+         position = "285.052 -53.2443 189.416";
+         rotation = "1 0 0 0";
+         scale = "2 2 2";
+         dataBlock = "BoxEffects";
+         collideable = "1";
+         static = "1";
+         rotate = "0";
+         rotate2 = "1";
+      };
+      new Item(TestSphereThing) {
+         position = "327.099 -76.3708 188.83";
+         rotation = "0 0 -1 72.9479";
+         scale = "1 1 1";
+         dataBlock = "TestSphere";
+         collideable = "1";
+         static = "1";
+         rotate = "0";
+         rotate2 = "0";
+      };
+   };
+   new InteriorInstance() {
+      position = "119.597 -119.444 230.246";
+      rotation = "0 0 -1 111.154";
+      scale = "1 1 1";
+      interiorFile = "~/data/interiors/towers/landtower.dif";
+      showTerrainInside = "0";
+   };
+   new TSStatic() {
+      position = "231.966 -38.432 194.305";
+      rotation = "-0.000488578 0.00312534 0.999995 164.339";
+      scale = "1 1 1";
+      shapeName = "~/data/shapes/panels/overview.dts";
+      receiveSunLight = "0";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "1";
+      customAmbientLighting = "1 1 1 1";
+         customAmbientSelfIllumination = "0";
+         useAdaptiveSelfIllumination = "0";
+   };
+   new TSStatic() {
+      position = "252.658 -87.1246 192.564";
+      rotation = "0.0998758 -0.16934 0.980484 119.709";
+      scale = "1 1 1";
+      shapeName = "~/data/shapes/panels/procedural.dts";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "1";
+      customAmbientLighting = "1 1 1 1";
+         customAmbientSelfIllumination = "0";
+         useAdaptiveSelfIllumination = "0";
+   };
+   new TSStatic() {
+      position = "331.498 -106.214 187.244";
+      rotation = "0 0 -1 60.7335";
+      scale = "1 0.2 1";
+      shapeName = "~/data/shapes/panels/custom.dts";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "1";
+      customAmbientLighting = "1 1 1 1";
+         customAmbientSelfIllumination = "0";
+         useAdaptiveSelfIllumination = "0";
+   };
+   new sgLightObject() {
+      position = "233.143 -53.4393 186.783";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "greenLight";
+      Enable = "1";
+      IconSize = "1";
+      ParticleColorAttenuation = "1";
+   };
+};
+//--- OBJECT WRITE END ---

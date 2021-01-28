@@ -1,0 +1,11 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/products/thinktanks_box><just:left>
+<font:Arial Bold:24>Think Tanks
+<font:Arial Bold:16>Developer:<font:Arial:16> BraveTree
+<font:Arial Bold:16>Publisher:<font:Arial:16> GarageGames
+<font:Arial Bold:16>Availability:<font:Arial:16> GarageGames.com and Shockwave.com
+
+Developed by BraveTree Productions using the <font:Arial Bold:16>Torque Shader Engine<font:Arial:16> this three person team was able to complete Think Tanks in just 6 months. Think Tanks is a lighthearted multi-player tank combat game designed to be a blast for the new and experienced gamer alike.  The nost notable engine changes BraveTree made for Think Tanks was the addition of tank style vehicles and specialized rendering optimizations. 
+
+<just:center><bitmap:demo/client/ui/products/thinktanks_ss>
+
+

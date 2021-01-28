@@ -1,0 +1,10 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/ss_ie><just:left>
+<just:left><font:Arial Bold:24>Tools and Editors
+
+<lmargin%:2><font:Arial Bold:18>3D Modeling Tools
+<lmargin%:5><font:Arial:16>Torque supports many industry standard content creation tools for 3D modeling and animation.  The Torque comes with model exporters for 3D Studio MAX on the high end and MilkShape on the low end.  Community members are creating exporters for other popular 3D modeling programs such as Lightwave, Maya and Blender.
+
+<lmargin%:2><font:Arial Bold:18>Interior Building Spaces
+<lmargin%:5><font:Arial:16>Interiors and most buildings are created with specialized editors capable of "portalizing" vast interior spaces.  The Torque supports industry standard (free) tools for creating these types of objects and comes with full support for the popular WorldCraft and Quark tools.  
+
+

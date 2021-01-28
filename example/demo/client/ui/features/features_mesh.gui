@@ -1,0 +1,46 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(features_mesh) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   helpTag = "0";
+      title = "Mesh Rendering";
+
+   new GuiScrollCtrl() {
+      profile = "GuiBevelLoweredProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      position = "30 106";
+      extent = "580 270";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      willFirstRespond = "1";
+      hScrollBar = "alwaysOff";
+      vScrollBar = "alwaysOn";
+      constantThumbHeight = "0";
+      childMargin = "0 0";
+      
+      new GuiMLTextCtrl() {
+         profile = "GuiMLTextProfile";
+         horizSizing = "width";
+         vertSizing = "height";
+         position = "14 12";
+         extent = "553 14";
+         minExtent = "8 2";
+         visible = "1";
+         helpTag = "0";
+         lineSpacing = "2";
+         allowColorChars = "0";
+         maxChars = "-1";
+         text = "main";
+            fileName = "demo/client/ui/features/features_mesh.txt";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+

@@ -1,0 +1,17 @@
+
+
+//--- OBJECT WRITE BEGIN ---
+new GameTSCtrl(SceneGui) {
+	profile = "GuiContentProfile";
+	horizSizing = "width";
+	vertSizing = "height";
+	position = "0 0 ";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	cameraZRot = "0";
+	forceFOV = "0";
+	 helpTag = "0";
+	roomNumber = "1";
+};
+//--- OBJECT WRITE END ---

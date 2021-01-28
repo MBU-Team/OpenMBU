@@ -1,0 +1,103 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(InspectAddFieldDlg) {
+	profile = "GuiDefaultProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "center";
+		vertSizing = "center";
+		position = "209 177";
+		extent = "221 125";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+		text = "Add dynamic field...";
+		resizeWidth = "1";
+		resizeHeight = "1";
+		canMove = "1";
+		canClose = "1";
+		canMinimize = "1";
+		canMaximize = "1";
+		minSize = "50 50";
+      closeCommand = "Canvas.popDialog(InspectAddFieldDlg);";
+
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "22 32";
+			extent = "30 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Name:";
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "21 58";
+			extent = "31 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Value:";
+		};
+		new GuiTextEditCtrl(InspectAddFieldValue) {
+			profile = "GuiTextEditProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "62 58";
+			extent = "146 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			historySize = "0";
+			maxLength = "255";
+		};
+		new GuiTextEditCtrl(InspectAddFieldName) {
+			profile = "GuiTextEditProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "62 32";
+			extent = "146 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			historySize = "0";
+			maxLength = "255";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "25 88";
+			extent = "73 20";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "OK";
+         command = "canvas.popDialog(InspectAddFieldDlg);InspectAddFieldDlg.doAction();";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "125 88";
+			extent = "73 20";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "CANCEL";
+         command = "canvas.popDialog(InspectAddFieldDlg);";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

@@ -1,0 +1,942 @@
+/*
+ Some style notes:
+     - subsections are named after the section they're in, with an underscore seperator; see the Intro section, which
+       contains Intro_TandT. This keeps the section namespace relatively clean.
+*/
+
+/*!
+
+@mainpage Torque Engine Reference
+
+@section Intro Introduction
+
+@subsection Intro_TandT Torque And The Engine Reference
+
+Torque is a large piece of software. Chances are that most of the applications you have worked on up to this point have only been a fraction of the size of Torque. This reference manual has been created in order to give you - be you a beginning developer or an experienced C++ programmer or somewhere in between - a step up on manipulating and extending Torque.
+
+This document serves two purposes. First, it provides a listing of every variable, function, method, class, namespace, and file in the engine. You can spend literally hours browsing the class hierarchy in Torque; the TER makes it much easier to focus on the structure of the code, instead of drowning in the details of source files.
+
+Second, it contains explanations and examples so that you can effectively work with Torque. It acts as a guide to the engine, so that you can save yourself time when you're looking for a solution to a problem. It also helps you do things the Right Way - so that you don't overlook anything, saving you debugging effort later (and making your game more efficient).
+
+@note This documentation is aimed towards C++ developers. If you're looking for information on how to use the engine's support tools, or work with the scripting language or editors, you may have better luck looking at http://www.garagegames.com/docs/torque.sdk/index.php.
+
+@subsection Intro_ProgSkills What Do I Need To Know?
+
+It would be great if it were possible to buy Torque and without any prior knowledge start making incredible, technologically ground-breaking games... but sadly, that's not possible. Writing game engines is an advanced skill. Luckily, Torque is already written. All you need to do is start building off of its foundation.
+
+@note This documentation is aimed towards C++ developers. If you're looking for information on how to use the engine's support tools, or work with the scripting language or editors, you may have better luck looking at http://www.garagegames.com/docs/torque.sdk/index.php.
+
+So, what you do you need to know to develop with Torque? You need to be able to read C or C++ code. You should be familiar with basic datastructures, like vectors, linked lists, trees, and queues. You need to be comfortable with pointers and memory management. A familiarity with linear algebra, or at the least the basics of 3d graphics, will be important, as will an understanding of network protocols and file I/O.
+
+But, you say, wait, I didn't pay much attention in Linear Algebra (or I haven't taken it yet)... I don't like data structures... or maybe you're just a beginner programmer. Am I stuck up the proverbial creek without a paddle? <b>By no means!</b> You have in your posession one of the best educations in programming you could hope for. You <i>will</i> learn something by working with Torque. Just stick with it - post on the forums and hang out on IRC - and you'll find yourself quickly learning more than you ever thought possible. When I started working with Torque, I thought I was a good C++ programmer - but I have easily doubled my C++ knowledge by working with it.
+
+Don't give up. Keep your wits about you. Go for a walk when you start seeing SimObjects dancing before your eyes. You're going to be fine!
+
+@subsection Intro_NoDocs What Do I Do If The Docs Are Incomplete?
+
+Torque is, as we've mentioned, a large and complex body of code. Though we have made every effort to accurately document all the code in the engine, it is entirely possible you will encounter undocumented, incompletely documented, or just plain wrong documentation.
+
+<b>This is OK.</b> Here is how you deal with this:
+
+    -# Figure out what is going on. This means you need to open the source files and read through them, see how the code is interrelated. Take notes, and map out the function calls that are made, and the data structures that are used.
+    -# If you have questions, seek out wisdom on the GarageGames IRC channel, or the forums. There are a lot of people out there who have probably encountered the same or similar problems. For best results, make sure you've put some thought into the problem - make a real effort to solve it on your own. People are always more willing to help if they can see that you've put forth serious effort and run into problems.
+    -# At this point, you've hopefully solved your problem. If not, repeat steps 1 and 2.
+    -# Now that you understand what's going on, add documentation to aid those who come after you! See http://www.garagegames.com/mg/projects/torque1/contribute.php for instructions on contributing your documentation as a patch.
+
+@section TOC Table Of Contents
+   - @ref Intro
+   - @ref Credits
+   - @ref changelog
+   - @ref MakingDocs
+   
+@subsection TOC_Overview Engine Overview Documentation
+    - @ref ControlFlow
+    - @ref PlatformLayer
+        - @ref PlatformOverview
+        - @ref PlatformEvent
+        - @ref PlatformUtil
+        - @ref PlatformNetwork
+        - @ref PlatformGame
+    - @ref Console
+        - @ref ConOverview
+        - @ref ConRef
+        - @ref ConFunctions
+        - @ref ConClasses
+            - @ref ConClasses_declaring
+        - @ref ConFields
+        - @ref ConDynamic
+        - @ref ConNamespace
+        - @ref ConPackage
+        - @ref ConVariables
+        - @ref ConArray
+        - @ref ConStringOp
+        - @ref ConCompiler
+        - @ref ConDebugger
+        - @ref ConInterface
+    - @ref Simulation
+        - @ref SimOver
+            - @ref SimOverIntroduction
+            - @ref SimOverDetails
+        - @ref SimBase
+        - @ref SimDB
+    - @ref FileIO
+        - @ref FileOverview
+        - @ref FilePaths
+        - @ref FileVolumes
+        - @ref FileResourceObject
+    - @ref InputModel
+        - @ref InputOverview
+        - @ref InputPlatform
+        - @ref InputAction
+        - @ref InputModKeys
+    - @ref Graphics
+        - @ref GraphicsOverview
+        - @ref GraphicsTexture
+        - @ref GraphicsPrimitive
+        - @ref GraphicsPrimRender
+        - @ref Graphics3DRender
+    - @ref GUI
+        - @ref GUIOver
+        - @ref GuiInput
+        - @ref GuiRender
+        - @ref GuiConsole
+    - @ref Render3D
+        - @ref Render3DOver
+        - @ref Render3DSceneGraph
+        - @ref Render3DTerrain
+        - @ref RenderInterior
+        - @ref Render3Space
+    - @ref Networking
+        - @ref NetOver
+        - @ref NetPlatform
+        - @ref NetProtocol
+            - @ref NetConnNegotiation
+            - @ref NetConnProtocol
+        - @ref NetConnection
+        - @ref NetBitstream
+        - @ref NetEvents
+        - @ref NetGhost
+        - @ref NetGameConnection
+        - @ref NetDatablocks
+        - @ref NetStringTable
+        - @ref NetConsole
+*/
+
+/*!
+
+@page Credits Credits
+
+@section Credits_Employees GarageGames Employees
+@author Mark Frohnmayer <http://www.garagegames.com/my/home/view.profile.php?qid=55>
+@author Rick Overman <http://www.garagegames.com/my/home/view.profile.php?qid=2>
+@author Tim Gift <http://www.garagegames.com/my/home/view.profile.php?qid=1>
+
+@section Credits_Interns GarageGames Interns
+@author Ben "Sado" Garney <http://www.garagegames.com/my/home/view.profile.php?qid=8863>
+@author Pat "KillerBun" Wilson <http://www.garagegames.com/my/home/view.profile.php?qid=370>
+@author Chris "Hobbiticus" Weiland <http://www.garagegames.com/my/home/view.profile.php?qid=8052>
+
+@section Credits_Contributors Contributors
+None yet - you could be the first! 
+
+E-mail staff@garagegames.com with fixes to the existing documentation, or new contributions.
+*/
+
+/*! @page ControlFlow Basic Control Flow
+
+@section CF_Introduction Introduction
+
+Because different platforms can have different main() entry points for applications, the Torque Engine main() function resides in the target OS platform library.  In the case of Windows, this is in file engine/platformWin32/winWindow.cc, where both main() (for console apps) and WinMain() are defined.  These in turn call run() which calls Game->main(int argc, const char **argv).  Game is a global object pointer referencing an instance of the GameInterface class that can be overridden for specific game behavior.
+
+The Torque example program's main initialization occurs in engine/game/main.cc in TorqueGame::main().  This function initializes libraries, initializes game functions and then cycles in the main game loop until the program is terminated.  The main loop basically calls platform library functions (engine/platform/platform.h) to produce platform events, which then drive the main simulation.
+
+The main.cc file also has TorqueGame function overrides for some of the basic event procession functions: processMouseMoveEvent (which dispatches Windows mouse movements to the GUI), processInputEvent (which processes other input related events), and processTimeEvent which computes an elapsed time value based on the time scale setting of the simulation and then:
+
+<ol>
+<li>Processes time for server objects (serverProcess() in engine/game/game.cc)\n
+<li>Checks for server network packet sends (serverNetProcess() in engine/game/netDispatch.cc)\n
+<li>Advances simulation event time (Sim::advanceTime() in engine/console/simManager.cc)\n
+<li>Processes time for client objects (clientProcess() in engine/game/game.cc)\n
+<li>Checks for client network packet sends (clientNetProcess() in engine/game/netDispatch.cc)\n
+<li>Renders the current frame (GuiCanvas::render() in engine/gui/guiCanvas.cc)\n
+<li>Checks for network timeouts (dispatchCheckTimeouts() in engine/game/netDispatch.cc)\n
+</ol>
+
+Incoming UDP network packets are processed in TorqueGame::processPacketReceiveEvent (defined in engine/game/netDispatch.cc), and incoming TCP connection data or information is processed in TorqueGame::processConnected*Event (defined in engine/game/TCPObject.cc).
+
+
+*/ 
+
+/*! @page PlatformLayer Platform layer
+
+@section PlatformOverview Overview
+
+The platform layer is the foundation of Torque. Running at the lowest level, it provides a common cross platform, cross architecture interface to the system for the game.  The platform layer is responsible for handling the details of file and network IO, graphics initialization, device initialization and input, and time event generation.  Standard library calls are proxied through the platform layer, so that the game code can be safe from platform specific ideosyncracies.
+
+System header files are (pretty much) only included from the platform library.  The platform layer is broken up into several sections - the cross-platform interface exposed to the game (engine/platform), and the platform specific libraries (engine/platformWin32, engine/platformMacOS, engine/platformX86UNIX).
+
+@section PlatformEvent Event Model
+
+The game is driven by a stream of events from the platform library. By journaling the stream of events from the platform layer, the game portion of the simulation session can be deterministically replayed for debugging purposes.
+
+The events used by the platform layer are all subclasses of Event:
+    - General Events
+        - TimeEvent
+        - QuitEvent
+        - ConsoleEvent
+    - Input Events
+        - InputEvent
+        - MouseMoveEvent
+    - Networking
+        - PacketReceiveEvent
+        - ConnectedReceiveEvent
+        - ConnectedAcceptEvent
+        - ConnectedNotifyEvent
+
+
+@section PlatformUtil Platform Utilities
+
+Torque has a number of powerful utility libraries in the platform layer:
+
+    - <b>Memory Manager</b> - Located in engine/platform/platformMemory.cc, this is designed to quickly allocate memory on cache aligned boundaries and perform debugging checks for overruns, multiple block frees and memory leaks.
+    - <b>The Profiler</b>  is a hierarchal time analysis toolkit that allows specific portions of the game to be timed - useful for finding performance bottlenecks.
+    - <b>Thread management</b> Torque has utility classes for creating threads, mutexes and semaphores.
+    - <b>Standard library</b> All standard library functions are redefined as dFuncname, for example sprintf becomes dSprintf(), strcpy becomes dStrcpy(), etc. The dFunctions take full advantage of Torque's feature set, and are guaranteed to work in the same way across all platforms; the library functions they replace may not do so.
+
+@section PlatformNetwork Network Functionality
+
+The platform library has a common interface for opening and closing network ports, connecting to other hosts, translating network addresses and sending and receiving network data.  TCP and UDP are supported.
+
+@section PlatformGame GameInterface
+
+The GameInterface class, defined in engine/platform/gameInterface.h, is the interface through which the platform and libraries communicate with the game, as well as the main handler for journaling.  All platform events are passed through GameInterface::processEvent(), which in turn feeds them to separate virtual event handlers.  One and only one instance of this class (or a subclass) should exist in the program. A single global pointer named Game points to it.
+
+
+*/
+
+/*! @page Console Console 
+
+@section ConOverview Overview
+
+The console module, rooted in engine/console/console.h, is a combined compiler and interpreter runtime that serves as the foundation for Torque applications.  All GUIs, game objects, interfaces, and game logic are handled through the console.  The language itself is syntactically similar to a typeless C++, with some additional features that allow for easier mod development.  Console scripts can be loaded via the exec() console command from the console window (brought up using the ~ key) or they can be loaded automatically from a mod via that mod's main.cs.
+
+@section ConRef Console Language Reference
+
+The Torque console language scanner and parser were built using the tools lex and yacc.  The scan and grammar files are engine/console/scan.l and engine/console/gram.y respectively.  The grammar is shown in a somewhat more understandable way in the attached document.
+
+@section ConFunctions Functions
+
+Console functions can be declared in either console scripts or in the C++ game/engine code.
+
+@code
+// A simple script function declaration.
+function helloWorld ()
+{
+    echo("Hello World!");
+}
+
+// Let's call it!
+helloWorld();
+
+// Or, for a method on a class:
+function SimObject::helloWorld(%this)
+{
+    echo("Hello World!");
+    echo("Called on object: " @ %this);
+}
+
+// And call it...
+$object = new SimObject();
+$object.helloWorld();
+@endcode
+
+@note Unlike in C++, the "this" variable is not implicit in a script's method declaration. Instead, the first parameter to a method is always the object whose method is being called. It is traditional but not required to call this parameter %this; a common variant is %db, for methods of datablocks.
+
+To declare console functions in the game or engine code, the ConsoleFunction macro (declared in engine/console/console.h) should be used:
+
+@code
+ConsoleFunction(helloWorld, void, 1, 1, "A simple test function.")
+{
+    Con::printf("Hello World!");
+}
+@endcode
+
+A rundown of the arguments to the ConsoleFunction macro:
+    - First is the name of the function, followed by the type.
+    - Second, come the minimum and maximum number of allowed arguments. The function name is "argument 0", so 1 is the minimum argument count allowed. Passing a 0 for max arguments will allow any number of arguments to the function.
+    - Finally, the usage string. This serves a dual purpose. See @ref console_autodoc "this page" for a more in-depth exploration of how the string can be used to autogenerate Doxygen compatible documentation from within your program. However, the string mostly exists to provide as feedback to users if they make a console function call with the wrong number of arguments.
+
+Methods for classes can also be declared in C++, using the ConsoleMethod macro:
+
+@code
+ConsoleMethod(SimObject, helloWorld, void, 2, 2, "A somewhat more complex test method.")
+{
+    Con::printf("Hello World!");
+    Con::printf("Called on object: %s", argv[1]);
+    Con::printf("Also called on object: %s", object->getName());
+}
+@endcode
+
+This defines a method callable on any instance of a SimObject the console has access to.
+
+@note Three useful parameters are provided to the code in the body of a ConsoleFunction or ConsoleMethod:
+        - int argc, indicating how many arguments were passed.
+        - char* argv[], an array of strings corresponding to the arguments.
+        - object, which is present only in the case of a ConsoleMethod, is a pointer to the
+          object on which the method is being called. It is automatically cast and validated, so you don't
+          need to cast it yourself (this was the case in older versions of Torque).
+
+@section ConClasses Classes, Objects and Namespaces
+
+@subsection ConClasses_declaring Declaring Console Classes
+
+Objects in the scripting language are simply instances of C++ classes deriving from SimObject, declared in the game engine and processed with a special set of macros (declared in engine/console/consoleObject.h).  The DECLARE_CONOBJECT(class_name) macro is placed inside the class definition and the IMPLEMENT_CONOBJECT (class_name) macro is placed in a linked source file.  IMPLEMENT_CONOBJECT has several versions, depending on the type of class:
+    - <b>IMPLEMENT_CONOBJECT()</b> A simple console object - no special network attributes.
+
+    - <b>IMPLEMENT_CO_NETOBJECT_V1()</b> A ghostable network object class.  Any object that will be ghosted from server to client needs to be declared as a NETOBJECT.  See the section on the network layer for more details about NetObjects.
+
+    - <b>IMPLEMENT_CO_DATABLOCK_V1()</b> A datablock class. Datablocks have special properties for being transmitted over the network.
+    
+@note There are 3 more IMPLEMENT_CONOBJECTs that deal specifically with network events. They are not covered here.
+
+Every class declared as a Console class MUST declare a Parent typedef in its private member section referencing its parent class.  This allows the console to properly determine the console object class hierarchy for method dispatch in the console.
+
+@code
+// A very simple SimObject sample.
+class SampleObject : public SimObject
+{
+    typedef SimObject Parent;
+public:
+    DECLARE_CONOBJECT(SampleObject);
+    S32 someVariable; // signed integer variable
+};
+IMPLEMENT_CONOBJECT(SampleObject);
+@endcode
+
+You can instantiate and manipulate this object in script like this:
+
+@code
+function foo()
+{
+    %obj = new SampleObject(MySampleObject);
+    echo(%obj.getName());
+}
+@endcode
+
+@section ConFields Adding Class Member Fields
+
+Data members of C++ classes can be accessed from within the scripting language.
+
+When the game starts, the console calls AbstractClassRep::initialize(), which assigns network IDs to classes, links class hierarchies, and initializes field data for each class.  To do this, each class with accessible data members declares a static member function called initPersistFields().  This function calls the addField static member function for each data member of the class:
+
+@code
+void SampleObject::initPersistFields()
+{
+    Parent::initPersistFields();  // adds the parent class's fields as well.
+    addField("someVariable", TypeS32, Offset(someVariable, SampleObject));
+}
+@endcode
+
+The type must be properly specified, of course. The Offset macro is used to determine the relative address of the data member in the class.  Once this is defined, scripts can use the member field of the object directly:
+
+@code
+function bar()
+{
+    %obj = new SampleObject(MySampleObject);
+    %obj.someVariable = 100;
+    echo(%obj.someVariable);
+}
+@endcode
+
+Field types are declared in engine/console/consoleTypes.h.  New console data types can be added by adding a type to consoleTypes.h and calling Con::registerType(typeId, typeSize, getDataFunc, setDataFunc).  See engine/console/consoleTypes.cc for examples of how types are defined.
+
+@section ConDynamic Dynamically Defined Fields
+Member fields of objects can also be defined from within the script itself.  For example:
+
+@code
+function foo()
+{
+    %object = new SampleObject();
+    %object.scriptVariable = "Hello World!";
+    echo(%object.scriptVariable);
+}
+@endcode
+
+@note Fields added in this way are only set and present on the instance on which they were set.
+
+@section ConNamespace Namespaces
+
+Namespaces (engine/console/consoleInternal.h) are collections of class member functions.  Every SimObject belongs to exactly one namespace.  By default, an object belongs to the namespace that corresponds to its class - so an instance of GameBase will have the GameBase namespace. Each namespace has a parent, so methods can invoke parent class methods by calling Parent::function().  
+
+New namespaces (not class-based) can be added in the engine via the Con::linkNamespaces() function.  Assigning the mNameSpace field of SimObject then assigns the new namespace to an object.  For example, in GuiControl::onAdd(), if a control has a name its name is used as its namespace.  This allows a named GUI control to have special behaviors.
+
+The ScriptObject class (defined in engine/console/scriptObject.cc) allows for the creation of "classes" within the scripting language:
+
+@code
+new ScriptObject(MyObject) {
+    class = Bar;
+    superClass = Foo;
+};
+
+function Bar::doSomething(%this)
+{
+    echo("Hi!");
+}
+
+MyObject.doSomething();
+> Hi!
+
+function Foo::doSomething(%this)
+{
+    echo("Hi! Foo");
+}
+
+function Bar::go(%this)
+{
+    %this.doSomething();
+    Parent::doSomething(%this);
+}
+
+MyObject.go();
+> Hi!
+> Hi! Foo
+@endcode
+
+@note Every SimObject in the system can be addressed either by name or by ID.  So in the example above, MyObject.go() searches the object dictionary for an object named MyObject and calls the go() method on that object.
+
+@section ConPackage Packages
+
+Packages are collections of functions that can be enabled and disabled at runtime.  Package functions can override (redefine) the behavior of existing functions in the global state or in packages that have been activated earlier.  Prior versions of a function can then be accessed using "Parent".  For example:
+
+@code
+function foo()
+{
+    echo("foo!");
+}
+
+package SamplePackage
+{
+
+function foo()
+{
+    echo("Haha!");
+    Parent::foo();
+}
+
+}
+
+% foo();
+foo!
+% ActivatePackage(SamplePackage);
+% foo();
+Haha!
+foo!
+@endcode
+
+Packages are useful for creating mods to games or for implementing specific game modes.
+
+@section ConVariables Variables
+
+The console language supports global variables and local (function scoped) variables.  Global variables are specified by a preceding $, and local variables by a % sign.  Example:
+
+@code
+$someGlobal = "This is some global.";
+
+function foo(%local1, %local2)
+{
+    %local3 = $someGlobal;
+}
+
+function bar(%local)
+{
+    // You can also create a new global from within a function!
+    $alottaGlobal = %local @ " is.";
+}
+@endcode
+
+@section ConArray Arrays
+
+The console language supports associative single- and multi-dimensional arrays.  Arrays actually construct new variables with the names concatenated - so for example $array[10] is the same as $array10, while $array[3, 4] is the same as $array3_4.  Strings can be used as array indexes as well: $array["foo"] = 100;.  Array dimensions are separated with commas inside the brackets - $array[1, 0] = 10;
+
+@section ConStringOp Special String Operators
+
+There are several special operators for strings in the scripting language:
+    - <b>$=</b>    Case insensitive string comparison.  True if strings are equal.
+    - <b>!$=</b>    Negative case insensitive string comparison.  True if strings are not equal
+    - <b>@@</b>    String concatenation operator:  "Hello " @ "World!" == "Hello World!"
+    - <b>TAB</b>    String concatenation with a tab.  "Hello" TAB "World!" == "Hello\tWorld!"
+    - <b>NL</b>    String concatenation with a newline.  "Hello" NL "World!" == "Hello\nWorld!"
+    - <b>SPC</b>    String concatenation with a space.  "Hello" SPC "World!" == "Hello World!"
+
+@section ConCompiler Compiler
+Scripts are executed in a two step process: First the script is compiled into a tokenized instruction stream, then the instruction stream is processed using the compiled evaluator.
+
+@section ConDebugger Debugger
+The console supports remote debugging via another instance of Torque.  In the game instance to be debugged, debugger port and password must be set using the dbgSetParameters(port, password);  Then, in the instance to be used as the debugger, the GUIs and scripts in common/debugger/ must be loaded.
+
+@see TelnetDebugger for more details on the debugger.
+
+@section ConInterface Interfacing with C++ Code
+The C++ game and engine code can be called from the scripts as described above, and the game code can also call into script using the console execute and evaluate functions:
+
+@code
+// simple execute of a console function using argv array:
+const char *execute(S32 argc, const char* argv[]);
+
+// simple execute of a console function, without stuffing an array
+const char *executef(S32 argc, ...);
+   
+// execution of a method on a SimObject using argv array:
+// first param is func name, second param MUST be empty
+// also, MUST have at least those two params
+const char *execute(SimObject *, S32 argc, const char *argv[]);
+
+// execution of a method on a SimObject without stuffing an array
+// first param is funcName, remaining params are args
+const char *executef(SimObject *, S32 argc, ...); 
+
+// evaluation of an arbitrary console command script:
+const char *evaluate(const char* string, bool echo, const char *fileName);
+
+// evaluation of a formatted (ala printf) command string:
+const char *evaluatef(const char* string, ...);
+@endcode
+
+Examples:
+
+@code
+SimObject *mySimObject = new SimObject;
+
+Con::executef(mySimObject, 4, "doSomething", Con::getIntArg(20), "Bye", "Hi");
+Con::evaluatef("mySimObject.doSomething(%d,\"%s\",\"%s\");", 20, "Bye", "Hi");
+
+char *argv[5];
+argv[0] = "doSomething";
+argv[1] = NULL;
+argv[2] = Con::getIntArg(20);
+argv[3] = "Bye";
+argv[4] = "Hi";
+
+Con::execute(mySimObject, 5, argv);
+@endcode
+
+The functions Con::getIntArg, Con::getFloatArg and Con::getArgBuffer(size) are used to allocate on the console stack string variables that will be passed into the next console function called.  This allows the console to avoid copying some data.
+
+
+*/ /*! @page Simulation Simulation 
+
+@section SimOver Overview
+
+@subsection SimOverIntroduction Introduction
+
+The simulation of objects is handled almost entirely in the game portion of the engine.  All simulation object classes are derived from GameBase, which is a subclass of SceneObject.  GameBase objects that wish to be notified of the passage of time can be added to one of the two process lists - the global server or global client process list, depending on whether the object is a server object or a client ghost.
+
+All objects in the process list are "ticked" once every 32 milliseconds.  The ordering of the objects is determined by the GameBase::processAfter method, which is called if an object must be processed at some time after another object (not necessarily immediately afterward).  For example, a player mounted to a vehicle would be set to processAfter the vehicle, so that after the vehicle moved the player's position could be updated to the correct position on the vehicles new position.
+
+@subsection SimOverDetails Update Interfaces
+
+Game objects are updated in three separate functions, overridden from GameBase: GameBase::processTick(), which takes a single Move structure as an argument (it may be NULL) and advances the object in time by one 32 ms tick, GameBase::interpolateTick(), which interpolates a client object backwards from the end of its current tick to the present time, and GameBase::advanceTime(), which allows a client object to advance animations and effects by the full duration of the time event.
+
+Server side objects are only simulated on even tick boundaries, but client objects, in order to present a smooth view when the frame rate is high, are simulated after each time event.  GameBase::processTick is still only invoked on even tick boundaries, but at the end of the time advance, objects are essentially rewound by the time difference to the end of the tick.  Also, client objects that need to animate only by the total elapsed time can do so in the GameBase::advanceTime function, which is only called once per time advancement.
+
+@note If the control object is sent new object state from the server, it will be advanced by every Move the client has recorded that the server has not yet acknowledged - this is because the server has old data as far as the client is concerned, so the client skips forward through all the new data it knows about.
+
+@section SimBase Simulation Objects
+
+SimBase (engine/console/simBase.*) defines the foundation SimObject classes that form the basis of the simulation engine.
+
+SimObject is the base class for all objects that the console language can create and manipulate.  All game classes (Player, InteriorInstance, Terrain, etc.) and GUI classes (GuiCanvas, GuiControl, etc). are all derived from SimObject.  SimObject maintains the list of dynamic fields, has name and ID properties, and can register itself with a global object manager, as well as providing several other services.
+
+A SimSet is a simple collection of SimObjects.  The set has console methods for adding and removing objects and iterating through the set.
+
+A SimGroup is a derivative of SimSet that "owns" the objects in its collection.  When a SimGroup object is destroyed, it destroys all of its members.  GuiControl is derived from SimGroup - thus making the GUI a hierarchal set of objects.
+
+SimEvent is a special class objects can use to send time-delayed messages to objects.
+
+SimManager (engine/console/simManager.cc) is a collection of functions for managing all of the objects and events in the simulation.  
+
+Objects are collected in a hierarchy of SimGroups and can be searched for by name or by object id.
+
+@section SimPersistanceInspection Persistence and Inspection
+
+Objects in Torque can be saved to a script file using SimObject::save().  This basically dumps the current state of all the object's registered fields and dynamic fields, as well as, in the case of a SimGroup, all of that object's sub objects.  GUIs and missions are examples of how the engine's editors save objects.
+
+Objects' fields can also be modified in-game using the inspector, which a GUI window that shows the fields of an object and allows those fields to be changed and saved.  Before new field values are to be saved to an object its onPreApply() method will be called, then the fields will be changed, then the object's onPostApply() method will be called.
+
+@section SimUsefulConsole Useful Console Commands
+
+There are several console commands that are useful to get an idea of what's going on in the system: 
+
+@code
+trace(true);       // Turns on console trace output, trace(false); to disable it.
+tree();            // Displays a graphical hierarchy and object inspector for
+                   // all objects currently registered in the system.
+object.dump();     // Dumps a list of all console commands and instance variables on an object.
+set.listObjects(); // Lists all of the objects in a set.
+@endcode
+
+@section SimDB Container Database
+
+Container maintains a database on both client and server for objects positioned in the simulation.  It supports a set of functions for quickly inserting, removing and moving objects in the world (Container::addObject, Container::removeObject, Container::checkBins), as well as query functions for line, box and polyhedron intersection tests (Container::castRay, Container::collideBox, Container::findObjects).
+
+*/
+
+
+
+/*! @page FileIO Files, Streams and the Resource Manager
+
+@section FileOverview Overview
+
+The Torque engine uses many resources - terrain files, bitmaps, shapes, material lists, fonts and interiors, to list just a few examples. In order to manage a large number of game resources effectively and provide a common interface for loading and saving resources, Torque uses the ResManager.
+
+Resources have the special property that only one instance of a resource will ever be loaded at a time.  Resource objects are reference counted so that when a second request is made for the same resource, the original loaded instance is returned.  The resource manager also defines a resource template class that acts as a transparent pointer to various types of game resources.
+
+@section FilePaths Searchable Paths
+A list of searchable paths are fed to the ResManager via the setModPaths() function. This function also scans the specified paths for all the files contained therein, creating a ResourceObject for each one. These are all stored in a ResDictionary, allowing rapid lookup of a specified file.
+
+In addition, a "writeable path" may be set using setWriteablePath(). The writable path is used to store files downloaded from game servers.
+
+@section FileVolumes Volume Files
+The Resource system also supports Volume files, which appeared in Tribes 1 as .vol files and Tribes 2 as .vl2 files, but in reality as ZIP files. When ResManager encounters a file with a .zip extension, it opens it and adds all the items in the ZIP's contents list to the list of known files.
+
+ResManager automatically deals with the complexities related to opening a ZIP file and streaming a specific file in it, so your resource implementation doesn't need to concern itself with where the data is coming from.
+
+@section FileResourceObject ResourceObject and Resource<T>
+As mentioned above, ResManager maintains a list of all the files it knows about using ResourceObjects. The Resource<T> template is provided to manage references to ResourceObjects; it ensures that the resource is properly refcounted.
+
+*/ 
+
+/*! @page InputModel Input Model
+
+@section InputOverview Overview
+
+Input events come from the OS, are translated in the platform layer and then posted to the game. By default the game then checks the input event against a global action map (which supercedes all other action handlers).  If there is no action specified for the event, it is passed on to the GUI system.  If the GUI does not handle the input event it is passed to the currently active (non-global) action map stack.
+
+<b>Example:</b> the user presses the ~ (tilde) key, which is bound in the global action map (in example/client/scripts/default.bind.cs) to toggleConsole.  This causes the console function associated with the bind to be executed, which in this case is toggleConsole, resulting in the console output window being shown.  If the key had not been bound in the global map, it would have passed to the first gui that could have handled it, and if none did, it would pass to any game actions that were bound to that key.
+
+@section InputPlatform Platform Input
+
+Platform specific code translates OS-specific events into uniform Torque input events.  These events are posted into the main application event queue via a call to GameInterface::processEvent() (remember, Game points to a subclass of GameInterface).  The default behavior for the GameInterface class is to pass all input events to GameInterface::processInputEvent(), which in the example TorqueGame calls ActionMap::handleEventGlobal, followed by Canvas->processInputEvent (if not handled by the global map), and if neither of those handles it, passes it to ActionMap::handleEvent.
+
+@section InputAction Action Maps
+Action maps map platform input events to console commands.  Any platform input event can be bound in a single generic way - so in theory the game doesn't need to know if the event came from the keyboard, mouse, joystick or some other input device.  This allows users of the game to map keys and actions according to their own preferences.
+
+@see ActionMap::bind(), ActionMap::bindCmd()
+
+There is one defined ActionMap object that is processed first for all events called GlobalActionMap.
+
+Game action maps are arranged in a stack for processing - so individual parts of the game can define specific actions - for example when the player jumps into a vehicle it could push a vehicle action map and pop the default player action map.
+
+@section InputModKeys Modifier Keys
+
+The inputName of an action can be modified by one of the three modifier keys - alt, shift and control.  For example, the fullscreen/window toggle is bound to "alt enter".  If an action is called with a modifier, releasing the modifier key(s) will not cause the break event to fire - only when the key itself is released.
+*/
+
+/*! @page Graphics Graphics
+
+@section GraphicsOverview Overview
+
+The Torque Engine does not implement its own graphics rasterization layer.  OpenGL was chosen as the graphics API for the Torque to primarily for its cross-platform nature and ease-of-use.  The Torque includes a utility library called DGL that extends OpenGL to support higher level primitives and resources, as well as performing texture management.
+
+The platform layer is responsible for initializing the OpenGL state.  For PlatformWin32 this can include loading a DLL that converts OpenGL calls to Direct3D (OpenGL2D3D.DLL).
+
+@section GraphicsTexture The Texture Manager
+
+DGL includes a texture manager (engine/dgl/gTexManager.*) that tracks the loading and unloading of all textures in the game.  When the game requests a texture, it uses the TextureHandle class - which acts as a sort of special resource handle for textures in the game.  Only one instance of a texture is ever loaded at once, and after load is handed off to OpenGL.  When the game switches graphics modes or video devices, the Texture Manager can transparently reload and re-download all the game's textures.
+
+@section GraphicsPrimitive Primitive support
+<b>GFont</b> - fonts in the Torque are alpha textures created by the platform layer from OS dependent outline fonts.
+
+<b>GBitmap</b> - the Torque supports several bitmap file types - PNG, JPEG, GIF, BMP and the custom BM8 format (an 8-bit color quantized texture format used to cut texture memory overhead).
+
+<b>MaterialList</b> - a material list is a resource that manages a list of bitmaps.  It is used for shapes and interiors that have more than one texture.
+
+@section GraphicsPrimRender Primitive rendering
+
+The DGL support functions support a wide variety of common 2D rendering primitives.  Bitmaps (loaded as textures) can be rendered via the dglDrawBitmap(), dglDrawBitmapStretch(), dglDrawBitmapSR() (sub-region), and dglDrawBitmapStretchSR() functions.  Text can be rendered using dglDrawText() and dglDrawTextN().  Dgl also supports drawing of lines, rectangles and filled rectangles.
+
+Unlike default OpenGL, the screen coordinate space set up for 2D rendering in the Torque is a traditional 2D scheme where (0,0) is in the upper left corner of the screen and +Y goes down the screen.  This requires (in the case of 3D) calling dglSetViewport rather than glViewport.
+
+For 2D rendering, DGL viewport management is simplified by dglSetClipRect().
+
+@section Graphics3DRender 3D Rendering
+
+There are several key differences in how the Torque does rendering from the default OpenGL.  First, the coordinate system is set up to look down the +Y axis instead of -Z.  This means dgl replaces the call to glFrustum() with a call to dglSetFrustum().  Also, all Torque matrices are organized in standard C array form - with the second element in the array corresponding to the first row, second column.  This is the opposite of OpenGL, so DGL supplies alternates to glLoadMatrix() and glMultMatrix(), appropriately named dglLoadMatrix() and dglMultMatrix() respectively.
+
+3D points can be converted to 2D screen points using the dglPointToScreen() function, and a measure of projected screen size of an object can be determined using the dglProjectRadius() function.
+
+*/
+
+/*! @page GUI The Graphical User Interface (GUI)
+
+@section GUIOver Overview
+The GUI library manages the user interface of Torque applications.  Based very loosely on the NeXTSTEP interface class library, the GUI library is designed specifically for the needs of game UI development.  Some important classes are:
+
+<b>GuiCanvas</b> - The Canvas object, a singleton instance of the GuiCanvas class, is the root of the currently active GUI hierarchy.  It is responsible for processing and dispatching mouse and keyboard events, managing update regions and cursor handling, and calling the GuiControl render methods when it is time to draw the next frame.  The GuiCanvas keeps track of a stack of content controls - separate hierarchies of GuiControls that render from bottom to top.  The main content control is a screen in the shell, and can be covered by any number of floating windows or dialogs.  The root of each content control hierarchy is sized to cover the entire canvas, so generally dialogs are composed of a content control containing a dialog control.
+
+<b>GuiControlProfile</b> - The GuiControlProfile class instances maintain common instance data across a set of controls.  Common information such as font face, colors, bitmaps and sound data are all stored in instances of GuiControlProfile, so that they don't need to be replicated on each control.
+
+<b>GuiControl</b> - The GuiControl class is the root class for all the GUI controls in the system.  GuiControl is derived from SimGroup and can contain any number of child GUI controls.  Each GuiControl maintains a bounding rectangle in the coordinate system of its parent control.  GuiControl has virtual methods for processing input events (onMouseDown, onMouseUp, onMouseEnter, onMouseLeave, onMouseMove, onMouseDragged, onRightMouseDown, onKeyDown, onKeyUp,onKeyRepeat), methods called by the Canvas for rendering (onPreRender, onRender), methods to control the lock focus of the mouse (mouseLock, mouseUnlock), coordinate conversion methods (localToGlobalCoord, globalToLocalCoord), and automatic sizing behavior when its parent control is resized (for example, when the screen resolution changes).  When a control is made visible, it (if not already loaded) loads the data associated with its GuiControlProfile.
+
+@section GuiInput Input Event Processing in the GUI system
+Input events are first processed for dispatch in GuiCanvas::processInputEvent.  Depending on the type of input event (keyboard or mouse), the Canvas processes the event in different ways.  
+
+<b>For keyboard events</b>, the Canvas maintains an instance variable call the first responder (mFirstResponder).  The first responder is essentially the control that has keyboard focus - for example a text field that the user is typing into or a button that the user has tabbed to.  For any keyboard event, the first responder has the first chance to process it.  If it does not process the event it passes it up to its parent class and then in GuiControl finally to its parent control.  If the keyboard event is not handled by any control in the responder chain (from first responder up to the root content control), the Canvas checks to see if it is a special key - tab and shift-tab set the first responder to the next and previous controls in the tab list respectively.  If it is not tab or shift-tab, the Canvas checks to see if the key is in the accelerator map for any of the controls visible (for example an OK button mapped to the enter key).  If it is not mapped, the Canvas passes back false, signifying that the event should be processed by the action map handler.
+
+<b>For mouse events (if the cursor is on)</b>, the event is handled by the GUI system.  Each mouse event can potentially generate several virtual method calls to controls.  For example, moving the mouse cursor from one control into another will cause the first control to receive an onMouseLeave method call, followed by an onMouseEnter method call to the new control and finally an onMouseMove to that control as well.  GuiControls can lock the mouse focus on the canvas so that only that control receives mouse method invocations - for example the GuiButtonCtrl control locks the mouse on mouse down and unlocks it on mouse up so that even if the user moves the cursor outside the control, the button still maintains focus and can re-highlight when the cursor is moved back inside.  The GuiControl virtual method pointInControl by default returns true if the cursor is inside the bounding rectangle of the control.  Control subclasses with non-rectangular shapes can override this method to provide controls with irregular mouse boundaries.
+
+@section GuiRender Control Rendering in the GUI system
+The Canvas object is the root of the control rendering hierarchy and is responsible for the rendering process.  When the game receives a time event from the platform layer it advances the state of the simulation and then instructs the canvas to render itself.  
+
+Before actually doing any rendering the Canvas instructs each control on the screen to onPreRender() itself, allowing each control to determine what if anything needs to be rendered on that control.  The canvas, in order to render more quickly, maintains a set of "dirty" bounding boxes signifying areas of the screen that need to be repainted - a button may change, for example, if the mouse has just been pressed inside it, causing it to glow in the depressed state.  During or before the onPreRender, a control can call the setUpdate() method on itself signifying that it needs to be repainted.  Because the Torque engine works with page flipping devices and there may be as many as three separate buffers with old screen data, the Canvas maintains three dirty rectangles representing the dirty state of each of the (up to) three buffers.
+
+After onPreRender, the Canvas renders the hierarchy of controls by telling the root of each layer (content control) to onRender() itself, and passing in a rectangle of the visible area of that control, which is initially set to the dirty area of the screen.  When a control renders it can optionally call renderChildControls with this visible rectangle which will clip the rectangle to the bounds of each of its child controls, and if there is any area visible, will call onRender() on the child with the clipped rectangle as the visible area. 
+
+@section GuiConsole The GUI system and the Console
+The GUI system is designed to work tightly with the Console language.  The GuiControl class has an instance variable called mConsoleVariable which is the name of a global console variable that will, if set, reflect the state of that control in a control-dependant way.  For example, a variable that is mapped to a checkbox control will have the value of 1 when the control is checked and 0 when it is not.  Each GuiControl also has an instance variable called mConsoleCommand and mAltConsoleCommand that get executed in different cases depending on the control - in the case of a GuiButton the mConsoleCommand script gets evaluated when the button is clicked (in GuiControl::onAction()).
+
+Another way the GUI system interacts with the console is via Console namespaces - when you name a control (like MainMenuQuitButton) that control name is registered as a namespace whose parent is the control's class, and special console methods can then be invoked from code on that control - in the case of a button the buttons onAction console method will be called when the button is pressed.  Custom controls can be built in this way to execute several different commands with custom arguments.
+
+*/ 
+
+/*! @page Render3D 3D Rendering
+
+@section Render3DOver Overview
+
+Torque has a modular, extensible 3D world rendering system.  Subclasses of the GuiTSCtrl override the GuiTSCtrl::processCameraQuery() and GuiTSCtrl::renderWorld() methods to define the camera orientation/FOV, and draw the 3D scene using OpenGL drawing commands respectively.  GuiTSCtrl manages setting up the viewport, modelview matrix and projection matrix.  The Torque example code GameTSCtrl class calls the global functions GameProcessCameraQuery() and GameRenderWorld().  GameProcessCameraQuery() returns the viewing camera of the current control object (the object in the simulation that the player is currently controlling), then GameRenderWorld makes the client scene graph object render the world.
+
+@section Render3DSceneGraph SceneGraph
+
+The scene graph library (engine/sceneGraph) is, on the client, responsible for traversing the world scene and determining which objects in the world should be rendered given the current camera position, and on the server, determines what objects should be sent to each client based on that client's position in the world.
+
+The world in the SceneGraph is divided into zones - volumes of space bounded by solid areas and portals.  The outside world is a single zone, while interior objects can have multiple interior zones.  SceneGraph::findZone() finds the zone of a given 3D point and reports which SceneObject owns that zone.  SceneGraph::rezoneObject() determines which zone or zones contain a SceneObject instance.  At render time, the scene is traversed starting from the zone that contains the camera, clipping each zone's objects to the visible portal set from the zones before it.  Scoping of network objects is performed in SceneGraph::scopeScene().
+
+The scene graph traversal is complicated by transform portals.  Transform portals are objects like mirrors or teleporters through which the world can be viewed using a different transform than the normal camera transform.  When SceneGraph::buildSceneTree() encounters an object with a transform portal, it constructs a new SceneState object for rendering that portal's contents.
+
+Every renderable world object in the scene derives from the SceneObject base class.  As the world is traversed, visible objects are asked to prepare one or more SceneRenderImage objects (in SceneObject::prepRenderImage()) that are then inserted into the current SceneState via SceneState::insertRenderImage().  Render images are sorted based on translucency and rendered from SceneObject::renderObject().  This system allows, for example, an interior object with multiple translucent windows to render the building first, followed by other objects, followed by the building's windows.  Objects can insert any number of images for rendering.
+
+@section Render3DTerrain Terrain
+
+The terrain library (engine/terrain) is the home for objects that render the outside world, including instances of the Sky, TerrainBlock and WaterBlock classes.  The Sky object renders the outside sky and cloud layers and maintains the visible distance and fog distance settings for the world.  The sky also tracks vertical fog layers and installs them into the SceneGraph for rendering.
+
+TerrainBlock manages a single 256x256 infinitely repeating block of heightfield terrain.  Terrain heightfield data is stored and loaded using the TerrainFile resource class (Resource<TerrainFile>) so that a single terrain data file can be shared between server and client, when both are on the same execution instance.  The TerrainRender static class is used by TerrainBlock instances for rendering.  The TerrainRender::renderBlock() function renders the current repeating block of terrain.
+
+@note There exists a TerrainManager resource which allows you to have NxM repeating areas of terrain, increasing the non-repeating terrain area.
+
+The terrain is textured by software blending base material textures into new material textures and then mapping those across 16 or more terrain squares based on the distance from the square.  Blender performs the blending of terrain textures and includes a MMX assembly version to speed the process (x86 architectures only). 
+
+The WaterBlock class manages a single block of water, which may or may not be infinitely repeating.  Water is dynamically detailed based on distance, so nearby water is more highly tessellated.  Though the surface of a water block is rectangular, the actual coverage of the water area can be set to seed fill from a point on the surface, allowing the water to fill a mountain crater, for example, without leaking outside the corner edges.
+
+@section RenderInterior Interior
+
+The interior library (engine/interior) manages the rendering, collision and IO for interior objects.  The InteriorInstance SceneObject class manages a single interior.  The InteriorResource class manages the data associated with one definition of an interior, multiple instances of which may exist at any one time.  Interiors manage zones for the scene graph, and may have subobjects that, for example, render a mirrored view (MirrorSubObject).  The InteriorLMManager class manages lightmaps for all currently loaded interiors - sharing lightmaps among instances where possible.
+
+Interiors are converted to DIF by the tool Map2DIF (formerly known as Morian). The source files are just Quake-style .map files - lists of convex physical "brushes" that define the solid areas of the interior.  Special brushes are used to define zone portal boundaries and objects such as doors and platforms.
+
+@section Render3Space 3Space (TS)
+
+The 3Space library (engine/ts) manages the display and animation of shape models in the world.  The 3Space shape resource class TSShape can be shared between multiple TSShapeInstance instances.  The TSShape class manages all the static data for a shape - mesh data, animation keyframes, material lists, decal information, triggers and detail levels (for dynamically detailed shapes).
+
+The TSShapeInstance class manages animation, rendering and detail selection for an instance of a shape.  The TSShapeInstance class uses the TSThread class to manage one of the concurrently running animations on an instance.  TSShapeInstance::addThread() initializes a new thread on a shape instance, and TSShapeInstance::setSequence() sets an animation sequence for a given thread.  Each thread can be individually advanced in time, or can be set on a time scale that is used when all threads are advanced in TSShapeInstance::advanceTime().  A thread can also manage transitions between sequences with TSShapeInstance::transitionToSequence().
+
+TSShape animation sequences can be composed of node/bone animation (for example, joints in an explosion), material animation (a texture animation on an explosion) and mesh animation (a morphing blob - note most mesh animations can be accomplished with node scale and rotation animations).  Animations can also contain visibility tracks so that some meshes in the shape are not visible until an animation is played.
+
+*/ 
+
+/*! @page Networking Networking
+
+@section NetOver Overview
+
+Torque was designed from the foundations up to offer robust client/server networked simulations.  Performance over the internet drove the design for the networking model.  Torque attempts to deal with three fundamental problems of network simulation programming - limited bandwidth, packet loss and latency.  For a more detailed, if somewhat outdated, description of the Torque network architecture, see "The Tribes II Engine Networking Model" paper by Tim Gift and Mark Frohnmayer and the accompanying PowerPoint slides in the Torque documentation area on GarageGames.com.
+
+An instance of Torque can be set up as a dedicated server, a client, or both a client and a server.  If the game is a client AND a server, it still behaves as a client connected to a server - instead of using the network, however, the NetConnection object has a short-circuit link to another NetConnection object in the same application instance.
+
+Bandwidth is a problem because in the large, open environments that Torque allows, and with the large number of clients that Torque supports (up to 128 per server, or beyond, if the network/server can handle it), potentially many different objects can be moving and updating at once.  The Torque uses three main strategies to maximize available bandwidth.  First, it prioritizes data, sending updates to what is most "important" to a client at a greater frequency than it updates data that is less important.  Second, it sends only data that is necessary - using the BitStream class, only the absolute minimum number of bits needed for a given piece of data will be sent.  Also, when object state changes, Torque only sends the part of the object state that changed.  Last, Torque caches common strings (NetStringTable) and data (SimDataBlock) so that they only need to be transmitted once.
+
+Packet loss is a problem because the information in lost data packets must somehow be retransmitted, yet in many cases the data in the dropped packet, if resent directly, will be stale by the time it gets to the client - for example, suppose that packet 1 contains a position update for a player and packet 2 contains a more recent position update for that same player.  If packet 1 is dropped but packet 2 makes it across the engine shouldn't resend the data that was in packet 1 - it is older than the version that was received by the client.  In order to minimize data that gets resent unnecessarily, the engine classifies data into four groups:
+
+    - <b>Unguaranteed Data</b> (NetEvent) - if this data is lost, don't re-transmit it.  An example of this type of data could be real-time voice traffic - by the time it is resent subsequent voice segments will already have played.
+    - <b>Guaranteed Data</b> (NetEvent) - if this data is lost, resend it.  Chat messages, messages for players joining and leaving the game and mission end messages are all examples of guaranteed data.
+    - <b>Most-Recent State Data</b> (NetObject) - Only the most current version of the data is important - if an update is lost, send the current state, unless it has been sent already.
+    - <b>Guaranteed Quickest Data</b> (Move) - critical data that must get through as soon as possible.
+
+Latency is a problem in the simulation because the network delay in information transfer (which, for modems, can be up to a quarter of a second or more) makes the client's view of the world perpetually out-of-sync with the server.  Twitch FPS games, for which Torque was initially designed, require instant control response in order to feel anything but sluggish.  Also, fast moving objects can be difficult for highly latent players to hit.  In order to solve these problems Torque employs several strategies:
+
+    - <b>Interpolation</b> is used to smoothly move an object from where the client thinks it is to where the server says it is.
+    - <b>Extrapolation</b> is used to guess where the object is going based on its state and rules of movement.
+    - <b>Prediction</b> is used to form an educated guess about where an object is going based on rules of movement and client input.
+
+The network architecture is layered: at the bottom is the platform layer, above that the notify protocol layer, followed by the NetConnection object and event management layer.  The following sections explain how each layer addresses some or all of the fundamental network simulation problems.
+
+@section NetPlatform Platform Networking Layer (TCP/UDP)
+
+The platform library provides the interface between the game engine and the OS dependent network functionality.  The platform library's Net interface contains functions for opening reliable and unreliable communication sockets, converting between string and numeric network addresses and sending and receiving data.
+
+Net::openPort() opens an unreliable socket, of which only one is allowed per application instance.  Net::sendto() sends an unreliable datagram to the specified NetAddress.  Net::openListenPort() opens a reliable socket for incoming TCP connections.  Net::openConnectTo() begins the process of asynchronously connecting to a remote TCP socket.  Net::sendtoSocket() sends data over an established TCP connection.  Net::process() processes the platform network layer, possibly generating network related events that are then posted into the simulation via GameInterface::processEvent().
+
+Torque also has some good debugging capabilities. The DEBUG_NET and DEBUG_LOG() macros are used to control debug output from the networking code. A full explanation of this functionality is beyond the scope of this overview; however, searching the source for instances of DEBUG_LOG should get you on the way to understanding this part of Torque.
+
+@section NetProtocol Connection Protocol
+
+@subsection NetConnNegotiation Connection Negotiation
+
+The negotiation of a game network connection is not actually a part of the network class tree in the Torque - instead a set of functions, declared in engine/game/netDispatch.cc perform this service.  The function TorqueGame::processPacketReceiveEvent() is the main dispatch function for incoming network packets.
+
+The first step of the connection process is the console function connect(), which initiates a connection attempt by sending a connect challenge request packet to the server from sendConnectChallengeRequest().
+
+The server, in handleConnectChallengeRequest(), may issue the client a connect challenge response, which the client will process in handleConnectChallengeResponse.  The client will in turn issue a connect request (sendConnectRequest) with the challenge information it received from the server.  The server processes this message in handleConnectRequest.  If the server decides to accept the request, it issues a sendConnectAccept back to the client and constructs a NetConnection object on the server to handle that client.  The client, in handleConnectAccept creates a complementary NetConnection object to manage the client side of the connection.  The dispatchCheckTimeouts function periodically checks if a connection request or challenge has been waiting too long and reissues the request if it has.
+
+@subsection NetConnProtocol Once We're Connected...
+
+Once a connection has been established, the function of the ConnectionProtocol class is to provide a common low-level mechanism for supporting the delivery of the four fundamental types of network data in the Torque.  The ConnectionProtocol abstract base class implements a sliding window connected message stream over an unreliable transport (UDP).  Rather than supporting guaranteed messages directly, the ConnectionProtocol class implements a notify protocol.  Each packet sent is prepended with a message header containing tracking information, including what packets the other end of the connection has received or were dropped in transit.  When a ConnectionProtocol instance determines that a packet it sent has been either received or dropped, it calls ConnectionProtocol::handleNotify().  Notifies are always delivered in the order packets were sent - so for every packet sent through a ConnectionProtocol object, eventually a notification of successful (ack) or unsuccessful (nack) delivery will be executed.
+
+Because the base network protocol exports the inherently unreliable nature of the network to the simulation, at a higher level Torque can directly support different types of data guarantee: for unguaranteed data, if it is nacked, there is no need to resend it.  For guaranteed data, if it is nacked, the engine queues it up for resend (NetConnection::eventPacketDropped()).  If the data is most recent state data and the packet is nacked and that object's state hasn't been subsequently changed and resent, queue the data up for resend (NetConnection::ghostPacketDropped()).  If the data is set for quickest possible delivery, continue sending the data with every packet until a packet containing the data is acked (GameConnection::readPacket()).
+
+@section NetConnection NetConnection
+
+The NetConnection class is derivative from both SimGroup and ConnectionProtocol, and is responsible for managing the data streaming between client and server.  The NetEvent class encapsulates the guaranteed and unguaranteed message delivery types and the ghost management portion of the NetConnection class handles state updates of world objects from server to client.  The Torque example game-specific subclass of NetConnection is GameConnection and handles transmission of game specific data such as player moves.
+
+The NetConnection class sends packets of a fixed size in a regular stream between the client and server.  When a message is posted for transmission, it is aggregated with other messages and sent based on the packet rate and packet size settings for that connection.
+
+@section NetBitstream The BitStream
+
+BitStream is a utility class used to pack data for transmission.  BitStream has methods for reading and writing variable-sized integers, floats, vectors, Huffman-coded strings and bits.
+
+When a NetConnection instance determines it is ready to send a packet across the network (NetConnection::checkPacketSend()), it allocates a BitStream and calls NetConnection::writePacket() with the stream.  When a packet is received it is processed through the corresponding NetConnection::readPacket() function.
+
+@section NetEvents Network Events
+
+The NetEvent class provides a foundation for guaranteed, guaranteed ordered and unguaranteed message transmission.  NetEvent uses the same class instance creation mechanism as the console, but rather than instantiating by name, NetEvents use a class ID, which was assigned when the console initializes.
+
+If the pack and unpack methods don't match in terms of what they read and write into the stream,
+serious network errors can occur.  The client and server should gracefully disconnect in these 
+cases, but the errors themselves can be very difficult to track down.  If the DEBUG_NET macro
+is defined, a special key will be written into the packet stream after each event and object 
+update, and the system will assert immediately when it detects that this problem has occurred.
+
+@section NetGhost Network Ghosts and Scoping
+
+The NetObject class is a derivative of SimObject that can replicate (ghost) itself across a network connection.  All world object classes are subclassed from NetObject (the superclass of SceneObject).  In order to best utilize the available bandwidth, the NetConnection attempts to determine which objects are "interesting" to each client - and among those objects, which ones are most important.  If an object is interesting to a client it is said to be "in scope" - for example, a visible enemy to a player in a first person shooter would be in scope.
+
+Each NetConnection object maintains a scoping object - responsible for determining which objects are in scope for that client.  Before the NetConnection writes ghost update information into each packet in NetConnection::ghostWritePacket(), it calls the scope object's onCameraScopeQuery() function which performs two services: first, it determines which objects are "in scope" for that client and calls NetConnection::objectInScope for each object on that client.  Second, the onCameraScopeQuery() call fills in the CameraScopeQuery structure which is then used to determine the priority of object updates.
+
+The default NetObject::onCameraScopeQuery() function scopes everything in the world, but the Torque game example overrides this in ShapeBase::onCameraScopeQuery().  ShapeBase calls the server SceneGraph::scopeScene() function to traverse the scene from the client's point of view and scope all potentially visible objects.  Each scoped object that needs to be updated is then prioritized based on the return value from the NetObject::getUpdatePriority() function, which by default returns a constant value.  This function is overridden in ShapeBase::getUpdatePriority() to take into account the object's distance from the camera, its velocity perpendicular to the view vector, and other factors.
+
+Rather than always sending the full state of the object each time it is updated across the network, the Torque supports only sending portions of the object's state that have changed.  To facilitate this, each NetObject can specify up to 32 independent sub-states that can be modified individually.  For example, a player object might have a movement state, detailing its position and velocity, a damage state, detailing its damage level and hit locations, and an animation state, signifying what animation, if any, the player is performing. 
+
+Each state data group is assigned a bit position in the class.  When an object's state changes, the object notifies the network system with the NetObject::setMaskBits function.  When the object is to be written into a packet in NetObject::packUpdate, the object's current state mask is passed in.  The object's state mask is NOT written into the packet directly - it is the responsibility of the pack function to accurately encode which states are updated.
+
+Initially an object's state mask is set to all 1's - signifying that all the object's states need to be updated.
+
+@section NetGameConnection GameConnection, Moves and the Control Object
+
+GameConnection is the game-specific subclass of NetConnection.  Applications can subclass NetConnection to directly write and read data from packets, as well as hook into the notify mechanism.  The NetConnection::allocNotify() function is called at the beginning of a packet write and is used to allocate a NetConnection::PacketNotify structure.  This structure is used to store information about the data written into the network packet.  When the packet is either acked or nacked, this notify structure is passed into the NetConnection::handleNotify() function.  Subclasses of NetConnection can subclass the PacketNotify structure and override the allocNotify method to add custom data to the packet tracking record.
+
+The GameConnection in the Torque example introduces the concept of the control object.  The control object is simply the object that the client associated with that network connection controls.  By default in the example the control object is an instance of the Player class, but can also be an instance of Camera (when editing the mission, for example).
+
+The Torque example uses a model in which the server is the authoritative master of the simulation.  To prevent clients from cheating, the server simulates all player moves and then tells the client where his player is in the world.  This model, while secure, can have problems - if the network latency is high, this round-trip time can give the player a very noticeable sense of movement lag.  To correct this problem, the example uses a form of prediction - it simulates the movement of the control object on the client and on the server both.  This way the client doesn't need to wait for round-trip verification of his moves - only in the case of a force acting on the control object on the server that doesn't exist on the client does the client's position need to be forcefully changed.
+
+To support this, all control objects (derivative of ShapeBase) must supply a writePacketData() and readPacketData() function that send enough data to accurately simulate the object on the client.  These functions are only called for the current control object, and only when the server can determine that the client's simulation is somehow out of sync with the server.  This occurs usually if the client is affected by a force not present on the server (like an interpolating object) or if the server object is affected by a server only force (such as the impulse from an explosion).
+
+The Move structure is a 32 millisecond snapshot of player input, containing x, y, and z positional and rotational changes as well as trigger state changes.  When time passes in the simulation moves are collected (depending on how much time passes), and applied to the current control object on the client.  The same moves are then packed over to the server in GameConnection::writePacket(), for processing on the server's version of the control object.
+
+@section NetDatablocks Datablocks
+
+Datablocks (ie, subclasses of SimDataBlock) are used in the network system to store common instance data for objects.  For example, a datablock may store animation data, model information, physical movement properties, etc, all of which are shared across a set of common objects.  All declared datablocks are sent to clients upon connection as guaranteed events (SimDataBlockEvent), and can then be referenced and sent as part of the initial ghost update.  An advantage of datablocks is that they are declared only on the server, so mods to the game can be created without forcing the client to downloading any script data.
+
+@section NetStringTable NetStringTable
+
+The NetStringTable class manages string data across connections.  Every tagged string in the console - those enclosed by single quotes ('), will be sent across a connection only a single time.  Every subsequent time that string is sent, an integer tag is substituted for the actual string data.  Strings like player names can be added with the addTaggedString console function and removed with the removeTaggedString console function.
+
+@section NetConsole Network Console Commands
+
+There are two remote procedure call network console commands - commandToServer and commandToClient.  The commandToServer function takes the form: commandToServer(functionNameTag, arg1, arg2, arg3, ... ), where functionNameTag is some string tag.  This call is converted into a RemoteCommandEvent and set across to the server.  Once there the server calls the local script function serverCmdXXX(clientId, arg1, arg2, arg3, ... ), where XXX is the text of the string tag.  The commandToClient function takes the form: commandToClient(clientId, functionNameTag, arg1, arg2, arg3, ... ) where the clientId argument is the object id of the connection object to send to.
+
+The commandTo* functions perform string argument substitution automatically using the in-string % modifier.  For example:
+
+@code 
+commandToClient('EchoMessage', 
+                'This %1 guy is super %2', 
+                'Got Milk?', 
+                'slow at writing documentation');
+@endcode
+
+is executed on the client as:
+
+@code function clientCmdEchoMessage(%message, %a1, %a2, %a3, %a4)
+{
+    // tagged strings must be detagged in order to be displayed.
+    echo(detag(%message));
+    echo("a1 = " @ detag(%a1));
+    echo("a2 = " @ detag(%a2));
+    echo("a3 = " @ detag(%a3));
+    echo("a4 = " @ detag(%a4));
+}
+@endcode
+
+and would echo:
+@code
+This Got Milk? guy is super slow at writing documentation
+a1 = Got Milk?
+a2 = slow at writing documentation
+a3 =
+a4 =
+@endcode
+
+The string substitution number (after the %) refers to the argument position n spaces after the current argument:
+
+@code 
+CommandToClient('EchoMessage', 
+                '%1 is a good %2 for %3', 
+                '%1 the good %2', 
+                'Role Model', 
+                'SuperDood %1', 
+                'the dude of super');
+@endcode
+
+Would echo:
+
+@code
+Role Model the good SuperDood the dude of super is a good Role Model 
+for SuperDood the dude of super
+A1 = Role Model the good SuperDood the dude of super
+A2 = Role Model
+A3 = SuperDood the dude of super
+A4 = the dude of super
+@endcode
+
+This functionality is especially useful for status and game messages coming from the server, because each text message compresses into just a small array of tag identifiers.
+*/
+
+/*!
+
+@page MakingDocs How to Regenerate the Torque Engine Reference
+
+@section MakingDocs_Intro Introduction
+
+One of the beauties of using Doxygen to document Torque is that it's very easy to update the documentation to reflect changes in the engine. If something is added, removed, or changed, all you need is the Torque source code, a few freely available software tools, and you can make a new copy of the docs.
+
+@note This documentation is considered part of Torque and therefore <b>MAY NOT BE DISTRIBUTED TO NON-LICENSE HOLDERS</b>, under the terms of the TGE license agreement (see section 3c of the license at http://www.garagegames.com/pg/product/eula.php?id=1). If you regenerate this documentation, you <b>MUST</b> take steps to prevent non-licensees from accessing it. The suggested route is to keep your regenerated copies of this documentation on your local system.
+
+@section MakingDocs_NeededFiles What You'll Need
+
+You will need the following tools to regenerate the documentation in HTML:
+    - Doxygen (http://www.doxygen.org/)
+    - If you want nicer graphics, you need dot (http://www.research.att.com/sw/tools/graphviz/) <i>Note - you can get just a dot binary for most architectures.)</i>
+
+@section MakingDocs_Regenerating How To Regenerate
+
+Regenerating the docs is a matter of running doxygen at the root of your Torque checkout, and passing it the path to your doxygen configuration file. For example, I have a file called doc.bat in the root of my Torque checkout, which contains:
+
+@code
+"c:\Program Files\doxygen\bin\doxygen.exe" doc\doxygen\html\doxygen.html.cfg
+@endcode
+
+And that's all you need to do to regenerate - though you'll want to tweak your doxygen.html.cfg file to reflect your individual setup. The configuration lines you care about are:
+    - <b>PROJECT_NAME</b>, if you want to indicate that these docs aren't for stock Torque. (For instance, setting it to "Secret Torque Project")
+    - <b>OUTPUT_DIRECTORY</b>, this controls where docs are placed.
+    - <b>STRIP_FROM_PATH</b>, which contains a path to strip from file names in the docs. For instance, my copy of Torque HEAD lives in c:/torque/HEAD, so I set STRIP_FROM_PATH to that so I only see engine//console//console.h, instead of a full path.
+    - <b>EXCLUDE</b>, contains some regular expressions which will be used to filter out paths. The config file by default filters out CVS directories and tries to exclude the Carbon and Unix platform libraries.
+
+More in-depth information is available at http://www.doxygen.org/, on the manual pages.
+*/

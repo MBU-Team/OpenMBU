@@ -1,0 +1,21 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Terrain Terraform Editor...<font:Arial:16>
+
+The Terrain Terraform Editor is used to algorithmically generate terrain heightfields.  Heightfield operations are arranged in a stack, with some operations using the results of previous operations to produce new heightfields.  The results of the last operation on the stack can be applied to the terrain using the Apply button.
+
+The Terraform Editor has two panes - the top pane displays information about the currently selected operation, and the bottom pane shows the current operation stack.  Between the two is a pull down menu for the creation of new operations.  The first operation in the stack is always the General operation (which can't be deleted).
+
+The following operations are supported in the editor:
+<font:Arial Bold:16>fBm Fractal<font:Arial:16> - Fractal for creating bumpy hills
+<font:Arial Bold:16>Rigid Multifractal<font:Arial:16> - Fractal for creating ridges and sweeping valleys
+<font:Arial Bold:16>Canyon Fractal<font:Arial:16> - Fractal for creating vertical canyon ridges
+<font:Arial Bold:16>Sinus<font:Arial:16> - Overlapping sine wave patterns with different frequencies useful for creating rolling hills
+<font:Arial Bold:16>Bitmap<font:Arial:16> - Used to import an existing 256x256 bitmap as a heightfield
+<font:Arial Bold:16>Turbulence<font:Arial:16> - perturbs another operation on the stack
+<font:Arial Bold:16>Smoothing<font:Arial:16> - smooths another operation on the stack
+<font:Arial Bold:16>Smooth Water<font:Arial:16> - smooths water
+<font:Arial Bold:16>Smooth Ridges/valleys<font:Arial:16> - smooths an existing operation on edge boundaries
+<font:Arial Bold:16>Filter<font:Arial:16> - filters an existing operation based on a curve
+<font:Arial Bold:16>Thermal Erosion<font:Arial:16> - erodes an existing operation using a thermal erosion algorithm
+<font:Arial Bold:16>Hydraulic Erosion<font:Arial:16> - erodes an existing operation using a hydraulic erosion algorithm
+<font:Arial Bold:16>Blend<font:Arial:16> - blends two existing operations acording to a scale factor and mathmatical operator
+<font:Arial Bold:16>Terrain File<font:Arial:16> - loads an existing terrain file onto the stack

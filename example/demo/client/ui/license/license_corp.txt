@@ -1,0 +1,15 @@
+<color:000000><font:Arial Bold:24>Torque Shader Commercial License
+<lmargin%:5><rmargin%:95><font:Arial:16>The Torque Commercial Licence is for individuals, companies and government entities looking to develop any type of product and for individuals who no longer qualify for the Indie License.  The Torque Shader Engine is well suited for architectual, game, medical and military simulations as well as a variety of other creative applications.
+
+<font:Arial Bold:16>Commercial License Summary:
+<lmargin%:8><rmargin%:95><font:Arial:16>• Only $995 per seat, includes complete source code to the engine and all tools.
+• No royalties.
+• No publisher restrictions
+• No content restrictions on product
+• No limit to the number of products you can publish per license.
+• CVS server for instant access to updates and enhancements.
+
+For more information about Commercial use of the Torque Shader Engine please <a:www.garagegames.com/main/company/contact.php>contact us</a> directly.
+
+
+

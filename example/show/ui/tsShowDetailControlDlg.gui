@@ -1,0 +1,138 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TSShowDetailControlDlg) {
+	profile = "GuiDefaultProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "True";
+	setFirstResponder = "False";
+	modal = "False";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "195 259";
+		extent = "220 140";
+		minExtent = "8 8";
+		visible = "True";
+		setFirstResponder = "False";
+		modal = "True";
+		helpTag = "0";
+		text = "Detail Control";
+		resizeWidth = "True";
+		resizeHeight = "True";
+		canMove = "True";
+		canClose = "True";
+		canMinimize = "True";
+		canMaximize = "True";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(TSShowDetailControlDlg);";
+
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "13 28";
+			extent = "27 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			command = "showToggleDetail();";
+			helpTag = "0";
+			text = "==>";
+		};
+		new GuiTextCtrl(showDetailInfoText1) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "16 89";
+			extent = "184 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Slider Sets Detail";
+				FONT = "12 244 Arial";
+				justify = "center";
+		};
+		new GuiTextCtrl(showDetailInfoText2) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "16 112";
+			extent = "184 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Slider Sets Detail";
+				FONT = "12 244 Arial";
+				justify = "center";
+		};
+		new GuiTextCtrl(showDetailText) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "46 30";
+			extent = "80 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Slider Sets Detail";
+				FONT = "12 244 Arial";
+				justify = "center";
+		};
+		new GuiSliderCtrl(showDetailSlider) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "16 57";
+			extent = "153 23";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			variable = "value";
+			helpTag = "0";
+			range = "0.000000 1.000000";
+			ticks = "5";
+			value = "0";
+				tab = "true";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+
+function showToggleDetail()
+{
+	if ($showAutoDetail)
+   {
+   	showDetailText.setValue("Slider Sets Detail Level");
+      showSetDetailSlider();
+      $showAutoDetail = false;
+   }
+   else
+   {
+   	showDetailText.setValue("Auto Detail Using Distance");
+      $showAutoDetail = true;
+   }
+
+}
+

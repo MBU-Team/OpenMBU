@@ -1,0 +1,188 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl (TSShowLightDlg)
+{
+   profile = "GuiDialogProfile";
+   modal = false;
+   
+   new GuiWindowCtrl()
+   {
+      profile = "GuiWindowProfile";
+      closeCommand = "Canvas.popDialog(TSShowLightDlg);";
+      position = "20 20";
+      extent = "150 400";
+      text = "Light Control";
+      
+      new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+         position = "20 30";
+         extent = "50 16";
+         font = "12 244 Arial";
+         justify = "center";
+         text = "Environment mapping:";
+      };
+
+      new GuiSliderCtrl( "emapAlpha")
+      {
+         profile  = "GuiSliderProfile";
+   	   position = "20 50";
+   	   extent   = "100 20";
+         tab      = "true";
+         range    = "0.0 1.0";
+         value    = 0.0;
+         ticks    = 5;
+      };
+      
+      new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+         position = "20 70";
+         extent = "50 16";
+         font = "12 244 Arial";
+         justify = "center";
+         text = "Ambient Red:";
+      };
+
+      new GuiSliderCtrl( "ambR")
+      {
+         profile  = "GuiSliderProfile";
+   	   position = "20 90";
+   	   extent   = "100 20";
+         tab      = "true";
+         range    = "0.0 1.0";
+         value    = 0.5;
+         ticks    = 5;
+      };
+      
+      new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+         position = "20 110";
+         extent = "50 16";
+         font = "12 244 Arial";
+         justify = "center";
+         text = "Ambient Green:";
+      };
+
+      new GuiSliderCtrl( "ambG")
+      {
+         profile  = "GuiSliderProfile";
+   	   position = "20 130";
+   	   extent   = "100 20";
+         tab      = "true";
+         range    = "0.0 1.0";
+         value    = 0.5;
+         ticks    = 5;
+      };
+      
+      new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+         position = "20 150";
+         extent = "50 16";
+         font = "12 244 Arial";
+         justify = "center";
+         text = "Ambient Blue:";
+      };
+
+      new GuiSliderCtrl( "ambB")
+      {
+         profile  = "GuiSliderProfile";
+   	   position = "20 170";
+   	   extent   = "100 20";
+         tab      = "true";
+         range    = "0.0 1.0";
+         value    = 0.5;
+         ticks    = 5;
+      };
+      
+      new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+         position = "20 190";
+         extent = "50 16";
+         font = "12 244 Arial";
+         justify = "center";
+         text = "Directional Red:";
+      };
+
+      new GuiSliderCtrl( "diffR")
+      {
+         profile  = "GuiSliderProfile";
+   	   position = "20 210";
+   	   extent   = "100 20";
+         tab      = "true";
+         range    = "0.0 1.0";
+         value    = 0.5;
+         ticks    = 5;
+      };
+      
+      new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+         position = "20 230";
+         extent = "50 16";
+         font = "12 244 Arial";
+         justify = "center";
+         text = "Directional Green:";
+      };
+
+      new GuiSliderCtrl( "diffG")
+      {
+         profile  = "GuiSliderProfile";
+   	   position = "20 250";
+   	   extent   = "100 20";
+         tab      = "true";
+         range    = "0.0 1.0";
+         value    = 0.5;
+         ticks    = 5;
+      };
+      
+      new GuiTextCtrl()
+      {
+         profile = "GuiTextProfile";
+         position = "20 270";
+         extent = "50 16";
+         font = "12 244 Arial";
+         justify = "center";
+         text = "Directional Blue:";
+      };
+
+      new GuiSliderCtrl( "diffB")
+      {
+         profile  = "GuiSliderProfile";
+   	   position = "20 290";
+   	   extent   = "100 20";
+         tab      = "true";
+         range    = "0.0 1.0";
+         value    = 0.5;
+         ticks    = 5;
+      };
+      
+      new GuiButtonCtrl ()
+      {
+         profile  = "GuiButtonProfile";
+         position = "40 330";
+         extent   = "60 20";
+         text = "Set Direction";
+         command = "showSetLightDirection();";
+      };
+
+      new GuiButtonCtrl ()
+      {
+         profile  = "GuiButtonProfile";
+         position = "40 360";
+         extent   = "60 20";
+         text = "OK";
+         command = "Canvas.popDialog(TSShowLightDlg);";
+      };
+   };
+};
+//--- OBJECT WRITE END ---

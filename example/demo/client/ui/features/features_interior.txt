@@ -1,0 +1,17 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/ss_ie>
+<just:left><font:Arial Bold:18>Interior Rendering Engine<font:Arial:16>
+<lmargin%:5>This portal based interior engine is capable of rendering enourmous enclosed spaces.  External light souces even filter through windows and properly light interior surfaces and to top it off the buildings even cast shadows on the terrain.
+
+<lmargin%:2><font:Arial Bold:18>Editors:<font:Arial:16><lmargin%:5>
+• Woldcraft .map editor
+• Quark .map editor
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Portal based visibility
+• Level-of-Detail support.
+• Detail brushes.
+• Per pixel, colored light maps
+• Animated lightmaps.
+• Buildings can be instanced, placed, manipulated and scaled.
+• Seamless integration with the terrain engine.
+

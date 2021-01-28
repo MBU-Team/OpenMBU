@@ -1,0 +1,59 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(MainMenuDlg) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "800 600";
+   minExtent = "8 8";
+   visible = "1";
+      helpTag = "0";
+      title = "Torque Shader Demo";
+
+   new GuiControl() {
+      profile = "GuiDefaultProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      position = "0 0";
+      extent = "800 600";
+      minExtent = "8 2";
+      visible = "1";
+         helpTag = "0";
+
+      new GuiBitmapButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "center";
+         vertSizing = "top";
+         position = "257 503";
+         extent = "285 85";
+         minExtent = "8 2";
+         visible = "1";
+         command = "loadDefaultMission();";
+         text = "Button";
+         groupNum = "-1";
+         buttonType = "PushButton";
+         bitmap = "./button";
+            helpTag = "0";
+
+         new GuiMLTextCtrl() {
+            profile = "GuiMLTextNoSelectProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 7";
+            extent = "260 32";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+            text = "<color:ffffff><shadowcolor:000000><shadow:1:1><font:arial bold:18>Terrain Demo\n<font:arial bold:14>Launches the TSE Terrain Demo.";
+               helpTag = "0";
+               allowSelection = "1";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+

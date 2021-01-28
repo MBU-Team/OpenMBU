@@ -1,0 +1,22 @@
+<rmargin%:98><color:000000><font:Arial Bold:24>Torque Shader "Indie" Game License
+<font:Arial:16><lmargin%:5>The goal of the Torque Shader Engine Indie License is to provide a AAA quality game engine to independent developers with a user friendly, liberal license agreement. The Indie license is intended to be used for games only, by small independent companies or individuals making less than $250,000 annually.
+
+<lmargin%:5><font:Arial Bold:16>Indie License Summary:
+<lmargin%:8><rmargin%:95><font:Arial:16>• Only $295 per seat, includes complete source code to the engine and all tools.
+• Game products only
+• No royalties.
+• No publisher restrictions
+• No limit to the number of games you can publish per license.
+• CVS server for instant access to updates and enhancements.
+• Indie Licensees agree to display the GarageGames Torque logo on startup screen.
+• All you need is your imagination and a C++ compiler.
+
+Other uses welcomed under our Commercial License, proceed to next page for details.
+
+For more information about the Torque Shader Engine and to review the complete End User License Agreement (EULA) please visit our <a:www.garagegames.com/pg/product/view.php?id=28>website product page</a>.
+
+
+
+
+
+

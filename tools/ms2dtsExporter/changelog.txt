@@ -1,0 +1,46 @@
+==============================================================================
+
+This file contains change information for the Torque DTS file exporter
+for Milkshape v1.5.8
+
+The original version of this code was written be José Luis Cebrián who
+has graciously allowed us to integrate his code into the Torque SDK.
+José did an awesome job of putting this tool together and the GG staff
+is very gratefull for the work he's put in to it.
+
+tg = Tim Gift
+rjp = Ryan J. Parker
+
+==============================================================================
+
+- rjp: Moved dtsSDK from tools/ms2dtsExporter to lib/
+- tg: Fixed duplicate DTS name strings
+- tg: Fixed problem with sequences including incorrect bones.
+- tg: Fixed incorrect sequence range display in dialog box
+- tg: Fixed problem with rotations in multi-sequence animations
+- tg: Added support for export options using named materials.
+- tg: Added multi-sequence support using named materials.
+- tg: The debug build DLL now includes the work debug in the name it exports to MS.
+- tg: Added support for mesh flags. These are added to a mesh's name and are
+      comma delimited after a colon, for example "name: flag1,flag2". Current
+      flags are "Billboard", "BillboardZ", "ENormals"
+- tg: Since MS doesn't allow you to shrink the grid below 1, I've changed the
+      default scale to 0.1
+- tg: Created a new project file for the Torque SDK workspace.
+- tg: Now automatically selects any mesh called "Collision" as the collision mesh.
+- tg: Fixed sequence "matters" arrays to export individually (was all the same)
+- tg: The animation now only includes information for affected nodes.
+- tg: Simplified bone-import code (now assumes parents exist before child)
+- tg: Removed extra node creation, all meshes not attached to bones are assigned
+      to the root node.
+- tg: Changed axis orientation, Milkshape X,Y,Z = Torque -X,Z,Y
+- tg: Added animation cyclic flag to export dialog box.
+- tg: Fixed bounds, radius & tubeRadius to use node transforms
+- tg: Got rid of unused node initialization (siblings, firstMesh, etc)
+- tg: Fixed quaternion vertex rotation to be Torque compatible.
+- tg: Re-organized bone/mesh management for better support of different
+      mesh types. Initial version supports standalone rigid meshes, or
+      rigid meshes attached to a bone.  For a rigid mesh to be associated
+      with a bone, all it's vertices must be assigned to that bone.
+- tg: Initial import of MilkShape exorter from José Luis Cebrián
+

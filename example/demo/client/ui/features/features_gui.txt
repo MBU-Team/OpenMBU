@@ -1,0 +1,24 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/gui_editor>
+<just:left><font:Arial Bold:18>GUI System and WYSIWYG Editor
+<font:Arial:16><lmargin%:5>If you have ever built a GUI system from scratch, you know how time consuming it is to implement all the features today's users are accustomed to: Copy, cut paste, tabbing, text selection, window focus, modal and non-modal dialogs, etc. The Torque comes with a complete GUI implementation (Torque Script enabled of course) as well as a full featured, in-engine, WYSIWYG editor for rapid prototyping and development. You can use the built in controls and easily create your own.  
+
+<lmargin%:2><font:Arial Bold:18>GUI System Features<font:Arial:16><lmargin%:5>
+• Build fully scriptable interfaces
+• Includes a complete set of default controls
+• Write custom controls
+• Extensive font support
+• Integrates with OS clipboard
+• Includes complex text-flow controls (like this one) supporting hyperlinks, images, text formatting and more.
+• Automatically adjust and scale to resolution changes
+
+<lmargin%:2><font:Arial Bold:18>GUI Editor Features<font:Arial:16><lmargin%:5>
+• Integrated WYSIWYG GUI editor
+• Edit and test without exiting.
+• Hierarchial control view
+• Property editor
+• Drag and drop interface
+• Supports copy, cut paste of controls
+• Align selected controls
+• Auto space selected controls
+• Bring forward/back assign parent controls
+

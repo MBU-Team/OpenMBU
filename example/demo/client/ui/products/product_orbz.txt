@@ -1,0 +1,12 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/products/orbz_box><just:left>
+<font:Arial Bold:24>Orbz
+<font:Arial Bold:16>Developer:<font:Arial:16> 21-6 Productions
+<font:Arial Bold:16>Publisher:<font:Arial:16> GarageGames
+<font:Arial Bold:16>Availability:<font:Arial:16> GarageGames.com, Shockwave, Real
+
+Orbz is an action/arcade game set in colorful 3D environments where the goal is to hit targets located throughout 14 distinct courses in a race to score the most points.  Strategic solo challenges and intense online action are successfully combined in this Torque title from independent developer, 21-6 Productions.  Orbz uses every aspect of the <font:Arial Bold:16>Torque Shader Engine<font:Arial:16>, including; terrain, interiors, water, particle effects, multiplayer networking, audio, multi-platform support (Mac, Linux, Windows), and dedicated server support.  Custom orb physics, artificial intelligence (botz), and online servers were added to complete this innovative title in just less than 6 months with a 5-person team.
+
+
+<just:center><bitmap:demo/client/ui/products/orbz_ss>
+
+

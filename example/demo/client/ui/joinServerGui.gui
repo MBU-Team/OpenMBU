@@ -1,0 +1,185 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiChunkedBitmapCtrl(JoinServerGui) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "800 600";
+   minExtent = "8 2";
+   visible = "1";
+   useVariable = "0";
+   tile = "0";
+      helpTag = "0";
+      title = "Join Game Server";
+
+   new GuiControl() {
+      profile = "GuiBevelLoweredProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      position = "30 105";
+      extent = "740 390";
+      minExtent = "8 8";
+      visible = "1";
+         helpTag = "0";
+
+      new GuiTextCtrl() {
+         profile = "GuiTextProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "595 23";
+         extent = "20 18";
+         minExtent = "8 8";
+         visible = "1";
+         text = "Ping";
+         maxLength = "255";
+            helpTag = "0";
+      };
+      new GuiScrollCtrl() {
+         profile = "GuiScrollProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "449 56";
+         extent = "266 186";
+         minExtent = "8 8";
+         visible = "1";
+         willFirstRespond = "1";
+         hScrollBar = "dynamic";
+         vScrollBar = "alwaysOn";
+         constantThumbHeight = "0";
+         childMargin = "0 0";
+            helpTag = "0";
+            defaultLineHeight = "15";
+
+         new GuiTextListCtrl(JS_serverList) {
+            profile = "GuiTextArrayProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "2 2";
+            extent = "244 16";
+            minExtent = "8 8";
+            visible = "1";
+            enumerate = "0";
+            resizeCell = "1";
+            columns = "0 145 205 260 325 385";
+            fitParentWidth = "1";
+            clipColumnText = "0";
+               noDuplicates = "false";
+               helpTag = "0";
+         };
+      };
+      new GuiTextCtrl() {
+         profile = "GuiTextProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "455 23";
+         extent = "63 18";
+         minExtent = "8 8";
+         visible = "1";
+         text = "Server Name";
+         maxLength = "255";
+            helpTag = "0";
+      };
+      new GuiTextCtrl() {
+         profile = "GuiTextProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "652 23";
+         extent = "36 18";
+         minExtent = "8 8";
+         visible = "1";
+         text = "Players";
+         maxLength = "255";
+            helpTag = "0";
+      };
+      new GuiMLTextCtrl() {
+         profile = "GuiMLTextProfile";
+         horizSizing = "width";
+         vertSizing = "bottom";
+         position = "2 2";
+         extent = "427 258";
+         minExtent = "8 2";
+         visible = "1";
+         lineSpacing = "2";
+         allowColorChars = "0";
+         maxChars = "-1";
+            fileName = "demo/client/ui/missions/join_server.txt";
+      };
+      new GuiButtonCtrl(JS_queryLan) {
+         profile = "GuiButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "594 257";
+         extent = "100 23";
+         minExtent = "8 8";
+         visible = "1";
+         command = "JoinServerGui.queryLan();";
+         text = "Query LAN";
+         groupNum = "-1";
+         buttonType = "PushButton";
+            helpTag = "0";
+      };
+      new GuiButtonCtrl(JS_queryMaster) {
+         profile = "GuiButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "454 257";
+         extent = "100 23";
+         minExtent = "8 8";
+         visible = "1";
+         command = "JoinServerGui.query();";
+         text = "Query Master";
+         groupNum = "-1";
+         buttonType = "PushButton";
+            helpTag = "0";
+      };
+      new GuiControl(JS_queryStatus) {
+         profile = "GuiWindowProfile";
+         horizSizing = "center";
+         vertSizing = "center";
+         position = "215 170";
+         extent = "310 50";
+         minExtent = "8 8";
+         visible = "0";
+            helpTag = "0";
+
+         new GuiButtonCtrl(JS_cancelQuery) {
+            profile = "GuiButtonProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 15";
+            extent = "64 20";
+            minExtent = "8 8";
+            visible = "1";
+            command = "JoinServerGui.cancel();";
+            text = "Cancel";
+            groupNum = "-1";
+            buttonType = "PushButton";
+               helpTag = "0";
+         };
+         new GuiProgressCtrl(JS_statusBar) {
+            profile = "GuiProgressProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "84 15";
+            extent = "207 20";
+            minExtent = "8 8";
+            visible = "1";
+               helpTag = "0";
+         };
+         new GuiTextCtrl(JS_statusText) {
+            profile = "GuiProgressTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "85 14";
+            extent = "205 20";
+            minExtent = "8 8";
+            visible = "1";
+            maxLength = "255";
+               helpTag = "0";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+

@@ -1,0 +1,97 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(aboutDlg) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+
+   new GuiWindowCtrl() {
+      profile = "GuiWindowProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "132 88";
+      extent = "376 303";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      text = "About...";
+      maxLength = "255";
+      resizeWidth = "0";
+      resizeHeight = "0";
+      canMove = "1";
+      canClose = "1";
+      canMinimize = "0";
+      canMaximize = "0";
+      minSize = "50 50";
+      closeCommand = "Canvas.popDialog(aboutDlg);";
+
+      new GuiMLTextCtrl(aboutText) {
+         profile = "GuiMLTextProfile";
+         horizSizing = "width";
+         vertSizing = "relative";
+         position = "19 36";
+         extent = "336 241";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         lineSpacing = "2";
+         allowColorChars = "0";
+         maxChars = "-1";
+            text = "This is a test";
+      };
+      new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "303 268";
+         extent = "60 23";
+         minExtent = "8 8";
+         visible = "1";
+         command = "Canvas.popDialog(aboutDlg);";
+         helpTag = "0";
+         text = "OK";
+      };
+      new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "12 268";
+         extent = "76 23";
+         minExtent = "8 8";
+         visible = "1";
+         command = "getHelp(\"2. License\");";
+         helpTag = "0";
+         text = "License...";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+function aboutDlg::onWake(%this)
+{
+   %text="<just:center><font:Arial Bold:20>Torque 1.2 Demo\n"@
+         "<font:Arial:12>"@ getCompileTimeString() @", "@ getBuildString() @"Build\n\n"@
+         "<font:Arial:16>Copyright (c) 2001 <a:www.garagegames.com>GarageGames.Com</a>\n"@
+         "<bitmap:rw/client/ui/gglogo150>";
+   aboutText.setText(%text);   
+}   
+
+function aboutText::onURL(%this, %url)
+{
+   echo(%this);
+   echo(%url);
+   gotoWebPage( %url );
+}   
+

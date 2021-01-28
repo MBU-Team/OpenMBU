@@ -1,0 +1,13 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/ss_we>
+<just:left><font:Arial Bold:18>Water Rendering Engine<font:Arial:16>
+<lmargin%:5>Nothing adds to the visual quality of a scene like a huge body of water with twinkling sun reflections.  Use the World Editor to place any number of water blocks in your world then adjust the "dials" to perfect your look: everything from churning lava to crystal clear still water.
+
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Level-of-Detail (LOD) uses screen error metrics 
+• Continuous, seemless, LOD mesh generation for large bodies of water
+• Specular sun glare reflection
+• Water depth based shoreline translucency
+• Dynamic wave animations
+• Multi-pass wave crest and shoreline textures
+• Integration with terrain and interior engines

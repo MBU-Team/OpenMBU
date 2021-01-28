@@ -1,0 +1,6 @@
+DESCRIPTION 'V12 Engine MilkShape Shape Exporter'
+
+VERSION     1.0
+
+EXPORTS
+    CreatePlugIn

@@ -1,0 +1,55 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(AnimationSceneGUI) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   helpTag = "0";
+
+   new GuiButtonCtrl() {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "466 191";
+      extent = "140 30";
+      minExtent = "8 2";
+      visible = "1";
+      command = "AnimationOrcPlay(\"celwave\");";
+      helpTag = "0";
+      text = "Wave";
+      groupNum = "-1";
+      buttonType = "PushButton";
+   };
+   new GuiButtonCtrl() {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "467 231";
+      extent = "140 30";
+      minExtent = "8 2";
+      visible = "1";
+      command = "AnimationOrcPlay(\"celsalute\");";
+      helpTag = "0";
+      text = "Salute";
+      groupNum = "-1";
+      buttonType = "PushButton";
+   };
+   new GuiButtonCtrl() {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "467 276";
+      extent = "138 30";
+      minExtent = "8 2";
+      visible = "1";
+      command = "AnimationOrcPlay(\"range\");";
+      helpTag = "0";
+      text = "Range Test";
+      groupNum = "-1";
+      buttonType = "PushButton";
+   };
+};
+//--- OBJECT WRITE END ---

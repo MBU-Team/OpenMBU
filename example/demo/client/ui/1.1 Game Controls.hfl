@@ -1,0 +1,23 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Default Game Control Setup...<font:Arial:16>
+<tab:105,200>
+<font:Arial Bold:16>Movement<font:Arial:16>
+W	Forward
+S	Backward
+A	Step left
+D	Step right
+Space	Jump
+Mouse Button	Fire
+
+<font:Arial Bold:16>View Control<font:Arial:16>
+E	Zoom
+R	Set zoom FOV
+TAB	First/Third person camera
+Alt-C	Toggle between camera/player
+
+<font:Arial Bold:16>Chat<font:Arial:16>
+U	Send public chat message
+
+<font:Arial Bold:16>Misc Functions<font:Arial:16>
+Ctrl-O	Open in-game options dialog
+F7	Drop the player at the camera
+F8	Drop the camera at the player

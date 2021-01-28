@@ -1,0 +1,17 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Terrain Editor...<font:Arial:16>
+
+The terrain editor is used to manually modify the terrain height map and square properties.  Terrain editing is accomplished using the brush.  The brush is a selection of terrain points or squares centered around the mouse cursor.  The brush is either a circle or square area, and can be one of several size selected from the brush menu.  The brush can also be either a hard brush - where the affect on the terrain is the same across the surface of the brush - or a soft brush - where the brush's influence on terrain diminishes towards the edges of the brush.  The Terrain Editor Settings dialog filter view controls the falloff of the soft brush.
+
+The following terrain editing action modes can be selected from the <font:Arial Bold:16>Action<font:Arial:16> menu.
+<font:Arial Bold:16>Select<font:Arial:16> - Painting with the brush selects grid points
+<font:Arial Bold:16>Adjust Selection<font:Arial:16> - The currently selected grid points can be raised or lowered as a group
+<font:Arial Bold:16>Add Dirt<font:Arial:16> - "Dirt" is added at the center of the brush
+<font:Arial Bold:16>Excavate<font:Arial:16> - "Dirt" is removed from the center of the brush
+<font:Arial Bold:16>Ajust Height<font:Arial:16> - The brush selection can be dragged to raise or lower it
+<font:Arial Bold:16>Flatten<font:Arial:16> - The brush surface is set to a flat plane height
+<font:Arial Bold:16>Smooth<font:Arial:16> - Rough areas are made more smooth in the bounds of the brush
+<font:Arial Bold:16>Set Height<font:Arial:16> - The terrain within the brush is set to a constant height (configurable in the Terrain Editor Settings)
+<font:Arial Bold:16>Set Empty<font:Arial:16> - The squares covered by the brush are made into holes in the terrain
+<font:Arial Bold:16>Clear Empty<font:Arial:16> - The squares covered by the brush are made solid
+<font:Arial Bold:16>Paint Material<font:Arial:16> - The current terrain texture material will be painted with the brush
+

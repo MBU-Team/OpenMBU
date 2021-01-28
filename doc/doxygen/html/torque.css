@@ -1,0 +1,81 @@
+body {
+	font-family: Arial, Helvetica, Univers, Verdana;
+	font-size: 8pt;
+	color: black;
+}
+h1,h2,h3,h4 { color:black; font-weight:bold; margin-top:.5em;margin-bottom:.5em}
+h1 { font-size:200%; text-align: center; }
+h2 { font-size:150%; }
+h3 { font-size:125%; }
+h4 { font-size:100%; }
+
+A.qindex {}
+A.qindexRef {}
+A.el { text-decoration: none; font-weight: bold }
+A.elRef { font-weight: bold }
+A.code { text-decoration: none; font-weight: normal; color: #4444ee }
+A.codeRef { font-weight: normal; color: #4444ee }
+A:hover { text-decoration: none; background-color: #f2f2ff }
+A.bar            { color: #ffffff; font-weight: bold; text-decoration: none }
+A.bar:hover      { color: #ffffff; font-weight: bold; text-decoration: underline; background-color: transparent }
+DL.el { margin-left: -1cm }
+DIV.fragment { 
+	width: 95%; 
+	background-color: #f0f0f0; 
+	border: 1px solid black; 
+	padding: 5px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+DIV.ah { background-color: black; font-weight: bold; color: #ffffff; margin-bottom: 3px; margin-top: 3px }
+TD.md { background-color: #f2f2ff; font-weight: bold; }
+TD.mdname { background-color: #f2f2ff; font-weight: bold; font-style: italic }
+DIV.groupHeader { margin-left: 16px; margin-top: 12px; margin-bottom: 6px; font-weight: bold }
+DIV.groupText { margin-left: 16px; font-style: italic; font-size: smaller }
+
+DIV.section2 { margin-left: 20px; }
+
+FONT.keyword       { color: #008000 }
+FONT.keywordtype   { color: #604020 }
+FONT.keywordflow   { color: #e08000 }
+FONT.comment       { color: #800000 }
+FONT.preprocessor  { color: #806020 }
+FONT.stringliteral { color: #002080 }
+FONT.charliteral   { color: #008080 }
+FONT.bar           { color: #ffffff; font-weight: bold; text-decoration: none }
+HR { color: #513C9D }
+
+
+.memberSection h1, .memberSection h2, .memberSection h3, .memberSection h4 { 
+	background-color: #ccccff; 
+	border: 1px solid black; 
+}
+
+.group h1, .group h2, .group h3, .group h4 { 
+	background-color: #ccccff; 
+	background-color: #666699; 
+	color: white;
+	border: 1px solid black; 
+}
+
+
+.menu {
+	background-color: #252525;
+	background-image: url("menu_bar.gif");
+	background-repeat: repeat-x;
+	background-position: top left;
+	white-space:nowrap; 
+	font-size: 8pt;
+	font-weight: bold;
+	color: #c0c0c0;
+}
+
+.menu a { font-weight: bold; text-decoration: none; }
+
+.menu a:link, .menu a:visited {
+	color: #c0c0c0;
+	text-decoration: none;
+	background-color: none; 
+}
+
+.menu a:hover { color: #FBD41E; background-color: transparent }

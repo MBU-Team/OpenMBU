@@ -1,0 +1,11 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/testimonials/dotcom>
+<just:left><font:Arial Bold:18>An Active Development Community<font:Arial:16>
+<lmargin%:5>When most people are deciding what engine to use they get bogged down in technology checklists and overlook one of the most important features - an active development community.  GarageGames has an active community of tens of thousands of developers from around the world.  
+
+It is a living knowlegebase and resource which you can tap into 24 hours a day. Build teams, get answers to development questions, product beta testing, code snippits, search resource databases and make new friends.
+
+
+
+<font:Arial Italic:16><lmargin%:2><rmargin%:95>"A professional engine backed by a team of creative, dedicated developers and an active user community. It's up to date, it's already created one AAA best selling title, and it's selling at an incredibly low price! What more could you want?"
+<font:Arial Bold:16><lmargin%:5>--David Dougher
+

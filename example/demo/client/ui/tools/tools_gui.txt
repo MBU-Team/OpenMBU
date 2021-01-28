@@ -1,0 +1,13 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/tools/ss_gui>
+<just:left><font:Arial Bold:18>WYSIWYG GUI Editor<font:Arial:16>
+<lmargin%:5>The Torque Shader Engine greatly simplies the task of creating game interfaces with its built in WYSIWYG GUI editor.  Quickly create, layout and test complex interfaces with scripted logic.  Edit screens while your game is running! Just press F10 to enter the gui editor, make the desired changes, F10 to exit and test.
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Integrated WYSIWYG GUI editor
+• Edit control properties
+• Build fully scripted interfaces
+• Includes a complete set of default controls
+• Easily add custom controls
+• Extensive anti-aliased font support
+• Copy, Cut, Paste to/from OS Clipboard
+

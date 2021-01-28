@@ -1,0 +1,269 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TSShowThreadControlDlg) {
+   profile = "GuiDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "True";
+	setFirstResponder = "False";
+	modal = "False";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "451 403";
+		extent = "327 187";
+		minExtent = "8 8";
+		visible = "True";
+		setFirstResponder = "False";
+		modal = "True";
+		helpTag = "0";
+		text = "Thread Control";
+		resizeWidth = "True";
+		resizeHeight = "True";
+		canMove = "True";
+		canClose = "True";
+		canMinimize = "True";
+		canMaximize = "True";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(TSShowThreadControlDlg);";
+
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "5 30";
+			extent = "42 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Threads:";
+				FONT = "12 244 Arial";
+				justify = "center";
+		};
+		new GuiScrollCtrl() {
+			profile = "GuiScrollProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "5 50";
+			extent = "50 100";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			willFirstRespond = "True";
+			hScrollBar = "alwaysOff";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "False";
+
+			new GuiTextListCtrl(threadList) {
+				profile = "GuiTextArrayProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "0 0";
+				extent = "50 16";
+				minExtent = "8 8";
+				visible = "True";
+				setFirstResponder = "False";
+				modal = "True";
+				command = "showUpdateThreadControl();";
+				helpTag = "0";
+				enumerate = "False";
+				resizeCell = "True";
+				columns = "0";
+					noDuplicates = "false";
+			};
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "90 30";
+			extent = "57 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Sequences:";
+				FONT = "12 244 Arial";
+		};
+		new GuiScrollCtrl() {
+			profile = "GuiScrollProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "60 50";
+			extent = "150 100";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			willFirstRespond = "True";
+			hScrollBar = "dynamic";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "False";
+				text = "Sequences:";
+
+			new GuiTextListCtrl(sequenceList) {
+				profile = "GuiTextArrayProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "0 0";
+				extent = "150 16";
+				minExtent = "8 8";
+				visible = "True";
+				setFirstResponder = "False";
+				modal = "True";
+				command = "showSelectSequence();";
+				altCommand = "showSelectSequence();";
+				helpTag = "0";
+				enumerate = "False";
+				resizeCell = "True";
+				columns = "0";
+					noDuplicates = "false";
+			};
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "230 27";
+			extent = "84 16";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "showPlay(threadList.getValue());";
+			helpTag = "0";
+			text = "Play";
+		};
+		new GuiTextCtrl(showScaleValue) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "133 162";
+			extent = "8 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+				FONT = "12 244 Arial";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "230 47";
+			extent = "84 16";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "showStop(threadList.getValue());";
+			helpTag = "0";
+			text = "Stop";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "230 79";
+			extent = "84 16";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			command = "Canvas.pushDialog(TSShowTransitionDlg,199);";
+			helpTag = "0";
+			text = "Transition...";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "230 110";
+			extent = "84 16";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "showNewThread();";
+			helpTag = "0";
+			text = "New Thread";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "230 129";
+			extent = "84 16";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "showDeleteThread(threadList.getValue());";
+			helpTag = "0";
+			text = "Delete Thread";
+		};
+		new GuiSliderCtrl(threadPosition) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "27 160";
+			extent = "100 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			variable = "value";
+			helpTag = "0";
+			range = "0.000000 1.000000";
+			ticks = "5";
+			value = "0";
+				tab = "true";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "230 161";
+			extent = "84 16";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "showScale.setText(\"\"); Canvas.pushDialog(TSShowEditScale,199);";
+			helpTag = "0";
+			text = "Edit Scale";
+		};
+		new GuiTextCtrl(transitionSignal) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 162";
+			extent = "8 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			helpTag = "0";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

@@ -1,0 +1,19 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/ss_te>
+<just:left><font:Arial Bold:18>Terrain Rendering Engine<font:Arial:16>
+<lmargin%:5>The Terrain system can render truly spectacular vistas with impressive visual distance.  Using the in-game editors you can quickly generate realistic heightfields and texture kilometers of terrain with a few mouse clicks. The screen error based, continuous LOD mesh reduction keeps the poly count low, the mesh rock solid and the distance visibiliy high.
+
+<lmargin%:2><font:Arial Bold:18>Integrated Editors:<font:Arial:16><lmargin%:5>
+• Integrated Heightfield Generator
+• Import/export grayscale heightfield bitmaps
+• Integrated rule-based texture tile placement
+• Integrated texture tile "painting" 
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Continuous, seemless, Level-of_Detail (LOD) mesh
+• LOD reduction uses adjustable screen error metrics
+• Light mapped self shadowing and building shadows
+• Dynamically generated blend tiles
+• Aggregated tile mip-mapping
+• Altitude based fog banks
+• Seamless integration with the interior engine
+

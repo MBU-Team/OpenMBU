@@ -1,0 +1,13 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(products_main) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   helpTag = "0";
+   title = "Torque Games";
+};
+//--- OBJECT WRITE END ---

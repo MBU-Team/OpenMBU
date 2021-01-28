@@ -1,0 +1,6 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Terrain Texture Painter...<font:Arial:16>
+
+The Terrain Texture Painter tool is used to manually paint terrain textures on the terrain.  Users can select up to six different textures in the boxes in the upper right corner of the screen.  Selecting a texture will place a black box around it.  The terrain brush can then be used to paint the texture on the terrain.
+
+Terrains with more than four textures may exhibit rendering irregularities if all those textures are used in the same area of a map.  In general it is wise to use four or fewer textures on any individual terrain map.
+

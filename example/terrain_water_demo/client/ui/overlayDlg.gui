@@ -1,0 +1,102 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(OverlayDlg) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+      helpTag = "0";
+
+   new GuiBitmapCtrl(OverlayFloater) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = "9 8";
+      extent = "181 169";
+      minExtent = "8 2";
+      visible = "0";
+      bitmap = "./tse_float";
+      wrap = "0";
+         helpTag = "0";
+   };
+   new GuiBitmapButtonCtrl(OverlayNextPage) {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "top";
+      position = "576 419";
+      extent = "52 53";
+      minExtent = "8 2";
+      visible = "0";
+      command = "MainMenuGui.nextPage();";
+      accelerator = "right";
+      text = "Button";
+      groupNum = "-1";
+      buttonType = "PushButton";
+      bitmap = "./arrows/arrow_right";
+         helpTag = "0";
+   };
+   new GuiBitmapButtonCtrl(OverlayQuitPage) {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "614 10";
+      extent = "16 14";
+      minExtent = "8 2";
+      visible = "1";
+      command = "quit();";
+      text = "Button";
+      groupNum = "-1";
+      buttonType = "PushButton";
+      bitmap = "./arrows/exit";
+         helpTag = "0";
+   };
+   new GuiMLTextCtrl(OverlayDesc) {
+      profile = "GuiMLTextProfile";
+      horizSizing = "width";
+      vertSizing = "top";
+      position = "109 407";
+      extent = "423 16";
+      minExtent = "8 2";
+      visible = "1";
+      lineSpacing = "2";
+      allowColorChars = "0";
+      maxChars = "-1";
+      text = "n/a";
+         helpTag = "0";
+         allowSelection = "1";
+   };
+   new GuiBitmapButtonCtrl(OverlayPrevPage) {
+      profile = "GuiButtonProfile";
+      horizSizing = "right";
+      vertSizing = "top";
+      position = "6 422";
+      extent = "52 53";
+      minExtent = "8 2";
+      visible = "0";
+      command = "MainMenuGui.prevPage();";
+      accelerator = "left";
+      text = "Button";
+      groupNum = "-1";
+      buttonType = "PushButton";
+      bitmap = "./arrows/arrow_left";
+         helpTag = "0";
+   };
+   new GuiMLTextCtrl(OverlayTitle) {
+      profile = "GuiMLTextProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "434 16";
+      extent = "197 52";
+      minExtent = "8 2";
+      visible = "1";
+      lineSpacing = "2";
+      allowColorChars = "0";
+      maxChars = "-1";
+      text = "n/a";
+         helpTag = "0";
+         allowSelection = "1";
+   };
+};
+//--- OBJECT WRITE END ---

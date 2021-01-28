@@ -1,0 +1,119 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(LoadFileDlg) {
+	profile = "GuiDefaultProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "137 78";
+		extent = "378 326";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+		text = "Load File...";
+		maxLength = "255";
+		resizeWidth = "1";
+		resizeHeight = "1";
+		canMove = "1";
+		canClose = "1";
+		canMinimize = "1";
+		canMaximize = "1";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(LoadFileDlg);";
+
+		new GuiScrollCtrl() {
+			profile = "GuiScrollProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "9 26";
+			extent = "282 289";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			willFirstRespond = "1";
+			hScrollBar = "dynamic";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "0";
+			defaultLineHeight = "15";
+			childMargin = "0 0";
+
+			new GuiTextListCtrl(loadFileList) {
+				profile = "GuiTextArrayProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "0 0";
+				extent = "161 8";
+				minExtent = "8 8";
+				visible = "1";
+				altCommand = "eval($loadFileCommand); Canvas.popDialog(LoadFileDlg);";
+				helpTag = "0";
+				enumerate = "0";
+				resizeCell = "1";
+				columns = "0";
+				fitParentWidth = "1";
+				clipColumnText = "0";
+					noDuplicates = "false";
+			};
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "303 268";
+			extent = "60 20";
+			minExtent = "8 8";
+			visible = "1";
+			command = "eval($loadFileCommand); Canvas.popDialog(LoadFileDlg);";
+			helpTag = "0";
+			text = "Load";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "303 294";
+			extent = "60 20";
+			minExtent = "8 8";
+			visible = "1";
+			command = "Canvas.popDialog(LoadFileDlg);";
+			helpTag = "0";
+			text = "Cancel";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+
+function fillFileList(%filespec, %ctrl)
+{
+   %ctrl.clear();
+   %i = 0;
+   %f = 0;
+   for(%fld = getField(%filespec, 0); %fld !$= ""; %fld = getField(%filespec, %f++))
+   {
+      for(%file = findFirstFile(%fld); %file !$= ""; %file = findNextFile(%fld))  
+         if (getSubStr(%file, 0, 4) !$= "CVS/")
+            %ctrl.addRow(%i++, %file);
+   }
+   %ctrl.sort(0);
+}
+
+//------------------------------------------------------------------------------
+// ex: getLoadFilename("stuff\*.*", loadStuff);
+//     -- calls 'loadStuff(%filename)' on dblclick or ok
+//------------------------------------------------------------------------------
+function getLoadFilename(%filespec, %callback)
+{  
+   $loadFileCommand = "if(loadFileList.getSelectedId() >= 0)" @ %callback @ "(loadFileList.getValue());";
+   Canvas.pushDialog(LoadFileDlg, 99);
+   fillFileList(%filespec, loadFileList);
+}
+

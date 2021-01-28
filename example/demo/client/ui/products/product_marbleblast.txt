@@ -1,0 +1,11 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/products/marbleblast_box><just:left>
+<font:Arial Bold:24>Marble Blast
+<font:Arial Bold:16>Developer:<font:Arial:16> GarageGames
+<font:Arial Bold:16>Publisher:<font:Arial:16> GarageGames
+<font:Arial Bold:16>Availability:<font:Arial:16> GarageGames.com, Shockwave, Yahoo, Real and retail outlets.
+
+MarbleBlast is the first game developed internally by GarageGames and uses the <font:Arial Bold:16>Torque Shader Engine<font:Arial:16>.  MarbleBlast is a marble based action/arcade game with dozens of challenging levels with moving platforms, hazards and power ups.  GarageGames created MarbleBlast in just under 6 months with only minor modifications to the <font:Arial Bold:16>Torque Shader Engine<font:Arial:16>.  The most notable changes were the addition of smooth shading to interior objects and custom marble physics. 
+
+<just:center><bitmap:demo/client/ui/products/marbleblast_ss>
+
+

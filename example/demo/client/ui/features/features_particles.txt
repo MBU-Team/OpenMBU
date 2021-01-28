@@ -1,0 +1,5 @@
+<spush><font:Arial Bold:18><lmargin%:2>Particle Engine<spop>
+<lmargin%:5>• Integrated with scripting engine
+• Animate texture and scale
+• Specify particle mass, drag, starting velocity, etc.
+• Sophisticated particle generators which can emit multiple particle types at once

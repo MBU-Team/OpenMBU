@@ -1,0 +1,48 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Mission Editor...
+
+Mission Editor Overview<font:Arial:16>
+The Mission Editor is the in-game tool for creating and editing landscapes and placing objects in the 3D world.
+
+Press the F11 key while in the game to toggle the Mission Editor on and off.  The mission editor will start editing the currently loaded mission.
+
+The Mission Editor is composed of the following tools, selectable from the Window menu:
+<font:Arial Bold:16>World Editor<font:Arial:16> - Full screen object movement and selection.
+<font:Arial Bold:16>World Editor Inspector<font:Arial:16> - Used to inspect the properties of mission objects
+<font:Arial Bold:16>World Editor Creator<font:Arial:16> - Used to create new mission objects
+<font:Arial Bold:16>Mission Area Editor<font:Arial:16> - Used to adjust the bounds of the mission area, as well as mirror terrain data
+<font:Arial Bold:16>Terrain Editor<font:Arial:16> - Tool for manually adjusting the terrain heightfield and square properties
+<font:Arial Bold:16>Terrain Terraform Editor<font:Arial:16> - Tool for procedurally generating the terrain heightfield from fractal operations
+<font:Arial Bold:16>Terrain Texture Editor<font:Arial:16> - Tool for procedurally generating the terrain textures based on rules
+<font:Arial Bold:16>Terrain Texture Painter<font:Arial:16> - Tool for manually painting terrain textures on the terrain
+
+There are several editor functions and menus that are available in all mission editor modes:
+
+<font:Arial Bold:20>Basic Movement<font:Arial:16>
+The normal movement keys can be used to control both the player and the camera.  The right mouse button is used to rotate the camera or adjust the player's view.
+
+<font:Arial Bold:20>File Menu<font:Arial:16>
+<font:Arial Bold:16>New Mission...<font:Arial:16> - Creates a new empty mission with a default terrain and sky
+<font:Arial Bold:16>Open Mission...<font:Arial:16> - Opens an existing mission for editing
+<font:Arial Bold:16>Save Mission<font:Arial:16> - Saves changes to the current mission to disk
+<font:Arial Bold:16>Save Mission As...<font:Arial:16> - Saves the current mission under a new name
+<font:Arial Bold:16>Import Terraform Data...<font:Arial:16> - Imports terraform rules from an existing terrain file
+<font:Arial Bold:16>Import Texture Data...<font:Arial:16> - Imports terrain texture rules from an existing terrain file
+<font:Arial Bold:16>Export Terraform Bitmap...<font:Arial:16> - Only active from the Terrain Terraform Editor - exports the current terraform map to a bitmap
+
+<font:Arial Bold:20>Edit Menu<font:Arial:16>
+<font:Arial Bold:16>Undo<font:Arial:16> - Undoes the last action in terrain or world editing.  Not all actions can be undone
+<font:Arial Bold:16>Redo<font:Arial:16> - Redoes the last undone action
+<font:Arial Bold:16>Cut<font:Arial:16> - Cuts the selected objects in the world editor from the mission to the clipboard
+<font:Arial Bold:16>Copy<font:Arial:16> - Copys the selected objects in the world editor to the clipboard
+<font:Arial Bold:16>Paste<font:Arial:16> - Pastes the current clipboard contents into the mission
+<font:Arial Bold:16>Select All<font:Arial:16> - Selects all mission objects in the world editor
+<font:Arial Bold:16>Select None<font:Arial:16> - Clears the current selection in the world and terrain editors
+<font:Arial Bold:16>Relight Scene<font:Arial:16> - Recomputes mission static lighting
+<font:Arial Bold:16>World Editor Settings...<font:Arial:16> - Accesses the settings dialog for the World Editor
+<font:Arial Bold:16>Terrain Editor Settings...<font:Arial:16> - Accesses the settings dialog for the Terrain Editor
+
+<font:Arial Bold:20>Camera Menu<font:Arial:16>
+<font:Arial Bold:16>Drop Camera At Player<font:Arial:16> - Moves the camera object to the location of the player, and sets the mode to camera movement mode
+<font:Arial Bold:16>Drop Player At Camera<font:Arial:16> - Moves the player object to the location of the movable camera, and sets the mode to player movement mode
+<font:Arial Bold:16>Toggle Camera<font:Arial:16> - Toggles between player and camera movement mode
+<font:Arial Bold:16>Slowest...Fastest<font:Arial:16> - Adjusts the speed of the camera

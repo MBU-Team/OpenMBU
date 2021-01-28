@@ -1,0 +1,11 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/products/tribes2_box><just:left>
+<font:Arial Bold:24>Tribes 2
+<font:Arial Bold:16>Developer:<font:Arial:16> Dynamix
+<font:Arial Bold:16>Publisher:<font:Arial:16> Vivendi/Universal Studios
+<font:Arial Bold:16>Availability:<font:Arial:16> Most retail and online stores.
+
+This AAA title was developed by Dynamix and released in the spring of 2001.  Tribes2 quickly became one of the top first person shooters in its genre, receiving many awards for its supurb team based game-play and superior networking code.  If you want to play a game that uses every square inch of the <font:Arial Bold:16>Torque Shader Engine<font:Arial:16>, this is the game to play.
+
+<just:center><bitmap:demo/client/ui/products/tribes2_ss>
+
+

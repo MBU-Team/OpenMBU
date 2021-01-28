@@ -1,0 +1,19 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/ss_re>
+<just:left><font:Arial Bold:18>Rendering Engine Overview<font:Arial:16>
+<lmargin%:5>The scene graph based rendering system in the Torque Shader Engine supports a wide array of rendering tasks: from vast Terrains to detailed Interior spaces, Animated meshes and clouded skys all seamlesly integrated producing stunning scenery.  The next couple pages provide an overview of the major rendering sub-systems.
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Custom & Procedurally Generated Shaders
+• Terrain Rendering
+• Interior Rendering
+• Sky and Environmental effects
+• Complex Animated Meshes
+• Multi-pass texturing
+• Layered volumetric fog
+• Decals
+• Detail texturing
+• Environment mapping
+• Vertex and multi-pass lighting
+• True spherical distance fogging (for terrain, buildings)
+• Spherical distance clipping (for terrain, buildings)
+

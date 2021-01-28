@@ -1,0 +1,148 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TSShowGui) {
+	profile = "GuiDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	setFirstResponder = "0";
+	modal = "1";
+	helpTag = "0";
+
+	new ShowTSCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "0 0";
+		extent = "800 600";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		helpTag = "0";
+	};
+	new GuiButtonCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 271";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		command = "getLoadFilename(\"*.dts\", showShapeLoad);";
+		helpTag = "0";
+		text = "Load Shape";
+	};
+	new GuiButtonCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 301";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		command = "getLoadFilename(\"*.dsq\", showSequenceLoad);";
+		helpTag = "0";
+		text = "Load Sequence";
+	};
+	new GuiButtonCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 361";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		command = "Canvas.pushDialog(TSShowDetailControlDlg,99);";
+		helpTag = "0";
+		text = "Detail Control";
+	};
+	new GuiButtonCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 390";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		command = "Canvas.pushDialog(TSShowLightDlg,99);";
+		helpTag = "0";
+		text = "Lighting";
+	};
+	new GuiButtonCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 420";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		command = "Canvas.pushDialog(TSShowMiscDlg,99);";
+		helpTag = "0";
+		text = "Misc";
+	};
+	new GuiButtonCtrl(showExitButton) {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 450";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		command = "stopShow();";
+		helpTag = "0";
+		text = "Quit";
+	};
+	new GuiButtonCtrl() {
+		profile = "GuiButtonProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 331";
+		extent = "100 20";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		command = "Canvas.pushDialog(TSShowThreadControlDlg,99); showUpdateThreadControl();";
+		helpTag = "0";
+		text = "Thread control";
+	};
+};
+//--- OBJECT WRITE END ---
+
+
+
+function TSShowGui::onWake(%this)
+{
+   GlobalActionMap.bindcmd(keyboard, "tab", "", "toggleMouse();");
+   showMoveMap.push();
+}
+
+function TSShowGui::onSleep(%this)
+{
+   GlobalActionMap.unbind(keyboard, "tab");
+   showMoveMap.pop();
+}
+
+

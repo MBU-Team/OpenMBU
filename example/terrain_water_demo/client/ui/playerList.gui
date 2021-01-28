@@ -1,0 +1,125 @@
+//-----------------------------------------------------------------------------
+// Torque Game Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(PlayerListGui) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+   noCursor = true;
+
+   new GuiBitmapCtrl() {
+      profile = "HudScrollProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = "65 175";
+      extent = "147 231";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      bitmap = "./hudfill.png";
+      wrap = "0";
+
+      new GuiTextCtrl() {
+         profile = "HudTextProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "37 2";
+         extent = "76 20";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         text = "Score Board";
+         maxLength = "255";
+      };
+      new GuiScrollCtrl() {
+         profile = "HudScrollProfile";
+         horizSizing = "width";
+         vertSizing = "height";
+         position = "0 24";
+         extent = "147 207";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         willFirstRespond = "1";
+         hScrollBar = "alwaysOff";
+         vScrollBar = "dynamic";
+         constantThumbHeight = "0";
+         defaultLineHeight = "15";
+         childMargin = "0 0";
+
+         new GuiTextListCtrl(PlayerListGuiList) {
+            profile = "HudTextProfile";
+            horizSizing = "width";
+            vertSizing = "height";
+            position = "0 0";
+            extent = "145 36";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            enumerate = "0";
+            resizeCell = "1";
+            columns = "0 120";
+            fitParentWidth = "1";
+            clipColumnText = "0";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function PlayerListGui::update(%this,%clientId,%name,%isSuperAdmin,%isAdmin,%isAI,%score)
+{
+   // Build the row to display.  The name can have ML control tags,
+   // including color and font.  Since we're not using and
+   // ML control here, we need to strip them off.
+   %tag = %isSuperAdmin? "[Super]":
+          (%isAdmin? "[Admin]":
+          (%isAI? "[Bot]":
+          ""));
+   %text = StripMLControlChars(%name) SPC %tag TAB %score;
+
+   // Update or add the player to the control
+   if (PlayerListGuiList.getRowNumById(%clientId) == -1)
+      PlayerListGuiList.addRow(%clientId, %text);
+   else
+      PlayerListGuiList.setRowById(%clientId, %text);
+
+   // Sorts by score
+   PlayerListGuiList.sortNumerical(1);
+}
+
+function PlayerListGui::updateScore(%this,%clientId,%score)
+{
+   %text = PlayerListGuiList.getRowTextById(%clientId);
+   %text = setField(%text,1,%score);
+   PlayerListGuiList.setRowById(%clientId, %text);
+   PlayerListGuiList.sortNumerical(1);
+}
+
+function PlayerListGui::remove(%this,%clientId)
+{
+   PlayerListGuiList.removeRowById(%clientId);
+}
+
+function PlayerListGui::toggle(%this)
+{
+   if (%this.isAwake())
+      Canvas.popDialog(%this);
+   else
+      Canvas.pushDialog(%this);
+}
+
+function PlayerListGui::clear(%this)
+{
+   // Override to clear the list.
+   PlayerListGuiList.clear();
+}

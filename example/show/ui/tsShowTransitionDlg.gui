@@ -1,0 +1,235 @@
+//-----------------------------------------------------------------------------
+// Torque Shader Engine
+// 
+// Copyright (c) 2001 GarageGames.Com
+// Portions Copyright (c) 2001 by Sierra Online, Inc.
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(TSShowTransitionDlg) {
+   profile = "GuiDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "True";
+	setFirstResponder = "False";
+	modal = "False";
+	helpTag = "0";
+
+	new GuiWindowCtrl() {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "6 378";
+		extent = "249 195";
+		minExtent = "8 8";
+		visible = "True";
+		setFirstResponder = "False";
+		modal = "True";
+		helpTag = "0";
+		text = "Transition Control";
+		resizeWidth = "True";
+		resizeHeight = "True";
+		canMove = "True";
+		canClose = "True";
+		canMinimize = "True";
+		canMaximize = "True";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(TSShowTransitionDlg);";
+
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "13 28";
+			extent = "27 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			command = "showToggleTransition();";
+			helpTag = "0";
+			text = "==>";
+		};
+		new GuiTextCtrl(showTransitionToText) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "46 30";
+			extent = "67 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Set Sequence";
+				justify = "center";
+				FONT = "12 244 Arial";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "13 56";
+			extent = "27 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			command = "showToggleTransitionPos();";
+			helpTag = "0";
+			text = "==>";
+		};
+		new GuiTextCtrl(showTransitionPosText) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "46 58";
+			extent = "147 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Transition To Synched Position";
+				justify = "center";
+				FONT = "12 244 Arial";
+		};
+		new GuiSliderCtrl(transitionPosition) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "47 125";
+			extent = "100 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			variable = "value";
+			helpTag = "0";
+			range = "0.000000 1.000000";
+			ticks = "5";
+			value = "0";
+				tab = "true";
+		};
+		new GuiTextCtrl(transitionDurationText) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "132 170";
+			extent = "14 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "0.2";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "15 159";
+			extent = "85 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			command = "Canvas.pushDialog(TSShowTranDurEditDlg);";
+			helpTag = "0";
+			text = "Edit Duration";
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "119 152";
+			extent = "42 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			helpTag = "0";
+			text = "Duration:";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "13 87";
+			extent = "27 20";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "True";
+			modal = "True";
+			command = "showToggleTransitionTargetPlay();";
+			helpTag = "0";
+			text = "==>";
+		};
+		new GuiTextCtrl(showTransitionTargetPlayText) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "46 89";
+			extent = "190 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Target sequence plays during transition";
+				FONT = "12 244 Arial";
+				justify = "center";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+$showTransition = false;
+$showTransitionSynched = true;
+$showTransitionDuration = 0.2;
+$showTransitionTargetPlay = true;
+
+function showToggleTransitionTargetPlay()
+{
+	if ($showTransitionTargetPlay)
+   {
+   	showTransitionTargetPlayText.setValue("Target sequence pauses during transition");
+      $showTransitionTargetPlay = false;
+   }
+   else
+   {
+   	showTransitionTargetPlayText.setValue("Target sequence plays during transition");
+      $showTransitionTargetPlay = true;
+   }
+}
+
+function showToggleTransition()
+{
+	if ($showTransition)
+   {
+   	showTransitionToText.setValue("Set Sequence");
+   	$showTransition=false;
+   }
+   else
+   {
+   	showTransitionToText.setValue("Transition To Sequence");
+   	$showTransition=true;
+   }
+}
+
+function showToggleTransitionPos()
+{
+	if ($showTransitionSynched)
+   {
+   	showTransitionPosText.setValue("Transition to Slider Position");
+   	$showTransitionSynched=false;
+   }
+   else
+   {
+   	showTransitionPosText.setValue("Transition To Synched Position");
+   	$showTransitionSynched=true;
+   }
+}

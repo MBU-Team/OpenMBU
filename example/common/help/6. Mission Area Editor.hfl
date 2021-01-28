@@ -1,0 +1,9 @@
+<lmargin%:5><rmargin%:95><font:Arial Bold:20>Mission Area Editor...<font:Arial:16>
+
+The Mission Area Editor displays an overhead height map in the upper right corner of the screen, with markers for mission objects, a box for the mission area and a pair of lines denoting the current field of view.  Clicking anywhere on the display will move the current view object (either camera or player) to that location in the mission.
+
+To edit the mission area, click on the "Edit Area" checkbox.  This will display 8 resizing knobs on the mission area box, that can be dragged with the mouse.
+
+The "Center" button will cause the terrain file data to be repositioned and centered at 0,0 in the center of the mission area box.
+
+To mirror the terrain, click on the Mirror button.  This will put the mission area editor in mirror mode.  The left and right arrow buttons adjust the mirror plane angle to one of 8 different angles (2 axis aligned, 2 45-degree splits), and the Apply button will mirror the terrain across the mirror plane.

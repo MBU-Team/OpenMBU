@@ -1,0 +1,14 @@
+.vs
+out.*.*/
+*.user
+*.log
+example/*.exe
+*.dso
+prefs.cs
+banlist.cs
+config.cs
+tools/*.exe
+tools/*.ilk
+shaderP*.hlsl
+shaderV*.hlsl
+*.ml

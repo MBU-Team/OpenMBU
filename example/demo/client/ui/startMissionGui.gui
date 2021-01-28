@@ -1,0 +1,104 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiChunkedBitmapCtrl(StartMissionGui) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   useVariable = "0";
+   tile = "0";
+      helpTag = "0";
+      title = "Play Demo Game";
+
+   new GuiControl() {
+      profile = "GuiBevelLoweredProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      position = "30 105";
+      extent = "580 270";
+      minExtent = "8 2";
+      visible = "1";
+         helpTag = "0";
+
+      new GuiControl() {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "14 285";
+         extent = "229 65";
+         minExtent = "8 2";
+         visible = "1";
+            helpTag = "0";
+
+         new GuiTextCtrl() {
+            profile = "GuiTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "17 10";
+            extent = "63 18";
+            minExtent = "8 8";
+            visible = "1";
+            text = "Player Name:";
+            maxLength = "255";
+               helpTag = "0";
+         };
+         new GuiTextEditCtrl() {
+            profile = "GuiTextEditProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "88 11";
+            extent = "134 18";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "pref::Player::Name";
+            maxLength = "255";
+            historySize = "0";
+            password = "0";
+            tabComplete = "0";
+            sinkAllKeyEvents = "0";
+               helpTag = "0";
+         };
+         new GuiTextCtrl() {
+            profile = "GuiTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "9 35";
+            extent = "71 18";
+            minExtent = "8 2";
+            visible = "1";
+            text = "Create Server:";
+            maxLength = "255";
+         };
+         new GuiCheckBoxCtrl(StartMissionGuiCheck) {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "89 31";
+            extent = "18 30";
+            minExtent = "8 2";
+            visible = "1";
+            text = " ";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+      };
+      new GuiMLTextCtrl(StartMissionGuiText) {
+         profile = "GuiMLTextProfile";
+         horizSizing = "width";
+         vertSizing = "bottom";
+         position = "2 2";
+         extent = "575 338";
+         minExtent = "8 2";
+         visible = "1";
+         lineSpacing = "2";
+         allowColorChars = "0";
+         maxChars = "-1";
+            fileName = "demo/client/ui/missions/start_racing.txt";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+

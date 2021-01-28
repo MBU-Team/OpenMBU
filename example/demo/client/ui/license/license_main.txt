@@ -1,0 +1,12 @@
+<color:000000><font:Arial Bold:24>Torque Shader Engine Licenses in a Nutshell
+<lmargin%:5><rmargin%:95><font:Arial:16>The Torque Shader Engine is used for much more than just games: it is being used for visualization, military simulations, educational materials and the list goes on.  Our goal is to keep our license agreements as simple and straight forward as possible please contact us if you have any questions about licensing the Torque for your project.
+
+1) Independent Game Development License
+2) Commercial Development License
+
+Click forward for details on the licensing the Torque...
+
+
+
+
+

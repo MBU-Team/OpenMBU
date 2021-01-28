@@ -1,0 +1,718 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(ObjectBuilderGui) {
+	profile = "GuiDefaultProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	setFirstResponder = "0";
+	modal = "1";
+	helpTag = "0";
+
+	new GuiWindowCtrl(OBTargetWindow) {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "217 74";
+		extent = "256 282";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		helpTag = "0";
+		resizeWidth = "1";
+		resizeHeight = "1";
+		canMove = "1";
+		canClose = "0";
+		canMinimize = "0";
+		canMaximize = "0";
+		minSize = "50 50";
+
+		new GuiTextCtrl() {
+			profile = "GuiCenterTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "13 31";
+			extent = "84 25";
+			minExtent = "8 8";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			helpTag = "0";
+			text = "Object Name:";
+		};
+		new GuiTextEditCtrl(OBObjectName) {
+			profile = "GuiTextEditProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "105 31";
+			extent = "143 18";
+			minExtent = "8 8";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			helpTag = "0";
+			historySize = "0";
+		};
+		new GuiControl(OBContentWindow) {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "8 56";
+			extent = "240 193";
+			minExtent = "0 0";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			helpTag = "0";
+		};
+		new GuiButtonCtrl(OBOKButton) {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "70 254";
+			extent = "80 20";
+			minExtent = "8 8";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			command = "ObjectBuilderGui.onOK();";
+			helpTag = "0";
+			text = "OK";
+		};
+		new GuiButtonCtrl(OBCancelButton) {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "156 254";
+			extent = "80 20";
+			minExtent = "8 8";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			command = "ObjectBuilderGui.onCancel();";
+			helpTag = "0";
+			text = "Cancel";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+function ObjectBuilderGui::init(%this)
+{
+   %this.baseOffsetX       = 9;
+   %this.baseOffsetY       = 10;
+   %this.scriptFile        = "editor/newObject.cs";
+   %this.defaultObjectName = "";
+   %this.defaultFieldStep  = 26;
+   %this.columnOffset      = 95;
+
+   %this.fieldNameExtent   = "132 18";
+   %this.textEditExtent    = "127 18";
+   %this.checkBoxExtent    = "18 18";
+   %this.popupMenuExtent   = "127 18";
+   %this.fileButtonExtent  = "127 18";
+
+   //
+   %this.numControls       = 0;
+
+   %this.reset();
+}
+
+function ObjectBuilderGui::reset(%this)
+{
+   %this.curXPos           = %this.baseOffsetX;
+   %this.curYPos           = %this.baseOffsetY;
+   %this.createCallback    = "";
+   %this.currentControl    = 0;
+
+   //
+   OBObjectName.setValue(%this.defaultObjectName);
+
+   //
+   %this.newObject         = 0;
+   %this.className         = "";
+   %this.numFields         = 0;
+
+   //
+   for(%i = 0; %i < %this.numControls; %i++)
+   {
+      %this.textControls[%i].delete();
+      %this.controls[%i].delete();
+   }
+   %this.numControls = 0;
+}
+
+//------------------------------------------------------------------------------
+
+function ObjectBuilderGui::createFileType(%this, %index)
+{
+   if(%index >= %this.numFields || %this.field[%index, name] $= "")
+   {
+      error("ObjectBuilderGui::createFileType: invalid field");
+      return;
+   }
+
+   //
+   if(%this.field[%index, text] $= "")
+      %name = %this.field[%index, name];
+   else
+      %name = %this.field[%index, text];
+
+   // 
+   %this.textControls[%this.numControls] = new GuiTextCtrl() {
+      profile = "GuiTextProfile";
+      text = %name;
+      extent = %this.fieldNameExtent;
+      position = %this.curXPos @ " " @ %this.curYPos;
+      modal = "1";
+   };
+
+   // 
+   %this.controls[%this.numControls] = new GuiButtonCtrl() {
+      profile = "GuiButtonProfile";
+      extent = %this.fileButtonExtent;
+      position = %this.curXPos + %this.columnOffset @ " " @ %this.curYPos;
+      modal = "1";
+      command = %this @ ".getFileName(" @ %index @ ");";
+   };
+
+   %val = %this.field[%index, value];
+   %this.controls[%this.numControls].setValue(fileBase(%val) @ fileExt(%val));
+
+   %this.numControls++;
+   %this.curYPos += %this.defaultFieldStep;
+}
+
+function ObjectBuilderGui::getFileName(%this, %index)
+{
+   if(%index >= %this.numFields || %this.field[%index, name] $= "")
+   {
+      error("ObjectBuilderGui::getFileName: invalid field");
+      return;
+   }
+   
+   %val = %this.field[%index, value];
+
+   %path = filePath(%val);
+   %ext = fileExt(%val);
+
+   %this.currentControl = %index;
+   getLoadFilename(%path @ "*" @ %ext, %this @ ".gotFileName");
+}
+
+function ObjectBuilderGui::gotFileName(%this, %name)
+{
+   %this.controls[%this.currentControl].setValue(%name);
+}
+
+//------------------------------------------------------------------------------
+
+function ObjectBuilderGui::createDataBlockType(%this, %index)
+{
+   if(%index >= %this.numFields || %this.field[%index, name] $= "")
+   {
+      error("ObjectBuilderGui::createDataBlockType: invalid field");
+      return;
+   }
+
+   //
+   if(%this.field[%index, text] $= "")
+      %name = %this.field[%index, name];
+   else
+      %name = %this.field[%index, text];
+
+   // 
+   %this.textControls[%this.numControls] = new GuiTextCtrl() {
+      profile = "GuiTextProfile";
+      text = %name;
+      extent = %this.fieldNameExtent;
+      position = %this.curXPos @ " " @ %this.curYPos;
+      modal = "1";
+   };
+
+   // 
+   %this.controls[%this.numControls] = new GuiPopupMenuCtrl() {
+      profile = "GuiPopUpMenuProfile";
+      extent = %this.popupMenuExtent;
+      position = %this.curXPos + %this.columnOffset @ " " @ %this.curYPos;
+      modal = "1";
+      maxPopupHeight = "200";
+   };
+
+   %classname = getWord(%this.field[%index, value], 0);
+
+   %this.controls[%this.numControls].add("", -1);
+
+   // add the datablocks
+   for(%i = 0; %i < DataBlockGroup.getCount(); %i++)
+   {
+      %obj = DataBlockGroup.getObject(%i);
+      if(%obj.getClassName() $= %classname)
+         %this.controls[%this.numControls].add(%obj.getName(), %i);
+   }
+   
+   %this.controls[%this.numControls].setValue(getWord(%this.field[%index, value], 1));
+
+   %this.numControls++;
+   %this.curYPos += %this.defaultFieldStep;
+}
+
+function ObjectBuilderGui::createBoolType(%this, %index)
+{
+   if(%index >= %this.numFields || %this.field[%index, name] $= "")
+   {
+      error("ObjectBuilderGui::createBoolType: invalid field");
+      return;
+   }
+   
+   //
+   if(%this.field[%index, value] $= "")
+      %value = 0;
+   else
+      %value = %this.field[%index, value];
+
+   //
+   if(%this.field[%index, text] $= "")
+      %name = %this.field[%index, name];
+   else
+      %name = %this.field[%index, text];
+
+   // 
+   %this.textControls[%this.numControls] = new GuiTextCtrl() {
+      profile = "GuiTextProfile";
+      text = %name;
+      extent = %this.fieldNameExtent;
+      position = %this.curXPos @ " " @ %this.curYPos;
+      modal = "1";
+   };
+
+   // 
+   %this.controls[%this.numControls] = new GuiCheckBoxCtrl() {
+      profile = "GuiCheckBoxProfile";
+      extent = %this.checkBoxExtent;
+      position = %this.curXPos + %this.columnOffset @ " " @ %this.curYPos;
+      modal = "1";
+   };
+
+   %this.controls[%this.numControls].setValue(%value);
+   
+   %this.numControls++;
+   %this.curYPos += %this.defaultFieldStep;
+}
+
+function ObjectBuilderGui::createStringType(%this, %index)
+{
+   if(%index >= %this.numFields || %this.field[%index, name] $= "")
+   {
+      error("ObjectBuilderGui::createStringType: invalid field");
+      return;
+   }
+   
+   //
+   if(%this.field[%index, text] $= "")
+      %name = %this.field[%index, name];
+   else
+      %name = %this.field[%index, text];
+
+   // 
+   %this.textControls[%this.numControls] = new GuiTextCtrl() {
+      profile = "GuiTextProfile";
+      text = %name;
+      extent = %this.fieldNameExtent;
+      position = %this.curXPos @ " " @ %this.curYPos;
+      modal = "1";
+   };
+
+   // 
+   %this.controls[%this.numControls] = new GuiTextEditCtrl() {
+      profile = "GuiTextEditProfile";
+      extent = %this.textEditExtent;
+      text = %this.field[%index, value];
+      position = %this.curXPos + %this.columnOffset @ " " @ %this.curYPos;
+      modal = "1";
+   };
+   
+   %this.numControls++;
+   %this.curYPos += %this.defaultFieldStep;
+}
+
+//------------------------------------------------------------------------------
+
+function ObjectBuilderGui::adjustSizes(%this)
+{
+   if(%this.numControls == 0)
+      %this.curYPos = 0;
+
+   OBTargetWindow.extent = "256 " @ %this.curYPos + 88;
+   OBContentWindow.extent = "240 " @ %this.curYPos;
+   OBOKButton.position = "70 " @ %this.curYPos + 62;
+   OBCancelButton.position = "156 " @ %this.curYPos + 62;
+}
+
+function ObjectBuilderGui::process(%this)
+{
+   if(%this.className $= "")
+   {
+      error("ObjectBuilderGui::process: classname is not specified");
+      return;
+   }
+
+   OBTargetWindow.setValue("Building Object: " @ %this.className);
+
+   //
+   for(%i = 0; %i < %this.numFields; %i++)
+   {
+      switch$(%this.field[%i, type])
+      {
+         case "TypeBool":
+            %this.createBoolType(%i);
+
+         case "TypeDataBlock":
+            %this.createDataBlockType(%i);
+
+         case "TypeFile":
+            %this.createFileType(%i);
+
+         default:
+            %this.createStringType(%i);
+      }
+   }
+   
+   // add the controls   
+   for(%i = 0; %i < %this.numControls; %i++)
+   {
+      OBContentWindow.add(%this.textControls[%i]);
+      OBContentWindow.add(%this.controls[%i]);
+   }
+
+   //
+   %this.adjustSizes();
+
+   //
+   Canvas.pushDialog(%this);
+}
+
+function ObjectBuilderGui::processNewObject(%this, %obj)
+{
+   if(%this.createCallback !$= "")
+      eval(%this.createCallback);
+
+   if(!isObject(EWorldEditor))
+      return;
+
+   $InstantGroup.add(%obj);
+   EWorldEditor.clearSelection();
+   EWorldEditor.selectObject(%obj);
+   EWorldEditor.dropSelection();
+}
+
+function ObjectBuilderGui::onOK(%this)
+{
+   // get current values
+   for(%i = 0; %i < %this.numControls; %i++)
+      %this.field[%i, value] = %this.controls[%i].getValue();
+
+   // 
+   %file = new FileObject();
+
+   %file.openForWrite(%this.scriptFile);
+
+   %file.writeLine(%this @ ".newObject = new " @ %this.className @ "(" @ OBObjectName.getValue() @ ") {");
+   
+   for(%i = 0; %i < %this.numFields; %i++)
+      %file.writeLine("   " @ %this.field[%i, name] @ " = \"" @ %this.field[%i, value] @ "\";");
+
+   %file.writeLine("};");
+
+   %file.close();
+   %file.delete();
+
+   //
+   exec(%this.scriptFile);
+   if(%this.newObject != 0)
+      %this.processNewObject(%this.newObject);
+
+   %this.reset();
+   Canvas.popDialog(%this);
+}
+
+function ObjectBuilderGui::onCancel(%this)
+{
+   %this.reset();
+   Canvas.popDialog(%this);
+}
+
+function ObjectBuilderGui::addField(%this, %name, %type, %text, %value)
+{
+   %this.field[%this.numFields, name] = %name;
+   %this.field[%this.numFields, type] = %type;
+   %this.field[%this.numFields, text] = %text;
+   %this.field[%this.numFields, value] = %value;
+
+   %this.numFields++;
+}
+
+//------------------------------------------------------------------------------
+// Environment
+//------------------------------------------------------------------------------
+
+function ObjectBuilderGui::buildfxFoliageReplicator(%this)
+{
+	%this.className = "fxFoliageReplicator";
+	%this.process();
+}
+
+function ObjectBuilderGui::buildfxShapeReplicator(%this)
+{
+	%this.className = "fxShapeReplicator";
+	%this.process();
+}
+
+function ObjectBuilderGui::buildfxSunLight(%this)
+{
+	%this.className = "fxSunLight";
+	%this.process();
+}
+
+function ObjectBuilderGui::buildSky(%this)
+{
+   %this.className = "Sky";
+
+   %this.addField("materialList", "TypeFile", "Material list",  "Lush_l4.dml");
+   %this.addField("cloudSpeed[0]", "TypePoint2", "Cloud0 Speed", "0.0000003 0.0000003");
+   %this.addField("cloudSpeed[1]", "TypePoint2", "Cloud1 Speed", "0.0000006 0.0000006");
+   %this.addField("cloudSpeed[2]", "TypePoint2", "Cloud2 Speed", "0.0000009 0.0000009");
+   %this.addField("cloudHeightPer[0]", "TypeFloat", "Cloud0 Height", "0.349971");
+   %this.addField("cloudHeightPer[1]", "TypeFloat", "Cloud1 Height", "0.25");
+   %this.addField("cloudHeightPer[2]", "TypeFloat", "Cloud2 Height", "0.199973");
+   %this.addField("visibleDistance", "TypeFloat", "Visible distance", "900");
+   %this.addField("fogDistance", "TypeFloat", "Fog distance", "600");
+   %this.addField("fogColor", "TypeColor", "Fog color", "0.5 0.5 0.5");
+   %this.addField("fogVolume1", "TypePoint3", "Fog volume", "120 0 100");
+   %this.addField("fogVolume2", "TypePoint3", "Fog volume", "0 0 0");
+   %this.addField("fogVolume3", "TypePoint3", "Fog volume", "0 0 0");
+
+   %this.process();
+}
+
+function ObjectBuilderGui::buildfxLight(%this)
+{
+   %this.className = "fxLight";
+   %this.addField("dataBlock", "TypeDataBlock", "fxLight Data", "fxLightData");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildsgMissionLightingFilter(%this)
+{
+   %this.className = "sgMissionLightingFilter";
+   %this.addField("dataBlock", "TypeDataBlock", "sgMissionLightingFilter Data", "sgMissionLightingFilterData");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildsgDecalProjector(%this)
+{
+   %this.className = "sgDecalProjector";
+   %this.addField("dataBlock", "TypeDataBlock", "DecalData Data", "DecalData");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildsgLightObject(%this)
+{
+   %this.className = "sgLightObject";
+   %this.addField("dataBlock", "TypeDataBlock", "sgLightObject Data", "sgLightObjectData");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildSun(%this)
+{
+   %this.className = "Sun";
+
+   %this.addField("direction", "TypeVector", "Direction", "1 1 -1");
+   %this.addField("color", "TypeColor", "Sun color", "0.8 0.8 0.8");
+   %this.addField("ambient", "TypeColor", "Ambient color", "0.2 0.2 0.2");
+
+   %this.process();
+}
+
+function ObjectBuilderGui::buildLightning(%this)
+{
+   %this.className = "Lightning";
+
+   %this.addField("dataBlock", "TypeDataBlock", "Data block", "LightningData DefaultStorm");
+
+   %this.process();
+}
+
+function ObjectBuilderGui::buildWater(%this)
+{
+   %this.className = "WaterBlock";
+
+   %this.addField("surfMaterial[0]", "TypeString", "Surface Material 0", "Water");
+   %this.addField("surfMaterial[1]", "TypeString", "Surface Material 1", "Underwater");
+   %this.addField("surfMaterial[2]", "TypeString", "Surface Material 2", "Water1_1FogPass");
+   %this.addField("surfMaterial[3]", "TypeString", "Surface Material 3", "WaterBlendMat");
+   %this.addField("surfMaterial[4]", "TypeString", "Surface Material 4", "WaterFallback1_1");
+
+   %this.addField("waveDir[0]", "TypePoint2", "Wave Direction", "0.000000 1.000000");
+   %this.addField("waveDir[1]", "TypePoint2", "Wave Direction", "0.707000 0.707000");
+   %this.addField("waveDir[2]", "TypePoint2", "Wave Direction", "0.500000 0.860000");
+   %this.addField("waveDir[3]", "TypePoint2", "Wave Direction", "0.860000 8.500000");
+
+   %this.addField("waveTexScale[0]", "TypePoint2", "Wave Texture Scale", "7.140000 7.140000");
+   %this.addField("waveTexScale[1]", "TypePoint2", "Wave Texture Scale", "6.250000 12.500000");
+   %this.addField("waveTexScale[2]", "TypePoint2", "Wave Texture Scale", "50.000000 50.000000");
+   %this.addField("waveTexScale[3]", "TypePoint2", "Wave Texture Scale", "0.000000 0.000000");
+
+   %this.addField("waveSpeed[0]", "TypeFloat", "Wave Speed", "-0.065");
+   %this.addField("waveSpeed[1]", "TypeFloat", "Wave Speed", "0.09");
+   %this.addField("waveSpeed[2]", "TypeFloat", "Wave Speed", "0.04");
+   %this.addField("waveSpeed[3]", "TypeFloat", "Wave Speed", "0.025");
+
+   %this.addField("baseColor", "TypeColorI", "Base color", "5 12 22 153");
+   %this.addField("underwaterColor", "TypeColorI", "Underwater color", "11 31 46 190");
+
+
+   %this.process();
+}
+
+function ObjectBuilderGui::buildTerrain(%this)
+{
+   %this.className = "TerrainBlock";
+   %this.createCallback = "ETerrainEditor.attachTerrain();";
+
+   %this.addField("terrainFile", "TypeFile", "Terrain file", "terrains/terr1.ter");
+   %this.addField("squareSize", "TypeInt", "Square size", "8");
+
+   %this.process();
+}
+
+function ObjectBuilderGui::buildAudioEmitter(%this)
+{
+   %this.className = "AudioEmitter";
+   %this.addField("profile", "TypeDataBlock", "Sound Profile", "AudioProfile");
+   %this.addField("description", "TypeDataBlock", "Sound Description", "AudioDescription");
+   %this.addField("fileName", "TypeFile", "Audio file", "");
+   %this.addField("useProfileDescription", "TypeBool", "Use profile's desc?", "false");
+   %this.addFIeld("volume", "TypeFloat", "Volume", "1.0");
+   %this.addField("isLooping", "TypeBool", "Looping?", "true");
+   %this.addField("is3D", "TypeBool", "Is 3D sound?", "true");
+   %this.addField("ReferenceDistance", "TypeFloat", "Reference distance", "5.0"); //EFM
+   %this.addField("maxDistance", "TypeFloat", "Max distance", "35.0");
+   %this.addField("coneInsideAngle", "TypeInt", "Cone inside angle", "90");
+   %this.addField("coneOutsideAngle", "TypeInt", "Cone outside angle", "120");
+   %this.addField("coneOutsideVolume", "TypeFloat", "Cone outside volume", "0.25");
+   %this.addField("loopCount", "TypeInt", "Loop count", "-1");
+   %this.addField("minLoopGap", "TypeInt", "Min loop gap (ms)", "0");
+   %this.addField("maxLoopGap", "TypeInt", "Max loop gap (ms)", "0");
+   %this.addField("type", "TypeInt", "Audio type", $SimAudioType);
+   %this.process();
+}
+
+function ObjectBuilderGui::buildPrecipitation(%this)
+{
+   %this.className = "Precipitation";
+   %this.addField("nameTag", "TypeString", "Name", "");
+   %this.addField("dataBlock", "TypeDataBlock", "Precipitation data", "PrecipitationData");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildParticleEmitter(%this)
+{
+   %this.className = "ParticleEmitterNode";
+   %this.addField("dataBlock", "TypeDataBlock", "datablock", "ParticleEmitterNodeData");
+   %this.addField("emitter",   "TypeDataBlock", "Particle data", "ParticleEmitterData");
+   %this.process();
+}
+
+//------------------------------------------------------------------------------
+// Mission
+//------------------------------------------------------------------------------
+
+function ObjectBuilderGui::buildMissionArea(%this)
+{
+   %this.className = "MissionArea";
+   %this.addField("area", "TypeRect", "Bounding area", "0 0 1024 1024");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildPath(%this)
+{
+   %this.className = "Path";
+   %this.process();
+}
+
+function ObjectBuilderGui::buildPathMarker(%this)
+{
+   %this.className = "Marker";
+   %this.process();
+}
+
+//function ObjectBuilderGui::buildForcefield(%this)
+//{
+//   %this.className = "ForcefieldBare";
+//   %this.addField("dataBlock", "TypeDataBlock", "Data Block", "ForceFieldBareData defaultForceFieldBare");
+//   %this.process();
+//}
+
+function ObjectBuilderGui::buildTrigger(%this)
+{
+   %this.className = "Trigger";
+   %this.addField("dataBlock", "TypeDataBlock", "Data Block", "TriggerData defaultTrigger");
+   %this.addField("polyhedron", "TypeTriggerPolyhedron", "Polyhedron", "0 0 0 1 0 0 0 -1 0 0 0 1");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildPhysicalZone(%this)
+{
+   %this.className = "PhysicalZone";
+   %this.addField("polyhedron", "TypeTriggerPolyhedron", "Polyhedron", "0 0 0 1 0 0 0 -1 0 0 0 1");
+   %this.process();
+}
+
+function ObjectBuilderGui::buildCamera(%this)
+{
+   %this.className = "Camera";
+
+   %this.addField("position", "TypePoint3", "Position", "0 0 0");
+   %this.addField("rotation", "TypePoint4", "Rotation", "1 0 0 0");
+   %this.addField("dataBlock", "TypeDataBlock", "Data block", "CameraData Observer");
+   %this.addField("team", "TypeInt", "Team", "0");
+
+   %this.process();
+}
+
+function ObjectBuilderGui::buildVolumeLight(%this)
+{
+   %this.className = "VolumeLight";
+   %this.addField("dataBlock", "TypeDataBlock", "Data block", "sgLightObjectData");
+   %this.process();
+}
+
+//------------------------------------------------------------------------------
+// System
+//------------------------------------------------------------------------------
+
+function ObjectBuilderGui::buildSimGroup(%this)
+{
+   %this.className = "SimGroup";
+   %this.process();
+}
+
+//------------------------------------------------------------------------------
+// AI
+//------------------------------------------------------------------------------
+
+//function ObjectBuilderGui::buildObjective(%this)
+//{
+//   %this.className = "AIObjective";
+//   %this.process();
+//}
+
+//function ObjectBuilderGui::buildNavigationGraph(%this)
+//{  
+//   %this.className = "NavigationGraph";
+//   %this.process();
+//}

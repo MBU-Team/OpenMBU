@@ -1,0 +1,10 @@
+<lmargin%:2><just:right>
+<just:left><font:Arial Bold:18>Join Multiplayer Game<font:Arial:16><lmargin%:5>
+To join a multiplayer game you must first query the internet or your local lan to find servers. If servers are found they will be displayed to the right.  If no servers are available, you may want to host one yourself by following the instructions on the previous page. If there are several servers to choose from, then generally the servers with the smaller ping values will give you a better playing experience.
+
+<font:Arial Bold:18><lmargin%:2>To Join a Server<font:Arial:16><lmargin%:5>
+• Press "Query LAN" to search for local servers or...
+• Press "Query Master" to search for internet servers 
+• Select the server to join then...
+• Press the right arrow button below... 
+

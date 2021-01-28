@@ -1,0 +1,26 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/ss_sh>
+<just:left><font:Arial Bold:18>Shader Engine<font:Arial:16>
+<lmargin%:5>The shader engine includes a cutting edge procedural shader generator. Procedural generation frees you from having to write a shader for every possible combination of material properties.  Material shaders are generated automatically on-the-fly and optimized for the current user hardware. Custom shaders are also easily added.
+
+<lmargin%:2><font:Arial Bold:18>Shader Support:<font:Arial:16><lmargin%:5>
+• DirectX 9 and OpenGL
+• 1.0, 1.1 and 2.0 shaders
+• Over 200 procedurally generated shaders
+• Easily extended with custom shaders
+• Detail management
+• Fixed-pipeline fallback
+
+<lmargin%:2><font:Arial Bold:18>Material Properties:<font:Arial:16><lmargin%:5>
+• Dynamic Lighting
+• Bumpmapping
+• Detail Maps
+• Specular
+• Cubemapping
+• Glow
+• Fog
+• Refraction
+• Reflection
+• Texture UV Animation
+• Multi-layered
+
+

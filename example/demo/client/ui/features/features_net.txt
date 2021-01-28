@@ -1,0 +1,18 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/torquenetworking>
+<just:left><font:Arial Bold:18>Torque Networking<font:Arial:16><lmargin%:5>
+The Torque is built for multi-player games.  This award winning network code has been recognized by press and developers alike as being one of the most efficient and responsive multi-player code bases available.  Easily support dozens of players and support for hundreds of players attainable with close attention to detailing and bandwidth usage (Tribes2 uses this code and supports 128 player servers).  Key features of Torque networking code are support for multiple data delivery requirements, partial object state updates and an effecient packet delivery notification protocol.
+
+<font:Arial Bold:18><lmargin%:2>Feature Highlights<font:Arial:16><lmargin%:5>
+• Award winning client/server architecture
+• Uses UDP and TCP
+• Packet stream manager
+• Object ghost manager
+• Partial object updates
+• Metric based partial updates
+• Bit level stream packing
+• String and message packing
+• Uses the optimal Notified Delivery Protocol
+
+<font:Arial Bold:18><lmargin%:2>References<font:Arial:16><lmargin%:5>
+Session Presentation Notes from Game Developers Conference 2000
+<a:www.garagegames.com/articles/networking1/>The TRIBES Engine Networking Model or How to Make the Internet Rock for Multi-player Games</a>

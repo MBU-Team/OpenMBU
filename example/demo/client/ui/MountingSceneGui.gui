@@ -1,0 +1,41 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(MountingSceneGui) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   helpTag = "0";
+
+   new GuiButtonCtrl() {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "466 191";
+      extent = "140 30";
+      minExtent = "8 2";
+      visible = "1";
+      command = "mountDetailOrc(CrossbowImage,0);";
+      helpTag = "0";
+      text = "Crossbow";
+      groupNum = "-1";
+      buttonType = "PushButton";
+   };
+   new GuiButtonCtrl() {
+      profile = "GuiButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "467 231";
+      extent = "140 30";
+      minExtent = "8 2";
+      visible = "1";
+      command = "mountDetailOrc(FlagPoleImage,1);";
+      helpTag = "0";
+      text = "Flag";
+      groupNum = "-1";
+      buttonType = "PushButton";
+   };
+};
+//--- OBJECT WRITE END ---

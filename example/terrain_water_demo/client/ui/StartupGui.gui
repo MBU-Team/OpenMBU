@@ -1,0 +1,51 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiFadeinBitmapCtrl(StartupGui) {
+   profile = "GuiInputCtrlProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+   bitmap = "./GarageGames";
+   wrap = "0";
+   fadeinTime = "125";
+   waitTime   = "3000";
+   fadeoutTime = "125";
+};
+//--- OBJECT WRITE END ---
+
+function loadStartup()
+{
+   StartupGui.done = false;
+   Canvas.setContent( StartupGui );
+   schedule(100, 0, checkStartupDone );
+   alxPlay(AudioStartup);
+}
+   
+
+//-------------------------------------
+function StartupGui::click()
+{
+   StartupGui.done = true;
+}
+
+
+//-------------------------------------
+function checkStartupDone()
+{
+   if( getPixelShaderVersion() < 1.0 )
+   {
+      MessageBoxOK("No shader hardware detected", "The demo will not run correctly. Needs at least pixel shader 1.0 support.", "quit();" );
+      Canvas.setCursor("DefaultCursor");
+   }
+   else
+   {
+      if (StartupGui.done)
+         loadMainMenu();
+      else
+         schedule(100, 0, checkStartupDone );
+   }   
+}
+

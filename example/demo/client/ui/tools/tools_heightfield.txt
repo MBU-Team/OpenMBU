@@ -1,0 +1,16 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/tools/ss_he>
+<just:left><font:Arial Bold:18>Heightfield Generator<font:Arial:16>
+<lmargin%:5>The Terrain heightfield generator is used to algorithmically create realistic heightfields which span miles of terrain. The heightfield generator supports several unique fractal generators and the ability to perform operations on multiple intermediate heightfields to generate a final result.  Apply intermediate and final results and see the terrain instantly in the 3D view.
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• View results instantly
+• Several algrithmic and fractal generators
+• Smoothing operator
+• Ridge and valley localized smoothing
+• Filter operator 
+• Thermal erosion operator
+• Hydraulic erosion operator
+• Blending operator
+• Water area smoothing
+
+

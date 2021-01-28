@@ -1,0 +1,18 @@
+<lmargin%:2>
+<just:right><bitmap:demo/client/ui/garagegames/gg_logo>
+<just:left><font:Arial Bold:24>About GarageGames
+
+<font:Arial:16>GarageGames is a unique Internet publishing label for independent games and gamemakers. We are a band of professional gamemakers committed to publishing truly original and exciting titles on our own terms. We want to give any and all gamemakers the opportunity to publish their games, find their audiences - and perhaps make their fortunes. Our mission is to provide independent developers with tools, knowledge, co-conspirators - whatever YOU need - to make great games. 
+
+<font:Arial Bold:24>GarageGames Partner Bios
+
+<font:Arial Bold:16>Jeff Tunnell: <font:Arial:16>Co-Founder of Dynamix, a game development division of Sierra On-Line and Vivendi Universal. Tunnell has either designed, produced, or directed more than 70 original titles at Dynamix including the best-selling and award-winning Red Baron, Rise of the Dragon, The Incredible Machine, Starsiege, and TRIBES.
+
+<font:Arial Bold:16>Tim Gift: <font:Arial:16>Senior engineer and manager of numerous R&D projects developing core 3D technology for Dynamix. Technology produced on these projects was used in a number of Dynamix and Sierra On-Line products including submarine, sports, robot, and flight simulations as well as games in the education, adventure and action categories. Tim managed the product development and directed the multi-player online game "Starsiege TRIBES"
+
+<font:Arial Bold:16>Rick Overman: <font:Arial:16>Director on Starsiege and Sr. Engineer on TRIBES2. A key member of the R&D team for Dynamix, his technology was used in a number of Dynamix and Sierra On-Line products including the best-selling and award-winning Kings Quest, Red Baron II, Trophy Bass, Starsiege, and TRIBES.
+
+<font:Arial Bold:16>Mark Frohnmayer: <font:Arial:16>As a Sr. Engineer at Dynamix, Mark was responsible for core graphics technology for the flight simulations A10-2 and Red Baron, and then assumed the role of Lead Engineer on the Starsiege: TRIBES and TRIBES 2 projects.
+
+<font:Arial Bold:16>Jay Moore: <font:Arial:16>As Sales and Marketing Director for a K-12 educational software distributor and President of an advertising design firm Jay started his gaming career with "The Even More Incredible Machine!". From there, he worked to bring all the Sierra educational products into the educational channel. 
+

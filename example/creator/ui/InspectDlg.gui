@@ -1,0 +1,204 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(InspectDlg) {
+	profile = "GuiDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "True";
+	setFirstResponder = "False";
+	modal = "False";
+	helpTag = "0";
+
+	new GuiWindowCtrl(InspectTitle) {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "20 20";
+		extent = "200 400";
+		minExtent = "8 8";
+		visible = "True";
+		setFirstResponder = "False";
+		modal = "True";
+		helpTag = "0";
+		resizeWidth = "True";
+		resizeHeight = "True";
+		canMove = "True";
+		canClose = "True";
+		canMinimize = "True";
+		canMaximize = "True";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(InspectDlg);";
+			font = "12 244 Arial";
+			selectfillColor = "253";
+			fillColor = "250";
+			opaque = "true";
+
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "8 24";
+			extent = "40 16";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			command = "InspectApply();";
+			helpTag = "0";
+			text = "APPLY";
+				selectBorderColor = "255";
+				borderColor = "249";
+				fillColor = "249";
+				fontHL = "12 253 Arial";
+				font = "12 252 Arial";
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "56 24";
+			extent = "29 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			text = "Name:";
+				font = "12 244 Arial";
+		};
+		new GuiTextEditCtrl(InspectObjectName) {
+			profile = "GuiTextEditProfile";
+			horizSizing = "width";
+			vertSizing = "bottom";
+			position = "98 23";
+			extent = "72 18";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			historySize = "0";
+		};
+		new GuiScrollCtrl() {
+			profile = "GuiScrollProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "8 44";
+			extent = "184 348";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			willFirstRespond = "True";
+			hScrollBar = "alwaysOff";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "False";
+
+			new GuiInspector(InspectFields) {
+				profile = "GuiDefaultProfile";
+				horizSizing = "width";
+				vertSizing = "bottom";
+				position = "0 0";
+				extent = "184 8";
+				minExtent = "8 8";
+				visible = "True";
+				setFirstResponder = "False";
+				modal = "True";
+				helpTag = "0";
+			};
+		};
+	};
+	new GuiWindowCtrl(InspectTreeTitle) {
+		profile = "GuiWindowProfile";
+		horizSizing = "right";
+		vertSizing = "bottom";
+		position = "232 20";
+		extent = "200 400";
+		minExtent = "8 8";
+		visible = "True";
+		setFirstResponder = "False";
+		modal = "True";
+		helpTag = "0";
+		text = "TREE VIEW";
+		resizeWidth = "True";
+		resizeHeight = "True";
+		canMove = "True";
+		canClose = "True";
+		canMinimize = "True";
+		canMaximize = "True";
+		minSize = "50 50";
+		closeCommand = "Canvas.popDialog(InspectDlg);";
+
+		new GuiScrollCtrl() {
+			profile = "GuiScrollProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "8 24";
+			extent = "184 368";
+			minExtent = "8 8";
+			visible = "True";
+			setFirstResponder = "False";
+			modal = "True";
+			helpTag = "0";
+			willFirstRespond = "True";
+			hScrollBar = "dynamic";
+			vScrollBar = "alwaysOn";
+			constantThumbHeight = "False";
+
+			new GuiTreeViewCtrl(InspectTreeView) {
+				profile = "GuiTreeViewProfile";
+				horizSizing = "width";
+				vertSizing = "bottom";
+				position = "0 0";
+				extent = "64 64";
+				minExtent = "8 8";
+				visible = "True";
+				setFirstResponder = "False";
+				modal = "True";
+				helpTag = "0";
+				destroyTreeOnSleep = false;
+			};
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+function Inspect(%obj)
+{
+   Canvas.popDialog("InspectDlg");
+   Canvas.pushDialog("InspectDlg", 30);
+   
+   InspectFields.inspect(%obj);
+   InspectObjectName.setValue(%obj.getName());
+   InspectTitle.setValue(%obj.getId() @ ": " @ %obj.getName());
+}
+
+function InspectApply()
+{
+   InspectFields.apply(InspectObjectName.getValue());
+}
+
+function InspectTreeView::onSelect(%this, %obj)
+{
+   Inspect(%obj);
+}
+
+function Tree(%obj)
+{
+   Canvas.popDialog("InspectDlg");
+   Canvas.pushDialog("InspectDlg", 35);
+   InspectTreeView.open(%obj);
+}
+
+function InspectAddFieldDlg::doAction(%this)
+{
+   if(InspectAddFieldName.getValue() $= "" || InspectAddFieldValue.getValue() $= "")
+      return;
+   eval(%this.object @ "." @ firstWord(InspectAddFieldName.getValue()) @ " = " @ InspectAddFieldValue.getValue() @ ";");
+   %this.inspector.inspect(%this.object);
+}
+
+

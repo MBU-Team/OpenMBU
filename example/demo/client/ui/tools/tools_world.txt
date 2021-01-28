@@ -1,0 +1,14 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/tools/ss_we>
+<just:left><font:Arial Bold:18>WYSIWYG World Editor<font:Arial:16>
+<lmargin%:5>Take the GUI Editor, add a Z-axis, and you get the Torque World Editor. This intutive WYSIWYG editor allows you to edit every aspect of your worlds: sun position and color, terrain attributes, place water volumes, configure sky, clouds, weather and fog, place, scale, size and rotate objects, set triggers and mission logic, and much more.  Like the GUI editor you can edit your worlds while the game is running!
+
+
+<lmargin%:2><font:Arial Bold:18>Feature Highlights:<font:Arial:16><lmargin%:5>
+• Integrated World Editor
+• WYSIWYG Editing
+• Construct, place, size, scale and rotate objects
+• Multi-level undo/redo
+• Edit object properties
+• Control lighting
+• Script object behaviors
+ 

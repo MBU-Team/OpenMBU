@@ -1,0 +1,10 @@
+<lmargin%:2><just:right><bitmap:demo/client/ui/features/tse>
+<just:left><font:Arial Bold:18>The Torque Shader Engine<font:Arial:16>
+<lmargin%:5>The Torque Shader Engine (TSE) is a full featured AAA game engine with award winning multi-player network code, DirectX9 vertex and pixel shader rendering, seamless indoor/outdoor rendering engines, state of the art skeletal animation, drag and drop GUI creation, a built in world editor, and a C-like scripting language. Unlike most commercial game engines, as part of the low cost license, you receive all C++ source code to the engine and tools, so you can customize the engine and make your game ROCK!
+
+Don´t spend your limited time reinventing the technology wheel. Instead, use an industry proven game development engine that can enhance your creativity, productivity and get your game done faster.
+
+<lmargin%:2><font:Arial Bold:18>Features<font:Arial:16>
+<lmargin%:5>The next several pages provide an overview of the major engine features.  Proceed to learn more about Scripting, the GUI System, Networking, Audio, Rendering, Interiors, Terrains, Water and much more....
+
+
