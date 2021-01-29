@@ -547,7 +547,7 @@ void Precipitation::unpackUpdate(NetConnection* con, BitStream* stream)
 //--------------------------------------------------------------------------
 VectorF Precipitation::getWindVelocity()
 {
-   Sky* sky = gClientSceneGraph->getCurrentSky();
+   Sky* sky = getCurrentClientSceneGraph()->getCurrentSky();
    return (sky && mUseWind) ? -sky->getWindVelocity() : VectorF(0,0,0);
 }
 
@@ -1226,7 +1226,7 @@ bool Precipitation::prepRenderImage(SceneState* state, const U32 stateKey,
       return false;
 
    // We do nothing if we're not supposed to be reflected.
-   if (gClientSceneGraph->isReflectPass() && !mReflect)
+   if (getCurrentClientSceneGraph()->isReflectPass() && !mReflect)
       return false;
 
    // This should be sufficient for most objects that don't manage zones, and
@@ -1308,7 +1308,7 @@ void Precipitation::renderObject(SceneState* state, RenderInst *ri)
    ColorF ambient( 1, 1, 1 );
    if ( mUseLighting )
    {
-      const LightInfo *sunlight = gClientSceneGraph->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+      const LightInfo *sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
       ambient = sunlight->mColor;
    }
 

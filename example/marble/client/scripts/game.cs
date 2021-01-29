@@ -35,7 +35,6 @@ function clientCmdSetCamera()
 
 function GameConnection::switchedSinglePlayerMode(%onoroff)
 {
-   error("TESTTESTTEST");
    ServerConnection.setControlObject($previewCamera);
    registerLights();
 }

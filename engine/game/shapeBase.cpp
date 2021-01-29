@@ -1202,7 +1202,7 @@ void ShapeBase::onCameraScopeQuery(NetConnection *cr, CameraScopeQuery * query)
    }
 
    // grab the visible distance from the sky
-   Sky * sky = gServerSceneGraph->getCurrentSky();
+   Sky * sky = getCurrentServerSceneGraph()->getCurrentSky();
    if(sky)
       query->visibleDistance = sky->getVisibleDistance();
    else

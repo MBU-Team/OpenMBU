@@ -399,7 +399,7 @@ SceneGraphData WaterBlock::setupSceneGraphInfo( SceneState *state )
 
    // grab the sun data from the light manager
    Vector<LightInfo*> lights;
-   const LightInfo *sunlight = gClientSceneGraph->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+   const LightInfo *sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
    VectorF sunVector = sunlight->mDirection;
 
    // set the sun data into scenegraph data
@@ -415,10 +415,10 @@ SceneGraphData WaterBlock::setupSceneGraphInfo( SceneState *state )
 
    // fog
    sgData.useFog              = true;
-   sgData.fogTex              = gClientSceneGraph->getFogTexture();
-   sgData.fogHeightOffset     = gClientSceneGraph->getFogHeightOffset();
-   sgData.fogInvHeightRange   = gClientSceneGraph->getFogInvHeightRange();
-   sgData.visDist             = gClientSceneGraph->getVisibleDistanceMod();
+   sgData.fogTex              = getCurrentClientSceneGraph()->getFogTexture();
+   sgData.fogHeightOffset     = getCurrentClientSceneGraph()->getFogHeightOffset();
+   sgData.fogInvHeightRange   = getCurrentClientSceneGraph()->getFogInvHeightRange();
+   sgData.visDist             = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
    // misc
    sgData.backBuffTex = GFX->getSfxBackBuffer();
@@ -494,7 +494,7 @@ void WaterBlock::setShaderParams()
 //-----------------------------------------------------------------------------
 void WaterBlock::renderObject(SceneState* state, RenderInst *ri)
 {
-   if( gClientSceneGraph->isReflectPass() )
+   if(getCurrentClientSceneGraph()->isReflectPass() )
    {
       return;
    }
@@ -828,7 +828,7 @@ void WaterBlock::updateReflection()
 
    // store "normal" camera position before changing over to reflected position
    MatrixF camTrans = query.cameraMatrix;
-   gClientSceneGraph->mNormCamPos = camTrans.getPosition();
+   getCurrentClientSceneGraph()->mNormCamPos = camTrans.getPosition();
 
    // update plane
    PlaneF plane;
@@ -844,25 +844,25 @@ void WaterBlock::updateReflection()
    GFX->setWorldMatrix( camReflectTrans );
 
    // set new projection matrix
-   gClientSceneGraph->setNonClipProjection( (MatrixF&) GFX->getProjectionMatrix() );
+   getCurrentClientSceneGraph()->setNonClipProjection( (MatrixF&) GFX->getProjectionMatrix() );
    MatrixF clipProj = mReflectPlane.getFrustumClipProj( camReflectTrans );
    GFX->setProjectionMatrix( clipProj );
 
 
    // render a frame
-   gClientSceneGraph->setReflectPass( true );
+   getCurrentClientSceneGraph()->setReflectPass( true );
 
    GFX->pushActiveRenderSurfaces();
    GFX->setActiveRenderSurface( mReflectPlane.getTex() );
    GFX->setZEnable( true );
    GFX->clear( GFXClearZBuffer | GFXClearStencil | GFXClearTarget, ColorI( 64, 64, 64 ), 1.0f, 0 );
    U32 objTypeFlag = -1;
-   gClientSceneGraph->renderScene( objTypeFlag );
+   getCurrentClientSceneGraph()->renderScene( objTypeFlag );
    GFX->popActiveRenderSurfaces();
 
    // cleanup
    GFX->clear( GFXClearZBuffer | GFXClearStencil, ColorI( 255, 0, 255 ), 1.0f, 0 );
-   gClientSceneGraph->setReflectPass( false );
+   getCurrentClientSceneGraph()->setReflectPass( false );
    GFX->popWorldMatrix();
    GFX->setProjectionMatrix( proj );
 

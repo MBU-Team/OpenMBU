@@ -18,7 +18,7 @@
 #include "lightingSystem/sgLightingModel.h"
 
 extern bool gEditingMission;
-extern SceneGraph* gClientSceneGraph;
+//extern SceneGraph* gClientSceneGraph;
 
 
 static EnumTable::Enums gsgLightFeatureTypes[] =

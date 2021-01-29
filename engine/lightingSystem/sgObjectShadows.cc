@@ -19,7 +19,7 @@
 // up texture memory after an intensive scene...
 #define SG_TEXTURE_TIMEOUT	30000
 
-extern SceneGraph* gClientSceneGraph;
+//extern SceneGraph* gClientSceneGraph;
 
 
 sgShadowTextureMultimap sgShadowTextureCache::sgShadowTextures;

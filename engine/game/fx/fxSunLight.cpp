@@ -1416,7 +1416,7 @@ void fxSunLight::AnimateSun(F32 ElapsedTime)
 	eye.getColumn(3, &eyePos);
 
 	// Calculate new Sun Position.
-	F32 Radius = gClientSceneGraph->getVisibleDistance() * 0.999f;
+	F32 Radius = getCurrentClientSceneGraph()->getVisibleDistance() * 0.999f;
 	mSunlightPosition = eyePos + (Radius * SunlightOffset);
 }
 
@@ -1692,7 +1692,7 @@ bool fxSunLight::prepRenderImage(SceneState* state, const U32 stateKey, const U3
 		// Yes, so calculate real sun elevation/azimuth.
 
 		// Do we have any lights?
-		const LightInfo *sunlight = gClientSceneGraph->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+		const LightInfo *sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
 		
 		// Yes, so fetch sunlight ( always first light ).
 		VectorF sunVector = -sunlight->mDirection;
@@ -1725,7 +1725,7 @@ void fxSunLight::renderObject( SceneState* state, RenderInst *ri )
 	//
 	// NOTE:-	We are doing this on the remote sun because then both suns will
 	//			have the same animation positions.
-	if (!LocalSun && !gClientSceneGraph->isReflectPass())
+	if (!LocalSun && !getCurrentClientSceneGraph()->isReflectPass())
 	{
 		// Yes, so calculate Elapsed Time.
 		mElapsedTime = (F32)((Platform::getVirtualMilliseconds() - mLastRenderTime) / 1000.0f);
@@ -1763,7 +1763,7 @@ void fxSunLight::renderObject( SceneState* state, RenderInst *ri )
 	{
       BBRadius *= mLocalScale;
 
-      if(!gClientSceneGraph->isReflectPass())
+      if(!getCurrentClientSceneGraph()->isReflectPass())
       {
 		   // Yes, so do we have Line-of-sight?
 		   if (TestLOS(mSunlightPosition))

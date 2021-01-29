@@ -386,7 +386,7 @@ void ParticleEmitter::onRemove()
    if( mSceneManager != NULL )
    {
       getCurrentClientContainer()->removeObject(this);
-      gClientSceneGraph->removeObjectFromScene(this);
+      getCurrentClientSceneGraph()->removeObjectFromScene(this);
    }
 
    Parent::onRemove();
@@ -651,9 +651,9 @@ void ParticleEmitter::emitParticles(const Point3F& start,
 
    if( mLastPartIndex && mSceneManager == NULL )
    {
-      gClientSceneGraph->addObjectToScene(this);
+       getCurrentClientSceneGraph()->addObjectToScene(this);
       getCurrentClientContainer()->addObject(this);
-      gClientProcessList.addObject(this);
+      getCurrentClientProcessList()->addObject(this);
    }
 
    mLastPosition = end;
@@ -722,9 +722,9 @@ void ParticleEmitter::emitParticles(const Point3F& rCenter,
    // Make sure we're part of the world
    if( mLastPartIndex && mSceneManager == NULL )
    {
-      gClientSceneGraph->addObjectToScene(this);
+       getCurrentClientSceneGraph()->addObjectToScene(this);
       getCurrentClientContainer()->addObject(this);
-      gClientProcessList.addObject(this);
+      getCurrentClientProcessList()->addObject(this);
    }
 
    mHasLastPosition = false;

@@ -229,13 +229,13 @@ void AtlasClipMapBatcher::renderFog()
    GFX->setShader(sd->shader);
 
    Point4F fogConst(
-         gClientSceneGraph->getFogHeightOffset(), 
-         gClientSceneGraph->getFogInvHeightRange(), 
-         gClientSceneGraph->getVisibleDistanceMod(), 
+       getCurrentClientSceneGraph()->getFogHeightOffset(),
+       getCurrentClientSceneGraph()->getFogInvHeightRange(),
+       getCurrentClientSceneGraph()->getVisibleDistanceMod(),
          0);
    GFX->setVertexShaderConstF(50, &fogConst[0], 1);
 
-   GFX->setTexture(0, gClientSceneGraph->getFogTexture());
+   GFX->setTexture(0, getCurrentClientSceneGraph()->getFogTexture());
    GFX->setTextureStageAddressModeU(0, GFXAddressClamp);
    GFX->setTextureStageAddressModeV(0, GFXAddressClamp);
 

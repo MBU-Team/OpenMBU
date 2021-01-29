@@ -459,7 +459,7 @@ ConsoleFunction( getControlObjectAltitude, const char*, 1, 1, "Get distance from
          else
             pSB->getTransform().getColumn(3, &pos);
 
-         TerrainBlock* pBlock = gClientSceneGraph->getCurrentTerrain();
+         TerrainBlock* pBlock = getCurrentClientSceneGraph()->getCurrentTerrain();
          if (pBlock != NULL) {
             Point3F terrPos = pos;
             pBlock->getWorldTransform().mulP(terrPos);

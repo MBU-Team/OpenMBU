@@ -224,7 +224,7 @@ void AmbientAudioManager::updateEnvironment()
 
       // check if submerged
       SimpleQueryList sql;
-      gClientSceneGraph->getWaterObjectList(sql);
+      getCurrentClientSceneGraph()->getWaterObjectList(sql);
 
       // grab the audio environment from the waterblock
       for(U32 i = 0; i < sql.mList.size(); i++)

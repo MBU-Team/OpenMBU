@@ -348,7 +348,7 @@ void AtlasInstance2::renderObject(SceneState *state, RenderInst * )
    GFX->setVertexShaderConstF(46, (float*)&terrainsize, 1);
 
    // Synch up with the atlas file.
-   if(!gClientSceneGraph->isReflectPass())
+   if(!getCurrentClientSceneGraph()->isReflectPass())
    {
       // Set focus point.
       Point3F pos = state->getCameraPosition();
@@ -437,9 +437,9 @@ void AtlasInstance2::renderObject(SceneState *state, RenderInst * )
 		   Box3F box;
 		   MathUtils::transformBoundingBox(renderedstub.stub->mBounds, sgData.objTrans, box);
 
-		   gClientSceneGraph->getLightManager()->sgSetupLights(this, box, 
+           getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this, box,
                                              LightManager::sgAtlasMaxDynamicLights);
-		   gClientSceneGraph->getLightManager()->sgGetBestLights(lights);
+           getCurrentClientSceneGraph()->getLightManager()->sgGetBestLights(lights);
 
 		   GFX->setTexture(0, renderedstub.texture);
 
@@ -483,7 +483,7 @@ void AtlasInstance2::renderObject(SceneState *state, RenderInst * )
 			   }
 		   }
 
-		   gClientSceneGraph->getLightManager()->sgResetLights();
+           getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
 	   }
 
 	   GFX->setAlphaTestEnable(false);

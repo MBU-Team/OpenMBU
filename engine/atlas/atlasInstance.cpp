@@ -224,7 +224,7 @@ void AtlasInstance::renderObject(SceneState* state, RenderInst *ri)
 
    GFX->setTextureStageAddressModeU( 1, GFXAddressClamp );
    GFX->setTextureStageAddressModeV( 1, GFXAddressClamp );
-   GFX->setTexture(1, gClientSceneGraph->getFogTexture());
+   GFX->setTexture(1, getCurrentClientSceneGraph()->getFogTexture());
 
    // And the detail textures...
    GFX->setTextureStageAddressModeU( 2, GFXAddressWrap  );
@@ -257,13 +257,13 @@ void AtlasInstance::renderObject(SceneState* state, RenderInst *ri)
 
    // Set up fogging.
    sgData.useFog            = true;
-   sgData.fogTex            = gClientSceneGraph->getFogTexture();
-   sgData.fogHeightOffset   = gClientSceneGraph->getFogHeightOffset();
-   sgData.fogInvHeightRange = gClientSceneGraph->getFogInvHeightRange();
-   sgData.visDist           = gClientSceneGraph->getVisibleDistanceMod();
+   sgData.fogTex            = getCurrentClientSceneGraph()->getFogTexture();
+   sgData.fogHeightOffset   = getCurrentClientSceneGraph()->getFogHeightOffset();
+   sgData.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
+   sgData.visDist           = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
    // grab the sun data from the light manager
-   const LightInfo *sunlight = gClientSceneGraph->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+   const LightInfo *sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
    VectorF sunVector = sunlight->mDirection; //first light is always sun
 
    // set the sun data into scenegraph data
@@ -283,7 +283,7 @@ void AtlasInstance::renderObject(SceneState* state, RenderInst *ri)
 
    while(mMaterial->setupPass(sgData))
    {
-      if( gClientSceneGraph->isReflectPass() )
+      if( getCurrentClientSceneGraph()->isReflectPass() )
          GFX->setCullMode(GFXCullCW);
       else
          GFX->setCullMode(GFXCullCCW);
@@ -442,7 +442,7 @@ void AtlasInstance::processLOD(SceneState *state, const MatrixF &renderTrans)
    AtlasResource::smInvObjTrans.mulP(state->getCameraPosition(), &AtlasResource::smCurObjCamPos);
 
    // Do the processing if we're not in a reflection.
-   if(!gClientSceneGraph->isReflectPass())
+   if(!getCurrentClientSceneGraph()->isReflectPass())
    {
 
       const F32 tan_half_FOV = tanf(0.5f * GameGetCameraFov() /** (float) M_PI / 180.0f */);

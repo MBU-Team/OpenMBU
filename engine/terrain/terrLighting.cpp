@@ -69,7 +69,7 @@ void TerrainRender::buildLightArray()
 {
    static LightInfoList lights;
    lights.clear();
-   gClientSceneGraph->getLightManager()->sgGetBestLights(lights);
+   getCurrentClientSceneGraph()->getLightManager()->sgGetBestLights(lights);
 
    // create terrain lights from these...
    U32 curIndex = 0;

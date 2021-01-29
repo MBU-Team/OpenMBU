@@ -660,8 +660,8 @@ void SceneGraph::unregisterZones(SceneObject* obj)
          obj->mZoneRangeStart = 0xFFFFFFFF;
 
          // query
-         if ((mIsClient == true  && obj != gClientSceneRoot) ||
-             (mIsClient == false && obj != gServerSceneRoot))
+         if ((mIsClient == true  && obj != getCurrentClientSceneRoot()) ||
+             (mIsClient == false && obj != getCurrentServerSceneRoot()))
          {
             Container* pQueryContainer = mIsClient ? getCurrentClientContainer() : getCurrentServerContainer();
             SimpleQueryList list;

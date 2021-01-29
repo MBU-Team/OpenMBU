@@ -123,7 +123,7 @@ void GuiShapeNameHud::onRender( Point2I, const RectI &updateRect)
    camFov = mDegToRad(camFov) / 2;
 
    // Visible distance info & name fading
-   F32 visDistance = gClientSceneGraph->getVisibleDistance();
+   F32 visDistance = getCurrentClientSceneGraph()->getVisibleDistance();
    F32 visDistanceSqr = visDistance * visDistance;
    F32 fadeDistance = visDistance * mDistanceFade;
 

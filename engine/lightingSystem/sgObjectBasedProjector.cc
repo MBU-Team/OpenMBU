@@ -17,7 +17,7 @@
 #include "lightingSystem/sgObjectShadows.h"
 #include "lightingSystem/sgFormatManager.h"
 
-extern SceneGraph* gClientSceneGraph;
+//extern SceneGraph* gClientSceneGraph;
 
 
 Point2I sgShadowSharedZBuffer::sgSize = Point2I(0, 0);

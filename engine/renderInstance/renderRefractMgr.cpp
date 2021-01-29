@@ -31,10 +31,10 @@ void RenderRefractMgr::setupSGData( RenderInst *ri, SceneGraphData &data )
    data.cubemap = ri->cubemap;
 
    data.useFog = true;
-   data.fogTex = gClientSceneGraph->getFogTexture();
-   data.fogHeightOffset = gClientSceneGraph->getFogHeightOffset();
-   data.fogInvHeightRange = gClientSceneGraph->getFogInvHeightRange();
-   data.visDist = gClientSceneGraph->getVisibleDistanceMod();
+   data.fogTex = getCurrentClientSceneGraph()->getFogTexture();
+   data.fogHeightOffset = getCurrentClientSceneGraph()->getFogHeightOffset();
+   data.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
+   data.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
    if( ri->lightmap )
    {
@@ -56,7 +56,7 @@ void RenderRefractMgr::render()
 
    GFX->pushWorldMatrix();
 
-   if( gClientSceneGraph->isReflectPass() )
+   if(getCurrentClientSceneGraph()->isReflectPass() )
    {
       GFX->setCullMode( GFXCullCW );
    }

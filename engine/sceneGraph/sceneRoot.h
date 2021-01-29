@@ -41,4 +41,14 @@ extern SceneRoot* gClientSceneRoot;     ///< Client's scene graph root.
 extern SceneRoot* gServerSceneRoot;     ///< Server's scene graph root.
 extern SceneRoot* gSPModeSceneRoot;     ///< SPMode's scene graph root.
 
+inline SceneRoot* getCurrentServerSceneRoot()
+{
+    return gSPMode ? gSPModeSceneRoot : gServerSceneRoot;
+}
+
+inline SceneRoot* getCurrentClientSceneRoot()
+{
+    return gSPMode ? gSPModeSceneRoot : gClientSceneRoot;
+}
+
 #endif //_SCENEROOT_H_

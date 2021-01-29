@@ -863,7 +863,7 @@ void TerrainBlock::renderObject(SceneState* state, RenderInst *ri)
       state->setupObjectProjection(this);
 
 
-   if( gClientSceneGraph->isReflectPass() )
+   if(getCurrentClientSceneGraph()->isReflectPass() )
    {
       GFX->setCullMode( GFXCullCW );
    }
@@ -881,10 +881,10 @@ void TerrainBlock::renderObject(SceneState* state, RenderInst *ri)
 
    // Fogging...
    sgData.useFog            = true;
-   sgData.fogTex            = gClientSceneGraph->getFogTexture();
-   sgData.fogHeightOffset   = gClientSceneGraph->getFogHeightOffset();
-   sgData.fogInvHeightRange = gClientSceneGraph->getFogInvHeightRange();
-   sgData.visDist           = gClientSceneGraph->getVisibleDistanceMod();
+   sgData.fogTex            = getCurrentClientSceneGraph()->getFogTexture();
+   sgData.fogHeightOffset   = getCurrentClientSceneGraph()->getFogHeightOffset();
+   sgData.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
+   sgData.visDist           = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
    // Set up world transform
    MatrixF world = GFX->getWorldMatrix();
@@ -897,7 +897,7 @@ void TerrainBlock::renderObject(SceneState* state, RenderInst *ri)
    sgData.camPos   = state->getCameraPosition();
 
 
-   gClientSceneGraph->getLightManager()->sgSetupLights(this, state->getCameraPosition(),
+   getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this, state->getCameraPosition(),
 	   Point3F(0, 0, 0), state->getVisibleDistance(), MaxVisibleLights);
    //gClientSceneGraph->getLightManager()->sgGetBestLights();
 
@@ -907,7 +907,7 @@ void TerrainBlock::renderObject(SceneState* state, RenderInst *ri)
    TerrainRender::renderBlock(this, state, &tMat, sgData);
 
 
-   gClientSceneGraph->getLightManager()->sgResetLights();
+   getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
 
 
    // Clean up after...

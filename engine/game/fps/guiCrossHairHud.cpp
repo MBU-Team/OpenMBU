@@ -89,7 +89,7 @@ void GuiCrossHairHud::onRender(Point2I offset, const RectI &updateRect)
    // Extend the camera vector to create an endpoint for our ray
    Point3F endPos;
    cam.getColumn(1, &endPos);
-   endPos *= gClientSceneGraph->getVisibleDistance();
+   endPos *= getCurrentClientSceneGraph()->getVisibleDistance();
    endPos += camPos;
 
    // Collision info. We're going to be running LOS tests and we
