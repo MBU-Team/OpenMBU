@@ -504,13 +504,13 @@ SceneLighting::~SceneLighting()
 
 bool SceneLighting::light(BitSet32 flags)
 {
-	if(!gClientSceneGraph)
+	if(!getCurrentClientSceneGraph())
 		return(false);
 
 	mStartTime = Platform::getRealMilliseconds();
 
 	// register static lights
-	LightManager * lManager = gClientSceneGraph->getLightManager();
+	LightManager * lManager = getCurrentClientSceneGraph()->getLightManager();
 	lManager->sgRegisterGlobalLights(true);
 
 	// grab all the lights
@@ -524,7 +524,7 @@ bool SceneLighting::light(BitSet32 flags)
 	// get all the objects and create proxy's for them
 	Vector<SceneObject *>   objects;
 	//gClientContainer.findObjects(InteriorObjectType | TerrainObjectType | AtlasObjectType, sgFindObjectsCallback, &objects);
-	gClientContainer.findObjects(InteriorObjectType | TerrainObjectType, sgFindObjectsCallback, &objects);
+	getCurrentClientContainer()->findObjects(InteriorObjectType | TerrainObjectType, sgFindObjectsCallback, &objects);
 
 	for(SceneObject ** itr = objects.begin(); itr != objects.end(); itr++)
 	{

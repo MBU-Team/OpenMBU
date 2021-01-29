@@ -145,7 +145,7 @@ void CollisionTest::collide(const MatrixF& transform)
 
    if (testPolytope || testClippedPolyList || testExtrudedPolyList || testDepthSortList) {
       testPos = boundingSphere.center;
-      gClientContainer.findObjects(0xFFFFFFFF,CollisionTest::callback,this);
+      getCurrentClientContainer()->findObjects(0xFFFFFFFF,CollisionTest::callback,this);
    }
 
    if (testExtrudedPolyList) {

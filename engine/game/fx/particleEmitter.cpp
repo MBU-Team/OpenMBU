@@ -385,7 +385,7 @@ void ParticleEmitter::onRemove()
 {
    if( mSceneManager != NULL )
    {
-      gClientContainer.removeObject(this);
+      getCurrentClientContainer()->removeObject(this);
       gClientSceneGraph->removeObjectFromScene(this);
    }
 
@@ -652,7 +652,7 @@ void ParticleEmitter::emitParticles(const Point3F& start,
    if( mLastPartIndex && mSceneManager == NULL )
    {
       gClientSceneGraph->addObjectToScene(this);
-      gClientContainer.addObject(this);
+      getCurrentClientContainer()->addObject(this);
       gClientProcessList.addObject(this);
    }
 
@@ -723,7 +723,7 @@ void ParticleEmitter::emitParticles(const Point3F& rCenter,
    if( mLastPartIndex && mSceneManager == NULL )
    {
       gClientSceneGraph->addObjectToScene(this);
-      gClientContainer.addObject(this);
+      getCurrentClientContainer()->addObject(this);
       gClientProcessList.addObject(this);
    }
 

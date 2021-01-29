@@ -406,6 +406,9 @@ bool initGame(int argc, const char **argv)
    gServerSceneGraph = new SceneGraph(false);
    gServerSceneRoot  = new SceneRoot;
    gServerSceneGraph->addObjectToScene(gServerSceneRoot);
+   gSPModeSceneGraph = new SceneGraph(true);
+   gSPModeSceneRoot  = new SceneRoot;
+   gSPModeSceneGraph->addObjectToScene(gSPModeSceneRoot);
    gDecalManager = new DecalManager;
    gClientContainer.addObject(gDecalManager);
    gClientSceneGraph->addObjectToScene(gDecalManager);
@@ -440,15 +443,20 @@ void shutdownGame()
    gClientContainer.removeObject(gDecalManager);
    gClientSceneGraph->removeObjectFromScene(gClientSceneRoot);
    gServerSceneGraph->removeObjectFromScene(gServerSceneRoot);
+   gSPModeSceneGraph->removeObjectFromScene(gSPModeSceneRoot);
    delete gClientSceneRoot;
    delete gServerSceneRoot;
+   delete gSPModeSceneRoot;
    delete gClientSceneGraph;
    delete gServerSceneGraph;
+   delete gSPModeSceneGraph;
    delete gDecalManager;
    gClientSceneRoot = NULL;
    gServerSceneRoot = NULL;
+   gSPModeSceneRoot = NULL;
    gClientSceneGraph = NULL;
    gServerSceneGraph = NULL;
+   gSPModeSceneGraph = NULL;
    gDecalManager = NULL;
 
    sgShadowTextureCache::sgClear();
@@ -722,6 +730,10 @@ void DemoGame::processTimeEvent(TimeEvent *event)
    // only send packets if a tick happened
    if(tickPass)
       GNet->processServer();
+   PROFILE_END();
+
+   PROFILE_START(SPModeProcess);
+   tickPass = spmodeProcess(timeDelta);
    PROFILE_END();
 
    PROFILE_START(SimAdvanceTime);

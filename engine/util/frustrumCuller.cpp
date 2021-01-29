@@ -12,7 +12,7 @@ void FrustrumCuller::init(SceneState *state)
 {
    // Set up some general info.
    mSceneState = state;
-   mFarDistance = gClientSceneGraph->getCurrentSky()->getVisibleDistance();
+   mFarDistance = getCurrentClientSceneGraph()->getCurrentSky()->getVisibleDistance();
 
    // Now determine the frustrum.
    F32 frustumParam[6];

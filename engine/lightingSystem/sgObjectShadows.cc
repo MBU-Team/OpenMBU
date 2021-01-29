@@ -309,7 +309,7 @@ void sgObjectShadows::sgRender(SceneObject *parentobject, TSShapeInstance *shape
 	}
 
 	LightInfoList lights;
-	gClientSceneGraph->getLightManager()->sgGetBestLights(lights);
+	getCurrentClientSceneGraph()->getLightManager()->sgGetBestLights(lights);
 	for(U32 i=0; i<lights.size(); i++)
 	{
 		LightInfo *light = lights[i];

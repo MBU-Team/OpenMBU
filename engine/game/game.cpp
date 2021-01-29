@@ -45,8 +45,30 @@ CollisionTest collisionTest;
 
 F32 gMovementSpeed = 1;
 
+bool gSPMode = false;
+
 //--------------------------------------------------------------------------
 ConsoleFunctionGroupBegin( GameFunctions, "General game functionality.");
+
+//--------------------------------------------------------------------------
+ConsoleFunction(setSinglePlayerMode, void, 2, 2, "( flag ) - Enable or disable singleplayer only mode.")
+{
+    argc;
+
+    bool oldSPMode = gSPMode;
+    gSPMode = dAtob(argv[1]);
+    if (gSPMode && !oldSPMode)
+        gSPModeProcessList.setDirty(gServerProcessList.isDirty());
+    else if (!gSPMode && oldSPMode)
+        gServerProcessList.setDirty(gSPModeProcessList.isDirty());
+}
+
+ConsoleFunction(isSinglePlayerMode, bool, 1, 1, "() - Checks if singleplayer only mode is enabled.")
+{
+    argc;
+
+    return gSPMode;
+}
 
 
 //--------------------------------------------------------------------------
@@ -587,6 +609,9 @@ const U32 AudioUpdatePeriod = 125;  ///< milliseconds between audio updates.
 
 bool clientProcess(U32 timeDelta)
 {
+   if (gSPMode)
+      return true;
+
    ShowTSShape::advanceTime(timeDelta);
    ITickable::advanceTime(timeDelta);
 
@@ -624,7 +649,32 @@ bool clientProcess(U32 timeDelta)
 
 bool serverProcess(U32 timeDelta)
 {
+   if (gSPMode)
+      return true;
    return gServerProcessList.advanceServerTime(timeDelta);
+}
+
+bool spmodeProcess(U32 timeDelta)
+{
+   if (!gSPMode)
+      return false;
+   
+   ITickable::advanceTime(timeDelta);
+   bool ret = getCurrentServerProcessList()->advanceSPModeTime(timeDelta);
+   
+   // Run the collision test and update the Audio system
+   // by checking the controlObject
+   MatrixF mat;
+   Point3F velocity;
+
+   if (GameGetCameraTransform(&mat, &velocity))
+   {
+       alxListenerMatrixF(&mat);
+       //      alxListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+       collisionTest.collide(mat);
+   }
+
+   return ret;
 }
 
 static ColorF cubeColors[8] = {
@@ -685,7 +735,7 @@ bool GameProcessCameraQuery(CameraQuery *query)
    {
       query->object = connection->getControlObject();
 
-      Sky* pSky = gClientSceneGraph->getCurrentSky();
+      Sky* pSky = getCurrentClientSceneGraph()->getCurrentSky();
 
       if (pSky)
          query->farPlane = pSky->getVisibleDistance();
@@ -1023,7 +1073,7 @@ void GameRenderWorld()
    // Need to consoldate to one clear call // glClear(GL_DEPTH_BUFFER_BIT);
    GFX->setCullMode( GFXCullNone );//glDisable(GL_CULL_FACE);
 
-   gClientSceneGraph->renderScene();
+   getCurrentClientSceneGraph()->renderScene();
    GFX->setZEnable( false ); //glDisable(GL_DEPTH_TEST);
    collisionTest.render();
 

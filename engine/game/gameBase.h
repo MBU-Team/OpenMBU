@@ -13,6 +13,8 @@
 #include "core/resManager.h"
 #endif
 
+#include "game/game.h"
+
 class NetConnection;
 class ProcessList;
 struct Move;
@@ -370,10 +372,13 @@ public:
    ProcessList(bool isServer);
    void markDirty()  { mDirty = true; }
    bool isDirty()  { return mDirty; }
+   void setDirty(bool dirty){mDirty = dirty;}
    void addObject(GameBase* obj) {
       obj->plLinkBefore(&head);
    }
    F32 getLastInterpDelta() { return mLastDelta / F32(TickMs); }
+
+   void dumpToConsole();
 
    /// @name Advancing Time
    /// The advance time functions return true if a tick was processed.
@@ -384,11 +389,23 @@ public:
 
    bool advanceServerTime(SimTime timeDelta);
    bool advanceClientTime(SimTime timeDelta);
+   bool advanceSPModeTime(SimTime timeDelta);
 
    /// @}
 };
 
 extern ProcessList gClientProcessList;
 extern ProcessList gServerProcessList;
+extern ProcessList gSPModeProcessList;
+
+inline ProcessList* getCurrentServerProcessList()
+{
+    return gSPMode ? &gSPModeProcessList : &gServerProcessList;
+}
+
+inline ProcessList* getCurrentClientProcessList()
+{
+    return gSPMode ? &gSPModeProcessList : &gClientProcessList;
+}
 
 #endif

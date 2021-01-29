@@ -550,7 +550,7 @@ bool Debris::onAdd()
 
 
    // tell engine the debris exists
-   gClientContainer.addObject(this);
+   getCurrentClientContainer()->addObject(this);
    gClientSceneGraph->addObjectToScene(this);
 
    removeFromProcessList();

@@ -39,5 +39,6 @@ class SceneRoot : public SceneObject
 
 extern SceneRoot* gClientSceneRoot;     ///< Client's scene graph root.
 extern SceneRoot* gServerSceneRoot;     ///< Server's scene graph root.
+extern SceneRoot* gSPModeSceneRoot;     ///< SPMode's scene graph root.
 
 #endif //_SCENEROOT_H_

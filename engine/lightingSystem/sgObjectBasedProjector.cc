@@ -344,7 +344,7 @@ void sgShadowProjector::sgCalculateBoundingBox()
 
 	PROFILE_START(sgShadowProjector_sgCalculateBoundingBox_find);
 
-	gClientContainer.findObjects((AtlasObjectType | TerrainObjectType | InteriorObjectType), sgShadowProjector::collisionCallback, this);
+	getCurrentClientContainer()->findObjects((AtlasObjectType | TerrainObjectType | InteriorObjectType), sgShadowProjector::collisionCallback, this);
 
 	sgShadowPoly[0].set(-sphere.radius, 0, -sphere.radius);
 	sgShadowPoly[1].set(-sphere.radius, 0,  sphere.radius);
@@ -863,7 +863,7 @@ Point3F sgShadowProjector::sgGetCompositeShadowLightDirection()
 	U32 time = Platform::getRealMilliseconds();
 
 	LightInfoList bestlights;
-	gClientSceneGraph->getLightManager()->sgGetBestLights(bestlights);
+	getCurrentClientSceneGraph()->getLightManager()->sgGetBestLights(bestlights);
 
 	if((time - sgPreviousShadowTime) < SG_DYNAMIC_SHADOW_TIME)
 		return sgPreviousShadowLightingVector;

@@ -854,8 +854,8 @@ bool ShapeBase::onNewDataBlock(GameBaseData* dptr)
    // a shape assigned to this object.
    if (bool(mDataBlock->shape)) {
       delete mShapeInstance;
-      mShapeInstance = new TSShapeInstance(mDataBlock->shape, isClientObject());
-      if (isClientObject())
+      mShapeInstance = new TSShapeInstance(mDataBlock->shape, isClientObject() || gSPMode);
+      if (isClientObject() || gSPMode)
          mShapeInstance->cloneMaterialList();
 
       mObjBox = mDataBlock->shape->bounds;
@@ -2250,7 +2250,7 @@ bool ShapeBase::prepRenderImage(SceneState* state, const U32 stateKey,
       }
    }
 
-   if( state->isObjectRendered(this) || gClientSceneGraph->isReflectPass() )
+   if( state->isObjectRendered(this) || getCurrentClientSceneGraph()->isReflectPass() )
    {
       mLastRenderFrame = sLastRenderFrame;
       // get shape detail and fog information...we might not even need to be drawn
@@ -2348,7 +2348,7 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex )
    TSMesh::setObject( this );
 
    
-   gClientSceneGraph->getLightManager()->sgSetupLights(this);
+   getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
 
    if( mountedImageIndex != -1 )
    {
@@ -2370,11 +2370,13 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex )
       mat.scale( mObjScale );
       GFX->setWorldMatrix( mat );
 
+      bool serverobj = this->isServerObject();
+
       mShapeInstance->animate();
       mShapeInstance->render();
    }
    
-   gClientSceneGraph->getLightManager()->sgResetLights();
+   getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
    
 
    GFX->popWorldMatrix();
@@ -2419,12 +2421,12 @@ void ShapeBase::renderShadow(SceneState *state, RenderInst *ri)
    TSMesh::setGlow(false);
    TSMesh::setRefract(false);
 
-   gClientSceneGraph->getLightManager()->sgSetupLights(this);
+   getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
 
    Point3F cam = state->getCameraPosition() - getRenderPosition();
    shadows.sgRender(this, getShapeInstance(), cam.len());
 
-   gClientSceneGraph->getLightManager()->sgResetLights();
+   getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
 
    GFX->setProjectionMatrix(proj);
    GFX->setViewport(viewport);
@@ -2769,7 +2771,7 @@ bool ShapeBase::pointInWater( Point3F &point )
    if (isServerObject())
       gServerSceneGraph->getWaterObjectList(sql);
    else
-      gClientSceneGraph->getWaterObjectList(sql);
+       getCurrentClientSceneGraph()->getWaterObjectList(sql);
 
    for (U32 i = 0; i < sql.mList.size(); i++)
    {
@@ -3202,10 +3204,10 @@ void ShapeBase::setHidden(bool hidden)
       // need to set a mask bit to make the ghost manager delete copies of this object
       // hacky, but oh well.
       setMaskBits(CloakMask);
-      if (mHidden)
+      /*if (mHidden)
          addToScene();
       else
-         removeFromScene();
+         removeFromScene();*/
 
       mHidden = hidden;
    }

@@ -1970,7 +1970,7 @@ bool fxSunLight::TestLOS(const Point3F& ObjectPosition)
 
 	// Perform a ray cast on the client container database.
 	RayInfo info;
-	bool los = !gClientContainer.castRay(eyePos, endPos, losMask, &info);
+	bool los = !getCurrentClientContainer()->castRay(eyePos, endPos, losMask, &info);
 
 	// Restore old Object Box.
 	mObjBox = OldObjBox;

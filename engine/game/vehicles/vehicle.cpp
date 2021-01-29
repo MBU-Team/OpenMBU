@@ -1621,7 +1621,7 @@ bool Vehicle::collidingWithWater( Point3F &waterHeight )
    F32 height = mFabs( mObjBox.max.z - mObjBox.min.z );
 
    RayInfo rInfo;
-   if( gClientContainer.castRay( curPos + Point3F(0.0, 0.0, height), curPos, WaterObjectType, &rInfo) )
+   if(getCurrentClientContainer()->castRay( curPos + Point3F(0.0, 0.0, height), curPos, WaterObjectType, &rInfo) )
    {
       waterHeight = rInfo.point;
       return true;

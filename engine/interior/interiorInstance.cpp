@@ -77,7 +77,7 @@ ConsoleFunction( isPointInside, bool, 2, 4, "(Point3F pos) or (float x, float y,
    }
 
    RayInfo collision;
-   if(gClientContainer.castRay(pos, Point3F(pos.x, pos.y, pos.z - 2000.f), InteriorObjectType, &collision))
+   if(getCurrentClientContainer()->castRay(pos, Point3F(pos.x, pos.y, pos.z - 2000.f), InteriorObjectType, &collision))
    {
       if(collision.face == -1)
          Con::errorf(ConsoleLogEntry::General, "cIsPointInside: failed to find hit face on interior");
@@ -1306,7 +1306,7 @@ void InteriorInstance::updateReflection()
    MatrixF relCamTrans = invObjTrans * query.cameraMatrix;
 
 
-   gClientSceneGraph->setReflectPass( true );
+   getCurrentClientSceneGraph()->setReflectPass( true );
    
    for( U32 i=0; i<mReflectPlanes.size(); i++ )
    {
@@ -1329,7 +1329,7 @@ void InteriorInstance::updateReflection()
       camTrans.inverse();
 
       // set new projection matrix
-      gClientSceneGraph->setNonClipProjection( (MatrixF&) GFX->getProjectionMatrix() );
+      getCurrentClientSceneGraph()->setNonClipProjection( (MatrixF&) GFX->getProjectionMatrix() );
       MatrixF clipProj = rf.getFrustumClipProj( camTrans );
       GFX->setProjectionMatrix( clipProj );
 
@@ -1342,7 +1342,7 @@ void InteriorInstance::updateReflection()
       U32 objTypeFlag = -1;
       objTypeFlag ^= TerrainObjectType | StaticObjectType | StaticRenderedObjectType;
 
-      gClientSceneGraph->renderScene( objTypeFlag );
+      getCurrentClientSceneGraph()->renderScene( objTypeFlag );
 
       GFX->popActiveRenderSurfaces();
    }
@@ -1353,7 +1353,7 @@ void InteriorInstance::updateReflection()
    // clear zbuffer
    GFX->clear( GFXClearZBuffer | GFXClearStencil, ColorI( 255, 0, 255 ), 1.0f, 0 );
 
-   gClientSceneGraph->setReflectPass( false );
+   getCurrentClientSceneGraph()->setReflectPass( false );
    GFX->popWorldMatrix();
    GFX->setProjectionMatrix( proj );
 

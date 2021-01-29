@@ -446,7 +446,7 @@ void sgLightObject::registerLights(LightManager *lightManager, bool lightingScen
 	{
 		U32 zone = 0;
 		SceneObject *obj;
-		gClientSceneGraph->findZone(getPosition(), obj, zone);
+		getCurrentClientSceneGraph()->findZone(getPosition(), obj, zone);
 		sgMainZone = zone;
 	}
 

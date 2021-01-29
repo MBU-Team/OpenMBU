@@ -773,6 +773,11 @@ void GameConnection::readPacket(BitStream *bstream)
    bstream->clearCompressionPoint();
    if (isConnectionToServer())
    {
+        if (bstream->readFlag() != gSPMode)
+        {
+            Con::executef(this, 2, "switchedSinglePlayerMode", Con::getIntArg((S32)gSPMode));
+        }
+
       mLastMoveAck = bstream->readInt(32);
       if (mLastMoveAck < mFirstMoveIndex)
          mLastMoveAck = mFirstMoveIndex;
@@ -784,6 +789,8 @@ void GameConnection::readPacket(BitStream *bstream)
          mMoveList.pop_front();
          mFirstMoveIndex++;
       }
+
+      //int processListDirty = bstream->readInt(10);
 
       mDamageFlash = 0;
       mWhiteOut = 0;
@@ -818,7 +825,7 @@ void GameConnection::readPacket(BitStream *bstream)
             obj->getClassRep()->updateNetStatReadData(bstream->getCurPos() - beginSize);
 #endif
 
-            if(callScript)
+            if(callScript && !gSPMode) // Might not work - Matt
                Con::executef(this, 2, "initialControlSet");
          }
          else
@@ -952,10 +959,14 @@ void GameConnection::writePacket(BitStream *bstream, PacketNotify *note)
    }
    else
    {
+       bstream->writeFlag(gSPMode);
+
       // The only time mMoveList will not be empty at this
       // point is during a change in control object.
 
       bstream->writeInt(mLastMoveAck - mMoveList.size(),32);
+
+      //bstream->writeInt(getCurrentServerProcessList()->isDirty() & 0x3FF, 10);
 
       S32 gIndex = -1;
 

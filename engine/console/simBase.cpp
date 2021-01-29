@@ -1461,6 +1461,24 @@ ConsoleMethod(SimSet, pushToBack, void, 3, 3, "set.pushToBack(object)")
    object->pushObjectToBack(obj);
 }
 
+ConsoleMethod(SimSet, setHidden, void, 3, 3, "(bool show)")
+{
+    object->setHidden(dAtob(argv[2]));
+}
+
+//ConsoleMethod(SimSet, isHidden, bool, 2, 2, "")
+//{
+//    return object->isHidden();
+//}
+
+void SimSet::setHidden(bool hidden)
+{
+    for (SimSet::iterator i = begin(); i != end(); i++)
+    {
+        (*i)->setHidden(hidden);
+    }
+}
+
 //----------------------------------------------------------------------------
 
 IMPLEMENT_CONOBJECT(SimSet);

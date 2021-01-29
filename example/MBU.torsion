@@ -1,0 +1,24 @@
+<TorsionProject>
+    <Name>MBU</Name>
+    <WorkingDir></WorkingDir>
+    <EntryScript>main.cs</EntryScript>
+    <DebugHook>dbgSetParameters( #port#, "#password#", true );</DebugHook>
+    <Mods>        <Folder>common</Folder>
+        <Folder>marble</Folder>
+        <Folder>creator</Folder>
+    </Mods>
+    <ScannerExts>cs; gui</ScannerExts>
+    <Configs>        <Config>            <Name>Debug</Name>
+            <Executable>TSE_DEBUG.exe</Executable>
+            <Arguments></Arguments>
+            <HasExports>true</HasExports>
+            <Precompile>true</Precompile>
+            <InjectDebugger>true</InjectDebugger>
+            <UseSetModPaths>false</UseSetModPaths>
+        </Config>
+    </Configs>
+    <SearchURL></SearchURL>
+    <SearchProduct>TGE</SearchProduct>
+    <SearchVersion>HEAD</SearchVersion>
+    <ExecModifiedScripts>true</ExecModifiedScripts>
+</TorsionProject>

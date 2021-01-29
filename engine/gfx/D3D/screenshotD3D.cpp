@@ -145,7 +145,7 @@ void ScreenShotD3D::captureCustom()
    GFX->beginScene();
    GFX->clear( GFXClearZBuffer | GFXClearStencil | GFXClearTarget, ColorI( 255, 0, 255 ), 1.0f, 0 );
 
-   gClientSceneGraph->renderScene( InteriorObjectType );
+   getCurrentClientSceneGraph()->renderScene( InteriorObjectType );
 
    GFX->endScene();
    GFX->popActiveRenderSurfaces();

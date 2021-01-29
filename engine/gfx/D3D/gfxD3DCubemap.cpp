@@ -227,7 +227,7 @@ void GFXD3DCubemap::updateDynamic( Point3F &pos )
    matProj.mul(rotMat);
    GFX->setProjectionMatrix(matProj);
    
-   gClientSceneGraph->setReflectPass( true );
+   getCurrentClientSceneGraph()->setReflectPass( true );
    
    // Loop through the six faces of the cube map.
    for( DWORD i=0; i<6; i++ )
@@ -288,10 +288,10 @@ void GFXD3DCubemap::updateDynamic( Point3F &pos )
       D3DDevice->Clear( 0, NULL, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
 
       // render scene
-      gClientSceneGraph->renderScene( InteriorObjectType );
+      getCurrentClientSceneGraph()->renderScene( InteriorObjectType );
    }
    
-   gClientSceneGraph->setReflectPass( false );
+   getCurrentClientSceneGraph()->setReflectPass( false );
    
    // restore render surface and depth buffer
    GFX->popActiveRenderSurfaces();

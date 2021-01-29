@@ -305,7 +305,7 @@ ConsoleFunction(_sgDropDecal, void, 6, 6, "(Point3F pos, Point3F tandir, Point3F
 		return;
 
 	RayInfo info;
-	if(!gClientContainer.castRay(pos, (pos + Point3F(0, 0, -100)),
+	if(!getCurrentClientContainer()->castRay(pos, (pos + Point3F(0, 0, -100)),
 		InteriorObjectType | TerrainObjectType, &info))
 	{
 		Con::errorf("Error in _sgDropDecal: no drop object found.");

@@ -82,9 +82,9 @@ bool Camera::onAdd()
    resetWorldBox();
 
    if(isClientObject())
-      gClientContainer.addObject(this);
+      getCurrentClientContainer()->addObject(this);
    else
-      gServerContainer.addObject(this);
+      getCurrentServerContainer()->addObject(this);
 
  //  addToScene();
    return true;
@@ -587,7 +587,7 @@ void Camera::validateEyePoint(F32 pos, MatrixF *mat)
                  ItemObjectType |
                  VehicleObjectType;
 
-      Container* pContainer = isServerObject() ? &gServerContainer : &gClientContainer;
+      Container* pContainer = isServerObject() ? getCurrentServerContainer() : getCurrentClientContainer();
       if (!pContainer->castRay(startPos, startPos - dir * 2.5 * pos, mask, &collision))
          endPos = startPos - dir * pos;
       else

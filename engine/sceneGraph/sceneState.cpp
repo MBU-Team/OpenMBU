@@ -247,6 +247,9 @@ void SceneState::setupBaseProjection()
 
 bool SceneState::isObjectRendered(const SceneObject* obj)
 {
+    if (obj->mHidden)
+        return false;
+
    const SceneObjectRef* pWalk = obj->mZoneRefHead;
 
    static F32 darkToOGLCoord[16] = { 1, 0,  0, 0,
@@ -375,9 +378,9 @@ bool checkFogBandBoxVisible(F32 dist, F32 haze, F32 low, F32 high, Vector<SceneS
 bool SceneState::isBoxFogVisible(F32 dist, F32 top, F32 bottom)
 {
    F32 camZ = mCamPosition.z;
-   if( gClientSceneGraph->isReflectPass() )
+   if(getCurrentClientSceneGraph()->isReflectPass() )
    {
-      camZ = gClientSceneGraph->mNormCamPos.z;
+      camZ = getCurrentClientSceneGraph()->mNormCamPos.z;
    }
 
    float haze = 0;
@@ -441,9 +444,9 @@ void SceneState::setupFog()
    mPosFogBands.clear();
 
    F32 camZ = mCamPosition.z;
-   if( gClientSceneGraph->isReflectPass() )
+   if(getCurrentClientSceneGraph()->isReflectPass() )
    {
-      camZ = gClientSceneGraph->mNormCamPos.z;
+      camZ = getCurrentClientSceneGraph()->mNormCamPos.z;
    }
 
    S32 i;

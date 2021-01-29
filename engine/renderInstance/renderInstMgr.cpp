@@ -188,7 +188,7 @@ void RenderInstManager::addInst( RenderInst *inst )
       }
 
       if( inst->matInst->hasGlow() && 
-         !gClientSceneGraph->isReflectPass() &&
+         !getCurrentClientSceneGraph()->isReflectPass() &&
          !inst->obj )
       {
          mRenderBins[ Glow ]->addElement( inst );

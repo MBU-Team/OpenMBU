@@ -40,6 +40,8 @@ function initCanvas(%windowName)
    exec("./cursor.cs");
    exec("./help.cs");
    //exec("./recordings.cs"); // use the marble blast one
+   
+   exec("./materials.cs");
 
    // Init the audio system
    OpenALInit();

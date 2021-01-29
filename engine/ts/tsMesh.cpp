@@ -335,7 +335,7 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList * materials)
    coreRI->primBuff = &mPB;
 
 //-----------------------------------------------------------------
-	LightManager *lm = gClientSceneGraph->getLightManager();
+	LightManager *lm = getCurrentClientSceneGraph()->getLightManager();
 	LightInfoList baselights;
 	lm->sgGetBestLights(baselights);
 	

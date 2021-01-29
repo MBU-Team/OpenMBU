@@ -264,6 +264,17 @@ protected:
 
 extern SceneGraph* gClientSceneGraph;
 extern SceneGraph* gServerSceneGraph;
+extern SceneGraph* gSPModeSceneGraph;
+
+inline SceneGraph* getCurrentServerSceneGraph()
+{
+    return gSPMode ? gSPModeSceneGraph : gServerSceneGraph;
+}
+
+inline SceneGraph* getCurrentClientSceneGraph()
+{
+    return gSPMode ? gSPModeSceneGraph : gClientSceneGraph;
+}
 
 
 inline LightManager * SceneGraph::getLightManager()

@@ -69,7 +69,7 @@ void Interior::setupRenderStates()
    GFX->setTextureStageColorOp( 2, GFXTOPDisable );
 
    // set culling
-   if( gClientSceneGraph->isReflectPass() )
+   if(getCurrentClientSceneGraph()->isReflectPass() )
    {
       GFX->setCullMode( GFXCullCW );
    }
@@ -127,7 +127,7 @@ SceneGraphData Interior::setupSceneGraphInfo( InteriorInstance *intInst,
 
    // grab the sun data from the light manager
    Vector<LightInfo*> lights;
-   const LightInfo *sunlight = gClientSceneGraph->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+   const LightInfo *sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
    VectorF sunVector = sunlight->mDirection; //first light is always sun
 
    // set the sun data into scenegraph data
@@ -153,10 +153,10 @@ SceneGraphData Interior::setupSceneGraphInfo( InteriorInstance *intInst,
 
    // fog
    sgData.useFog = true;
-   sgData.fogTex = gClientSceneGraph->getFogTexture();
-   sgData.fogHeightOffset = gClientSceneGraph->getFogHeightOffset();
-   sgData.fogInvHeightRange = gClientSceneGraph->getFogInvHeightRange();
-   sgData.visDist = gClientSceneGraph->getVisibleDistanceMod();
+   sgData.fogTex = getCurrentClientSceneGraph()->getFogTexture();
+   sgData.fogHeightOffset = getCurrentClientSceneGraph()->getFogHeightOffset();
+   sgData.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
+   sgData.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
    // misc
    sgData.backBuffTex = GFX->getSfxBackBuffer();
@@ -371,7 +371,7 @@ void Interior::prepBatchRender( InteriorInstance *intInst, SceneState *state )
    // render zones
    for( U32 i=0; i<mZones.size(); i++ )
    {
-      if( zoneVis.isZoneVisible(i) == false && !gClientSceneGraph->isReflectPass() )
+      if( zoneVis.isZoneVisible(i) == false && !getCurrentClientSceneGraph()->isReflectPass() )
       {
          continue;
       }
@@ -385,7 +385,7 @@ void Interior::prepBatchRender( InteriorInstance *intInst, SceneState *state )
    
 
    // render reflective surfaces
-   if( !gClientSceneGraph->isReflectPass() )
+   if( !getCurrentClientSceneGraph()->isReflectPass() )
    {
       renderLights(intInst, sgData, coreRi, zoneVis);
 
@@ -442,7 +442,7 @@ bool Interior::renderLights(InteriorInstance *intInst, SceneGraphData &sgData,
 {
 	sgDynamicLightCache lightdatacache;
 	LightInfoList lights;
-	LightManager *lm = gClientSceneGraph->getLightManager();
+	LightManager *lm = getCurrentClientSceneGraph()->getLightManager();
 
 	// get all lights...
 	lm->sgGetAllUnsortedLights(lights);

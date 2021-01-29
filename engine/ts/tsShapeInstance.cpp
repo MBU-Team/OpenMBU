@@ -1574,7 +1574,7 @@ GBitmap * TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, M
    GFX->getFrustum( &left, &right, &bottom, &top, &nearPlane, &farPlane );
    U32 numFogVolumes;
    FogVolume* fogVolumes;
-   gClientSceneGraph->getFogVolumes(numFogVolumes, fogVolumes);
+   getCurrentClientSceneGraph()->getFogVolumes(numFogVolumes, fogVolumes);
 
    SceneState state(
       NULL,
@@ -1594,10 +1594,10 @@ GBitmap * TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, M
       farPlane); // vis factor
 
    // build the fog texture
-   gClientSceneGraph->buildFogTexture(&state);
+   getCurrentClientSceneGraph()->buildFogTexture(&state);
 
    // we'll also need to add a light to the scene if there isn't one already
-   const LightInfo *light = gClientSceneGraph->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+   const LightInfo *light = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
 
    TSMesh::setCamTrans( cameraMatrix );
    TSMesh::setSceneState( &state );

@@ -31,6 +31,8 @@
 #include "sceneGraph/lightManager.h"
 #endif
 
+#include "game/game.h"
+
 //-------------------------------------- Forward declarations...
 class SceneObject;
 class SceneGraph;
@@ -710,6 +712,8 @@ protected:
    Box3F   mRenderWorldBox;      ///< Render bounding box in world space
    SphereF mRenderWorldSphere;   ///< Render bounxing sphere in world space
 
+   bool    mHidden;
+
    /// Regenerates the world-space bounding box and bounding sphere
    void    resetWorldBox();
 
@@ -813,6 +817,17 @@ public:
 //--------------------------------------------------------------------------
 extern Container gServerContainer;
 extern Container gClientContainer;
+extern Container gSPModeContainer;
+
+inline Container* getCurrentServerContainer()
+{
+    return gSPMode ? &gSPModeContainer : &gServerContainer;
+}
+
+inline Container* getCurrentClientContainer()
+{
+    return gSPMode ? &gSPModeContainer : &gClientContainer;
+}
 
 //--------------------------------------------------------------------------
 //-------------------------------------- Inlines

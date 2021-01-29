@@ -370,6 +370,8 @@ SceneObject::SceneObject()
    mBinMaxX = 0xFFFFFFFF;
    mBinMinY = 0xFFFFFFFF;
    mBinMaxY = 0xFFFFFFFF;
+
+   mHidden = false;
 }
 
 SceneObject::~SceneObject()
@@ -546,12 +548,12 @@ void SceneObject::addToScene()
 {
    if(isClientObject())
    {
-      gClientContainer.addObject(this);
-      gClientSceneGraph->addObjectToScene(this);
+      getCurrentClientContainer()->addObject(this);
+      getCurrentClientSceneGraph()->addObjectToScene(this);
    }
    else
    {
-      gServerContainer.addObject(this);
+      getCurrentServerContainer()->addObject(this);
       gServerSceneGraph->addObjectToScene(this);
    }
 }
@@ -670,6 +672,9 @@ void SceneObject::initPersistFields()
    addField("rotation", TypeMatrixRotation, Offset(mObjToWorld, SceneObject));
    addField("scale", TypePoint3F, Offset(mObjScale, SceneObject));
    endGroup("Transform"); // MM: Added group footer.
+   addGroup("Visibility");
+   addField("hidden", TypeBool, Offset(mHidden, SceneObject));
+   endGroup("Visibility");
 }
 
 bool SceneObject::onSceneAdd(SceneGraph* pGraph)
@@ -789,6 +794,7 @@ void Container::Link::linkAfter(Container::Link* ptr)
 
 Container gServerContainer;
 Container gClientContainer;
+Container gSPModeContainer;
 
 Container::Container()
 {
@@ -1938,7 +1944,7 @@ bool SceneObject::getLightingAmbientColor(ColorF * col)
 
       // Ambient light is determined by the surface we are standing on.
       RayInfo collision;
-	  if(gClientContainer.castRay(pos, Point3F(pos.x, pos.y, pos.z - cRayLength),
+	  if(getCurrentClientContainer()->castRay(pos, Point3F(pos.x, pos.y, pos.z - cRayLength),
             InteriorObjectType | TerrainObjectType | AtlasObjectType, &collision))
 	  {
 		  bool found = true;

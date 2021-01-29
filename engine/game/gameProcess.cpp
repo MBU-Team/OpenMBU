@@ -14,8 +14,17 @@
 
 ProcessList gClientProcessList(false);
 ProcessList gServerProcessList(true);
+ProcessList gSPModeProcessList(true);
 
 bool ProcessList::mDebugControlSync = false;
+
+ConsoleFunction(dumpProcessList, void, 1, 1, "dumpProcessList();")
+{
+    Con::printf("client process list:");
+    getCurrentClientProcessList()->dumpToConsole();
+    Con::printf("server process list:");
+    gServerProcessList.dumpToConsole();
+}
 
 ProcessList::ProcessList(bool isServer)
 {
@@ -195,6 +204,47 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
    mLastTime = targetTime;
    PROFILE_END();
    return tickCount != 0;
+}
+
+//----------------------------------------------------------------------------
+
+bool ProcessList::advanceSPModeTime(SimTime timeDelta)
+{
+    PROFILE_START(AdvanceSPModeTime);
+
+    if (mDirty) orderList();
+
+    SimTime targetTime = mLastTime + timeDelta;
+    SimTime targetTick = targetTime & ~TickMask;
+    SimTime tickCount = (targetTick - mLastTick) >> TickShift;
+
+    bool ret = mLastTick != targetTick;
+    // Advance all the objects
+    for (; mLastTick != targetTick; mLastTick += TickMs)
+        advanceObjects();
+
+    F32 dt = F32(timeDelta) / 1000;
+    for (GameBase* obj = head.mProcessLink.next; obj != &head;
+        obj = obj->mProcessLink.next)
+        obj->advanceTime(dt);
+
+    mLastTime = targetTime;
+    PROFILE_END();
+    return ret;
+}
+
+//----------------------------------------------------------------------------
+
+void ProcessList::dumpToConsole()
+{
+    for (GameBase* pobj = head.mProcessLink.next; pobj != &head; pobj = pobj->mProcessLink.next)
+    {
+        SimObject* obj = dynamic_cast<SimObject*>(pobj);
+        if (obj)
+            Con::printf("id %i, order guid %i, type %s", obj->getId(), 0, obj->getClassName());
+        else
+            Con::printf("---unknown object type, order guid %i", 0);
+    }
 }
 
 

@@ -99,7 +99,7 @@ bool TSStatic::onAdd()
    resetWorldBox();
    setRenderTransform(mObjToWorld);
 
-   mShapeInstance = new TSShapeInstance(mShape, isClientObject());
+   mShapeInstance = new TSShapeInstance(mShape, isClientObject() || gSPMode);
 
    // Scan out the collision hulls...
    U32 i;
@@ -187,7 +187,7 @@ bool TSStatic::prepRenderImage(SceneState* state, const U32 stateKey,
    // This should be sufficient for most objects that don't manage zones, and
    //  don't need to return a specialized RenderImage...
 
-   if( mShapeInstance && (state->isObjectRendered(this) || gClientSceneGraph->isReflectPass()) )
+   if( mShapeInstance && (state->isObjectRendered(this) || getCurrentClientSceneGraph()->isReflectPass()) )
    {
       Point3F cameraOffset;
       getRenderTransform().getColumn(3,&cameraOffset);
@@ -236,7 +236,7 @@ void TSStatic::renderObject(SceneState* state)
    GFX->pushWorldMatrix();
 
    
-   gClientSceneGraph->getLightManager()->sgSetupLights(this);
+   getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
 
    MatrixF mat = getRenderTransform();
    mat.scale( mObjScale );
@@ -245,7 +245,7 @@ void TSStatic::renderObject(SceneState* state)
    mShapeInstance->animate();
    mShapeInstance->render();
    
-   gClientSceneGraph->getLightManager()->sgResetLights();
+   getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
    
 
    GFX->popWorldMatrix();

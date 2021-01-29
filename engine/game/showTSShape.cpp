@@ -265,7 +265,7 @@ bool ShowTSShape::prepRenderImage(SceneState* state, const U32 stateKey,
 void ShowTSShape::prepBatchRender( SceneState* state )
 {
    // setup light
-   LightInfo *sunlight = gClientSceneGraph->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+   LightInfo *sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
 
    sunlight->mType = LightInfo::Vector;
    sunlight->mDirection.set( -lightDir.x, -lightDir.y, -lightDir.z );
@@ -337,8 +337,8 @@ bool ShowTSShape::onAdd()
    orbitUs();
 
    // We're always a client object...
-   gClientContainer.addObject(this);
-   gClientSceneGraph->addObjectToScene(this);
+   getCurrentClientContainer()->addObject(this);
+   getCurrentClientSceneGraph()->addObjectToScene(this);
 
    mObjBox = shapeInstance->getShape()->bounds;
    resetWorldBox();
@@ -359,8 +359,8 @@ bool ShowTSShape::onAdd()
 
 void ShowTSShape::onRemove()
 {
-   gClientSceneGraph->removeObjectFromScene(this);
-   gClientContainer.removeObject(this);
+   getCurrentClientSceneGraph()->removeObjectFromScene(this);
+   getCurrentClientContainer()->removeObject(this);
 
    if (this == currentShow)
    {
@@ -401,9 +401,9 @@ void ShowTSShape::deleteThread(S32 th)
 
 void ShowTSShape::setPosition(Point3F p)
 {
-   if (stayGrounded && gClientSceneGraph->getCurrentTerrain())
+   if (stayGrounded && getCurrentClientSceneGraph()->getCurrentTerrain())
       // won't actually change p.z if on empty square
-      gClientSceneGraph->getCurrentTerrain()->getHeight(Point2F(p.x,p.y),&p.z);
+       getCurrentClientSceneGraph()->getCurrentTerrain()->getHeight(Point2F(p.x,p.y),&p.z);
 
    centerPos = p + shapeInstance->getShape()->center;
    mat.setColumn(3,p);
@@ -799,7 +799,7 @@ void ShowRenderWorld()
       }
    }
 
-   gClientSceneGraph->renderScene();
+   getCurrentClientSceneGraph()->renderScene();
 
 }
 

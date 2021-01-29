@@ -34,10 +34,10 @@ void RenderGlowMgr::setupSGData( RenderInst *ri, SceneGraphData &data )
    data.cubemap = ri->cubemap;
 
    data.useFog = true;
-   data.fogTex = gClientSceneGraph->getFogTexture();
-   data.fogHeightOffset = gClientSceneGraph->getFogHeightOffset();
-   data.fogInvHeightRange = gClientSceneGraph->getFogInvHeightRange();
-   data.visDist = gClientSceneGraph->getVisibleDistanceMod();
+   data.fogTex = getCurrentClientSceneGraph()->getFogTexture();
+   data.fogHeightOffset = getCurrentClientSceneGraph()->getFogHeightOffset();
+   data.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
+   data.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
    data.glowPass = true;
 
@@ -58,7 +58,7 @@ void RenderGlowMgr::setupSGData( RenderInst *ri, SceneGraphData &data )
 //-----------------------------------------------------------------------------
 void RenderGlowMgr::render()
 {
-   GlowBuffer *glowBuffer = gClientSceneGraph->getGlowBuff();
+   GlowBuffer *glowBuffer = getCurrentClientSceneGraph()->getGlowBuff();
    if( !glowBuffer || glowBuffer->isDisabled() | !mElementList.size() ) return;
 
    RectI vp = GFX->getViewport();

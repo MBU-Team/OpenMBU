@@ -59,7 +59,7 @@ bool AmbientAudioManager::getOutsideScale(F32 * pScale, InteriorInstance ** pInt
    camMat.getColumn(3, &pos);
 
    RayInfo collision;
-   if(!gClientContainer.castRay(pos, Point3F(pos.x, pos.y, pos.z - 2000.f), InteriorObjectType, &collision))
+   if(!getCurrentClientContainer()->castRay(pos, Point3F(pos.x, pos.y, pos.z - 2000.f), InteriorObjectType, &collision))
    {
       *pScale = 1.f;
       *pInterior = 0;

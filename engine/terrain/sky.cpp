@@ -652,9 +652,9 @@ void Sky::renderObject( SceneState* state, RenderInst *ri )
 
 
    // this fixes oblique frustum clip prob on planar reflections
-   if( gClientSceneGraph->isReflectPass() )
+   if(getCurrentClientSceneGraph()->isReflectPass() )
    {
-      GFX->setProjectionMatrix( gClientSceneGraph->getNonClipProjection() );
+      GFX->setProjectionMatrix(getCurrentClientSceneGraph()->getNonClipProjection() );
    }
    else
    {
@@ -728,9 +728,9 @@ void Sky::render(SceneState *state)
    S32 index         = 0;
    Point3F camPos;
 
-   if(gClientSceneGraph)
+   if(getCurrentClientSceneGraph())
    {
-      F32 currentVisDis = gClientSceneGraph->getVisibleDistanceMod();
+      F32 currentVisDis = getCurrentClientSceneGraph()->getVisibleDistanceMod();
       if(mLastVisDisMod != currentVisDis)
       {
          calcPoints();
@@ -745,9 +745,9 @@ void Sky::render(SceneState *state)
    {
       camPos = state->getCameraPosition();
       
-      if( gClientSceneGraph->isReflectPass() )
+      if(getCurrentClientSceneGraph()->isReflectPass() )
       {
-         camPos = gClientSceneGraph->mNormCamPos;
+         camPos = getCurrentClientSceneGraph()->mNormCamPos;
       }
 
       depthInFog = -(camPos.z - mFogLine);
@@ -1324,8 +1324,8 @@ void Sky::calcPoints()
    F32 textureDim;
 
    F32 visDisMod = mVisibleDistance;
-   if(gClientSceneGraph)
-      visDisMod = gClientSceneGraph->getVisibleDistanceMod();
+   if(getCurrentClientSceneGraph())
+      visDisMod = getCurrentClientSceneGraph()->getVisibleDistanceMod();
    mRadius = visDisMod * 0.20f;
 
    Cloud::setRadius(mRadius);

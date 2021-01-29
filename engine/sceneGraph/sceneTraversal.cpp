@@ -136,7 +136,7 @@ void SceneGraph::buildSceneTree(SceneState*  state,
                                 const U32    currDepth,
                                 const U32    objectMask )
 {
-   AssertFatal(this == gClientSceneGraph, "Error, only the client scenegraph can support this call!");
+   AssertFatal(this == gClientSceneGraph || this == gSPModeSceneGraph, "Error, only the client scenegraph can support this call!");
 
    // Search proceeds from the baseObject, and starts in the baseZone.
    // General Outline:
@@ -206,7 +206,7 @@ void SceneGraph::buildSceneTree(SceneState*  state,
    //  potentially rendered list.  Note: we can query against the client
    //  container without testing, since only the client will be calling this
    //  function.  This is assured by the assert at the top...
-   gClientContainer.findObjects(prl.mBox, objectMask, prlInsertionCallback, &prl);
+   getCurrentClientContainer()->findObjects(prl.mBox, objectMask, prlInsertionCallback, &prl);
 
    // Clear the object colors
    U32 i;

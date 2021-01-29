@@ -9,6 +9,7 @@
 
 SceneRoot* gClientSceneRoot = NULL;
 SceneRoot* gServerSceneRoot = NULL;
+SceneRoot* gSPModeSceneRoot = NULL;
 
 SceneRoot::SceneRoot()
 {

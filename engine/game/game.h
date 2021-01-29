@@ -19,6 +19,8 @@ struct CameraQuery;
 const F32 MinCameraFov              = 1.f;      ///< min camera FOV
 const F32 MaxCameraFov              = 179.f;    ///< max camera FOV
 
+extern bool gSPMode;
+
 /// Actually renders the world.  This is the function that will render the scene ONLY - new guis, no damage flashes.
 void GameRenderWorld();
 /// Renders overlays such as damage flashes, white outs, and water masks.  These are usually a color applied over the entire screen.
@@ -43,5 +45,7 @@ void GameInit();
 bool clientProcess(U32 timeDelta);
 /// Processes the next cycle on the server.  This function will only have an effect when executed on the server.
 bool serverProcess(U32 timeDelta);
+
+bool spmodeProcess(U32 timeDelta);
 
 #endif

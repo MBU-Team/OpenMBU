@@ -99,7 +99,7 @@ void GuiTSCtrl::onRender(Point2I offset, const RectI &updateRect)
    GFX->setFrustum( left, right, bottom, top,
                     mLastCameraQuery.nearPlane, mLastCameraQuery.farPlane );
 
-   gClientSceneGraph->setVisibleDistance( mLastCameraQuery.farPlane );
+   getCurrentClientSceneGraph()->setVisibleDistance( mLastCameraQuery.farPlane );
 
    mLastCameraQuery.cameraMatrix.inverse();
    GFX->setWorldMatrix( mLastCameraQuery.cameraMatrix );

@@ -240,7 +240,7 @@ void SceneLighting::TerrainProxy::light(LightInfo * light)
 
 		// Static object support...
 		Vector<SceneObject *>   objects;
-		gClientContainer.findObjects(ShadowCasterObjectType, sgFindObjectsCallback, &objects);
+		getCurrentClientContainer()->findObjects(ShadowCasterObjectType, sgFindObjectsCallback, &objects);
 
 		// build static shadow volume
 		for(U32 o=0; o<objects.size(); o++)

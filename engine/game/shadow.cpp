@@ -404,7 +404,7 @@ void Shadow::buildPartition(const Point3F & p, const Point3F & lightDir, F32 rad
 
    // get polys
 
-   gClientContainer.findObjects(smShadowMask,Shadow::collisionCallback,this);
+   getCurrentClientContainer()->findObjects(smShadowMask,Shadow::collisionCallback,this);
 
    // setup partition list
    gShadowPoly[0].set(-radius,0,-radius);

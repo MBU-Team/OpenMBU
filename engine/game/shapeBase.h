@@ -828,7 +828,7 @@ protected:
    bool mCloaked;
    F32  mCloakLevel;
 //   TextureHandle mCloakTexture;
-   bool mHidden; ///< in/out of world
+   //bool mHidden; ///< in/out of world
 
    /// @}
 

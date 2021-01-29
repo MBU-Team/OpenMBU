@@ -641,14 +641,14 @@ ConsoleFunction(atlasEmitCastRayTest, void, 2, 2, "(pos) - draw a bunch of debug
          bool ret;
 
          // Do Client...
-         ret = gClientContainer.castRay(start, end, AtlasObjectType, &r);
+         ret = getCurrentClientContainer()->castRay(start, end, AtlasObjectType, &r);
          if(ret)
             gDebugDraw->drawLine(start, r.point, ColorF(0, 1, 1));
          else
             gDebugDraw->drawLine(start, end, ColorF(1, 0, 1));
 
          // Do server...
-         ret = gServerContainer.castRay(start, end, AtlasObjectType, &r);
+         ret = getCurrentServerContainer()->castRay(start, end, AtlasObjectType, &r);
          if(ret)
             gDebugDraw->drawLine(start, r.point, ColorF(0, 1, 0));
          else

@@ -685,7 +685,7 @@ bool Explosion::onAdd()
       }
    }
 
-   gClientContainer.addObject(this);
+   getCurrentClientContainer()->addObject(this);
    gClientSceneGraph->addObjectToScene(this);
 
    removeFromProcessList();

@@ -640,7 +640,7 @@ void fxFoliageReplicator::CreateFoliage(void)
 			FoliageEnd.z= -2000.f;
 
 			// Perform Ray Cast Collision on Client.
-			CollisionResult = gClientContainer.castRay(	FoliageStart, FoliageEnd, FXFOLIAGEREPLICATOR_COLLISION_MASK, &RayEvent);
+			CollisionResult = getCurrentClientContainer()->castRay(	FoliageStart, FoliageEnd, FXFOLIAGEREPLICATOR_COLLISION_MASK, &RayEvent);
 
 			// Did we hit anything?
 			if (CollisionResult)
@@ -660,7 +660,7 @@ void fxFoliageReplicator::CreateFoliage(void)
 				// If we collided with water and are not allowing on the water surface then let's find the
 				// terrain underneath and pass this on as the original collision else fail.
 				if ((CollisionType & WaterObjectType) && !mFieldData.mAllowWaterSurface &&
-					!gClientContainer.castRay( FoliageStart, FoliageEnd, FXFOLIAGEREPLICATOR_NOWATER_COLLISION_MASK, &RayEvent)) continue;
+					!getCurrentClientContainer()->castRay( FoliageStart, FoliageEnd, FXFOLIAGEREPLICATOR_NOWATER_COLLISION_MASK, &RayEvent)) continue;
 
 				// We passed with flying colour so carry on.
 				CollisionResult = true;

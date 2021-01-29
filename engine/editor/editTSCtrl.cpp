@@ -215,7 +215,7 @@ void EditTSCtrl::renderWorld(const RectI & updateRect)
    GFX->setCullMode( GFXCullNone );
    GFX->setBaseRenderState();
 
-   gClientSceneGraph->renderScene();
+   getCurrentClientSceneGraph()->renderScene();
 
    // render the mission area...
    if(mRenderMissionArea)

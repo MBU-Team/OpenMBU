@@ -1132,6 +1132,9 @@ class SimSet: public SimObject
 
    virtual SimObject *findObject(const char *name);
 
+   //bool isHidden();
+   void setHidden(bool b);
+
    inline void lock()
    {
 #ifdef TORQUE_MULTITHREAD

@@ -23,6 +23,7 @@ const U32 SceneGraph::csmMaxTraversalDepth = 4;
 U32 SceneGraph::smStateKey = 0;
 SceneGraph* gClientSceneGraph = NULL;
 SceneGraph* gServerSceneGraph = NULL;
+SceneGraph* gSPModeSceneGraph = NULL;
 const U32 SceneGraph::csmRefPoolBlockSize = 4096;
 F32 SceneGraph::smVisibleDistanceMod = 1.0;
 
@@ -578,8 +579,8 @@ void SceneGraph::registerZones(SceneObject* obj, U32 numZones)
    // Since we now have new zones in this space, we need to rezone any intersecting
    //  objects.  Query the container database to find all intersecting/contained
    //  objects, and rezone them
-   Container* pQueryContainer = mIsClient ? &gClientContainer :
-      &gServerContainer;
+   Container* pQueryContainer = mIsClient ? getCurrentClientContainer():
+       getCurrentServerContainer();
    // query
    SimpleQueryList list;
    pQueryContainer->findObjects(obj->mWorldBox, 0xFFFFFFFF, SimpleQueryList::insertionCallback, &list);
@@ -662,7 +663,7 @@ void SceneGraph::unregisterZones(SceneObject* obj)
          if ((mIsClient == true  && obj != gClientSceneRoot) ||
              (mIsClient == false && obj != gServerSceneRoot))
          {
-            Container* pQueryContainer = mIsClient ? &gClientContainer : &gServerContainer;
+            Container* pQueryContainer = mIsClient ? getCurrentClientContainer() : getCurrentServerContainer();
             SimpleQueryList list;
             pQueryContainer->findObjects(obj->mWorldBox, 0xFFFFFFFF, SimpleQueryList::insertionCallback, &list);
             for (i = 0; i < list.mList.size(); i++) {
@@ -869,8 +870,8 @@ void SceneGraph::zoneInsert(SceneObject* obj)
    if (obj->isManagingZones()) {
       // Query the container database to find all intersecting/contained
       //  objects, and rezone them
-      Container* pQueryContainer = mIsClient ? &gClientContainer :
-         &gServerContainer;
+      Container* pQueryContainer = mIsClient ? getCurrentClientContainer() :
+          getCurrentServerContainer();
       // query
       SimpleQueryList list;
       pQueryContainer->findObjects(obj->mWorldBox, 0xFFFFFFFF, SimpleQueryList::insertionCallback, &list);

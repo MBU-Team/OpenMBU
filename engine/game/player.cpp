@@ -1866,7 +1866,7 @@ MatrixF * Player::Death::fallToGround(F32 dt, const Point3F& loc, F32 curZ, F32 
 
    PROFILE_START(ConformToGround);
 
-   if (gClientContainer.castRay(pos, below, sPlayerConformMask, &coll))
+   if (getCurrentClientContainer()->castRay(pos, below, sPlayerConformMask, &coll))
    {
       F32      adjust, height = (loc.z - coll.point.z), sink = curSink;
       VectorF  desNormal = coll.normal;
@@ -1894,7 +1894,7 @@ MatrixF * Player::Death::fallToGround(F32 dt, const Point3F& loc, F32 curZ, F32 
 
          // Do the three casts-
          for (S32 c = 0; c < 3; c++)
-            if (gClientContainer.castRay(corners[c], downpts[c], sPlayerConformMask, &coll))
+            if (getCurrentClientContainer()->castRay(corners[c], downpts[c], sPlayerConformMask, &coll))
                downpts[c] = coll.point;
             else
                break;
@@ -2095,7 +2095,7 @@ void Player::updateActionThread()
          MatrixF mat = getRenderTransform();
          mat.getColumn(1, &rot);
          mat.mulP(Point3F(offset,0.0f,0.0f), &pos);
-         if (gClientContainer.castRay(Point3F(pos.x, pos.y, pos.z + 0.01f),
+         if (getCurrentClientContainer()->castRay(Point3F(pos.x, pos.y, pos.z + 0.01f),
             Point3F(pos.x, pos.y, pos.z - 2.0f ),
             TerrainObjectType | InteriorObjectType | VehicleObjectType, &rInfo))
          {
@@ -4016,7 +4016,7 @@ bool Player::pointInWater( Point3F &point )
    if (isServerObject())
       gServerSceneGraph->getWaterObjectList(sql);
    else
-      gClientSceneGraph->getWaterObjectList(sql);
+       getCurrentClientSceneGraph()->getWaterObjectList(sql);
 
    for (U32 i = 0; i < sql.mList.size(); i++)
    {
