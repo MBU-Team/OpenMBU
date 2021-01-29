@@ -121,6 +121,9 @@ void RenderInstManager::uninitBins()
 //-----------------------------------------------------------------------------
 void RenderInstManager::addInst( RenderInst *inst )
 {
+    if (!mInitialized)
+        gRenderInstManager.init();
+
    AssertISV( mInitialized, "RenderInstManager not initialized - call console function 'initRenderInstManager()'" );
 
    // handle special cases that don't require insertion into multiple bins
@@ -300,7 +303,7 @@ void RenderInstManager::render()
 // initRenderInstManager - do this through script because there's no good place to
 // init after device creation in code.
 //-----------------------------------------------------------------------------
-ConsoleFunction( initRenderInstManager, void, 1, 1, "initRenderInstManager")
+/*ConsoleFunction( initRenderInstManager, void, 1, 1, "initRenderInstManager")
 {
    gRenderInstManager.init();
-}
+}*/
