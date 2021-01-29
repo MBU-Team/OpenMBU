@@ -3,7 +3,6 @@
 //-----------------------------------------------------------------------------
 struct ConnectData
 {
-   float4 shading         : COLOR;
    float2 texCoord        : TEXCOORD0;
    float2 fogCoord        : TEXCOORD1;
    float2 detailCoord     : TEXCOORD2;
@@ -29,7 +28,7 @@ Fragout main( ConnectData IN,
 {
    Fragout OUT;
    
-   float4 diffuseColor = tex2D(diffuseMap, IN.texCoord) * IN.shading;
+   float4 diffuseColor = tex2D(diffuseMap, IN.texCoord);
    float4 fogCol       = tex2D(fogMap,     IN.fogCoord);
    float4    detailCol  =  tex2D(detailMap,   IN.detailCoord);
              detailCol  *= tex2D(detailMap2,  IN.detailCoord2);

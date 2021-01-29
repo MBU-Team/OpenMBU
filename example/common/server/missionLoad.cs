@@ -9,12 +9,15 @@
 
 // On every mission load except the first, there is a pause after
 // the initial mission info is downloaded to the client.
-$MissionLoadPause = 5000;
+// JMQ: not for MB2
+//$MissionLoadPause = 5000;
 
 //-----------------------------------------------------------------------------
 
 function loadMission( %missionName, %isFirstMission ) 
 {
+   $missionLoadStart = getRealTime();
+
    endMission();
    echo("*** LOADING MISSION: " @ %missionName);
    echo("*** Stage 1 load");
@@ -22,6 +25,7 @@ function loadMission( %missionName, %isFirstMission )
    // Reset all of these
    clearCenterPrintAll();
    clearBottomPrintAll();
+   clearServerPaths();
 
    // increment the mission sequence (used for ghost sequencing)
    $missionSequence++;
@@ -43,10 +47,10 @@ function loadMission( %missionName, %isFirstMission )
 
    // if this isn't the first mission, allow some time for the server
    // to transmit information to the clients:
-   if( %isFirstMission || $Server::ServerType $= "SinglePlayer" )
+   //if( %isFirstMission || $Server::ServerType $= "SinglePlayer" )
       loadMissionStage2();
-   else
-      schedule( $MissionLoadPause, ServerGroup, loadMissionStage2 );
+   //else
+   //   schedule( $MissionLoadPause, ServerGroup, loadMissionStage2 );
 }
 
 //-----------------------------------------------------------------------------
@@ -59,6 +63,7 @@ function loadMissionStage2()
 
    // Make sure the mission exists
    %file = $Server::MissionFile;
+   echo( "--Trying to find mission " @ %file );
    
    if( !isFile( %file ) ) {
       error( "Could not find mission " @ %file );
@@ -78,6 +83,10 @@ function loadMissionStage2()
       schedule( 3000, ServerGroup, CycleMissions );
       return;
    }
+
+   // populate id variables for the mission we loaded
+   $Server::MissionId = MissionInfo.level;
+   $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(MissionInfo.gameMode);
 
    // Mission cleanup group
    new SimGroup( MissionCleanup );

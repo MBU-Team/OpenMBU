@@ -1,0 +1,101 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(OptimatchGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+         
+   new GuiXboxOptionListCtrl(OptimatchOptionList) {
+      profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallWideProfile";
+      position = isWidescreen()? "380 211" : "0 100";
+      extent = isWidescreen()? "815 400" : "640 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = "center";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "48 52" : "49 51";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 0 3 35" : "0 0 2 25";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+      
+      // data is dynamically added to this option list in the show() function
+   };
+};
+
+function OptimatchGui::show(%this)
+{
+   RootGui.setTitle($Text::OptimatchTitle);
+   RootGui.setB($Text::Back);
+   RootGui.setA($Text::Go);
+         
+   OptimatchOptionList.clear();
+   // if you add remove/rows, be sure to update these indexes
+   %this.maxPlayersOption = 0;
+   %this.missionOption = 1;
+   %this.zoneOption = 2;
+   %this.langOption = 3;
+   
+   if (GameMissionInfo.getMode() !$= GameMissionInfo.MPMode)
+   {
+      GameMissionInfo.setMode(GameMissionInfo.MPMode);
+      GameMissionInfo.setDefaultMission();
+   }
+   
+   %this.maxPlayersMin = 2;
+   OptimatchOptionList.addRow($Text::MaxPlayersOption, $Text::AnyOption TAB GetOptionListRangeText(%this.maxPlayersMin, $Server::AbsMaxPlayers), 8);
+   OptimatchOptionList.addRow($Text::MissionOption, $Text::AnyOption TAB GameMissionInfo.getMissionDisplayNameList(), 18);
+   OptimatchOptionList.addRow($Text::ZoneLabel, $Text::ZoneOptions, -1);
+   OptimatchOptionList.addRow($Text::LanguageLabel, $Text::LangOptions, 16);
+   
+   OptimatchOptionList.setOptionIndex(%this.maxPlayersOption, $pref::shell::maxPlayersFilter);
+   OptimatchOptionList.setOptionIndex(%this.missionOption, $pref::shell::missionFilter);
+   OptimatchOptionList.setOptionIndex(%this.zoneOption, $pref::shell::zoneFilter);
+   OptimatchOptionList.setOptionIndex(%this.langOption, $pref::shell::langFilter);
+   
+   CreateGameOptionList.setOptionWrap(%this.maxPlayersOption, false);
+}
+
+function OptimatchGui::setCenterText(%this,%text)
+{
+   RootGui.setCenterText(%text);
+}
+
+function OptimatchOptionList::onOptionChange(%this, %increase)
+{
+   if (OptimatchOptionList.getSelectedIndex() == OptimatchGui.missionOption &&
+       %this.getOptionIndex(OptimatchGui.missionOption) > 0)
+   {
+      GameMissionInfo.selectMission(%this.getOptionIndex(OptimatchGui.missionOption) - 1);
+   }
+}
+
+function OptimatchGui::setFilters(%this)
+{
+   $pref::shell::maxPlayersFilter = OptiMatchOptionList.getOptionIndex(OptimatchGui.maxPlayersOption);
+   $pref::shell::missionFilter = OptiMatchOptionList.getOptionIndex(OptimatchGui.missionOption);
+   $pref::shell::zoneFilter = OptiMatchOptionList.getOptionIndex(OptimatchGui.zoneOption);
+   $pref::shell::langFilter = OptiMatchOptionList.getOptionIndex(OptimatchGui.langOption);
+}
+
+function OptimatchGui::onA(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   %this.setFilters();
+      
+   RootGui.setContent(FindGameGui);
+   return true;
+}
+
+function OptimatchGui::onB(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   %this.setFilters();
+   
+   RootGui.setContent(MultiPlayerGui);
+   return true;
+}

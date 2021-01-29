@@ -1,0 +1,1033 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(LobbyGui)
+{
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+   
+   new GuiControl()
+	{
+	   profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "0 0";
+      extent = "640 70";
+      minExtent = "8 8";
+      
+      new GuiMLTextCtrl(LobbyGuiLoadingText)
+   	{
+      	profile = "TextHeadingProfile";
+         horizSizing = "center";
+         vertSizing = "height";
+      	position = "0 0";
+      	extent = "640 20";
+      	minExtent = "8 8";
+      	lineSpacing = "2";
+      	allowColorChars = "0";
+      	maxChars = "-1";
+      	lineCount = 0;
+      	visible = 0;
+   	};
+   };
+   
+   new GuiWindowCtrl(LobbyGuiPlayerListBG) {
+      profile = "bgBoxTopProfile";
+      horizSizing = isWidescreen() ? "center" : "right";
+      vertSizing = isWidescreen() ? "center" : "bottom";
+      position =  "25 58";
+      extent = "600 410";
+      maxLength = "255";
+      resizeWidth = "0";
+      resizeHeight = "0";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+	      				
+	   new GuiTextListCtrl(LobbyGuiPlayerList)
+	   {
+	      profile = "LobbyTextArrayProfile";
+	      setFirstResponder = "true";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "25 22";
+	      extent = "550 285";
+	      autoResize = false; // don't try to resize to accommodate new rows - stay within extents
+	      rowsPerPage = 8;    // maximum number of rows to render per page
+	      allowUnselectedScroll = false;
+	      minExtent = "8 8";
+	      //hAlign = "width";
+	      enumerate = "0";
+	      resizeCell = "1";
+	      // readyicon, player, score last game, tankicon, skillicon, voiceicon
+	      columns = "0 26 315 367 423 490";  
+	      columnAligns = "0 0 0 0 0 0";
+	      columnBmps = "1 0 0 1 1 1";
+	      clipColumnText = "1";
+	      fitParentWidth = "0";
+	      noDuplicates = "false";
+	      iconPath = "marble/client/ui/xbox/";
+	      hostIcon = "BrainIcon";
+	      readyIcon = "Ready";
+	      demoOutOfTimeIcon = "DemoOutOfTimeIcon";
+	      skill1Icon = "stars_1";
+	      skill2Icon = "stars_2";
+	      skill3Icon = "stars_3";
+	      skill4Icon = "stars_4";
+	      skill5Icon = "stars_5";
+	      skill6Icon = "stars_6";
+	      voiceIcon = "voiceIcon";
+	      voiceIconOff = "voiceIconOff";
+	      voiceIconPity = "voiceIconPity";
+	      voiceIconSpeak = "voiceIconSpeak";
+	      voidIcon = "void";
+	      centerBmpsVert = true;
+	      centerBmpsHoriz = true;
+	   };
+   
+	   new GuiMLTextCtrl(LobbyMessage) {
+	      //profile = "ttTinyTextProfile";
+	      profile = "TextHeadingProfile";
+	      position = "25 100";
+	      extent = "510 30";
+	      text = "";
+		};
+	};
+	      
+   new GuiWindowCtrl(LobbyGuiHostGameInfoBG) {
+      profile = "bgBoxProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+	   position = isWideScreen() ? "580 485" : "97 287";
+	   extent = isWideScreen() ? "513 118" : "503 118";
+      maxLength = "255";
+      resizeWidth = "0";
+      resizeHeight = "0";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+      				
+	   new GuiMLTextCtrl(LobbyGuiHostGameInfo)
+	   {
+	      profile = "BigInfoTextProfile";
+	      position = "52 25";
+	      extent = "495 285";
+	      autoResize = false; // don't try to resize to accommodate new rows - stay within extents
+	      rowsPerPage = 10;    // maximum number of rows to render per page
+	      minExtent = "8 8";
+	      enumerate = "0";
+	      resizeCell = "1";
+	      columns = "5 116";
+	      columnAligns = "0 0";
+	      columnBmps = "0 0";
+	      clipColumnText = "0";
+	      fitParentWidth = "1";
+	      noDuplicates = "false";
+	   };   
+	};
+};
+//--- OBJECT WRITE END ---
+
+
+function LobbyGui::show(%this)
+{
+   RootGui.setTitle($Text::Lobby);
+   if (XBLiveIsRanked() && XBLiveIsArbRegistered())
+      RootGui.setA($Text::continue);
+   else
+      RootGui.setA($Text::Ready);
+   RootGui.setB($Text::ExitGame);
+   RootGui.setY($Text::SelectPlayer);
+
+   %this.hosting = false;
+
+   %this.updateHostingStatus();
+   %this.updateHostInfo();
+   %this.setLoading(true); // <-- lame hack to make sure ready flashes when returning from game
+   %this.setLoading(LobbyGuiPlayerList.rowCount() == 0);
+   %this.updateScores();
+   
+   if (LobbyGuiPlayerList.rowCount() > 0)
+      LobbyGuiPlayerList.setSelectedRow(0);
+      
+   LobbyGuiPlayerList.onSelect( LobbyGuiPlayerList.getSelectedId() ); // This will update the Y button just in case -pw & mm
+   
+   %this.checkDemoTime();
+}
+
+function LobbyGui::onSleep( %this )
+{
+   // To fix it so if you have this up when game starts it will be an overlay
+   // on the play GUI -pw
+   LobbyPopupDlg.hide();
+}
+
+// set the correct game state if we are out of demo time.  return true if we
+// are out of time, false otherwise.
+function LobbyGui::checkDemoTime(%this)
+{
+   if (!isDemoLaunch())
+      return false;
+      
+   // did we already set the out of time state?
+   if (ServerConnection.demoOutOfTime)
+      return true;
+      
+   if ($Demo::TimeRemaining <= 1000) // 1000 = 1 second slop factor
+   {
+      // slam this to zero 
+      $Demo::TimeRemaining = 0;
+      
+      // we are not ready
+      clientSetReadyStatus(false);   
+      
+      // tell server we are out of time
+      commandToServer('DemoOutOfTime'); 
+      
+      if ($Server::Hosting)
+      {
+         // don't let anyone in
+         allowConnections(false);
+         
+         // this will disable join in progress on our match (which should hide our record on the live
+         // service)
+         updateHostedMatchInfo();
+      }
+      
+      // slam the disconnect gui to the main menu so that we get out of the MP shell
+      // when we disconnect
+      $disconnectGui = MainMenuGui;
+      
+      // indicate that we are out of time to the caller
+      return true;
+   }
+   
+   // not out of time
+   return false;
+}
+
+function LobbyGui::setLoadingText(%this, %text)
+{
+   if (%text $= "")
+      return;
+   LobbyGuiLoadingText.setText("<just:center>" @ %text);
+   LobbyGuiLoadingText.forceReflow();
+   
+   %x = getWord(LobbyGuiLoadingText.getPosition(), 0);
+   %y = getWord(LobbyGuiLoadingText.getPosition(), 1);
+   %w = getWord(LobbyGuiLoadingText.getExtent(), 0);
+   %h = getWord(LobbyGuiLoadingText.getExtent(), 1);
+
+   LobbyGuiLoadingText.resize(%x, %y, %w, %h);
+}
+
+function LobbyGui::setLoading(%this, %loading)
+{  
+   if (%loading && !LobbyGuiLoadingText.visible)
+   {
+      %this.setLoadingText($Text::S34);
+      LobbyGuiLoadingText.setVisible(true);
+      RootGuiBottomNavBar.setVisible(false);
+      // %JMQ animation
+      //clientStartPulseAnim(LobbyGuiLoadingText, 2000, 20000);
+   }
+   else if (!%loading && LobbyGuiLoadingText.visible)
+   {
+      RootGuiBottomNavBar.setVisible(true);     
+      // %JMQ animation
+      //clientStopPulseAnim();
+      LobbyGuiLoadingText.setVisible(false); // do this after we stop the anim, because the stop will enable visible
+      // if we aren't hosting and are not ready, pulse the ready message
+      // %JMQ animation
+      //if (!ServerConnection.ready)
+      //   clientStartPulseAnim(NavControlsGui_AText, 0, -1);   
+   }
+}
+
+function LobbyGui::isLoading(%this)
+{
+   return LobbyGuiLoadingText.visible;
+}
+
+function LobbyGui::updateHostingStatus(%this)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+      
+   // if this player is the host, set the hosting status ($Server::Hosting will only be true on server)
+   %this.hosting = $Server::Hosting;
+   if (%this.isAwake())
+   {
+      //NavControlsGui.setBlack($Text::BT40, 2);
+
+      //if (%this.hosting)
+      //{
+	      // set the selected row if it isn't set already
+	      if (LobbyGuiPlayerList.rowCount() > 0 && getWord(LobbyGuiPlayerList.getSelectedCell(), 1) == -1)
+         {
+	         LobbyGuiPlayerList.setSelectedRow(0);
+         }
+	   //}
+	   
+	   if (%this.hosting && !isDemoLaunch() && !XBLiveIsRanked()) 
+	      RootGui.setLS($Text::ChangeLevels);
+   }
+}
+
+function LobbyGui::getReadyIcon(%this, %ready, %demoOutOfTime)
+{
+   // if we are out of time, use the "out of time" icon for ready status
+   if (%demoOutOfTime)
+      return LobbyGuiPlayerList.iconPath @ LobbyGuiPlayerList.demoOutOfTimeIcon;
+   else if (%ready)
+      return LobbyGuiPlayerList.iconPath @ LobbyGuiPlayerList.readyIcon;
+   else
+      return "";
+}
+
+function LobbyGui::update(%this,%clientId,%name,%xbLiveId,%xbLiveSkill,%xbLiveVoice,%address,%rating,%ready,%invited,%demoOutOfTime)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   %tankIcon = "";
+	  
+	// %JMQ: lobby skill icon
+	//%skillIcon = LeaderboardGui.getXBLiveStars(%xbLiveSkill);
+	%skillIcon = "";
+		   
+	// this is set by updateVoiceStatus
+	%voiceIcon = LobbyGuiPlayerList.iconPath @ LobbyGuiPlayerList.voidIcon;
+	   
+	%readyIcon = %this.getReadyIcon(%ready,%demoOutOfTime);
+	   
+ 	if (isPCBuild()) %xbLiveVoice = getRandom(1) + 1; 
+	
+	%text = %readyIcon TAB
+	   %name TAB
+	   "" TAB // no score is set in this function
+	   %tankIcon TAB
+	   %skillIcon TAB
+	   %voiceIcon TAB // everything after this should be invisible
+	   %xbLiveId TAB 
+	   %xbLiveVoice; // 0 = no communicator, 1 = communicator, 2 = no communicator but voice through speakers enabled
+	
+   // Update or add the player to the control
+   if (LobbyGuiPlayerList.getRowNumById(%clientId) == -1)
+   {
+      LobbyGuiPlayerList.addRow(%clientId, %text);
+      %this.registerXBLivePlayer(%name,%xbLiveId,%address,%xbLiveVoice,%invited);
+   }
+   else
+      LobbyGuiPlayerList.setRowById(%clientId, %text);
+      
+   if ($Player::ClientId $= %clientId) 
+   {
+      LobbyGuiPlayerList.setSelectedById(%clientId);
+   }
+      
+   %this.updateVoiceStatus(%clientId, %xbLiveVoice, %xbLiveId);
+   %this.updateRating(%clientId, %xbLiveSkill);
+        
+   // once we have at least one player we are no longer loading
+   if (LobbyGuiPlayerList.rowCount() > 0)
+      %this.setLoading(false);
+   
+   %this.updateHostingStatus();
+}
+
+function LobbyGui::setMessage(%this, %message)
+{
+   LobbyMessage.setVisible(true);
+   LobbyMessage.setAlpha(0.0);
+   LobbyMessage.setText(%message);
+   // %JMQ animation
+   LobbyMessage.animateAlpha(1.0, 0, $shell::fadetime);
+   
+   cancel(%this.lobbyMessageSched);
+   %this.lobbyMessageSched = %this.vschedule(4000, clearLobbyMessage);
+}
+
+function LobbyGui::clearLobbyMessage(%this)
+{
+   // %JMQ animation
+   LobbyMessage.animateAlpha(0.0, 0, $shell::fadetime);
+   %this.lobbyMessageSched = LobbyMessage.vschedule(2 * $shell::fadetime, setVisible, false);
+}
+
+function LobbyGui::updateRating(%this, %client, %xbLiveSkill)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   %rowIdx = LobbyGuiPlayerList.getRowNumById(%client);
+   
+   if (%rowIdx == -1)
+      return;
+
+   %rowText = LobbyGuiPlayerList.getRowText(%rowIdx);
+   if (%rowText !$= "")
+   {
+      // %JMQ skill icon
+      //%skillIcon = LeaderboardGui.getXBLiveStars(%xbLiveSkill);
+      %skillIcon = "";
+      %rowText = setField(%rowText, 4, %skillIcon);
+      LobbyGuiPlayerList.setRowById(%client, %rowText);
+   }
+}
+
+function LobbyGui::resetSelectedRow(%this)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   // if we already have a selected row, don't bother
+   if (LobbyGuiPlayerList.getSelectedId() != -1)
+      return;
+      
+   LobbyGuiPlayerList.setSelectedRow(0);
+   LobbyGuiPlayerList.onSelect( LobbyGuiPlayerList.getSelectedId() ); // This will update the Y button just in case -pw
+}
+
+function LobbyGui::updateReadyStatus(%this, %client, %isMe, %ready, %demoOutOfTime)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   %rowIdx = LobbyGuiPlayerList.getRowNumById(%client);
+   
+   if (%rowIdx == -1)
+      return;
+
+   %rowText = LobbyGuiPlayerList.getRowText(%rowIdx);
+   if (%rowText !$= "")
+   {
+      %readyIcon = %this.getReadyIcon(%ready,%demoOutOfTime);
+      
+      %rowText = setField(%rowText, 0, %readyIcon);
+      LobbyGuiPlayerList.setRowById(%client, %rowText);
+      
+      if (%isMe && %this.isAwake())
+      {
+         // %JMQ: animation
+         //if (%ready)
+         //   clientStopPulseAnim();
+         //else
+         //   clientStartPulseAnim(NavControlsGui_AText, 0, -1);
+      }
+   }
+}
+
+function LobbyGui::updateScores(%this)
+{
+   if (!isObject(ClientRanks) || ClientRanks.rowCount() == 0)
+   {
+      echo("LobbyGui: clearing client scores");
+      // clear all the scores if there is no ClientRanks
+      for (%i = 0; %i < LobbyGuiPlayerList.rowCount(); %i++)
+      {
+         %rowText = LobbyGuiPlayerList.getRowText(%i);
+         %rowId =   LobbyGuiPlayerList.getRowId(%i);
+         %rowText = setField(%rowText, 2, "");
+         LobbyGuiPlayerList.setRowById(%rowId, %rowText);
+      }
+   }
+   else
+   {
+      echo("LobbyGui: displaying client scores");
+      for ( %i = 0; %i < ClientRanks.rowCount(); %i++ )
+      {
+         %clid = ClientRanks.getRowId(%i);
+         %row = ClientRanks.getRowText(%i);
+         %score = getWord(%row, 1);  
+         
+         %lobbyRow = LobbyGuiPlayerList.getRowTextById(%clid);
+         if (%lobbyRow !$= "")
+         {
+            %lobbyRow = setField(%lobbyRow, 2, %score);
+            LobbyGuiPlayerList.setRowById(%clid, %lobbyRow);
+         }
+      }  
+      LobbyGuiPlayerList.sortNumerical(2, false);
+   }
+}
+
+//function LobbyGui::updateClientSettings(%this, %client, %team, %tank)
+//{
+//   if (!$Client::connectedMultiplayer)
+//      return;
+//
+//   %rowIdx = LobbyGuiPlayerList.getRowNumById(%client);
+//     
+//   if (%rowIdx == -1)
+//      return;
+//
+//   %rowText = LobbyGuiPlayerList.getRowText(%rowIdx);
+//   if (%rowText !$= "")
+//   {
+//      %teamIcon = ""; //getTeamIcon(%team);
+//      %tankIcon = ""; //getTankIcon(%tank);
+//      
+//      %rowText = setField(%rowText, 2, %teamIcon);
+//      %rowText = setField(%rowText, 3, %tankIcon);
+//      LobbyGuiPlayerList.setRowById(%client, %rowText);
+//   }
+//}
+
+// http://www.xbox.com/en-us/live/about/guide-icons.htm
+function LobbyGui::updateVoiceStatus(%this, %client, %status, %xbLiveId)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   %rowIdx = LobbyGuiPlayerList.getRowNumById(%client);
+   if (%rowIdx == -1)
+      return;
+      
+   %rowText = LobbyGuiPlayerList.getRowText(%rowIdx);
+   if (%rowText !$= "")
+   {
+      // if we have new status, update it now - field 8 in the text because the previous field is the xbliveid which
+      // contains an embedded tab :(
+      if (%status !$= "")
+         %rowText = setField(%rowText, 8, %status);
+      else
+         // otherwise retrieve current status
+         %status = getField(%rowText, 8);
+         
+      //error("@@@@@ Updating communicator status:" SPC %client SPC %status);
+      
+      %isMe = XBLiveGetUserID() $= %xbLiveId;
+      
+      %icon = LobbyGuiPlayerList.iconPath;
+      if (XBLiveIsPlayerMuted(%xbLiveId)) // %JMQ also check for self-muting
+      {
+         %icon = %icon @ LobbyGuiPlayerList.voiceIconOff;
+      }
+      else if (%status == 0) 
+      {
+         // no communicator 
+         %icon = %icon @ LobbyGuiPlayerList.voidIcon;
+      }
+      else if (%status == 1) 
+      {
+         // communicator present 
+         %icon = %icon @ LobbyGuiPlayerList.voiceIcon;
+      }
+      else if (%status == 2)
+      {
+         // speakers
+         %icon = %icon @ LobbyGuiPlayerList.voiceIconPity;
+      }
+      else if (%status == 3)
+      {
+         // self-muting (self mutilation?).  self gets mute icon,
+         // others get no icon
+         if (%isMe)
+            %icon = %icon @ LobbyGuiPlayerList.voiceIconOff;
+         else
+            %icon = %icon @ LobbyGuiPlayerList.voidIcon;
+      }
+      
+      %rowText = setField(%rowText, 5, %icon);
+      LobbyGuiPlayerList.setRowById(%client, %rowText);
+      
+      // if it isn't me, update the remote player list status
+      if (!%isMe)
+         XBLiveUpdateRemoteVoiceStatus(%xbLiveId, %status);
+   }
+}
+
+function LobbyGui::updateCommunicatorTalking(%this, %xbLiveId, %talking)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   %rowIndex = LobbyGuiPlayerList.findRowIndexByXBLiveId(%xbLiveId);
+   if (%rowIndex == -1)
+      return;
+      
+   // we don't have to worry about muting here because we won't get updates for muted players
+      
+   %rowText = LobbyGuiPlayerList.getRowText(%rowIndex);
+   %client = LobbyGuiPlayerList.getRowId(%rowIndex);
+   if (%talking)
+   {     
+      %icon = LobbyGuiPlayerList.iconPath @ LobbyGuiPlayerList.voiceIconSpeak;
+      %rowText = setField(%rowText, 5, %icon);
+      LobbyGuiPlayerList.setRowById(%client, %rowText);
+   }
+   else
+   {
+      // defer to updateVoiceStatus() to see what our icon should be
+      %this.updateVoiceStatus(%client, "", %xbLiveId);
+   }
+}
+
+function LobbyGui::updateMuteStatus(%this)
+{
+   // walk the players and update the voice status on each. 
+   
+   for (%i = 0; %i < LobbyGuiPlayerList.rowCount(); %i++)
+   {
+      %clientId = LobbyGuiPlayerList.getRowId(%i);
+      %text = LobbyGuiPlayerList.getRowText(%i);
+      %xbLiveId = getField(%text, 6) TAB getField(%text, 7);
+      %this.updateVoiceStatus(%clientId, "", %xbLiveId);
+   }
+}
+
+function LobbyGui::registerXBLivePlayer(%this,%name,%xbLiveId,%address,%xbLiveVoice,%invited)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+      
+   // cannot register without an xblive id
+   if (%xbLiveId $= "")
+      return;
+
+   // is this player me?
+   %isMe = %xbLiveId $= XBLiveGetUserId();
+   if (!%isMe)
+   {
+      // handle remote player
+      
+      // is the remote address the host?  if so, use the global secure address we stored on connect
+      %host = %address $= "host";
+      if(%address $= "host")
+      	%address = $XBLive::secureHostAddress;
+      else // otherwise use the supplied address
+         %address = XBLiveXnAddrToString(%address);
+         
+      error("@@@@@ Registering XBLive Player & Remote Talker:" SPC %name SPC %xbLiveId SPC %address SPC %invited);
+      
+      XBLiveRegisterPlayer(%name, %xbLiveId, %invited);
+	   XBLiveRegisterRemoteTalker(%xbLiveId, %address);
+	   
+	    // update remote player voice status
+       XBLiveUpdateRemoteVoiceStatus(%xbLiveId, %xbLiveVoice);
+	}
+	else
+	{
+	   // handle self
+	   
+	   error("@@@@@ Registering Local Talker:" SPC %name SPC %xbLiveId);
+	   XBLiveRegisterLocalTalker(%xbLiveId);
+	}
+}
+
+function LobbyGui::unregisterXBLivePlayer(%this,%name,%xbLiveId)
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   %xbLiveId = trim(%xbLiveId);
+   if (%xbLiveId !$= "")
+   {
+      // use $Player::XBLiveId instead of XBLiveGetUserId() because we may not actually
+      // be logged on at this point (e.g. failed connection)
+      %isMe = %xbLiveId $= $Player::XBLiveId; 
+      if (!%isMe)
+      {
+         error("@@@@@ Unregistering XBLive Player & Remote Talker:" @ " " @ %name @ "[" @ %xbLiveId @ "]");
+         XBLiveUnregisterPlayer(%name, %xbLiveId);
+         XBLiveUnregisterRemoteTalker(%xbLiveId);
+      }
+      else
+      {
+         error("@@@@@ Unregistering Local Talker:" @ " " @ %name @ "[" @ %xbLiveId @ "]");
+         XBLiveUnregisterLocalTalker();
+      }
+   }
+}
+
+function LobbyGui::updateHostInfo(%this)
+{
+   // don't bother updating if we aren't awake or if there is no server connection
+   if (!%this.isAwake() || !isObject(ServerConnection) || !ServerConnection.hasParams)
+      return;
+      
+   // update column headers
+   //LobbyGuiTeamHeader.setVisible(ServerConnection.teamGame && isEnglish());
+   
+   // update background
+   //%missionFile = GameMissionInfo.getMissionFile(ServerConnection.missionId);
+   //BackgroundGui.setMissionBitmap(filebase(%missionFile));   
+   
+   // set host info
+   %gameMode = GameMissionInfo.getGameModeDisplayName(ServerConnection.gameModeId);
+   %missionName = GameMissionInfo.getMissionDisplayName(ServerConnection.missionId);
+   
+   if (ServerConnection.isRanked)
+      %rankedStr = avar($Text::LobbyRankFormat, $Text::Ranked);
+   else
+      %rankedStr = avar($Text::LobbyRankFormat, $Text::Standard);
+      
+   %missionName = %missionName @ %rankedStr;
+   
+   %this.setHostInfo(ServerConnection.hostName, %gameMode, %missionName, 
+      ServerConnection.priSlotsUsed, ServerConnection.priSlotsFree, 
+      ServerConnection.pubSlotsUsed, ServerConnection.pubSlotsFree);
+}
+
+function LobbyGui::setHostInfo(%this, %hostName, %gameMode, %mapname, %priSlotsUsed, %priSlotsFree, %pubSlotsUsed, %pubSlotsFree)
+{	
+	//%gamemodetag = (isEnglish()) ? $text::LM7 @ " " : ""; // hide "
+	%gamemodetag = $Text::LobbyHostName;
+	
+   LobbyGuiHostGameInfo.setText( 
+   			"<font:Arial Bold:22>" @ %gamemodetag SPC %hostName @ "\n" @
+   			$Text::LobbyHostLevel SPC %mapname @ "\n" @ 
+   			"<font:Arial Bold:18>" @ $Text::LobbyHostPrivateSlots @ $Text::Colon SPC
+   			%priSlotsUsed @ $Text::Slash @ %priSlotsFree + %priSlotsUsed @ 
+   			$Text::Comma SPC $Text::LobbyHostPublicSlots @ $Text::Colon SPC 
+   			%pubSlotsUsed @ $Text::Slash @ %pubSlotsFree + %pubSlotsUsed @ "<font:Arial Bold:20> ");
+}
+
+function LobbyGui::findClientIdByXBLiveId(%this, %xbLiveId)
+{
+   %rowIndex = LobbyGuiPlayerList.findRowIndexByXBLiveId(%xbLiveId);
+   if (%rowIndex == -1)
+      return 0;
+      
+   return LobbyGuiPlayerList.getRowId(%rowIndex);
+}
+
+function LobbyGui::findXBLiveIdByClientId(%this, %clientId)
+{
+   %rowText = LobbyGuiPlayerList.getRowTextById(%clientId);
+   return LobbyGuiPlayerList.getXBLiveIdFromRowText(%rowText);
+}
+
+function LobbyGuiPlayerList::findRowIndexByXBLiveId(%this, %xbLiveId)
+{
+   for (%i = 0; %i < LobbyGuiPlayerList.rowCount(); %i++)
+   {
+      %text = LobbyGuiPlayerList.getRowText(%i);
+      %rowxbLiveId = LobbyGuiPlayerList.getXBLiveIdFromRowText(%text);
+      if (%xbLiveId $= %rowxbLiveId)
+         return %i;
+   }
+   return -1;
+}
+
+function LobbyGuiPlayerList::getXBLiveIdFromRowText(%this, %text)
+{
+   %xbLiveId = "";
+   if (%text !$= "")
+   {
+      %name = getSection(%text, 1, "\t");
+      // the xblive in will be of the form ID\tFLAGS, so we need to obtain the two respective sections and
+      // concatenate them to get the full ID
+      %id = getSection(%text, 6, "\t");
+      if (%id $= "")
+         // invalid xblive id
+         return %xbLiveId;
+         
+      %flags = getSection(%text, 7, "\t");
+      %xbLiveId = %id TAB %flags;
+   }
+   return %xbLiveId;
+}
+
+function LobbyGui::remove(%this,%clientId)
+{
+   %rowCount = LobbyGuiPlayerList.rowCount();
+   if (%rowCount == 0)
+      return false;
+      
+   %text = LobbyGuiPlayerList.getRowTextById(%clientId);
+   if (%text !$= "")
+   {
+      %xbLiveId = LobbyGuiPlayerList.getXBLiveIdFromRowText(%text);
+      if (%xbLiveId !$= "")
+         %this.unregisterXBLivePlayer(%name,%xbLiveId);
+   }
+   LobbyGuiPlayerList.removeRowById(%clientId);
+   
+   %this.resetSelectedRow();
+   
+   // return true only if we successfully removed a row
+   %newRowCount = LobbyGuiPlayerList.rowCount();
+   if (%newRowCount != %rowCount - 1)
+      return false;
+   else
+      return true;
+}
+
+function LobbyGui::clear(%this)
+{
+   // need to explicitly remove each row so that the players are unregistered properly.  we keep track of 
+   // whether the remove() function is successfully removing rows so that we don't get into an infinite loop
+   %ok = true;
+   while (%ok && LobbyGuiPlayerList.rowCount() > 0)
+      %ok = %this.remove(LobbyGuiPlayerList.getRowId(0));
+      
+   // just in case
+   LobbyGuiPlayerList.clear();
+   
+   LobbyGuiHostGameInfo.setText("");
+   
+   ClientRanks.clear();
+}
+
+function LobbyGui::onA(%this)
+{
+   if (!RootGui.AEnabled())
+      return;
+      
+   if (%this.isLoading())
+      return;
+      
+   alxPlay( AudioButtonDown );
+   
+   if (XBLiveIsRanked() && XBLiveIsArbRegistered()) 
+   {
+      // arb game is over
+      if (%this.hosting && ClientGroup.getCount() > 1)
+         XMessagePopupDlg.show(0, $Text::ErrorClientsWillDrop, $Text::OK, "LobbyGui.exitGame();", $Text::Cancel, "");
+      else
+         LobbyGui.exitGame();
+
+      return true;
+   }
+      
+   if (%this.checkDemoTime())
+   {
+      XMessagePopupDlg.show(0, $Text::DemoUpsellMP7, $Text::OK);
+      return;
+   }   
+      
+   clientSetReadyStatus(!ServerConnection.ready);   
+   
+   if (!isPCBuild() && %this.hosting && XBLiveIsRanked() && ServerConnection.ready && ClientGroup.getCount() == 1)
+   {
+      XMessagePopupDlg.show(0, $Text::ErrorTooFewPlayers, $Text::OK);
+   }
+}
+
+function LobbyGui::onClientsNotReady(%this)
+{
+   if (%this.hosting)
+   {
+      XMessagePopupDlg.show(0, $Text::ErrorClientsNotReady, $Text::OK);
+   }
+}
+
+function LobbyGui::exitGame(%this)
+{
+   escapeFromGame();
+}
+
+function LobbyGui::onB(%this)
+{
+   if (!RootGui.BEnabled())
+      return;
+      
+   if (%this.isLoading())
+      return;
+      
+   alxPlay( AudioButtonDown );
+   
+   if (%this.hosting && ClientGroup.getCount() > 1)
+      XMessagePopupDlg.show(0, $Text::ErrorClientsWillDrop, $Text::OK, "LobbyGui.exitGame();", $Text::Cancel, "");
+   else
+      LobbyGui.exitGame();
+
+   return true;
+}
+
+function LobbyGui::onLeft(%this)
+{
+   if (!RootGuiLSButton.visible)
+      return;
+      
+   alxPlay( AudioButtonOver );
+   
+   GameMissionInfo.selectPreviousMission();
+   
+   if ($EnableFMS)
+   {
+      $Server::MissionId = GameMissionInfo.getCurrentMission().level;
+      $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
+      $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      
+      onMissionLoaded();
+   
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %client = ClientGroup.getObject(%i);
+         commandToClient(%client, 'ShowMission', GameMissionInfo.getCurrentMission().file);
+      }
+   }
+      
+   return true;
+}
+
+function LobbyGui::onRight(%this)
+{
+   if (!RootGuiLSButton.visible)
+      return;
+
+   alxPlay( AudioButtonOver );
+     
+   GameMissionInfo.selectNextMission();
+
+   if ($EnableFMS)
+   {
+      $Server::MissionId = GameMissionInfo.getCurrentMission().level;
+      $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
+      $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      
+      onMissionLoaded();
+      
+      for (%i = 0; %i < ClientGroup.getCount(); %i++)
+      {
+         %client = ClientGroup.getObject(%i);
+         commandToClient(%client, 'ShowMission', GameMissionInfo.getCurrentMission().file);
+      }
+   }
+         
+   return true;
+}
+
+//function LobbyGui::onWhite(%this)
+//{
+//   if (%this.isLoading())
+//      return;
+//      
+//   //if (!NavControlsGui.BEnabled())
+//   //   return;
+//      
+//   alxPlay( AudioButtonDown );
+//   showGui(LobbyOptionsGui);
+//}
+
+function LobbyGuiPlayerList::onSelect( %this, %id, %text )
+{
+   if (!LobbyGui.isAwake())
+      return;
+      
+   if (%id == -1)
+      return;
+   
+   // have we selected ourselves?
+   %isSelf = $Player::ClientId $= %id;
+   
+   %showKick = !%isSelf && LobbyGui.hosting;
+   %showPlayerReview = !%isSelf;
+   
+   // If we can't kick this person, change the Y action to "Show Gamercard"
+   // that will take care of friend invites and all that other jazz
+   if( !%showKick && !%showPlayerReview )
+      RootGui.setY( $Text::GamerCard );
+   else
+      RootGui.setY( $Text::SelectPlayer );
+}
+
+function LobbyGui::onY(%this)
+{
+   if (%this.isLoading())
+      return;
+      
+   %id = LobbyGuiPlayerList.getSelectedId();
+   
+   if (%id == -1)
+      return;
+      
+   alxPlay( AudioButtonDown );
+   
+   // have we selected ourselves?
+   %isSelf = $Player::ClientId $= %id;
+   
+   // get the name of the target
+   %name = getField(LobbyGuiPlayerList.getRowTextById(%id), 1);
+   // get the live id of the target
+   %otherXbliveid = %this.findXBLiveIdByClientId(%id);
+   // see if the target is a friend
+   //%otherFriend = XBLiveIsFriend(XBLiveGetSignInPort(), %otherXbliveid);
+   
+   %showPlayerReview = !%isSelf;
+   %showKick = !%isSelf && %this.hosting;
+   %showInviteFriend = false; //!%isSelf && !%otherFriend;
+   %showGamerCard = true;
+
+   if( !%isSelf )
+      LobbyPopupDlg.show(%name,%id,%showPlayerReview,%showKick,%showInviteFriend,%showGamerCard);
+   else
+      XBLiveShowGamercardUI(XBLiveGetSignInPort(), %otherXbliveid);
+}
+
+function LobbyGuiPlayerList::test(%this)
+{
+   %this.clear();
+   
+//    %icons[0] = %this.heavyTankIcon;
+//    %icons[1] = %this.mediumTankIcon;
+//    %icons[2] = %this.lightTankIcon;
+//    %icons[3] = %this.heavySkullTankIcon;
+//    %icons[4] = %this.mediumSkullTankIcon;
+//    %icons[5] = %this.lightSkullTankIcon;
+//    %icons[6] = %this.ufoIcon;
+//    %icons[7] = %this.lightTankIcon;
+   
+   %skicons[0] = %this.skill1Icon;
+   %skicons[1] = %this.skill2Icon;
+   %skicons[2] = %this.skill3Icon;
+   %skicons[3] = %this.skill4Icon;
+   %skicons[4] = %this.skill5Icon;
+   %skicons[5] = %this.skill6Icon;
+   
+   %voiceicons[0] = %this.voiceIcon;
+   %voiceicons[1] = %this.voiceIconOff;
+   %voiceicons[2] = %this.voiceIconPity;
+   %voiceicons[3] = ""; 
+
+   %plnames[0] = "dash             ";
+   %plnames[1] = "AWWWWWWWWWWWWE";
+   %plnames[2] = "Hugobrain        ";
+   %plnames[3] = "JamesBomb        ";
+   %plnames[4] = "KillinBrainCells ";
+   %plnames[5] = "LONEWOLF(UF)     ";
+   %plnames[6] = "Rabban           ";
+   %plnames[7] = "Tally Ho         ";
+   
+   
+   // player, ishosticon, teamicon, readyicon, tankicon, skillicon, voiceicon
+   for (%i = 0; %i < 8; %i++)
+   {
+   %team = (getRandom(1) == 0) ?  %this.greenTeamIcon : %this.blueTeamIcon;
+   %ready = (getRandom(1) == 0) ?  %this.iconPath @ %this.readyIcon : "";
+   
+   %this.addRow(-1,
+      %ready TAB
+      %plnames[getRandom(7)] TAB 
+      " " TAB  
+      " " TAB 
+      " " TAB
+      %this.iconPath @ %voiceicons[getRandom(3)]);
+   }
+
+   LobbyGui.setHostInfo(%plnames[getRandom(7)], "Scrum", $Text::LevelNameMP6, "1", "2", "4", "7");
+  
+   //LobbyGui.setHostInfo("LAG O TOMITON", "Team Battlemode", "(Hippowcampus Hollow)", "1/1", "7/7");
+}
+
+function lbg_test()
+{
+   exec("marble/client/ui/lobbyGui.gui");
+   mainMenuGui.show();
+   LobbyGui.show();
+   LobbyGuiPlayerList.test();
+}
+
+function lbg_reload()
+{
+   rGui(LobbyGui);
+}

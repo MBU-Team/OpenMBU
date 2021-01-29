@@ -1,0 +1,116 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(helpGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+
+   new GuiWindowCtrl(helpBG) {
+      profile = "bgBoxProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWidescreen() ? "257 104" : "17 61";
+      extent = isWidescreen() ? "750 467" : "610 347";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+      
+      new GuiAutoScrollCtrl(helpScroller) {
+         profile = "HelpScrollProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+         position = "30 28";
+         extent = isWidescreen() ? "685 404" : "547 280";
+         minExtent = "8 2";
+         visible = "1";
+         childMargin = "0 0";
+         enableScrolling = "1";
+         horizontalScroll = "0";
+         horizontalScrollDirection = "left";
+         verticalScroll = "1";
+         verticalScrollDirection = "up";
+         scrollInterval = "35";
+         scrollDelta = "1";
+         repeatScroll = "1";
+
+         new GuiMLTextCtrl(HelpText) {
+            profile = isWidescreen() ? "LargeInfoTextProfile" : "InfoTextProfile";
+		      horizSizing = "right";
+		      vertSizing = "bottom";
+            position = "5 0";
+	         extent = isWidescreen() ? "683 403" : "545 280";
+            minExtent = "8 2";
+            visible = "1";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function helpGui::show(%this, %backGui, %whichPage)
+{
+   if (%backGui !$= "")
+      %this.backGui = %backGui;
+      
+	%this.backGui2 = aboutMenuOptionsGui;
+   
+   helpScroller.scrollTo( 0, 0 );
+
+   switch( %whichPage )
+   {
+      case 0:
+         helpScroller.enableScrolling( false );
+         %title = $Text::About3Title;
+         %text = $Text::About1;
+      case 1:
+         helpScroller.enableScrolling( false );
+         %title = $Text::About3aTitle;
+         %text = $Text::About2 @ "\n\n" @ $Text::About3;
+      case 2:
+        helpScroller.enableScrolling( false );
+         %title = $Text::About3bTitle;
+         %text = $Text::About4 @ "\n\n" @ $Text::About5 @ "\n\n" @ $Text::About6;
+      case 3: 
+         helpScroller.enableScrolling( false );
+         %title = $Text::About4Title;
+         %text = $Text::AboutSP1 @ "\n\n" @ $Text::AboutSP2;
+      case 4: 
+         helpScroller.enableScrolling( false );
+         %title = $Text::About5Title;
+         %text = $Text::AboutMP1 @ "\n\n" @ $Text::AboutMP2;
+      case 5: //credits
+         helpScroller.scrollToTop();
+         helpScroller.enableScrolling( true );
+         %title = $Text::HOCredits;
+        	%this.backGui2 = HelpAndOptionsGui;
+         
+         %bigTitleSize = isWideScreen() ? 36 : 30;
+         %smallTitleSize = isWideScreen() ? 30 : 24;
+         %text = "<just:center>" @ avar( $Text::GGCredits, %bigTitleSize, %smallTitleSize ) @ "\n\n" @ 
+                 avar( $Text::MSCredits, %bigTitleSize, %smallTitleSize ) @ "\n\n" @ 
+                 avar( $Text::LocCredits, %bigTitleSize, %smallTitleSize );
+   }
+            
+	helpText.clear();
+	helpText.setText(%text);
+   
+   RootGui.setA( $Text::OK );
+   RootGui.setTitle( %title );
+}
+
+function helpGui::onA(%this)
+{
+   RootGui.setContent( %this.backGui2, %this.backGui );
+}
+

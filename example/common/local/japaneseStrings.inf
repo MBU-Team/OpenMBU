@@ -1,0 +1,645 @@
+﻿[Strings]
+;-------------------------------------------------------------------------------
+; English String Table
+;
+; Note, any line that begins with a comment (;) is not used and does not 
+; need to be translated
+;-------------------------------------------------------------------------------
+$Text::Title = "Marble Blast Ultra";
+
+;-------------------------------------------------------------------------------
+; General
+;-------------------------------------------------------------------------------
+$Text::Loading = "Loading";
+$Text::Exit = "終了";
+$Text::Previous = "前へ";
+$Text::Next = "次へ";
+$Text::Retry = "リトライ";
+$Text::Back = "戻る";
+$Text::More = "その他";
+$Text::Level = "レベル";
+$Text::Start = "開始";
+$Text::PressAToStart = "A ボタンを押して開始してください";
+
+;-------------------------------------------------------------------------------
+; Live
+;-------------------------------------------------------------------------------
+$Text::SignIn = "サインイン";
+$Text::SignedIn = "サインインしました";
+$Text::SignInFailed = "サインインに失敗しました";
+$Text::PassCodeNeeded = "パス コードが必要です";
+$Text::NotSignedIn = "サインインしていません";
+$Text::SigningIn = "サインインしています";
+
+$Text::Friends = "フレンド";
+$Text::Offline = "オフライン";
+$Text::PlayOffline = "オフラインでプレイ";
+$Text::ConnectionLost = "Xbox Live への接続が切断されました。もう一度サインインしてください。";
+$Text::DupLogin = "他のプレイヤーがあなたのアカウントを使ってサインインしたため、Xbox Live からサインアウトされました。";
+$Text::ESRBWarning = "ESRB Notice: Game Experience May Change During Online Play";
+
+;-------------------------------------------------------------------------------
+; Live Leaderboards
+;-------------------------------------------------------------------------------
+$Text::Leaderboard = "ランキング"; // used for Y button label on single player level preview gui, bug 14993
+$Text::LeaderBoards = "ランキング";
+$Text::CLeaderBoard = "表示の変更";
+$Text::NobodyRanked = "このランキングにエントリーされているプレイヤーはまだいません。";
+$Text::YouNotRanked = "このランキングにはまだエントリーがありません。";
+$Text::FriendNotRanked = "フレンドは、このランキングにまだエントリーしていません。";
+$Text::Overall = "全体";
+$Text::MyScore = "マイ スコア";
+$Text::MBLeaderBoard = "Marble Blast のランキング";
+
+
+;-------------------------------------------------------------------------------
+; Controler
+;-------------------------------------------------------------------------------
+$Text::ButtonA = "A";
+$Text::ButtonB = "B";
+$Text::ButtonX = "X";
+$Text::ButtonY = "Y";
+$Text::ButtonRB = "RB"; // capitalized because it is a label on pause menu
+$Text::ButtonLB = "LB"; // capitalized because it is a label on pause menu
+$Text::ButtonStart = "Start";
+$Text::ButtonBack = "戻る";
+$Text::LTrigger = "左トリガー";
+$Text::RTrigger = "右トリガー";
+$Text::LStickBtn = "左スティック";
+$Text::RStickBtn = "右スティック";
+$Text::PullToUse = "右トリガーを引いて %1 を使用しましょう。"; // %1 will be replaced with name of powerup
+
+;-------------------------------------------------------------------------------
+; Demo Mode
+;-------------------------------------------------------------------------------
+$Text::PlayAllN1 = "完全版を購入して、全 60 レベルをプレイしましょう！";
+$Text::SaveAndRank = "完全版を購入すると、スコアを保存してランキングに登録することができます。";
+$Text::NoSaveInDemo = "このゲームの完全版を購入すると、ハイスコアを登録できます。オンラインでスコアを保存せずにゲームを続けるには、<bitmap:marble/client/ui/xbox/pad_button_a.png> ボタンを押します。";
+$Text::DemoEgg = "完全版を購入すると、隠しアイテムを含む、さまざまなゲーム要素が追加されます。";
+$Text::InviteBuyNow = "完全版を購入して、このマッチをプレイしましょう！";
+$Text::DemoNoRanked = "完全版を購入して、ランク マッチをプレイしましょう！";
+$Text::DemoUpsellLevel = "完全版を購入して、このレベルをプレイしましょう！";
+
+$Text::DemoUpsell00 = "Marble Blast Ultra を購入しよう！";
+$Text::DemoUpsell01 = "-  シングル プレイヤーの全 60 レベルがプレイできます。\n\n";
+$Text::DemoUpsell02 = "-  シングル プレイヤーのベスト タイムをランキングで確認できます。\n\n";
+$Text::DemoUpsell03 = "-  Xbox Live でマルチプレイヤー の全 10 レベルがプレイできます。\n\n";
+$Text::DemoUpsell04 = "-  マルチプレイヤー ランキングにスコアを登録できます。\n\n";
+$Text::DemoUpsell05 = "-  ランク マッチに参加できます。\n\n";
+$Text::DemoUpsell06 = "-  実績を獲得したり、隠しアイテムを見つけることができます。\n\n";
+$Text::DemoUpsell07 = "完全版を購入する";
+$Text::DemoUpsell08 = "完全版では、以下の機能が追加されます。\n\n";
+$Text::DemoUpsell09 = "ゲームに戻る";
+$Text::DemoUpsell10 = "終了";
+
+$Text::DemoUpsellMP0 = "Marble Blast Ultra マルチプレイヤー へようこそ！\n\n";
+$Text::DemoUpsellMP1 = "Marble Blast Ultra のお試し版を起動するたびに、7 分間、マルチプレイヤー ゲームをプレイできます。\n\n";
+$Text::DemoUpsellMP2 = "お試し版では、他のプレイヤーをゲームに招待したり、他のプレイヤーに招待された Marble Blast Ultra ゲームに参加したりすることはできません。\n\n";
+$Text::DemoUpsellMP3 = "お試し版でプレイ可能なのは 1 レベルだけですが、完全版にはマルチプレイヤー用に 10 レベル用意されています。\n\n";
+$Text::DemoUpsellMP4 = "完全版を購入して、時間制限のないマルチプレイヤー ゲームを思う存分プレイしましょう！";
+
+$Text::DemoUpsellMP5 = "お試し時間が終了しました！ 完全版を購入すると、以下の機能が追加されます。\n\n";
+$Text::DemoUpsellMP6 = "ホストのお試し時間が終了しました！  完全版を購入すると、以下の機能が追加されます。\n\n";
+$Text::DemoUpsellMP7 = "お試し時間が終了しました！ 完全版を購入するにはマッチを終了してください。";
+
+$Text::DemoTimerLabel = "お試し時間:"; // demo timer label
+
+$Text::PurchasedThanks = "Marble Blast Ultra をご購入いただきありがとうございます！";
+
+;-------------------------------------------------------------------------------
+; Level Time Stuff
+;-------------------------------------------------------------------------------
+$Text::None = "なし";
+$Text::BestTime = "ベスト タイム:";
+$Text::EndTime = "タイム:";
+$Text::EndScore = "レーティング:";
+$Text::LevelComplete = "レベル クリア！";
+$Text::NewBestTime = "ベスト タイム更新！";
+$Text::NewHighScore = "ハイスコア更新！";
+$Text::ParTime = "パー タイム:";
+$Text::Improvement = "更新タイム";
+$Text::MyRecord = "記録";
+$Text::OldRecord = "以前の記録";
+$Text::NextLevel = "次のレベル";
+$Text::LoadingBest = "ベスト タイムを読み込んでいます";
+$Text::Completion = "クリア";
+$Text::TimeBonus = "タイム ボーナス";
+$Text::ChangeLevels = "レベルの変更";
+$Text::Rank = "ランク";
+$Text::PlayerName = "ゲーマータグ";
+$Text::Time = "タイム";
+$Text::Points = "ポイント";
+$Text::Score = "レーティング";
+$Text::TrueSkill = "TrueSkill(TM) ランク";
+$Text::Difficulty = "難易度";
+
+;-------------------------------------------------------------------------------
+; Tagged Strings
+;-------------------------------------------------------------------------------
+$Text::Tagged::Congratulations = '\c0ゴールです！ おめでとうございます！';
+$Text::Tagged::NotAllGems = '\c0すべての宝石を手に入れなければゴールできません！';
+$Text::Tagged::HaveAllGems = '\c0すべての宝石を手に入れました。ゴールへ向かってください！';
+$Text::Tagged::OneGemLeft = '\c0宝石を手に入れました。残りは 1 個です！';
+$Text::Tagged::NGemsLeft = '\c0宝石を手に入れました。残りは %1 個です！';
+
+$Text::Tagged::AnEasterEgg = '\c0隠しアイテムを手に入れました！';
+$Text::Tagged::GemPickupOnePoint = '\c01 ポイントの宝石を手に入れました！';
+$Text::Tagged::GemPickupNPoints = '\c0%1 ポイントの宝石を手に入れました！';
+$Text::Tagged::GameOver = '\c0ゲーム オーバー！';
+
+;-------------------------------------------------------------------------------
+; Non-tagged powerup strings
+;-------------------------------------------------------------------------------
+$Text::ASuperJump = "スーパー ジャンプのパワーアップ アイテムを手に入れました！";
+$Text::ASuperSpeed = "スーパー スピードのパワーアップ アイテムを手に入れました！";
+$Text::AGyrocopter = "ジャイロコプターのパワーアップ アイテムを手に入れました！";
+$Text::AGravityMod = "重力調整アイテムを手に入れました！";
+$Text::AMegaMarble = "メガ マーブルのパワーアップ アイテムを手に入れました！";
+$Text::ABlast = "ブラストのパワーアップ アイテムを手に入れました！";
+$Text::ATimeTravelBonus = "%1 秒のタイム ボーナスを手に入れました！";
+
+;-------------------------------------------------------------------------------
+; Non-tagged game messages 
+;-------------------------------------------------------------------------------
+$Text::Msg::Tied = "引き分けです！"; // tie
+$Text::Msg::WonMP1 = "%1 が %2 ポイントで勝利しました！"; // 1 point version
+$Text::Msg::WonMPN = "%1 が %2 ポイントで勝利しました！"; // 0 or 2+ point version
+$Text::Msg::PlayerJoin = "%1 がゲームに参加しました";
+$Text::Msg::PlayerDrop =  "%1 がゲームを抜けました";
+
+;-------------------------------------------------------------------------------
+; Various gui strings
+;-------------------------------------------------------------------------------
+$Text::SearchingForGames  = "ゲームを検索中...";
+$Text::LobbyRankFormat = " [%1]"; whether the game is ranked or standard is displayed in the Lobby in this format
+                                ; after the level name.  %1 will be $Text::Ranked or $Text::Standard
+$Text::Ranked = "ランク マッチ";
+$Text::Standard = "プレイヤー マッチ";
+$Text::ModeRanked = "タイプ: ランク マッチ";
+$Text::ModeStandard = "タイプ: プレイヤー マッチ";
+$Text::PoweredBy = "POWERED BY"; // In context: "POWERED BY Torque Shader Engine." 
+
+;-------------------------------------------------------------------------------
+; Gui titles
+;-------------------------------------------------------------------------------
+$Text::MainMenu = "メイン メニュー";
+$Text::DifficultyMenu = "難易度の選択";
+$Text::SelectBeginner = "ビギナー: ";
+$Text::SelectIntermediate = "ノーマル: ";
+$Text::SelectAdvanced = "エキスパート: ";
+$Text::LevelPreview = "レベルの選択";
+$Text::CreateMatchTitle = "マッチの作成";
+$Text::Lobby = "ロビー";
+$Text::JoinGame = "ゲームに参加";
+$Text::LeaderBoardScreen = "ランキング";
+$Text::MultiplayerMenu = "マルチプレイヤー";
+$Text::OptimatchTitle = "カスタム マッチ";
+$Text::AboutMenu = "MARBLE BLAST について";
+$Text::SelectLeaderboard = "ランキングの選択";
+
+;-------------------------------------------------------------------------------
+; Menu Options
+;-------------------------------------------------------------------------------
+$Text::SinglePlayer = "シングル プレイヤー";
+$Text::Multiplayer = "マルチプレイヤー";
+$Text::Achievements = "実績";
+$Text::Play = "プレイ";
+;$Text::XbLiveOptions = "Xbox Live Options";
+;$Text::Options = "Options";
+$Text::HelpAndOptions = "ヘルプ＆オプション";
+$Text::UnlockFullGame = "完全版を購入";
+$Text::RTArcadeMenu = "Arcade に戻る";
+$Text::LevelsBeginner = "ビギナー レベル";
+$Text::LevelsIntermediate = "ノーマル レベル";
+$Text::LevelsAdvanced = "エキスパート レベル";
+$Text::Go = "OK";
+$Text::OK = "OK";
+$Text::Cancel = "キャンセル";
+$Text::Refresh = "更新";
+$Text::Select = "選択";
+;$Text::ReturningToArcade = "Returning to Xbox Live Arcade Menu";
+;$Text::PlayMarbleBlast = "Play Marble Blast";
+$Text::QuickMatch = "クイック マッチ";
+$Text::OptiMatch = "カスタム マッチ";
+$Text::CreateMatch = "マッチの作成";
+$Text::Players = "プレイヤー";
+$Text::Ready = "準備完了";
+$Text::ExitGame = "終了";
+
+;-------------------------------------------------------------------------------
+; Join Game Gui
+;-------------------------------------------------------------------------------
+$Text::Join = "参加";
+$Text::Create = "作成";
+$Text::JoiningGame = "ゲームに参加しています";
+$Text::ZoneLabel = "Xbox Live ゲーマー ゾーン";
+$Text::ZoneOptions = "指定なし\t現在のゲーマー ゾーン";
+$Text::LanguageLabel = "言語";
+$Text::LangOptions = "指定なし\t現在の言語";
+$Text::AnyOption = "指定なし";
+$Text::MaxPlayersOption = "最大プレイヤー数"; // $Text::AnyOption, 2, 3, 4 ... 8
+$Text::MissionOption = "レベル"; // $Text::AnyOption, $Text::LevelNameMP1, $Text::LevelNameMP2 ...
+
+$Text::FGG_Host = "ホスト";
+$Text::FGG_Mission = "レベル";
+$Text::FGG_NumPlayers = "プレイヤー数";
+$Text::FGG_Players = "プレイヤー";
+
+;-------------------------------------------------------------------------------
+; Create Game Gui
+;-------------------------------------------------------------------------------
+$Text::Mission = "レベル";
+$Text::MaxPlayers = "最大プレイヤー数";
+$Text::PrivateSlots = "プライベート スロット";
+
+;-------------------------------------------------------------------------------
+; Leaderboard Select Menu
+;-------------------------------------------------------------------------------
+$Text::LBSinglePlayer = "シングル プレイヤー";
+$Text::LBMPScrum = "マルチプレイヤー";
+
+;-------------------------------------------------------------------------------
+; Lobby stuff
+;-------------------------------------------------------------------------------
+$Text::LobbyHostName = "ホスト:"; 
+$Text::LobbyHostLevel = "レベル:"; 
+$Text::LobbyHostPrivateSlots = "プライベート スロット"; 
+$Text::LobbyHostPublicSlots = "パブリック スロット"; 
+
+; separators
+$Text::Colon  = ":";
+$Text::Comma  = ",";
+$Text::Slash  = "/";
+$Text::Plus   = "+";
+$Text::Minus  = "-";
+$Text::Period  = ".";
+
+$Text::SubmitPlayerReview = "プレイヤー レビューを送信";
+$Text::Kick = "退出させる";
+$Text::GamerCard = "ゲーマー カードの表示";
+$Text::SendFriendRequest = "フレンド登録の依頼を送信";
+$Text::NoOptionsAvailable  = "選択可能なオプションがありません。";
+$Text::SelectPlayer = "プレイヤーを選択";
+$Text::Player = "プレイヤー:";
+
+;-------------------------------------------------------------------------------
+; Pause Menu
+;-------------------------------------------------------------------------------
+$Text::UseItems = "パワーアップ アイテム";
+$Text::Blast = "ブラスト";
+$Text::ShowScores = "スコア";
+$Text::Jump = "ジャンプ";
+$Text::Camera = "視点";
+$Text::MoveMarble = "マーブルの移動";
+;$Text::ShowNames = "Toggle Name Visibility";
+$Text::HighScores = "ハイスコア";
+
+$Text::Paused = "ポーズ";
+$Text::Resume = "再開";
+$Text::Restart = "リスタート";
+$Text::MainMenuOption = "メイン メニュー";
+$Text::ExitLevelOption = "レベルを終了";
+$Text::ResumePlay = "ゲームに戻る";
+
+;-------------------------------------------------------------------------------
+; Options
+;-------------------------------------------------------------------------------
+$Text::GameOptions = "ゲーム設定";
+$Text::Adjust = "調整";
+$Text::Toggle = "切り替え";
+$Text::MusicVol = "音楽のボリューム";
+$Text::FXVol = "効果音ボリューム";
+$Text::InvX = "視点 - X 軸";
+$Text::InvY = "視点 - Y 軸";
+$Text::InvOnOff = "標準\t反転";
+$Text::MarbleSkin = "デザイン";
+$Text::MarbleOptions = "1\t2\t3\t4\t5\t6\t7\t8";
+;$Text::MarbleColor = "Marble Color";
+
+;-------------------------------------------------------------------------------
+; Object Strings
+;-------------------------------------------------------------------------------
+$Text::FoundNewEgg = "新しい隠しアイテムを獲得しました！";
+$Text::AlreadyFoundEgg = "このアイテムはすでに獲得済みです！";
+
+$Text::UseSuperJump = "スーパー ジャンプ";
+$Text::UseSuperSpeed = "スーパー スピード";
+$Text::UseGyrocopter = "ジャイロコプター";
+$Text::UseMegaMarble = "メガ マーブル";
+$Text::UseBlast = "ブラスト";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Game Modes
+;-------------------------------------------------------------------------------
+$Text::GameModeScrum = "スクラム";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Overall leaderboard titles
+;-------------------------------------------------------------------------------
+$Text::LB_SPOverall = "シングル プレイヤー総合"
+$Text::LB_MPScrumOverall = "マルチプレイヤー総合";
+$Text::LB_MPScrumSkill = "ランク マッチ総合";
+
+;-------------------------------------------------------------------------------
+; Errors
+;-------------------------------------------------------------------------------
+;$Text::SettingsHosed = "Your settings appear to be damaged and cannot be used. Default settings will be restored. Press A to continue.";
+;$Text::SettingsHosedTitle = "Settings Damaged";
+;$Text::CtrlrReconnect = "Please reconnect the controller to port %1 and press START to continue.";
+;$Text::CtrlrDisconnectTitle = "Controller Disconnected";
+;$Text::ReconnectAnyPort = "Please reconnect a controller to any controller port and press START to continue.";
+;$Text::UploadOnlyIfSignedIn = "You can upload your high score only if you are signed in to the Xbox Live service.";
+$Text::Continue = "続ける";
+;$Text::UpdateRequired = "An update is required to play this game online. Please return to the Xbox Live Arcade Menu, sign in to Xbox Live, and select this game again to download the update.";
+; $Text::ArbRegister = "Registering with Arbitration service"; // using $Text::TestingNetwork for this now
+$Text::SignInForMultiplayer = "マルチプレイヤー ゲームをプレイするには、Xbox Live にサインインする必要があります。";
+$Text::MPNotAllowed = "Xbox Live でマルチプレイヤー ゲームをプレイすることができません。";
+;$Text::SignInToPurchase = "You must Sign In to Live in order to unlock the full game.  Press A to Sign In or B to cancel.";
+$Text::SignInLeaderboard = "ランキングを表示するには、Xbox Live にサインインする必要があります。";
+;$Text::SignInForSP = "Please sign in to play.";
+;$Text::SignInToPlay = "Please sign in to play or press B to Return to Arcade.";
+$Text::ExitLevelConfirm = "このレベルを終了してよろしいですか？ 現在の進行状況が失われます。";
+$Text::HostMMConfirm = "メイン メニューに戻ってよろしいですか？  戻ると、すべてのプレイヤーがセッションから切断されます。";
+$Text::HostMMInviteConfirm = "このゲーム招待を受けますか？ゲーム招待を受けると、すべてのプレイヤーがセッションから切断されます。";
+$Text::ClientMMConfirm = "このレベルを終了してメイン メニューに戻ってもよろしいですか？";
+$Text::RankedHostConfirm = "このゲームを終了してもよろしいですか？途中で終了すると、すべてのプレイヤーがセッションから切断されます。また、ポイントが失われる場合があります。";
+$Text::RankedClientConfirm = "このゲームを終了してもよろしいですか？途中で終了すると、ポイントが失われる場合があります。";
+
+$Text::ErrorCannotConnect   = "セッションに接続できません。";
+$Text::ErrorSessionEnded    = "予期しない原因によりセッションが切断されました。";
+$Text::ErrorConnectionLost  = "セッションへの接続が切断されました。";
+$Text::ErrorHostKilled      = "ホストがセッションを終了しました。";
+$Text::ErrorSessionGone     = "このゲーム セッションにアクセスすることができません。";
+$Text::ErrorYouBanned       = "このセッションでプレイすることはできません。";
+$Text::ErrorNoGames         = "ゲームが見つかりません。";
+$Text::ErrorHostKickedYou   = "ホストによって退出させられました。";
+$Text::ErrorBandwidthWarn   = "このプレイヤー数では、ネットワーク状況によってゲームに影響が出る場合があります。";
+$Text::ErrorClientsNotReady = "すべてのプレイヤーの準備が整うまでゲームを開始できません。";
+$Text::ErrorClientsWillDrop = "ゲームを抜けると、すべてのプレイヤーが切断されてしまいます。";
+$Text::ErrorTooFewPlayers   = "もう 1 人プレイヤーがいないと、ランク マッチは開始できません。";
+$Text::ErrorSignedOff       = "Xbox Live からサインアウトしました。メイン メニューに戻ります。";
+$Text::TestingNetwork       = "お待ちください";
+;$Text::ErrorArbFailed       = "Session ended due to failed registration with Arbitration service."; // using $Text::ErrorCannotConnect now
+$Text::ErrorDemoUpgrade     = "完全版を購入して、このマッチをプレイしましょう！";
+;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
+$Text::ErrorKickSure        = "このプレイヤーを退出させてよろしいですか？";
+$Text::ErrorNoSwitchMarble  = "ゲーム中はマーブルのデザインを変更できません。";
+
+
+;-------------------------------------------------------------------------------
+; Help & Options Menu Options
+;-------------------------------------------------------------------------------
+$Text::HOMarble = "マーブルのデザイン";
+$Text::HOOptions = "視点と音の設定";
+$Text::HOInstructions = "プレイ方法";
+$Text::HOCredits = "クレジット";
+
+;-------------------------------------------------------------------------------
+; About Menu Options
+;-------------------------------------------------------------------------------
+$Text::AboutBasics = "マーブルの操作";
+$Text::AboutPowerups = "パワーアップ アイテム";
+$Text::AboutBlast = "ブラスト メーター";
+$Text::AboutSP = "シングル プレイヤー";
+$Text::AboutMP = "マルチプレイヤー";
+
+;-------------------------------------------------------------------------------
+; About Page
+;-------------------------------------------------------------------------------
+$Text::HOTitle = "ヘルプ ＆ オプション";
+$Text::About0Title = "マーブルのデザイン";
+$Text::About1Title = "視点と音の設定";
+$Text::About2Title = "プレイ方法";
+$Text::About3Title = "マーブルの操作";
+$Text::About3aTitle = "パワーアップ アイテム";
+$Text::About3bTitle = "ブラスト メーター";
+$Text::About4Title = "シングル プレイヤー";
+$Text::About5Title = "マルチプレイヤー";
+$Text::About6Title = "MARBLE BLAST チーム";
+
+;About Marble Blast Basics
+$Text::About1 = "左スティックでマーブルを移動します。 \n\nA ボタンまたは 左トリガーでマーブルをジャンプさせます。\n\n右スティックで視点を移動して周囲を見回すことができます。\n\nメイン メニューの [ヘルプ＆オプション] 画面から、視点移動操作を反転させることができます。";
+
+;About Powerups
+$Text::About2 = "ゲーム中にはさまざまなパワーアップ アイテムが存在します。パワーアップ アイテムを手に入れるには、その上にマーブルを転がします。手に入れたパワーアップ アイテムはパワーアップ アイテム ウィンドウに表示されます。";
+$Text::About3 = "右トリガーを引くか、B ボタンを押して、パワーアップ アイテムを使用します。";
+
+;About Blast
+$Text::About4 = "ブラストを使用すると、マルチプレイヤーの対戦相手を弾き飛ばして、自分のマーブルを少し浮かせることができます。使いどころを工夫しましょう！";
+$Text::About5 = "ブラスト メーターで現在使用可能なブラストのレベルを確認できます。  ブラスト メーターは時間の経過に伴いゆっくりと増えていきます。";
+$Text::About6 = "X ボタンまたは RB を押して、ブラスト を使用します。\n\nウルトラ ブラストのパワーアップ アイテムを手に入れると、ブラストのメーターが一気に満タンになり、さらにブラストの威力もアップします！";
+
+;About Single Player Mode
+$Text::AboutSP1 = "できる限り早く、各レベルのゴール パッドにたどり着きましょう。他のプレイヤーのベスト タイムはランキングで確認できます。";
+$Text::AboutSP2 = "<lmargin:70>スタート パッド - ここがレベルのスタート地点です。\n\nゴール パッド - ここまでマーブルを転がして、レベルをクリアします。\n\n宝石 - 宝石が存在するレベルもあります。宝石をすべて集めなければ、レベル クリアになりません。\n\nタイム ボーナス - これを取ると一時的に時間が止まります。";
+
+;About Multiplayer
+$Text::AboutMP1 = "宝石を手に入れるとポイントを獲得できます。できるだけ多くの宝石を手に入れてください。次の宝石が現れたらいつでも進めるように準備しておきましょう！\n\n高いポイントを獲得できる宝石もあります。高得点の宝石ほど、手に入れるのが困難になります。";
+$Text::AboutMP2 = "ランキングで世界中のプレイヤーと腕を競いましょう。";
+
+; Credits
+$Text::GGCredits = "<spush><font:Arial Bold:%1>GarageGames Team<spop>\n\n<spush><font:Arial Bold:%2>Development<spop>\nTim Aste\nJane Chase\nTimothy Clarke\nAdam deGrandis\nClark Fagot\nMatt Fairfax\nMark Frohnmayer\nBen Garney\nTim Gift\nJustin Kovac\nJoe Maruschak\nMark McCoy\nJay Moore\nRick Overman\nJohn Quigley\nBrian Ramage\nKevin Ryan\nLiam Ryan\nAlex Swanson\nJeff Tunnell\nPat Wilson\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nCafe Aroma\nCafe Yumm!\nMezza Luna Pizzeria\nPizza Research Institute\nThe GarageGames Community";
+$Text::MSCredits = "<spush><font:Arial Bold:%1>Xbox Live Arcade Team<spop>\n\n<spush><font:Arial Bold:%2>Program Management<spop>\nKatie Stone\nJon David\n\n<spush><font:Arial Bold:%2>Test Manager<spop>\nTony Harlich\n\n<spush><font:Arial Bold:%2>Test<spop>\nMichael Jones\nChad Dylan Long (VMC)\nEric Snyder (VMC)\nNoriko Fritschle (VMC)\nKevin Hathaway (VMC)\nTy Roberts (VMC)\n\n<spush><font:Arial Bold:%2>Release Manager<spop>\nJulie Pitt (VOLT)\n\n<spush><font:Arial Bold:%2>Development<spop>\nBrian Ostergren\nEric Heutchy\nEric Fleegal\n\n<spush><font:Arial Bold:%2>Group Manager<spop>\nGreg Canessa\n\n<spush><font:Arial Bold:%2>Product Planning<spop>\nRoss Erickson\nCherie Lutz\n\n<spush><font:Arial Bold:%2>Content Creation<spop>\nMichelle Lomba\n\n<spush><font:Arial Bold:%2>Usability<spop>\nTom Fuller\nChuck Harrison\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nJ Allard\nShane Kim\nDon Ryan\nChris Early\nOliver Miyashita\nMike Minahan\nVMC Consulting\nAmi Blaire\nDarryl Saunders\nAaron Greenberg\nMichael Wolf\nDavid Hufford\nDarren Trencher";
+$Text::LocCredits = "<spush><font:Arial Bold:%1>Localization<spop>\n\n<spush><font:Arial Bold:%2>Japan Localization Team<spop>\nShinya Muto\nJunya Chiba\nGo Komatsu\nMayumi Koike\nTakehiro Kuga\nMasao Okamoto\nYutaka Hasegawa\nMunetaka Fuse\nTakashi Sasaki\nShinji Komiyama\n\n<spush><font:Arial Bold:%2>Korea Localization Team<spop>\nEun Hee Lee\nIn Goo Kwon\nWhi Young Yoon\nJi Young Kim\n\n<spush><font:Arial Bold:%2>Taiwan Localization Team<spop>\nRobert Lin\nCarole Lin\nLilia Lee\nJason Cheng";
+
+;-------------------------------------------------------------------------------
+; Achievement Strings
+;-------------------------------------------------------------------------------
+;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
+;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
+
+$Text::AchievementName01 = "Timely Marble";
+$Text::AchievementName02 = "Apprentice's Badge";
+$Text::AchievementName03 = "Journeyman's Badge";
+$Text::AchievementName04 = "Adept's Badge";
+$Text::AchievementName05 = "Marble-fu Initiate";
+$Text::AchievementName06 = "Marble-fu Master";
+$Text::AchievementName07 = "Marble-fu Transcendent";
+$Text::AchievementName08 = "Egg Seeker";
+$Text::AchievementName09 = "Egg Basket";
+$Text::AchievementName10 = "First Place";
+$Text::AchievementName11 = "Gem Collector";
+$Text::AchievementName12 = "Veteran Battler";
+
+$Text::AchievementDescription01 = "任意のレベルをパー タイム内でゴールしましょう。";
+$Text::AchievementDescription02 = "ビギナー レベルをすべてクリアしましょう。";
+$Text::AchievementDescription03 = "ノーマル レベルをすべてクリアしましょう。";
+$Text::AchievementDescription04 = "エキスパート レベルをすべてクリアしましょう。";
+$Text::AchievementDescription05 = "ビギナー レベルのすべてのレベルをパー タイム以内にクリアしましょう。";
+$Text::AchievementDescription06 = "ノーマル レベルのすべてのレベルをパー タイム以内にクリアしましょう。";
+$Text::AchievementDescription07 = "エキスパート レベルのすべてのレベルをパー タイム以内にクリアしましょう。";
+$Text::AchievementDescription08 = "隠しアイテムを見つけましょう。";
+$Text::AchievementDescription09 = "隠しアイテムを 20 個すべて見つけましょう。";
+$Text::AchievementDescription10 = "マルチプレイヤー マッチで 1 位になりましょう。";
+$Text::AchievementDescription11 = "マルチプレイヤー マッチで 75 ポイント獲得しましょう。";
+$Text::AchievementDescription12 = "マルチプレイヤーで合計 2,000 ポイント獲得しましょう。";
+
+;-------------------------------------------------------------------------------
+; Singleplayer Game Strings
+;-------------------------------------------------------------------------------
+
+$Text::InGameReady = "Ｒｅａｄｙ";
+$Text::InGameGo = "Ｇｏ！";
+$Text::InGameOutofBounds = "ＯＢ！";
+
+;-------------------------------------------------------------------------------
+; Level Strings
+;-------------------------------------------------------------------------------
+$Text::LevelName1 = "マーブルの転がし方";
+$Text::LevelStartHelp1 = "Marble Blast Ultra へようこそ！\nマーブルを転がすには左スティックを使います。";
+$Text::TriggerText1_0 = "右スティックで視点を移動します。";
+$Text::TriggerText1_1 = "A ボタンを押すか、左トリガーを引いてジャンプします！";
+$Text::TriggerText1_2 = "エリア外に落ちないよう、注意しましょう。";
+$Text::TriggerText1_3 = "ゴール パッドまでマーブルを転がしていくとレベル クリアです。";
+$Text::LevelName2 = "上へ移動";
+$Text::LevelStartHelp2 = "スーパージャンプのパワーアップ アイテムを使うと、高い障害物を飛び越えられます。";
+$Text::TriggerText2_0 = "スーパー スピードのパワーアップ アイテムを使うと、速く移動できます。特に急な坂道は、これを使って登りましょう。";
+$Text::TriggerText2_1 = "エレベーターに乗れば、上のプラットフォームに登れます。";
+$Text::LevelName3 = "宝石集め";
+$Text::LevelStartHelp3 = "ゴールする前に、隠されている宝石を集めましょう。";
+$Text::TriggerText3_0 = "タイム ボーナスを取ると時間が止まり、タイムの短縮が可能になります。";
+$Text::TriggerText3_1 = "タイム ボーナスを使うと時間が止まり、タイム短縮が可能になります。";
+
+$Text::LevelName4 = "滑りやすさ";
+$Text::LevelStartHelp4 = "滑りやすさは場所によって違います。";
+$Text::TriggerText4_0 = "ゴムのマットの上ではマーブルが滑りにくくなります。急な傾斜でも滑り落ちずに登ることができます。";
+$Text::TriggerText4_1 = "氷の上では滑りやすくなります。\n近づくときには注意が必要です。";
+
+$Text::LevelName5 = "3 方向の重力";
+$Text::LevelStartHelp5 = "重力調整アイテムを使うと、重力の方向を変えることができます。";
+$Text::TriggerText5_0 = "3 方向に重力を切り替えて、それぞれ宝石を手に入れましょう。";
+
+$Text::LevelName6 = "橋の横断";
+$Text::LevelStartHelp6 = "壁のない場所では、エリア外に落ちないように気をつけましょう。";
+$Text::TriggerText6_0 = "細い橋の上では細心の注意が必要です。\nエリア外に落ちるとタイムロスになります。";
+$Text::TriggerText6_1 = "動くプラットフォームに乗れば、それまで行くことができなかった場所にも移動できます。";
+
+$Text::LevelName7 = "初心者用ゲレンデ";
+$Text::LevelStartHelp7 = "勢いをつけて、一番下まで急いで移動しましょう。";
+
+$Text::LevelName8 = "初飛行";
+$Text::LevelStartHelp8 = "ジャイロコプターのパワーアップ アイテムを使えば、安全に穴を飛び越えられます。";
+
+$Text::LevelName9 = "危険な坂道";
+$Text::LevelStartHelp9 = "障害物に気をつけてゴールを目指しましょう。";
+
+$Text::LevelName10 = "マーブル バトル入門";
+$Text::LevelStartHelp10 = "ブラスト メーターの色が変わったら RB を押してブラストを使用しましょう。";
+$Text::TriggerText10_0 = "小さいマーブルだと穴に落ちてしまいそうです。";
+$Text::TriggerText10_1 = "空中でブラストを使用すれば、高くジャンプできます。マルチプレイヤー ゲームでは他のプレイヤーを吹き飛ばすこともできます。";
+$Text::TriggerText10_2 = "ウルトラ ブラストのパワーアップ アイテムを手に入れると、ブラスト メーターが一気に満タンになり、さらにアップする場合もあります！";
+$Text::TriggerText10_3 = "メガ マーブルのパワーアップ アイテムを使うと、マーブルが巨大化します！";
+$Text::TriggerText10_4 = "マルチプレイヤー ゲームでは、一番多く宝石を集めたプレイヤーが勝者となります。";
+$Text::LevelName36 = "ホップ、スキップ、ジャンプ";
+$Text::LevelName39 = "ハーフ パイプ";
+$Text::LevelStartHelp39 = "ハーフ パイプに散らばっている宝石を集めましょう。";
+$Text::LevelName45 = "急勾配";
+$Text::LevelStartHelp45 = "坂を登り、上からスピードをつけて反対側に下りましょう。";
+$Text::LevelName40 = "ガントレット";
+$Text::LevelStartHelp40 = "叩かれないように注意！";
+$Text::LevelName37 = "分かれ道";
+$Text::LevelStartHelp37 = "急いで宝石をすべて集めましょう。";
+$Text::LevelName106 = "忍耐";
+$Text::LevelStartHelp106 = "プラットフォームから落ちないように気をつけましょう。落ちたら終わりです！";
+$Text::LevelName104 = "分岐";
+$Text::LevelName105 = "キューブ ルート";
+$Text::LevelName103 = "黒ダイヤ";
+$Text::LevelName102 = "タイミングよく上へ";
+$Text::LevelName107 = "都会のジャングル";
+$Text::LevelStartHelp107 = "ジャングルへようこそ！";
+$Text::LevelName48 = "螺旋階段";
+$Text::LevelStartHelp48 = "ゴールを目指して登っていきましょう！";
+$Text::LevelName28 = "スロープ マトリックス";
+$Text::LevelStartHelp28 = "宝石を 10 個見つけましょう！";
+$Text::LevelName108 = "山頂の避難所";
+$Text::LevelName101 = "未踏の通路";
+$Text::LevelName27 = "スケート場";
+$Text::LevelStartHelp27 = "スーパー テクニックを披露しましょう！";
+$Text::LevelName35 = "上を目指して";
+$Text::LevelStartHelp35 = "頂上の穴を目指しましょう！";
+$Text::LevelName34 = "早霜";
+$Text::LevelStartHelp34 = "氷に注意！";
+$Text::LevelName109 = "スケートで頂上へ";
+$Text::LevelName72 = "適者生存";
+$Text::LevelStartHelp72 = "プラットフォームから落ちないようにしましょう！";
+$Text::LevelName77 = "摩天楼";
+$Text::LevelStartHelp77 = "すべての宝石を手に入れて頂上を目指しましょう！";
+$Text::LevelName50 = "木の家";
+$Text::LevelName58 = "自然淘汰";
+$Text::LevelStartHelp58 = "振り落とされないよう気をつけましょう。";
+$Text::LevelName80 = "つむじ風";
+$Text::LevelName70 = "火の玉";
+$Text::LevelName55 = "障害物競走";
+$Text::LevelName81 = "そり滑り";
+$Text::LevelStartHelp81 = "滑りやすい場所ではジャンプすれば、操作が楽になります。";
+$Text::LevelName86 = "二元性";
+$Text::LevelStartHelp86 = "一番早く着く道はどれでしょう？";
+$Text::LevelName100 = "キング オブ ザ マウンテン";
+$Text::LevelStartHelp100 = "果たしてこの山を登りきれるでしょうか？";
+$Text::LevelName53 = "3 段レース";
+$Text::LevelStartHelp53 = "左右をよく見て渡りましょう！";
+$Text::LevelName73 = "洞窟探検";
+$Text::LevelStartHelp73 = "宝石を集めて、ゴールに急ぎましょう！";
+$Text::TriggerText73_0 = "スーパージャンプで洞窟から脱出しましょう！";
+$Text::LevelName98 = "シャーデン フロイド";
+$Text::LevelStartHelp98 = "バンパーの動きに気をつけましょう。";
+$Text::LevelName57 = "三層迷路";
+$Text::LevelName76 = "スロープ リローデット";
+$Text::LevelStartHelp76 = "プラットフォームを渡るときには十分注意しましょう。";
+$Text::LevelName79 = "アクロバット";
+$Text::LevelStartHelp79 = "着地する瞬間、回転をコントロールしましょう。";
+$Text::LevelName83 = "足場";
+$Text::LevelStartHelp83 = "トラップから落ちないように、動き続けましょう！";
+$Text::LevelName59 = "スリップ注意";
+$Text::LevelStartHelp59 = "バンパーに注意しましょう！";
+$Text::LevelName75 = "究極のスキー";
+$Text::LevelStartHelp75 = "スキー初心者は注意が必要です。";
+$Text::LevelName88 = "試練";
+$Text::LevelStartHelp88 = "パワー、スピード、軽やかさが、待ち受ける試練を乗り越えるのには不可欠です。";
+$Text::LevelName61 = "ハーフ パイプのエリート";
+$Text::LevelName87 = "ダイダロス";
+$Text::LevelName97 = "工事中";
+$Text::LevelStartHelp97 = "足元注意！";
+$Text::LevelName56 = "羅針盤の針";
+$Text::LevelName89 = "狭間胸壁";
+$Text::LevelStartHelp89 = "城で大暴れしましょう！";
+$Text::LevelName69 = "世界一周";
+$Text::LevelName21 = "落し穴";
+$Text::LevelStartHelp21 = "コースの隙間から落ちないようにテクニックを磨きましょう。";
+$Text::LevelName12 = "重力の螺旋";
+$Text::LevelStartHelp12 = "重力調整アイテムを使って、ゴールしましょう。";
+$Text::LevelName23 = "連続コーナー";
+$Text::LevelStartHelp23 = "パワーアップ アイテムを使って途切れた道を渡り、連続コーナーを進みましょう。";
+$Text::LevelName22 = "プラットフォーム パーティー";
+$Text::LevelStartHelp22 = "動くプラットフォームに乗って、ゴールを目指しましょう。";
+$Text::LevelName82 = "ジャンプ ジャンプ ジャンプ！";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Level Strings
+;-------------------------------------------------------------------------------
+
+$Text::LevelNameMP1 = "全方向に注意";
+$Text::LevelNameMP2 = "バトル キューブ";
+$Text::LevelNameMP3 = "スプロール";
+$Text::LevelNameMP4 = "スケート バトル";
+$Text::LevelNameMP5 = "頂上";
+$Text::LevelNameMP6 = "マーブル キング";
+$Text::LevelNameMP7 = "マーブル シティ";
+$Text::LevelNameMP8 = "地平線";
+$Text::LevelNameMP9 = "宝石ストリート";
+$Text::LevelNameMP10 = "震源地";
+
+;-------------------------------------------------------------------------------
+; Additional Help Strings
+;-------------------------------------------------------------------------------
+
+$Text::TriggerTextFirstSuperJump = "スーパー ジャンプで隙間を跳び越しましょう。"
+$Text::TriggerTextFirstGyrocopter = "ジャイロコプターのパワーアップ アイテムを使えば、安全に隙間を飛び越えられます。";
+$Text::TriggerTextFirstMines = "地雷には注意しましょう。";
+$Text::TriggerTextIce = "氷は滑りやすくなっています。注意しましょう。";
+$Text::TriggerTextRubber = "ゴムで覆われた場所では滑りにくくなります。";
+$Text::TriggerTextTornado = "トルネードに巻き込まれないよう、気をつけましょう。";
+$Text::TriggerTextFans = "ファンの風には注意しましょう。";
+$Text::TriggerTextBumpers = "バンパーにぶつかると、跳ね返されてしまいます。";
+$Text::TriggerTextAirMove = "空中でも回転方向を変えることができます。";
+

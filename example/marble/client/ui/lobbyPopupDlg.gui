@@ -1,0 +1,287 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(LobbyPopupDlg) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+
+	new GuiBitmapCtrl(XMessageBGFrame) {
+     profile = "GuiDefaultProfile";
+      alpha = "0";
+	   horizSizing = "width";
+	   vertSizing = "height";
+   	position = "0 0";
+	   extent = "640 480";
+      bitmap = "./xbox/fade_black";
+      wrap = "1";
+	   visible = "1";
+      
+	   new GuiBitmapCtrl(XMessagePopFrame) {
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "center";
+	      vertSizing = "center";
+	      position = "70 30";
+	      extent =   "512 400"; 
+	      minExtent = "48 92";
+	      visible = "1";
+	      bitmap = "./xbox/popupGUI";
+	      wrap = "0";
+	            
+	      new GuiMLTextCtrl(LobbyPopupText) {
+	         profile = "TextHeadingSmallNoShadeProfile";
+				position = "103 85";
+				extent =   "313 186";
+	         minExtent = "8 8";
+	         visible = "1";
+	         lineSpacing = "2";
+	         allowColorChars = "0";
+	         maxChars = "-1";
+	         maxAlpha = "1.0";
+	         minAlpha = "1.0";
+	      };
+	      new GuiMLTextCtrl(LobbyPopupConfirmText) {
+	         profile = "TextHeadingSmallNoShadeProfile";
+				position = "103 85";
+				extent =   "313 186";
+	         minExtent = "8 8";
+	         visible = "1";
+	         lineSpacing = "2";
+	         allowColorChars = "0";
+	         maxChars = "-1";
+	         maxAlpha = "1.0";
+	         minAlpha = "1.0";
+	      };
+			new GuiControl(LobbyPopupMenuCrop) {
+			   profile = "GuiDefaultProfile";
+				position = "74 53";
+				extent =   "365 221";
+			   
+		      new GuiXboxListCtrl(LobbyPopupMenu) 
+		      {
+			      profile = "PopupMenuListProfile";
+			      position = "22 7";
+		         extent = "343 220";
+		         setFirstResponder = "true";
+		      };
+	      };
+		   new GuiControl(LobbyPopupBottomNavBar) {
+		      profile = "GuiDefaultProfile";
+		      horizSizing = "right";
+		      vertSizing = "bottom";
+		      position = "-119 248";
+		      extent = "640 200";
+		      minExtent = "8 2";
+		      visible = "1";
+		
+		      new GuiControl(LobbyPopupABtn) {
+		         profile = "GuiDefaultProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+		         position = "34 40";
+		         extent = "500 60";
+		         minExtent = "8 2";
+		         bitmap = "./xbox/roundedBG";
+		         visible = "1";
+		
+		         new GuiBitmapCtrl(LobbyPopupAButtonImage) {
+		            profile = "GuiDefaultProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "440 0";
+		            extent = "45 45";
+		            minExtent = "8 2";
+		            visible = "1";
+		            bitmap = "./xbox/pad_button_a";
+		            wrap = "0";
+		            onMouseUp = "LobbyPopup.onA();";
+		         };
+		         new GuiTextCtrl(LobbyPopupABtnTxt) {
+		            profile = "TextAButtonProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "4 5";
+		            extent = "437 34";
+		            minExtent = "50 34";
+		            visible = "1";
+		            text = "";
+		            maxLength = "255";
+		         };
+		      };
+		      new GuiControl(LobbyPopupBBtn) {
+		         profile = "GuiDefaultProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+		         position = "67 5";
+		         extent = "500 60";
+		         minExtent = "8 2";
+		         bitmap = "./xbox/roundedBG";
+		         visible = "1";
+		         
+		         new GuiBitmapCtrl(LobbyPopupBButtonImage) {
+		            profile = "GuiDefaultProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "440 5";
+		            extent = "35 35";
+		            minExtent = "8 2";
+		            visible = "1";
+		            bitmap = "./xbox/pad_smallbutton_b";
+		            wrap = "0";
+		            onMouseUp = "LobbyPopup.onB();";
+		         };
+		         new GuiTextCtrl(LobbyPopupBBtnTxt) {
+		            profile = "TextBButtonProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "4 5";
+		            extent = "437 34";
+		            minExtent = "50 34";
+		            visible = "1";
+		            text = "";
+		            maxLength = "255";
+		         };
+		      };
+			};
+		};
+	};
+
+};
+//--- OBJECT WRITE END ---
+
+function LobbyPopupDlg::show(%this, %clientName, %clientId, %showPlayerReview,%showKick,%showInviteFriend,%showGamerCard)
+{
+   LobbyPopupMenu.clear();
+   
+   %this.reviewOption = 1;
+   %this.friendOption = 3;
+   %this.kickOption = 2;
+   %this.gamerCardOption = 4;
+   
+	if (%showPlayerReview)
+	   LobbyPopupMenu.addRow($Text::SubmitPlayerReview, %this.reviewOption, 0, 6);
+	if (%showInviteFriend)
+	   LobbyPopupMenu.addRow($Text::SendFriendRequest, %this.friendOption, 0, 2);
+	if (%showKick)
+	   LobbyPopupMenu.addRow($Text::Kick, %this.kickOption, 0, 10);
+   if (%showGamerCard)
+      LobbyPopupMenu.addRow($Text::GamerCard, %this.gamerCardOption, 0, 6);
+      
+         
+   if (LobbyPopupMenu.getRowCount() > 0)
+   {
+      LobbyPopupText.setText( %nameColor @ %clientName);
+      LobbyPopupMenu.setSelectedIndex(0);
+   }
+   else
+   {
+      LobbyPopupText.setText( %clientName @ "<br><br>" @ $Text::NoOptionsAvailable);
+   }
+   
+   LobbyPopupABtnTxt.setText($Text::OK);
+   LobbyPopupABtn.setVisible(true);
+   LobbyPopupBBtnTxt.setText($Text::Cancel);
+   LobbyPopupBBtn.setVisible(true);
+      
+   %this.victim = %clientId;
+   %this.victimName = %clientName;
+   %this.victimXBLiveId = LobbyGui.findXBLiveIdByClientId(%clientId);
+   
+   %this.setConfirming(false);
+   
+   if (!%this.isAwake())
+   {
+      clientSetReadyStatus(false);
+      
+      Canvas.pushDialog(LobbyPopupDlg, 0);   
+      
+	   //LobbyPopupBGFrame.alpha = 0;
+	   //LobbyPopupBGFrame.animateAlpha(0.7, 75, 100);
+   }
+}
+
+function LobbyPopupDlg::hide(%this)
+{
+   if (!%this.isAwake())
+      return;
+      
+   Canvas.popDialog(%this);    
+}
+
+function LobbyPopupDlg::setConfirming(%this, %confirming)
+{
+   %this.confirming = %confirming;
+   
+   LobbyPopupText.setVisible(!%this.confirming);
+   LobbyPopupMenu.setVisible(!%this.confirming);
+   LobbyPopupConfirmText.setVisible(%this.confirming);
+   
+   if (%this.confirming)
+   {
+      switch (LobbyPopupMenu.getSelectedData())
+      {
+         case %this.kickOption:
+         	%align = isEnglish() ? "<br><br><just:center>" : "<br><br>";
+            LobbyPopupConfirmText.setText( %this.victimName @ %align @ $Text::ErrorKickSure);
+      }
+   }
+}
+
+function LobbyPopupDlg::doIt(%this)
+{      
+   switch (LobbyPopupMenu.getSelectedData())
+   {
+       case %this.kickOption:
+          error("Kicked:" SPC %this.victim);
+          kick(%this.victim); // this will only work on the host
+       case %this.reviewOption:
+          error("Reviewing player:" SPC %this.victim);
+          XBLiveShowPlayerReviewUI(XBLiveGetSignInPort(), %this.victimXBLiveId);
+       case %this.friendOption:
+          error("Activating friend UI for player:" SPC %this.victim);
+          XBLiveShowFriendRequestUI(XBLiveGetSignInPort(), %this.victimXBLiveId);
+       case %this.gamerCardOption:
+         error("Showing gamercard for player:" SPC %this.victim);
+         XBLiveShowGamercardUI(XBLiveGetSignInPort(), %this.victimXBLiveId);
+   } 
+   %this.setConfirming(false);
+}
+
+function LobbyPopupDlg::onA(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   if (LobbyPopupMenu.getRowCount() == 0)
+   {
+      %this.hide();
+      return;
+   }
+   %selected = LobbyPopupMenu.getSelectedData();
+   
+   // kick option requires confirmation
+   if (%selected $= %this.kickOption && !%this.confirming)
+      %this.setConfirming(true);
+   else
+   {
+      %this.doIt();  
+      %this.hide();
+   }
+}
+
+function LobbyPopupDlg::onB(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   if (LobbyPopupMenu.getRowCount() == 0)
+   {
+      %this.hide();
+      return;
+   }
+   if (%this.confirming)
+      %this.setConfirming(false);
+   else
+      %this.hide();
+}
+

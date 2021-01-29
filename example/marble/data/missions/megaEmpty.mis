@@ -1,0 +1,120 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+      new ScriptObject(MissionInfo) {
+         desc = "Level Preview Mission";
+         type = "none";
+         artist = "Alex Swanson";
+         gameType = "singleplayer";
+         time = "50000";
+         level = "0";
+         isInDemoMode = "1";
+         include = "1";
+         name = "Level Preview Mission";
+         difficulty = "1";
+   };
+   new MissionArea(MissionArea) {
+      area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_beginner.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 1.00399e-038 0.967194";
+      fogVolume2 = "-1 0.945956 0.205138";
+      fogVolume3 = "-1 0.135577 0.353959";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "1";
+      skyGlowColor = "0.050000 0.050000 0.050000 1.000000";
+   };
+   new StaticShape(Cloud_Beginner) {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeCloudsBeginnerShape";
+   };
+   new StaticShape(Cloud_Intermediate) {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "1";
+      dataBlock = "astrolabeCloudsIntermediateShape";
+   };
+   new StaticShape(Cloud_Advanced) {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "1";
+      dataBlock = "astrolabeCloudsAdvancedShape";
+   };
+   new Sun(Mega_Sun) {
+      direction = "0.573201 0.275357 -0.771764";
+      color = "1.080000 1.030000 0.900000 1.000000";
+      ambient = "0.400000 0.400000 0.500000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new Sun(Beginner_Sun) {
+      direction = "0.573201 0.275357 -0.771764";
+      color = "1.080000 1.030000 0.900000 1.000000";
+      ambient = "0.400000 0.400000 0.500000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new Sun(Intermediate_Sun) {
+      direction = "0.573201 0.275357 -0.771764";
+      color = "1.080000 1.030000 0.900000 1.000000";
+      ambient = "0.400000 0.400000 0.500000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new Sun(Advanced_Sun) {
+      direction = "0.573201 0.275357 -0.771764";
+      color = "1.080000 1.030000 0.900000 1.000000";
+      ambient = "0.400000 0.400000 0.500000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new SpawnSphere() {
+         position = "30.3726 -22.4954 20.1734";
+         rotation = "0.52399 0.251342 -0.813795 1.06521";
+         scale = "1 1 1";
+         dataBlock = "SpawnSphereMarker";
+         radius = "1";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new StaticShape() {
+      position = "-7.62939e-006 -6.10352e-005 -612.988";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+};
+//--- OBJECT WRITE END ---
+

@@ -8,15 +8,44 @@
 
 exec("./defaults.cs");
 
-// Unicode test strings
-exec("./client/unicodeStrings.cs");
-
 //-----------------------------------------------------------------------------
+
+function initCheats()
+{
+   if ($Test::CheatsEnabled $= "")
+      return;
+      
+   error("----------------------- WARNING - CHEATS ENABLED! ---------------------------");
+      
+   if ($Test::ForceTrial)
+   {
+      error("----------------------- WARNING - CHEATING DEMO STATUS! ---------------------------");
+      // force trial mode appropriately
+      %isTrial = $Test::ForceTrialMode == 0;
+      
+      // redefine "isDemoLaunch()" function
+      %str = "function isDemoLaunch() { return " @ %isTrial @ "; }";
+      eval(%str);
+   }
+   
+   if ($Test::ForceLanguage !$= "")
+   {
+      // redefine getLanguage function
+      %str = "function getLanguage() { return \"" @ $Test::ForceLanguage @ "\"; }";
+      eval(%str);
+   }
+   
+   // see achievements.cs in marble/client/scripts for more cheats initialization
+}
 
 function initCommon()
 {
    // All mods need the random seed set
    setRandomSeed();
+   
+   // exec the cheats file.  however it should not exist in production builds.
+   exec("./testcheats.cs");
+   initCheats();
 
    // Very basic functions used by everyone
    exec("./client/canvas.cs");
@@ -50,6 +79,10 @@ function initBaseServer()
    exec("./server/game.cs");
 }   
 
+function isPCBuild()
+{
+   return $platform $= "windows";
+}
 
 //-----------------------------------------------------------------------------
 package Common {
@@ -136,17 +169,11 @@ function onStart()
    Parent::onStart();
    echo("\n--------- Initializing MOD: Common ---------");
    initCommon();
+   exec("./local/localization.cs");
 }
 
 function onExit()
 {
-   echo("Exporting client prefs");
-   export("$pref::*", "./client/prefs.cs", False);
-
-   echo("Exporting server prefs");
-   export("$Pref::Server::*", "./server/prefs.cs", False);
-   BanList::Export("./server/banlist.cs");
-
    OpenALShutdown();
    Parent::onExit();
 }

@@ -1,0 +1,297 @@
+//-----------------------------------------------------------------------------
+// Torque Game Engine
+//
+// Copyright (c) 2001 GarageGames.Com
+//-----------------------------------------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(PlayerListGui) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+   noCursor = true;
+
+   new GuiControl(PlayerListContainer) {
+      profile = "GuiModelessDialogProfile";
+		horizSizing = "relative";
+	   vertSizing = "relative";
+      position = "33 54";
+      extent = "356 360";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      wrap = "0";
+         
+    	new GuiBitmapCtrl(scoreBackDrop) {
+			profile = "GuiDefaultProfile";
+	      position = "0 0";
+   		horizSizing = "right";
+		   vertSizing = "bottom";
+	      extent = "350 128";
+			bitmap = "./game/scoreBackdrop.png";
+			visible = "1";
+	        
+		   new GuiBitmapCtrl(PlayerListGui_PlusMinus) {
+		      profile = "GuiDefaultProfile";
+		      horizSizing = "right";
+		      vertSizing = "bottom";
+		      position = "20 17";
+		      extent = "22 111";
+		      minExtent = "8 2";
+		      bitmap = "./game/scoreBackdropMinus";
+		      wrap = "0";
+				visible = "1";
+		   };
+	   };
+	         
+      new GuiTextListCtrl(PlayerListGuiList) {
+         profile = "PlayerListGuiProfile";
+         //horizSizing = "width";
+         //vertSizing = "height";
+         position = "27 43";
+         extent = "356 271";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         enumerate = "0";
+         resizeCell = "0";
+         columns = "0 19 260";
+         columnAligns = "0 0 0 1";
+         columnBmps = "1 0 0";
+         fitParentWidth = "1";
+         clipColumnText = "0";
+         centerBmpsVert = true;
+	      centerBmpsHoriz = false;
+      };
+      
+      new GuiTextListCtrl(ShortPlayerList) {
+         profile = "PlayerListGuiProfile";
+         //horizSizing = "width";
+         //vertSizing = "height";
+         position = "27 43";
+         extent = "356 271";
+         minExtent = "8 8";
+         visible = "0";
+         helpTag = "0";
+         enumerate = "0";
+         resizeCell = "0";
+         columns = "0 19 260";
+         columnAligns = "0 0 0 1";
+         columnBmps = "1 0 0";
+         fitParentWidth = "1";
+         clipColumnText = "0";
+         rowHeightOffset = "0";
+         centerBmpsVert = true;
+	      centerBmpsHoriz = false;
+      };
+	};
+};
+//--- OBJECT WRITE END ---
+function PlayerListGui::updateClientName(%this,%clientId,%name)
+{
+   %text = PlayerListGuiList.getRowTextById(%clientId);
+   if (%text !$= "")
+   {
+      // if there is a "tag" this code will drop it :(  oh well
+      %name = StripMLControlChars(%name);
+      %text = setField(%text, 1, %name);
+      PlayerListGuiList.setRowById(%clientId,%text);
+   }
+   
+   %this.updateWidths();
+}
+
+function PlayerListGui::testFull()
+{
+   playerlistgui.update(1,"AWWWWWWWWWWWWWE1",0,0,0,2,0,0);
+   playerlistgui.update(2,"AWWWWWWWWWWWWWE1",0,0,0,4,0,0);
+   playerlistgui.update(3,"AWWWWWWWWWWWWWE1",0,0,0,6,0,0);
+   playerlistgui.update(4,"AWWWWWWWWWWWWWE1",0,0,0,8,0,0);
+   playerlistgui.update(5,"AWWWWWWWWWWWWWE1",0,0,0,10,0,0);
+   playerlistgui.update(6,"AWWWWWWWWWWWWWE1",0,0,0,12,0,0);
+   playerlistgui.update(7,"AWWWWWWWWWWWWWE1",0,0,0,14,0,0);
+}
+
+function PlayerListGui::update(%this,%clientId,%name,%isSuperAdmin,%isAdmin,%isAI,%score,%cumScore, %team)
+{
+   // Build the row to display.  The name can have ML control tags,
+   // including color and font.  Since we're not using and
+   // ML control here, we need to strip them off.
+//   %tag = %isSuperAdmin? "[Super]":
+//          (%isAdmin? "[Admin]":
+//          (%isAI? "":
+//          ""));
+   %tag = "";
+
+   %name = StripMLControlChars(%name);
+   %aiok = false;
+
+   //if (%name !$= "" && %name $= $Player::Name)
+   if ($Player::ClientId $= %clientId)
+      %icon = "marble/client/ui/xbox/GreenDot.png";
+   else
+      %icon = "";
+
+   %text = %icon TAB %name SPC %tag TAB %score SPC " " TAB %cumScore;
+
+   // Update or add the player to the control
+   if (PlayerListGuiList.getRowNumById(%clientId) == -1)
+      PlayerListGuiList.addRow(%clientId, %text);
+   else
+      PlayerListGuiList.setRowById(%clientId, %text);
+   
+   %this.updateWidths();
+   
+   // Sort by score
+   PlayerListGuiList.sortNumerical(2,false);
+      
+   %this.updateShortPlayerList(%clientId);   
+   
+   //PlayerListGuiList.setSelectedById($Player::ClientId);
+}
+
+function PlayerListGui::updateWidths(%this)
+{
+   %this.longestName = 0;
+   
+   // Check the width of the longest player name and resize
+   for( %i = 0; %i < PlayerListGuiList.rowCount(); %i++ )
+   {
+      %name = getField( PlayerListGuiList.getRowText( %i ), 1 );
+      %nameSize = getStrWidthPrecise( %this.profile.fontType, %this.profile.fontSize, %name );
+      echo( "&&& Current name: '" @ %name @ "' is " @ %nameSize @ " pixels wide." );
+      if( %this.longestName < %nameSize )
+         %this.longestName = %nameSize;
+   }
+   echo( "&&& Longest is " @  %this.longestName @ " pixels." );
+   
+   %newLastColWidth = 115 + %this.longestName; // Magic number -pw
+   PlayerListGuiList.columns = "0 19 " @ %newLastColWidth;
+   ShortPlayerList.columns = "0 19 " @ %newLastColWidth;
+}
+
+function PlayerListGui::updateScore(%this,%clientId,%score,%cumScore)
+{
+   %text = PlayerListGuiList.getRowTextById(%clientId);
+   %text = setField(%text,2,%score SPC " ");
+   %text = setField(%text,3,%cumScore);
+   PlayerListGuiList.setRowById(%clientId, %text);
+   PlayerListGuiList.sortNumerical(2,false);
+   %this.updateShortPlayerList(%clientId);
+}
+
+function PlayerListGui::updateShortPlayerList(%this)
+{
+   ShortPlayerList.clear();
+   %line = PlayerListGuiList.getRowNumById(ShortPlayerList.clientId);
+   %text = PlayerListGuiList.getRowTextById(ShortPlayerList.clientId);
+   
+   if (%line == 0) // if I'm the leader, get second place row
+      %text2 = PlayerListGuiList.getRowText(1); // this may be empty if we are only one in game
+   else // i'm not the leader, get the leader's row
+      %text2 = PlayerListGuiList.getRowText(0);
+   
+   ShortPlayerList.setRowById(1, %text);
+   if (%text2 !$= "")
+      ShortPlayerList.setRowById(2, %text2);
+   ShortPlayerList.sortNumerical(2,false);
+}
+
+function PlayerListGui::initShortPlayerList(%this,%clientId)
+{
+	ShortPlayerList.clear();	
+	ShortPlayerList.addRow(1, "", 0);
+	ShortPlayerList.addRow(2, "", 1);
+	
+	ShortPlayerList.clientId = %clientId;
+
+   %this.updateShortPlayerList();
+}
+
+function PlayerListGui::remove(%this,%clientId)
+{
+   PlayerListGuiList.removeRowById(%clientId);
+   %this.updateShortPlayerList(%clientId);
+   
+   %this.updateWidths();
+}
+
+function PlayerListGui::toggle(%this)
+{
+   if (%this.isAwake())
+      Canvas.popDialog(%this);
+   else
+      Canvas.pushDialog(%this);
+}
+
+function PlayerListGui::onWake(%this)
+{
+   if (ShortPlayerList.visible)
+      PlayerListGui_PlusMinus.setBitmap("marble/client/ui/game/scoreBackdropPlus.png");
+   else
+      PlayerListGui_PlusMinus.setBitmap("marble/client/ui/game/scoreBackdropMinus.png");
+}
+
+function togglePlayerListLength()
+{
+   if (!$Client::connectedMultiplayer)
+      return;
+
+   PlayerListGuiList.setVisible(ShortPlayerList.visible);
+   ShortPlayerList.setVisible(!ShortPlayerList.visible);
+   
+   if (ShortPlayerList.visible)
+      PlayerListGui_PlusMinus.setBitmap("marble/client/ui/game/scoreBackdropPlus.png");
+   else
+      PlayerListGui_PlusMinus.setBitmap("marble/client/ui/game/scoreBackdropMinus.png");
+}
+
+//function PlayerListGui::showPlayerScores(%this, %val)
+//{
+//   if ($Game::SinglePlayer) 
+//      return;
+//
+//   if (%val)
+//   {
+//      ScoresGui.visible = 1;
+//      CenterPrintDlg.setAlpha(0.25);
+//      HudClockBox.setVisible(1);
+//   }
+//   else
+//   {
+//      ScoresGui.visible = 0;
+//      if (CenterPrintDlg.alpha) 
+//         CenterPrintDlg.setAlpha(1);
+//      if (HudClock.gettime() > 35) 
+//         HudClockBox.setVisible(0);
+//   }
+//}
+
+function PlayerListGui::clear(%this)
+{
+   %this.longestName = 0;
+   PlayerListGuiList.clear();
+   ShortPlayerList.clear();	
+}
+
+function PlayerListGui::zeroScores(%this)
+{
+   // Override to clear the list.
+   for (%i=0; %i<PlayerListGuiList.rowCount(); %i++)
+   {
+      // can get but not set using index, so just use id
+      %id   = PlayerListGuiList.getRowId(%i);
+      %text = PlayerListGuiList.getRowTextById(%id);
+      %text = setField(%text,2,0 SPC " " );
+      PlayerListGuiList.setRowById(%id,%text);
+   }
+   // sort by name
+   PlayerListGuiList.sort(0);
+   %this.updateShortPlayerList();
+}
+

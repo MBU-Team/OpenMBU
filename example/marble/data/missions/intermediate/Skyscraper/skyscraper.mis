@@ -1,0 +1,1225 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+   new SimGroup(check2) {
+
+      new Trigger(check2) {
+         position = "3.98488 12.0057 51.9118";
+         rotation = "1 0 0 0";
+         scale = "1.97163 3.97387 3.28276";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "4";
+      };
+      new StaticShape() {
+         position = "4.94663 9.01772 52.0144";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new ScriptObject(MissionInfo) {
+         gameType = "SinglePlayer";
+         desc = "A preview mission";
+         include = "1";
+         time = "150000";
+         level = "25";
+startHelpText  =  $Text::LevelStartHelp77;
+         difficulty = "5";
+         type = "intermediate";
+name  =  $Text::LevelName77;
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      materialList = "~/data/skies/sky_intermediate.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 7.45949e-031 1.3684e-038";
+      fogVolume2 = "-1 1.07208e-014 8.756e-014";
+      fogVolume3 = "-1 5.1012e-010 2.05098e-008";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "0.000000 0.000000 0.000000 0.000000";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
+   };
+   new StaticShape(Cloud_Shape) {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "astrolabeCloudsIntermediateShape";
+   };
+   new Sun() {
+      direction = "-0.559294 0.395212 -0.728696";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.400000 0.400000 0.400000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "astrolabeShape";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "./skyscraper.dif";
+      showTerrainInside = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "0 -2 2.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "StartPad";
+      };
+   };
+   new Item() {
+      position = "3 13 26.0246";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "3.5 10 74.0232";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new StaticShape(EndPoint) {
+      position = "1 10 78";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "5 10 52.0246";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-3 10 52.0246";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-6 10 22.0246";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new InteriorInstance() {
+      position = "-3.5 5.5 25.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-3.5 14.5 25.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "3.5 14.5 25.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "3.5 5.5 25.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "0.5 13.5 47.5";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-3.5 5.5 -2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_3_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-3.5 14.5 -2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_3_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "3.5 5.5 -2";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_3_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "3.5 14.5 -2";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_3_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-3.5 5.5 -8";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "3.5 5.5 -31.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "3.5 14.5 -31.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-3.5 14.5 -8";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-3.5 5.5 2";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "3.5 5.5 2";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "2.5 7.5 83.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "2.5 7.5 87.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-1.5 11.5 87.5";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-1.5 11.5 83.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-6 4 -0.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-6 4 11.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-6 4 -0.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.270813";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "0";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "6 4 21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "6 4 26";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "6 4 21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.112839";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "1";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-2 20 11";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-2 20 17";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-2 20 11";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.135406";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "2";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "2 20 13.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "2 20 26";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "2 20 13.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 12.2179";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "3";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "0";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-10 6 8";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-10 6 22";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-10 6 8";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 13.6841";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "4";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "0";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-6 18 14";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-6 18 22";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-6 18 14";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 7.81946";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "5";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "0";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-3 7 25.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-3 7 32.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-3 7 25.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.157974";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "6";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-3 7 39.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-3 7 48";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-3 7 39.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.191826";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "7";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-2 5 31.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-2 5 40.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-2 5 31.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 8.79689";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "8";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "0";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "3 7 47";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "3 7 52";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "3 7 47";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.112839";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "9";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-3 13 47";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-3 13 52";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-3 13 47";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.112839";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "10";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-1.5 8 51.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-1.5 8 58";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-1.5 8 51.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.14669";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "11";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "3.5 8 57";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "3.5 8 74";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "3.5 8 57";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.383652";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "12";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "3.5 11 73";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "3.5 11 78";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "3.5 11 73";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 0.112839";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "13";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "4000";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(Platform1_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "0 7 57.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "0 7 61.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "0 7 57.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(Platform1) {
+         position = "0 0 3.90973";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Skyscraper/skyscraper.dif";
+         interiorIndex = "14";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialPosition = "0";
+            initialTargetPosition = "-1";
+      };
+   };
+   new Trigger(Bounds) {
+      position = "-16.8762 28.1338 -8.76861";
+      rotation = "1 0 0 0";
+      scale = "35.4918 37.1338 113.769";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new SimGroup(check1) {
+
+      new Trigger(check1) {
+         position = "-7.98657 11.947 21.9851";
+         rotation = "1 0 0 0";
+         scale = "3.95195 3.97387 3.28276";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+      new StaticShape() {
+         position = "-6.9516 8.98603 22.0119";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SpawnSphere() {
+      position = "-20.3342 -16.7193 -10.8618";
+      rotation = "-0.739086 0.252283 0.624585 57.3144";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---

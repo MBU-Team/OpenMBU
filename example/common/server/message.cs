@@ -117,38 +117,33 @@ function chatMessageClient( %client, %sender, %voiceTag, %voicePitch, %msgString
 
 function chatMessageTeam( %sender, %team, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 )
 {
-	if ( ( %msgString $= "" ) || spamAlert( %sender ) )
-	   return;
-	
-	%count = ClientGroup.getCount();
-	
-	for ( %i = 0; %i < %count; %i++ )
-	{
-	   %obj = ClientGroup.getObject( %i );
-	   if ( %obj.team == %sender.team )
-	      chatMessageClient( %obj, %sender, %sender.voiceTag, %sender.voicePitch, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 );
-	}
+   if ( ( %msgString $= "" ) || spamAlert( %sender ) )
+      return;
+   %count = ClientGroup.getCount();
+   for ( %i = 0; %i < %count; %i++ )
+   {
+      %obj = ClientGroup.getObject( %i );
+      if ( %obj.team == %sender.team )
+         chatMessageClient( %obj, %sender, %sender.voiceTag, %sender.voicePitch, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 );
+   }
 }
 
 function chatMessageAll( %sender, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 )
 {
-	if ( ( %msgString $= "" ) || spamAlert( %sender ) )
-	   return;
-	   
-	%count = ClientGroup.getCount();
-	
-	for ( %i = 0; %i < %count; %i++ )
-	{
-	   %obj = ClientGroup.getObject( %i );
-	   
-	   if(%sender.team != 0)
+   if ( ( %msgString $= "" ) || spamAlert( %sender ) )
+      return;
+   %count = ClientGroup.getCount();
+   for ( %i = 0; %i < %count; %i++ )
+   {
+		%obj = ClientGroup.getObject( %i );
+		if(%sender.team != 0)
 	      chatMessageClient( %obj, %sender, %sender.voiceTag, %sender.voicePitch, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 );
-	   else
-	   {
-	      // message sender is an observer -- only send message to other observers
-	      if(%obj.team == %sender.team)
-	         chatMessageClient( %obj, %sender, %sender.voiceTag, %sender.voicePitch, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 );
-	   }
+		else
+		{
+			// message sender is an observer -- only send message to other observers
+			if(%obj.team == %sender.team)
+		      chatMessageClient( %obj, %sender, %sender.voiceTag, %sender.voicePitch, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10 );
+		}
 	}
 }
 

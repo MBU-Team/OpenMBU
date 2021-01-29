@@ -68,8 +68,8 @@ Conn main( Appdata In,
 
    Out.outLightVec.xyz = -inLightVec;
    Out.outLightVec.xyz = mul(objToTangentSpace, Out.outLightVec);
-   Out.pos = mul(objToTangentSpace, In.position.xyz / 100.0);;
-   Out.outEyePos.xyz = mul(objToTangentSpace, eyePos.xyz / 100.0);;
+   Out.pos = mul(objToTangentSpace, In.position.xyz / 10.0);;
+   Out.outEyePos.xyz = mul(objToTangentSpace, eyePos.xyz / 10.0);;
    Out.outLightVec.w = step( 0.0, dot( -inLightVec, In.normal ) );
    
    

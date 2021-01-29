@@ -1,0 +1,70 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(lbMenuGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+   
+   new GuiXboxListCtrl(LeaderboardMenu) {
+      profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+	   horizSizing = "left";
+	   vertSizing = "height";
+		position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+      extent = "640 480";
+   };
+};
+//--- OBJECT WRITE END ---
+function lbMenuGui::onA(%this)
+{
+   %idx = LeaderboardMenu.getSelectedIndex();
+   
+	alxPlay( AudioButtonDown );
+	
+   if (!XBLiveIsSignedInSilver())
+   {
+      XMessagePopupDlg.show(0, $Text::SignInLeaderboard, $Text::OK);
+      return;
+   }
+	
+   switch( %idx )
+   {
+      case 0:
+         RootGui.setContent(LevelScoresGui);
+      case 1: 
+         RootGui.setContent(LevelScoresGui, GameMissionInfo.MPMode, $Leaderboard::MPScrumOverall);
+   }
+      
+   return true;
+}
+
+function lbMenuGui::onB(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   RootGui.setContent(%this.backGui);
+}
+
+function lbMenuGui::show(%this, %backGui)
+{          
+   if (%backGui !$= "")
+      %this.backGui = %backGui;
+      
+   if (%this.backGui $= "")
+      %this.backGui = MainMenuGui;
+      
+   // add rows
+   LeaderboardMenu.clear();
+   LeaderboardMenu.addRow($Text::LBSinglePlayer, "", 0, 6);
+   LeaderboardMenu.addRow($Text::LBMPScrum, "", 0, 6);
+
+   RootGui.setA($Text::Go);
+   RootGui.setB($Text::Back);
+   RootGui.setTitle($Text::SelectLeaderboard);
+}
+
+function lbMenuGui::hide(%this)
+{
+}
+

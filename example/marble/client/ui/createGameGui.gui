@@ -1,0 +1,475 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(CreateGameGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+         
+   new GuiXboxOptionListCtrl(CreateGameOptionList) {
+      profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallWideProfile";
+      position = isWidescreen()? "380 373" : "0 195";
+      extent = isWidescreen()? "815 400" : "640 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = isWidescreen()? "bottom" : "top";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "48 52" : "48 52";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 0 3 35" : "0 0 2 25";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+     
+      // data is dynamically added to this option list in the show() function
+   };
+   new GuiBitmapCtrl(CG_DemoLock) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWidescreen()? "512 179" : "192 18";
+      extent = "256 256";
+      minExtent = "8 2";
+      visible = "0";
+      bitmap = "./xbox/demoLock";
+      wrap = "0";
+   };
+};
+
+function GetOptionListRangeText(%min, %max, %incr)
+{
+   %delim = "\t";
+   %text = "";
+   
+   if (%incr $= "")
+      %incr = 1;
+   
+   for (%i = %min; %i <= %max; %i += %incr)
+   {
+      %text = %text @ %i;
+      if (%i < %max)
+         %text = %text @ %delim;
+   }
+}
+
+function allowPrivateSlots()
+{
+   return !isDemoLaunch() && !$Client::MatchMode;
+}
+
+function CreateGameGui::show(%this,%backGui)
+{
+   %this.backGui = %backGui; // optional parameter, if unspecified back goes to multi player gui
+   
+   RootGui.setTitle($Text::CreateMatchTitle);
+   RootGui.setB($Text::Back);
+   
+   GameMissionInfo.setMode(GameMissionInfo.MPMode);
+   GameMissionInfo.setDefaultMission();
+   
+   CreateGameGui.maxPlayersMin = 2; // minimum number of players allowed on max players option
+     
+   CreateGameOptionList.clear();
+   // if you add remove/rows, be sure to update these indexes
+   %this.missionIndex = 0;
+   %this.maxPlayersIndex = 1;
+   %this.privateSlotsIndex = 2;
+   CreateGameOptionList.addRow($Text::Mission, GameMissionInfo.getMissionDisplayNameList(), 18);
+   CreateGameOptionList.addRow($Text::MaxPlayers, GetOptionListRangeText(%this.maxPlayersMin, $Server::AbsMaxPlayers), 8);
+   
+   if( allowPrivateSlots() )
+      CreateGameOptionList.addRow($Text::PrivateSlots, $Text::None TAB GetOptionListRangeText(1, $Server::AbsMaxPlayers), 8);
+   //CreateGameOptionList.addRow($Text::GM23, $Text::S40 TAB GetOptionListRangeText(1, $Server::AbsMaxBots));
+   //CreateGameOptionList.addRow($Text::GM29, GetOptionListRangeText(5, 15, 5));
+   
+   if ($pref::Server::MaxPlayers > $Server::AbsMaxPlayers)
+      $pref::Server::MaxPlayers = $Server::AbsMaxPlayers;
+            
+   if ($pref::Server::PrivateSlots > $pref::Server::MaxPlayers - 1)
+      $pref::Server::PrivateSlots = $pref::Server::MaxPlayers - 1;
+      
+   //%timeIdx = $pref::Server::TimeLimit / 5 - 1;
+   //if (%timeIdx < 0 || %timeIdx > 2)
+   //   %timeIdx = 1;
+      
+   CreateGameOptionList.setOptionIndex(%this.missionIndex, GameMissionInfo.getCurrentIndex());
+   //CreateGameOptionList.setOptionIndex(5, %timeIdx);
+   %this.updateMaxPlayers();
+   
+   CreateGameOptionList.setOptionWrap(%this.maxPlayersIndex, false);
+   
+   if( allowPrivateSlots() )
+      CreateGameOptionList.setOptionWrap(%this.privateSlotsIndex, false);
+   
+   %this.onMissionChanged();
+   
+   %this.creatingGame = false;
+   
+   if (!isPCBuild() && $Client::QoSData $= "")
+   {
+      RootGui.displayLoadingAnimation( "center" );
+      CreateGameOptionList.visible = false;
+      // %JMQ animation
+      %this.setCenterText($Text::TestingNetwork);
+      //clientStopPulseAnim();
+      //clientStartPulseAnim(CreateGameCenterText, 150, 60000);
+      // schedule a reset of the centertext alpha so that it doesn't get slammed 
+      // to zero by a fade-in (looks bad)
+      //CreateGameCenterText.schedule(0,setAlpha,1.0);
+      XBLiveProbeLocalQoS("CreateGameGui.onQoSProbeComplete();");
+   }
+   else
+   {
+      CreateGameOptionList.visible = true;
+      %this.setCenterText("");
+      %this.setButtons();
+   }
+}
+
+function CreateGameGui::setButtons(%this)
+{
+   RootGui.setB($Text::Back);
+   
+   if (isDemoLaunch())
+      RootGui.setX($Text::DemoUpsell07);
+   
+   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+   {
+      CG_DemoLock.setVisible( true );
+      RootGui.setA("");
+   }
+   else
+   {
+      CG_DemoLock.setVisible( false );
+      RootGui.setA($Text::GO);
+   }
+}
+
+function CreateGameGui::updateMaxPlayers(%this)
+{
+   if ($pref::Server::MaxPlayers > $Server::AbsMaxPlayers)
+      $pref::Server::MaxPlayers = $Server::AbsMaxPlayers;
+            
+   if ($pref::Server::PrivateSlots > $pref::Server::MaxPlayers - 1)
+      $pref::Server::PrivateSlots = $pref::Server::MaxPlayers - 1;
+
+   CreateGameOptionList.setOptionIndex(%this.maxPlayersIndex, $pref::Server::MaxPlayers - CreateGameGui.maxPlayersMin);
+   
+   if( allowPrivateSlots() )
+      CreateGameOptionList.setOptionIndex(%this.privateSlotsIndex, $pref::Server::PrivateSlots);
+}
+
+function CreateGameGui::onQoSProbeComplete(%this)
+{
+   if (!%this.isAwake())
+      return;
+      
+   RootGui.displayLoadingAnimation();
+   
+   // %JMQ: animation
+   //clientStopPulseAnim();
+      
+   $Client::QoSData = XBLiveGetLocalQoSInfo();
+   %this.processQoSData();
+   
+   CreateGameOptionList.visible = true;
+   Canvas.setDefaultFirstResponder(); // friggin hack so that option list gets events
+   %this.setCenterText("");
+   %this.setButtons();
+}
+
+function CreateGameGui::processQoSData(%this)
+{
+   $Shell::RecommendedPlayers = $Server::AbsMaxPlayers;
+   $Shell::DisplayBandwidthWarning = false;
+   
+   if ($Client::QoSData !$= "")
+   {
+      echo("Processing Local QOS Data:" SPC $Client::QoSData);
+      %up = getWord($Client::QoSData, 0);
+      %down = getWord($Client::QoSData, 1);     
+      
+      // find the maximum number of supported players
+      %recommended = $Server::AbsMaxPlayers;
+      for (%i = 0; %i < $Server::NumBandwidthLimits; %i++)
+      {
+         %required = getWord($Server::BandwidthLimit[%i], 0);
+         %maxPlayers = getWord($Server::BandwidthLimit[%i], 1);
+         
+         if ((%up < %required || %down < %required) && %maxPlayers < %recommended)
+         {
+            $Shell::DisplayBandwidthWarning = true;
+            %recommended = %maxPlayers;
+         }
+      }
+      $Shell::RecommendedPlayers = %recommended;
+   }
+   
+   // initialize max players pref var if necessary
+   if ($pref::Server::MaxPlayers $= "" || $pref::Server::MaxPlayers < 0 || $pref::Server::MaxPlayers > $Server::AbsMaxPlayers)
+      $pref::Server::MaxPlayers = $Server::AbsMaxPlayers;
+
+   // if we're low bandwidth and max players is higher than low bandwidth limit, reset
+   // max players
+   if ($Shell::DisplayBandwidthWarning && $pref::Server::MaxPlayers > $Shell::RecommendedPlayers)
+      $pref::Server::MaxPlayers = $Shell::RecommendedPlayers;
+      
+   %this.updateMaxPlayers();
+}
+
+function CreateGameGui::setCenterText(%this,%text)
+{
+   RootGui.setCenterText(%text);
+}
+
+function CreateGameGui::onMissionChanged(%this)
+{
+   %this.setButtons();
+   //%missionFile = GameMissionInfo.getMissionFile(CreateGameOptionList.getOptionIndex(1));
+   //BackgroundGui.setMissionBitmap(filebase(%missionFile));   
+}
+
+function CreateGameOptionList::onOptionChange(%this, %increase)
+{
+   %row = %this.getSelectedIndex();
+   %maxPlayers = %this.getOptionIndex(CreateGameGui.maxPlayersIndex); 
+   %maxPlayers = %maxPlayers + CreateGameGui.maxPlayersMin;
+   
+   if( allowPrivateSlots() )
+      %privateSlots = %this.getOptionIndex(CreateGameGui.privateSlotsIndex);
+   
+   if (%maxPlayers == $Shell::RecommendedPlayers + 1 && %increase == 1 && $Shell::DisplayBandwidthWarning)
+   {
+      $Shell::DisplayBandwidthWarning = false;
+      XMessagePopupDlg.show(0, $Text::ErrorBandwidthWarn, $Text::OK);
+   }
+        
+   if (%privateSlots >= %maxPlayers)
+      // numeric option - does not wrap
+      %privateSlots = %maxPlayers - 1;
+   
+   if (CreateGameOptionList.getSelectedIndex() == CreateGameGui.missionIndex)
+   {
+      GameMissionInfo.selectMission(%this.getOptionIndex(CreateGameGui.missionIndex));
+      CreateGameGui.onMissionChanged();
+   }
+   
+   if( allowPrivateSlots() )
+      CreateGameOptionList.setOptionIndex(CreateGameGui.privateSlotsIndex, %privateSlots);
+}
+
+function CreateGameGui::onGameCreated(%this)
+{
+   RootGui.displayLoadingAnimation();
+   
+   // check for error status...
+   if ($Client::UseXBLiveMatchMaking && ($XBLive::MatchCreateStatus !$= "" || !XBLiveIsSignedInGold()))
+   {
+      // uh oh
+      if (!XBLiveIsSignedInGold())
+         $disconnectGui = MainMenuGui;
+      else
+         $disconnectGui = CreateGameGui;
+
+      // return to preview mode
+      enterPreviewMode();
+      RootGui.setContent(ConnErrorGui, $Text::ErrorCannotConnect, "Internal Error: Create Hosted Match failed.");
+      return;
+   }
+   
+   $Server::UsingLobby = true;
+   RootGui.setContent(LobbyGui);
+}
+
+function CreateGameGui::createGame(%this)
+{
+   %this.creatingGame = true;
+   
+   // remove ourselves from the UI and activating loading message
+   if (%this.isAwake()) // we should be
+   {
+      RootGui.removeContent();
+      RootGui.setCenterText($Text::TestingNetwork);
+      // %JMQ: activate animation thingy after 1 second
+   }
+   
+   // get game parameters from option list
+   
+   // we assume that the server is running the desired level already, thus 
+   // $Server::MissionId and $Server::GameModeId should be set already
+   
+   $pref::Server::missionId = $Server::MissionId;
+   $pref::Server::MaxPlayers = CreateGameOptionList.getOptionIndex(%this.maxPlayersIndex) + CreateGameGui.maxPlayersMin;
+   
+   if( allowPrivateSlots() )
+      $pref::Server::PrivateSlots = CreateGameOptionList.getOptionIndex(%this.privateSlotsIndex);
+   else
+      $pref::Server::PrivateSlots = 0;
+   
+   // unused in MB:
+   //$pref::Server::MaxBots = CreateGameOptionList.getOptionIndex(4);
+   //$pref::Server::TimeLimit = (CreateGameOptionList.getOptionIndex(5) + 1) * 5;
+   
+   //$Game::Duration = $pref::Server::TimeLimit * 60;
+   //$Server::StayMission = true;        
+   $Server::ReturnToLobby = true;
+   $pref::Server::Name = XBLiveGetUserName();
+   
+   //MissionSequence.buildMissionSequence();
+   //MissionSequence.setCurrentMission($Server::PostLobbyMissionFile);
+   
+   //createServer("MultiPlayer", "game/data/missions/lobby.mis");
+   
+   // %JMQ: put params in server
+   
+   $disconnectGui = CreateGameGui;
+   startMultiplayerMode();
+   
+   if ($EnableFMS)
+   {
+      $Server::MissionId = GameMissionInfo.getCurrentMission().level;
+      $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
+      $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      
+      onMissionLoaded();
+   }
+      
+   // may need to some UI stuff here ("Creating game...") 
+   if (!$Client::UseXBLiveMatchMaking)
+   {
+      %this.onGameCreated();
+      return;
+   }
+
+   %ok = XBLiveCreateHostedMatch($Player::name, $Server::GameModeId, $pref::Server::missionId, $Pref::Server::MaxPlayers, $Pref::Server::PrivateSlots, "CreateGameGui.onGameCreated();");
+   if (!%ok)
+   {
+      enterPreviewMode();
+      RootGui.setContent(ConnErrorGui, $Text::ErrorCannotConnect, "Internal Error: Create Hosted Match failed.");
+   }
+   else
+      RootGui.displayLoadingAnimation( "center" );
+}
+
+function CreateGameGui::onX(%this)
+{
+   if (!RootGui.XEnabled())
+      return;
+   
+   alxPlay( AudioButtonDown );
+   
+   %this.doUpsell();
+   return true;
+}
+
+function CreateGameGui::onA(%this)
+{
+   if (RootGui.isCenterTextVisible())
+      return;
+      
+   if (!RootGui.AEnabled())
+      return;
+      
+   if (%this.creatingGame)
+   {
+      // block until game is created
+      error("Creating game, returning...");
+      return; 
+   }
+   
+   alxPlay( AudioButtonDown );
+   
+   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+   {
+      // shouldn't be here
+      // upsell their ass
+      //XMessagePopupDlg.show(0, $Text::DemoUpsellLevel, $Text::OK, "CreateGameGui.doUpsell();", $Text::Cancel);
+   }
+   else
+      %this.createGame(); 
+   
+   // %JMQ settings save?
+   return true;
+}
+
+function CreateGameGui::doUpsell(%this)
+{
+   clientShowMarketplaceUI();
+}
+
+function CreateGameGui::onB(%this)
+{
+   if (%this.creatingGame)
+   {
+      // block until game is created
+      error("Creating game, returning...");
+      return; 
+   }
+   
+   alxPlay( AudioButtonDown );
+   if (%this.backGui)
+      RootGui.setContent(%this.backGui);
+   else
+      RootGui.setContent(MultiPlayerGui);
+   return true;
+}
+
+function CreateGameGui::onY(%this)
+{  
+   if (%this.creatingGame)
+   {
+      // block until game is created
+      error("Creating game, returning...");
+      return; 
+   }
+
+   //alxPlay( AudioButtonDown );
+   // tell SignInControlsGui to do its thing.  Unfortunately the event handling architecture prevents it from having
+   // an event handler of its own.
+   //SignInControlsGui.process(%this);
+   //return true;
+}
+
+function cgg_reload()
+{
+   exec("marble/client/ui/createGameGui.gui");
+}
+
+//function onMissionTriggerPressed(%gui, %optionList, %optionIndex, %increment)
+//{
+//   %mission = %optionList.getOptionIndex(%optionIndex);
+//   %dataLen = getFieldCount(%optionList.getRowData(%optionIndex));
+//   
+//   %mission += %increment;
+//   if (%mission >= %dataLen)
+//      %mission = 0;
+//   else if (%mission < 0)
+//      %mission = %dataLen - 1;
+//      
+//   if (%mission < 0)
+//      %mission = 0;
+//
+//   %optionList.setOptionIndex(%optionIndex, %mission);
+//   %gui.onMissionChanged();   
+//}
+
+// Use Trigger buttons to change the BG. Should be used to select the next map. 
+//function CreateGameGui::onRTrigger(%this)
+//{
+//   if (RootGui.isCenterTextVisible())
+//      return;
+//      
+//   alxPlay( AudioButtonOver );
+//   
+//   onMissionTriggerPressed(%this, CreateGameOptionList, 1, 1);
+//}
+//
+//function CreateGameGui::onLTrigger(%this)
+//{
+//   if (RootGui.isCenterTextVisible())
+//      return;
+//      
+//   alxPlay( AudioButtonOver );
+//   
+//   onMissionTriggerPressed(%this, CreateGameOptionList, 1, -1);
+//}

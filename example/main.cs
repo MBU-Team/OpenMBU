@@ -2,12 +2,13 @@
 // Torque Shader Engine
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
-profilerEnable(true);
-$defaultGame = "demo";
-//$defaultGame = "terrain_water_demo";
+
+dbgSetParameters(8777, "foo");
+
+$defaultGame = "marble";
 $displayHelp = false;
 
-profilerEnable(1);
+$vidAlreadySet = false;
 
 //-----------------------------------------------------------------------------
 // Support functions used to manage the mod string
@@ -31,34 +32,57 @@ function popFront(%list, %delim)
    return nextToken(%list, unused, %delim);
 }
 
+// Some localization debug helpers
+$locCharacterSet = ANSI;
+$locLanguage = ""; 
 
 //------------------------------------------------------------------------------
 // Process command line arguments
-
-// Run the Torque Creator mod by default, it's needed for editors.
-
-
-$isDedicated = false;
-$modcount = 2;
-$userMods = "creator;" @ $defaultGame;
-
 for ($i = 1; $i < $Game::argc ; $i++)
 {
    $arg = $Game::argv[$i];
    $nextArg = $Game::argv[$i+1];
    $hasNextArg = $Game::argc - $i > 1;
    $logModeSpecified = false;
-
-   // Check for dedicated run
-   if( stricmp($arg,"-dedicated") == 0  )
-   {
-      $userMods = $defaultGame;
-      $modcount = 1;
-      $isDedicated = true;
-   }
-
+   
    switch$ ($arg)
    {
+      case "-language":
+         $argUsed[$i]++;
+         if( $hasNextArg )
+         {
+            switch$( $nextArg )
+            {
+               case "french":
+                  $locLanguage = "french";
+                  $locCharacterSet = ANSI;
+               case "german":
+                  $locLanguage = "german";
+                  $locCharacterSet = ANSI;
+               case "italian":
+                  $locLanguage = "italian";
+                  $locCharacterSet = ANSI;
+               case "japanese":
+                  $locLanguage = "japanese";
+                  $locCharacterSet = SHIFTJIS;
+               case "korean":
+                  $locLanguage = "korean";
+                  $locCharacterSet = SHIFTJIS;
+               case "portuguese":
+                  $locLanguage = "portuguese";
+                  $locCharacterSet = ANSI;
+               case "spanish":
+                  $locLanguage = "spanish";
+                  $locCharacterSet = ANSI;
+               case "chinese":
+                  $locLanguage = "chinese";
+                  $locCharacterSet = CHINESEBIG5;
+            }
+            $argUsed[$i+1]++;
+            $i++;
+         }
+         else
+            error( "Error: Missing Command Line argument. Usage: -language <english|french|german|italian|japanese|korean|portuguese|spanish|chinese>" );
       //--------------------
       case "-log":
          $argUsed[$i]++;
@@ -88,41 +112,32 @@ for ($i = 1; $i < $Game::argc ; $i++)
             $userMods = pushFront($userMods, $nextArg, ";");
             $argUsed[$i+1]++;
             $i++;
-            $modcount++;
+	    $modcount++;
          }
          else
             error("Error: Missing Command Line argument. Usage: -mod <mod_name>");
-
+            
       //--------------------
       case "-game":
          $argUsed[$i]++;
          if ($hasNextArg)
          {
-            // Set the selected mod and creator for editor stuff.
-            if( $isDedicated )
-            {
-               $userMods = $nextArg;
-               $modcount = 1;
-            }
-            else
-            {
-               $userMods = "creator;" @ $nextArg;
-               $modcount = 2;
-            }
+            // Remove all mods, start over with game
+            $userMods = $nextArg;
             $argUsed[$i+1]++;
             $i++;
-            error($userMods);
+	    $modcount = 1;
          }
          else
             error("Error: Missing Command Line argument. Usage: -game <game_name>");
-
+            
       //--------------------
       case "-show":
          // A useful shortcut for -mod show
          $userMods = strreplace($userMods, "show", "");
          $userMods = pushFront($userMods, "show", ";");
          $argUsed[$i]++;
-         $modcount++;
+	 $modcount++;
 
       //--------------------
       case "-console":
@@ -171,6 +186,55 @@ for ($i = 1; $i < $Game::argc ; $i++)
          $displayHelp = true;
          $argUsed[$i]++;
 
+      //--------------------
+      case "-wide":
+         $pref::Video::resolution = "1280 720 32";
+         $vidAlreadySet = true;
+         if ($hasNextArg) 
+         {
+            $argUsed[%i+1]++;
+            %i++;
+            switch ($nextArg)
+            {
+               case 0 : 
+                  $pref::Video::resolution = "1280 720 32";
+               case 1 : 
+                  $pref::Video::resolution = "848 480 32";
+               case 2 : 
+                  $pref::Video::resolution = "1280 768 32";
+               case 3 : 
+                  $pref::Video::resolution = "1360 768 32";
+               case 4 :
+                  $pref::Video::resolution = "1920 1080 32";
+            }
+            echo("Setting wide screen mode using resolution of" SPC $pref::Video::resolution);
+         }
+
+      //--------------------
+      case "-norm":
+         $pref::Video::resolution = "640 480 32";
+         $vidAlreadySet = true;
+         if ($hasNextArg) 
+         {
+            $argUsed[%i+1]++;
+            %i++;
+            switch ($nextArg)
+            {
+               case 0 : 
+                  $pref::Video::resolution = "640 480 32";
+               case 1 : 
+                  $pref::Video::resolution = "1024 768 32";
+               case 2 : 
+                  $pref::Video::resolution = "1280 1024 32";
+               case 3 :
+                  $pref::Video::resolution = "640 576 32";
+               case 4 :
+                  $pref::Video::resolution = "753 565 32";                  
+            }
+            
+            echo("Setting normal screen mode using resolution of" SPC $pref::Video::resolution);
+         }
+
       //-------------------
       default:
          $argUsed[$i]++;
@@ -179,14 +243,29 @@ for ($i = 1; $i < $Game::argc ; $i++)
    }
 }
 
-if($modcount == 0) {
-      $userMods = $defaultGame;
-      $modcount = 1;
+echo( "LOCALIZATION: Using language " @ $locLanguage @ " with character set " @ $locCharacterSet );
+
+if( $modcount == 0 ) 
+{
+   $userMods = $defaultGame;
+   $modcount = 1;
 }
+
+// DO NOT Run the Torque Creator mod if a dedicated server.
+// Note: this fails if -dedicated not first parameter.
+if( !( $Game::argc > 1 && $Game::argv[1] $= "-dedicated" ) && $platform !$= "xenon" && $platform !$= "xbox" )
+{
+   $modcount++;
+   $userMods = "creator;" @ $userMods;
+}
+
+// Test
+$userMods = "shaders;" @ $userMods;
+$modcount++;
 
 //-----------------------------------------------------------------------------
 // The displayHelp, onStart, onExit and parseArgs function are overriden
-// by mod packages to get hooked into initialization and cleanup.
+// by mod packages to get hooked into initialization and cleanup. 
 
 function onStart()
 {
@@ -203,7 +282,7 @@ function parseArgs()
 {
    // Here for mod override, the arguments have already
    // been parsed.
-}
+}   
 
 package Help {
    function onExit() {
@@ -246,22 +325,169 @@ if( !$logModeSpecified )
       setLogMode(6);
 }
 
-// Set the mod path which dictates which directories will be visible
-// to the scripts and the resource engine.
-setModPaths($userMods);
+function initVideo()
+{
+   $pref::Video::displayDevice = "D3D";
+   $pref::Video::allowOpenGL = 1;
+   $pref::Video::allowD3D = 1;
+   $pref::Video::preferOpenGL = 1;
+   $pref::Video::appliedPref = 0;
+   $pref::Video::disableVerticalSync = 1;
+   $pref::Video::monitorNum = 0;
+   if (!$vidAlreadySet)
+   {
+      $pref::Video::resolution = "800 600 32";
+      $pref::Video::windowedRes = "1280 720";
+      $pref::Video::wideScreen = false;
+   }
+   $pref::Video::fullScreen = "0";
 
-// Get the first mod on the list, which will be the last to be applied... this
-// does not modify the list.
-nextToken($userMods, currentMod, ";");
+   $canvasCreated = createCanvas("Marble Blast Ultra!");
 
-// Execute startup scripts for each mod, starting at base and working up
+   new GuiControlProfile (SplashLoadingProfile)
+   {
+      tab = false;
+      canKeyFocus = false;
+      hasBitmapArray = false;
+      mouseOverSelected = false;
+
+      // fill color
+      opaque = false;
+      fillColor = "0 0 0";
+
+      // border color
+      border = false;
+
+      // font
+      fontType = "";
+      
+      // bitmap information
+      bitmap = "";
+      bitmapBase = "";
+      textOffset = "0 0";
+   };
+   new GuiControlProfile (SplashLoadingProgressProfile)
+   {
+      tab = false;
+      canKeyFocus = false;
+      hasBitmapArray = false;
+      mouseOverSelected = false;
+
+      // fill color
+      opaque = true;
+      fillColor = "255 255 255";
+
+      // border color
+      border = true;
+      borderColor = "0 0 0";
+
+      // font
+      fontType = "";
+      
+      // bitmap information
+      bitmap = "";
+      bitmapBase = "";
+      textOffset = "0 0";
+   };
+
+   new GuiBitmapCtrl (SplashLoadingGui)
+   {
+      profile = "SplashLoadingProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      position = "0 0";
+      extent = "640 480";
+
+      new GuiControl ()
+      {
+         profile = "SplashLoadingProfile";
+         horizSizing = "center";
+         vertSizing = "center";
+         position = "0 0";
+         extent = "640 480";
+         new GuiBitmapCtrl(SplashGGLogoBitmapGui)
+         {
+            profile = "SplashLoadingProfile";
+            horizSizing = "center";
+            vertSizing = "center";
+            position = "64 40";
+            extent = "512 393";
+            minExtent = "8 8";
+         };
+         new GuiBitmapCtrl (SplashTSELogoBitmapGui)
+         {
+            profile = "SplashLoadingProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "100 72";
+            extent = "435 352";
+            minExtent = "8 8";
+         };
+         new GuiProgressCtrl (SplashLoadingProgress)
+         {
+            profile = "SplashLoadingProgressProfile";
+            horizSizing = "width";
+            vertSizing = "bottom";
+            position = "100 100";
+            extent = "500 50";
+         };
+         new GuiProgressCtrl (SplashDecompressionProgress)
+         {
+            profile = "SplashLoadingProgressProfile";
+            horizSizing = "width";
+            vertSizing = "bottom";
+            position = "100 200";
+            extent = "500 50";
+         };
+         new GuiProgressCtrl (SplashAddingProgress)
+         {
+            profile = "SplashLoadingProgressProfile";
+            horizSizing = "width";
+            vertSizing = "bottom";
+            position = "100 300";
+            extent = "500 50";
+         };
+      };
+   };
+
+   Canvas.setContent(SplashLoadingGui);
+   SplashLoadingProgress.setVisible(false);
+   SplashDecompressionProgress.setVisible(false);
+   SplashAddingProgress.setVisible(false);
+   SplashGGLogoBitmapGui.setVisible(false);
+   SplashTSELogoBitmapGui.setVisible(false);
+   Canvas.repaint();
+}
+
+function loaderSetEngineLogo()
+{
+   SplashGGLogoBitmapGui.setVisible(false);
+   SplashTSELogoBitmapGui.setVisible(true);
+   SplashTSELogoBitmapGui.setBitmap("marble/client/ui/EngineSplash.png");
+}
+
+function updateProgress()
+{
+   if(!$LoaderBitmapSet && isResourceBGLoaded("marble/client/ui/EngineSplash.png"))
+   {
+      SplashLoadingGui.setBitmap("marble/client/ui/EngineSplashBG.jpg");
+      SplashGGLogoBitmapGui.setBitmap("marble/client/ui/GG_Logo.png");
+      SplashGGLogoBitmapGui.setVisible(true);
+      $LoaderBitmapSet = true;
+      schedule(5000, 0, loaderSetEngineLogo);
+   }
+   $updateProgressSchedule = schedule(100, 0, updateProgress);
+   SplashLoadingProgress.setValue($BKLoader::loadPct);
+   SplashDecompressionProgress.setValue($BKLoader::decompressPct);
+   SplashAddingProgress.setValue($BKLoader::addPct);
+}
+
 function loadDir(%dir)
 {
-   setModPaths(pushback($userMods, %dir, ";"));
+   //setModPaths(pushback($userMods, %dir, ";"));
    exec(%dir @ "/main.cs");
 }
 
-echo("--------- Loading MODS ---------");
 function loadMods(%modPath)
 {
    %modPath = nextToken(%modPath, token, ";");
@@ -273,41 +499,71 @@ function loadMods(%modPath)
       $modcount--;
    }
 }
-loadMods($userMods);
-echo("");
 
-if($modcount == 0) {
-   enableWinConsole(true);
-   error("Error: Unable to load any specified mods");
-   quit();
-}
-// Parse the command line arguments
-echo("--------- Parsing Arguments ---------");
-parseArgs();
-
-if(0)
+function continueStartup()
 {
-echo("doing that thing");
-atlasGenerateGeometryFromHeightfield("terrain_water_demo/geometry.atlas", "terrain_water_demo/test_16_513.raw");
-AtlasGeomChunk_dumpIOStatistics();
-atlasGenerateBlenderTerrain("terrain_water_demo/sample.atlas", "demo/geometry.atlas", "terrain_water_demo/opacityMap.atlas", "terrain_water_demo/lightmap.atlas");
-AtlasGeomChunk_dumpIOStatistics();
-quit();
+   // Get the first mod on the list, which will be the last to be applied... this
+   // does not modify the list.
+   nextToken($userMods, currentMod, ";");
+
+   // Execute startup scripts for each mod, starting at base and working up
+   echo("--------- Loading MODS ---------");
+   loadMods($userMods);
+   echo("");
+
+   if($modcount == 0) {
+      enableWinConsole(true);
+      error("Error: Unable to load any specified mods");
+      quit();	
+   }
+   // Parse the command line arguments
+   echo("--------- Parsing Arguments ---------");
+   parseArgs();
+
+   // Either display the help message or startup the app.
+   if ($displayHelp) {
+      enableWinConsole(true);
+      displayHelp();
+      quit();
+   }
+   else {
+      onStart();
+      echo("Engine initialized...");
+   }
+
+   // Display an error message for unused arguments
+   for ($i = 1; $i < $Game::argc; $i++)  {
+      if (!$argUsed[$i])
+         error("Error: Unknown command line argument: " @ $Game::argv[$i]);
+   }
 }
 
-// Either display the help message or startup the app.
-if ($displayHelp) {
-   enableWinConsole(true);
-   displayHelp();
-   quit();
-}
-else {
-   onStart();
-   echo("Engine initialized...");
+function onZipLoaded(%zipName, %success)
+{
+   SplashLoadingProfile.fillColor = %zipColor[$zipLoadedCount];
+   cancel($updateProgressSchedule);
+   echo("loaded zip - success == " @ %success);
+   if(!%success)
+   {
+      echo("Recursing mod paths.");
+      %modDirs = "marble;common;shaders";
+      
+      // If this is a PC, non-dedicated build, load creator for the artists -pw
+      if( !( $Game::argc > 1 && $Game::argv[1] $= "-dedicated" ) && $platform !$= "xenon" && $platform !$= "xbox" )
+         %modDirs = "creator;" @ %modDirs;
+         
+      setModPaths(%modDirs);
+   }
+   continueStartup();
 }
 
-// Display an error message for unused arguments
-for ($i = 1; $i < $Game::argc; $i++)  {
-   if (!$argUsed[$i])
-      error("Error: Unknown command line argument: " @ $Game::argv[$i]);
-}
+initVideo();
+
+// Set the mod path which dictates which directories will be visible
+// to the scripts and the resource engine.
+//loadZip("marble.bza");
+onZipLoaded("marble.bza", false);
+SplashLoadingProfile.fillColor = "100 200 50";
+
+$updateProgressSchedule = schedule(100, 0, updateProgress);
+SplashLoadingProfile.fillColor = "50 100 200";

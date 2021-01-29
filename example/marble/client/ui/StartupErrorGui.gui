@@ -1,0 +1,46 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(StartupErrorGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   
+   new GuiBitmapCtrl(StartupErrorGenericBG) {
+		profile = "GuiDefaultProfile";
+		horizSizing = "relative";
+		vertSizing = "bottom";
+		position = "40 90";
+		extent = "560 295";
+		bitmap = "./xbox/roundedBG";
+		wrap = "0";
+		visible = "1";
+	   
+		new GuiMLTextCtrl(StartupErrorGenericText)
+		{
+			profile = "InfoTextProfile";
+			position = "10 10";
+			extent = "540 275";
+			lineSpacing = "2";
+			maxChars = "-1";
+			lineCount = 0;
+			visible = 1;
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+function StartupErrorGui::show(%this, %text)
+{
+   RootGui.setA($Text::OK);
+   RootGui.setTitle("");   
+   StartupErrorGenericText.setText(%text);
+}
+
+function StartupErrorGui::onA( %this )
+{
+   RootGui.setContent(ESRBGui);
+}
+

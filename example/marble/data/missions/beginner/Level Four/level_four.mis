@@ -1,0 +1,339 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+   new ScriptObject(MissionInfo) {
+         include = "1";
+startHelpText  =  $Text::LevelStartHelp6;
+         difficulty = "2";
+         time = "45000";
+         type = "beginner";
+         level = "6";
+name  =  $Text::LevelName6;
+         gameType = "singleplayer";
+         desc = "Finally, a mission where you can fall off!";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      materialList = "~/data/skies/sky_beginner.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "300";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 0.135577 0.353959";
+      fogVolume2 = "-1 -0.105312 0.985244";
+      fogVolume3 = "-1 0.793928 0.606816";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "0.416521 -0.909105 0.006149 -0.165836";
+   };
+   new StaticShape(Cloud_Shape) {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "astrolabeCloudsBeginnerShape";
+   };
+   new Sun() {
+      direction = "-0.596285 -0.298142 -0.745356";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.440000 0.440000 0.440000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "./level_four.dif";
+      showTerrainInside = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "114 44 20";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "-24 -42 20";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "EndPad";
+   };
+   new InteriorInstance() {
+      position = "54 35.5 19.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_4_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "60 35.5 19.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_4_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "54 12.5 19.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_8_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "60 12.5 19.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/arch_8_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "54 12.5 3.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "60 12.5 3.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "60 35.5 11.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "54 35.5 11.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new Trigger() {
+      position = "50.1681 46.65 19.9625";
+      rotation = "1 0 0 0";
+      scale = "17.1354 16.9126 5.03541";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "HelpTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+text  =  $Text::TriggerText6_0;
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "astrolabeShape";
+   };
+   new Trigger(Bounds) {
+      position = "-33.5 75.5 12.6729";
+      rotation = "1 0 0 0";
+      scale = "159.25 127 76.3424";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "48 -18 20";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "2000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "48 -18 20";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "6000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-6 -18 20";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "2000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "-6 -18 20";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            reanderShadow = "1";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "6000";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/beginner/Level Four/level_four.dif";
+         interiorIndex = "0";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new StaticShape() {
+      position = "122.25 69 20";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "glass_18shape";
+   };
+   new StaticShape() {
+      position = "15 -11.75 13.75";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "glass_18shape";
+   };
+   new Trigger() {
+      position = "48.3601 -0.848196 19.6871";
+      rotation = "1 0 0 0";
+      scale = "11.6287 12.4984 5.03541";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "HelpTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+text  =  $Text::TriggerText6_1;
+   };
+   new SimGroup(check1) {
+
+      new Trigger(check1) {
+         position = "45.9647 -2.47166 19.049";
+         rotation = "1 0 0 0";
+         scale = "15 15 5";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+      new StaticShape() {
+         position = "55.0185 -8.9832 20.004";
+         rotation = "0 0 1 179.336";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new StaticShape() {
+      position = "-3 -11.75 13.75";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "glass_9shape";
+   };
+   new StaticShape() {
+      position = "9 -26.25 13.75";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "glass_15shape";
+   };
+   new StaticShape() {
+      position = "101 35.75 20";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "glass_12shape";
+   };
+   new SpawnSphere() {
+      position = "78.1727 32.2913 35.342";
+      rotation = "-0.151935 -0.285962 0.946119 233.376";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "1";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---
+
+

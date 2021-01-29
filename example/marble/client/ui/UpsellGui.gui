@@ -1,0 +1,241 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(UpsellGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   
+   new GuiBitmapCtrl(upselllpic) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWidescreen() ? "730 430" : "360 270";
+      extent = "255 119";
+      minExtent = "8 8";
+      visible = "1";
+      bitmap = "./xbox/upsell.png";
+      wrap = "0";
+         helpTag = "0";
+   };
+   
+   new GuiWindowCtrl(UpsellGenericBG) {
+      profile = "bgBoxProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWidescreen() ? "257 104" : "17 61";
+      extent = isWidescreen() ? "750 467" : "610 347";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+      
+		new GuiMLTextCtrl(UpsellGenericText)
+		{
+         profile = isWidescreen() ? "LargeInfoTextProfile" : "InfoTextProfile";
+         position = "30 28";
+         extent = isWidescreen() ? "685 404" : "547 297";
+			lineSpacing = "2";
+			maxChars = "-1";
+			lineCount = 0;
+			visible = 1;
+		};
+	};
+	
+};
+//--- OBJECT WRITE END ---
+
+function UpsellGui::getFeatureListText(%this)
+{
+   return $Text::DemoUpsell01 @
+         $Text::DemoUpsell02 @
+         $Text::DemoUpsell03 @
+         $Text::DemoUpsell04 @
+         $Text::DemoUpsell05 @
+         $Text::DemoUpsell06;
+}
+
+function UpsellGui::displayUpsell( %this, %isQuitting, %callbackFxn, %nextGui )
+{
+   if( nameToId( RootGui.contentGui ) != nameToId( %this ) )
+   {      
+      %this._goBackToGui = RootGui.contentGui;
+      %this._nextGui = 0;
+      if (isObject(%nextGui))
+         %this._nextGui = %nextGui;
+      
+      RootGui.setContent( %this );
+      
+      if( %callbackFxn !$= "" )
+      {
+         %this._callbackFxn = %callbackFxn;
+      }
+      else
+      {
+         %this._callbackFxn = "";
+      }
+      
+      // default to displaying the feature list
+      %text = $Text::DemoUpsell08 @ %this.getFeatureListText();
+         
+      %this.setDisplayText(%text);
+      
+      RootGui.setX( $Text::DemoUpsell07 );
+      if( !%isQuitting )
+      {
+         RootGui.setA( $Text::Continue ); // don't buy
+      }
+      else
+      {
+         RootGui.setB( $Text::DemoUpsell09 ); // back to game
+         RootGui.setA( $Text::DemoUpsell10 ); // quit
+      }
+      
+      %this._isQuitting = %isQuitting;
+   }
+}
+
+function UpsellGui::setDisplayText(%this, %text)
+{
+   UpsellGenericText.setText(%text);
+}
+
+function UpsellGui::setBackToGui(%this, %backToGui)
+{
+   %this._goBackToGui = %backToGui;
+}
+
+function UpsellGui::displayMPPostGame(%this, %hostDropped)
+{
+   %this.displayUpsell();
+   if (%hostDropped)
+      %this.setDisplayText($Text::DemoUpsellMP6 @ %this.getFeatureListText());
+   else
+      %this.setDisplayText($Text::DemoUpsellMP5 @ %this.getFeatureListText());
+}
+
+function UpsellGui::displayMPGuide(%this, %nextGui, %backGui)
+{
+   %text = 
+      $Text::DemoUpsellMP0 @ 
+      $Text::DemoUpsellMP1 @
+      $Text::DemoUpsellMP2 @
+      $Text::DemoUpsellMP3 @ 
+      $Text::DemoUpsellMP4;
+      
+   %this.displayGenericText(%text, %nextGui, %backGui);
+   RootGui.setTitle($Text::MultiplayerMenu);
+}
+
+function UpsellGui::displayGenericText(%this, %text, %nextGui, %backGui)
+{
+   if( nameToId( RootGui.contentGui ) != nameToId( %this ) )
+   {
+      if (!isObject(%backGui))
+         %this._goBackToGui = RootGui.contentGui;
+      else
+         %this._goBackToGui = %backGui;
+         
+      if (!isObject(%nextGui))
+         %this._nextGui = MainMenuGui;
+      else
+         %this._nextGui = %nextGui;
+         
+      RootGui.setContent(%this);
+      
+      UpsellGenericText.setText(%text);
+        
+      RootGui.setA( $Text::OK );
+      RootGui.setB( $Text::Back );
+      
+      %this._isQuitting = false;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+function UpsellGui::onWake( %this )
+{
+   RootGui.setTitle( $Text::DemoUpsell00 );
+}
+
+//------------------------------------------------------------------------------
+function UpsellGui::onA(%this)
+{
+   if (!RootGui.AEnabled())
+      return;
+
+   alxPlay( AudioButtonDown );      
+   if (%this._isQuitting)
+   {
+      quit();
+      return true; // should never execute, due to quit()
+   }
+      
+   if (isObject(%this._nextGui))
+   {
+      RootGui.setContent(%this._nextGui);
+   }
+   else
+   {
+      RootGui.setContent( %this._goBackToGui );
+      
+      if( %this._callbackFxn !$= "" )
+      {
+         eval( %this._callbackFxn );
+      }
+   }
+   return true;
+}
+
+function UpsellGui::onX( %this )
+{
+   if (!RootGui.XEnabled())
+      return;
+      
+   if (isDemoLaunch())
+   {
+      alxPlay( AudioButtonDown );
+            
+      clientShowMarketplaceUI();
+   }
+   return true;
+}
+
+function UpsellGui::onSignInComplete(%this, %showAchUI, %showMarketplace)
+{
+   if (XBLiveIsSignedIn() && %showAchUI)
+      XBLiveShowAchievementsUI();
+   else if (%showMarketplace)
+      clientShowMarketplaceUI();
+}
+
+//------------------------------------------------------------------------------
+
+function UpsellGui::onB( %this )
+{
+   if (!RootGui.BEnabled())
+      return;
+      
+   if (%this._isQuitting)
+   {
+      alxPlay( AudioButtonDown );
+      RootGui.setContent(ESRBGui);
+      return true;
+   }
+   
+   RootGui.setContent( %this._goBackToGui );
+      
+   if( %this._callbackFxn !$= "" )
+   {
+      eval( %this._callbackFxn );
+   }
+      
+   return true;
+}

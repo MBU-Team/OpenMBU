@@ -1,0 +1,22 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(MissionLoadingGui) {
+   profile = GuiDefaultProfile;
+   horizSizing = "width";
+   vertSizing = "height";
+};
+
+function MissionLoadingGui::show(%this)
+{
+   RootGui.setTitle("");
+   RootGui.setCenterText($Text::Loading);
+   RootGui.displayLoadingAnimation( "center" );
+   
+   // enable preview server view
+   $Game::renderPreview = true;
+}
+
+function MissionLoadingGui::hide(%this)
+{   
+   // disable preview server view
+   $Game::renderPreview = false;
+}

@@ -1,0 +1,573 @@
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(levelPreviewGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   //bitmap = "./background.jpg";
+   wrap = "0";
+      helpTag = "0";
+      useVariable = "0";
+      tile = "0";
+
+   new GuiControl(LP_preview) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = "59 161";
+      extent = "258 193";
+      minExtent = "8 8";
+      visible = "1";
+      wrap = "0";
+         helpTag = "0";
+
+      new GuiBitmapCtrl(LP_fadepreview) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "0 0";
+         extent = "258 193";
+         minExtent = "8 8";
+         visible = "1";
+         bitmap = "./xbox/fade_black";
+         wrap = "0";
+            helpTag = "0";
+      };
+      new GuiMLTextCtrl(LP_previewtext) {
+         profile = "TextHeadingWhiteProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "-1 14";
+         extent = "256 32";
+         minExtent = "8 2";
+         visible = "1";
+         lineSpacing = "0";
+         allowColorChars = "0";
+         maxChars = "-1";
+         text = "<just:left>" @ $Text::SeeItPlayed;
+      };
+   };
+   new GuiWindowCtrl(LP_bgBox) {
+      profile = "bgBoxProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWideScreen() ? "550 470" : "97 272";
+      extent = isWideScreen() ? "543 137" : "503 137";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+      
+	   new GuiMLTextCtrl(LP_timetext) {
+	      profile = "TextHeadingSmallNoShadeProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = isWideScreen() ? "30 45" : "0 45";
+	      extent = "225 67";
+	      minExtent = "8 2";
+	      visible = "1";
+	      lineSpacing = "0";
+	      allowColorChars = "0";
+	      maxChars = "-1";
+	      text = "";
+	   };
+	   new GuiMLTextCtrl(LP_times) {
+	      profile = "TextHeadingSmallNoShadeProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = isWideScreen() ? "275 45" : "245 45";
+	      extent = "160 128";
+	      minExtent = "8 2";
+	      visible = "1";
+	      lineSpacing = "0";
+	      allowColorChars = "0";
+	      maxChars = "-1";
+	      text = "99:99.00\n99:99.00";
+	   };
+	   new GuiMLTextCtrl(LP_difficultyText) {
+	      profile = "TextHeadingSmallNoShadeProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = isWideScreen() ? "385 45" : "355 45";
+	      extent = "340 35";
+	      minExtent = "8 2";
+	      visible = "1";
+	      text = "";
+	   };
+	   new GuiMLTextCtrl(LP_demoText) {
+	      profile = "TextHeadingSmallNoShadeProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = isWideScreen() ? "62 52" : "42 48";
+	      extent = "298 72";
+	      minExtent = "8 2";
+	      visible = "0";
+	      text = "<just:center><font:Arial Bold:22>" @ $Text::PlayAllN1;
+	   };
+	   new GuiBitmapCtrl(LP_egg) {
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+         position = isWideScreen() ? "35 77" : "40 73";
+	      extent = "20 20";
+	      minExtent = "8 2";
+	      visible = "0";
+	      bitmap = "./xbox/eggIcon";
+	      wrap = "0";
+	   };
+	   new GuiBitmapCtrl(LP_staticon) {
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = isWideScreen() ? "35 52" : "40 48";
+	      extent = "20 20";
+	      minExtent = "8 2";
+	      visible = "1";
+	      bitmap = "./xbox/statIcon";
+	      wrap = "0";
+	   };
+// 	   new GuiBitmapCtrl(LP_difficulty) {
+// 	      profile = "GuiDefaultProfile";
+// 	      horizSizing = "right";
+// 	      vertSizing = "bottom";
+// 	      position = "259 350";
+// 	      extent = "38 38";
+// 	      minExtent = "8 2";
+// 	      visible = "1";
+// 	      bitmap = "./xbox/difficulty_11";
+// 	      wrap = "0";
+// 	   };
+   };
+   
+   new GuiXboxOptionListCtrl(levelPreviewSelection) {
+      profile = isWidescreen()? "TextOptionListInactiveProfile" : "TextOptionListInactiveSmallProfile";
+      position = isWidescreen()? "380 435" : "132 250";
+      extent = isWidescreen()? "815 400" : "510 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = isWidescreen()? "bottom" : "top";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "30 70" : "30 70";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+  	};
+   new GuiBitmapCtrl(LP_DemoLock) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWidescreen()? "512 179" : "192 38";
+      extent = "256 256";
+      minExtent = "8 2";
+      visible = "0";
+      bitmap = "./xbox/demoLock";
+      wrap = "0";
+   };
+};
+//--- OBJECT WRITE END ---
+
+function levelPreviewGui::onWake(%this)
+{
+   %this.setButtons();
+   //RootGui.setLS($Text::ChangeLevels);
+   RootGui.setTitle($Text::LevelPreview);
+   
+   GameMissionInfo.setMode(GameMissionInfo.SPMode);
+   GameMissionInfo.setDefaultMission();
+   
+   if ($EnableFMS)
+      GameMissionInfo.setCamera();
+   
+   levelPreviewGui.setSelected();
+   
+   // Tee-hee, teh hack
+   resumeGame();
+}
+
+function levelPreviewGui::onA()
+{
+   if (!RootGui.AEnabled())
+      return;
+      
+   alxPlay( AudioButtonDown );
+   
+   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+   {
+      // nothing - see x button
+   }
+   else
+   {
+      // Spawn the player and start the game
+      if ($EnableFMS)
+      {
+         RootGui.setContent(MissionLoadingGui);
+         
+         // Flip out of singlePlayerMode
+         setSinglePlayerMode(false);
+         
+         // Create a new server
+         loadMission(GameMissionInfo.getCurrentMission().file, true);
+      }
+      else
+         commandToServer('JoinGame');
+
+      $disconnectGui = levelPreviewGui;
+   }
+
+   return true;
+}
+
+function levelPreviewGui::onX()
+{
+   if (!RootGui.XEnabled())
+      return;
+      
+   clientShowMarketplaceUI();
+
+//   if( LP_scores_btn.isVisible() )
+//   {
+//      alxPlay( AudioButtonDown );
+//      levelScoresGui.updateLeaderboard();
+//      Canvas.setContent( levelScoresGui );
+//   }
+   return true;
+}
+
+function levelPreviewGui::onB(%this)
+{
+   alxPlay( AudioButtonDown );
+   RootGui.setContent( difficultySelectGui, %this );
+     
+   return true;
+}
+
+function levelPreviewGui::onY(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   if (!RootGui.YEnabled())
+      return;
+   
+   if (!XBLiveIsSignedInSilver())
+   {
+      XMessagePopupDlg.show(0, $Text::SignInLeaderboard, $Text::OK);
+      return;
+   }
+   else
+      RootGui.setContent(levelScoresGui, "", GameMissionInfo.getCurrentMission().level, levelPreviewGui);
+      
+   return true;
+}
+
+function levelPreviewGui::setButtons(%this)
+{
+   RootGui.setY($Text::Leaderboard);
+   
+   RootGui.setB($Text::Back);
+   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+      RootGui.setA("");
+   else
+      RootGui.setA($Text::Play);
+
+   if (isDemoLaunch())
+      RootGui.setX($Text::DemoUpsell07);
+}
+
+function levelPreviewGui::onLeft(%this)
+{
+   alxPlay( AudioButtonOver );
+   
+   GameMissionInfo.selectPreviousMission();
+      
+   levelPreviewGui.setSelected();
+  
+   return true;
+}
+
+function levelPreviewGui::onRight(%this)
+{
+   alxPlay( AudioButtonOver );
+     
+   GameMissionInfo.selectNextMission();
+         
+   levelPreviewGui.setSelected();
+     
+   return true;
+}
+
+function levelPreviewGui::setLevelText( %obj, %levelnum, %text )
+{
+   //LP_title_front.setText( $Text::Level SPC %levelnum @ "\n" @ %text );
+   
+   levelPreviewSelection.clear();
+   levelPreviewSelection.addRow($Text::Level, %text, 18);
+}
+
+function levelPreviewGui::setPreviewText( %text, %fade )
+{
+   if( %fade )
+   {
+      LP_fadepreview.setVisible( true );
+   }
+   else
+   {
+      LP_fadepreview.setVisible( false );
+   }
+   
+   LP_previewtext.setText( %text );
+}
+
+function levelPreviewGui::setSelected(%this)
+{
+   %this.setButtons();
+   
+   %mission = GameMissionInfo.getCurrentMission();
+   
+   // if we haven't loaded stats for this level, load them and call populateLevelInfo function when load completes
+//   if (XBLiveIsSignedInSilver() && !XBLiveAreStatsLoaded(%mission.level))
+//   {
+//      XBLiveCancelLoading();
+//      XBLiveReadStats(%mission.level, %mission.level, "LevelPreviewGui.populateLevelInfo();");
+//   }
+
+   %this.populateLevelInfo();
+}
+
+function levelPreviewGui::populateLevelInfo(%this)
+{
+   %mission = GameMissionInfo.getCurrentMission();
+
+   if (isWidescreen())
+   {   
+	   %lineSpacingHack = "<font:Arial Bold:30> <font:Arial Bold:24>";
+	   %biggerFont = "<font:Arial Bold:30>";
+	}
+	else
+	{
+	   %lineSpacingHack = "<font:Arial Bold:24> <font:Arial Bold:20>";
+	   %biggerFont = "<font:Arial Bold:24>";		
+	}
+	
+   %colorBetter = "<color:8DFF8D>";
+   %colorWorse = "<color:FF7575>";
+   %colorNuetral = "<color:88BCEE>";   
+   
+   //LP_difficulty.setBitmap( "./xbox/difficulty_" @ %mission.difficulty );
+   LP_difficultyText.setText( %lineSpacingHack @ $Text::Level SPC %biggerFont @ %mission.level @ 
+                                       "\n" @ %lineSpacingHack @ $Text::Difficulty SPC %biggerFont @ %mission.difficulty);
+
+   if( !GameMissionInfo.getCurrentMission().isInDemoMode && isDemoLaunch() )
+   {
+      //levelPreviewGui::setPreviewText( $Text::SeeItPlayed, true );
+      levelPreviewGui::setPreviewText( "", false );
+      
+      LP_demoText.setvisible(1);
+      LP_staticon.setvisible(0);
+      LP_DemoLock.setVisible(1);
+      
+      %descText = "";
+   }
+   else
+   {
+      levelPreviewGui::setPreviewText( "", false );
+      LP_demoText.setvisible(0);
+      LP_staticon.setvisible(1);
+      LP_DemoLock.setVisible(0);
+            
+      if(%mission.time)
+      {
+         %timeText = %colorNuetral @ %timeText @ formatTime( %mission.time );
+      }
+      else
+      {
+         %timeText = %timeText @ "FIX ME";
+      }
+      
+      // Check to see if they have gotten the egg on this level
+      LP_egg.setVisible( false );
+      
+      if( %mission.hasEggIndex )
+      {
+         if( hasFoundEgg( %mission.hasEggIndex ) )
+            LP_egg.setVisible( true );
+      }
+      
+      if( XBLiveIsSignedInSilver() )
+      {
+         //%player = new LeaderboardEntry();
+         //%player.loadThisPlayer();
+         //%time = %player.getBestTime( %mission.level );
+         
+         %cachedTime = $CachedUserTime::levelTime[%mission.level];
+         
+         if (XBLiveAreStatsLoaded(%mission.level))
+            %time = XBLiveGetStatValue(%mission.level, "time");
+            
+         if( ( %time > %cachedTime && %cachedTime != 0 ) || %time == 0 )
+            %time = %cachedTime;
+         
+         if( %time <= 0 )
+         {
+            %time = $Text::None;
+         }
+         else
+         {
+            %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
+            %time = %color @ formatTime( %time );
+         }
+      }
+      else
+      {
+         if( $CachedUserTime::levelTime[%mission.level] )
+         {
+            %time = $CachedUserTime::levelTime[%mission.level];
+             
+            %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
+            %time = %color @ formatTime( %time );
+         }
+         else
+            %time = $Text::None;
+      }
+      
+      %descText = "<just:right>" @ %lineSpacingHack @ $Text::BestTime
+                                  @ "\n" @ %lineSpacingHack @ $Text::ParTime;
+                                  
+      %timeText = %biggerFont @ %time @ "\n" @ %timeText;
+   }
+   
+   levelPreviewGui.setLevelText( %mission.level, %mission.name );
+   LP_timetext.setText( %descText );
+   LP_times.setText( %timeText );
+}
+
+function levelPreviewGui::updateXOnline( %this, %code, %user )
+{
+   if( %code == 0 )
+   {
+      LP_friends_list.setText( $Text::Friends );
+      LP_login_name.setText( $Text::SignedIn @ ": " @ %user );
+      
+      levelScoresGui.updateLeaderboard();
+   }
+   else if( %code == -1 )
+   {
+      levelPreviewGui::setSelected();
+      LP_friends_list.setText( $Text::SignIn );
+      LP_login_name.setText( $Text::SignInFailed );
+      LP_scores_tag.setVisible( false );    
+      LP_scores_btn.setVisible( false );
+   }
+   else if( %code == -2 )
+   {
+      levelPreviewGui::setSelected();
+      LP_friends_list.setText( $Text::SignIn );
+      LP_login_name.setText( $Text::PassCodeNeeded );
+      LP_scores_tag.setVisible( false );
+      LP_scores_btn.setVisible( false );
+   }
+   else
+   {
+      levelPreviewGui::setSelected();
+      LP_friends_list.setText( $Text::SignIn );
+      LP_login_name.setText( $Text::NotSignedIn );
+      LP_scores_tag.setVisible( false );
+      LP_scores_btn.setVisible( false );
+   }
+}
+addXBLACallback( levelPreviewGui, "updateXOnline", 0 ); // Login callback = 0
+
+function levelPreviewGui::loadedScores()
+{
+   LP_scores_tag.setVisible( true );
+   LP_scores_btn.setVisible( true );
+      
+   levelPreviewGui.setSelected();
+   levelScoresGui.updateLeaderboard();
+}
+addXBLACallback( levelPreviewGui, "loadedScores", 3 ); // user stat load callback = 3
+
+//------------------------------------------------------------------------------------------------
+function startSelectedMission()
+{
+   error("startSelectedMission: this function needs updating to use GameMissionInfo/preview server before it will work");
+   pauseMusic();
+   
+   if ($Client::shellMode $= "SinglePlayer")
+      %missionGroup = SinglePlayMissionGroup;
+   else if ($Client::shellMode $= "MultiPlayer")
+      %missionGroup = MultiPlayMissionGroup;
+
+   %mission = %missionGroup.getObject( $currentMission );
+   $LastMissionType = %mission.type;
+   
+   lockControler( $LastButtonPressControlerInst );
+   
+   // Check to see if this is a demo launch, and if so, is this a playable mission or a demo mission
+   if( isDemoMission( GameMissionInfo.getCurrentIndex() ) == 2 && isDemoLaunch() )
+   {
+      echo( "WOULD LAUNCH SEE IT PLAYED!!![CENSORED]" );
+      // Test code for now
+      playDemo( "marble/client/demos/level_" @ %mission.level @ ".rec" );
+      $DemoStartGui = LevelPreviewGui;
+      $seeItPlayedDemo = true;
+      $playingDemo = true;
+   }
+   else
+   {
+      if ($pref::HostMultiPlayer)
+         %serverType = "MultiPlayer";
+      else
+         %serverType = "SinglePlayer";
+   
+      // We need to start a server if one isn't already running
+      if ( $Server::ServerType $= "" ) {
+         if($doRecordDemo)
+            recordDemo("~/client/demos/demo" @ $doRecordDemo++ @ ".rec", %mission.file);
+         createServer(%serverType, %mission.file);
+         %conn = new GameConnection(ServerConnection);
+         RootGroup.add(ServerConnection);
+         %conn.setConnectArgs($pref::Player::Name);
+         %conn.setJoinPassword($Client::Password);
+         %conn.connectLocal();
+      }
+      else
+         loadMission(%mission.file);
+      if(isObject(MissionInfo))
+         MissionInfo.level = %mission.level;
+   }
+}
+
+function onDemoPlay(%misFile)
+{
+   pauseMusic();
+   $playingDemo = true;
+   createServer("SinglePlayer", %misFile);
+   %conn = new GameConnection(ServerConnection);
+   RootGroup.add(ServerConnection);
+   %conn.setConnectArgs($pref::Player::Name);
+   %conn.setJoinPassword($Client::Password);
+   %conn.connectLocal();
+}
+
+function onDemoPlayDone(%forced)
+{
+   $playingDemo = false;
+   disconnect();
+
+   if( %forced || $seeItPlayedDemo )
+   {
+      Canvas.setContent($DemoStartGui);
+      $seeItPlayedDemo = false;
+   }
+   else
+      runPresentation();
+}

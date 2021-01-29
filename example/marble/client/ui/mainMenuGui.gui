@@ -1,0 +1,181 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(mainMenuGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+   
+	new GuiBitmapCtrl(logo) {
+	   profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+	   position = isWidescreen()? "200 50" : "35 28";
+	   extent = isWidescreen()? "512 400" : "256 200";
+	   minExtent = "8 8";
+		bitmap = "./logo";
+	   visible = "1";
+	};  
+        
+    new GuiXboxListCtrl(MainMenu) {
+      profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+	   horizSizing = "left";
+	   vertSizing = "height";
+		position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+      extent = "640 480";
+   };      
+  				
+};
+//--- OBJECT WRITE END ---
+function mainMenuGui::onA(%this)
+{
+   %idx = MainMenu.getSelectedIndex();
+   
+   // Update the sign-in state here
+   XBLiveUpdateSigninState();
+   
+	alxPlay( AudioButtonDown );
+   switch( %idx )
+   {
+      case 0:
+         $Client::shellMode = "SinglePlayer";
+         //clientSetSigninPort(Canvas.getLastDeviceInst());
+         //clientLockController(Canvas.getLastDeviceInst());
+         RootGui.setContent(DifficultySelectGui);
+      case 1: 
+         if (!XBLiveIsSignedInSilver())
+         {
+            XMessagePopupDlg.show(0, $Text::SignInForMultiplayer, $Text::OK);
+         }
+         else if (!XBLiveIsSignedInGold())
+         {
+            XMessagePopupDlg.show(0, $Text::MPNotAllowed, $Text::OK);
+         }
+         // set the initial sign in port to the controller that fired this event.  
+         // MultiplayerGui will check to make sure that we're signed into live on this port.
+         //clientSetSigninPort(Canvas.getLastDeviceInst());
+         else if (isDemoLaunch())
+         {
+            $Client::shellMode = "MultiPlayer";
+            if ($Demo::TimeRemaining > 0)
+               UpsellGui.displayMPGuide(MultiPlayerGui, MainMenuGui);
+            else
+               UpsellGui.displayMPPostGame(false);
+         }
+         else
+         {
+            $Client::shellMode = "MultiPlayer";
+            RootGui.setContent(MultiPlayerGui);
+         }
+      case 2: 
+         //showGui(OptionsGui, %this);
+         // leader boards
+//         if(!XBLiveIsSignedInSilver() && $UIXLogonStatus !$= "LOGGING_IN")
+//         {
+//            XMessagePopupDlg.show(0, $Text::E31, 
+//               $Text::BT21, "SinglePlayerGui.startingLeaderboard = true; SignInControlsGui.process();", 
+//               $Text::BT17, "");
+//            return;
+//         }
+//         else
+//            showGui(LeaderboardGui, $Stats::BattlemodeIndex, %this, true);
+         RootGui.setContent(lbMenuGui, MainMenuGui);
+      case 3:
+         XBLiveShowAchievementsUI();
+      case 4:
+         RootGui.setContent(HelpAndOptionsGui, MainMenuGui);
+      case 5: // exit game or unlock full game in demo
+         if (isDemoLaunch())
+            clientShowMarketplaceUI();
+         else
+            %this.exitGame();
+      case 6: // exit game in demo
+         %this.exitGame();
+   }
+      
+   return true;
+}
+
+// note, some other guis use this callback for upsell functionality, be careful
+// about changing it
+function MainMenuGui::onSignInComplete(%this, %showAchUI, %showMarketplace)
+{
+   if (XBLiveIsSignedIn() && %showAchUI)
+      XBLiveShowAchievementsUI();
+   else if (%showMarketplace)
+      clientShowMarketplaceUI();
+}
+
+function MainMenuGui::exitGame(%this)
+{
+   if( isDemoLaunch() )
+      UpsellGui.displayUpsell( true );
+   else
+      quit();
+}
+
+function MainMenuGui::show(%this)
+{     
+   if (!XBLiveIsSignedIn())
+      error("@@@@@ Not signed in on main menu!  Bad!");
+
+   // reset shell mode
+   $Client::shellMode = "MainMenu";
+   
+   // reset megamission camera
+   GameMissionInfo.setCamera();
+   
+   // clear locked controller on main menu
+   //error("Main menu activated, clearing locked controller");
+   //clientUnlockController();
+   
+   // add rows
+   MainMenu.clear();
+   MainMenu.addRow($Text::SinglePlayer, "", 0, 2);
+   MainMenu.addRow($Text::MultiPlayer, "", 20, 2);
+   MainMenu.addRow($Text::LeaderBoards, "", 0, 6);
+   MainMenu.addRow($Text::Achievements, "", 0, 6);
+   MainMenu.addRow($Text::HelpAndOptions, "", 0, 8);
+   if (isDemoLaunch())
+      MainMenu.addRow($Text::UnlockFullGame, "", 0, 2);
+   MainMenu.addRow($Text::RTArcadeMenu, "", 0, 10);
+   
+   // disable some stuff
+   //MainMenu.setRowEnabled(4,false);
+   
+   RootGui.setA($Text::Go);
+   // test::Cheatsenabled should be empty normally
+   //RootGui.setTitle($Text::MainMenu @ $Test::CheatsEnabled);
+   RootGui.setTitle("" @ $Test::CheatsEnabled);
+   
+   glogo.visible = 1;
+   
+   // Stat up the title music
+   if( xbHasPlaybackControl() && !xbIsPlayingMusic() )
+      playMusic();         
+}
+
+function MainMenuGui::onRequireSignInComplete(%this)
+{
+   if (!XBLiveIsSignedIn())
+   {
+      // "shouldn't happen"
+      error("MainMenuGui.onRequiredSignInComplete: we should be signed in, but we aren't!");
+      return;
+   }
+     
+   // finish up game invite stuff
+   if (XBLiveIsInvitePending())
+      onXBLiveInviteFound();
+}
+
+function MainMenuGui::hide(%this)
+{
+	glogo.visible = 0;
+}
+
+function mmg_reload()
+{
+   exec("marble/client/ui/mainMenuGui.gui");
+}

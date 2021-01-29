@@ -1,0 +1,66 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(AIEWorkingDlg) {
+	profile = "GuiModelessDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	setFirstResponder = "0";
+	modal = "0";
+	helpTag = "0";
+
+	new GuiChunkedBitmapCtrl() {
+		profile = "GuiContentProfile";
+		horizSizing = "right";
+		vertSizing = "top";
+		position = "234 5";
+		extent = "400 130";
+		minExtent = "8 8";
+		visible = "1";
+		setFirstResponder = "0";
+		modal = "1";
+		helpTag = "0";
+
+		new GuiTextCtrl() {
+			profile = "GuiBigTextProfile"; 
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "16 10";
+			extent = "378 40";
+			minExtent = "8 8";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			helpTag = "0";
+			text = "Building Graph ...";
+		};
+		new GuiProgressCtrl(GraphBuildProgress) {
+			profile = "GuiProgressProfile";
+			horizSizing = "center";
+			vertSizing = "top";
+			position = "29 50";
+			extent = "342 31";
+			minExtent = "8 8";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			helpTag = "0";
+				setValue = "0";
+		};
+		new GuiTextCtrl(GraphCurrentOperation) {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "35 96";
+			extent = "8 18";
+			minExtent = "8 8";
+			visible = "1";
+			setFirstResponder = "0";
+			modal = "1";
+			helpTag = "0";
+		};
+	};
+};
+//--- OBJECT WRITE END ---

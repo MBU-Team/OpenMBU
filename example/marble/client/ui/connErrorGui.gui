@@ -1,0 +1,110 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(connErrorGui)
+{
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0"; 
+   
+   // RootGui provides all the UI controls that we need
+};
+//--- OBJECT WRITE END ---
+
+function connErrorGui::show(%this, %message, %errorInfo)
+{
+   // assume that we are disconnected from the server, so call disconnectedCleanup()
+   // immediately so that we don't keep trying to send voice or other game data.  but we don't want to 
+   // transition to the disconnected gui yet, since we want users to be able to read the disconnect message.
+   // save save it off then restore it, and we'll display it later when they press they A button.
+   %saveGui = $disconnectGui;
+   $disconnectGui = "";
+   disconnectedCleanup();
+   $disconnectGui = %saveGui;
+   
+   // enable preview server view
+   $Game::renderPreview = true;
+      
+	%this.message = %message;
+	%this.errorInfo = %errorInfo;
+
+   // errorInfo is only displayed when cheat sequence is pressed (See below).  i'd rather horrify the user with the
+   // full error message, but VMC/Oberon said No No.
+	%this.setText(%message);
+	
+	RootGui.setA($Text::OK);
+	RootGui.setTitle("");
+}
+
+function connErrorGui::setText(%this, %message)
+{
+   RootGui.setCenterText(%message);
+}
+
+function connErrorGui::hide(%this)
+{
+   // disable preview server view
+   $Game::renderPreview = false;
+}
+
+function connErrorGui::onA(%this)
+{
+   alxPlay( AudioButtonDown );
+  
+   if (isObject($disconnectGui))
+      RootGui.setContent($disconnectGui);
+   else
+      RootGui.setContent(MainMenuGui);
+}
+
+function connErrorGui::testDisplay(%this)
+{
+   %this.show("HI THERE!");
+}
+
+// Begin Cheat stuff
+connErrorGui.cheatSeq = "W B W W B";
+connErrorGui.cheatIdx = 0;
+
+function connErrorGui::onCheatComplete(%this)
+{
+  // spew
+  error("ON CHEAT COMPLETE");
+  
+  // fx
+  alxPlay(OptionsGuiTestSound);
+  
+  // logic
+  %this.setText(%this.message SPC %this.errorInfo);
+}
+
+function connErrorGui::onCheatPressed(%this, %cheatBtn)
+{
+  if (%this.cheatIdx >= getWordCount(%this.cheatSeq))
+     %this.cheatIdx = 0;
+
+  if (getWord(%this.cheatSeq, %this.cheatIdx) $= %cheatBtn)
+     %this.cheatIdx++;
+  else
+     %this.cheatIdx = 0;
+     
+  if (%this.cheatIdx >= getWordCount(%this.cheatSeq))
+     %this.onCheatComplete();
+}
+
+function connErrorGui::onWhite(%this)
+{
+  %this.onCheatPressed("W");
+}
+
+function connErrorGui::onBlack(%this)
+{
+  %this.onCheatPressed("B");
+}
+// End cheat stuff
+
+function ceg_reload()
+{
+   exec("marble/client/ui/connErrorGui.gui");
+}

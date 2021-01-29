@@ -1,0 +1,87 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(inputAndSoundOptionsGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+   new GuiXboxOptionListCtrl(inputAndSoundOptionsList) {
+      profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallProfile";
+      position = isWidescreen()? "380 211" : "132 100";
+      extent = isWidescreen()? "815 400" : "510 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = "center";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "50 50" : "45 55";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+      
+      // data is dynamically added to this option list in the show() function
+   };
+};
+//--- OBJECT WRITE END ---
+
+function inputAndSoundOptionsGui::show(%this, %backGui)
+{   
+	if (%backGui !$= "")
+      %this.backGui = %backGui;
+      
+   inputAndSoundOptionsList.clear();
+  
+   inputAndSoundOptionsList.addRow($Text::InvY, $Text::InvOnOff, 8); // invert y
+   inputAndSoundOptionsList.addRow($Text::InvX, $Text::InvOnOff, 8); // invert x
+   inputAndSoundOptionsList.addRow($Text::MusicVol, GetOptionListRangeText(0, 100, 5), 8); // "Music"
+   inputAndSoundOptionsList.addRow($Text::FXVol, GetOptionListRangeText(0, 100, 5), 8); // "FX"
+
+   inputAndSoundOptionsList.setOptionIndex(0, $pref::invertYCamera);
+   inputAndSoundOptionsList.setOptionIndex(1, $pref::invertXCamera);
+   inputAndSoundOptionsList.setOptionIndex(2, ($pref::Option::MusicVolume) / 5 );
+   inputAndSoundOptionsList.setOptionIndex(3, ($pref::Option::FXVolume) / 5 );
+
+   RootGui.setA( $Text::OK );
+   RootGui.setTitle( $Text::About1Title );
+}
+
+function inputAndSoundOptionsList::onOptionChange(%this, %increase)
+{
+   %row = %this.getSelectedIndex();
+   %val = %this.getOptionIndex(%row); 
+   
+   echo(%val);
+   
+   switch (%row)
+   {
+      case 0:
+         // invert y
+         if (%val != 0 && %val != 1)
+            %val = 0;
+         $pref::invertYCamera = %val;
+      case 1:
+         //  invert x
+         if (%val != 0 && %val != 1)
+            %val = 0;
+         $pref::invertXCamera = %val;
+      case 2:
+         // music
+         $pref::Option::MusicVolume = %val * 5;
+         echo("Music volume = " @ $pref::Option::MusicVolume);
+         xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
+      case 3:
+         // fx
+         $pref::Option::FXVolume = %val * 5;
+         alxSetMasterVolume($pref::Option::FXVolume * 0.01);
+         alxPlay(OptionsGuiTestSound);
+   }  
+}
+
+function inputAndSoundOptionsGui::onA(%this)
+{
+   RootGui.setContent(HelpAndOptionsGui, %this.backGui);
+   saveUserProfile();
+}

@@ -1,0 +1,135 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(GameEndGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+   new GuiWindowCtrl(gebox) {
+      profile = "bgBoxProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWideScreen() ? "715 410" : "279 240"; 
+      extent = "344 154";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+      
+	   new GuiTextListCtrl(GE_Stats)
+	   {
+	      profile = "EndGameStatsListGuiProfile";
+	      setFirstResponder = "false";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "30 25";
+	      extent = "281 147";
+
+	      autoResize = false; // don't try to resize to accommodate new rows - stay within extents
+	      rowsPerPage = 8;    // maximum number of rows to render per page
+	      allowUnselectedScroll = false;
+	      minExtent = "8 8";
+	      //hAlign = "width";
+	      enumerate = "0";
+	      resizeCell = "1";
+	      //
+	      columns = "169 178 0 169";
+	      columnAligns = "1 0 2 0";
+	      columnBmps = "0 0 0 0";
+	      clipColumnText = "0";
+	      fitParentWidth = "0";
+	      noDuplicates = "false";
+	      iconPath = "marble/client/ui/xbox/";
+	      centerBmpsVert = true;
+	      centerBmpsHoriz = true;
+	   };     
+	   new GuiBitmapCtrl(GE_staticon) {
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "42 27";
+	      extent = "20 20";
+	      minExtent = "8 2";
+	      visible = "1";
+	      bitmap = "./xbox/statIcon";
+	      wrap = "0";
+	   };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function GameEndGui::onWake( %this )
+{
+   RootGui.setTitle( $Text::LevelComplete );
+   
+   RootGui.setA( $Text::Next );
+   RootGui.setB( $Text::Retry );
+   RootGui.setY( $Text::Leaderboard );
+}
+
+//------------------------------------------------------------------------------
+
+function GameEndGui::onA( %this )
+{
+   if ($EnableFMS)
+   {
+      // Delete everything
+      if (isObject($ServerGroup))
+         $ServerGroup.delete();
+      $ServerGroup = new SimGroup(ServerGroup);
+      
+      if (isObject(MissionGroup))
+         MissionGroup.delete();
+      
+      if (isObject(MissionCleanup))
+         MissionCleanup.delete();
+   
+      // Flip back to SinglePlayerMode
+      // The current mission should still be unhidden
+      setSinglePlayerMode(true);
+   }
+   
+   commandToServer('SetWaitState');
+   
+   RootGui.setContent(LevelPreviewGui);
+   
+   GameMissionInfo.selectNextMission();
+   levelPreviewGui.setSelected();
+   
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+function GameEndGui::onB( %this )
+{
+   RootGui.setContent(PlayGui);
+   restartLevel();
+   
+   return true;
+}
+
+function GameEndGui::onY(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   if (!RootGui.YEnabled())
+      return;
+   
+   if (!XBLiveIsSignedInSilver())
+   {
+      XMessagePopupDlg.show(0, $Text::SignInLeaderboard, $Text::OK);
+      return;
+   }
+   else
+      RootGui.setContent(levelScoresGui, "", GameMissionInfo.getCurrentMission().level, GameEndGui);
+      
+   return true;
+}

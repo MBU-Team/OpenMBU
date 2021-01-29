@@ -15,7 +15,6 @@ struct VertData
 struct ConnectData
 {
    float4 hpos            : POSITION;
-   float4 shading         : COLOR;
    float2 texCoord        : TEXCOORD0;
    float2 fogCoord        : TEXCOORD1;
    float2 detailCoord     : TEXCOORD2;
@@ -30,7 +29,6 @@ ConnectData main( VertData IN,
                   uniform float4x4 objTrans        : register(VC_OBJ_TRANS),
                   uniform float3   eyePos          : register(VC_EYE_POS),
                   uniform float3   fogData         : register(VC_FOGDATA),
-                  uniform float4   inLightColor    : register(VC_LIGHT_DIFFUSE1),
                   uniform float4   texGen          : register(C44),
                   uniform float4   scaleOff        : register(C45),
                   uniform float4   morphInfo       : register(C46)
@@ -61,7 +59,5 @@ ConnectData main( VertData IN,
    OUT.detailCoord  = realPos / 51;
    OUT.detailCoord2 = realPos / 13;
 
-   OUT.shading = inLightColor;
-   
    return OUT;
 }

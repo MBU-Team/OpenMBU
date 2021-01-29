@@ -1,0 +1,65 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(DifficultySelectGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+
+   new GuiXboxListCtrl(DifficultyMenu) {
+      profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+	   horizSizing = "left";
+	   vertSizing = "height";
+		position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+      extent = "640 480";
+   };
+};
+//--- OBJECT WRITE END ---
+function DifficultySelectGui::onA(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   if (!%this.menuEnabled)
+      return true;
+     
+   switch$ ( DifficultyMenu.getSelectedIndex() )
+   {
+      case 0:
+         GameMissionInfo.setMode(GameMissionInfo.SPMode);
+         GameMissionInfo.setFilterDifficulty( beginner );
+         RootGui.setContent(LevelPreviewGui);
+      case 1: 
+         GameMissionInfo.setMode(GameMissionInfo.SPMode);
+         GameMissionInfo.setFilterDifficulty( intermediate );
+         RootGui.setContent(LevelPreviewGui);
+      case 2: 
+         GameMissionInfo.setMode(GameMissionInfo.SPMode);
+         GameMissionInfo.setFilterDifficulty( advanced );
+         RootGui.setContent(LevelPreviewGui);
+   }
+      
+   return true;
+}
+
+function DifficultySelectGui::onB(%this)
+{
+   alxPlay( AudioButtonDown );
+   RootGui.setContent(MainMenuGui);
+   return true;
+}
+
+function DifficultySelectGui::show(%this, %fromGui)
+{
+   %this.menuEnabled = true;
+   
+   DifficultyMenu.clear();
+   DifficultyMenu.addRow($Text::LevelsBeginner, "", 0, 2);
+   DifficultyMenu.addRow($Text::LevelsIntermediate, "", 0, 2);
+   DifficultyMenu.addRow($Text::LevelsAdvanced, "", 0, 2);
+                
+   RootGui.setTitle($Text::DifficultyMenu);
+   RootGui.setA($Text::GO);
+   RootGui.setB($Text::Back);
+}

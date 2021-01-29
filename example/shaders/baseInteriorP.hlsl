@@ -8,9 +8,9 @@
 struct v2f
 {
    float4 HPOS : POSITION;
-	float4 TEX0 : TEXCOORD0;
-	float4 TEX1 : TEXCOORD1;
-	float4 TEX2 : TEXCOORD2;
+	float4 TEX0 : TEXCOORD0_centroid;
+	float4 TEX1 : TEXCOORD1_centroid;
+	float4 TEX2 : TEXCOORD2_centroid;
 	float3 lightDir : TEXCOORD3;
 };
 

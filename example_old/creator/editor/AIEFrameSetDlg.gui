@@ -1,0 +1,162 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(AIEFrameSetDlg) {
+	profile = "GuiModelessDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+		activeToolCount = "0";
+
+	new GuiFrameSetCtrl(AIEFrameSet) {
+		profile = "GuiContentProfile";
+		horizSizing = "width";
+		vertSizing = "height";
+		position = "120 30";
+		extent = "520 420";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+		columns = "0";
+		rows = "0";
+		borderWidth = "4";
+		borderColor = "206 206 206 206";
+		borderEnable = "dynamic";
+		borderMovable = "dynamic";
+		autoBalance = "0";
+
+		new GuiControl(AIEFrame) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "0 0";
+			extent = "520 420";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+				borderWidth = "2";
+
+		};
+		new GuiFrameSetCtrl(AIEToolFrameSet) {
+			profile = "GuiContentProfile";
+			horizSizing = "width";
+			vertSizing = "height";
+			position = "520 420";
+			extent = "20 20";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			columns = "0";
+			borderWidth = "3";
+			borderColor = "206 206 206 206";
+			borderEnable = "dynamic";
+			borderMovable = "dynamic";
+			autoBalance = "0";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+//------------------------------------------------------------------------------
+// Functions
+//------------------------------------------------------------------------------
+
+function AIEFrameSetDlg::getPrefs(%this)
+{
+}
+
+function AIEFrameSetDlg::setPrefs(%this)
+{
+}
+
+function AIEFrameSetDlg::onWake(%this)
+{
+   $AIEdit = true;
+   AIEditorMap.push();
+   aiEdit.clearIgnoreList();
+   aiEdit.ignoreObjClass(AIObjective);
+   aiEdit.toggleIgnoreList = true;
+   aiEdit.renderNav = true;
+}
+
+function AIEFrameSetDlg::onSleep(%this)
+{
+   $AIEdit = false;
+   AIEditorMap.pop();
+   EditorTree.open("MissionGroup");
+}
+
+function AIEFrameSetDlg::init(%this)
+{
+   AIEFrame.add(aiEdit);
+   %this.resetFrames();
+}
+
+function AIEFrameSetDlg::update(%this)
+{
+   // check the frame to see if it is visible
+   if(AIEToolFrameSet.getCount())
+   {
+      %res = getResolution();
+
+      //90 = width of button bar
+      %width = getWord(%res, 0) - 90;
+
+      if(AIEFrameSet.getColumnOffset(1) > %width - editor.minToolFrameWidth)
+         AIEFrameSet.setColumnOffset(1, %width - editor.minToolFrameWidth);
+   }
+}
+
+function AIEFrameSetDlg::resetFrames(%this)
+{
+   %tools = AIEToolFrameSet;
+   while(%tools.getRowCount() > %tools.getCount())
+      %tools.removeRow();
+   while(%tools.getRowCount() < %tools.getCount())
+      %tools.addRow();
+      
+   %offset = 400;
+
+   // update the frame view
+   %frameSet = AIEFrameSet;
+   if(!%tools.getCount() && (%frameSet.getColumnCount() > 1))
+   {
+      %Offset = %frameSet.getColumnOffset(1);
+      %frameSet.removeColumn();
+   }
+   if(%tools.getCount() && (%frameSet.getColumnCount() == 1))
+   {
+      %frameSet.addColumn();
+      %frameSet.setColumnOffset(1, %offset);
+   }
+
+   //if(%tools.getCount())
+      //%this.toolPaneOffset = AIEFrameSet.getColumnOffset(1);
+   %this.activeToolCount = %tools.getCount();
+}
+
+function AIEFrameSetDlg::addTool(%this, %tool)
+{
+   %group = nameToId("MissionGroup/Teams/team" @ $AIEditor::inspectTeam @ "/AIObjectives");
+   
+   if(%group == -1)
+      return false;
+   
+   if($AIEditor::inspectTeam == 1)
+      EditorTree.open("MissionGroup/Teams/team1/AIObjectives");
+   else
+      EditorTree.open("MissionGroup/Teams/team2/AIObjectives");
+   
+   AIEToolFrameSet.add(%tool);
+   %this.resetFrames();
+   return true;
+}
+
+function AIEFrameSetDlg::removeTool(%this, %tool)
+{
+   AIEToolFrameSet.remove(%tool);
+   %this.resetFrames();
+}
+

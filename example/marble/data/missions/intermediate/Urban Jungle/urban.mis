@@ -1,0 +1,718 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+  new ScriptObject(MissionInfo) {
+         include = "1";
+         level = "22";
+         name = $Text::LevelName107;
+         time = "120000";
+         difficulty = "4";
+         startHelpText = $Text::LevelStartHelp107;
+         gameType = "SinglePlayer";
+         desc = "Its a jungle out there!";
+         type = "Intermediate";
+         hasEggIndex = "7";
+   };
+   new MissionArea(MissionArea) {
+      area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_intermediate.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 7.45949e-031 1.3684e-038";
+      fogVolume2 = "-1 1.07208e-014 8.756e-014";
+      fogVolume3 = "-1 5.1012e-010 2.05098e-008";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "-0.026242 -0.031545 0.999158 0.887938";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+   new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsIntermediateShape";   };   new Sun() {
+      direction = "0.545417 -0.358918 -0.757428";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.440000 0.440000 0.440000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./urban.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-38 -8.5 14";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-56 -19.5 14";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-18.5 -14 14";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "0 -0.5 4";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "2 -13.5 8";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "28 6.5 -2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-68 -23 20";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-56 -17 20";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-38 -17 18";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-14 -17 6";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-9 -6 4";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "0 3 4";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "24 -35 -6";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "32 -11 -6";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "44 -11 -6";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "44 -11 -6";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "68 25 -18";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "67 -8 -16";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "56 -13 -18";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "51 -2 -20";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "44 19 -16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "62 25 -20";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "56 -11 -6";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-4 -17 6";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "11 -2 6";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_gentleslope.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "21.5 -2 6";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "31.5 -12 6";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "30 -31.5 -4";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "22.5 -30 -6";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "28.5 -2 6";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "74 -7.5 -16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "56.5 12 -14";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "63.5 -2 -14";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "33.5 30 -12";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "32 31.5 -12";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "30.5 30 -12";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "62 -9.5 -16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "54.5 -8 -18";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "47.5 -2 -20";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "28 -0.5 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_tight_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "79.5 16 -16";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/intermediate_wide_curve.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "-83 -17 22";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "-83 -23 22";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "83 7 -16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "11 17 2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "28 33 -12";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "-15 -31 10";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "-50 -20 14";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "34 -34 -4";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "65 -11 -16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "27 -27 16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "HelicopterItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Trigger(Bounds) {
+      position = "-89.5 41.5 -21.5837";
+      rotation = "1 0 0 0";
+      scale = "179 83 247.466";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new Trigger() {
+      position = "-99.6667 52.1628 -20.0655";
+      rotation = "1 0 0 0";
+      scale = "90.4598 90.6029 18.3236";
+      hidden = "0";
+      dataBlock = "OutOfBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new Item() {
+      position = "-2.01179 -8.92377 31.9923";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "1.5308 -5.07765 32.0406";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "60.8952 13.124 8.52161";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "64.7587 17.201 8.53144";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "70.9778 15.1011 31.9171";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "HelicopterItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "46.5026 -11.38 -0.553632";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "34.6709 -10.8193 -0.407708";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "36.8347 7.96774 -1.93976";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+   };
+   new Item() {
+      position = "25.956 14.0496 63.8108";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EasterEggItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         easterEggIndex = "7";
+   };
+   new SpawnSphere() {
+      position = "-15.4086 -29.7216 14.7717";
+      rotation = "0.0818296 -0.0462782 0.995571 59.1983";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+   new SimGroup(check1) {
+
+      new Trigger(check1) {
+         position = "-4.05319 -14.4494 4.03827";
+         rotation = "0 0 1 90";
+         scale = "3.5 3 5";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+      new StaticShape() {
+         position = "-5.01749 -17.015 6.00851";
+         rotation = "0 0 1 88.8084";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SimGroup(check2) {
+
+      new Trigger(check2) {
+         position = "23.5683 -6.65241 -7.2803";
+         rotation = "0 0 1 90";
+         scale = "9 9 5";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+      new StaticShape() {
+         position = "18.9786 -10.9994 -5.99293";
+         rotation = "0 0 1 89.9544";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+

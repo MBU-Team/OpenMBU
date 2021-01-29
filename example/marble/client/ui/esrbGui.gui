@@ -1,0 +1,144 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(ESRBGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   
+   new GuiBitmapCtrl(ESRBlogo) {
+	   profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+	   position = isWidescreen()? "200 50" : "70 10";
+	   extent = "512 400";
+	   minExtent = "8 8";
+		bitmap = "./logo";
+	   visible = "1";
+	};  
+   
+//    new GuiMLTextCtrl(astart) {
+//       profile = "TextButtonProfile";
+//       horizSizing = "center";
+//       vertSizing = "top";
+//       position = "0 397";
+//       extent = "640 100";
+//       minExtent = "50 34";
+//       visible = "1";
+//       text = "<just:center>" @ $Text::PressAToStart;
+//       maxLength = "255";
+//    };
+//    
+   new GuiMLTextCtrl(ESRBText) {
+      profile = "TextHeadingSmallProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWidescreen()? "420 530" : "120 360";
+      extent = "440 250";
+      minExtent = "50 34";
+      visible = 0;
+      text = "<just:center>" @ $Text::ESRBWarning @ "\n";
+      maxLength = "255";
+   };
+};
+//--- OBJECT WRITE END ---
+
+function ESRBGui::show(%this)
+{
+   RootGui.setTitle("");
+   RootGui.setA($Text::PressAToStart);
+   
+   if (getRegion() $= "na_all")
+      ESRBText.visible = true;
+   else
+      ESRBText.visible = false;
+   
+//    if (isPCBuild() & isEnglish()) ESRBText.visible = true;
+      
+   // get rid of any dialogs
+   if (XMessagePopupDlg.isAwake())
+      XMessagePopupDlg.remove();
+      
+   clientUnlockController();
+   
+   // in this gui, we wait to process accepted invites until user hits A, so
+   // disable invite event interception
+   error("ESRBGui: disabling automatic invite processing");
+   $XBLive::InviteProcessingEnabled = false;
+     
+   // Update the sign-in state here
+   XBLiveUpdateSigninState();
+   
+   %this.doMissionCleanup();
+}
+
+function ESRBGui::hide(%this)
+{
+   // enable automatic invite processing.  in all parts of the game except this ui,
+   // accepted invites are processed as soon as they are received
+   error("ESRBGui: enabling automatic invite processing");
+   $XBLive::InviteProcessingEnabled = true;
+}
+
+function ESRBGui::doMissionCleanup(%this)
+{
+   if ($EnableFMS)
+   {
+      // Delete everything
+      if (isObject($ServerGroup))
+         $ServerGroup.delete();
+      $ServerGroup = new SimGroup(ServerGroup);
+      
+      if (isObject(MissionGroup))
+         MissionGroup.delete();
+      
+      if (isObject(MissionCleanup))
+         MissionCleanup.delete();
+   
+      // Flip back to SinglePlayerMode
+      // The current mission should still be unhidden
+      setSinglePlayerMode(true);
+   }
+   
+   commandToServer('SetWaitState');
+}
+
+function ESRBGui::onA(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   // we now know what controller they are using, require them to be signed in on it
+   %port = Canvas.getLastDeviceInst();
+   XBLiveSetSignInPort(%port); 
+   
+   if (!XBLiveIsSignedIn(%port))
+   {
+      // sign in, chump
+      XBLiveShowSigninUI();
+      // JMQ: disabled using the callback to autoadvance after sign in, the UI flow is kind of weird
+      //$Client::SignInCompleteCallback = "ESRBGui.onSignInComplete();";
+      return true;   
+   }
+   
+   // signed in
+   %this.onSignInComplete();
+      
+   return true;
+}
+
+function ESRBGui::onSignInComplete(%this)
+{
+   %port = XBLiveGetSignInPort();
+   if (XBLiveIsSignedIn(%port)) 
+   {
+      // signed in
+      clientSetSigninPort(%port); // this will load their profile, savegame state, and lock the controller
+      RootGui.setContent(MainMenuGui);
+      
+      // process invites for the sign in port.  does nothing if no invite is available
+      // for the specified port
+      XBLiveCheckForInvite(%port);
+   }
+}

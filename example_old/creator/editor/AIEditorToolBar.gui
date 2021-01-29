@@ -1,0 +1,90 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(AIEditorToolBar) {
+	profile = "GuiModelessDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new GuiControl() {
+		profile = "GuiContentProfile";
+		horizSizing = "width";
+		vertSizing = "bottom";
+		position = "0 0";
+		extent = "640 30";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+
+		new GuiCheckBoxCtrl(AIEditorObjectivesTree1CheckBox) {
+			profile = "GuiRadioProfile";
+			horizSizing = "left";
+			vertSizing = "bottom";
+			position = "290 5";
+			extent = "114 20";
+			minExtent = "8 8";
+			visible = "1";
+			command = "AIEditorObjectivesTree1CheckBox.setTreeGui(1);";
+			helpTag = "0";
+			text = "Objectives Team 1";
+		};
+		new GuiCheckBoxCtrl(AIEditorObjectivesTree2CheckBox) {
+			profile = "GuiRadioProfile";
+			horizSizing = "left";
+			vertSizing = "bottom";
+			position = "405 5";
+			extent = "114 20";
+			minExtent = "8 8";
+			visible = "1";
+			command = "AIEditorObjectivesTree2CheckBox.setTreeGui(2);";
+			helpTag = "0";
+			text = "Objectives Team 2";
+		};
+		new GuiCheckBoxCtrl(AIEditorObjectivesInspectorCheckBox) {
+			profile = "GuiRadioProfile";
+			horizSizing = "left";
+			vertSizing = "bottom";
+			position = "520 5";
+			extent = "114 20";
+			minExtent = "8 8";
+			visible = "1";
+			command = "if($ThisControl.getValue()) AIEFrameSetDlg.addTool(EditorToolInspectorGui); else AIEFrameSetDlg.removeTool(EditorToolInspectorGui);";
+			helpTag = "0";
+			text = "Objectives Inspector";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+function AIEditorToolBar::init(%this)
+{
+}
+
+function AIEditorObjectivesTree1CheckBox::setTreeGui(%this, %team)
+{
+   $AIEditor::inspectTeam = %team;
+   AIEditorObjectivesTree2CheckBox.setValue(false);   
+   
+   if($ThisControl.getValue())
+      %isSet = AIEFrameSetDlg.addTool(EditorToolTreeViewGui); 
+   else
+      %isSet = AIEFrameSetDlg.removeTool(EditorToolTreeViewGui);
+      
+   $ThisControl.setValue(%isSet);   
+}
+
+function AIEditorObjectivesTree2CheckBox::setTreeGui(%this, %team)
+{
+   $AIEditor::inspectTeam = %team;
+   AIEditorObjectivesTree1CheckBox.setValue(false);   
+   
+   if($ThisControl.getValue())
+      %isSet = AIEFrameSetDlg.addTool(EditorToolTreeViewGui); 
+   else
+      %isSet = AIEFrameSetDlg.removeTool(EditorToolTreeViewGui);
+      
+   $ThisControl.setValue(%isSet);   
+}

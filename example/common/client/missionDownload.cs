@@ -20,6 +20,8 @@
 
 function clientCmdMissionStartPhase1(%seq, %missionName, %musicTrack)
 {
+   $missionDownloadStart = getRealTime();
+   
    // These need to come after the cls.
    echo ("*** New Mission: " @ %missionName);
    echo ("*** Phase 1: Download Datablocks & Targets");
@@ -38,6 +40,9 @@ function onDataBlockObjectReceived(%index, %total)
 
 function clientCmdMissionStartPhase2(%seq,%missionName)
 {
+   echo("Mission phase completed in:" SPC (getRealTime() - $missionDownloadStart));
+   $missionDownloadStart = getRealTime();
+   
    onPhase1Complete();
    echo ("*** Phase 2: Download Ghost Objects");
    purgeResources();
@@ -63,23 +68,22 @@ function onGhostAlwaysObjectReceived()
 
 function clientCmdMissionStartPhase3(%seq,%missionName)
 {
+   echo("Mission phase completed in:" SPC (getRealTime() - $missionDownloadStart));
+   $missionDownloadStart = getRealTime();
    onPhase2Complete();
-   StartClientReplication();
-   StartFoliageReplication();
    echo ("*** Phase 3: Mission Lighting");
    $MSeq = %seq;
    $Client::MissionFile = %missionName;
 
-   // Need to light the mission before we are ready.
-   // The sceneLightingComplete function will complete the handshake 
-   // once the scene lighting is done.
-   if (lightScene("sceneLightingComplete", ""))
-   {
-      error("Lighting mission....");
-      schedule(1, 0, "updateLightingProgress");
-      onMissionDownloadPhase3(%missionName);
-      $lightingMission = true;
-   }
+   onMissionDownloadPhase3(%missionName);
+   registerLights();
+   onPhase3Complete();
+   // The is also the end of the mission load cycle.
+   onMissionDownloadComplete();
+   commandToServer('MissionStartPhase3Ack', $MSeq);
+   
+   echo("Mission phase completed in:" SPC (getRealTime() - $missionDownloadStart));
+   $missionDownloadStart = getRealTime();
 }
 
 function updateLightingProgress()
@@ -90,7 +94,7 @@ function updateLightingProgress()
 }
 
 function sceneLightingComplete()
-{
+{  
    echo("Mission lighting done");
    onPhase3Complete();
    

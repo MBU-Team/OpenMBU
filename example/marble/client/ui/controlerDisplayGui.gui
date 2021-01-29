@@ -1,0 +1,184 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(ControlerDisplayGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+      helpTag = "0";
+
+   new GuiWindowCtrl(controllerBG) {
+      profile = "bgBoxProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+//       position = isWidescreen() ? "257 104" : "17 61";
+//       extent = isWidescreen() ? "750 467" : "610 347";
+      position = isWidescreen() ? "257 104" : "101 61";
+      extent = isWidescreen() ? "750 467" : "467 347";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+      
+      new GuiControl(Controller) {
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+// 			position = isWidescreen() ? "180 120" : "0 28";
+			position = isWidescreen() ? "22 20" : "-112 -36";
+	      extent = "712 480";
+	      minExtent = "8 2";
+	      visible = "1";
+	         helpTag = "0";
+	
+	      new GuiBitmapCtrl(PauseControllerBG) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "right";
+	         vertSizing = "bottom";
+	         position = "142 0";
+	         extent = "392 418";
+	         minExtent = "8 2";
+	         visible = "1";
+	         bitmap = "./xbox/bgController";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+	      
+	      new GuiBitmapCtrl(PauseControllerImage) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "right";
+	         vertSizing = "bottom";
+	         position = "213 50";
+	         extent = "256 320";
+	         minExtent = "8 2";
+	         visible = "1";
+	         bitmap = "./xbox/xbox_controller";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+	      
+	      new GuiControl(ControllerTags) {
+		      profile = "GuiDefaultProfile";
+	         horizSizing = "right";
+	         vertSizing = "bottom";
+	         position = "0 0";
+		      extent = "712 480";
+		      minExtent = "8 2";
+		      visible = "1";
+		         helpTag = "0";
+	
+		      new GuiTextCtrl(gpLT) {
+		         profile = "ControllerTextRightProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "-77 148" : "-49 129";
+		         extent = "320 36";
+						text = $Text::Jump;
+		      };
+		      new GuiTextCtrl(gpBB) {
+		         profile = "ControllerTextRightProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+		         position = isWidescreen() ? "-44 96 " : "-38 93 "; 
+		         extent = "320 36";
+						text = $Text::Blast;
+		      };
+		      new GuiTextCtrl(gpRT) {
+		         profile = "ControllerTextRightProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "-16 51 " : "-13 54 ";
+		         extent = "320 36";
+						text = $Text::UseItems;
+		      };
+	// 	      new GuiTextCtrl(gpRB) {
+	// 	         profile = "ControllerTextProfile";
+	// 	         horizSizing = "right";
+	// 	         vertSizing = "bottom";
+	// 	         position = isWidescreen() ? "349 61" : "173 25";
+	// 	         extent = "320 36";
+	// 					text = $Text::Blast;
+	// 	      };
+		      new GuiTextCtrl(gpY) {
+		         profile = "ControllerTextProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "355 89  " : "354 91  ";
+		         extent = "320 36";
+						text = $Text::ShowScores;
+		      };
+		      new GuiTextCtrl(gpB) {
+		         profile = "ControllerTextProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "390 125 " : "387 127 ";
+		         extent = "320 36";
+						text = $Text::UseItems;
+		      };
+		      new GuiTextCtrl(gpA) {
+		         profile = "ControllerTextProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "417 166 " : "414 167 ";
+		         extent = "320 36";
+						text = $Text::Jump;
+		      };
+		      new GuiTextCtrl(gpX) {
+		         profile = "ControllerTextProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "410 249 " : "407 250 ";
+		         extent = "320 36";
+						text = $Text::Blast;
+		      };
+		      new GuiTextCtrl(gpRS) {
+		         profile = "ControllerTextProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "377 289 " : "375 290 ";
+		         extent = "320 36";
+						text = $Text::Camera;
+		      };
+		      new GuiTextCtrl(gpLS) {
+		         profile = "ControllerTextProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+					position = isWidescreen() ? "323 323 " : "321 324 ";
+		         extent = "320 36";
+						text = $Text::MoveMarble;
+		      };
+		   };
+	   };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function ControlerDisplayGui::show( %this, %backGui )
+{
+   if (%backGui !$= "")
+      %this.backGui = %backGui;
+      
+   if (%this.backGui $= "")
+      %this.backGui = HelpAndOptionsGui;
+   
+   RootGui.setA( $Text::OK );
+   RootGui.setTitle( $Text::AboutBasics );
+}
+
+//------------------------------------------------------------------------------
+
+function ControlerDisplayGui::onA( %this )
+{
+   RootGui.setContent( %this.backGui );
+}
+
+function ControlerDisplayGui::onB( %this )
+{
+   RootGui.setContent( %this.backGui );
+}

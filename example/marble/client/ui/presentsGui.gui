@@ -1,0 +1,100 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiBitmapCtrl(presentsGui) {
+   profile = "GuiContentProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   bitmap = "./xbox/blue.jpg";
+   wrap = "0";
+      checkSched = "3389";
+      qLineCount = "0";
+      done = "0";
+      helpTag = "0";
+      useVariable = "0";
+      tile = "0";
+      skip = "0";
+
+   new GuiControl() {
+      profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 8";
+      visible = "1";
+
+      new GuiBitmapCtrl() {
+         profile = "SplashLoadingProfile";
+         horizSizing = "center";
+         vertSizing = "center";
+         position = "69 99";
+         extent = "500 270";
+         minExtent = "8 8";
+         visible = "1";
+         bitmap = "./gg_logo";
+         wrap = "0";
+            helpTag = "0";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+//new GuiFadeinBitmapCtrl(presentsGui) {
+//   profile = "GuiInputCtrlProfile";
+//   horizSizing = "right";
+//   vertSizing = "bottom";
+//   position = "0 0";
+//   extent = "640 480";
+//   minExtent = "8 8";
+//   visible = "1";
+//   helpTag = "0";
+//   bitmap = "~/client/ui/GGprototype";
+//   wrap = "0";
+//   fadeinTime = "125";
+//   waitTime   = "450000";
+//   fadeoutTime = "125";
+//};
+
+function presentsGui::onWake(%this)
+{
+   presentsGui.done = false;
+   presentsGui.skip = false;
+   //if(!$presentationRunBefore)
+   //{
+   //   $presentationRunBefore = true;
+   //}
+   cancel(%this.checkSched);
+   %this.checkSched = %this.schedule(100, checkPresentsDone);
+}   
+
+function presentsGui::onSleep(%this)
+{
+   cancel(%this.checkSched);
+}
+   
+//-------------------------------------
+//function presentsGui::click()
+//{
+//   presentsGui.skip = true;
+//}
+//
+//function presentsGui::onAction()
+//{
+//   presentsGui.skip = true;
+//}
+
+function presentsGui::checkPresentsDone(%this)
+{
+   //if( ( presentsGui.skip || presentsGui.done ))
+   if( presentsGui.done )
+   {
+      //$PresentationIsDone = true;
+      RootGui.setContent(MainMenuGui);
+   }
+   else
+      %this.checkSched = %this.schedule(100, checkPresentsDone);
+}
+
+

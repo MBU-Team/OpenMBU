@@ -115,7 +115,27 @@ function debugMetricsCallback()
           "  NO:  " @ $Metrics::numObjectsRendered;
 }
 
+function marbleCallback()
+{
+   return $testCount @ " V: " @ $MarbleVelocity @ " A: " @ $MarbleA @ " O: " @ $MarbleO @ " AR: " @ $Marbleal;
+}
 
+package Metrics
+{
+
+function onFrameAdvance(%time)
+{
+   Parent::onFrameAdvance(%time);
+   if(TextOverlayControl.callback !$= "")
+   {
+      eval("$frameVal = " @ TextOverlayControl.callback @ ";");
+      TextOverlayControl.setText($frameVal);
+   }
+}
+
+};
+
+activatePackage(Metrics);
 
 function metrics(%expr)
 {
@@ -138,7 +158,7 @@ function metrics(%expr)
       case "texture":   
          GLEnableMetrics(true);
          %cb = "textureMetricsCallback()";
-
+      case "marble":    %cb = "marbleCallback()";
       case "video":     %cb = "videoMetricsCallback()";
       case "vehicle":   %cb = "vehicleMetricsCallback()";
       case "water":     %cb = "waterMetricsCallback()";
@@ -147,7 +167,7 @@ function metrics(%expr)
    if (%cb !$= "")
    {
       Canvas.pushDialog(FrameOverlayGui, 1000);
-      TextOverlayControl.setValue(%cb);
+      TextOverlayControl.callback = %cb;
    }
    else
    {

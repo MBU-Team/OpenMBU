@@ -1,0 +1,926 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(FindGameGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+
+   new GuiControl(FindGameColumns)
+	{
+	   profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 8";
+      visible = 0;
+      
+	   new GuiWindowCtrl(fgbox) {
+	      profile = "bgBoxProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "54 81";
+	      extent = "560 257";
+	      maxLength = "255";
+	      resizeWidth = "0";
+	      resizeHeight = "0";
+	      canClose = "0";
+	      canMinimize = "0";
+	      canMaximize = "0";
+	      canMove = "0";
+	      minSize = "50 50";
+	      
+		   new GuiBitmapCtrl(fgMoreArrow) {
+			   profile = "GuiDefaultProfile";
+			   horizSizing = "relative";
+			   vertSizing = "top";
+			   position = "500 206";
+			   extent = "32 32";
+			   minExtent = "8 2";
+			   visible = "0";
+			   bitmap = "./xbox/downArrow";
+			   wrap = "0";
+			};
+      
+         new GuiTextListCtrl(FindGameServerList)
+		   {
+		      //profile = "ttTinyColorTextArrayProfile";
+		      profile = "FindGamesTextArrayProfile";
+		      setFirstResponder = "true";
+		      position = "21 25";
+		      extent = "517 340";
+		      autoResize = false; // don't try to resize to accommodate new rows - stay within extents
+		      rowsPerPage = 7;    // maximum number of rows to render per page
+		      minExtent = "8 8";
+		      enumerate = "0";
+		      resizeCell = "1";
+		      columns = "390 420 538 540 545 5"; // also see column indices below
+		      columnAligns = "0 0 0 0 0 0";
+		      columnBmps = "0 1 0 0 0 0";
+		      clipColumnText = "0";
+		      fitParentWidth = "0";
+		      noDuplicates = "false";
+		      iconPath = "marble/client/ui/xbox/";
+		      oneStar = "ping_1";
+		      twoStars = "ping_2";
+		      threeStars = "ping_3";
+		      fourStars = "ping_4";
+		      centerBmpsVert = true;
+		      centerBmpsHoriz = true;
+		      
+		      nameColumn = 5;
+		      playersColumn = 0;
+		      pingDisplayColumn = 1;
+		      // not displayed:
+		      pingColumn = 2; 
+		      xbliveColumn = 3; 
+		      pcResultIndexColumn = 4;
+		   };
+      };
+      
+	   new GuiWindowCtrl(FindGameServerInfoBG) {
+	      profile = "bgBoxProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "254 314";
+	      extent = "360 91";
+	      maxLength = "255";
+	      resizeWidth = "0";
+	      resizeHeight = "0";
+	      canClose = "0";
+	      canMinimize = "0";
+	      canMaximize = "0";
+	      canMove = "0";
+	      minSize = "50 50";
+	      				
+		   new GuiMLTextCtrl(FindGameServerInfo)
+		   {
+		      profile = "BigInfoTextProfile";
+		      position = "40 22";
+		      extent = "310 285";
+		      autoResize = false; // don't try to resize to accommodate new rows - stay within extents
+		      rowsPerPage = 10;    // maximum number of rows to render per page
+		      minExtent = "8 8";
+		      enumerate = "0";
+		      resizeCell = "1";
+		      columns = "5 116";
+		      columnAligns = "0 0";
+		      columnBmps = "0 0";
+		      clipColumnText = "0";
+		      fitParentWidth = "1";
+		      noDuplicates = "false";
+		   };   
+		};
+   };
+};
+
+// PC override function
+function onServerQueryStatus(%status, %msg, %value)
+{
+   if (%status !$= "done" && %status !$= "error")
+      return;
+      
+   eval($pcsearchcallback);
+}
+
+$pcsearchusefilters = 1;
+
+// PC override function
+function PC_XBLiveSearchForMatches(%gamemodefilter, %missionfilter, %maxplayersfilter, %skillFilter, 
+   %callback)
+{
+   $pcsearchcallback = %callback;
+   
+   // if we are a Xenon, we don't want any Xenons to respond to the Lan query, because we will 
+   // also get them from Xbox Live.  So set the no-xenon's flag (filter bit 6)
+   %filterFlags = 0;
+   if (!isPCBuild())
+      %filterFlags |= 1 << 6;
+      
+   queryLanServers(
+         1000,      // lanPort for local queries
+         0,          // Query flags
+         "any",      // gameTypes
+         "any",      // missionType
+         0,          // minPlayers
+         100,        // maxPlayers
+         100,        // maxBots
+         2,          // regionMask
+         1000,       // maxPing
+         0,          // minCPU
+         %filterFlags,// filterFlags
+         1           ,// Do clear the server info list
+         $pcsearchusefilters            // Use filters (LAN servers are normally not filtered)
+   );  
+}
+
+// ----------------------------------------------------------------------------
+
+function FindGameGui::setQuickMatch(%this, %quickMatch)
+{
+   if (%quickMatch $= "")
+      %this.quickMatch = false;
+   else
+      %this.quickMatch = %quickMatch;
+}
+
+function FindGameGui::show(%this, %quickMatch, %skipSearch)
+{
+   // quickmatch and skipsearch are optional parameters
+   %this.setQuickMatch(%quickMatch);
+      
+   // all controls hidden by default
+   %this.showCenterText(false);
+   %this.showTables(false);
+
+   %this.joiningGame = false;
+   
+   RootGui.setTitle($Text::JoinGame);
+   RootGui.setB($Text::Back);
+   
+   // maximum amount of time we'll spend waiting for QoS data
+   %this.pollTime = 5000;
+     
+   %this.pcSearchActive = false;
+   %this.xbliveSearchActive = false;
+   
+   // hide info box in ranked mode (so that host name isn't displayed - this is "recommended")
+   FindGameServerInfoBG.visible = !XBLiveIsRanked();
+   
+   GameMissionInfo.setMode(GameMissionInfo.MPMode);
+
+   if ($EnableFMS)
+   {
+      %missionIndex = GameMissionInfo.getCurrentIndex();
+   
+      if (%missionIndex == -1)
+         %missionIndex = 0;
+   
+      GameMissionInfo.selectMission(%missionIndex);
+   }
+      
+   if (%skipSearch $= "" || !%skipSearch)   
+      %this.startSearch();   
+}
+
+function FindGameGui::hide(%this)
+{
+   echo("cancelling poll");
+   XBLiveCancelQoSPoll();
+   cancel(%this.displaySched);
+}
+
+function FindGameGui::showCenterText(%this, %show)
+{
+   if (!%show)
+      RootGui.setCenterText("");
+}
+
+function FindGameGui::showTables(%this, %show)
+{
+   //FindGameServerList.visible = %show;
+   //FindGameServerInfo.visible = %show;
+   FindGameColumns.visible = %show;
+}
+
+function FindGameGui::setCenterText(%this,%text)
+{
+   RootGui.setCenterText(%text);
+}
+
+function FindGameServerList::onSelect(%this, %x, %y)
+{
+   // no-op in quickmatch mode
+   if (FindGameGui.quickMatch)
+      return;
+           
+   // don't play the sound unless the columns are visible 
+   // (we might be selecting new rows during QoS polling, which is not a user input)
+   if (FindGameColumns.visible)
+      alxPlay( AudioButtonOver );
+   
+   // in a GuiTextListCtrl, the %x parameter is thw row Id and %y is the row text
+   %rowText = %y;
+  
+   FindGameServerInfo.setText("");
+   
+   // if this is a PC result, don't display any info text
+   if (getField(%rowText, FindGameServerList.xbliveColumn) > 0)
+      return;
+   
+   %entry = XBLiveGetMatchResultsEntry(%x);
+   
+   if (%entry $= "")
+      return;
+      
+   //FindGameGui.updatePingIcon(%x);
+   
+   // host
+   %name = getField(%entry, 0);
+   // gameMode
+   %gameModeId = getField(%entry, 5);
+   // map (world)
+   %missionId = getField(%entry, 6);
+      
+   // maxplayers
+   %maxPlayers = getField(%entry, 2);
+   // players
+   %players = getField(%entry, 3);
+   
+   FindGameGui.setInfoText(%name, %gameModeId, %missionId, %players, %maxPlayers);
+}
+
+function FindGameGui::setInfoText(%this, %hostGamerName, %gameModeId, %missionId, %numPlayers, %maxPlayers, %playerList)
+{
+	
+	if (%playerList !$= "")
+	   %playersText = $Text::FGG_Players @ ":" @ %playerList;
+	
+	%missionDisplay = GameMissionInfo.getMissionDisplayName(%missionId);
+	
+   FindGameServerInfo.setText(
+      $Text::FGG_Host @ ":" @ %hostGamerName SPC "\n" @ 
+      %playersText);
+}
+
+function FindGameGui::onSearchComplete(%this,%type)
+{
+   if (!%this.isAwake())
+   {
+      echo("FindGameGui not awake, search aborted");
+      return;
+   }
+   
+   if (%type $= "xblive")
+      %this.xbliveSearchActive = false;
+   else if (%type $= "pc")
+      %this.pcSearchActive = false;
+   
+   // if a search is still active, wait for it to finish
+   if (%this.xbliveSearchActive || %this.pcSearchActive)
+   {
+      echo("Search still active, waiting for finish");
+      return;
+   }
+   
+   // process xblive results.  on a PC this won't happen so we set the raw count to 0
+   if (isPCBuild())
+      %rawCount = 0;
+   else
+      %rawCount = XBLiveGetMatchResultsCount();
+      
+   echo(%rawCount @ " games returned from Live.");
+      
+   %count = 0;
+   for(%i = 0; %i < %rawCount; %i++)
+   {
+      %this.poll[%i] = 0;
+      %entry = XBLiveGetMatchResultsEntry(%i);
+      //echo(%entry);
+      if (%entry $= "")
+         continue;
+         
+      // filter based on demo status
+      %selfDemo = isDemoLaunch();
+      %otherDemo = getField(%entry, 7);
+      
+      // JMQ: shouldn't need this, demo filtering is done at xblive query level, but leave it 
+      // here just in case.
+      // filter if one of is is a demo and other other isn't
+      if (%selfDemo ^ %otherDemo)
+      {
+         echo("filtering out server due to demo status:" SPC %otherDemo SPC %selfDemo);
+         continue;
+      }
+      
+      // JMQ: don't need this, protocol filtering is done at xblive query level
+      // filter if protocol version does not match
+      //%otherVer = getField(%entry, 8);
+      //%selfVer = getGameProtocolVersion();
+      //if (%otherVer != %selfVer)
+      //{
+      //   echo("filtering out server due to protocol version:" SPC %otherVer SPC %selfVer);
+      //   continue;
+      //}
+
+      // language filter
+      if (%this.langFilter)
+      {
+         %otherLang = getField(%entry, 8);
+         %selfLang = getLanguageCode();
+         if ($Test::MyLang !$= "")
+            %selfLang = $Test::MyLang;
+         if (%otherLang != %selfLang)
+         {
+            echo("filtering out server due to different language:" SPC %otherLang SPC %selfLang);
+            continue;
+         }
+      }
+      
+      // zone filter
+      if (%this.zoneFilter)
+      {
+         %otherZone = getField(%entry, 9);
+         %selfZone = XBLiveGetGamerZone(XBLiveGetSignInPort());
+         if ($Test::MyZone !$= "")
+            %selfZone = $Test::MyZone;
+         if (%otherZone != %selfZone)
+         {
+            echo("filtering out server due to different zone:" SPC %otherZone SPC %selfZone);
+            continue;
+         }
+      }
+      
+      // mission filter
+      %missionId = getField(%entry, 6);
+      if (%this.missionfilter != -1 && %missionId != %this.missionfilter)
+      {
+         echo("filtering out server: not desired mission:" SPC %this.missionfilter SPC %missionId);
+         continue;
+      }
+            
+      // player count filter
+      %maxPlayers = getField(%entry, 2);
+      %players = getField(%entry, 3);
+      
+      if (%this.maxplayersfilter != -1 && %maxPlayers > %this.maxplayersfilter)
+      {
+         echo("filtering out server: exceeds max players:" SPC %this.maxplayersfilter SPC %maxPlayers);
+         continue;
+      }
+      
+      if (%players >= %maxPlayers)
+      {
+         echo("filtering out server: full");
+         continue;
+      }
+      
+      // done manual filtering, increment count since this is an unfiltered server
+      %count++;
+      
+      // ping not valid yet due to QoS probe delay. just set it to something
+      // ridiculous and don't set a game icon.
+      %ping = 100000;
+      %gameIcon = "";
+      
+      // add with mission as main string Identifier
+      %missionId = getField(%entry, 6);
+      %missionName = GameMissionInfo.getMissionDisplayName(%missionId);
+      
+      // maxplayers
+      %maxPlayers = getField(%entry, 2);
+      // players
+      %players = getField(%entry, 3);
+      
+      %playerStr = "\c1" @ %players SPC $Text::Slash SPC %maxPlayers;
+      
+      %rowText = %playerStr TAB %gameIcon TAB %ping TAB "0" TAB "0" TAB "\c1" @ %missionName; // 0 == is xblive result
+      FindGameServerList.addRow(%i, %rowText);
+      %this.updatePingIcon(%i);
+      XBLiveAddPolledHost(%i); // add to list of hosts to poll for QoS
+   }
+   
+   // now, process PC query results in PC builds or in xbox non-release builds
+   if (isPCBuild() || !isRelease())
+   {
+      %sc = getServerCount();
+      echo(%sc @ " games returned from LAN search.");
+      for (%i = 0; %i < %sc; %i++)
+      {
+         // no filtering in PC build, we just add everything
+         setServerInfo(%i);
+         %score = 0;
+         %icon = 0;
+         %playerStr = "\c1" @ $ServerInfo::PlayerCount SPC $Text::Slash SPC $ServerInfo::MaxPlayers;
+         %ping = $ServerInfo::Ping;
+         // for testing
+         //%ping = 120;
+         %gameIcon = "";
+         %rowText =  %playerStr TAB %gameIcon TAB %ping TAB "1" TAB %i TAB "\c1" @ "LAN:" SPC $ServerInfo::Name; // 1 == is pc result
+         FindGameServerList.addRow(%count, %rowText);
+         %this.updatePingIcon(%count);
+         %count++;
+      }
+   }
+   
+   fgMoreArrow.visibility = (%count > FindGameServerList.rowsPerPage) ? 1 : 0;
+   
+   if (%count == 0)
+   {
+      RootGui.displayLoadingAnimation();
+      //clientStopPulseAnim();
+      RootGui.setX($Text::CreateMatch);
+      RootGui.setB($Text::Back);
+      %this.setCenterText($Text::ErrorNoGames);
+      return;
+   }
+      
+   // if we're a PC build just display the results now
+   if (isPCBuild())
+   {
+      RootGui.displayLoadingAnimation();
+      %this.displayResults();
+   }
+   else
+   {
+      // start checking for QoS data.
+      XBLiveStartQoSPoll();
+      // schedule the results to display when the poll time expires
+      cancel(%this.displaySched);
+      %this.displaySched = %this.schedule(%this.polltime, displayResults);
+   }
+}
+
+function FindGameGui::getGameIcon(%this, %ping)
+{
+      %gameIcon = "";
+      if (%ping < 70)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.fourStars;
+      else if (%ping < 100)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.threeStars;
+      else if (%ping < 130)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.twoStars;
+      else if (%ping < 160)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.oneStar;
+      else 
+         // no game icon for shitty servers
+         %gameIcon = "";
+      return %gameIcon;
+}
+
+function FindGameGui::updatePingIcon(%this, %i, %ping)
+{
+   %rowText = FindGameServerList.getRowTextById(%i);
+   if (%rowText $= "")
+   {
+      error("updatePingIcon: error, empty row text");
+      return;
+   }
+   
+   // if we have a new ping, set that value in the row.  otherwise 
+   // grab the previously stored ping value from the row.
+   if (%ping !$= "")
+      %rowText = setField(%rowText, FindGameServerList.pingColumn, %ping);
+   else
+      %ping = getField(%rowText, FindGameServerList.pingColumn);
+   
+   // now update the icon
+   %gameIcon = %this.getGameIcon(%ping);
+   %rowText = setField(%rowText, FindGameServerList.pingDisplayColumn, %gameIcon);
+   FindGameServerList.setRowById(%i, %rowText);
+}
+
+function FindGameGui::displayResults(%this)
+{
+   // return if we aren't awake (handle case where they moved to another gui but 
+   // poll was still active)
+   if (!%this.isAwake())
+      return;
+            
+   cancel(%this.displaySched);
+   RootGui.displayLoadingAnimation();
+        
+  %shouldDisplay = FindGameServerList.rowCount() > 0;
+  
+   // we should only do this if the tables are not yet visible - we don't want to be 
+   // resorting the list while the user is moving around on it.
+   if (%shouldDisplay && !FindGameColumns.visible)
+   {  
+      // sort the servers and set the selected row
+      echo("Sorting results by ping");
+      FindGameServerList.sortNumerical(FindGameServerList.pingColumn,true); // sort by ping ascending      
+      FindGameServerList.setSelectedRow(0);
+      FindGameServerList.setTopRow(0);
+   
+      // if we're in quickmatch mode, join the first game and return
+      if (%this.quickMatch) 
+      {
+         %this.joinGame(FindGameServerList.getSelectedId());
+         return;
+      }
+
+      // optimatch mode: show the server tables and nav buttons
+      //clientStopPulseAnim();
+      %this.showCenterText(false);
+      %this.showTables(true);
+   
+      RootGui.setX($Text::CreateMatch);
+      // no gamercard option in ranked mode, because host name is not displayed
+      if (!XBLiveIsRanked())
+         RootGui.setY($Text::GamerCard);
+      else
+         RootGui.setY("");
+      RootGui.setB($Text::Back);
+      RootGui.setA($Text::Join);
+   }
+}
+
+function FindGameGui::startSearch(%this)
+{
+   %this.searching = true;
+   cancel(%this.displaySched);
+
+   FindGameServerList.clear();
+   %this.showTables(false);
+   %this.setCenterText($Text::SearchingForGames);
+   // %JMQ: animation
+   //clientStartPulseAnim(FindGameCenterText, 2000, 20000);
+   RootGui.displayLoadingAnimation( "center" );
+   
+   if (%this.quickMatch)
+   {
+      // disable filters
+      %this.zoneFilter = 0; // any zone
+      %this.langFilter = 0; // any language 
+      %this.gamemodefilter = 0; // always 0
+      %this.missionfilter = -1; // any mission
+      %this.maxplayersfilter = -1; // any number of players
+   }
+   else
+   {
+      %this.zoneFilter = $pref::shell::zoneFilter;
+      %this.langFilter = $pref::shell::langFilter;
+      %this.gamemodefilter = 0; // always 0
+      
+      %this.missionfilter = -1; // default is no mission filter
+      %filterPref = $pref::shell::missionFilter;
+      if (%filterPref > 0)
+      {
+         // just in case...
+         if (GameMissionInfo.getMode() !$= GameMissionInfo.MPMode)
+         {
+            GameMissionInfo.setMode(GameMissionInfo.MPMode);
+            GameMissionInfo.setDefaultMission();
+         }
+         
+         // get the Id of the mission that we are filtering for.  
+         %filterPref--; // so that we can index the zero-based mission id list
+         %list = GameMissionInfo.getMissionIdList();
+         %id = getField(%list, %filterPref);
+         if (%id !$= "")
+         {
+            %this.missionfilter = %id;
+         }
+      }
+      
+      %this.maxplayersfilter = -1; // default is no max players filter
+      %filterPref = $pref::shell::maxPlayersFilter;
+      if (%filterPref > 0)
+      {
+         // add one to get the actual number of players that we are filtering on
+         %this.maxplayersfilter = %filterPref + 1;
+      }
+   }
+
+   echo("searching...using filters:");
+   echo("  gamemode:  " SPC %this.gamemodefilter);
+   echo("  mission:   " SPC %this.missionfilter);
+   echo("  maxplayers:" SPC %this.maxplayersfilter);
+   echo("  zone:      " SPC %this.zoneFilter);   
+   echo("  lang:      " SPC %this.langFilter);
+   
+   RootGui.setX("");
+   RootGui.setY("");
+   RootGui.setA("");
+   
+   %this.continueSearch();
+}
+
+function FindGameGui::continueSearch(%this)
+{
+   //error("FindGameGui::continueSearch(): Hacking filter settings");
+   //%this.gamemodefilter = 0;
+   //%this.missionfilter = -1;
+   //%this.maxplayersfilter = -1;
+   
+   if (!isPCBuild())
+   {
+      XBLiveCancelQoSPoll();
+      
+      %this.xbLiveSearchActive = true;
+      // running on xbox, do a live search and a PC search in non release builds
+      XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, %this.maxplayersfilter, 
+         -1, "FindGameGui.onSearchComplete(xblive);");
+      
+      if (!isRelease())   
+      {
+         %this.pcSearchActive = true;
+         PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 
+            %this.maxplayersfilter, -1, "FindGameGui.onSearchComplete(pc);");
+      }
+   }
+   else
+   {
+      // pc build, do PC search only
+      %this.pcSearchActive = true;
+      PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 
+         %this.maxplayersfilter, -1, "FindGameGui.onSearchComplete(pc);");
+   }
+}
+
+function FindGameGui::getHostName(%this, %index)
+{
+   return getField(XBLiveGetMatchResultsEntry(%index), 0);
+}
+
+function FindGameGui::getGameModeName(%this, %index)
+{
+   return GameMissionInfo.getGameModeDisplayName(getField(XBLiveGetMatchResultsEntry(%index), 5));
+}
+
+function FindGameGui::joinGame(%this, %index, %invited)
+{  
+   cancel(%this.displaySched);
+   
+   // cancel active QoS probes now
+   XBLiveCancelQoSPoll();
+   
+   // if this is a PC result, just join the game pronto
+   %rowText = FindGameServerList.getRowTextById(%index);
+   //error("join row text:" SPC %rowText);
+   if (!%invited && %rowText !$= "")
+   {
+      %isPC = getField(%rowText,FindGameServerList.xbliveColumn);
+      //error("isPC:" SPC %isPC);
+      if (%isPC)
+      {
+         echo("Joining PC game...");
+         %realIndex = getField(%rowText, FindGameServerList.pcResultIndexColumn);
+         
+         if(!setServerInfo(%realIndex))
+         {
+            error("   FAILED...invalid index");
+            return;
+         }
+   
+         if (%this.quickMatch)
+            $disconnectGui = MultiPlayerGui;
+         else
+            $disconnectGui = FindGameGui;
+           
+         // turn off live stuff since we're connecting to PC
+         XBLiveSetEnabled(false);
+            
+         %this.joiningGame = true;
+         RootGui.setContent(MissionLoadingGui);
+         if ($EnableFMS)
+            establishConnection($ServerInfo::Address, true);
+         else
+            connectToServer($ServerInfo::Address);
+         return;
+      }
+   }
+   
+   if (!%invited)
+   {
+      %entry = XBLiveGetMatchResultsEntry(%index);
+      if (%entry $= "")
+      {
+         error("not joining game because there is no current selection");
+         %this.onConnectError($Text::ErrorCannotConnect);
+         return;
+      }
+   }
+   
+   if (!%this.isAwake())
+      RootGui.setContent(%this,false,true);
+   
+   RootGui.setA("");
+   RootGui.setB("");
+   RootGui.setY("");
+   RootGui.setX("");
+
+   %this.setCenterText($Text::JoiningGame);
+   %this.showCenterText(true);
+   %this.showTables(false);
+   // %JMQ animation
+   //clientStartPulseAnim(FindGameCenterText, 2000, 20000);
+   RootGui.displayLoadingAnimation( "center" );
+         
+   %this.joiningGame = true;
+     
+   $Client::Invited = %invited;
+   
+   cancel(%this.joinSched);
+   %this.joinSched = %this.schedule(750, continueJoin, %index);
+}
+
+function FindGameGui::continueJoin(%this, %index)
+{
+   if (!XBLiveConnect(%index, $Client::Invited, "FindGameGui.onConnectComplete();"))
+      // doh!
+      %this.onConnectComplete();
+}
+
+function FindGameGui::onConnectComplete(%this)
+{
+   RootGui.displayLoadingAnimation();
+   // XBLiveConnect sets $XBLive::secureHostAddress appropriately
+   if ($XBLive::secureHostAddress $= "")
+   {
+      %this.onConnectError($Text::ErrorCannotConnect);
+      return false;
+   }
+   
+   if (%this.quickMatch || $Client::Invited)
+      $disconnectGui = MultiPlayerGui;
+   else
+      $disconnectGui = FindGameGui;
+
+   RootGui.setContent(MissionLoadingGui);
+   if ($EnableFMS)
+      establishConnection($XBLive::secureHostAddress, true, $Client::Invited);
+   else
+      connectToServer($XBLive::secureHostAddress, $Client::Invited);
+}
+
+function FindGameGui::onConnectError(%this, %message)
+{
+   if (!%this.isAwake())
+      // better wake ourselves up
+      RootGui.setContent(%this,false,true);
+      
+   %this.showCenterText(true);
+   %this.showTables(false);
+   
+   RootGui.displayLoadingAnimation();
+   //clientStopPulseAnim();
+   %this.setCenterText(%message);
+
+   %this.joiningGame = false;   
+   RootGui.setX($Text::CreateMatch);
+   RootGui.setY("");
+   RootGui.setB($Text::Back);
+   RootGui.setA("");
+}
+
+function FindGameGui::onA(%this)
+{
+   if (!RootGui.AEnabled() || %this.joiningGame)
+      return;
+      
+   alxPlay( AudioButtonDown );
+   %this.joinGame(FindGameServerList.getSelectedId());
+   return true;
+}
+
+function FindGameGui::onB(%this)
+{
+   if (!RootGui.BEnabled() || %this.joiningGame)
+      return;
+      
+   alxPlay( AudioButtonDown );
+   
+   if (%this.quickMatch)
+      RootGui.setContent(MultiPlayerGui);
+   else
+      RootGui.setContent(OptimatchGui);
+      
+   return true;
+}
+
+function FindGameGui::onX(%this)
+{  
+   if (!RootGui.XEnabled() || %this.joiningGame)
+      return;
+      
+   alxPlay( AudioButtonDown );
+   XBLiveCancelQoSPoll();
+   RootGui.setContent(CreateGameGui, %this);
+   return true;
+}
+
+function FindGameGui::onY(%this)
+{  
+   if (!RootGui.YEnabled() || %this.joiningGame)
+      return;
+
+   alxPlay( AudioButtonDown );
+   
+   %index = FindGameServerList.getSelectedId();
+   %rowText = XBLiveGetMatchResultsEntry(%index);
+   %xuid = getField(%rowText, 11);
+   if (%xuid !$= "")
+      XBLiveShowGamercardUI( XBLiveGetSignInPort(), %xuid TAB "0"); // "0" == empty flags 
+
+//   %this.startSearch();
+   return true;
+}
+
+// QoS callbacks
+function onXBLiveQoSPollComplete()
+{
+   echo("QoS Poll complete");
+   if (FindGameGui.isAwake())
+      FindGameGui.displayResults();
+}
+
+function onXBLiveQoSHostComplete(%index,%flags,%probeXmit,%probesRecv,%rttMedian,%rttMinimum,%upbps,%downbps)
+{
+   echo("Got QoS response:" SPC %index SPC %flags SPC %probeXmit SPC %probesRecv SPC %rttMedian SPC %rttMinimum SPC %upbps SPC %downbps);   
+   // for testing
+   //%rttMedian = 90;
+   if (FindGameGui.isAwake())
+      FindGameGui.updatePingIcon(%index,%rttMedian);
+}
+
+function fgg_st()
+{
+   XBLiveSearchForMatches(0,-1,-1,-1,"fgg_st_complete();");
+}
+
+function fgg_st_complete()
+{
+   %count = XBLiveGetMatchResultsCount();
+   error(%count SPC "matches found");
+   if (%count > 0)
+   {
+      echo(XBLiveGetMatchResultsEntry(0));
+   }
+}
+
+function fgg_test()
+{
+   RootGui.setCenterText("");
+	FindGameColumns.visible = 1;
+   %rawCount = 9;
+   %count = 0;
+   for(%i = 0; %i < %rawCount; %i++)
+   {
+      // ping not valid yet due to QoS probe delay. just set it to something
+      // ridiculous and don't set a game icon.
+      %ping = getRandom(180);
+      %gameIcon = "";
+      
+      // add with mission as main string Identifier
+      eval("%missionName = $Text::LevelNameMP" @ (%i+1) @ ";");
+      
+      // maxplayers
+      %maxPlayers = getRandom(7)+1;
+      // players
+      %players = getRandom(%maxPlayers-1)+1;
+      
+      %playerStr = "\c1" @ %players SPC $Text::Slash SPC %maxPlayers;
+      
+      if (%ping < 70)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.fourStars;
+      else if (%ping < 100)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.threeStars;
+      else if (%ping < 130)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.twoStars;
+      else if (%ping < 160)
+         %gameIcon = FindGameServerList.iconPath @ FindGameServerList.oneStar;
+      else 
+         // no game icon for shitty servers
+         %gameIcon = "";
+
+      %rowText = %playerStr TAB %gameIcon TAB %ping TAB "1" TAB "1" TAB "\c1" @ %missionName; // 0 == is xblive result
+      FindGameServerList.addRow(%i, %rowText);
+      echo(%rowText);
+//       %this.updatePingIcon(%i);
+   }	
+	
+	
+}

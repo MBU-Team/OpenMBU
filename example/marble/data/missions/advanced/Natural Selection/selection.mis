@@ -1,0 +1,1189 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+  new ScriptObject(MissionInfo) {
+         level = "59";
+         gameType = "SinglePlayer";
+         startHelpText = $Text::LevelStartHelp58;
+         desc = "Don\'t fall behind!";
+         name = $Text::LevelName58;
+         include = "1";
+         time = "75000";
+         difficulty = "10";
+         type = "advanced";
+         artist = "Alex Swanson";
+         hasEggIndex = "20";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_advanced.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 7.45949e-031 1.3684e-038";
+      fogVolume2 = "-1 1.07208e-014 8.756e-014";
+      fogVolume3 = "-1 5.1012e-010 2.05098e-008";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "0.000000 0.000000 0.000000 0.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
+   };
+   new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsAdvancedShape";   };   new Sun() {
+      direction = "0.598938 -0.325682 -0.731577";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.400000 0.400000 0.400000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./natural_selection.dif";
+      showTerrainInside = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "-27 -24 -28";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "-34.5 -18 25";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "-8 -8 22.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "22 -8 -16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-8 -24 28.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "HelicopterItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new InteriorInstance() {
+      position = "-12 30 36";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-16 34 36";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-16 34 -20";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-0.5 6 -24";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-4.5 2 -24";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-12 30 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-16 34 28";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-16 34 4";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-12 30 28";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-12 30 4";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "36 10 20";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "40 10 20";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "40 2 20";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "36 2 20";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "40 10 -8";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "40 2 -8";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "40 10 -20";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_4_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "40 10 -44";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-0.5 6 -16";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-4.5 2 -16";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-0.5 6 -20";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-4.5 2 -20";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-40.5 -20 16.5";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_4_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-40.5 -12 16.5";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_4_corner.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-40.5 -20 -30.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-40.5 -12 -3.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-40.5 -20 0.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new InteriorInstance() {
+      position = "-40.5 -12 0.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-20 -22 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-20 6 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "2000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-20.25 6 -16";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-20 22 -16";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "12 22 -16";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "12 6 -16";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "6";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "28 6 -16";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "7";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "28 -10 -16";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "8";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "12 -10 -16";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "9";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "12 -10 0";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "10";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-4 -10 0";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "11";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-4 -26 8";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "12";
+            type = "Normal";
+            msToNext = "4000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "20 -26 8";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "13";
+            type = "Normal";
+            msToNext = "2000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "20 -16 8";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "14";
+            type = "Normal";
+            msToNext = "8000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "20 -16 25";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "15";
+            type = "Normal";
+            msToNext = "10000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-27.5 -16 25";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "16";
+            type = "Normal";
+            msToNext = "2000";
+            smoothingType = "Accelerate";
+         };
+      };
+      new Trigger(MustChange) {
+         position = "-19.25 -22 -22.75";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "TriggerGotoTarget";
+         polyhedron = "-3.2500000 -4.0000000 1.2500000 0.0000000 8.0000000 0.0000000 6.5000000 0.0000000 0.0000000 0.0000000 0.0000000 -2.5000000";
+            targetTime = "70000";
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "0";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-11 -12 -9.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-11 -12 0";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "2000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-11 -12 0";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "2000";
+            smoothingType = "Accelerate";
+         };
+      };
+      new Trigger(MustChange) {
+         position = "-11 -12 -8.25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "TriggerGotoTarget";
+         polyhedron = "-2.0000000 -2.0000000 1.2500000 0.0000000 4.0000000 0.0000000 4.0000000 0.0000000 0.0000000 0.0000000 0.0000000 -2.5000000";
+            targetTime = "3000";
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "1";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-24.5 -7.25 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-24.5 -10.75 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-15.5 -10.75 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-15.5 -7.25 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-24.5 -7.25 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "1.48891 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "2";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "-24.5 -0.25 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-24.5 -3.75 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-15.5 -3.75 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-15.5 -0.25 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "-24.5 -0.25 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "1.48891 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "3";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "14.7813 10 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "11.2813 10 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "11.2813 1 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "14.7813 1 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "14.7813 10 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 -1.48891 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "4";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "22.25 -6.25 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "22.25 -9.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "31.25 -9.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "31.25 -6.25 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "22.25 -6.25 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "1.48891 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "5";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "22.25 -2.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "22.25 -6.25 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "31.25 -6.25 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "31.25 -2.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "22.25 -2.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "1.48891 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "6";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "22.25 -9.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "22.25 -13.25 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "31.25 -13.25 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "31.25 -9.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "22.25 -9.75 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "1.48891 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "7";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "25.2188 8 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21.7188 8 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21.7188 -1 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "25.2188 -1 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "25.2188 8 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 -1.48891 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "8";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "21.7188 10 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18.2188 10 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18.2188 1 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21.7188 1 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21.7188 10 -16.0625";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "-3.16578 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Natural Selection/natural_selection.dif";
+         interiorIndex = "9";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new Trigger(Bounds) {
+      position = "-57.405 56.5124 -30.0551";
+      rotation = "1 0 0 0";
+      scale = "114.119 119.214 215.205";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new Item() {
+      position = "-14.0225 32.0083 63.8132";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EasterEggItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         easterEggIndex = "20";
+         checkPointConfirmationNumber = "0";
+   };
+   new SpawnSphere() {
+      position = "-41.5479 -26.974 35.6171";
+      rotation = "0.411922 -0.199776 0.88905 57.2259";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---
+

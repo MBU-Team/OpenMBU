@@ -52,7 +52,10 @@ function serverCmdMissionStartPhase1Ack(%client, %seq)
    // Send over the datablocks...
    // OnDataBlocksDone will get called when have confirmation
    // that they've all been received.
-   %client.transmitDataBlocks($missionSequence);
+   //%client.transmitDataBlocks($missionSequence);
+   
+   // JMQ: we assume all datablocks have been exec'ed client side and preloaded already
+   %client.onDataBlocksDone($missionSequence);
 }
 
 function GameConnection::onDataBlocksDone( %this, %missionSequence )
@@ -98,6 +101,9 @@ function GameConnection::onGhostAlwaysFailed(%client)
 
 function GameConnection::onGhostAlwaysObjectsReceived(%client)
 {
+   // ENABLE_INTERIOR_STENCILS
+   //buildMissionShadows();
+
    // Ready for next phase.
    commandToClient(%client, 'MissionStartPhase3', $missionSequence, $Server::MissionFile);
 }
@@ -114,4 +120,20 @@ function serverCmdMissionStartPhase3Ack(%client, %seq)
    // Server is ready to drop into the game
    %client.startMission();
    %client.onClientEnterGame();
+
+   if ($EnableFMS)
+   {
+      if (isSinglePlayerMode()) // We just loaded the MegaMission
+      {
+         commandToClient(%client, 'SetCamera');
+         commandToClient(%client, 'ShowMission', GameMissionInfo.getCurrentMission().file);
+      }
+      else //if (GameMissionInfo.mode $= GameMissionInfo.SPMode) // We just started a singleplayer level
+      {
+         %client.onClientJoinGame();
+      }
+   }
+
+   %diff = getRealTime() - $missionLoadStart;
+   error("Took " @ %diff / 1000 @ " seconds to load" @ $Server::MissionFile);
 }

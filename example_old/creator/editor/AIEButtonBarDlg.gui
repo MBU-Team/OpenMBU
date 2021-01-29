@@ -1,0 +1,517 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(AIEButtonBarDlg) {
+	profile = "GuiModelessDialogProfile";
+	horizSizing = "right";
+	vertSizing = "bottom";
+	position = "0 0";
+	extent = "640 480";
+	minExtent = "8 8";
+	visible = "1";
+	helpTag = "0";
+
+	new GuiChunkedBitmapCtrl() {
+		profile = "GuiContentProfile";
+		horizSizing = "right";
+		vertSizing = "height";
+		position = "0 30";
+		extent = "120 420";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+
+		new GuiCheckBoxCtrl(ExteriorCheckBox) {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "11 23";
+			extent = "100 22";
+			minExtent = "8 8";
+			visible = "1";
+			command = "ExteriorCheckBox.updateCheckBox();";
+			helpTag = "0";
+			text = "Draw Ext";
+		};
+		new GuiCheckBoxCtrl(InteriorCheckBox) {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "11 47";
+			extent = "100 22";
+			minExtent = "8 8";
+			visible = "1";
+			command = "InteriorCheckBox.updateCheckBox();";
+			helpTag = "0";
+			text = "Draw Int";
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "11 6";
+			extent = "73 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Visual Options:";
+		};
+		new GuiCheckBoxCtrl(JetConnectionsCheckBox) {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "11 73";
+			extent = "100 22";
+			minExtent = "8 8";
+			visible = "1";
+			command = "JetConnectionsCheckBox.updateCheckBox();";
+			helpTag = "0";
+			text = "Draw Jet";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 201";
+			extent = "100 29";
+			minExtent = "8 8";
+			visible = "1";
+			command = "makeJettableGraph(Nav);";
+			helpTag = "0";
+			text = "Bot Graph";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 169";
+			extent = "100 29";
+			minExtent = "8 8";
+			visible = "1";
+			command = "makeJettableGraph(Spawn);";
+			helpTag = "0";
+			text = "Spawn Graph";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 233";
+			extent = "100 29";
+			minExtent = "8 8";
+			visible = "1";
+			command = "AIEButtonBarDlg.createLOSXref();";
+			helpTag = "0";
+			text = "Build LOS";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 265";
+			extent = "100 29";
+			minExtent = "8 8";
+			visible = "1";
+			command = "navGraph.saveGraph();";
+			helpTag = "0";
+			text = "Save";
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "11 151";
+			extent = "56 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Graph Build";
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "11 315";
+			extent = "64 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "AI Objectives";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 331";
+			extent = "100 29";
+			minExtent = "8 8";
+			visible = "1";
+			command = "AICreateObjectives();";
+			helpTag = "0";
+			text = "Build Objectives";
+		};
+		new GuiPopUpMenuCtrl(ObjectiveList) {
+			profile = "GuiPopUpProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 368";
+			extent = "101 20";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "New Objective";
+			maxPopupHeight = "200";
+		};
+		new GuiButtonCtrl() {
+			profile = "GuiButtonProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 395";
+			extent = "100 29";
+			minExtent = "8 8";
+			visible = "1";
+			command = "AISaveMissionObjectives();";
+			helpTag = "0";
+			text = "Save";
+		};
+		new GuiTextCtrl() {
+			profile = "GuiTextProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "10 102";
+			extent = "73 18";
+			minExtent = "8 8";
+			visible = "1";
+			helpTag = "0";
+			text = "Camera speed:";
+		};
+		new GuiSliderCtrl() {
+			profile = "GuiDefaultProfile";
+			horizSizing = "right";
+			vertSizing = "bottom";
+			position = "6 121";
+			extent = "80 20";
+			minExtent = "80 20";
+			visible = "1";
+			variable = "value";
+			command = "$Camera::movementSpeed = $ThisControl.getValue();";
+			helpTag = "0";
+			range = "0.000000 200.000000";
+			ticks = "10";
+			value = "20";
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+//------------------------------------------------------------------------------
+// Functions
+//------------------------------------------------------------------------------
+
+function makeUnbridgedGraph()
+{
+   GraphCurrentOperation.setValue("Generating interior nodes...");
+   Canvas.repaint();   
+   navGraph::generateInterior();
+   dataProgress();
+   
+   GraphCurrentOperation.setValue("Remaking graph...");
+   Canvas.repaint();   
+   remakeTheGraph();
+   dataProgress();
+}
+
+function makeJettableGraph(%NAVorSPAWN)
+{
+   AIworking(true);
+   
+      $NavGraph::operations = 7;
+      $NavGraph::operationsDone = 0;
+   
+      navGraph.setGenMode(%NAVorSPAWN);
+      navGraph::exteriorInspect();
+      dataProgress();
+      makeUnbridgedGraph();
+   
+      GraphCurrentOperation.setValue("Beginning slow bridge finding pass");
+      Canvas.repaint();
+      
+      navGraph.assemble();
+      
+      navGraph.cullIslands();
+      remakeTheGraph();
+      navGraph.pushBridges();
+      navGraph.makeTables();
+      dataProgress();
+      
+   AIworking(false);
+}
+
+//------------------------------------------------------------------------------
+
+function AIEButtonBarDlg::getPrefs(%this)
+{
+}
+
+//------------------------------------------------------------------------------
+
+function AIEbuttonBarDlg::setPrefs(%this)
+{
+}
+
+//------------------------------------------------------------------------------
+
+function AIEButtonBarDlg::init(%this)
+{
+   InteriorCheckBox.setValue($pref::NavGraph::drawIndoor);
+   ExteriorCheckBox.setValue($pref::NavGraph::drawOutdoor);
+   
+   if(!$pref::NavGraph::drawIndoor)
+      JetConnectionsCheckBox.visible = false;
+   
+   JetConnectionsCheckBox.setValue($pref::NavGraph::drawJetEdges);
+   
+   ObjectiveList.clear();
+   ObjectiveList.setText("New Objective");
+   ObjectiveList.add("Deploy Outdoor Turret", 1);
+   ObjectiveList.add("Deploy Indoor Turret", 2);
+   ObjectiveList.add("Deploy Inventory", 3);
+   ObjectiveList.add("Touch FlipFlop", 4);
+   ObjectiveList.add("Mortar Target", 5);
+   ObjectiveList.add("Repair Equipment", 6);
+   ObjectiveList.add("Attack Target", 7);
+   ObjectiveList.add("Defend Location", 8);
+   objectiveList.add("New Group", 9);
+   
+   //ObjectivesList.sort();
+}
+
+//------------------------------------------------------------------------------
+
+function AIEButtonBarDlg::onSleep(%this)
+{
+}
+
+//------------------------------------------------------------------------------
+
+function AIEButtonBarDlg::onWake(%this)
+{
+}
+
+//------------------------------------------------------------------------------
+
+function dataProgress()
+{
+   $NavGraph::operationsDone++;
+   %percent = $NavGraph::operationsDone / $NavGraph::operations;
+   GraphBuildProgress.setValue(%percent);
+   Canvas.repaint();   
+}
+
+//------------------------------------------------------------------------------
+
+function remakeTheGraph()
+{
+   GraphCurrentOperation.setValue("making graph...");
+   Canvas.repaint();   
+   navGraph.makeGraph();
+   dataProgress();
+}
+
+//------------------------------------------------------------------------------
+
+function AIEButtonBarDlg::createLOSXref()
+{
+   AIworking(true);
+      GraphCurrentOperation.setValue("Making LOS CrossRef Table...");
+      GraphBuildProgress.setValue(0);
+   
+      if(2.player)
+         navGraph.prepLOS(2.player.getTransform());
+      else
+         navGraph.prepLOS("0 0 0");
+      
+      while(navGraph.makeLOS())
+      {
+         GraphBuildProgress.setValue($graphProcessPercent);
+         Canvas.repaint();   
+      }
+      GraphBuildProgress.setValue(100);
+      Canvas.repaint();   
+   AIworking(false);
+}
+
+function ExteriorCheckBox::updateCheckBox()
+{
+   $pref::NavGraph::drawOutdoor = !$pref::NavGraph::drawOutdoor;
+}
+
+function InteriorCheckBox::updateCheckBox()
+{
+   $pref::NavGraph::drawIndoor = !$pref::NavGraph::drawIndoor;
+   
+   if(!$pref::NavGraph::drawIndoor)
+      JetConnectionsCheckBox.visible = false;
+   else
+      jetConnectionsCheckBox.visible = true;
+}
+
+function JetConnectionsCheckBox::updateCheckBox()
+{
+   $pref::NavGraph::drawJetEdges = !$pref::NavGraph::drawJetEdges;
+}
+
+function AISaveMissionObjectives()
+{
+   // once we have created all objecitves, save out the mis file
+   if(!isObject(MissionGroup))
+   {
+      error("No mission exists!");
+      return;
+   }
+   
+   // check for read-only
+   %file = "FixMe/missions/" @ $Client::MissionFile;
+   if(!isWriteableFileName(%file))
+   {
+      error("Mission file '" @ %file @ "' is not writeable.");
+      return; 
+   }
+   
+   // ok, were good to save.
+   missionGroup.save("missions/" @ $Client::MissionFile);
+}
+
+function AIObjectivesLock(%lock)
+{
+   %numTeams = nameToId("MissionGroup/Teams").getCount();
+
+   for(%j = 0; %j < %numTeams; %j++)
+   {
+      %objGroup = nameToId("MissionGroup/Teams/team" @ %j @ "/AIObjectives");
+      if(%objGroup == -1)
+         continue;
+
+      %objCount = %objGroup.getCount();
+   
+      for(%i = 0; %i < %objCount; %i++)
+      {
+         %obj = %objGroup.getObject(%i);
+         %obj.locked = %lock;
+      }
+   }   
+   
+   // save
+   AISaveMissionObjectives();
+}
+
+function addNewObjective(%type)
+{
+   if($AIEditor::inspectTeam == 1)
+      %team = 1;
+   else if($AIEditor::inspectTeam == 2)
+      %team = 2;
+   else 
+      %team = 1;
+   
+   %tGroup = nameToId("MissionGroup/Teams/team" @ %team @ "/AIObjectives");
+   
+   if(%tGroup < 1)
+      return;
+      
+   if($InstantGroup $= "MissionGroup")
+      $InstantGroup = %tGroup;
+      
+   switch$(%type)
+   {
+      case "Defend Location":
+         %objective = new AIObjective(AIODefendLocation)
+         {
+		      dataBlock = "AIObjectiveMarker";
+         };
+      case "Repair Equipment":
+         %objective = new AIObjective(AIORepairObject)
+         {
+		      dataBlock = "AIObjectiveMarker";
+         };
+      case "Deploy Outdoor Turret":
+         %Objective = new AIObjective(AIODeployEquipment)
+	      {
+		      dataBlock = "AIObjectiveMarker";
+            weightLevel1 = 4100;
+		      weightLevel2 = 0;
+		      description = "Deploy outdoor Turret";
+		      offense = false;
+		      defense = true;
+            targetObjectId = -1;
+            targetObject = -1;
+            targetClientId = -1;
+            equipment = "TurretOutdoorDeployable";
+		      buyEquipmentSet = "MediumOutdoorTurretSet";
+	      };
+      case "Deploy Indoor Turret":
+         %Objective = new AIObjective(AIODeployEquipment)
+	      {
+		      dataBlock = "AIObjectiveMarker";
+            weightLevel1 = 4100;
+		      weightLevel2 = 0;
+		      description = "Deploy indoor Turret";
+		      offense = false;
+		      defense = true;
+            targetObjectId = -1;
+            targetObject = -1;
+            targetClientId = -1;
+            equipment = "TurretIndoorDeployable";
+		      buyEquipmentSet = "MediumIndoorTurretSet";
+	      };
+      case "Attack Target":
+         %objective = new AIObjective(AIOAttackObject)
+         {
+		      dataBlock = "AIObjectiveMarker";
+         };
+      case "Touch FlipFlop":
+         %objective = new AIObjective(AIOTouchObject)
+         {
+		      dataBlock = "AIObjectiveMarker";
+         };
+      case "Mortar Target":
+         %objective = new AIObjective(AIOMortarObject)
+         {
+		      dataBlock = "AIObjectiveMarker";
+         };
+      case "Deploy Inventory":
+         %Objective = new AIObjective(AIODeployEquipment)
+	      {
+		      dataBlock = "AIObjectiveMarker";
+            weightLevel1 = 4100;
+		      weightLevel2 = 0;
+		      description = "Deploy Inventory Station";
+		      offense = false;
+		      defense = true;
+            targetObjectId = -1;
+            targetObject = -1;
+            targetClientId = -1;
+            equipment = "InventoryDeployable";
+		      buyEquipmentSet = "MediumInventorySet";
+	      };
+      case "New Group":
+         %set = new SimGroup("ObjectiveSet");
+         %tGroup.add(%set);
+         return;
+      default:
+         error("no defined type.");
+         return;      
+   }
+   
+   $InstantGroup.add(%objective);
+   aiEdit.clearSelection();
+   aiEdit.selectObject(%objective);
+   aiEdit.dropSelection();
+   %objective.location = %objective.getWorldBoxCenter();
+   Inspector.inspect(%objective);
+   InspectorNameEdit.setValue(%objective.getName());
+}
+
+function ObjectiveList::onSelect(%this, %id, %text)
+{  
+   addNewObjective(%text);
+   ObjectiveList.setText("New Objective");
+}

@@ -1,0 +1,1003 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+   new ScriptObject(MissionInfo) {
+         type = "intermediate";
+         desc = "Try to beat the clock and avoid the obstacles.";
+         level = "32";
+         gameType = "SinglePlayer";
+         time = "35000";
+         include = "1";
+         artist = "Alex Swanson";
+         name = $Text::LevelName55;
+         difficulty = "6";
+         hasEggIndex = "8";
+   };
+   new MissionArea(MissionArea) {
+      area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_advanced.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 -1.73483e+009 -1.73483e+009";
+      fogVolume2 = "-1 -1.73483e+009 -1.73483e+009";
+      fogVolume3 = "-1 -1.73483e+009 -1.73483e+009";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "0.416521 -0.909105 0.006149 -0.165836";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 -1734829824.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 -1734829824.000000";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 -1734829824.000000";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+   new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsIntermediateShape";   };   new Sun() {
+      direction = "0.743093 0.11244 -0.659674";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.440000 0.440000 0.440000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "-3.8 1.85807e-007 -1.81794e-006";
+         rotation = "0 0 1 89.9544";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "20 74.2 12";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+   };
+   new Trigger(Bounds) {
+      position = "-100 135.2 -36.6";
+      rotation = "1 0 0 0";
+      scale = "200 200 200";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "19.25 9.75 0.25";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "4 9.75 0.25";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "19.25 9.75 0.25";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "-10.1627 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "0";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "6.75 14 -4";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21.75 14 -4";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "6.75 14 -4";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "9.99615 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "1";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "20 46 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "500";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 46 -6";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 46 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 0.864";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "2";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "16 46 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "500";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 46 -6";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 46 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 1.952";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "3";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "24 46 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "600";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 46 -6";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1200";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 46 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 0.96";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "4";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "24 50 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "800";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 50 -5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 50 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 1.8625";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "5";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "20 50 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "700";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 50 -4";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 50 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 1.548";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "6";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "16 50 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 50 -5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 50 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 0.74";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "7";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "16 54 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "500";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 54 -3";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 54 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 3.416";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "8";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "20 54 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "750";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 54 -2";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 54 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 7.168";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "9";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "24 54 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "600";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 54 -3";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 54 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 5.334";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "10";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "24 58 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "900";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 58 -1";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "24 58 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 8.748";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "11";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "20 58 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "400";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 58 0";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "20 58 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 9.48";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "12";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-2";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "16 58 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "600";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 58 -1";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1000";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "16 58 -10";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "10";
+            smoothingType = "Linear";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 6.858";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/intermediate/Obstacle Course/obstacle.dif";
+         interiorIndex = "13";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new Item() {
+      position = "20.0599 62.2 0.563932";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+   };
+   new Item() {
+      position = "20.1541 67.7636 6.59139";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+   };
+   new StaticShape() {
+      position = "13.1784 38.985 -10.0266";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new StaticShape() {
+      position = "12.7895 32.9661 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new StaticShape() {
+      position = "23.2442 34.1 -3.85";
+      rotation = "0 1 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "DuctFan";
+   };
+   new StaticShape() {
+      position = "7.63 22.4771 -3.85";
+      rotation = "1 0 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "DuctFan";
+   };
+   new StaticShape() {
+      position = "14.8 31 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new StaticShape() {
+      position = "16.8 31 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new StaticShape() {
+      position = "12.8 31 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new StaticShape() {
+      position = "14.8 29 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new StaticShape() {
+      position = "16.8 29 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new StaticShape() {
+      position = "12.8 29 -10";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "trapdoor";
+         open = "0";
+         resetTime = "Default";
+         timeout = "200";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./obstacle.dif";
+      showTerrainInside = "0";
+   };
+   new Item() {
+      position = "14.8025 31.1301 -11.6679";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EasterEggItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         easterEggIndex = "8";
+         foundOnCheckpointSeq = "0";
+   };
+   new SimGroup(check1) {
+
+      new StaticShape() {
+         position = "13.0053 24.9717 -5.98274";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+      new Trigger(check1) {
+         position = "11.9951 28.0908 -6.26389";
+         rotation = "1 0 0 0";
+         scale = "4.02685 3.95924 2.72931";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+   };
+   new SimGroup(check2) {
+
+      new Trigger(check2) {
+         position = "18.0076 44.0043 -6.05226";
+         rotation = "1 0 0 0";
+         scale = "4.02685 3.95924 2.72931";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "3";
+      };
+      new StaticShape() {
+         position = "19.2499 41.882 -5.99366";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SimGroup(check3) {
+
+      new Trigger(check2) {
+         position = "19.9771 43.5181 -10.0248";
+         rotation = "1 0 0 0";
+         scale = "2.03891 3.95924 2.72931";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "3";
+      };
+      new StaticShape() {
+         position = "20.9775 40.9611 -9.9811";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SpawnSphere() {
+      position = "-6.86048 -5.84319 5.5617";
+      rotation = "0.160127 -0.0854913 0.983387 56.9964";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---
+

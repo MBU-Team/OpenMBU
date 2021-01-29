@@ -24,3 +24,4 @@ function clientCmdMissionEnd(%seq)
    $lightingMission = false;
    $sceneLighting::terminateLighting = true;
 }
+

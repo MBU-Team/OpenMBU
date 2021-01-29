@@ -39,13 +39,13 @@ Fragout main(v2f IN,
 	Fragout OUT;
 
    float2 texOffset;
-   float sinOffset1 = sin( accumTime * 1.5 + IN.TEX0.y * 6.28319 * 3.0 ) * 0.03;
-   float sinOffset2 = sin( accumTime * 3.0 + IN.TEX0.y * 6.28319 ) * 0.04;
-   
+   float sinOffset1 = sin( accumTime * 0.5 + IN.TEX0.y * 6.28319 * 3.0 ) * 0.01;
+   float sinOffset2 = sin( accumTime * 1.0 + IN.TEX0.y * 6.28319 ) * 0.01;
+
    texOffset.x = IN.TEX0.x + sinOffset1 + sinOffset2;
-   texOffset.y = IN.TEX0.y + cos( accumTime * 3.0 + IN.TEX0.x * 6.28319 * 2.0 ) * 0.05;
-   
-   
+   texOffset.y = IN.TEX0.y + cos( accumTime * 3.0 + IN.TEX0.x * 6.28319 * 2.0 ) * 0.01;
+
+
    float4 bumpNorm = tex2D( bumpMap, texOffset ) * 2.0 - 1.0;
    float4 diffuse = tex2D( diffMap, texOffset );
 

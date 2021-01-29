@@ -1,0 +1,896 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+   new ScriptObject(MissionInfo) {
+         artist = "Alex Swanson";
+         include = "1";
+         difficulty = "9";
+         type = "advanced";
+         time = "120000";
+         level = "47";
+         name = $Text::LevelName105;
+         gameType = "SinglePlayer";
+         desc = "My brain hurts";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_advanced.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 2.8026e-045 1.89175e-042";
+      fogVolume2 = "-1 2.8026e-045 1.85392e-042";
+      fogVolume3 = "-1 2.8026e-045 1.82869e-042";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "0.000000 0.000000 0.000000 0.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000000";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 0.000000";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+   new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsAdvancedShape";   };   new Sun() {
+      direction = "-0.629444 -0.320255 -0.707981";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.440000 0.440000 0.440000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./cube.dif";
+      showTerrainInside = "0";
+   };
+   new Item() {
+      position = "11 -23.8 -27";
+      rotation = "1 0 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "15 -3 -24";
+         rotation = "0 0 -1 90.573";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "27 0 -27";
+      rotation = "1 0 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "6.8 -3 -0.999999";
+      rotation = "0 1 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "AntiGravityItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "28.9871 -11.1929 -21";
+      rotation = "-1 0 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "AntiGravityItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "27 -21 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "27 -21 -12";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "27 -21 -12";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "27 -21 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "27 -21 -24";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 12";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Cube Root/cube.dif";
+         interiorIndex = "0";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "21 -24 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 -12 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 -12 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 -24 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 -24 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 12 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Cube Root/cube.dif";
+         interiorIndex = "1";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "21 -12 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 0 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 0 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 -12 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "21 -12 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 12 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Cube Root/cube.dif";
+         interiorIndex = "2";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "9 -27 -12";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "9 -27 0";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "9 -27 0";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "9 -27 -12";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "9 -27 -12";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 12";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Cube Root/cube.dif";
+         interiorIndex = "3";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "6 -9 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "4500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18 -9 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18 -9 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "4500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "6 -9 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "6 -9 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "2.25345 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Cube Root/cube.dif";
+         interiorIndex = "4";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "6 -9 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18 -9 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18 -9 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "6 -9 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "6 -9 -21";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "12 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Cube Root/cube.dif";
+         interiorIndex = "5";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "18 -27 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "30 -27 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "30 -27 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "3000";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18 -27 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "1500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "18 -27 -9";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "5";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "12 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Cube Root/cube.dif";
+         interiorIndex = "6";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new Trigger(Bounds) {
+      position = "-3 8.66321 -33";
+      rotation = "1 0 0 0";
+      scale = "40.4468 41.6632 50";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new Item() {
+      position = "6.76938 -2.68698 -11.0888";
+      rotation = "1 0 0 180";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "AntiGravityItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "7.0043 -23.1288 -26.962";
+      rotation = "0 1 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "AntiGravityItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "17.0641 -11.203 -2.99031";
+      rotation = "-1 0 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "AntiGravityItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "6.93079 -11.1464 -2.80408";
+      rotation = "0 1 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "AntiGravityItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "7.50967 -9.1652 -14.916";
+      rotation = "-0.569806 0.581317 -0.580854 239.389";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "3.00156 -23.1936 -1.15";
+      rotation = "-1 0 0 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "AntiGravityItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "14.8879 -9.26729 -11.5246";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "3.01854 -24.2365 -2.91722";
+      rotation = "1 0 0 89.9544";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "HelicopterItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "26.8536 -3.01763 -23.4204";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "30.5961 -2.88738 -26.9537";
+      rotation = "0 -1 0 91.1003";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "30.5999 -2.95134 -2.90813";
+      rotation = "0 -1 0 91.1003";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new StaticShape() {
+      position = "5.76051 -1.99976 -0.0459422";
+      rotation = "0.40319 0.000321114 0.915116 180.084";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "ArrowSide";
+   };
+   new StaticShape() {
+      position = "29.9506 -12.2692 -24.0008";
+      rotation = "0.785794 -0.429628 0.444914 104.257";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "ArrowSide";
+   };
+   new StaticShape() {
+      position = "17.9734 -12.2372 -1.31092";
+      rotation = "0.896315 -0.318352 0.308659 96.0127";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "ArrowSide";
+   };
+   new Item() {
+      position = "27.0089 -3.10072 0.6";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "26.9763 0.6 -2.78608";
+      rotation = "1 0 0 89.9544";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "2.95223 -11.4266 -14.9237";
+      rotation = "1 0 0 89.9544";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new SimGroup(check5) {
+
+      new StaticShape() {
+         position = "30.0093 -14.9932 -14.9952";
+         rotation = "0 -1 0 90";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+      new Trigger(check5) {
+         position = "29.9488 -17.3401 -17.5629";
+         rotation = "1 0 0 90";
+         scale = "5 5 5";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+   };
+   new SimGroup(check2) {
+
+      new Trigger(check2) {
+         position = "6.51261 -12.3304 -12.1728";
+         rotation = "1 0 0 0";
+         scale = "5 5 5";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+      new StaticShape() {
+         position = "9.00231 -14.999 -11.9952";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SimGroup(check4) {
+
+      new StaticShape() {
+         position = "14.9956 -11.9911 -2.99395";
+         rotation = "1 0 0 90";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+      new Trigger(check4) {
+         position = "12.2191 -12.542 -5.32569";
+         rotation = "1 0 0 90";
+         scale = "5 5 5";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+   };
+   new SpawnSphere() {
+      position = "-11.5767 11.7315 3.74017";
+      rotation = "0.0866721 -0.239192 0.967096 141.376";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---

@@ -27,19 +27,18 @@ function createServer(%serverType, %mission)
    //
    $missionSequence = 0;
    $Server::PlayerCount = 0;
+   $Server::PrivatePlayerCount = 0;
    $Server::ServerType = %serverType;
+   $Server::ArbRegTimeout = 10000;
 
-   // Setup for multi-player, the network must have been
-   // initialized before now.
-   if (%serverType $= "MultiPlayer") {
-      echo("Starting multiplayer mode");
-
-      // Make sure the network port is set to the correct pref.
-      portInit($Pref::Server::Port);
-      allowConnections(true);
-
-      if ($pref::Net::DisplayOnMaster !$= "Never" )
-         schedule(0,0,startHeartbeat);
+   if (!$EnableFMS)
+   {
+      // Setup for multi-player, the network must have been
+      // initialized before now.
+      if (%serverType $= "MultiPlayer") 
+      {
+         startMultiplayerMode();
+      }
    }
 
    // Load the mission
@@ -48,18 +47,73 @@ function createServer(%serverType, %mission)
    loadMission(%mission, true);
 }
 
+function startMultiplayerMode()
+{
+   if (doesAllowConnections())
+   {
+      error("startMultiplayerMode(): Multiplayer mode is already active");
+      return;
+   }
+   echo("Starting multiplayer mode");
+   $Server::ServerType = "MultiPlayer";
+   $Server::Hosting = true;
+   $Server::BlockJIP = false;
+   
+   // Make sure the network port is set to the correct pref.
+   portInit($Pref::Server::Port);
+   allowConnections(true);
+
+   if ($pref::Server::DisplayOnMaster !$= "Never" )
+      schedule(0,0,startHeartbeat);
+      
+   // we are now considered to be connected to a multiplayer server (our own)
+   $Client::connectedMultiplayer = true;
+   
+   // update the data for the local client connection
+   LocalClientConnection.updateClientData($Player::Name, $Player::XBLiveId, XBLiveGetVoiceStatus(), false);
+}
+
+function stopMultiplayerMode()
+{
+//   if (!doesAllowConnections())
+//      return;
+
+   if (!$Server::Hosting)
+      return;
+      
+   echo("Stopping multiplayer mode");
+   $Server::ServerType = "SinglePlayer";
+   $Server::Hosting = false;
+   $Server::UsingLobby  = false;
+   $Server::BlockJIP = false;
+   
+   portInit(0);
+   allowConnections(false);
+   stopHeartbeat();
+   
+   cancel($Server::ArbSched);
+   
+   if (isObject(ServerConnection))
+      ServerConnection.ready = false;
+   
+   $Client::connectedMultiplayer = false;
+}
 
 //-----------------------------------------------------------------------------
 
 function destroyServer()
 {
+   if (!$EnableFMS)
+   {
+      $Server::Hosting = false;
+      allowConnections(false);
+      stopHeartbeat();
+   }
+   
    $Server::ServerType = "";
-   allowConnections(false);
-   stopHeartbeat();
    $missionRunning = false;
    
-   // End any running mission
-   endMission();
+   // Clean up the game scripts
    onServerDestroyed();
 
    // Delete all the server objects
@@ -69,22 +123,29 @@ function destroyServer()
       MissionCleanup.delete();
    if (isObject($ServerGroup))
       $ServerGroup.delete();
+   if (isObject(MissionInfo))
+      MissionInfo.delete();
 
-   // Delete all the connections:
-   while (ClientGroup.getCount())
+   if (!$EnableFMS)
    {
-      %client = ClientGroup.getObject(0);
-      %client.delete();
+      // Delete all the connections:
+      while (ClientGroup.getCount())
+      {
+         %client = ClientGroup.getObject(0);
+         %client.delete();
+      }
    }
 
    $Server::GuidList = "";
+   $Server::MissionFile = "";
 
    // Delete all the data blocks...
-   deleteDataBlocks();
+   // JMQ: we don't delete datablocks in this version of MB
+   //deleteDataBlocks();
    
-   // Save any server settings
-   echo( "Exporting server prefs..." );
-   export( "$Pref::Server::*", "~/prefs.cs", false );
+   // Save any server settings - Not on the XBox -pw
+   //echo( "Exporting server prefs..." );
+   //export( "$Pref::Server::*", "~/prefs.cs", false );
 
    // Dump anything we're not using
    purgeResources();

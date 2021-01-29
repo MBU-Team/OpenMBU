@@ -1,0 +1,211 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(SaveFileDlg) {
+   profile = "GuiDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+
+   new GuiWindowCtrl() {
+      profile = "GuiWindowProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "131 77";
+      extent = "378 326";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      text = "Save File...";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canMove = "1";
+      canClose = "1";
+      canMinimize = "1";
+      canMaximize = "1";
+      minSize = "50 50";
+      closeCommand = "Canvas.popDialog(SaveFileDlg);";
+
+      new GuiPopUpMenuCtrl(SA_directoryList) {
+         profile = "GuiPopUpMenuProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "68 23";
+         extent = "226 19";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         maxLength = "255";
+         maxPopupHeight = "200";
+      };
+      new GuiScrollCtrl() {
+         profile = "GuiScrollProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "9 46";
+         extent = "285 248";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         willFirstRespond = "1";
+         hScrollBar = "dynamic";
+         vScrollBar = "alwaysOn";
+         constantThumbHeight = "0";
+         defaultLineHeight = "15";
+         childMargin = "0 0";
+
+         new GuiTextListCtrl(SA_fileList) {
+            profile = "GuiTextArrayProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "0 0";
+            extent = "267 144";
+            minExtent = "8 8";
+            visible = "1";
+            altCommand = "doSACallback();";
+            helpTag = "0";
+            enumerate = "0";
+            resizeCell = "1";
+            columns = "0";
+            fitParentWidth = "1";
+            clipColumnText = "0";
+               noDuplicates = "false";
+         };
+      };
+      new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "303 268";
+         extent = "60 20";
+         minExtent = "8 8";
+         visible = "1";
+         command = "doSACallback();";
+         helpTag = "0";
+         text = "Save";
+      };
+      new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "303 294";
+         extent = "60 20";
+         minExtent = "8 8";
+         visible = "1";
+         command = "Canvas.popDialog(SaveFileDlg);";
+         helpTag = "0";
+         text = "Cancel";
+      };
+      new GuiTextEditCtrl(SA_nameEdit) {
+         profile = "GuiTextEditProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "8 299";
+         extent = "286 16";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         maxLength = "255";
+         historySize = "0";
+         password = "0";
+         tabComplete = "0";
+      };
+      new GuiTextCtrl() {
+         profile = "GuiTextProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "10 21";
+         extent = "55 20";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         text = "Directory";
+         maxLength = "255";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+
+//------------------------------------------------------------------------------
+// ex: getSaveFilename("~/stuff/*.*", saveStuff);
+//     -- calls 'saveStuff(%filename)' on dblclick or ok
+//------------------------------------------------------------------------------
+function getSaveFilename(%filespec, %callback, %currentFile)
+{  
+   $SA_callback = %callback;   
+   $SA_filespec = %filespec;
+
+   %hasPath = (filePath(%currentFile) $= "") ? false : true;
+   Canvas.pushDialog(SaveFileDlg, 99);
+
+   // Fill the Directory Drop Down
+   %i = 0;
+   %unique = 0;
+   SA_directoryList.clear();
+   for(%file = findFirstFile("*"); %file !$= ""; %file = findNextFile("*"))  
+      if (strstr(%file, "/CVS/") == -1)
+      {
+         %path = filePath(%file);
+         if (!%unique[%path]) 
+         {
+            %i++;
+            %unique[%path] = %i;
+            SA_directoryList.add(%path, %i);
+            if (!%hasPath)
+            {
+               if (isFile(%path @ "/" @ %currentFile))
+               {
+                  %currentFile = %path @ "/" @ %currentFile;
+                  %hasPath = true;
+               }
+            }
+         }
+      }
+   SA_directoryList.sort();
+   
+   // select the directory represented by current file
+   if ( %unique[filePath(%currentFile)] )
+      SA_directoryList.setSelected( %unique[filePath(%currentFile)] );
+   else
+      SA_directoryList.setSelected( 1 );
+
+   SA_nameEdit.setValue(fileName(%currentFile));
+}
+
+
+//--------------------------------------
+function doSACallback()
+{
+   if (SA_nameEdit.getValue() !$= "" && SA_directoryList.getValue() !$= "")
+   {
+      %file = SA_directoryList.getValue() @ "/" @ SA_nameEdit.getValue();
+      eval( $SA_callback @ "(\"" @ %file @"\");" );
+   }
+   Canvas.popDialog(SaveFileDlg);
+}   
+
+
+//--------------------------------------
+function SA_directoryList::onSelect(%this, %id)
+{
+   // when a directory is selected put it's files in the file list
+   SA_fileList.clear();
+   %filespec = %this.getTextById(%id) @ "/" @ $SA_filespec;
+   for(%file = findFirstFile(%filespec); %file !$= ""; %file = findNextFile(%filespec))  
+      if (strStr(%file, "/CVS/") == -1)
+         SA_fileList.addRow(%i++, fileName(%file));
+   SA_fileList.sort(0);
+}   
+
+
+//--------------------------------------
+function SA_filelist::onSelect(%this, %id)
+{
+   // when a file is selected change the current filename
+   SA_nameEdit.setValue(%this.getRowTextById(%id));
+}   
+

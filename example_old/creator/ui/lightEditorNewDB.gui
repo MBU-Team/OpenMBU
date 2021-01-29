@@ -1,0 +1,99 @@
+//-----------------------------------------------
+// Copyright © Synapse Gaming 2004
+// Written by John Kabus
+//-----------------------------------------------
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(sgLightEditorNewDB) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+   new GuiWindowCtrl() {
+      profile = "GuiWindowProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "191 192";
+      extent = "257 96";
+      minExtent = "8 2";
+      visible = "1";
+      text = "Create New Light Datablock";
+      maxLength = "255";
+      resizeWidth = "0";
+      resizeHeight = "0";
+      canMove = "1";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      minSize = "50 50";
+
+      new GuiTextEditCtrl(sgLightEditorNewDBName) {
+         profile = "GuiTextEditProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "125 32";
+         extent = "117 18";
+         minExtent = "8 2";
+         visible = "1";
+         maxLength = "255";
+         historySize = "0";
+         password = "0";
+         tabComplete = "0";
+         sinkAllKeyEvents = "0";
+      };
+      new GuiTextCtrl() {
+         profile = "GuiTextProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "12 31";
+         extent = "106 18";
+         minExtent = "8 2";
+         visible = "1";
+         text = "Light Datablock Name:";
+         maxLength = "255";
+      };
+      new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "12 63";
+         extent = "76 20";
+         minExtent = "8 2";
+         visible = "1";
+         command = "sgLightEditorNewDB.createDB();";
+         text = "Create";
+         groupNum = "-1";
+         buttonType = "PushButton";
+      };
+      new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "166 63";
+         extent = "76 20";
+         minExtent = "8 2";
+         visible = "1";
+         command = "Canvas.popDialog(sgLightEditorNewDB);";
+         text = "Cancel";
+         groupNum = "-1";
+         buttonType = "PushButton";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function sgLightEditorNewDB::createDB(%this)
+{
+   %name = sgLightEditorNewDBName.getValue();
+   if(%name $= "")
+      return;
+   if(sgLightEditorNewDB.clone)
+      sgLightEditor.cloneDB(%name);
+   else
+      sgLightEditor.createDB(%name);
+   Canvas.popDialog(sgLightEditorNewDB);
+}

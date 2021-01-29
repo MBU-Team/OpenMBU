@@ -7,18 +7,20 @@
 
 function kick(%client)
 {
-   messageAll( 'MsgAdminForce', '\c2The Admin has kicked %1.', %client.name);
+   messageAll( 'MsgAdminForce', "", "kick", %client.name);
 
    if (!%client.isAIControlled())
-      BanList::add(%client.guid, %client.getAddress(), $Pref::Server::KickBanTime);
-   %client.delete("You have been kicked from this server");
+      //BanList::add(%client.guid, %client.getAddress(), $Pref::Server::KickBanTime);
+      $banlist[%client.xbLiveId] = getRealTime() TAB $Server::KickBanTime;
+   %client.delete("CR_YOUAREKICKED");
 }
 
 function ban(%client)
 {
-   messageAll('MsgAdminForce', '\c2The Admin has banned %1.', %client.name);
+   messageAll('MsgAdminForce', "", "ban", %client.name);
 
    if (!%client.isAIControlled())
-      BanList::add(%client.guid, %client.getAddress(), $Pref::Server::BanTime);
-   %client.delete("You have been banned from this server");
+      //BanList::add(%client.guid, %client.getAddress(), $Pref::Server::BanTime);
+      $banlist[%client.xbLiveId] = getRealTime() TAB $Server::BanTime;
+   %client.delete("CR_YOUAREBANNED");
 }

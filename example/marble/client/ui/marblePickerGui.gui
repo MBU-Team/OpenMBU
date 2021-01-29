@@ -1,0 +1,89 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(marblePickerGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+   new GuiXboxOptionListCtrl(marblePickerOptionList) {
+      profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallProfile";
+      position = isWidescreen()? "380 120" : "132 115";
+      extent = isWidescreen()? "815 400" : "510 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = "center";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "50 50" : "45 55";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+      
+      // data is dynamically added to this option list in the show() function
+   };
+};
+//--- OBJECT WRITE END ---
+
+function marblePickerGui::onWake( %this )
+{
+   // Load marble picker mission
+   GameMissionInfo.setMode( GameMissionInfo.SpecialMode );
+   GameMissionInfo.selectMission( 0 );
+   commandToServer('SetMarble', $pref::marbleIndex);
+   commandToServer('SpawnMarblePickerMarble');
+}
+
+function marblePickerGui::show(%this, %backGui)
+{
+   // Change THIS variable to add/remove marbles
+   %numMarbles = 35;
+   
+   %marbleString = "";
+   for( %i = 0; %i < %numMarbles; %i++ )
+   {
+      if( %i == 0 )
+         %marbleString = ( %i + 1 );
+      else
+         %marbleString = %marbleString TAB ( %i + 1 );
+   }
+   
+	if (%backGui !$= "")
+      %this.backGui = %backGui;    
+
+   marblePickerOptionList.clear();
+   marblePickerOptionList.addRow($Text::MarbleSkin, %marbleString, %numMarbles);
+   marblePickerOptionList.setOptionIndex(%row, $pref::marbleIndex); 
+   
+   RootGui.setA( $Text::OK );
+   RootGui.setTitle( $Text::About0Title );
+}
+
+function marblePickerOptionList::onOptionChange(%this, %increase)
+{
+   %row = %this.getSelectedIndex();
+   %val = %this.getOptionIndex(%row); 
+   
+   $pref::marbleIndex = %val;
+   
+   // Because the server is running in the background...
+   commandToServer('SetMarble', $pref::marbleIndex);
+   commandToServer('SpawnMarblePickerMarble');
+}
+
+function marblePickerGui::onA(%this)
+{
+   // Delete the marble just so it doesn't show up anywhere else
+   commandToServer('DestroyMarblePickerMarble');
+   
+   // Save the profile
+   %string = CurrentGamerProfile.packProfile();
+   CurrentGamerProfile.saveProfile(%string);
+   
+   // Return to selected mission
+   GameMissionInfo.setMode( GameMissionInfo.SPMode );
+   GameMissionInfo.selectMission( GameMissionInfo.getCurrentIndex() );
+   RootGui.setContent(HelpAndOptionsGui, %this.backGui);
+}

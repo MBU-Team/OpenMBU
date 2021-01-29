@@ -1,0 +1,94 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(HelpDlg) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+
+   new GuiWindowCtrl() {
+      profile = "GuiWindowProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "75 36";
+      extent = "483 393";
+      minExtent = "300 200";
+      visible = "1";
+      helpTag = "0";
+      text = "Help";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canMove = "1";
+      canClose = "1";
+      canMinimize = "1";
+      canMaximize = "1";
+      minSize = "50 50";
+      closeCommand = "Canvas.popDialog(HelpDlg);";
+
+      new GuiScrollCtrl() {
+         profile = "GuiScrollProfile";
+         horizSizing = "right";
+         vertSizing = "height";
+         position = "8 26";
+         extent = "132 356";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         willFirstRespond = "1";
+         hScrollBar = "alwaysOff";
+         vScrollBar = "dynamic";
+         constantThumbHeight = "0";
+         childMargin = "0 0";
+
+         new GuiTextListCtrl(HelpFileList) {
+            profile = "GuiTextListProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "1 1";
+            extent = "130 8";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            enumerate = "0";
+            resizeCell = "1";
+            columns = "0";
+            fitParentWidth = "1";
+            clipColumnText = "0";
+         };
+      };
+      new GuiScrollCtrl() {
+         profile = "GuiScrollProfile";
+         horizSizing = "width";
+         vertSizing = "height";
+         position = "146 26";
+         extent = "328 356";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         willFirstRespond = "1";
+         hScrollBar = "alwaysOff";
+         vScrollBar = "alwaysOn";
+         constantThumbHeight = "0";
+         childMargin = "0 0";
+
+         new GuiMLTextCtrl(HelpText) {
+            profile = "GuiMLTextProfile";
+            horizSizing = "width";
+            vertSizing = "bottom";
+            position = "1 1";
+            extent = "310 16";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            lineSpacing = "2";
+            allowColorChars = "0";
+            maxChars = "-1";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---

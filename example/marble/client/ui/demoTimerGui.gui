@@ -1,0 +1,68 @@
+function DemoTimerGui::init(%this, %srcGui, %region)
+{
+   if (isDemoLaunch() && $Client::connectedMultiplayer)
+   {
+      %this.setVisible(true);
+	   //%this.reposition(%region);
+	      
+// 	   if (isWidescreen())
+// 	      %this.position = %this.widePosition;
+// 	   else
+// 	      %this.position = %this.normPosition;
+   
+      //%srcGui.add(%this);
+      
+      %this.updateTimeRemaining();
+   }
+   else
+   {
+      %this.setVisible(false);
+   }
+}
+
+function DemoTimerGui::reposition(%this, %region)
+{
+      // set position
+	   if (%region)
+		   // use a sinister eval
+		   DemoTimerGui.position = eval("return DemoTimerGui.region" @ %region @ "position;");
+		else DemoTimerGui.position = DemoTimerGui.region1Position;
+}
+
+function DemoTimerGui::pause(%this, %toggle)
+{
+      // set position for pause menu
+	   if (%toggle)
+	   	%this.position = getWord(%this.position, 0) SPC getWord(%this.position, 1) - 13;
+	   else %this.position = getWord(%this.position, 0) SPC getWord(%this.position, 1) + 13;
+}
+
+function zeropad(%str, %digits)
+{
+   %len = strlen(%str);
+   %numPads = %digits - %len;
+   
+   for (%i = 0; %i < %numPads; %i++)
+      %str = "0" @ %str;
+   return %str;
+}
+
+function DemoTimerGui::updateTimeRemaining(%this)
+{
+   cancel($updateDemoTimeSched);
+   
+   %secs = mFloor($Demo::TimeRemaining % 60000 / 1000);
+   %mins = mFloor($Demo::TimeRemaining / 60000);
+   
+   if (%secs > 0 || %mins > 0)
+      %color = "<color:EBEBEB>";
+   else
+      %color = "<color:EB1010>";
+   
+   %this.setText("<just:right>" @ %color @ $Text::DemoTimerLabel SPC %mins @ ":" @ zeropad(%secs, 2) @ " \n");
+   
+   // schedule next update
+   if ($Demo::TimeRemaining > 0 && %this.isAwake())
+      $updateDemoTimeSched = %this.schedule(1000, updateTimeRemaining);
+}
+

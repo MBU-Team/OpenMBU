@@ -1,0 +1,835 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiBitmapCtrl(LevelScoresGui) {
+   profile = "GuiContentProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   bitmap = "./xbox/void";
+   wrap = "0";
+      entryStart = "0";
+      useVariable = "0";
+      helpTag = "0";
+      tile = "0";
+      leaderboard = "0";
+
+   new GuiTextCtrl(LS_Title) 
+   {
+      profile = "TextTitleRightProfile";
+	   horizSizing = "right";
+	   vertSizing = "bottom";
+		position = isWidescreen()? "-100 30" : "-50 10";
+      extent = isWidescreen()? "1024 80" : "640 80";
+      minExtent = "8 8";
+      visible = "1";
+      text = "";
+   };
+   
+   // HA HA HA HACK HACK 
+   // LS_Title is swapped with this object below in Japanese language
+   new GuiTextCtrl(LS_Title_Japanese) 
+   {
+      profile = "TextJapaneseTitleRightProfile";
+	   horizSizing = "right";
+	   vertSizing = "bottom";
+		position = isWidescreen() ? "-100 35" : "-50 15"; 
+      extent = isWidescreen() ? "1024 85" : "640 85";
+      minExtent = "8 8";
+      visible = "0";
+      text = "";
+   };
+      
+   new GuiWindowCtrl(LS_bgBox) {
+      profile = "bgBoxProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = isWideScreen() ? "298 83" : "15 61";
+      extent = isWideScreen() ? "612 426" : "612 309";
+      minExtent = "8 2";
+      visible = "1";
+      maxLength = "255";
+      resizeWidth = "1";
+      resizeHeight = "1";
+      canMove = "0";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      minSize = "50 50";
+
+      new GuiMLTextCtrl(LS_Rank_Header) {
+         profile = "TextListRightProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "16 25";
+         extent = "80 20";
+         minExtent = "8 20";
+         visible = "1";
+         lineSpacing = "23";
+         allowColorChars = "0";
+         maxChars = "-1";
+	            text = "<font:Arial Bold:18><just:center>" @ $Text::Rank;
+            helpTag = "0";
+      };
+      new GuiMLTextCtrl() {
+         profile = "TextListProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "108 25";
+         extent = "350 20";
+         minExtent = "8 20";
+         visible = "1";
+         lineSpacing = "23";
+         allowColorChars = "0";
+         maxChars = "-1";
+	            text = "<font:Arial Bold:18><just:left>" @ $Text::PlayerName;
+            helpTag = "0";
+      };
+      new GuiMLTextCtrl(LS_Time_Header) {
+         profile = "TextListProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "395 25";
+         extent = "87 20";
+         minExtent = "8 20";
+         visible = "1";
+         lineSpacing = "23";
+         allowColorChars = "0";
+	            text = "<font:Arial Bold:18><just:left>" @ $Text::Time;
+         maxChars = "-1";
+            helpTag = "0";
+      };
+      new GuiMLTextCtrl(LS_Score_Header) {
+         profile = "TextListRightProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "374 25";
+         extent = "200 20";
+         minExtent = "8 20";
+         visible = "1";
+         lineSpacing = "23";
+         allowColorChars = "0";
+         maxChars = "-1";
+	            text = "<font:Arial Bold:18><just:right>" @ $Text::Score;
+            helpTag = "0";
+      };
+      new GuiTextListCtrl(ScoreboardList) {
+         profile = "ScoreboardListGuiProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "39 47";
+         extent = isWideScreen() ? "536 378" : "536 209";
+         minExtent = "8 8";
+         visible = "1";
+         rowsPerPage = isWideScreen() ? "13" : "10";
+         allowUnselectedScroll = "0";
+         enumerate = "0";
+         resizeCell = "0";
+         columns = "0 65 353 495 530";
+         columnAligns = "0 0 0 2";
+         columnBmps = "0 0 0 0 1";
+         fitParentWidth = "0";
+         autoResize = "0";
+         clipColumnText = "0";
+         rowHeightOffset = "0";
+         centerBmpsVert = "1";
+         centerBmpsHoriz = "1";
+            noDuplicates = "false";
+      };
+      new GuiBitmapCtrl(LS_downarrow) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = isWideScreen() ? "38 378" : "38 261";
+         extent = "32 32";
+         minExtent = "8 2";
+         visible = "0";
+         bitmap = "./xbox/downArrow";
+         wrap = "0";
+            helpTag = "0";
+      };
+      new GuiBitmapCtrl(LS_uparrow) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "38 19";
+         extent = "32 32";
+         minExtent = "8 2";
+         visible = "0";
+         bitmap = "./xbox/upArrow";
+         wrap = "0";
+            helpTag = "0";
+      };
+      new GuiMLTextCtrl(LS_Loading) {
+         profile = "TextHeadingSmallProfile";
+         horizSizing = "center";
+         vertSizing = "botom";
+         position = isWidescreen()? "207 236" : "207 172";
+         extent = "275 60";
+         minExtent = "8 2";
+         visible = "1";
+         lineSpacing = "0";
+         allowColorChars = "0";
+         maxChars = "-1";
+         text = "<just:center>Loading \n ";
+            helpTag = "0";
+            maxLength = "255";
+      };
+	};
+   new GuiXboxOptionListCtrl(LS_title_front) {
+      profile = isWidescreen()? "TextOptionListInactiveProfile" : "TextOptionListInactiveSmallProfile";
+      position = isWidescreen()? "380 455" : "132 319";
+      extent = isWidescreen()? "815 400" : "510 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = isWidescreen()? "bottom" : "top";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "30 70" : "30 70";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+  	};
+};
+//--- OBJECT WRITE END ---
+
+// HACK 
+if (isJapanese())
+{
+   LS_Title.delete();
+   new GuiTextCtrl(LS_Title : LS_Title_Japanese);
+   LS_Title.visible = 1;
+   LevelScoresGui.add(LS_Title);
+   LevelScoresGui.bringToFront(LS_Title);
+   LevelScoresGui.pushToBack(LS_title_front); // I don't know why this gets screwed up, but it does
+}
+
+$MaxLeaderboardIdx = 2;
+
+//ScoreboardList.addRow( 0, "1" TAB "ZeroStride" TAB "00:00.00" TAB "123456" );
+
+$MaxEntriesOnScreen = isWideScreen()? 13 : 10;       // Number of entries displayed on one page
+$NumEntriesToScroll = isWideScreen()? 12 : 9;        // Number of entires to scroll per press of down/up
+levelScoresGui.leaderboard = 0; // Top Players leaderboard
+levelScoresGui.entryStart = 0;  // Starts at entries 1-10
+
+//function levelScoresGui::onX()
+//{
+//   if( isLoggedOn() )
+//   {
+//      alxPlay( AudioButtonDown );
+//      levelPreviewGui.setSelected();
+//      Canvas.setContent( levelPreviewGui );
+//   }
+//   return true;
+//}
+
+function levelScoresGui::onA(%this)
+{
+   // Play
+//   alxPlay( AudioButtonDown );
+//   $launchMissionGui = levelPreviewGui;
+//   startSelectedMission();
+   return true;
+}
+
+function levelScoresGui::onB(%this)
+{
+   // Exit
+   alxPlay( AudioButtonDown );
+   //levelPreviewGui.setSelected();
+   //Canvas.setContent( levelPreviewGui );
+   RootGui.setContent(%this.backGui);
+
+   return true;
+}
+
+function levelScoresGui::onY(%this)
+{
+   // Show Gamercard
+   %rowText = ScoreboardList.getRowTextById( ScoreBoardList.getSelectedId() );
+   %xuid = getField( %rowText, getFieldCount( %rowText ) - 1 );
+   
+   if( %xuid )
+      XBLiveShowGamercardUI( XBLiveGetSignInPort(), %xuid );
+   
+   return true;
+}
+
+function levelScoresGui::onLeft(%this)
+{
+   LevelScoresGui.currentIndex--;
+   if( LevelScoresGui.currentIndex < 0 )
+      LevelScoresGui.currentIndex = %this.currentMissionGroup.lbListCount - 1;
+      
+   alxPlay( AudioButtonOver );
+   %this.updateLeaderboard();
+   return true;
+}
+
+function levelScoresGui::onRight(%this)
+{
+   LevelScoresGui.currentIndex++;
+   if( LevelScoresGui.currentIndex > %this.currentMissionGroup.lbListCount - 1 )
+      LevelScoresGui.currentIndex = 0;
+   
+   alxPlay( AudioButtonOver );
+   %this.updateLeaderboard();
+   return true;
+}
+
+function levelScoresGui::onX(%this)
+{
+   alxPlay( AudioButtonOver );
+   
+   levelScoresGui.leaderboard--;
+   if( levelScoresGui.leaderboard < 0 )
+      levelScoresGui.leaderboard = $MaxLeaderboardIdx;
+      
+   levelScoresGui.updateLeaderboard(false);
+}
+
+function levelScoresGui::onRTrigger(%this, %isCalledFromWrap)
+{
+   if( XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard) <= $MaxEntriesOnScreen )
+   {
+      $lsgSetRowHack = XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard) - 1;
+      ScoreboardList.setSelectedRow( $lsgSetRowHack );
+      return true;
+   }
+   
+   if( levelScoresGui.entryStart + $NumEntriesToScroll < XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard) )
+   {
+      levelScoresGui.entryStart += $NumEntriesToScroll;
+      
+      $lsgSetRowHack = 0;
+      
+      %this.doLoad();
+      %this.setSelectedInfo();
+   }
+   else
+   {
+      if( %isCalledFromWrap )
+         $lsgSetRowHack = 0;
+      else
+         $lsgSetRowHack = -1;
+   }
+   
+   return true;
+}
+
+function levelScoresGui::onLTrigger(%this, %isCalledFromWrap)
+{
+   echo( XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard) );
+   if( XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard) <= $MaxEntriesOnScreen )
+   {
+      $lsgSetRowHack = 0;
+      ScoreboardList.setSelectedRow( $lsgSetRowHack );
+      return true;
+   }
+   
+   if( levelScoresGui.entryStart - $NumEntriesToScroll >= 0 )
+   {
+      levelScoresGui.entryStart -= $NumEntriesToScroll;
+      $lsgSetRowHack = -1;
+   }
+   else if( levelScoresGui.entryStart == 0 )
+   {
+      $lsgSetRowHack = 0;
+      ScoreboardList.setSelectedRow( $lsgSetRowHack );
+      return true;
+   }
+   else
+   {
+      $lsgSetRowHack = levelScoresGui.entryStart - 1;
+      levelScoresGui.entryStart = 0;
+   }
+
+   %this.doLoad();
+   %this.setSelectedInfo();
+   
+   return true;
+}
+
+// parameters:
+//  mode (SP or MP)
+//  levelid or -1 for overall
+function levelScoresGui::show(%this,%mode,%missionId,%backGui)
+{
+   // save the mode
+   %this.savedMode = GameMissionInfo.getMode();
+   
+   if (!isObject(%backGui))
+      %this.backGui = lbMenuGui;
+   else
+      %this.backGui = %backGui;
+   
+   // set new mode
+   if (%mode $= "")
+      %mode = GameMissionInfo.SPMode;
+   GameMissionInfo.setMode(%mode);
+
+   %this.currentMissionGroup = GameMissionInfo.getCurrentMissionGroup();
+   
+   // JMQ: disable MP level leaderboards
+   if (%this.missionId > 60)
+      %this.missionId = "";
+      
+   if (%missionId $= "")
+   {
+      %this.currentIndex = 0; // start with overall leaderboard
+   }
+   else
+   {
+      // find the index in the leaderboard list for this id
+      %found = false;
+      for (%i = 0; %i < %this.currentMissionGroup.lbListCount; %i++)
+         if (%missionId $= getField(%this.currentMissionGroup.lbList, %i))
+         {
+            %found = true;
+            %this.currentIndex = %i;
+            break;
+         }
+         
+      if (!%found)
+      {
+         error("mission id" SPC %missionId SPC "was not found in the leaderboard list");
+         %this.currentIndex = 0; // start with overall leaderboard
+      }
+   }
+     
+   %this.leaderboard = 2;
+   RootGui.setB($Text::Back);
+   RootGui.setX($Text::CLeaderBoard);
+   RootGui.setTitle($Text::LeaderBoardScreen);
+   
+   %this.resetDisplay();
+   
+   if (!XBLiveIsSignedInSilver())
+   {
+      XMessagePopupDlg.show(0, $Text::SignInLeaderboard, $Text::OK, "RootGui.setContent(" @ %this.backGui @");");
+      return;
+   }
+   
+   %this.updateLeaderboard();
+   
+  	if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
+}
+
+function levelScoresGui::hide(%this)
+{
+   %this.cancelLoad();
+   
+   XBLiveClearLoadedLeaderboards();
+   
+   // restore the mode
+   GameMissionInfo.setMode(%this.savedMode);
+   GameMissionInfo.setDefaultMission();
+}
+
+function levelScoresGui::onSignInComplete(%this)
+{
+   if (!XBLiveIsSignedInSilver())
+      %this.onB();
+   else
+      %this.updateLeaderboard();
+}
+
+function levelScoresGui::resetDisplay(%this)
+{
+   %this.setLoadingDisplay( true );
+   
+   ScoreboardList.clear();
+   
+   LS_downarrow.setVisible( false );
+   LS_uparrow.setVisible( false );
+   LS_Rank_Header.setVisible( true );
+   
+   $lsgSetRowHack = 0;
+}
+
+function levelScoresGui::updateLeaderboard(%this, %useSchedule)
+{
+   %this.resetDisplay();
+   
+   // -1 means we are loading the initial view of the leaderboard, we will get the actual starting value
+   // when the load completes.  the value will be stored in $XBLive::LeaderboardStartingIndex
+   levelScoresGui.entryStart = -1; 
+   
+   %this.lbId = getField(%this.currentMissionGroup.lbList, %this.currentIndex);
+   
+   // by default we use a deferred load
+   if (%useSchedule $= "" || %useSchedule)
+      %this.scheduleLoad();
+   else
+      %this.doLoad(); // load now
+      
+   %this.setSelectedInfo();
+}
+
+function levelScoresGui::cancelLoad(%this)
+{
+   XBLiveCancelLoading(); // cancel previous loads
+   cancel(%this.loadSched); // cancel pending loads
+}
+
+// schedule a load of the leaderboard after a delay
+function levelScoresGui::scheduleLoad(%this)
+{
+   %this.cancelLoad();
+   %this.loadSched = %this.schedule(1000, doLoad);
+}
+
+function levelScoresGui::setLoadingDisplay( %this, %show )
+{
+   if( %show )
+   {
+      LS_Loading.setVisible( true );
+      LS_Loading.setText( "<just:center>" @ $Text::Loading @ "...\n " );
+      
+      %x = getWord( LS_bgBox.position, 0 ) + getWord( LS_Loading.position, 0 ) + 100;
+      %y = getWord( LS_bgBox.position, 1 ) + getWord( LS_Loading.position, 1 ) - 67;
+
+      RootGui.displayLoadingAnimation( %x, %y );
+   }
+   else
+   {
+      LS_Loading.setVisible( false );
+      RootGui.displayLoadingAnimation();
+   }
+}
+
+// do a leaderboard load right now
+function levelScoresGui::doLoad(%this)
+{
+   %this.cancelLoad();
+   echo("Leaderboard Loading" SPC %this.lbId SPC %this.leaderboard SPC %this.entryStart SPC $MaxEntriesOnScreen);
+   
+   %this.setLoadingDisplay( true );
+   
+   ScoreboardList.clear();
+   
+   XBLiveLoadLeaderboard(%this.lbId, %this.leaderboard, %this.entryStart, $MaxEntriesOnScreen, "levelScoresGui.setSelected();");  
+}
+
+// update the visual indicator of what level is being viewed.  this can be done even if the load for the 
+// leaderboard is not yet complete.  
+// this function also returns true if the selected leaderboard is an "overall" leaderboard, false otherwise
+function levelScoresGui::setSelectedInfo(%this)
+{
+   //%mission = LevelScoresGui.currentMissionGroup.getObject( LevelScoresGui.currentMission );
+   %mission = GameMissionInfo.findMissionById(%this.lbId);
+   if (isObject(%mission))
+   {
+      %isOverall = false;
+      levelScoresGui.setTitleText( %mission.level, %mission.name );
+   }
+   else
+   {
+      //if (%this.lbId == $Leaderboard::MPScrumSkill)
+      //   LS_Score_Header.setText("<font:Arial Bold:18><just:left>" @ $Text::TrueSkillLabel);
+      
+      %isOverall = true;
+      levelScoresGui.setTitleText( -1, GameMissionInfo.getLeaderboardTitle(%this.lbId) );
+   }
+   
+   return %isOverall;
+}
+
+//------------------------------------------------------------------------------
+
+function ScoreBoardList::onWrapToBottom(%this)
+{
+   // Ok, here we want to capture this event, and load the next things
+   levelScoresGui.onLTrigger( true );
+   
+   // -2 here is just telling the GuiArrayCtrl that we don't want it to
+   // touch the selected row.
+   return -2;
+}
+
+
+function ScoreBoardList::onWrapToTop(%this)
+{
+   levelScoresGui.onRTrigger( true );
+   
+   return -2;
+}
+
+//------------------------------------------------------------------------------
+
+function levelScoresGui::setSelected(%this)
+{
+   levelScoresGui.entryStart = $XBLive::LeaderboardStartingIndex;
+   
+   ScoreboardList.clear();
+   
+   LS_downarrow.setVisible( false );
+   LS_uparrow.setVisible( false );
+   LS_Rank_Header.setVisible( true );
+   
+	if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
+	%this.setLoadingDisplay();
+	
+	if (%this.lbId == $Leaderboard::MPScrumSkill)
+	   LS_Score_Header.setText("<font:Arial Bold:18><just:right>" @ $Text::TrueSkill);
+	else
+	   LS_Score_Header.setText("<font:Arial Bold:18><just:right>" @ $Text::Score);
+	
+	%mission = GameMissionInfo.findMissionById(%this.lbId);
+	%isOverall = %this.setSelectedInfo();
+   
+   %rowCount = XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard);
+   //error("rowcount:" SPC %rowCount);
+   
+   %abnormalMessageText = "";
+   
+   // they don't want this.  if you are the only one ranked, they want your to be on there.
+//   if (%rowCount == 1 && levelScoresGui.leaderboard == 2)
+//   {
+//      // if its the friends leaderboard and the only row is me, display "friends not ranked"
+//      %entry = XBLiveGetLeaderboardRow(%this.lbId, %this.leaderboard, 0);
+//      %rowXbliveId = getField(%entry, 1);
+//      %myLiveId = getField($Player::XBLiveId, 0); // ignore flags field
+//      if (%myLiveId $= "" || %rowXbliveId $= %myLiveId)
+//      {
+//         %abnormalMessageText = $Text::FriendNotRanked;
+//         
+//         // slam row count so that we don't display the row
+//         %rowCount = 0;
+//      }
+//   }
+   
+   if( %rowCount == 0 )
+   {
+      if( levelScoresGui.leaderboard == 2 )
+      {
+         // friend board
+         %abnormalMessageText = $Text::FriendNotRanked;
+      }
+      else if( levelScoresGui.leaderboard == 1 )
+      {
+         // my score board
+         if( isDemoLaunch() )
+            %abnormalMessageText = $Text::SaveAndRank;
+         else
+            %abnormalMessageText = $Text::YouNotRanked;
+      }
+      else // overall board
+      {
+         %abnormalMessageText = $Text::NobodyRanked;
+      }
+   }
+   
+   %missionTime = %mission.time;
+   if( !%mission.time )
+   {
+      %missionTime = 2 * %mission.goldTime;
+   }
+   
+  if( %rowCount > $MaxEntriesOnScreen )
+  {
+     if( %rowCount > levelScoresGui.entryStart + $MaxEntriesOnScreen )
+     {
+        LS_downarrow.setVisible( true );
+     }
+     
+     if( levelScoresGui.entryStart > 0 )
+     {
+        LS_uparrow.setVisible( true );
+        LS_Rank_Header.setVisible( false );
+     }
+  }
+   
+   %entryEnd = levelScoresGui.entryStart + $MaxEntriesOnScreen;
+   
+   if( %entryEnd > %rowCount  )
+      %entryEnd = %rowCount;
+      
+   %scorerow = 0;
+   
+   %lbHasTime = XBLiveLeaderboardHasColumn(%this.lbId, "time");
+   %lbHasPoints = XBLiveLeaderboardHasColumn(%this.lbId, "gems");
+   %lbHasRankedSkill = XBLiveLeaderboardHasColumn(%this.lbId, "rankedskill");
+   
+   if (%lbHasTime && %lbHasPoints)
+   {
+      // uh oh
+      error("don't know how to display leaderboard with both time and gems");
+   }
+   if (%lbHasTime)
+      LS_Time_Header.setText("<font:Arial Bold:18>" @ $Text::Time);
+   else if (%lbHasPoints)
+      LS_Time_Header.setText("<font:Arial Bold:18>" @ $Text::Points);
+   else
+      LS_Time_Header.setText("<font:Arial Bold:18>" @ "");
+   
+   for( %i = levelScoresGui.entryStart; %i < %entryEnd; %i++ )
+   {  
+      //%entry = new LeaderboardEntry();
+      //%entry.loadStats( %i );
+      %entry = XBLiveGetLeaderboardRow(%this.lbId, %this.leaderboard, %i);
+      //error("loopit" SPC %entry);
+            
+      %gamertag = getField(%entry, 0);
+      %xuid = getField(%entry, 1);
+      %rank = getField(%entry, 2);
+      %thisScore = getField(%entry, 3);
+      %data = getField(%entry, 4);
+      
+      // This is convoluted with the getField, but XBLiveGetUserID returns
+      // in the format "<xuid>\t0" so it is needed -pw
+      if( %xuid $= getField( XBLiveGetUserID(), 0 ) ) 
+         %rowText = %rank TAB "\c1" @ %gamertag @ "\c0";
+      else
+         %rowText = %rank TAB %gamertag;
+      
+      if (%lbHasTime)
+      {
+          // if this is a time-based board and this guys rating is not what we would expect,
+         // flag his text in red (probably posted with an old build)
+         // JMQ: disabled this for release build
+//         if (%this.lbId >= 1 && %this.lbid <= 60)
+//         {
+//            %calcedRating = calcRating( %data, %mission.time, %mission.goldTime + $GoldTimeDelta, %mission.difficulty );
+//            
+//            // flag if leaderboard rating is more than 100 points apart from calc'ed rating
+//            if (mAbs(%calcedRating - %thisScore) >= 100)
+//            {
+//               %rowText = %rank TAB "\c2" @ %gamertag @ "\c0";
+//            }
+//         }
+      
+         %timeBestTime = %data;
+                  
+         if( %timeBestTime <= 0 )
+         {
+            %rowText = %rowText TAB $Text::None;
+         }
+         else
+         {
+            if( %timeBestTime < -1 ||  %timeBestTime > 3600000 )
+            {
+               echo( "Time for '" @ %gamertag @ "' on level " @ %mission.level @ " is bogus: " @ formatTime( %timeBestTime ) @ " (" @ %timeBestTime @ ")" );
+               %rowText = %rowText TAB $Text::None;
+            }
+            else
+            {
+               %rowText = %rowText TAB formatTime( %timeBestTime );         
+            }
+         }
+     	}
+     	else if (%lbHasPoints)
+     	{
+         %rowText = %rowText TAB %data;
+     	}
+     	else if (%lbHasRankedSkill)
+      {
+         // no data column in this leaderboard
+         %rowText = %rowText TAB "";
+         %thisScore = %data;
+      }
+     	else
+     	{
+     	   // no data column in this leaderboard
+     	   %rowText = %rowText TAB "";
+     	}
+      
+      if( %thisScore < 0 )
+      {
+         echo( "Score for '" @ %gamertag @ "' on level " @ %mission.level @ " is bogus: " @ %thisScore );
+         %rowText = %rowText TAB "0";
+      }
+      else
+         %rowText = %rowText TAB %thisScore;
+         
+      // Store the XUID in a column that won't be displayed so we can get
+      // it later to look at the gamercard
+      %rowText = %rowText TAB %xuid;
+         
+      ScoreboardList.addRow( %scorerow, %rowText );
+      %scorerow++;
+   }
+   
+   if( %scorerow > 0 )
+   {
+      RootGui.setY($Text::GamerCard);
+      
+      if( $lsgSetRowHack < 0 )
+         $lsgSetRowHack = ScoreBoardList.rowCount() - 1;
+      
+      ScoreBoardList.setSelectedRow( $lsgSetRowHack );
+   }
+   else
+      RootGui.setY("");
+      
+   if( %abnormalMessageText !$= "" )
+   {
+      LS_Loading.setText( %abnormalMessageText );
+      LS_Loading.setVisible( true );
+   }
+}
+
+function levelScoresGui::setTitleText( %this, %levelnum, %text )
+{
+//    %text = "<just:right>" @ %text;
+//    LS_title_front.setText( %text );
+   %icon = (%levelnum == -1) ? 10 : 18;
+   
+   switch( levelScoresGui.leaderboard )
+   {
+      case 0:
+         %leaderboard = $Text::Overall;
+      case 1:
+         %leaderboard = $Text::MyScore;
+      case 2:
+         %leaderboard = $Text::Friends;
+   }
+   
+   if (%levelnum != -1) 
+	   LS_Title.setText($Text::Level SPC %levelnum);
+   else 
+   	LS_Title.setText("");
+   
+   LS_title_front.clear();
+   LS_title_front.addRow(%leaderboard, %text, %icon);
+}
+
+function levelScoresGui::test(%this)
+{
+   LS_Loading.setText("");
+
+   if (!isWidescreen()) 
+   {   
+	   %rankColumn = "21.\n22.\n23.\n24.\n25.\n26.\n27.\n28.\n29.\n30.\n";
+	   %scoreColumn = "65440\n46506\n7680\n1340\n346\n268\n157\n135\n97\n12056797\n";
+	   %nameColumn = "Duude\nFooman\nWWWWWWWWWWWWWWW\nAWWWWWWWWWWWWE\n"
+	                       @ "tortle\naldijaned\nNardo Pillow\nStu\nMonkeySpoonFightr\nJohn Quigley\n";
+	   
+	   %timeColumn = "00:03.15\n00:04.45\n00:05.12\n00:07.78\n00:15.00\n00:23.98\n00:45.90\n01:03.08\n01:15.62\n15:53.07\n";
+	}
+	else 
+	{
+	   %rankColumn = "21.\n22.\n23.\n24.\n25.\n26.\n27.\n28.\n29.\n30.\n31.\n32.\n233.\n324.\n425.\n";
+	   %scoreColumn = "65440\n46506\n7680\n1340\n346\n268\n157\n135\n97\n12056797\n65440\n46506\n7680\n1340\n346\n";
+	   %nameColumn = "Duude\nFooman\nWWWWWWWWWWWWWWW\nAWWWWWWWWWWWWE\n"
+	                       @ "tortle\naldijaned\nNardo Pillow\nStu\nMonkeySpoonFightr\nJohn Quigley\n"
+	                       @ "Woodle\nfour\nRocketz\nLyle\nBLAM FANTASTICO";
+	   
+	   %timeColumn = "00:03.15\n00:04.45\n00:05.12\n00:07.78\n00:15.00\n00:23.98\n00:45.90\n01:03.08\n01:15.62\n15:53.07\n";		
+	}
+	
+   for (%i = 0; %i < getFieldCount(%nameColumn); %i++)
+	   ScoreboardList.addRow( %i, getField(%rankColumn,%i) TAB getField(%nameColumn,%i) TAB getField(%timeColumn,%i) TAB getField(%scoreColumn,%i) );
+   
+   LS_downarrow.setVisible( 1 );
+   LS_uparrow.setVisible( 1 );
+   LS_Rank_Header.setVisible( 0 );
+   
+   RootGui.setTitle("FAKE PC" SPC $Text::LeaderBoardScreen);
+   levelScoresGui.setTitleText( -1, GameMissionInfo.getLeaderboardTitle(%this.lbId) );
+}
+
+// levelScoresGui.test();
+

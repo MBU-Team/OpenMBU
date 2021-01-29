@@ -1,0 +1,165 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(ConsoleDlg) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+      new GuiStackControl(ConsoleStack) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "0 0";
+         extent = "640 418";
+         minExtent = "60 60";
+         visible = "1";
+
+         new GuiScrollCtrl() {
+         profile = "GuiScrollProfile";
+         position = "0 0";
+         extent = "640 350";
+         hScrollBar = "alwaysOn";
+         vScrollBar = "alwaysOn";
+         horizSizing = "width";
+         vertSizing = "height";
+      
+            new GuiConsole() {
+            profile = "GuiConsoleProfile";
+            position = "0 0";
+            };
+         };
+         new GuiConsoleEditCtrl(ConsoleEntry) {
+            profile = "GuiTextEditProfile";
+            horizSizing = "width";
+            vertSizing = "top";
+            position = "0 350";
+            extent = "640 18";
+            minExtent = "8 2";
+            visible = "1";
+            altCommand = "ConsoleEntry::eval();";
+            maxLength = "255";
+            historySize = "20";
+            password = "0";
+            tabComplete = "0";
+            sinkAllKeyEvents = "1";
+            useSiblingScroller = "1";
+         };
+         new GuiPaneControl(ConsoleErrorPane)
+         {
+            profile = "GuiPaneProfile";
+            caption = "No script compilation errors occured.";
+            extent = "640 85";
+            
+         new GuiScrollCtrl(ConsoleErrorScroller) {
+            profile = "GuiScrollProfile";
+            horizSizing = "width";
+            vertSizing = "bottom";
+            position = "0 368";
+            extent = "640 71";
+            minExtent = "8 2";
+            visible = "1";
+            willFirstRespond = "0";
+            hScrollBar = "alwaysOff";
+            vScrollBar = "alwaysOn";
+            constantThumbHeight = "1";
+            childMargin = "0 0";
+
+            new GuiMLTextCtrl(ConsoleErrorDisplay) {
+               profile = "GuiMLTextProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "2 2";
+               extent = "640 14";
+               minExtent = "8 2";
+               visible = "1";
+               lineSpacing = "2";
+               allowColorChars = "0";
+               maxChars = "-1";
+            };
+         };
+         };
+      };
+};
+//--- OBJECT WRITE END ---
+
+$ConsoleActive = false;
+
+function ConsoleEntry::eval()
+{
+   %text = ConsoleEntry.getValue();
+   echo("==>" @ %text);
+   eval(%text);
+   ConsoleEntry.setValue("");
+   
+   // Check for any pending errors to display
+   updateConsoleErrorWindow();
+}
+
+function ToggleConsole(%make)
+{
+   if (%make)
+   {
+      if ($ConsoleActive)
+      {
+         // Deactivate the console.
+         
+         if ( $enableDirectInput )
+            activateKeyboard();
+         Canvas.popDialog(ConsoleDlg);
+         $ConsoleActive = false;
+      }
+      else
+      {
+         // Activate the console.
+         ConsoleStack.resize(0,0, getWord(getRes(), 0), 1);
+         
+         if ( $enableDirectInput )
+            deactivateKeyboard();
+         Canvas.pushDialog(ConsoleDlg, 99);
+         $ConsoleActive = true;
+
+         // Check for any pending errors to display
+         updateConsoleErrorWindow();
+         
+	  // Collapse the errors if this is the first time...
+	  if(ConsoleErrorPane._initialized == false)
+	  {
+	     ConsoleErrorPane.setCollapsed(true);
+	  }
+
+      }
+   }
+}
+
+// The first hash is 1000...
+$ScriptErrorHashDisplayed = 999;
+
+function updateConsoleErrorWindow()
+{
+   if($ScriptErrorHash != $ScriptErrorHashDisplayed && $ScriptErrorHash != 0)
+   {
+      // Hash was different so there must be a new error. Update the display!
+
+      %oldText = ConsoleErrorDisplay.getText();
+      
+      if(%oldText !$= "")
+      	ConsoleErrorDisplay.setText(%oldText @ "\n" @ $ScriptError);
+      else
+      	ConsoleErrorDisplay.setText($ScriptError);
+      
+      ConsoleErrorDisplay.setCursorPosition(100000); // Hacka hacka hacka
+      ConsoleErrorDisplay.scrollToBottom();
+      
+      // Update the pane caption.
+      $ConsoleErrorCount += $ScriptErrorHash - $ScriptErrorHashDisplayed;
+      ConsoleErrorPane.caption = $ConsoleErrorCount @ " script compilation error(s) have occured!";
+      
+      // Indicate we dealt with this...
+      $ScriptErrorHashDisplayed = $ScriptErrorHash;
+      $ScriptError = "";
+   }
+}
+

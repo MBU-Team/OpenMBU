@@ -1,0 +1,403 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+    new ScriptObject(MissionInfo) {
+         include = "1";
+         level = "15";
+         name = $Text::LevelName23;
+         time = "80000";
+         difficulty = "3";
+         startHelpText = $Text::LevelStartHelp23;
+         gameType = "SinglePlayer";
+         artist = "Alex Swanson";
+         desc = "Follow the path and fly to the goal.";
+         type = "beginner";
+   };
+   new MissionArea(MissionArea) {
+      area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_beginner.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1000";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 -1.73483e+009 -1.73483e+009";
+      fogVolume2 = "-1 -1.73483e+009 -1.73483e+009";
+      fogVolume3 = "-1 -1.73483e+009 -1.73483e+009";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "-1.000000 0.000000 0.000000 1.000000";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 -1734829824.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 -1734829824.000000";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 -1734829824.000000";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+      new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsBeginnerShape";   };   new Sun() {
+      direction = "0.614021 -0.433884 -0.659336";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.440000 0.440000 0.440000 1.000000";
+      shadowColor = "0.000000 0.000000 0.000000 0.400000";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./windingroad.dif";
+      showTerrainInside = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "-36 47.5 4";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "-36 -36.5 24";
+      rotation = "0 0 -1 89.3814";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "12 -36.5 36";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "HelicopterItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         showHelpOnPickup = "1";
+   };
+   new Item() {
+      position = "0 35.5 16.2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         showHelpOnPickup = "1";
+   };
+   new Trigger(Bounds) {
+      position = "-67 67 -4";
+      rotation = "1 0 0 0";
+      scale = "134 134 129.391";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new InteriorInstance() {
+      position = "31.5 -32.5 35.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_8_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "31.5 -40 35.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_8_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "31.5 -40 19.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_4_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "31.5 -40 11.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "13.5 7 19.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_4_corner.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "34 7 19.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "34 7 15.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-20.5 -38 -0.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-39.5 -32 11.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-20.5 -38 23.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_4_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-20.5 -38 15.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_8_corner.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "-39.5 -32 15.5";
+      rotation = "0 0 1 180";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_corner.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "6.5 7 23.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "5.5 32.25 15.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_8_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "5.5 39.25 15.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_8_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "5.5 32.25 -4.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "5.5 39.25 -4.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "23.5 41 15.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_3_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "23.5 34 15.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_3_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "31.5 34 1.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "6.5 -9 7.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "6.5 -9 23.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_8_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "5.5 32.25 -0.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "5.5 39.25 -0.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new InteriorInstance() {
+      position = "31.5 34 9.5";
+      rotation = "0 0 1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "~/data/missions/parts/arch_4_corner.dif";
+      showTerrainInside = "0";
+         className = "interior";
+   };
+   new SimGroup(check1) {
+
+      new Trigger(check1) {
+         position = "-15.8412 43.0809 15.8772";
+         rotation = "1 0 0 0";
+         scale = "16.3627 15.4914 2.41893";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+      new StaticShape() {
+         position = "-4.99017 34.5043 16.0054";
+         rotation = "0 0 1 89.9544";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SimGroup(check2) {
+
+      new Trigger(check1) {
+         position = "3.01309 -6.0907 27.3218";
+         rotation = "1 0 0 0";
+         scale = "16.3627 15.4914 2.41893";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "1";
+      };
+      new StaticShape() {
+         position = "10.9673 -11.4928 28.01";
+         rotation = "0 0 1 89.9544";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SpawnSphere() {
+      position = "-33.4303 48.4464 19.6879";
+      rotation = "0.0320757 -0.0972039 0.994748 143.655";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---
+
+

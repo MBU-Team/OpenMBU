@@ -1,0 +1,174 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(MultiPlayerGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+
+   new GuiXboxListCtrl(MultiPlayerMenu) {
+      profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+	   horizSizing = "left";
+	   vertSizing = "height";
+		position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+      extent = "640 480";
+   };  
+};
+//--- OBJECT WRITE END ---
+function MultiPlayerGui::onA(%this)
+{
+   alxPlay( AudioButtonDown );
+   
+   if (!%this.menuEnabled)
+      return true;
+   
+   // check for disabled rows (for demo mode)
+   // %JMQ: demo
+//   if (!MultiPlayerMenu.getRowEnabled(MultiPlayerMenu.getSelectedIndex()))
+//   {
+//      featureNotInDemo($Text::UP2);
+//      return;
+//   }
+   
+   switch$ ( MultiPlayerMenu.getSelectedIndex() )
+   {
+      case 0:
+         RootGui.setContent(FindGameGui, true); // true means do a quickmatch search and join
+      case 1: 
+         RootGui.setContent(OptimatchGui);
+         // temporarily, just go to find game gui and start search
+         //RootGui.setContent(FindGameGui, false);
+      case 2:
+         if ($EnableFMS)
+         {
+            GameMissionInfo.setMode(GameMissionInfo.MPMode);
+            
+            %missionFile = GameMissionInfo.getDefaultMission();
+            GameMissionInfo.setCurrentMission(%missionFile);
+         }
+         
+         RootGui.setContent(CreateGameGui);
+      case 3:
+         // Auto enter the MP leaderboards
+         RootGui.setContent( LevelScoresGui, GameMissionInfo.MPMode, $Leaderboard::MPScrumOverall, %this );
+   }
+      
+   return true;
+}
+
+function MultiPlayerGui::onB(%this)
+{
+   alxPlay( AudioButtonDown );
+   %this.exit(false);
+   return true;
+}
+
+function MultiPlayerGui::onY(%this)
+{  
+   alxPlay( AudioButtonDown );
+   
+   %newModeRanked = !$Client::MatchMode;
+   
+   if (%newModeRanked && isPCBuild())
+   {
+      XMessagePopupDlg.show(0, "PC build can't do ranked mode", $Text::OK);
+      return true;
+   }
+   if (%newModeRanked && isDemoLaunch())
+   {
+      XMessagePopupDlg.show(0, $Text::DemoNoRanked, $Text::OK);
+      return true;
+   }
+   
+   $Client::MatchMode = %newModeRanked;
+   %this.updateMatchMode();
+   return true;
+}
+
+function MultiPlayerGui::onWhite(%this)
+{
+   //alxPlay( AudioButtonDown );
+   
+   //showGui(OptionsGui, %this);
+   
+   //return true;
+} 
+
+function MultiPlayerGui::exit(%this, %signOff)
+{
+   XBLiveDeleteHostedMatch(); // just in case
+   cancel(%this.logonSchedule); // just in case
+   
+   if (%signOff)
+      uixLogoff();
+   RootGui.setContent(MainMenuGui);
+}
+
+function MultiPlayerGui::updateMatchMode(%this)
+{
+   if ($Client::MatchMode)
+      RootGui.setY($Text::ModeRanked);
+   else
+      RootGui.setY($Text::ModeStandard);
+   XBLiveSetRanked($Client::MatchMode);
+}
+
+function MultiPlayerGui::show(%this)
+{
+   %this.menuEnabled = true;
+   
+   // add rows
+   MultiPlayerMenu.clear();
+   MultiPlayerMenu.addRow($Text::QuickMatch, "", 0, 2);
+   MultiPlayerMenu.addRow($Text::OptiMatch, "", 0, 2);
+   MultiPlayerMenu.addRow($Text::CreateMatch, "", 0, 2);
+   MultiPlayerMenu.addRow($Text::LeaderBoards, "", 0, 6);
+
+   RootGui.setTitle($Text::MultiplayerMenu);
+   RootGui.setA($Text::GO);
+   RootGui.setB($Text::Back);
+   
+   // make sure we're not in ranked mode in these cases
+   if (isDemoLaunch() || isPCBuild())
+      $Client::MatchMode = 0;
+      
+   %this.updateMatchMode();
+   
+   MultiPlayerMenu.setSelectedIndex(0);
+   
+   if (!XBLiveIsSignedInGold())
+   {
+      // shouldn't be here
+      XMessagePopupDlg.show(0, $Text::MPNotAllowed, $Text::OK, "RootGui.setContent(MainMenuGui);");
+   }
+      
+//   if (XBLiveIsSignedInGold())
+//   {
+//      $Client::shellMode = "MultiPlayer";
+//   }
+//   else if ($Client::UseXBLiveMatchMaking)
+//   {     
+//      //%checkContentStatus = !isDemoLaunch() && RootGui.previousContentGui == MainMenuGui.getId();
+//      %checkContentStatus = false;
+//      clientPromptSignedIn("MultiPlayerGui.onSignInComplete(" @ %checkContentStatus @ ");", $Text::SignInForMultiplayer, "XBLiveIsSignedInGold();", "MultiPlayerGui.exit(false);");
+//   }
+}
+
+function MultiPlayerGui::onSignInComplete(%this, %checkContentStatus)
+{
+   if (!XBLiveIsSignedInGold())
+      %this.exit(false);
+   else
+   {
+      // we're in multiplayer mode now
+      $Client::shellMode = "MultiPlayer";
+      
+      //clientLockController(XBLiveGetSigninPort());
+   }
+}
+
+function mpg_reload() 
+{
+   exec("marble/client/ui/multiPlayerGui.gui");
+}

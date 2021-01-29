@@ -1,0 +1,55 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(aboutMenuOptionsGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+   new GuiXboxListCtrl(aboutMenuOptionsList) {
+      profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+	   horizSizing = "left";
+	   vertSizing = "height";
+		position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+      extent = "640 480";
+   };
+};
+//--- OBJECT WRITE END ---
+
+function aboutMenuOptionsGui::onA(%this)
+{
+   %idx = aboutMenuOptionsList.getSelectedIndex();
+   
+	alxPlay( AudioButtonDown );
+   
+   if( %idx == 0 )
+      RootGui.setContent( ControlerDisplayGui, %this );
+   else
+      RootGui.setContent(helpGui, %this.backGui, %idx);
+   
+   return true;
+}
+
+function aboutMenuOptionsGui::show(%this, %backGui)
+{
+   if (%backGui !$= "")
+      %this.backGui = %backGui;
+   
+   aboutMenuOptionsList.clear();
+   aboutMenuOptionsList.addRow($Text::AboutBasics, "", 0, 12);
+   aboutMenuOptionsList.addRow($Text::AboutPowerups, "", 0, 12);
+   aboutMenuOptionsList.addRow($Text::AboutBlast, "", 0, 12);
+   aboutMenuOptionsList.addRow($Text::AboutSP, "", 0, 12);
+   aboutMenuOptionsList.addRow($Text::AboutMP, "", 0, 12);
+   
+   RootGui.setA($Text::Go);
+   RootGui.setB( $Text::Back );
+   RootGui.setTitle( $Text::About2Title );
+}
+
+function aboutMenuOptionsGui::onB(%this)
+{
+   RootGui.setContent( HelpAndOptionsGui, %this.backGui );
+}

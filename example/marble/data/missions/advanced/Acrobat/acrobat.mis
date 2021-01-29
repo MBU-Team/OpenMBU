@@ -1,0 +1,326 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+  new ScriptObject(MissionInfo) {
+         time = "80000";
+         artist = "Alex Swanson";
+         gameType = "SinglePlayer";
+         desc = "Careful jumping is the key!";
+         type = "advanced";
+         startHelpText = $Text::LevelStartHelp79;
+         include = "1";
+         level = "49";
+         difficulty = "9";
+         name = $Text::LevelName79;
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_advanced.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 7.45949e-031 1.3684e-038";
+      fogVolume2 = "-1 1.07208e-014 8.756e-014";
+      fogVolume3 = "-1 5.1012e-010 2.05098e-008";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "0.000000 0.000000 0.000000 0.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
+   };
+   new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsAdvancedShape";   };   new Sun() {
+      direction = "-0.574613 0.406037 -0.710601";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.400000 0.400000 0.400000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./acrobat.dif";
+      showTerrainInside = "0";
+   };
+   new Item() {
+      position = "64 -24.5 54.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperSpeedItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "64 21.5 62";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperSpeedItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new StaticShape(EndPoint) {
+      position = "-27.5 0 56";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "2 29.8 49.0303";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "6 -6 8";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+      };
+   };
+   new Item() {
+      position = "0.162516 -0.151839 8.25";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperSpeedItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "0.00755069 -35.5228 14.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperSpeedItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new SimGroup(MustChange_g) {
+
+      new Path() {
+         isLooping = "1";
+
+         new Marker() {
+            position = "64 -31.5 14.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "1";
+            type = "Normal";
+            msToNext = "130";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "64 -31.5 20";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "2";
+            type = "Normal";
+            msToNext = "200";
+            smoothingType = "Linear";
+         };
+         new Marker() {
+            position = "64 -31.5 20";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "3";
+            type = "Normal";
+            msToNext = "500";
+            smoothingType = "Accelerate";
+         };
+         new Marker() {
+            position = "64 -31.5 14.5";
+            rotation = "1 0 0 0";
+            scale = "1 1 1";
+            hidden = "0";
+            seqNum = "4";
+            type = "Normal";
+            msToNext = "0";
+            smoothingType = "Accelerate";
+         };
+      };
+      new PathedInterior(MustChange) {
+         position = "0 0 5.1763";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "PathedDefault";
+         interiorResource = "marble/data/missions/advanced/Acrobat/acrobat.dif";
+         interiorIndex = "0";
+         basePosition = "0 0 0";
+         baseRotation = "1 0 0 0";
+         baseScale = "1 1 1";
+            initialTargetPosition = "-1";
+      };
+   };
+   new Trigger(Bounds) {
+      position = "-33 50.5393 -3.00001";
+      rotation = "1 0 0 0";
+      scale = "121.818 96.0393 419.785";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new StaticShape() {
+      position = "3.88277 33.2295 48.2389";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "ArrowDown";
+   };
+   new StaticShape() {
+      position = "-1.77986 -4.20066 8.07043";
+      rotation = "0.171368 -0.176728 -0.969227 90.0261";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "ArrowSide";
+   };
+   new Item() {
+      position = "-1.25 0 2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperSpeedItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-3.5 0 2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperSpeedItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "1 0 2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperSpeedItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         foundOnCheckpointSeq = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new SimGroup(check4) {
+
+      new Trigger(check04) {
+         position = "66.4193 15.3188 61.6637";
+         rotation = "0 0 1 179.909";
+         scale = "4.93939 4.90889 4.62679";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "4";
+      };
+      new StaticShape() {
+         position = "63.977 17.5146 61.7677";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SimGroup(check2) {
+
+      new Trigger(check02) {
+         position = "55.6187 -29.566 20.1953";
+         rotation = "1 0 0 0";
+         scale = "4.93939 4.32182 4.62679";
+         hidden = "0";
+         dataBlock = "CheckPointTrigger";
+         polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+            sequence = "2";
+      };
+      new StaticShape() {
+         position = "57.9992 -31.5075 20.2571";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "checkPointShape";
+      };
+   };
+   new SpawnSphere() {
+      position = "-15.6118 -38.9246 23.8957";
+      rotation = "0.130715 -0.0590861 0.989658 49.0966";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---
+
+

@@ -1,0 +1,387 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+   new ScriptObject(MissionInfo) {
+         include = "1";
+         difficulty = "3";
+         artist = "Kevin Ryan & Tim Aste";
+         startHelpText = $Text::LevelStartHelp27;
+         type = "beginner";
+         time = "90000";
+         gameType = "SinglePlayer";
+         level = "16";
+         name = $Text::LevelName27;
+         desc = "Skate for the gems.";
+   };
+   new MissionArea(MissionArea) {
+      area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "~/data/skies/sky_beginner.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 -1.73483e+009 -1.73483e+009";
+      fogVolume2 = "-1 -1.73483e+009 -1.73483e+009";
+      fogVolume3 = "-1 -1.73483e+009 -1.73483e+009";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "-6973005312.000000 -6973005312.000000 -6973005312.000000 -6973005312.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 -1734829824.000000";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 -1734829824.000000";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 -1734829824.000000";
+   };
+   new StaticShape() {
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+   };
+      new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsBeginnerShape";   };   new Sun() {
+      direction = "0.442343 0.475025 -0.760713";
+      color = "1.400000 1.200000 0.400000 1.000000";
+      ambient = "0.440000 0.440000 0.440000 1.000000";
+      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new InteriorInstance() {
+      position = "-0.474878 0.718696 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./skatepark.dif";
+      showTerrainInside = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "-22.966 -15.5375 100.042";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "19.3242 -12.0392 99.9883";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "-11.65 -2.6 101.35";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-0.75 2.05 101.75";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-11.05 6.2 101.35";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-11.0418 14.2161 101.15";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-0.75 9.85 101.55";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-0.75 17.25 101.75";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-15.8 23.4 102.2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-5.97905 30.3225 102.4";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-16.4793 39.4246 102.2";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-4.00274 41.9507 102";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "5.25423 36.9518 102.4";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "7.80131 21.4205 99.8";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "18.9864 19.733 99.4365";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "5.68768 14.1827 99.4016";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "13.1384 14.4193 98.1719";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-0.366512 -7.87331 102.158";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Trigger(Bounds) {
+      position = "-93 119 89";
+      rotation = "1 0 0 0";
+      scale = "178 180 32";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new Item() {
+      position = "7.79628 8.40074 99.2814";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "18.6597 8.13499 99.3031";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new StaticShape() {
+      position = "-26.75 -15.25 100.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_18shape";
+   };
+   new StaticShape() {
+      position = "-5.5 -18.5 100.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_18shape";
+   };
+   new SpawnSphere() {
+      position = "12.9513 39.2824 104.677";
+      rotation = "-0.0729455 -0.171119 0.982546 225.452";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+   new StaticShape() {
+      position = "-26.75 20.75 100.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_18shape";
+   };
+   new StaticShape() {
+      position = "27.75 -15.25 100.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_18shape";
+   };
+   new StaticShape() {
+      position = "27.75 20.75 100.5";
+      rotation = "0 0 -1 90";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_18shape";
+   };
+   new StaticShape() {
+      position = "-23.5 54 100.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_18shape";
+   };
+   new StaticShape() {
+      position = "12.5 54 100.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_9shape";
+   };
+   new StaticShape() {
+      position = "-23.5 -18.5 100.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "glass_9shape";
+   };
+};
+//--- OBJECT WRITE END ---
+

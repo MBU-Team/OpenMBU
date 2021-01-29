@@ -1,0 +1,74 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiBitmapCtrl(loadingGui) {
+   profile = "SplashLoadingProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   bitmap = "./EngineSplashBG";
+   wrap = "0";
+      tile = "0";
+      qLineCount = "0";
+      helpTag = "0";
+      useVariable = "0";
+
+   new GuiControl(ldframe) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 8";
+      visible = "1";
+
+      new GuiBitmapCtrl() {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "100 72";
+         extent = "435 352";
+         minExtent = "8 8";
+         visible = "1";
+         bitmap = "./EngineSplash";
+         wrap = "0";
+            helpTag = "0";
+
+         new GuiBitmapCtrl(poweredby) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "156 33";
+            extent = "128 16";
+            minExtent = "8 8";
+            visible = isEnglish() ? "1" : "0";
+            bitmap = "./PoweredBy";
+            wrap = "0";
+         };
+      };
+      new GuiTextCtrl(LG_loadingtext2) {
+         profile = "TextTitleRightProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "230 375";
+         extent = "300 80";
+         minExtent = "50 34";
+         visible = "1";
+         text = $Text::Loading;
+         maxLength = "255";
+      };
+      new GuiBitmapAnimation(ldAnim) {
+         profile = "LoadingAnimationProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "535 381"; 
+         extent = "63 63";
+         minExtent = "8 2";
+         visible = "1";
+         animationFrameDelay = "50";
+         boundsCorrect= "1";
+      };
+   };
+};
+//--- OBJECT WRITE END ---

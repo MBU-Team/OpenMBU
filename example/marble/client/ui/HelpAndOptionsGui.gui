@@ -1,0 +1,75 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(HelpAndOptionsGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+   
+   new GuiXboxListCtrl(HelpAndOptionsList) {
+      profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+	   horizSizing = "left";
+	   vertSizing = "height";
+		position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+      extent = "640 480";
+   };
+};
+//--- OBJECT WRITE END ---
+
+function HelpAndOptionsGui::onA(%this)
+{
+   %idx = HelpAndOptionsList.getSelectedIndex();
+   
+	alxPlay( AudioButtonDown );
+   
+   //if( ServerConnection.gameState !$= "wait" && ServerConnection.gameState !$= "" )
+   //   %idx += 1;
+   
+   // If we are in a game, do not allow marble switch
+   if( %idx == 0 && (ServerConnection.gameState !$= "wait" && ServerConnection.gameState !$= "") )
+   {
+      XMessagePopupDlg.show(0, $Text::ErrorNoSwitchMarble, $Text::OK);
+      return true;
+   }
+      
+   switch( %idx )
+   {
+      case 0:
+         RootGui.setContent(marblePickerGui, %this.backGui);
+      case 1: 
+         RootGui.setContent(inputAndSoundOptionsGui, %this.backGui);
+      case 2: 
+         RootGui.setContent(aboutMenuOptionsGui, %this.backGui);
+      case 3:
+         RootGui.setContent(helpGui, %this.backGui, 5);
+   }
+    
+   return true;
+}
+
+function HelpAndOptionsGui::show(%this, %backGui)
+{
+   if (%backGui !$= "")
+      %this.backGui = %backGui;
+      
+   if (%this.backGui $= "")
+      %this.backGui = MainMenuGui;
+
+   HelpAndOptionsList.clear();
+   
+   HelpAndOptionsList.addRow($Text::HOMarble, "", 0, 8);
+   HelpAndOptionsList.addRow($Text::HOOptions, "", 0, 8);
+   HelpAndOptionsList.addRow($Text::HOInstructions, "", 0, 12);
+   HelpAndOptionsList.addRow($Text::HOCredits, "", 0, 12);
+  
+   RootGui.setA($Text::Go);
+   RootGui.setB( $Text::Back );
+   RootGui.setTitle( $Text::HOTitle );
+}
+
+function HelpAndOptionsGui::onB(%this)
+{
+   RootGui.setContent( %this.backGui );
+}

@@ -1,0 +1,658 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(RootGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   
+   new GameTSCtrl(RootTSCtrl) {
+      profile = "GuiContentProfile";
+      horizSizing = "parent";
+      vertSizing = "parent";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      cameraZRot = "0";
+      forceFOV = "0";
+      
+      new GuiShapeNameHud(RootShapeNameHud) {
+         profile = "PlayerNameProfile";
+         horizSizing = "parent";
+         vertSizing = "parent";
+         position = "0 0";
+         extent = "640 480";
+         minExtent = "8 2";
+         visible = "1";
+         fillColor = "0.000000 0.000000 0.000000 0.000000";
+         frameColor = "0.000000 1.000000 0.000000 1.000000";
+         textColor = "1.000000 1.000000 0.000000 1.000000";
+         showFill = "0";
+         showFrame = "0";
+         verticalOffset = "0.5";
+         distanceFade = "0.1";
+			ellipseScreenFraction = "0.790000 0.90000";
+			fullArrowLength = "60";
+			fullArrowWidth = "40";
+			maxArrowAlpha = "0.6";
+			maxTargetAlpha = "0.4";
+			minArrowFraction = "0.4";
+      };
+      new GuiScoreCountHud(RootScoreCountHud) {
+         profile = "ScoreCountHudProfile";
+         horizSizing = "parent";
+         vertSizing = "parent";
+         position = "0 0";
+         extent = "640 480";      
+         verticalOffset = "0.5";
+         pointColor[1] = "1 0.4 0.4 1";
+         pointColor[2] = "1 1 0.4 1";
+         pointColor[5] = "0.4 0.4 1 1";
+         velocity = 100;
+         acceleration = -33;
+         time = 3000;
+      };
+   };
+
+	new GuiBitmapCtrl(RootBackgroundOverlay) {
+	   profile = "GuiDefaultProfile";
+      horizSizing = "parent";
+      vertSizing = "parent";
+	   position = "-4 -4";
+	   extent = "648 488";
+	   minExtent = "8 8";
+		bitmap = "./xbox/BG_fadeOutSoftEdge";
+	   visible = "1";
+	};
+};
+
+new GuiControl(RootCenterCtrl) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   
+   new GuiBitmapCtrl(RootBackgroundFadeOut) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "parent";
+      vertSizing = "parent";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 2";
+      visible = "0";
+      bitmap = "./xbox/fade_black";
+      wrap = "0";
+         helpTag = "0";
+   };
+   
+   new GuiControl(RootBackgroundBitmaps) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "parent";
+      vertSizing = "parent";
+      position = "0 0";
+      extent = "640 480";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+				
+		new GuiBitmapCtrl(ab_bg) {
+		   profile = "GuiDefaultProfile";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+		   position = isWidescreen()? "615 580" : "300 384";
+		   extent = isWidescreen()? "512 128" : "348 90";
+		   minExtent = "8 8";
+			bitmap = "./xbox/BG_NavBarUnderButtons";
+		   visible = "1";
+		};  
+		
+		new GuiBitmapCtrl(xy_bg) {
+		   profile = "GuiDefaultProfile";
+		   horizSizing = "right";
+		   vertSizing = "bottom";
+		   position = isWidescreen()? "75 531" : "0 350";
+		   extent = isWidescreen()? "512 128" : "348 90";
+		   minExtent = "8 8";
+			bitmap = "./xbox/BG_NavBarUnderButtonsLeft";
+		   visible = "1";
+		};  
+		
+	};
+
+	new GuiBitmapCtrl(glogo) {
+	   profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+	   position = isWidescreen()? "240 536" : "36 375"; //"120 375";
+	   extent = isWidescreen()? "128 128" : "64 64";
+	   minExtent = "8 8";
+		bitmap = "./g";
+	   visible = "1";
+	};  
+		
+   new GuiTextCtrl(RootTitle) 
+   {
+      profile = "TextTitleProfile";
+	   horizSizing = "right";
+	   vertSizing = "bottom";
+// 		position = isWidescreen()? "-200 30" : "50 10";
+		position = isWidescreen()? "100 30" : "50 10";
+      extent = "1120 80";
+      minExtent = "8 8";
+      visible = "1";
+      text = "GUI TITLE GOES HERE";
+   };
+   
+   new GuiMLTextCtrl(LevelTitle) 
+   {
+      profile = isJapanese() ? "TextJapaneseTitleRightProfile" : "TextTitleProfile";
+	   horizSizing = "right";
+	   vertSizing = "bottom";
+// 		position = isWidescreen()? "-200 30" : "50 10";
+		position = isWidescreen()? "100 90" : "50 70";
+      extent = "1120 80";
+      minExtent = "8 8";
+      visible = "1";
+      text = "";
+   };
+   
+   new GuiControl() {
+      profile = "GuiDefaultProfile";
+      horizSizing = "relative";
+      vertSizing = "center";
+      position = "50 210";
+      extent = "540 90";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      
+      new GuiMLTextCtrl(RootCenterText) {
+         profile = "TextHeadingProfile";
+         horizSizing = "width";
+         vertSizing = "height";
+         position = "0 0";
+         extent = "540 90";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+         lineSpacing = "0";
+         allowColorChars = "0";
+         maxChars = "-1";
+      };
+   };
+   
+   new GuiControl(RootGuiBottomNavBar) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "relative";
+      vertSizing = "bottom";
+      position = isWidescreen()? "0 590" : "0 385";
+      extent = "640 200";
+      minExtent = "8 2";
+      visible = "1";
+
+      new GuiControl(RootGuiAButton) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         position = isWidescreen()? "542 50" : "97 34";
+         extent = "500 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/roundedBG";
+         visible = "1";
+
+         new GuiBitmapCtrl(RootGuiAButtonImage) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = isWidescreen()? "440 0" : "440 5";
+            extent = isWidescreen()? "45 45" : "35 35";
+            minExtent = "8 2";
+            visible = "1";
+            bitmap = isWidescreen()? "./xbox/pad_button_a" : "./xbox/pad_smallbutton_a";
+            wrap = "0";
+            onMouseUp = "RootGui.contentGui.onA();";
+         };
+         new GuiTextCtrl(RootGuiAButtonText) {
+            profile = "TextAButtonProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "0 5";
+            extent = "437 34";
+            minExtent = "50 34";
+            visible = "1";
+            text = "";
+            maxLength = "255";
+         };
+      };
+      new GuiControl(RootGuiBButton) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         position = isWidescreen()? "567 5" : "114 4";
+         extent = "500 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/roundedBG";
+         visible = "1";
+         
+         new GuiBitmapCtrl(RootGuiBButtonImage) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "440 5";
+            extent = "35 35";
+            minExtent = "8 2";
+            visible = "1";
+            bitmap = "./xbox/pad_smallbutton_b";
+            wrap = "0";
+            onMouseUp = "RootGui.contentGui.onB();";
+         };
+         new GuiTextCtrl(RootGuiBButtonText) {
+            profile = "TextBButtonProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "0 5";
+            extent = "437 34";
+            minExtent = "50 34";
+            visible = "1";
+            text = "";
+            maxLength = "255";
+         };
+      };
+      new GuiControl(RootGuiYButton) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         position = isWidescreen()? "235 5" : "95 4";
+         extent = "500 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/roundedBG";
+         visible = "1";
+
+         new GuiBitmapCtrl(RootGuiYButtonImage) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "6 5";
+            extent = "35 35";
+            minExtent = "8 2";
+            visible = "1";
+            bitmap = "./xbox/pad_smallbutton_y";
+            wrap = "0";
+            onMouseUp = "RootGui.contentGui.onY();";
+         };
+         new GuiTextCtrl(RootGuiYButtonText) {
+            profile = "TextYButtonProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = isWidescreen()? "45 5" : "42 5";
+            extent = "437 34";
+            minExtent = "50 34";
+            visible = "1";
+            text = "";
+            maxLength = "255";
+         };
+      };
+      new GuiControl(RootGuiXButton) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         position = isWidescreen()? "262 50" : "102 34";
+         extent = "500 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/roundedBG";
+         visible = "1";
+
+         new GuiBitmapCtrl(RootGuiXButtonImage) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = isWidescreen()? "6 0" : "16 5";
+            extent = isWidescreen()? "45 45" : "35 35";
+            minExtent = "8 2";
+            visible = "1";
+            bitmap = isWidescreen()? "./xbox/pad_button_x" : "./xbox/pad_smallbutton_x";
+            wrap = "0";
+            onMouseUp = "RootGui.contentGui.onX();";
+         };
+         new GuiTextCtrl(RootGuiXButtonText) {
+            profile = "TextXButtonProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = isWidescreen()? "55 5" : "52 5";
+            extent = "437 34";
+            minExtent = "50 34";
+            visible = "1";
+            text = "";
+            maxLength = "255";
+         };
+      };
+      new GuiControl(RootGuiLSButton) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "right";
+         vertSizing = "top";
+         position = isWidescreen()? "262 50" : "102 34";
+         extent = "500 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/roundedBG";
+         visible = "1";
+
+         new GuiBitmapCtrl(RootGuiLSButtonImage) {
+            profile = "GuiDefaultProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+//             position = isWidescreen()? "6 0" : "16 5";
+            position = isWidescreen()? "6 8" : "16 8";
+//             extent = isWidescreen()? "45 45" : "35 35";
+            extent = isWidescreen()? "29 29" : "29 29";
+            minExtent = "8 2";
+            visible = "1";
+            bitmap = isWidescreen()? "./xbox/pad_stick_l_tilt" : "./xbox/pad_stick_l_tilt";
+            wrap = "0";
+            onMouseUp = "RootGui.contentGui.onRight();";
+         };
+         new GuiTextCtrl(RootGuiLSButtonText) {
+            profile = "TextXButtonProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = isWidescreen()? "55 5" : "52 5";
+            extent = "437 34";
+            minExtent = "50 34";
+            visible = "1";
+            text = "";
+            maxLength = "255";
+         };
+      };
+   };
+   new GuiBitmapAnimation(RootLoadAnimation) {
+      profile = "LoadingAnimationProfile";
+      horizSizing = "center";
+      vertSizing = "bottom";
+      position = isWidescreen() ? "610 253" : "288 129";
+      extent = "63 63";
+      minExtent = "8 2";
+      visible = "0";
+      boundsCorrect= "1";
+      animationFrameDelay = "50";
+   };
+};
+//--- OBJECT WRITE END ---
+function RootGui::show(%this)
+{
+   Canvas.setContent(%this);
+   // resize to screen resolution
+   %width = getWord(getResolution(), 0);
+   %height = getWord(getResolution(), 1);
+   %this.resize(0, 0, %width, %height);
+
+   if (RootCenterCtrl.getGroup().getId() != %this.getId())
+   {
+      %w = getWord($Shell::Resolution,0);
+      %h = getWord($Shell::Resolution,1);
+      %offsetX = getWord($Shell::Offset,0);
+      %offsetY = getWord($Shell::Offset,1);
+      %this.add(RootCenterCtrl);
+      RootCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
+   }
+}
+
+function RootGui::removeContent(%this)
+{
+   if (isObject(%this.contentGui))
+   {
+      %this.previousContentGui = %this.contentGui.getId();
+      if (%this.contentGui.hasFunction(hide))
+         %this.contentGui.hide();
+      // error("Removing" SPC %this.contentGui.getName() SPC "from" SPC %this.contentGui.getGroup().getName());
+      %this.contentGui.getGroup().remove(%this.contentGui);
+      %this.eventControl = 0;
+   }
+   %this.contentGui = 0;
+   
+   // clear controls
+   %this.setA("");
+   %this.setB("");
+   %this.setY("");
+   %this.setX("");
+   %this.setLS("");
+   %this.setCenterText("");
+   %this.setTitle("");
+   %this.displayLoadingAnimation();
+}
+
+function RootGui::redisplayContent(%this)
+{
+   if (isObject(%this.contentGui))
+      %this.setContent(%this.contentGui);
+}
+
+function RootGui::hasContent(%this)
+{
+   return isObject(%this.contentGui) && %this.contentGui.isAwake();
+}
+
+// %gui: the gui to show
+// %a1..%a9: arguments that will be passed to the new gui's show() function
+function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9)
+{
+   if (!isObject(%gui))
+   {
+      error("RootGui::setContent: gui is not an object:" SPC %gui);
+      return;
+   }
+   
+   if (%this.inSetContent)
+      error("RootGui::setContent is not re-entrant, watch out");
+   %this.inSetContent = true;
+   
+   // make sure we are awake
+   if (!%this.isAwake())
+      %this.show();
+      
+   // remove old content gui
+   %this.removeContent();
+        
+   // reset title - new gui better change this in onWake() or show()
+   %this.setTitle("GUI TITLE GOES HERE");
+   RootBackgroundBitmaps.setVisible(true);
+  
+   // add new content gui
+   %this.contentGui = %gui;
+   %x = 0;
+   %y = 0;
+   if (%this.contentGui.getId() == PlayGui.getId())
+   {
+      RootTSCtrl.add(%this.contentGui);
+      %x = $PlayGui::safeHorMargin;
+      %y = $PlayGui::safeVerMargin;
+      %width  = getWord(getResolution(),0) - 2 * %x;
+      %height = getWord(getResolution(),1) - 2 * %y;
+   }
+   else
+   {
+      RootCenterCtrl.add(%this.contentGui);
+      %width  = getWord(RootCenterCtrl.extent,0);
+      %height = getWord(RootCenterCtrl.extent,1);
+   }
+   %this.contentGui.resize(%x,%y,%width,%height);
+   // error("Adding" SPC %this.contentGui.getName() SPC "to" SPC %this.contentGui.getGroup().getName()" SPC ts control with res" SPC %width SPC %height);
+   
+   // call show function 
+   if (%this.contentGui.hasFunction(show))
+      %this.contentGui.show(%a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9);
+   
+   // update the Canvas's first responder - we have to do this because the Canvas doesn't get 
+   // any messages about the objects we are adding/removing
+   Canvas.setDefaultFirstResponder();
+   // set it up so that canvas forwards all events to the contentGui, first responder (if any)
+   // still takes presidence
+   %this.eventControl = %this.contentGui;
+   
+   // move the nav bar to the end.  this is only done so that its mouse on up commands work
+   %this.pushToBack(RootGuiBottomNavBar);
+   
+   // propogate nocursor attribute to RootGui
+   %this.noCursor = %this.contentGui.noCursor;
+   
+   // do cursor check thingy
+   Canvas.checkCursor();
+   
+   %this.inSetContent = false;
+}
+
+function RootGui::setA(%this,%text)
+{
+   RootGuiAButtonText.setText(%text);
+   if (%text $= "")
+      RootGuiAButton.visible = false;
+   else
+      RootGuiAButton.visible = true;
+}
+
+function RootGui::AEnabled(%this)
+{
+   return RootGuiAButton.visible;
+}
+
+function RootGui::setB(%this,%text)
+{
+   RootGuiBButtonText.setText(%text);
+   if (%text $= "")
+      RootGuiBButton.visible = false;
+   else
+      RootGuiBButton.visible = true;
+}
+
+function RootGui::BEnabled(%this)
+{
+   return RootGuiBButton.visible;
+}
+
+function RootGui::setY(%this,%text)
+{
+   RootGuiYButtonText.setText(%text);
+   if (%text $= "")
+      RootGuiYButton.visible = false;
+   else
+      RootGuiYButton.visible = true;
+}
+
+function RootGui::YEnabled(%this)
+{
+   return RootGuiYButton.visible;
+}
+
+function RootGui::setX(%this,%text)
+{
+   RootGuiXButtonText.setText(%text);
+   if (%text $= "")
+      RootGuiXButton.visible = false;
+   else
+      RootGuiXButton.visible = true;
+}
+
+function RootGui::XEnabled(%this)
+{
+   return RootGuiXButton.visible;
+}
+
+function RootGui::setLS(%this,%text)
+{
+   RootGuiLSButtonText.setText(%text);
+   if (%text $= "")
+      RootGuiLSButton.visible = false;
+   else
+      RootGuiLSButton.visible = true;
+}
+
+function RootGui::LSEnabled(%this)
+{
+   return RootGuiLSButton.visible;
+}
+
+function RootGui::setTitle(%this,%text)
+{
+   if (%text $= "")
+   {
+      RootTitle.visible = false;
+   }
+   else
+   {
+      RootTitle.setText(%text);
+      RootTitle.visible = true;
+   }
+}
+
+function RootGui::setCenterText(%this,%text)
+{
+   if (%text $= "")
+   {
+      RootCenterText.visible = false;
+   }
+   else
+   {
+      RootCenterText.setText("<just:center>" @ %text @ "\n ");
+      RootCenterText.visible = true;
+   }
+}
+
+function RootGui::isCenterTextVisible(%this)
+{
+   return RootCenterText.visible;
+}
+
+function RootGui::displayLoadingAnimation(%this, %x, %y)
+{
+   if( %x && %y )
+   {
+      RootLoadAnimation.resize( %x, %y, 63, 63 );
+      RootLoadAnimation.setVisible( true );
+   }
+   // Put it above the "center text"
+   else if( %x $= "center" )
+   {
+      %loadingPos = isWidescreen() ? "610 253" : "288 129";
+      RootLoadAnimation.resize( getWord( %loadingPos, 0 ), getWord( %loadingPos, 1 ), 63, 63 );
+      RootLoadAnimation.setVisible( true );
+   }
+   else
+      RootLoadAnimation.setVisible( false );
+   
+   // Brings the animation on top of everything
+   RootCenterCtrl.pushToBack( RootLoadAnimation );
+}
+
+// test functions
+function RootGui::redisplay(%this)
+{
+   Canvas.remove(RootGui);
+   Canvas.setContent(RootGui);
+}
+
+function RootGui::testCenterText(%this)
+{
+   RootGui.setCenterText("One is a Bun, Two is a Shoe, Three is a Tree, Four is a Door, Five is a Hive, Six is Sticks, Seven is Heaven, Eight is a Gate, Nine is Swine, Ten is a Hen.  ROY G BIV: Red, Orange, Yellow, Green, Blue, Indigo, Violet.  HOMES: Huron, Ontario, Michigan, Erie, Superior.");
+   RootGui.redisplay();
+}
+
+function RootBackgroundBitmaps::setVisible(%this,%vis)
+{
+   // we need to do this ourself because we want to set
+   // visibility of background overlay at the same time and
+   // it is now in a different group.  It's in a different
+   // group because it has different sizing characteristics,
+   // but we still want to yoke it's visibility to this group
+   for (%i=0; %i<%this.getCount(); %i++)
+   {
+      %gui = %this.getObject(%i);
+      %gui.setVisible(%vis);
+   }
+   
+   RootBackgroundOverlay.setVisible(%vis);
+}

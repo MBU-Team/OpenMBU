@@ -1,0 +1,646 @@
+﻿[Strings]
+;-------------------------------------------------------------------------------
+; English String Table
+;
+; Note, any line that begins with a comment (;) is not used and does not 
+; need to be translated
+;-------------------------------------------------------------------------------
+$Text::Title="Marble Blast Ultra";
+
+;-------------------------------------------------------------------------------
+; General
+;-------------------------------------------------------------------------------
+$Text::Loading="載入中...";
+$Text::Exit="離開";
+$Text::Previous="上一步";
+$Text::Next="下一步";
+$Text::Retry="重試";
+$Text::Back="返回";
+$Text::More="更多";
+$Text::Level="等級";
+$Text::Start="開始";
+$Text::PressAToStart="按 A 按鍵開始";
+
+;-------------------------------------------------------------------------------
+; Live
+;-------------------------------------------------------------------------------
+$Text::SignIn="登入";
+$Text::SignedIn="已登入";
+$Text::SignInFailed="登入失敗";
+$Text::PassCodeNeeded="需要密碼";
+$Text::NotSignedIn="尚未登入";
+$Text::SigningIn="登入中";
+
+$Text::Friends="好友";
+$Text::Offline="離線";
+$Text::PlayOffline="離線玩";
+$Text::ConnectionLost=" Xbox Live 服務連線遺失，請重新登入。";
+$Text::DupLogin="由於其他人使用你的帳號登入，所以你被登出 Xbox Live 服務 。";
+$Text::ESRBWarning="ESRB 警告：線上遊戲體驗可能因連線速度與品質而有所不同。玩家提供之線上遊戲內容可能會有不同遊戲體驗。";
+
+;-------------------------------------------------------------------------------
+; Live Leaderboards
+;-------------------------------------------------------------------------------
+$Text::Leaderboard="排行榜"; // used for Y button label on single player level preview gui, bug 14993
+$Text::LeaderBoards="排行榜";
+$Text::CLeaderBoard="切換";
+$Text::NobodyRanked="本排行榜尚無排名。";
+$Text::YouNotRanked="你在這個排行榜尚未排名";
+$Text::FriendNotRanked="你的好友在這個排行榜尚未排名。";
+$Text::Overall="全部";
+$Text::MyScore="我的分數";
+$Text::MBLeaderBoard="Marble Blast 排行榜";
+
+
+;-------------------------------------------------------------------------------
+; Controler
+;-------------------------------------------------------------------------------
+$Text::ButtonA="A";
+$Text::ButtonB="B";
+$Text::ButtonX="X";
+$Text::ButtonY="Y";
+$Text::ButtonRB="右緩衝鍵";
+$Text::ButtonLB="左緩衝鍵";
+$Text::ButtonStart="開始鍵";
+$Text::ButtonBack="返回鍵";
+$Text::LTrigger="左發射鍵";
+$Text::RTrigger="右發射鍵";
+$Text::LStickBtn="左搖桿";
+$Text::RStickBtn="右搖桿";
+$Text::PullToUse="按右發射鍵使用 %1";
+
+;-------------------------------------------------------------------------------
+; Demo Mode
+;-------------------------------------------------------------------------------
+$Text::PlayAllN1="購買完整版遊戲可以玩所有 60 個等級唷！";
+$Text::SaveAndRank="購買完整版後，可以儲存你的分數，並在排行榜上排名！";
+$Text::NoSaveInDemo="購買完整版遊戲，就可以上傳高分。按 <bitmap:marble/client/ui/xbox/pad_button_a.png> 不儲存並繼續。";
+$Text::DemoEgg="升級到完整版遊戲，就有更多精采內容和功能，例如：復活節彩蛋。";
+$Text::InviteBuyNow="現在升級到完整版就可玩這個遊戲！";
+$Text::DemoNoRanked="升級到完整版就可以玩排名遊戲！";
+$Text::DemoUpsellLevel="請升級到完整版遊戲才能玩這個等級。";
+
+$Text::DemoUpsell00="快去買 Marble Blast Ultra！";
+$Text::DemoUpsell01="-  挑戰單人遊戲所有 60 個等級。\n\n";
+$Text::DemoUpsell02="-  在線上和別人比比看你的最佳時間。\n\n";
+$Text::DemoUpsell03="-  挑戰多人遊戲中 10 種場景。\n\n";
+$Text::DemoUpsell04="-  把你的分數貼到多人遊戲排行榜上。\n\n";
+$Text::DemoUpsell05="-  參加排名配對遊戲。\n\n"
+$Text::DemoUpsell06="-  贏得成就並找到隱藏的彩蛋。\n\n";
+$Text::DemoUpsell07="解鎖完整版遊戲";
+$Text::DemoUpsell08="解鎖這些新功能：\n\n";
+$Text::DemoUpsell09="回到遊戲";
+$Text::DemoUpsell10="離開";
+
+$Text::DemoUpsellMP0="歡迎來到 Marble Blast Ultra 多人遊戲！\n\n";
+$Text::DemoUpsellMP1="試玩多人遊戲每次 7 分鐘。\n\n";
+$Text::DemoUpsellMP2="試玩版無法邀請其他玩家加入遊戲，也不能加入其他 Marble Blast Ultra 遊戲邀請。\n\n";
+$Text::DemoUpsellMP3="試玩版只有一個等級，完整版將有 10 個多人遊戲等級。\n\n";
+$Text::DemoUpsellMP4="解鎖完整版遊戲，盡情享受吧！";
+
+$Text::DemoUpsellMP5="試玩時間到！快去買完整版來玩吧！\n\n";
+$Text::DemoUpsellMP6="主持人時間用完，快去買完整版來玩吧！\n\n";
+$Text::DemoUpsellMP7="時間到！遊戲將結束，請購買完整版遊戲繼續玩。";
+
+$Text::DemoTimerLabel="試玩計時："; // demo timer label
+
+$Text::PurchasedThanks="謝謝購買 Marble Blast Ultra！";
+
+;-------------------------------------------------------------------------------
+; Level Time Stuff
+;-------------------------------------------------------------------------------
+$Text::None="無";
+$Text::BestTime="最佳時間：";
+$Text::EndTime="時間：";
+$Text::EndScore="分數：";
+$Text::LevelComplete="等級完成！";
+$Text::NewBestTime="新最佳時間！";
+$Text::NewHighScore="新高分！";
+$Text::ParTime="平均時間：";
+$Text::Improvement="有進步喔";
+$Text::MyRecord="我的紀錄";
+$Text::OldRecord="舊紀錄";
+$Text::NextLevel="下一個等級";
+$Text::LoadingBest="載入最佳時間";
+$Text::Completion="完成";
+$Text::TimeBonus="時間紅利";
+$Text::ChangeLevels="改變等級";
+$Text::Rank="排名";
+$Text::PlayerName="玩家代號";
+$Text::Time="時間";
+$Text::Points="點數";
+$Text::Score="分數";
+$Text::TrueSkill="TrueSkill(TM) 等級";
+$Text::Difficulty="困難度";
+
+;-------------------------------------------------------------------------------
+; Tagged Strings
+;-------------------------------------------------------------------------------
+$Text::Tagged::Congratulations='\c0恭喜！你完成了！';
+$Text::Tagged::NotAllGems='\c0沒有收集到所有寶石，所以無法完成！';
+$Text::Tagged::HaveAllGems='\c0收集到所有寶石了，朝著終點前進吧！';
+$Text::Tagged::OneGemLeft='\c0找到一個寶石，還有一個寶石！';
+$Text::Tagged::NGemsLeft='\c0找到一個寶石，還有 %1 個寶石！';
+
+$Text::Tagged::AnEasterEgg='\c0找到一個復活節彩蛋！';
+$Text::Tagged::GemPickupOnePoint='\c0檢起一個值 1 點的寶石。';
+$Text::Tagged::GemPickupNPoints='\c0檢起一個值 %1 點的寶石。';
+$Text::Tagged::GameOver='\c0遊戲結束！';
+
+;-------------------------------------------------------------------------------
+; Non-tagged powerup strings
+;-------------------------------------------------------------------------------
+$Text::ASuperJump="找到跳躍超能力！";
+$Text::ASuperSpeed="找到衝刺超能力！";
+$Text::AGyrocopter="找到漂浮超能力！";
+$Text::AGravityMod="找到重力改變超能力！";
+$Text::AMegaMarble="找到巨大超能力！";
+$Text::ABlast="找到突圍超能力！";
+$Text::ATimeTravelBonus="找到 %1 秒的時間暫停獎勵！";
+
+;-------------------------------------------------------------------------------
+; Non-tagged game messages 
+;-------------------------------------------------------------------------------
+$Text::Msg::Tied="平手！"; // tie
+$Text::Msg::WonMP1="%1 以 %2 分獲勝！"; // 1 point version
+$Text::Msg::WonMPN="%1 以 %2 分獲勝！"; // 0 or 2+ point version
+$Text::Msg::PlayerJoin="%1 加入遊戲";
+$Text::Msg::PlayerDrop="%1 離開遊戲";
+
+;-------------------------------------------------------------------------------
+; Various gui strings
+;-------------------------------------------------------------------------------
+$Text::SearchingForGames="尋找遊戲中...";
+$Text::LobbyRankFormat=" [%1]"; whether the game is ranked or standard is displayed in the Lobby in this format
+; after the level name.  %1 will be $Text::Ranked or $Text::Standard
+$Text::Ranked="排名配對";
+$Text::Standard="玩家配對";
+$Text::ModeRanked="類型：排名配對";
+$Text::ModeStandard="類型：玩家配對";
+$Text::PoweredBy="POWERED BY"; // In context: "POWERED BY Torque Shader Engine."
+
+;-------------------------------------------------------------------------------
+; Gui titles
+;-------------------------------------------------------------------------------
+$Text::MainMenu="主選單";
+$Text::DifficultyMenu="選擇困難度";
+$Text::SelectBeginner="初級： ";
+$Text::SelectIntermediate="中級： ";
+$Text::SelectAdvanced="高級： ";
+$Text::LevelPreview="選擇等級";
+$Text::CreateMatchTitle="建立配對";
+$Text::Lobby="遊戲大廳";
+$Text::JoinGame="加入遊戲";
+$Text::LeaderBoardScreen="排行榜";
+$Text::MultiplayerMenu="多人遊戲";
+$Text::OptimatchTitle="自訂遊戲";
+$Text::AboutMenu="關於 MARBLE BLAST";
+$Text::SelectLeaderboard="選擇排行榜";
+
+;-------------------------------------------------------------------------------
+; Menu Options
+;-------------------------------------------------------------------------------
+$Text::SinglePlayer="單人遊戲";
+$Text::Multiplayer="多人遊戲";
+$Text::Achievements="成就";
+$Text::Play="開始";
+;$Text::XbLiveOptions = "Xbox Live Options";
+;$Text::Options = "Options";
+$Text::HelpAndOptions="說明及選項";
+$Text::UnlockFullGame="解鎖完整版遊戲";
+$Text::RTArcadeMenu="回到 Arcade";
+$Text::LevelsBeginner="初級";
+$Text::LevelsIntermediate="中級";
+$Text::LevelsAdvanced="高級";
+$Text::Go="確定";
+$Text::OK="確定";
+$Text::Cancel="取消";
+$Text::Refresh="更新";
+$Text::Select="選擇";
+;$Text::ReturningToArcade = "Returning to Xbox Live Arcade Menu";
+;$Text::PlayMarbleBlast = "Play Marble Blast";
+$Text::QuickMatch="快速配對";
+$Text::OptiMatch="自訂配對";
+$Text::CreateMatch="建立配對";
+$Text::Players="玩家";
+$Text::Ready="就緒";
+$Text::ExitGame="離開";
+
+;-------------------------------------------------------------------------------
+; Join Game Gui
+;-------------------------------------------------------------------------------
+$Text::Join="加入";
+$Text::Create="建立";
+$Text::JoiningGame="加入遊戲";
+$Text::ZoneLabel="Xbox Live 玩家區";
+$Text::ZoneOptions="任何\t我的玩家區";
+$Text::LanguageLabel="語系";
+$Text::LangOptions="任何\t我的語系";
+$Text::AnyOption="任何";
+$Text::MaxPlayersOption="最多玩家數"; // $Text::AnyOption, 2, 3, 4 ... 8
+$Text::MissionOption="等級"; // $Text::AnyOption, $Text::LevelNameMP1, $Text::LevelNameMP2 ...
+
+$Text::FGG_Host="主持";
+$Text::FGG_Mission="等級";
+$Text::FGG_NumPlayers="玩家數";
+$Text::FGG_Players="玩家";
+
+;-------------------------------------------------------------------------------
+; Create Game Gui
+;-------------------------------------------------------------------------------
+$Text::Mission="等級";
+$Text::MaxPlayers="最多玩家";
+$Text::PrivateSlots="未公開空位";
+
+;-------------------------------------------------------------------------------
+; Leaderboard Select Menu
+;-------------------------------------------------------------------------------
+$Text::LBSinglePlayer="單人遊戲";
+$Text::LBMPScrum="多人遊戲";
+
+;-------------------------------------------------------------------------------
+; Lobby stuff
+;-------------------------------------------------------------------------------
+$Text::LobbyHostName="主持：";
+$Text::LobbyHostLevel="等級：";
+$Text::LobbyHostPrivateSlots="未公開空位";
+$Text::LobbyHostPublicSlots="公開的空位";
+
+; separators
+$Text::Colon=":";
+$Text::Comma=",";
+$Text::Slash="/";
+$Text::Plus="+";
+$Text::Minus="-";
+$Text::Period=".";
+
+$Text::SubmitPlayerReview="送出玩家評價";
+$Text::Kick="踢除";
+$Text::GamerCard="顯示玩家卡";
+$Text::SendFriendRequest="傳送好友請求";
+$Text::NoOptionsAvailable="沒有可用選項。";
+$Text::SelectPlayer="選擇玩家";
+$Text::Player="玩家：";
+
+;-------------------------------------------------------------------------------
+; Pause Menu
+;-------------------------------------------------------------------------------
+$Text::UseItems="超能力";
+$Text::Blast="突圍";
+$Text::ShowScores="分數";
+$Text::Jump="跳躍";
+$Text::Camera="視角";
+$Text::MoveMarble="移動彈珠";
+;$Text::ShowNames = "Toggle Name Visibility";
+$Text::HighScores="高分";
+
+$Text::Paused="暫停";
+$Text::Resume="繼續";
+$Text::Restart="重新開始";
+$Text::MainMenuOption="主選單";
+$Text::ExitLevelOption="離開等級";
+$Text::ResumePlay="繼續遊戲";
+
+;-------------------------------------------------------------------------------
+; Options
+;-------------------------------------------------------------------------------
+$Text::GameOptions="遊戲選項";
+$Text::Adjust="調整";
+$Text::Toggle="切換";
+$Text::MusicVol="音量";
+$Text::FXVol="特效音量";
+$Text::InvX="視角 X 軸";
+$Text::InvY="視角 Y 軸";
+$Text::InvOnOff="正常\t反轉";
+$Text::MarbleSkin="彈珠類型";
+
+;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
+;$Text::MarbleColor = "Marble Color";
+
+;-------------------------------------------------------------------------------
+; Object Strings
+;-------------------------------------------------------------------------------
+$Text::FoundNewEgg="你找到新的彩蛋了！耶！";
+$Text::AlreadyFoundEgg="你已經有這個彩蛋！";
+
+$Text::UseSuperJump="跳躍超能力";
+$Text::UseSuperSpeed="衝刺超能力";
+$Text::UseGyrocopter="漂浮超能力";
+$Text::UseMegaMarble="巨大超能力";
+$Text::UseBlast="突圍超能力";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Game Modes
+;-------------------------------------------------------------------------------
+$Text::GameModeScrum="奪球";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Overall leaderboard titles
+;-------------------------------------------------------------------------------
+$Text::LB_SPOverall="單人遊戲總分"
+$Text::LB_MPScrumOverall="多人遊戲總分";
+$Text::LB_MPScrumSkill="排名配對總分";
+
+;-------------------------------------------------------------------------------
+; Errors
+;-------------------------------------------------------------------------------
+;$Text::SettingsHosed = "Your settings appear to be damaged and cannot be used. Default settings will be restored. Press A to continue.";
+;$Text::SettingsHosedTitle = "Settings Damaged";
+;$Text::CtrlrReconnect = "Please reconnect the controller to port %1 and press START to continue.";
+;$Text::CtrlrDisconnectTitle = "Controller Disconnected";
+;$Text::ReconnectAnyPort = "Please reconnect a controller to any controller port and press START to continue.";
+;$Text::UploadOnlyIfSignedIn = "You can upload your high score only if you are signed in to the Xbox Live service.";
+$Text::Continue="繼續";
+;$Text::UpdateRequired = "An update is required to play this game online. Please return to the Xbox Live Arcade Menu, sign in to Xbox Live, and select this game again to download the update.";
+; $Text::ArbRegister = "Registering with Arbitration service"; // using $Text::TestingNetwork for this now
+$Text::SignInForMultiplayer="必須登入 Xbox Live，才能玩多人遊戲。";
+$Text::MPNotAllowed="你不被允許玩 Xbox Live 多人遊戲。";
+;$Text::SignInToPurchase = "You must Sign In to Live in order to unlock the full game.  Press A to Sign In or B to cancel.";
+$Text::SignInLeaderboard="必須登入 Xbox Live，才能看排行榜。";
+;$Text::SignInForSP = "Please sign in to play.";
+;$Text::SignInToPlay = "Please sign in to play or press B to Return to Arcade.";
+$Text::ExitLevelConfirm="你確定要結束這個等級？你的遊戲進度會遺失。";
+$Text::HostMMConfirm="確定要回到主選單？這樣其他玩家會斷線。";
+$Text::HostMMInviteConfirm="確定要接受遊戲邀請嗎？遊戲中的所有其他玩家會被迫結束遊戲。";
+$Text::ClientMMConfirm="確定要離開遊戲階段並回到主選單？";
+$Text::RankedHostConfirm="確定要離開遊戲嗎？遊戲中其他玩家也會結束遊戲，提早離開會失去分數。";
+$Text::RankedClientConfirm="確定要離開遊戲嗎？提早離開會失去分數。";
+
+$Text::ErrorCannotConnect="無法連上遊戲階段。";
+$Text::ErrorSessionEnded="遊戲階段突然結束。";
+$Text::ErrorConnectionLost="遺失遊戲階段的連線。";
+$Text::ErrorHostKilled="主持人已結束遊戲階段。";
+$Text::ErrorSessionGone="遊戲階段已不存在。";
+$Text::ErrorYouBanned="你無法在此遊戲階段中玩。";
+$Text::ErrorNoGames="找不到遊戲。";
+$Text::ErrorHostKickedYou="主持人把你踢出遊戲。";
+$Text::ErrorBandwidthWarn="若你允許這麼多的玩家，網路傳輸狀況將會影響遊戲品質。";
+$Text::ErrorClientsNotReady="玩家尚未就緒前，無法開始遊戲。";
+$Text::ErrorClientsWillDrop="如果現在離開，將會和其他玩家失去連線。";
+$Text::ErrorTooFewPlayers="只有一位玩家無法玩排名遊戲。";
+$Text::ErrorSignedOff="你已經登出 Xbox Live，回到主選單。";
+$Text::TestingNetwork="請稍待";
+;$Text::ErrorArbFailed       = "Session ended due to failed registration with Arbitration service."; // using $Text::ErrorCannotConnect now
+$Text::ErrorDemoUpgrade="升級到完整版才能玩本遊戲！";
+;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
+$Text::ErrorKickSure="你確定要踢除這個玩家？";
+$Text::ErrorNoSwitchMarble="遊戲進行中無法更換彈珠。";
+
+
+;-------------------------------------------------------------------------------
+; Help & Options Menu Options
+;-------------------------------------------------------------------------------
+$Text::HOMarble="彈珠外觀";
+$Text::HOOptions="輸入及聲音選項";
+$Text::HOInstructions="如何玩";
+$Text::HOCredits="製作群";
+
+;-------------------------------------------------------------------------------
+; About Menu Options
+;-------------------------------------------------------------------------------
+$Text::AboutBasics="彈珠控制";
+$Text::AboutPowerups="超能力";
+$Text::AboutBlast="突圍指示器";
+$Text::AboutSP="單人遊戲模式";
+$Text::AboutMP="多人遊戲模式";
+
+;-------------------------------------------------------------------------------
+; About Page
+;-------------------------------------------------------------------------------
+$Text::HOTitle="說明及選項";
+$Text::About0Title="選擇彈珠外觀";
+$Text::About1Title="輸入及聲音選項";
+$Text::About2Title="如何玩";
+$Text::About3Title="彈珠控制";
+$Text::About3aTitle="超能力";
+$Text::About3bTitle="突圍指示器";
+$Text::About4Title="單人遊戲模式";
+$Text::About5Title="多人遊戲模式";
+$Text::About6Title="MARBLE BLAST 團隊";
+
+;About Marble Blast Basics
+$Text::About1="用左搖桿移動彈珠。\n\n按 A 按鍵或左發射鍵跳躍。\n\n用右搖桿變換視角方向。\n\n請到「說明及選項」中變更視角設定。";
+
+;About Powerups
+$Text::About2="利用超能力幫你度過難關，要收集超能力，直接滾過去碰觸即可，它會顯示在超能力視窗。";
+$Text::About3="按右發射鍵或 B 按鍵使用超能力。";
+
+;About Blast
+$Text::About4="突圍超能力會將多人遊戲中的對手彈開，同時讓你有少許的領先，請謹慎使用。";
+$Text::About5="突圍指示器顯示目前超能力的能量多寡，能量會隨時間緩慢增加。";
+$Text::About6="按 X 按鍵或右緩衝鍵來使用突圍超能力。\n\n收集突圍補充包立即恢復超能力。";
+
+;About Single Player Mode
+$Text::AboutSP1="越快到達結束座台越好，到排行榜上和其他玩家比比看誰的時間短。";
+$Text::AboutSP2="<lmargin:70>開始座台 - 起跑點。\n\n結束座台 - 比賽終點。\n\n寶石 - 某些等級才有寶石，一定要收集到所有寶石才能過關。\n\n時間暫停 - 可以暫停計時器，讓你掌握優勢。";
+
+;About Multiplayer
+$Text::AboutMP1="收集寶石可以獲得點數，收集越多越好。\n\n越難拿到的寶石值越多點數。";
+$Text::AboutMP2="到排行榜上和世界上其他玩家一較高下。";
+
+; Credits
+$Text::GGCredits="<spush><font:Arial Bold:%1>GarageGames Team<spop>\n\n<spush><font:Arial Bold:%2>Development<spop>\nTim Aste\nJane Chase\nTimothy Clarke\nAdam deGrandis\nClark Fagot\nMatt Fairfax\nMark Frohnmayer\nBen Garney\nTim Gift\nJustin Kovac\nJoe Maruschak\nMark McCoy\nJay Moore\nRick Overman\nJohn Quigley\nBrian Ramage\nKevin Ryan\nLiam Ryan\nAlex Swanson\nJeff Tunnell\nPat Wilson\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nCafe Aroma\nCafe Yumm!\nMezza Luna Pizzeria\nPizza Research Institute\nThe GarageGames Community";
+$Text::MSCredits="<spush><font:Arial Bold:%1>Xbox Live Arcade Team<spop>\n\n<spush><font:Arial Bold:%2>Program Management<spop>\nKatie Stone\nJon David\n\n<spush><font:Arial Bold:%2>Test Manager<spop>\nTony Harlich\n\n<spush><font:Arial Bold:%2>Test<spop>\nMichael Jones\nChad Dylan Long (VMC)\nEric Snyder (VMC)\nNoriko Fritschle (VMC)\nKevin Hathaway (VMC)\nTy Roberts (VMC)\n\n<spush><font:Arial Bold:%2>Release Manager<spop>\nJulie Pitt (VOLT)\n\n<spush><font:Arial Bold:%2>Development<spop>\nBrian Ostergren\nEric Heutchy\nEric Fleegal\n\n<spush><font:Arial Bold:%2>Group Manager<spop>\nGreg Canessa\n\n<spush><font:Arial Bold:%2>Product Planning<spop>\nRoss Erickson\nCherie Lutz\n\n<spush><font:Arial Bold:%2>Content Creation<spop>\nMichelle Lomba\n\n<spush><font:Arial Bold:%2>Usability<spop>\nTom Fuller\nChuck Harrison\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nJ Allard\nShane Kim\nDon Ryan\nChris Early\nOliver Miyashita\nMike Minahan\nVMC Consulting\nAmi Blaire\nDarryl Saunders\nAaron Greenberg\nMichael Wolf\nDavid Hufford\nDarren Trencher";
+$Text::LocCredits="<spush><font:Arial Bold:%1>Localization<spop>\n\n<spush><font:Arial Bold:%2>Japan Localization Team<spop>\nShinya Muto\nJunya Chiba\nGo Komatsu\nMayumi Koike\nTakehiro Kuga\nMasao Okamoto\nYutaka Hasegawa\nMunetaka Fuse\nTakashi Sasaki\nShinji Komiyama\n\n<spush><font:Arial Bold:%2>Korea Localization Team<spop>\nEun Hee Lee\nIn Goo Kwon\nWhi Young Yoon\nJi Young Kim\n\n<spush><font:Arial Bold:%2>Taiwan Localization Team<spop>\nRobert Lin\nCarole Lin\nLilia Lee\nJason Cheng";
+
+;-------------------------------------------------------------------------------
+; Achievement Strings
+;-------------------------------------------------------------------------------
+;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
+;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
+
+$Text::AchievementName01="時光彈珠";
+$Text::AchievementName02="新手勳章";
+$Text::AchievementName03="老手勳章";
+$Text::AchievementName04="高手勳章";
+$Text::AchievementName05="彈珠訣竅";
+$Text::AchievementName06="彈珠大王";
+$Text::AchievementName07="彈珠王達人";
+$Text::AchievementName08="彩蛋搜索者";
+$Text::AchievementName09="彩蛋籃";
+$Text::AchievementName10="第一名";
+$Text::AchievementName11="寶石收藏家";
+$Text::AchievementName12="身經百戰的老手";
+
+$Text::AchievementDescription01="在平均時間內完成任何等級。";
+$Text::AchievementDescription02="完成所有初級等級。";
+$Text::AchievementDescription03="完成所有中級等級。";
+$Text::AchievementDescription04="完成所有高級等級。";
+$Text::AchievementDescription05="在平均時間內完成所有初級等級。";
+$Text::AchievementDescription06="在平均時間內完成所有中級等級。";
+$Text::AchievementDescription07="在平均時間內完成所有高級等級。";
+$Text::AchievementDescription08="找出任何隱藏的復活節彩蛋。";
+$Text::AchievementDescription09="找出全部二十個復活節彩蛋。";
+$Text::AchievementDescription10="在多人遊戲配對中贏得第一名。";
+$Text::AchievementDescription11="在多人遊戲配對中獲得 75 點。";
+$Text::AchievementDescription12="在多人遊戲中獲得 2,000 點。";
+
+;-------------------------------------------------------------------------------
+; Singleplayer Game Strings
+;-------------------------------------------------------------------------------
+
+$Text::InGameReady="就緒";
+$Text::InGameGo="開始！";
+$Text::InGameOutofBounds="出界";
+
+;-------------------------------------------------------------------------------
+; Level Strings
+;-------------------------------------------------------------------------------
+$Text::LevelName1="學習滾動";
+$Text::LevelStartHelp1="歡迎來到 Marble Blast Ultra！\n使用左搖桿來滾動彈珠。";
+$Text::TriggerText1_0="使用右搖桿來改變視角。";
+$Text::TriggerText1_1="按 A 按鍵或左發射鍵跳躍。";
+$Text::TriggerText1_2="小心別掉下去了！";
+$Text::TriggerText1_3="快奔向結束座台過關。";
+$Text::LevelName2="步步高升";
+$Text::LevelStartHelp2="跳躍超能力可以用來克服較高的障礙。";
+$Text::TriggerText2_0="用衝刺超能力來加速，特別是陡坡。";
+$Text::TriggerText2_1="搭乘電梯到最上面的平臺。";
+$Text::LevelName3="收集寶石";
+$Text::LevelStartHelp3="必須收集到所有寶石才能過關。";
+$Text::TriggerText3_0="用時間暫停超能力停止計時，讓你搶先一步。";
+$Text::TriggerText3_1="用時間暫停超能力停止計時，讓你搶先一步。";
+
+$Text::LevelName4="注意摩擦力";
+$Text::LevelStartHelp4="不是所有表面都是相同的！";
+$Text::TriggerText4_0="橡皮墊有較佳的牽引力。\n利用它們爬上困難的角落！";
+$Text::TriggerText4_1="冰很滑！\n 碰到時要小心。";
+
+$Text::LevelName5="三重引力";
+$Text::LevelStartHelp5="用重力改變超能力來改變重力方向！";
+$Text::TriggerText5_0="從這三個地方各收集一個寶石。";
+
+$Text::LevelName6="過橋";
+$Text::LevelStartHelp6="小心不要掉下去！";
+$Text::TriggerText6_0="在狹窄的橋上要小心！\n如果掉下去會浪費時間！";
+$Text::TriggerText6_1="移動中的平台會將你帶到終點。";
+
+$Text::LevelName7="兔子坡";
+$Text::LevelStartHelp7="增強衝力快速到達終點！";
+
+$Text::LevelName8="首次起飛";
+$Text::LevelStartHelp8="用漂浮超能力來安全飛越裂縫。";
+
+$Text::LevelName9="險坡";
+$Text::LevelStartHelp9="別讓這些障礙阻擋了你奔向終點的決心。";
+
+$Text::LevelName10="彈珠至尊";
+$Text::LevelStartHelp10="當指示器亮起來後，按右緩衝鍵使用突圍超能力。";
+$Text::TriggerText10_0="「小」彈珠會掉下去喔...";
+$Text::TriggerText10_1="在空中使用突圍超能力，可以跳得更高，同時把對手給踢遠一點。";
+$Text::TriggerText10_2="用突圍補充包來恢復能力值。";
+$Text::TriggerText10_3="巨大超能力讓你的彈珠變大。";
+$Text::TriggerText10_4="目標是比其他人收集更多的寶石。";
+$Text::LevelName36="跳躍之最";
+$Text::LevelName39="U 型半管";
+$Text::LevelStartHelp39="在 U 型半管中加速以便收集寶石。";
+$Text::LevelName45="溜滑梯";
+$Text::LevelStartHelp45="一路往上爬，然後一路下坡衝向終點。";
+$Text::LevelName40="挑戰";
+$Text::LevelStartHelp40="別被打敗了！";
+$Text::LevelName37="岔路";
+$Text::LevelStartHelp37="看你多快能找到所有寶石。";
+$Text::LevelName106="耐力";
+$Text::LevelStartHelp106="不能停止前進 - 已經沒有退路了。";
+$Text::LevelName104="分歧";
+$Text::LevelName105="立方根";
+$Text::LevelName103="黑鑽";
+$Text::LevelName102="緩步爬升";
+$Text::LevelName107="都市叢林";
+$Text::LevelStartHelp107="歡迎來到叢林！";
+$Text::LevelName48="螺旋攀升";
+$Text::LevelStartHelp48="往上爬奔向終點吧！";
+$Text::LevelName28="斜坡交錯";
+$Text::LevelStartHelp28="找出 10 個寶石。";
+$Text::LevelName108="山之巔";
+$Text::LevelName101="狹路相逢";
+$Text::LevelName27="溜冰公園";
+$Text::LevelStartHelp27="秀出你的超炫動作！";
+$Text::LevelName35="志比天高";
+$Text::LevelStartHelp35="瞄準最高的洞！";
+$Text::LevelName34="初霜";
+$Text::LevelStartHelp34="注意：前有結冰！";
+$Text::LevelName109="溜冰之最";
+$Text::LevelName72="適者生存";
+$Text::LevelStartHelp72="留在平台上才能得救。";
+$Text::LevelName77="摩天樓";
+$Text::LevelStartHelp77="一路攻頂找出所有寶石。";
+$Text::LevelName50="樹屋";
+$Text::LevelName58="自然淘汰";
+$Text::LevelStartHelp58="別落後！";
+$Text::LevelName80="頭昏眼花";
+$Text::LevelName70="不可能的任務";
+$Text::LevelName55="危機處處";
+$Text::LevelName81="滑雪橇";
+$Text::LevelStartHelp81="利用滑溜的表面輔助操控技巧。";
+$Text::LevelName86="二次元";
+$Text::LevelStartHelp86="哪一條才是最短路線？";
+$Text::LevelName100="山寨王";
+$Text::LevelStartHelp100="勇者無懼";
+$Text::LevelName53="三次元比賽";
+$Text::LevelStartHelp53="左顧右盼";
+$Text::LevelName73="探勘深穴";
+$Text::LevelStartHelp73="收集所有寶石後直奔終點。";
+$Text::TriggerText73_0="用跳躍超能力離開山洞。";
+$Text::LevelName98="幸災樂禍";
+$Text::LevelStartHelp98="注意緩衝器的位置。";
+$Text::LevelName57="三次元迷宮";
+$Text::LevelName76="斜坡殺手";
+$Text::LevelStartHelp76="跨越平台時要格外小心。";
+$Text::LevelName79="特技";
+$Text::LevelStartHelp79="要降落時控制好方向。";
+$Text::LevelName83="鷹架";
+$Text::LevelStartHelp83="繼續移動別掉進陷阱門裡。";
+$Text::LevelName59="危險斜坡";
+$Text::LevelStartHelp59="小心緩衝器！";
+$Text::LevelName75="極限滑雪";
+$Text::LevelStartHelp75="滑雪初學者請小心。";
+$Text::LevelName88="試煉";
+$Text::LevelStartHelp88="力量、速度和技巧是致勝關鍵。";
+$Text::LevelName61="U 型半管專家";
+$Text::LevelName87="代達羅斯的迷宮";
+$Text::LevelName97="施工中";
+$Text::LevelStartHelp97="請格外小心。";
+$Text::LevelName56="移動平台";
+$Text::LevelName89="城牆";
+$Text::LevelStartHelp89="盡情享樂！";
+$Text::LevelName69="環遊世界";
+$Text::LevelName21="陷阱";
+$Text::LevelStartHelp21="避開地上的裂縫來練習操控技巧。";
+$Text::LevelName12="重力大師";
+$Text::LevelStartHelp12="使用重力改變超能力來跑完全程。";
+$Text::LevelName23="風之路";
+$Text::LevelStartHelp23="善用超能力來跨過地上的裂縫。";
+$Text::LevelName22="平台舞會";
+$Text::LevelStartHelp22="注意移動平台，抓準時機衝向終點。";
+$Text::LevelName82="跳 跳 跳！";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Level Strings
+;-------------------------------------------------------------------------------
+
+$Text::LevelNameMP1="全方位";
+$Text::LevelNameMP2="方塊戰鬥";
+$Text::LevelNameMP3="蔓延";
+$Text::LevelNameMP4="溜冰大戰";
+$Text::LevelNameMP5="頂點";
+$Text::LevelNameMP6="彈珠之王";
+$Text::LevelNameMP7="彈珠城市";
+$Text::LevelNameMP8="地平線";
+$Text::LevelNameMP9="路上的寶石";
+$Text::LevelNameMP10="震央";
+
+;-------------------------------------------------------------------------------
+; Additional Help Strings
+;-------------------------------------------------------------------------------
+
+$Text::TriggerTextFirstSuperJump="用跳躍超能力來克服地上的裂縫。"
+$Text::TriggerTextFirstGyrocopter="用漂浮超能力來安全飛越裂縫。";
+$Text::TriggerTextFirstMines="小心地雷！";
+$Text::TriggerTextIce="小心 -- 冰很滑！";
+$Text::TriggerTextRubber="橡皮表面有更多的摩擦力！";
+$Text::TriggerTextTornado="小心龍捲風的拉力！";
+$Text::TriggerTextFans="小心風扇的風。";
+$Text::TriggerTextBumpers="當你碰到緩衝器時，會把你彈回來。";
+$Text::TriggerTextAirMove="在半空中仍可以改變行進方向。";
+
