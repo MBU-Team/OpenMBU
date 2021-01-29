@@ -149,14 +149,14 @@ void GFXD3DDevice::enumerateVideoModes()
 
 void GFXD3DDevice::setVideoMode( const GFXVideoMode &mode ) 
 {
-   Platform::setWindowSize( mode.resolution.x, mode.resolution.y, mode.fullScreen );
-
    // set this before the reset - some modules like the GlowBuffer need to 
    // resize screen buffers to the new video mode ( during reset() )
    mVideoMode = mode;
 
    D3DPRESENT_PARAMETERS d3dpp = setupPresentParams( mode );
    reset( d3dpp );
+
+   Platform::setWindowSize(mode.resolution.x, mode.resolution.y, mode.fullScreen);
    
    // Setup default states
    initStates();

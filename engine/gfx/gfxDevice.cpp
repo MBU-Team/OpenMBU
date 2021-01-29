@@ -517,15 +517,39 @@ ConsoleFunction( setVideoMode, void, 5, 5, "setVideoMode(width, height, bit dept
    vm.fullScreen = dAtoi(argv[4]);
    GFX->setVideoMode(vm);
 
-   char tempBuf[15];
-   dSprintf( tempBuf, sizeof( tempBuf ), "%d %d %d", vm.resolution.x, vm.resolution.y, vm.bitDepth );
-   Con::setVariable( "$pref::Video::resolution", tempBuf );
+   if (vm.fullScreen)
+   {
+      char tempBuf[15];
+      dSprintf( tempBuf, sizeof( tempBuf ), "%d %d %d", vm.resolution.x, vm.resolution.y, vm.bitDepth );
+      Con::setVariable( "$pref::Video::resolution", tempBuf );
+   }
+   else
+   {
+      char tempBuf[15];
+      dSprintf(tempBuf, sizeof(tempBuf), "%d %d", vm.resolution.x, vm.resolution.y);
+      Con::setVariable("$pref::Video::windowedRes", tempBuf);
+   }
 }
 
 ConsoleFunction( toggleFullScreen, void, 1, 1, "toggles between windowed and fullscreen mode. toggleFullscreen()")
 {
    GFXVideoMode vm = GFX->getVideoMode();
    vm.fullScreen = !vm.fullScreen;
+
+   U32 w, h, d;
+
+   if (vm.fullScreen)
+      dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
+   else
+   {
+      dSscanf(Con::getVariable("$pref::Video::windowedRes"), "%d %d", &w, &h);
+      d = 32;
+   }
+
+   vm.resolution.x = w;
+   vm.resolution.y = h;
+   vm.bitDepth = d;
+
    GFX->setVideoMode(vm);
 }
 

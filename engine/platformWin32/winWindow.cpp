@@ -928,15 +928,22 @@ void Platform::initWindow(const Point2I &initialSize, const char *name)
    //on load, find the closest one to that (most likely the exact one)
    GFXVideoMode vm;
 
-   const char* resolutionString = Con::getVariable("$pref::Video::resolution");
-   char resolutionCopy[256] = "640 480 32";
-   if (*resolutionString)
-      dStrcpy(resolutionCopy, resolutionString);
+   bool fullscreen = Con::getBoolVariable("$pref::Video::fullScreen", 1);
 
-   vm.resolution.x = dAtoi(dStrtok(resolutionCopy, " "));
-   vm.resolution.y = dAtoi(dStrtok(NULL, " "));
-   vm.bitDepth = dAtoi(dStrtok(NULL, " "));
-   vm.fullScreen = Con::getBoolVariable("$pref::Video::fullScreen", 1);
+   U32 w, h, d;
+
+   if (fullscreen)
+      dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
+   else
+   {
+      dSscanf(Con::getVariable("$pref::Video::windowedRes"), "%d %d", &w, &h);
+      d = 32;
+   }
+
+   vm.resolution.x = w;
+   vm.resolution.y = h;
+   vm.bitDepth = d;
+   vm.fullScreen = fullscreen;
    vm.refreshRate = 60; //HACK
 
    //TODO find a better way to handle Win32WinMgr...
