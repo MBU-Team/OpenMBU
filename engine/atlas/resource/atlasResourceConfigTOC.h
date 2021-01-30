@@ -15,32 +15,32 @@ class AtlasResourceConfigStub : public AtlasResourceStub<AtlasConfigChunk>
 {
 public:
 
-   typedef AtlasResourceStub<AtlasConfigChunk> Parent;
+    typedef AtlasResourceStub<AtlasConfigChunk> Parent;
 
-   AtlasResourceConfigStub()
-   {
-      // Null our string.
-      dMemset(mName, 0, sizeof(mName[0]) * MaxConfigChunkNameLength);
-   }
+    AtlasResourceConfigStub()
+    {
+        // Null our string.
+        dMemset(mName, 0, sizeof(mName[0]) * MaxConfigChunkNameLength);
+    }
 
-   enum
-   {
-      MaxConfigChunkNameLength = 128,
-   };
+    enum
+    {
+        MaxConfigChunkNameLength = 128,
+    };
 
-   U8 mName[MaxConfigChunkNameLength];
+    U8 mName[MaxConfigChunkNameLength];
 
-   virtual void write(Stream *s)
-   {
-      Parent::write(s);
-      s->write(MaxConfigChunkNameLength, mName);
-   }
+    virtual void write(Stream* s)
+    {
+        Parent::write(s);
+        s->write(MaxConfigChunkNameLength, mName);
+    }
 
-   virtual void read(Stream *s, const U32 version)
-   {
-      Parent::read(s, version);
-      s->read(MaxConfigChunkNameLength, mName);
-   }
+    virtual void read(Stream* s, const U32 version)
+    {
+        Parent::read(s, version);
+        s->read(MaxConfigChunkNameLength, mName);
+    }
 };
 
 /// Atlas resource TOC subclass for configuration data.
@@ -61,37 +61,37 @@ public:
 /// @ingroup AtlasResource
 class AtlasResourceConfigTOC : public AtlasResourceTOC<AtlasResourceConfigStub>
 {
-   bool mAreConfigsLoaded;
+    bool mAreConfigsLoaded;
 
 public:
-   typedef AtlasResourceTOC<AtlasResourceConfigStub> Parent;
+    typedef AtlasResourceTOC<AtlasResourceConfigStub> Parent;
 
-   AtlasResourceConfigTOC()
-   {
-      mAreConfigsLoaded = false;
+    AtlasResourceConfigTOC()
+    {
+        mAreConfigsLoaded = false;
 
-      // Make it puke if people try to access this TOC as a quadtree - it's not.
-      mIsQuadtree = false;
-   }
+        // Make it puke if people try to access this TOC as a quadtree - it's not.
+        mIsQuadtree = false;
+    }
 
-   /// Since we're dealing with small datasets (ie, config data), we don't want
-   /// the normal paging semantics. Therefore, call load() to get all config
-   /// data into memory and ready for access.
-   ///
-   /// This is a convenience method (unless you specify a forced reload), since
-   /// the other methods in this class will request data be loaded if it's not
-   /// already.
-   void load(bool forceReload=false);
+    /// Since we're dealing with small datasets (ie, config data), we don't want
+    /// the normal paging semantics. Therefore, call load() to get all config
+    /// data into memory and ready for access.
+    ///
+    /// This is a convenience method (unless you specify a forced reload), since
+    /// the other methods in this class will request data be loaded if it's not
+    /// already.
+    void load(bool forceReload = false);
 
-   void initialize(U32 maxConfigCount);
+    void initialize(U32 maxConfigCount);
 
-   bool getConfig(const char *name, AtlasConfigChunk *&acc);
-   void addConfig(const char *name, AtlasConfigChunk *acc);
+    bool getConfig(const char* name, AtlasConfigChunk*& acc);
+    void addConfig(const char* name, AtlasConfigChunk* acc);
 
-   AtlasResourceTOC<AtlasResourceConfigStub> *castToResourceTOC()
-   {
-      return this;
-   }
+    AtlasResourceTOC<AtlasResourceConfigStub>* castToResourceTOC()
+    {
+        return this;
+    }
 
 };
 

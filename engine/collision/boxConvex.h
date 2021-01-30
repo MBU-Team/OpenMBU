@@ -13,34 +13,34 @@
 
 //----------------------------------------------------------------------------
 
-class BoxConvex: public Convex
+class BoxConvex : public Convex
 {
-   Point3F getVertex(S32 v);
-   void emitEdge(S32 v1,S32 v2,const MatrixF& mat,ConvexFeature* cf);
-   void emitFace(S32 fi,const MatrixF& mat,ConvexFeature* cf);
+    Point3F getVertex(S32 v);
+    void emitEdge(S32 v1, S32 v2, const MatrixF& mat, ConvexFeature* cf);
+    void emitFace(S32 fi, const MatrixF& mat, ConvexFeature* cf);
 public:
-   //
-   Point3F mCenter;
-   VectorF mSize;
+    //
+    Point3F mCenter;
+    VectorF mSize;
 
-   BoxConvex() { mType = BoxConvexType; }
-   void init(SceneObject* obj) { mObject = obj; }
+    BoxConvex() { mType = BoxConvexType; }
+    void init(SceneObject* obj) { mObject = obj; }
 
-   Point3F support(const VectorF& v) const;
-   void getFeatures(const MatrixF& mat,const VectorF& n, ConvexFeature* cf);
-   void getPolyList(AbstractPolyList* list);
+    Point3F support(const VectorF& v) const;
+    void getFeatures(const MatrixF& mat, const VectorF& n, ConvexFeature* cf);
+    void getPolyList(AbstractPolyList* list);
 };
 
 
-class OrthoBoxConvex: public BoxConvex
+class OrthoBoxConvex : public BoxConvex
 {
-   typedef BoxConvex Parent;
-   mutable MatrixF mOrthoMatrixCache;
+    typedef BoxConvex Parent;
+    mutable MatrixF mOrthoMatrixCache;
 
- public:
-   OrthoBoxConvex() { mOrthoMatrixCache.identity(); }
+public:
+    OrthoBoxConvex() { mOrthoMatrixCache.identity(); }
 
-   virtual const MatrixF& getTransform() const;
+    virtual const MatrixF& getTransform() const;
 };
 
 #endif

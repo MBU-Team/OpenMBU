@@ -18,51 +18,51 @@
 
 class Sun : public NetObject
 {
-   private:
-      typedef NetObject Parent;
+private:
+    typedef NetObject Parent;
 
-      LightInfo      mLight;
-	  LightInfo      mRegisteredLight;
+    LightInfo      mLight;
+    LightInfo      mRegisteredLight;
 
-	  bool useBloom;
-	  bool useToneMapping;
-	  bool useDynamicRangeLighting;
+    bool useBloom;
+    bool useToneMapping;
+    bool useDynamicRangeLighting;
 
-	  bool DRLHighDynamicRange;
-	  F32 DRLTarget;
-	  F32 DRLMax;
-	  F32 DRLMin;
-	  F32 DRLMultiplier;
+    bool DRLHighDynamicRange;
+    F32 DRLTarget;
+    F32 DRLMax;
+    F32 DRLMin;
+    F32 DRLMultiplier;
 
-	  F32 bloomCutOff;
-	  F32 bloomAmount;
-	  F32 bloomSeedAmount;
+    F32 bloomCutOff;
+    F32 bloomAmount;
+    F32 bloomSeedAmount;
 
-      void conformLight();
+    void conformLight();
 
-   public:
+public:
 
-      Sun();
+    Sun();
 
-      // SimObject
-      bool onAdd();
-      void onRemove();
-      void registerLights(LightManager *lm, bool lightingScene);
+    // SimObject
+    bool onAdd();
+    void onRemove();
+    void registerLights(LightManager* lm, bool lightingScene);
 
-      //
-      void inspectPostApply();
+    //
+    void inspectPostApply();
 
-      static void initPersistFields();
+    static void initPersistFields();
 
-      // NetObject
-      enum NetMaskBits {
-         UpdateMask     = BIT(0)
-      };
+    // NetObject
+    enum NetMaskBits {
+        UpdateMask = BIT(0)
+    };
 
-      U32  packUpdate  (NetConnection *conn, U32 mask, BitStream * stream);
-      void unpackUpdate(NetConnection *conn,           BitStream * stream);
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 
-      DECLARE_CONOBJECT(Sun);
+    DECLARE_CONOBJECT(Sun);
 };
 
 #endif

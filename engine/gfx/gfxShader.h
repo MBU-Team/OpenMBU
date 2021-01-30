@@ -15,12 +15,12 @@
 class GFXShader
 {
 public:
-   U32 mVertexFlags;
-   F32 mPixVersion;
+    U32 mVertexFlags;
+    F32 mPixVersion;
 
-   virtual ~GFXShader(){};
+    virtual ~GFXShader() {};
 
-   virtual void process(){};
+    virtual void process() {};
 };
 
 #endif // GFXSHADER

@@ -9,283 +9,283 @@
 
 Tokenizer::Tokenizer()
 {
-   dMemset(mFileName, 0, sizeof(mFileName));
+    dMemset(mFileName, 0, sizeof(mFileName));
 
-   mpBuffer    = NULL;
-   mBufferSize = 0;
+    mpBuffer = NULL;
+    mBufferSize = 0;
 
-   mCurrPos    = 0;
-   mCurrLine   = 0;
-   mPrevPos   = 0;
-   mStartPos   = 0;
+    mCurrPos = 0;
+    mCurrLine = 0;
+    mPrevPos = 0;
+    mStartPos = 0;
 
-   dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
-   mTokenIsCurrent = false;
+    dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
+    mTokenIsCurrent = false;
 }
 
 Tokenizer::~Tokenizer()
 {
-   dMemset(mFileName, 0, sizeof(mFileName));
+    dMemset(mFileName, 0, sizeof(mFileName));
 
-   delete [] mpBuffer;
-   mpBuffer    = NULL;
-   mBufferSize = 0;
+    delete[] mpBuffer;
+    mpBuffer = NULL;
+    mBufferSize = 0;
 
-   mCurrPos    = 0;
-   mCurrLine   = 0;
-   mPrevPos   = 0;
-   mStartPos   = 0;
+    mCurrPos = 0;
+    mCurrLine = 0;
+    mPrevPos = 0;
+    mStartPos = 0;
 
-   dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
-   mTokenIsCurrent = false;
+    dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
+    mTokenIsCurrent = false;
 }
 
 bool Tokenizer::openFile(const char* pFileName)
 {
-   AssertFatal(mFileName[0] == '\0', "Reuse of Tokenizers not allowed!");
+    AssertFatal(mFileName[0] == '\0', "Reuse of Tokenizers not allowed!");
 
-   FileStream* pStream = new FileStream;
-   if (pStream->open(pFileName, FileStream::Read) == false)
-   {
-      delete pStream;
-      return false;
-   }
-   dStrcpy(mFileName, pFileName);
+    FileStream* pStream = new FileStream;
+    if (pStream->open(pFileName, FileStream::Read) == false)
+    {
+        delete pStream;
+        return false;
+    }
+    dStrcpy(mFileName, pFileName);
 
-   mBufferSize = pStream->getStreamSize();
-   mpBuffer    = new char[mBufferSize];
-   pStream->read(mBufferSize, mpBuffer);
-   pStream->close();
-   delete pStream;
+    mBufferSize = pStream->getStreamSize();
+    mpBuffer = new char[mBufferSize];
+    pStream->read(mBufferSize, mpBuffer);
+    pStream->close();
+    delete pStream;
 
-   // Not really necessary, but couldn't hurt...
-   mCurrPos    = 0;
-   mCurrLine   = 0;
+    // Not really necessary, but couldn't hurt...
+    mCurrPos = 0;
+    mCurrLine = 0;
 
-   dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
-   mTokenIsCurrent = false;
+    dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
+    mTokenIsCurrent = false;
 
-   return true;
+    return true;
 }
 
 bool Tokenizer::openFile(Stream* pStream)
 {
-   mBufferSize = pStream->getStreamSize();
-   mpBuffer    = new char[mBufferSize];
-   pStream->read(mBufferSize, mpBuffer);
-   //pStream->close();
-   //delete pStream;
+    mBufferSize = pStream->getStreamSize();
+    mpBuffer = new char[mBufferSize];
+    pStream->read(mBufferSize, mpBuffer);
+    //pStream->close();
+    //delete pStream;
 
-   // Not really necessary, but couldn't hurt...
-   mCurrPos    = 0;
-   mCurrLine   = 0;
+    // Not really necessary, but couldn't hurt...
+    mCurrPos = 0;
+    mCurrLine = 0;
 
-   dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
-   mTokenIsCurrent = false;
+    dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
+    mTokenIsCurrent = false;
 
-   return true;
+    return true;
 }
 
 bool Tokenizer::reset()
 {
-   mCurrPos    = 0;
-   mCurrLine   = 0;
-   mPrevPos   = 0;
-   mStartPos   = 0;
+    mCurrPos = 0;
+    mCurrLine = 0;
+    mPrevPos = 0;
+    mStartPos = 0;
 
-   dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
-   mTokenIsCurrent = false;
+    dMemset(mCurrTokenBuffer, 0, sizeof(mCurrTokenBuffer));
+    mTokenIsCurrent = false;
 
-   return true;
+    return true;
 }
 
 bool Tokenizer::setCurrentPos(U32 pos)
 {
-   mCurrPos    = pos;
-   mTokenIsCurrent = false;
+    mCurrPos = pos;
+    mTokenIsCurrent = false;
 
-   return advanceToken(true);
+    return advanceToken(true);
 }
 
 bool Tokenizer::advanceToken(const bool crossLine, const bool assertAvail)
 {
-   if (mTokenIsCurrent == true)
-   {
-      AssertFatal(mCurrTokenBuffer[0] != '\0', "No token, but marked as current?");
-      mTokenIsCurrent = false;
-      return true;
-   }
+    if (mTokenIsCurrent == true)
+    {
+        AssertFatal(mCurrTokenBuffer[0] != '\0', "No token, but marked as current?");
+        mTokenIsCurrent = false;
+        return true;
+    }
 
-   U32 currPosition = 0;
-   mCurrTokenBuffer[0] = '\0';
+    U32 currPosition = 0;
+    mCurrTokenBuffer[0] = '\0';
 
-   // Store the beginning of the previous advance
-   // and the beginning of the current advance
-   mPrevPos  = mStartPos;
-   mStartPos = mCurrPos;
+    // Store the beginning of the previous advance
+    // and the beginning of the current advance
+    mPrevPos = mStartPos;
+    mStartPos = mCurrPos;
 
-   while (mCurrPos < mBufferSize)
-   {
-      char c = mpBuffer[mCurrPos];
+    while (mCurrPos < mBufferSize)
+    {
+        char c = mpBuffer[mCurrPos];
 
-      bool cont = true;
-      switch (c)
-      {
+        bool cont = true;
+        switch (c)
+        {
         case ' ':
         case '\t':
-         if (currPosition == 0)
-         {
-            // Token hasn't started yet...
-            mCurrPos++;
-         }
-         else
-         {
-            // End of token
-            mCurrPos++;
-            cont = false;
-         }
-         break;
+            if (currPosition == 0)
+            {
+                // Token hasn't started yet...
+                mCurrPos++;
+            }
+            else
+            {
+                // End of token
+                mCurrPos++;
+                cont = false;
+            }
+            break;
 
         case '\r':
         case '\n':
-         if (crossLine == true)
-         {
-            if (currPosition == 0)
+            if (crossLine == true)
             {
-               // Haven't started getting token, but we're crossing lines...
-               while (mpBuffer[mCurrPos] == '\r' || mpBuffer[mCurrPos] == '\n')
-                  mCurrPos++;
+                if (currPosition == 0)
+                {
+                    // Haven't started getting token, but we're crossing lines...
+                    while (mpBuffer[mCurrPos] == '\r' || mpBuffer[mCurrPos] == '\n')
+                        mCurrPos++;
 
-               mCurrLine++;
+                    mCurrLine++;
+                }
+                else
+                {
+                    // Getting token, stop here, leave pointer at newline...
+                    cont = false;
+                }
             }
             else
             {
-               // Getting token, stop here, leave pointer at newline...
-               cont = false;
+                cont = false;
+                break;
             }
-         }
-         else
-         {
-            cont = false;
             break;
-         }
-         break;
 
         default:
-         if (c == '\"')
-         {
-            // Quoted token
-            //AssertISV(currPosition == 0,
-            //          avar("Error, quotes MUST be at start of token.  Error: (%s: %d)",
-            //               getFileName(), getCurrentLine()));
-
-            U32 startLine = getCurrentLine();
-            mCurrPos++;
-
-            while (mpBuffer[mCurrPos] != '\"') {
-               AssertISV(mCurrPos < mBufferSize,
-                         avar("End of file before quote closed.  Quote started: (%s: %d)",
-                              getFileName(), startLine));
-               AssertISV((mpBuffer[mCurrPos] != '\n' && mpBuffer[mCurrPos] != '\r'),
-                         avar("End of line reached before end of quote.  Quote started: (%s: %d)",
-                              getFileName(), startLine));
-
-               mCurrTokenBuffer[currPosition++] = mpBuffer[mCurrPos++];
-            }
-
-            mCurrPos++;
-            cont = false;
-         }
-         else if (c == '/' && mpBuffer[mCurrPos+1] == '/')
-         {
-            // Line quote...
-            if (currPosition == 0)
+            if (c == '\"')
             {
-               // continue to end of line, then let crossLine determine on the next pass
-               while (mCurrPos < mBufferSize && (mpBuffer[mCurrPos] != '\n' && mpBuffer[mCurrPos] != '\r'))
-                  mCurrPos++;
+                // Quoted token
+                //AssertISV(currPosition == 0,
+                //          avar("Error, quotes MUST be at start of token.  Error: (%s: %d)",
+                //               getFileName(), getCurrentLine()));
+
+                U32 startLine = getCurrentLine();
+                mCurrPos++;
+
+                while (mpBuffer[mCurrPos] != '\"') {
+                    AssertISV(mCurrPos < mBufferSize,
+                        avar("End of file before quote closed.  Quote started: (%s: %d)",
+                            getFileName(), startLine));
+                    AssertISV((mpBuffer[mCurrPos] != '\n' && mpBuffer[mCurrPos] != '\r'),
+                        avar("End of line reached before end of quote.  Quote started: (%s: %d)",
+                            getFileName(), startLine));
+
+                    mCurrTokenBuffer[currPosition++] = mpBuffer[mCurrPos++];
+                }
+
+                mCurrPos++;
+                cont = false;
+            }
+            else if (c == '/' && mpBuffer[mCurrPos + 1] == '/')
+            {
+                // Line quote...
+                if (currPosition == 0)
+                {
+                    // continue to end of line, then let crossLine determine on the next pass
+                    while (mCurrPos < mBufferSize && (mpBuffer[mCurrPos] != '\n' && mpBuffer[mCurrPos] != '\r'))
+                        mCurrPos++;
+                }
+                else
+                {
+                    // This is the end of the token.  Continue to EOL
+                    while (mCurrPos < mBufferSize && (mpBuffer[mCurrPos] != '\n' && mpBuffer[mCurrPos] != '\r'))
+                        mCurrPos++;
+                    cont = false;
+                }
             }
             else
             {
-               // This is the end of the token.  Continue to EOL
-               while (mCurrPos < mBufferSize && (mpBuffer[mCurrPos] != '\n' && mpBuffer[mCurrPos] != '\r'))
-                  mCurrPos++;
-               cont = false;
+                mCurrTokenBuffer[currPosition++] = c;
+                mCurrPos++;
             }
-         }
-         else
-         {
-            mCurrTokenBuffer[currPosition++] = c;
-            mCurrPos++;
-         }
-         break;
-      }
+            break;
+        }
 
-      if (cont == false)
-         break;
-   }
+        if (cont == false)
+            break;
+    }
 
-   mCurrTokenBuffer[currPosition] = '\0';
+    mCurrTokenBuffer[currPosition] = '\0';
 
-   if (assertAvail == true)
-      AssertISV(currPosition != 0, avar("Error parsing: %s at or around line: %d", getFileName(), getCurrentLine()));
+    if (assertAvail == true)
+        AssertISV(currPosition != 0, avar("Error parsing: %s at or around line: %d", getFileName(), getCurrentLine()));
 
-   if (mCurrPos == mBufferSize)
-      return false;
+    if (mCurrPos == mBufferSize)
+        return false;
 
-   return currPosition != 0;
+    return currPosition != 0;
 }
 
 bool Tokenizer::regressToken(const bool crossLine)
 {
-   AssertFatal(mTokenIsCurrent == false && mCurrPos != 0,
-               "Error, token already regressed, or no token has been taken yet...");
+    AssertFatal(mTokenIsCurrent == false && mCurrPos != 0,
+        "Error, token already regressed, or no token has been taken yet...");
 
-   return setCurrentPos(mPrevPos);
+    return setCurrentPos(mPrevPos);
 }
 
 bool Tokenizer::tokenAvailable()
 {
-   // Note: this implies that when advanceToken(false) fails, it must cap the
-   //        token buffer.
-   //
-   return mCurrTokenBuffer[0] != '\0';
+    // Note: this implies that when advanceToken(false) fails, it must cap the
+    //        token buffer.
+    //
+    return mCurrTokenBuffer[0] != '\0';
 }
 
 const char* Tokenizer::getToken() const
 {
-   return mCurrTokenBuffer;
+    return mCurrTokenBuffer;
 }
 
 bool Tokenizer::tokenICmp(const char* pCmp) const
 {
-   return dStricmp(mCurrTokenBuffer, pCmp) == 0;
+    return dStricmp(mCurrTokenBuffer, pCmp) == 0;
 }
 
 bool Tokenizer::findToken(U32 start, const char* pCmp)
 {
-   // Move to the start
-   setCurrentPos(start);
+    // Move to the start
+    setCurrentPos(start);
 
-   // Loop through the file and see if the token exists
-   while (advanceToken(true))
-   {
-      if (tokenICmp(pCmp))
-         return true;
-   }
+    // Loop through the file and see if the token exists
+    while (advanceToken(true))
+    {
+        if (tokenICmp(pCmp))
+            return true;
+    }
 
-   return false;
+    return false;
 }
 
 bool Tokenizer::findToken(const char* pCmp)
 {
-   return findToken(0, pCmp);
+    return findToken(0, pCmp);
 }
 
 bool Tokenizer::endOfFile()
 {
-   if (mCurrPos < mBufferSize)
-      return false;
-   else
-      return true;
+    if (mCurrPos < mBufferSize)
+        return false;
+    else
+        return true;
 }

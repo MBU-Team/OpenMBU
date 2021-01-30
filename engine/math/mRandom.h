@@ -17,38 +17,38 @@
 class MRandomGenerator
 {
 protected:
-   MRandomGenerator() {}
-   S32  mSeed;
+    MRandomGenerator() {}
+    S32  mSeed;
 
 public:
-   void setSeed();
-   S32  getSeed() { return mSeed; }
-   virtual void setSeed(S32 s) = 0;
+    void setSeed();
+    S32  getSeed() { return mSeed; }
+    virtual void setSeed(S32 s) = 0;
 
-   virtual U32 randI( void ) = 0;      ///< 0..2^31 random number generator
-   virtual F32  randF( void );         ///< 0.0 .. 1.0 F32 random number generator
-   S32 randI(S32 i, S32 n);            ///< i..n integer random number generator
-   F32 randF(F32 i, F32 n);            ///< i..n F32 random number generator
+    virtual U32 randI(void) = 0;      ///< 0..2^31 random number generator
+    virtual F32  randF(void);         ///< 0.0 .. 1.0 F32 random number generator
+    S32 randI(S32 i, S32 n);            ///< i..n integer random number generator
+    F32 randF(F32 i, F32 n);            ///< i..n F32 random number generator
 };
 
 
 //--------------------------------------
 inline F32 MRandomGenerator::randF()
 {
-   // default: multiply by 1/(2^31)
-   return  F32(randI()) * F32(1.0/2147483647.0);
+    // default: multiply by 1/(2^31)
+    return  F32(randI()) * F32(1.0 / 2147483647.0);
 }
 
 inline S32 MRandomGenerator::randI(S32 i, S32 n)
 {
-   AssertFatal(i<=n, "MRandomGenerator::randi: inverted range.");
-   return (S32)(i + (randI() % (n - i + 1)) );
+    AssertFatal(i <= n, "MRandomGenerator::randi: inverted range.");
+    return (S32)(i + (randI() % (n - i + 1)));
 }
 
 inline F32 MRandomGenerator::randF(F32 i, F32 n)
 {
-   AssertFatal(i<=n, "MRandomGenerator::randf: inverted range.");
-   return (i + (n - i) * randF());
+    AssertFatal(i <= n, "MRandomGenerator::randf: inverted range.");
+    return (i + (n - i) * randF());
 }
 
 
@@ -61,27 +61,27 @@ inline F32 MRandomGenerator::randF(F32 i, F32 n)
 class MRandomLCG : public MRandomGenerator
 {
 protected:
-   static const S32 msQuotient;
-   static const S32 msRemainder;
+    static const S32 msQuotient;
+    static const S32 msRemainder;
 
 public:
-   MRandomLCG();
-   MRandomLCG(S32 s);
+    MRandomLCG();
+    MRandomLCG(S32 s);
 
-   static void setGlobalRandSeed(U32 seed);
+    static void setGlobalRandSeed(U32 seed);
 
-   void setSeed(S32 s);
-//   using MRandomGenerator::randI;
+    void setSeed(S32 s);
+    //   using MRandomGenerator::randI;
     S32 randI(S32 i, S32 n);            ///< i..n integer generator
 
-   U32 randI( void );
+    U32 randI(void);
 
 };
 
 // Solution to "using" problem.
 inline S32 MRandomLCG::randI(S32 i, S32 n)
 {
-    return( MRandomGenerator::randI(i,n) );
+    return(MRandomGenerator::randI(i, n));
 }
 
 
@@ -96,19 +96,19 @@ inline S32 MRandomLCG::randI(S32 i, S32 n)
 ///
 /// Maier, W.L., 1991; A Fast Pseudo Random Number Generator,
 /// Dr. Dobb's Journal, May, pp. 152 - 157
-class MRandomR250: public MRandomGenerator
+class MRandomR250 : public MRandomGenerator
 {
 private:
-   U32 mBuffer[250];
-   S32 mIndex;
+    U32 mBuffer[250];
+    S32 mIndex;
 
 public:
-   MRandomR250();
-   MRandomR250(S32 s);
+    MRandomR250();
+    MRandomR250(S32 s);
 
-   void setSeed(S32 s);
-// using MRandomGenerator::randI;
-   U32 randI();
+    void setSeed(S32 s);
+    // using MRandomGenerator::randI;
+    U32 randI();
 };
 
 

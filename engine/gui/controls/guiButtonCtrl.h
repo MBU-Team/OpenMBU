@@ -12,13 +12,13 @@
 
 class GuiButtonCtrl : public GuiButtonBaseCtrl
 {
-   typedef GuiButtonBaseCtrl Parent;
+    typedef GuiButtonBaseCtrl Parent;
 
-  public:
-   DECLARE_CONOBJECT(GuiButtonCtrl);
-   GuiButtonCtrl();
+public:
+    DECLARE_CONOBJECT(GuiButtonCtrl);
+    GuiButtonCtrl();
 
-   void onRender(Point2I offset, const RectI &updateRect);
+    void onRender(Point2I offset, const RectI& updateRect);
 };
 
 #endif //_GUI_BUTTON_CTRL_H

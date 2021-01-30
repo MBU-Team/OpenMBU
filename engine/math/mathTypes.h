@@ -13,15 +13,15 @@
 void RegisterMathFunctions(void);
 
 // Define Math Console Types
-DefineConsoleType( TypePoint2I )
-DefineConsoleType( TypePoint2F )
-DefineConsoleType( TypePoint3F )
-DefineConsoleType( TypePoint4F )
-DefineConsoleType( TypeRectI )
-DefineConsoleType( TypeRectF )
-DefineConsoleType( TypeMatrixPosition )
-DefineConsoleType( TypeMatrixRotation )
-DefineConsoleType( TypeBox3F )
+DefineConsoleType(TypePoint2I)
+DefineConsoleType(TypePoint2F)
+DefineConsoleType(TypePoint3F)
+DefineConsoleType(TypePoint4F)
+DefineConsoleType(TypeRectI)
+DefineConsoleType(TypeRectF)
+DefineConsoleType(TypeMatrixPosition)
+DefineConsoleType(TypeMatrixRotation)
+DefineConsoleType(TypeBox3F)
 
 
 #endif

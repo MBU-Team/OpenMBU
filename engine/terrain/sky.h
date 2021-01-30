@@ -38,97 +38,97 @@ class SceneState;
 
 enum SkyState
 {
-   isDone = 0,
-   comingIn = 1,
-   goingOut = 2
+    isDone = 0,
+    comingIn = 1,
+    goingOut = 2
 };
 
 typedef struct
 {
-   bool StormOn;
-   bool FadeIn;
-   bool FadeOut;
-   S32 currentCloud;
-   F32 stormSpeed;
-   F32 stormDir;
-   S32 numCloudLayers;
-   F32 fadeSpeed;
-   SkyState stormState;
+    bool StormOn;
+    bool FadeIn;
+    bool FadeOut;
+    S32 currentCloud;
+    F32 stormSpeed;
+    F32 stormDir;
+    S32 numCloudLayers;
+    F32 fadeSpeed;
+    SkyState stormState;
 }StormInfo;
 
 typedef struct
 {
-   SkyState state;
-   F32 speed;
-   F32 time;
-   F32 fadeSpeed;
+    SkyState state;
+    F32 speed;
+    F32 time;
+    F32 fadeSpeed;
 }StormCloudData;
 
 typedef struct
 {
-   bool active;
-   SkyState state;
-   F32 speed;
-   F32 endPercentage;
-   F32 lastPercentage;
+    bool active;
+    SkyState state;
+    F32 speed;
+    F32 endPercentage;
+    F32 lastPercentage;
 }StormFogVolume;
 
 typedef struct
 {
-   SkyState state;
-   U32 startTime;
-   F32 endPercentage;
-   F32 time;
-   S32 current;
-   U32 lastTime;
-   StormFogVolume volume[MaxFogVolumes];
+    SkyState state;
+    U32 startTime;
+    F32 endPercentage;
+    F32 time;
+    S32 current;
+    U32 lastTime;
+    StormFogVolume volume[MaxFogVolumes];
 }StormFogData;
 
 //---------------------------------------------------------------------------
 class Cloud
 {
-  private:
-   Point3F mPoints[25];
-   Point2F mSpeed;
-   F32 mCenterHeight, mInnerHeight, mEdgeHeight;
-   F32 mAlpha[25];
-   S32 mDown, mOver;
-   static F32 mRadius;
-   F32 mLastTime, mOffset;
-   Point2F mBaseOffset, mTexCoords[25], mTextureScale;
-   GFXTexHandle mCloudHandle;
+private:
+    Point3F mPoints[25];
+    Point2F mSpeed;
+    F32 mCenterHeight, mInnerHeight, mEdgeHeight;
+    F32 mAlpha[25];
+    S32 mDown, mOver;
+    static F32 mRadius;
+    F32 mLastTime, mOffset;
+    Point2F mBaseOffset, mTexCoords[25], mTextureScale;
+    GFXTexHandle mCloudHandle;
 
-   Point2F alphaCenter;
-   Point2F stormUpdate;
-   F32 stormAlpha[25];
-   F32 mAlphaSave[25];
+    Point2F alphaCenter;
+    Point2F stormUpdate;
+    F32 stormAlpha[25];
+    F32 mAlphaSave[25];
 
-   static StormInfo mGStormData;
-  public:
-   Cloud();
-   ~Cloud();
-   void setPoints();
-   void setHeights(F32 cHeight, F32 iHeight, F32 eHeight);
-   void setTexture(GFXTexHandle);
-   void setSpeed(Point2F);
-   void setTextPer(F32 cloudTextPer);
-   void updateCoord();
-   void calcAlpha();
-   void render(U32, U32, bool, S32, PlaneF*);
-   void updateStorm();
-   void calcStorm(F32 speed, F32 fadeSpeed);
-   void calcStormAlpha();
-   static void startStorm(SkyState);
-   static void setRadius(F32 rad) {mRadius = rad;}
-   void setRenderPoints(Point3F* renderPoints, Point2F* renderTexPoints, F32* renderAlpha, F32* renderSAlpha, S32 index);
-   void clipToPlane(Point3F* points, Point2F* texPoints, F32* alphaPoints, F32* sAlphaPoints, U32& rNumPoints, const PlaneF& rPlane);
+    static StormInfo mGStormData;
+public:
+    Cloud();
+    ~Cloud();
+    void setPoints();
+    void setHeights(F32 cHeight, F32 iHeight, F32 eHeight);
+    void setTexture(GFXTexHandle);
+    void setSpeed(Point2F);
+    void setTextPer(F32 cloudTextPer);
+    void updateCoord();
+    void calcAlpha();
+    void render(U32, U32, bool, S32, PlaneF*);
+    void updateStorm();
+    void calcStorm(F32 speed, F32 fadeSpeed);
+    void calcStormAlpha();
+    static void startStorm(SkyState);
+    static void setRadius(F32 rad) { mRadius = rad; }
+    void setRenderPoints(Point3F* renderPoints, Point2F* renderTexPoints, F32* renderAlpha, F32* renderSAlpha, S32 index);
+    void clipToPlane(Point3F* points, Point2F* texPoints, F32* alphaPoints, F32* sAlphaPoints, U32& rNumPoints, const PlaneF& rPlane);
 };
 
 //--------------------------------------------------------------------------
 class Sky : public SceneObject
 {
-   typedef SceneObject Parent;
-  private:
+    typedef SceneObject Parent;
+private:
 
     StormCloudData mStormCloudData;
     StormFogData mStormFogData;
@@ -195,17 +195,17 @@ class Sky : public SceneObject
     void calcPoints();
     void loadVBPoints();
 
-  protected:
+protected:
     bool onAdd();
     void onRemove();
 
-    bool prepRenderImage  ( SceneState *state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState=false);
-    void renderObject     ( SceneState *state, RenderInst *ri );
-    void render(SceneState *state);
-    void calcAlphas_Heights(F32 zCamPos, F32 *banHeights, F32 *alphaBan, F32 DepthInFog);
+    bool prepRenderImage(SceneState* state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState = false);
+    void renderObject(SceneState* state, RenderInst* ri);
+    void render(SceneState* state);
+    void calcAlphas_Heights(F32 zCamPos, F32* banHeights, F32* alphaBan, F32 DepthInFog);
     void renderSkyBox(F32 lowerBanHeight, F32 alphaIn);
-    void calcBans(F32 *banHeights, Point3F banPoints[][MAX_BAN_POINTS], Point3F *cornerPoints);
-    void renderBans(F32 *alphaBan, F32 *banHeights, Point3F banPoints[][MAX_BAN_POINTS], Point3F *cornerPoints);
+    void calcBans(F32* banHeights, Point3F banPoints[][MAX_BAN_POINTS], Point3F* cornerPoints);
+    void renderBans(F32* alphaBan, F32* banHeights, Point3F banPoints[][MAX_BAN_POINTS], Point3F* cornerPoints);
     void inspectPostApply();
     void startStorm();
     void setVisibility();
@@ -216,7 +216,7 @@ class Sky : public SceneObject
     void startStormFog();
     void setRenderPoints(Point3F* renderPoints, S32 index);
     void calcTexCoords(Point2F* texCoords, Point3F* renderPoints, S32 index, F32 lowerBanHeight);
-  public:
+public:
     Point2F mWindDir;
     enum NetMaskBits {
         InitMask = BIT(0),
@@ -228,48 +228,48 @@ class Sky : public SceneObject
         StormCloudsOnMask = BIT(6),
         StormFogOnMask = BIT(7),
         SkyGlowMask = BIT(8)
-   };
-   enum Constants {
+    };
+    enum Constants {
         EnvMapMaterialOffset = 6,
-        CloudMaterialOffset  = 7
-   };
+        CloudMaterialOffset = 7
+    };
 
-   Sky();
-   ~Sky();
+    Sky();
+    ~Sky();
 
-   F32 getVisibleDistance() const { return mVisibleDistance; }
+    F32 getVisibleDistance() const { return mVisibleDistance; }
 
-   /// @name Storm management.
-   /// @{
-   void stormCloudsShow(bool);
-   void stormFogShow(bool);
-   void stormCloudsOn(S32 state, F32 time);
-   void stormFogOn(F32 percentage, F32 time);
-   void stormRealFog(S32 value, F32 max, F32 min, F32 speed);
-   /// @}
+    /// @name Storm management.
+    /// @{
+    void stormCloudsShow(bool);
+    void stormFogShow(bool);
+    void stormCloudsOn(S32 state, F32 time);
+    void stormFogOn(F32 percentage, F32 time);
+    void stormRealFog(S32 value, F32 max, F32 min, F32 speed);
+    /// @}
 
-   /// @name Wind velocity
-   /// @{
+    /// @name Wind velocity
+    /// @{
 
-   void setWindVelocity(const Point3F &);
-   Point3F getWindVelocity();
-   /// @}
+    void setWindVelocity(const Point3F&);
+    Point3F getWindVelocity();
+    /// @}
 
-   /// @name Environment mapping
-   /// @{
+    /// @name Environment mapping
+    /// @{
 
-//   TextureHandle getEnvironmentMap() { return mMaterialList.getMaterial(EnvMapMaterialOffset); }
-   /// @}
+ //   TextureHandle getEnvironmentMap() { return mMaterialList.getMaterial(EnvMapMaterialOffset); }
+    /// @}
 
-   /// Torque infrastructure
-   DECLARE_CONOBJECT(Sky);
-   static void initPersistFields();
-   static void consoleInit();
+    /// Torque infrastructure
+    DECLARE_CONOBJECT(Sky);
+    static void initPersistFields();
+    static void consoleInit();
 
-   U32  packUpdate  (NetConnection *conn, U32 mask, BitStream *stream);
-   void unpackUpdate(NetConnection *conn,           BitStream *stream);
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 
-   void updateVisibility();
+    void updateVisibility();
 };
 
 

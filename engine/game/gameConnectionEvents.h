@@ -8,61 +8,61 @@
 
 class QuitEvent : public SimEvent
 {
-   void process(SimObject *object)
-   {
-      Platform::postQuitMessage(0);
-   }
+    void process(SimObject* object)
+    {
+        Platform::postQuitMessage(0);
+    }
 };
 
 class SimDataBlockEvent : public NetEvent
 {
-   SimObjectId id;
-   SimDataBlock *mObj;
-   U32 mIndex;
-   U32 mTotal;
-   U32 mMissionSequence;
-   bool mProcess;
-  public:
-   ~SimDataBlockEvent();
-   SimDataBlockEvent(SimDataBlock* obj = NULL, U32 index = 0, U32 total = 0, U32 missionSequence = 0);
-   void pack(NetConnection *, BitStream *bstream);
-   void write(NetConnection *, BitStream *bstream);
-   void unpack(NetConnection *cptr, BitStream *bstream);
-   void process(NetConnection*);
-   void notifyDelivered(NetConnection *, bool);
+    SimObjectId id;
+    SimDataBlock* mObj;
+    U32 mIndex;
+    U32 mTotal;
+    U32 mMissionSequence;
+    bool mProcess;
+public:
+    ~SimDataBlockEvent();
+    SimDataBlockEvent(SimDataBlock* obj = NULL, U32 index = 0, U32 total = 0, U32 missionSequence = 0);
+    void pack(NetConnection*, BitStream* bstream);
+    void write(NetConnection*, BitStream* bstream);
+    void unpack(NetConnection* cptr, BitStream* bstream);
+    void process(NetConnection*);
+    void notifyDelivered(NetConnection*, bool);
 #ifdef TORQUE_DEBUG_NET
-   const char *getDebugName();
+    const char* getDebugName();
 #endif
-   DECLARE_CONOBJECT(SimDataBlockEvent);
+    DECLARE_CONOBJECT(SimDataBlockEvent);
 };
 
-class Sim2DAudioEvent: public NetEvent
+class Sim2DAudioEvent : public NetEvent
 {
-  private:
-   const AudioProfile *mProfile;
+private:
+    const AudioProfile* mProfile;
 
-  public:
-   Sim2DAudioEvent(const AudioProfile *profile=NULL);
-   void pack(NetConnection *, BitStream *bstream);
-   void write(NetConnection *, BitStream *bstream);
-   void unpack(NetConnection *, BitStream *bstream);
-   void process(NetConnection *);
-   DECLARE_CONOBJECT(Sim2DAudioEvent);
+public:
+    Sim2DAudioEvent(const AudioProfile* profile = NULL);
+    void pack(NetConnection*, BitStream* bstream);
+    void write(NetConnection*, BitStream* bstream);
+    void unpack(NetConnection*, BitStream* bstream);
+    void process(NetConnection*);
+    DECLARE_CONOBJECT(Sim2DAudioEvent);
 };
 
-class Sim3DAudioEvent: public NetEvent
+class Sim3DAudioEvent : public NetEvent
 {
-  private:
-   const AudioProfile *mProfile;
-   MatrixF mTransform;
+private:
+    const AudioProfile* mProfile;
+    MatrixF mTransform;
 
-  public:
-   Sim3DAudioEvent(const AudioProfile *profile=NULL,const MatrixF* mat=NULL);
-   void pack(NetConnection *, BitStream *bstream);
-   void write(NetConnection *, BitStream *bstream);
-   void unpack(NetConnection *, BitStream *bstream);
-   void process(NetConnection *);
-   DECLARE_CONOBJECT(Sim3DAudioEvent);
+public:
+    Sim3DAudioEvent(const AudioProfile* profile = NULL, const MatrixF* mat = NULL);
+    void pack(NetConnection*, BitStream* bstream);
+    void write(NetConnection*, BitStream* bstream);
+    void unpack(NetConnection*, BitStream* bstream);
+    void process(NetConnection*);
+    DECLARE_CONOBJECT(Sim3DAudioEvent);
 };
 
 
@@ -71,22 +71,32 @@ class Sim3DAudioEvent: public NetEvent
 //----------------------------------------------------------------------------
 class SetMissionCRCEvent : public NetEvent
 {
-   private:
-      U32   mCrc;
+private:
+    U32   mCrc;
 
-   public:
-      SetMissionCRCEvent(U32 crc = 0xffffffff)
-         { mCrc = crc; }
-      void pack(NetConnection *, BitStream * bstream)
-         { bstream->write(mCrc); }
-      void write(NetConnection * con, BitStream * bstream)
-         { pack(con, bstream); }
-      void unpack(NetConnection *, BitStream * bstream)
-         { bstream->read(&mCrc); }
-      void process(NetConnection * con)
-         { static_cast<GameConnection*>(con)->setMissionCRC(mCrc); }
+public:
+    SetMissionCRCEvent(U32 crc = 0xffffffff)
+    {
+        mCrc = crc;
+    }
+    void pack(NetConnection*, BitStream* bstream)
+    {
+        bstream->write(mCrc);
+    }
+    void write(NetConnection* con, BitStream* bstream)
+    {
+        pack(con, bstream);
+    }
+    void unpack(NetConnection*, BitStream* bstream)
+    {
+        bstream->read(&mCrc);
+    }
+    void process(NetConnection* con)
+    {
+        static_cast<GameConnection*>(con)->setMissionCRC(mCrc);
+    }
 
-      DECLARE_CONOBJECT(SetMissionCRCEvent);
+    DECLARE_CONOBJECT(SetMissionCRCEvent);
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include "gfx/gfxCubemap.h"
 #include "core/bitStream.h"
 
-IMPLEMENT_CONOBJECT( CubemapData );
+IMPLEMENT_CONOBJECT(CubemapData);
 
 //****************************************************************************
 // Cubemap Data
@@ -16,18 +16,18 @@ IMPLEMENT_CONOBJECT( CubemapData );
 //----------------------------------------------------------------------------
 CubemapData::CubemapData()
 {
-   cubemap = NULL;
-   dynamic = false;
+    cubemap = NULL;
+    dynamic = false;
 
-   dMemset( cubeFaceFile, 0, sizeof( cubeFaceFile ) );
+    dMemset(cubeFaceFile, 0, sizeof(cubeFaceFile));
 }
 
 CubemapData::~CubemapData()
 {
-   if( cubemap )
-   {
-      delete cubemap;
-   }
+    if (cubemap)
+    {
+        delete cubemap;
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -35,10 +35,10 @@ CubemapData::~CubemapData()
 //--------------------------------------------------------------------------
 void CubemapData::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 
-   addField("cubeFace",    TypeFilename, Offset(cubeFaceFile, CubemapData),6);
-   addField("dynamic",     TypeBool, Offset(dynamic, CubemapData));
+    addField("cubeFace", TypeFilename, Offset(cubeFaceFile, CubemapData), 6);
+    addField("dynamic", TypeBool, Offset(dynamic, CubemapData));
 }
 
 //--------------------------------------------------------------------------
@@ -46,12 +46,12 @@ void CubemapData::initPersistFields()
 //--------------------------------------------------------------------------
 bool CubemapData::onAdd()
 {
-   if( !Parent::onAdd() )
-      return false;
+    if (!Parent::onAdd())
+        return false;
 
-   createMap();
+    createMap();
 
-   return true;
+    return true;
 }
 
 //--------------------------------------------------------------------------
@@ -60,34 +60,34 @@ bool CubemapData::onAdd()
 //--------------------------------------------------------------------------
 void CubemapData::createMap()
 {
-   if( !cubemap )
-   {
-      if( dynamic )
-      {
-         cubemap = GFX->createCubemap();
-         cubemap->initDynamic( 512 );
-      }
-      else
-      {
-         bool initSuccess = true;
-
-         for( U32 i=0; i<6; i++ )
-         {
-            if( cubeFaceFile[i] && cubeFaceFile[i][0] )
-            {
-               if(!cubeFace[i].set(cubeFaceFile[i], &GFXDefaultStaticDiffuseProfile ))
-               {
-                  Con::errorf("CubemapData::createMap - Failed to load texture '%s'", cubeFaceFile[i]);
-                  initSuccess = false;
-               }
-            }
-         }
-
-         if( initSuccess )
-         {
+    if (!cubemap)
+    {
+        if (dynamic)
+        {
             cubemap = GFX->createCubemap();
-            cubemap->initStatic( cubeFace );
-         }
-      }
-   }
+            cubemap->initDynamic(512);
+        }
+        else
+        {
+            bool initSuccess = true;
+
+            for (U32 i = 0; i < 6; i++)
+            {
+                if (cubeFaceFile[i] && cubeFaceFile[i][0])
+                {
+                    if (!cubeFace[i].set(cubeFaceFile[i], &GFXDefaultStaticDiffuseProfile))
+                    {
+                        Con::errorf("CubemapData::createMap - Failed to load texture '%s'", cubeFaceFile[i]);
+                        initSuccess = false;
+                    }
+                }
+            }
+
+            if (initSuccess)
+            {
+                cubemap = GFX->createCubemap();
+                cubemap->initStatic(cubeFace);
+            }
+        }
+    }
 }

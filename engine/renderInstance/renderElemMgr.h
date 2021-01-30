@@ -12,28 +12,28 @@
 //**************************************************************************
 class RenderElemMgr
 {
- public:
-   struct MainSortElem
-   {
-      RenderInst *inst;
-      U32 key;
-      U32 key2;
-   };
+public:
+    struct MainSortElem
+    {
+        RenderInst* inst;
+        U32 key;
+        U32 key2;
+    };
 
- protected:
-   Vector< MainSortElem > mElementList;
+protected:
+    Vector< MainSortElem > mElementList;
 
- public:
-   RenderElemMgr();
+public:
+    RenderElemMgr();
 
-   virtual void addElement( RenderInst *inst );
-   virtual void sort();
-   virtual void render(){};
-   virtual void clear();
+    virtual void addElement(RenderInst* inst);
+    virtual void sort();
+    virtual void render() {};
+    virtual void clear();
 
-   virtual void setupLights(RenderInst *inst, SceneGraphData &data);
+    virtual void setupLights(RenderInst* inst, SceneGraphData& data);
 
-   static S32 FN_CDECL cmpKeyFunc(const void* p1, const void* p2);
+    static S32 FN_CDECL cmpKeyFunc(const void* p1, const void* p2);
 
 };
 

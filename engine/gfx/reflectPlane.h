@@ -13,21 +13,21 @@
 //**************************************************************************
 class ReflectPlane
 {
-   PlaneF         mPlane;
-   GFXTexHandle   mReflectTex;
-   U32            mTexSize;
-   
+    PlaneF         mPlane;
+    GFXTexHandle   mReflectTex;
+    U32            mTexSize;
+
 
 public:
-   
-   ReflectPlane();
-   void setupTex( U32 size );
-   void setPlane( PlaneF &plane ){ mPlane = plane; }
-   const PlaneF & getPlane(){ return mPlane; }
 
-   MatrixF getCameraReflection( MatrixF &camTrans );
-   MatrixF getFrustumClipProj( MatrixF &modelview );
-   GFXTexHandle & getTex(){ return mReflectTex; }
+    ReflectPlane();
+    void setupTex(U32 size);
+    void setPlane(PlaneF& plane) { mPlane = plane; }
+    const PlaneF& getPlane() { return mPlane; }
+
+    MatrixF getCameraReflection(MatrixF& camTrans);
+    MatrixF getFrustumClipProj(MatrixF& modelview);
+    GFXTexHandle& getTex() { return mReflectTex; }
 
 };
 

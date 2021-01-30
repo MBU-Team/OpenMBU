@@ -12,30 +12,30 @@
 
 class GuiMLTextEditCtrl : public GuiMLTextCtrl
 {
-   typedef GuiMLTextCtrl Parent;
+    typedef GuiMLTextCtrl Parent;
 
-   //-------------------------------------- Overrides
-  protected:
-   StringTableEntry mEscapeCommand;
+    //-------------------------------------- Overrides
+protected:
+    StringTableEntry mEscapeCommand;
 
-   // Events
-   bool onKeyDown(const GuiEvent&event);
+    // Events
+    bool onKeyDown(const GuiEvent& event);
 
-   // Event forwards
-   void handleMoveKeys(const GuiEvent&);
-   void handleDeleteKeys(const GuiEvent&);
+    // Event forwards
+    void handleMoveKeys(const GuiEvent&);
+    void handleDeleteKeys(const GuiEvent&);
 
-   // rendering
-   void onRender(Point2I offset, const RectI &updateRect);
+    // rendering
+    void onRender(Point2I offset, const RectI& updateRect);
 
-  public:
-   GuiMLTextEditCtrl();
-   ~GuiMLTextEditCtrl();
+public:
+    GuiMLTextEditCtrl();
+    ~GuiMLTextEditCtrl();
 
-   void resize(const Point2I &newPosition, const Point2I &newExtent);
+    void resize(const Point2I& newPosition, const Point2I& newExtent);
 
-   DECLARE_CONOBJECT(GuiMLTextEditCtrl);
-   static void initPersistFields();
+    DECLARE_CONOBJECT(GuiMLTextEditCtrl);
+    static void initPersistFields();
 };
 
 #endif  // _H_GUIMLTEXTEDITCTRL_

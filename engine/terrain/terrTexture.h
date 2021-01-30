@@ -16,150 +16,150 @@
 struct EmitChunk;
 
 struct AllocatedTexture {
-   // Spatial
-   U32 level;
-   S32 x, y;
+    // Spatial
+    U32 level;
+    S32 x, y;
 
-   // Render
-   EmitChunk *emitList;
-   GFXTexHandle handle;
+    // Render
+    EmitChunk* emitList;
+    GFXTexHandle handle;
 
-   // For frame/free lists.
-   AllocatedTexture *next;
-   AllocatedTexture *previous;
+    // For frame/free lists.
+    AllocatedTexture* next;
+    AllocatedTexture* previous;
 
-   // Cache
-   AllocatedTexture *nextLink;
+    // Cache
+    AllocatedTexture* nextLink;
 
-   // Static interface
+    // Static interface
 private:
-   static AllocatedTexture *mTextureGrid[AllocatedTextureCount];
-   static AllocatedTexture **mTextureGridPtr[5];
+    static AllocatedTexture* mTextureGrid[AllocatedTextureCount];
+    static AllocatedTexture** mTextureGridPtr[5];
 
-   static inline AllocatedTexture * getGrid(U32 level, U32 x, U32 y)
-   {
-      return mTextureGridPtr[level - 2][x + (y << (8 - level))];
-   }
+    static inline AllocatedTexture* getGrid(U32 level, U32 x, U32 y)
+    {
+        return mTextureGridPtr[level - 2][x + (y << (8 - level))];
+    }
 
-   static inline void setGrid(U32 level, U32 x, U32 y, AllocatedTexture* newEntry)
-   {
-      mTextureGridPtr[level - 2][x + (y << (8 - level))] = newEntry;
-   }
+    static inline void setGrid(U32 level, U32 x, U32 y, AllocatedTexture* newEntry)
+    {
+        mTextureGridPtr[level - 2][x + (y << (8 - level))] = newEntry;
+    }
 
 public:
-   static void init();
-   static AllocatedTexture* alloc(Point2I pos, U32 level);
-   static void freeTex(AllocatedTexture *tex);
-   static void trimFree();
-   static void moveToFrame(AllocatedTexture *tex);
-   static void moveToFree(AllocatedTexture *tex);
-   static void trimFreeList();
-   static void flushCache();
-   static void flushCacheRect(RectI bRect);
+    static void init();
+    static AllocatedTexture* alloc(Point2I pos, U32 level);
+    static void freeTex(AllocatedTexture* tex);
+    static void trimFree();
+    static void moveToFrame(AllocatedTexture* tex);
+    static void moveToFree(AllocatedTexture* tex);
+    static void trimFreeList();
+    static void flushCache();
+    static void flushCacheRect(RectI bRect);
 
 
 #ifdef TERR_TEXTURE_DEBUG
-   static U32 mAllocTexCount;
+    static U32 mAllocTexCount;
 #endif
 
-   AllocatedTexture()
-   {
+    AllocatedTexture()
+    {
 #ifdef TERR_TEXTURE_DEBUG
-      mAllocTexCount++;
-      Con::printf("++ allocTexMake %d %x", mAllocTexCount, this);
+        mAllocTexCount++;
+        Con::printf("++ allocTexMake %d %x", mAllocTexCount, this);
 #endif
-      nextLink = next = previous = NULL;
-      emitList = NULL;
-      handle   = NULL;
-   }
+        nextLink = next = previous = NULL;
+        emitList = NULL;
+        handle = NULL;
+    }
 
-   AllocatedTexture(U32 aLevel, S32 aX, S32 aY)
-   {
+    AllocatedTexture(U32 aLevel, S32 aX, S32 aY)
+    {
 #ifdef TERR_TEXTURE_DEBUG
-      mAllocTexCount++;
-      Con::printf("++ allocTexMake %d %x (%d, %d)@%d", mAllocTexCount, this, aX, aY, aLevel);
+        mAllocTexCount++;
+        Con::printf("++ allocTexMake %d %x (%d, %d)@%d", mAllocTexCount, this, aX, aY, aLevel);
 #endif
-      nextLink = next = previous = NULL;
-      emitList = NULL;
-      handle   = NULL;
+        nextLink = next = previous = NULL;
+        emitList = NULL;
+        handle = NULL;
 
-      level = aLevel;
-      x = aX;
-      y = aY;
-   }
+        level = aLevel;
+        x = aX;
+        y = aY;
+    }
 
-   ~AllocatedTexture()
-   {
+    ~AllocatedTexture()
+    {
 #ifdef TERR_TEXTURE_DEBUG
-      mAllocTexCount--;
-      Con::printf("-- allocTexKill %d %x", mAllocTexCount, this);
+        mAllocTexCount--;
+        Con::printf("-- allocTexKill %d %x", mAllocTexCount, this);
 #endif
-      handle = NULL;
-   }
+        handle = NULL;
+    }
 
-   inline void safeUnlink()
-   {
-      if(!(next && previous)) return;
+    inline void safeUnlink()
+    {
+        if (!(next && previous)) return;
 
-      next->previous = previous;
-      previous->next = next;
-      next = previous = NULL;
-   }
+        next->previous = previous;
+        previous->next = next;
+        next = previous = NULL;
+    }
 
-   inline void unlink()
-   {
-      AssertFatal(next && previous, "Invalid unlink.");
-      next->previous = previous;
-      previous->next = next;
-      next = previous = NULL;
-   }
-   inline void linkAfter(AllocatedTexture *t)
-   {
-      AssertFatal(next == NULL && previous == NULL, "Cannot link a non-null next & prev");
+    inline void unlink()
+    {
+        AssertFatal(next && previous, "Invalid unlink.");
+        next->previous = previous;
+        previous->next = next;
+        next = previous = NULL;
+    }
+    inline void linkAfter(AllocatedTexture* t)
+    {
+        AssertFatal(next == NULL && previous == NULL, "Cannot link a non-null next & prev");
 
-      next = t->next;
-      previous = t;
-      t->next->previous = this;
-      t->next = this;
-   }
+        next = t->next;
+        previous = t;
+        t->next->previous = this;
+        t->next = this;
+    }
 };
 
 
 namespace TerrTexture
 {
 
-   extern S32 mTextureMinSquareSize;
-   extern bool mEnableTerrainDetails;
+    extern S32 mTextureMinSquareSize;
+    extern bool mEnableTerrainDetails;
 
-   extern AllocatedTexture *mTextureFrameWalk;
+    extern AllocatedTexture* mTextureFrameWalk;
 
-   extern AllocatedTexture mTextureFrameListHead;
-   extern AllocatedTexture mTextureFrameListTail;
+    extern AllocatedTexture mTextureFrameListHead;
+    extern AllocatedTexture mTextureFrameListTail;
 
-   extern AllocatedTexture mTextureFreeListHead;
-   extern AllocatedTexture mTextureFreeListTail;
+    extern AllocatedTexture mTextureFreeListHead;
+    extern AllocatedTexture mTextureFreeListTail;
 
-   extern AllocatedTexture *mCurrentTexture;
+    extern AllocatedTexture* mCurrentTexture;
 
-   extern U32 mTextureSlopSize;
-   extern Vector<GFXTexHandle> mTextureFreeList;
+    extern U32 mTextureSlopSize;
+    extern Vector<GFXTexHandle> mTextureFreeList;
 
-   extern S32 mDynamicTextureCount;
-   extern S32 mTextureSpaceUsed;
-   extern S32 mLevelZeroCount;
-   extern S32 mFullMipCount;
-   extern S32 mStaticTextureCount;
-   extern S32 mUnusedTextureCount;
-   extern S32 mStaticTSU;
-   extern U32 mNewGenTextureCount;
+    extern S32 mDynamicTextureCount;
+    extern S32 mTextureSpaceUsed;
+    extern S32 mLevelZeroCount;
+    extern S32 mFullMipCount;
+    extern S32 mStaticTextureCount;
+    extern S32 mUnusedTextureCount;
+    extern S32 mStaticTSU;
+    extern U32 mNewGenTextureCount;
 
 
-   void init();
-   void shutdown();
-   void textureRecurse(SquareStackNode *stack);
-   void startFrame();
-   AllocatedTexture* getNextFrameTexture();
-   void buildBlendMap(AllocatedTexture *tex);
+    void init();
+    void shutdown();
+    void textureRecurse(SquareStackNode* stack);
+    void startFrame();
+    AllocatedTexture* getNextFrameTexture();
+    void buildBlendMap(AllocatedTexture* tex);
 };
 
 #endif

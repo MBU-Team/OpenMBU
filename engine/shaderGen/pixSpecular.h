@@ -15,13 +15,13 @@ class PixelSpecular : public ShaderFeature
 {
 
 public:
-   virtual void processVert( Vector<ShaderComponent*> &componentList,
-                             GFXShaderFeatureData &fd );
+    virtual void processVert(Vector<ShaderComponent*>& componentList,
+        GFXShaderFeatureData& fd);
 
-   virtual void processPix( Vector<ShaderComponent*> &componentList, 
-                            GFXShaderFeatureData &fd );
+    virtual void processPix(Vector<ShaderComponent*>& componentList,
+        GFXShaderFeatureData& fd);
 
-   virtual Resources getResources( GFXShaderFeatureData &fd );
+    virtual Resources getResources(GFXShaderFeatureData& fd);
 };
 
 

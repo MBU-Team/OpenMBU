@@ -8,62 +8,62 @@
 #define readOnly()  AssertFatal(mMode==TSShapeAlloc::ReadMode, "TSShapeAlloc: write-only function called when reading")
 #define writeOnly() AssertFatal(mMode==TSShapeAlloc::WriteMode,"TSShapeAlloc: read-only function called when writing")
 
-void TSShapeAlloc::setRead(S32 * memBuffer32, S16 * memBuffer16, S8 * memBuffer8, bool clear)
+void TSShapeAlloc::setRead(S32* memBuffer32, S16* memBuffer16, S8* memBuffer8, bool clear)
 {
-   mMemBuffer32 = memBuffer32;
-   mMemBuffer16 = memBuffer16;
-   mMemBuffer8  = memBuffer8 ;
+    mMemBuffer32 = memBuffer32;
+    mMemBuffer16 = memBuffer16;
+    mMemBuffer8 = memBuffer8;
 
-   mMemGuard32  = 0;
-   mMemGuard16  = 0;
-   mMemGuard8   = 0;
+    mMemGuard32 = 0;
+    mMemGuard16 = 0;
+    mMemGuard8 = 0;
 
-   mSaveGuard32  = 0;
-   mSaveGuard16  = 0;
-   mSaveGuard8   = 0;
+    mSaveGuard32 = 0;
+    mSaveGuard16 = 0;
+    mSaveGuard8 = 0;
 
-   if (clear)
-   {
-      mDest = NULL;
-      mSize = 0;
-   }
+    if (clear)
+    {
+        mDest = NULL;
+        mSize = 0;
+    }
 
-   setSkipMode(false);
-   mMode = TSShapeAlloc::ReadMode;
+    setSkipMode(false);
+    mMode = TSShapeAlloc::ReadMode;
 }
 
 void TSShapeAlloc::setWrite()
 {
-   mMemBuffer32 = 0;
-   mMemBuffer16 = 0;
-   mMemBuffer8  = 0;
+    mMemBuffer32 = 0;
+    mMemBuffer16 = 0;
+    mMemBuffer8 = 0;
 
-   mSize32 = mFullSize32 = 0;
-   mSize16 = mFullSize16 = 0;
-   mSize8  = mFullSize8  = 0;
+    mSize32 = mFullSize32 = 0;
+    mSize16 = mFullSize16 = 0;
+    mSize8 = mFullSize8 = 0;
 
-   mMemGuard32  = 0;
-   mMemGuard16  = 0;
-   mMemGuard8   = 0;
+    mMemGuard32 = 0;
+    mMemGuard16 = 0;
+    mMemGuard8 = 0;
 
-   setSkipMode(false); // doesn't really do anything here...
-   mMode = TSShapeAlloc::WriteMode;
+    setSkipMode(false); // doesn't really do anything here...
+    mMode = TSShapeAlloc::WriteMode;
 }
 
 void TSShapeAlloc::doAlloc()
 {
-   readOnly();
+    readOnly();
 
-   mDest = new S8[mSize];
-   mSize = 0;
+    mDest = new S8[mSize];
+    mSize = 0;
 }
 
 void TSShapeAlloc::align32()
 {
-   readOnly();
+    readOnly();
 
-   S32 aligned = mSize+3 & (~0x3);
-   allocShape8(aligned-mSize);
+    S32 aligned = mSize + 3 & (~0x3);
+    allocShape8(aligned - mSize);
 }
 
 #define IMPLEMENT_ALLOC(suffix,type)                          \
@@ -184,26 +184,26 @@ void TSShapeAlloc::setGuard##suffix()                         \
    mMemGuard##suffix += 1;                                    \
 }
 
-IMPLEMENT_ALLOC(32,S32)
-IMPLEMENT_ALLOC(16,S16)
-IMPLEMENT_ALLOC(8,S8)
+IMPLEMENT_ALLOC(32, S32)
+IMPLEMENT_ALLOC(16, S16)
+IMPLEMENT_ALLOC(8, S8)
 
 void TSShapeAlloc::checkGuard()
 {
-   bool check32 = checkGuard32();
-   bool check16 = checkGuard16();
-   bool check8  = checkGuard8();
+    bool check32 = checkGuard32();
+    bool check16 = checkGuard16();
+    bool check8 = checkGuard8();
 
-   AssertFatal(check32,avar("TSShapeAlloc::checkGuard32: found %i, wanted %i",getSaveGuard32(),getPrevGuard32()));
-   AssertFatal(check16,avar("TSShapeAlloc::checkGuard16: found %i, wanted %i",getSaveGuard16(),getPrevGuard16()));
-   AssertFatal(check8 ,avar("TSShapeAlloc::checkGuard8:  found %i, wanted %i",getSaveGuard8() ,getPrevGuard8()));
+    AssertFatal(check32, avar("TSShapeAlloc::checkGuard32: found %i, wanted %i", getSaveGuard32(), getPrevGuard32()));
+    AssertFatal(check16, avar("TSShapeAlloc::checkGuard16: found %i, wanted %i", getSaveGuard16(), getPrevGuard16()));
+    AssertFatal(check8, avar("TSShapeAlloc::checkGuard8:  found %i, wanted %i", getSaveGuard8(), getPrevGuard8()));
 }
 
 void TSShapeAlloc::setGuard()
 {
-   setGuard32();
-   setGuard16();
-   setGuard8();
+    setGuard32();
+    setGuard16();
+    setGuard8();
 }
 
 

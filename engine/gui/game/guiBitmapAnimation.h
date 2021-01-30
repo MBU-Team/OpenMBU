@@ -6,22 +6,22 @@
 // This control is from MBU...used for the gui "loading" animation (rotating TSE logo)
 class GuiBitmapAnimation : public GuiControl
 {
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
 protected:
-   U32 mLastFrameSwitchTime;
-   S32 mAnimationFrameDelay;
-   U32 mFrameNum;
-   bool mBoundsCorrect;
+    U32 mLastFrameSwitchTime;
+    S32 mAnimationFrameDelay;
+    U32 mFrameNum;
+    bool mBoundsCorrect;
 
 
 public:
-   GuiBitmapAnimation();
-   static void initPersistFields();
-   void onRender( Point2I offset, const RectI &updateRect );
-   bool onWake();
+    GuiBitmapAnimation();
+    static void initPersistFields();
+    void onRender(Point2I offset, const RectI& updateRect);
+    bool onWake();
 
-   DECLARE_CONOBJECT( GuiBitmapAnimation );
+    DECLARE_CONOBJECT(GuiBitmapAnimation);
 };
 
 #endif

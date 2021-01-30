@@ -25,44 +25,44 @@
 /// @ingroup AtlasCore
 struct AtlasRequestHeader
 {
-   struct ARHNote
-   {
-      void *who; 
-      F32 priority;
-      U32 reason;
+    struct ARHNote
+    {
+        void* who;
+        F32 priority;
+        U32 reason;
 
-      ARHNote *next;
-   };
+        ARHNote* next;
+    };
 
-   static FreeListChunker<ARHNote> smChunker;
-   static ARHNote *allocNote();
-   static void freeNote(ARHNote *note);
+    static FreeListChunker<ARHNote> smChunker;
+    static ARHNote* allocNote();
+    static void freeNote(ARHNote* note);
 
-   ARHNote *head;
-   U32 refCount;
+    ARHNote* head;
+    U32 refCount;
 
 public:
-   AtlasRequestHeader();
-   ~AtlasRequestHeader();
+    AtlasRequestHeader();
+    ~AtlasRequestHeader();
 
-   /// Note a request from someone. This either adds a new ARHNote, or
-   /// updates one if it exists.
-   void request(void *who, F32 priority, U32 reason);
+    /// Note a request from someone. This either adds a new ARHNote, or
+    /// updates one if it exists.
+    void request(void* who, F32 priority, U32 reason);
 
-   /// Cancel a request from someone. This will remove the appropriate
-   /// ARHNote if it exists.
-   void cancel(void *who, U32 reason);
+    /// Cancel a request from someone. This will remove the appropriate
+    /// ARHNote if it exists.
+    void cancel(void* who, U32 reason);
 
-   /// Calculate the total priority on this item. It's best to cache the
-   /// result in a member so that it's not needlessly churned.
-   const F32 calculateCumulativePriority() const;
+    /// Calculate the total priority on this item. It's best to cache the
+    /// result in a member so that it's not needlessly churned.
+    const F32 calculateCumulativePriority() const;
 
-   /// Get the current reference count to this stub, based on how many
-   /// uncanceled requests there are.
-   const U32 getRefCount() const
-   {
-      return refCount;
-   }
+    /// Get the current reference count to this stub, based on how many
+    /// uncanceled requests there are.
+    const U32 getRefCount() const
+    {
+        return refCount;
+    }
 };
 
 #endif

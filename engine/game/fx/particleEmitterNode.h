@@ -18,28 +18,28 @@ class ParticleEmitter;
 //*****************************************************************************
 class ParticleEmitterNodeData : public GameBaseData
 {
-   typedef GameBaseData Parent;
+    typedef GameBaseData Parent;
 
-  protected:
-   bool onAdd();
+protected:
+    bool onAdd();
 
-   //-------------------------------------- Console set variables
-  public:
-   F32 timeMultiple;
+    //-------------------------------------- Console set variables
+public:
+    F32 timeMultiple;
 
-   //-------------------------------------- load set variables
-  public:
+    //-------------------------------------- load set variables
+public:
 
-  public:
-   ParticleEmitterNodeData();
-   ~ParticleEmitterNodeData();
+public:
+    ParticleEmitterNodeData();
+    ~ParticleEmitterNodeData();
 
-   void packData(BitStream*);
-   void unpackData(BitStream*);
-   bool preload(bool server, char errorBuffer[256]);
+    void packData(BitStream*);
+    void unpackData(BitStream*);
+    bool preload(bool server, char errorBuffer[256]);
 
-   DECLARE_CONOBJECT(ParticleEmitterNodeData);
-   static void initPersistFields();
+    DECLARE_CONOBJECT(ParticleEmitterNodeData);
+    static void initPersistFields();
 };
 
 
@@ -48,37 +48,37 @@ class ParticleEmitterNodeData : public GameBaseData
 //*****************************************************************************
 class ParticleEmitterNode : public GameBase
 {
-   typedef GameBase Parent;
+    typedef GameBase Parent;
 
-  private:
-   ParticleEmitterNodeData* mDataBlock;
+private:
+    ParticleEmitterNodeData* mDataBlock;
 
-  protected:
-   bool onAdd();
-   void onRemove();
-   bool onNewDataBlock(GameBaseData *dptr);
+protected:
+    bool onAdd();
+    void onRemove();
+    bool onNewDataBlock(GameBaseData* dptr);
 
-   ParticleEmitterData* mEmitterDatablock;
-   S32                  mEmitterDatablockId;
+    ParticleEmitterData* mEmitterDatablock;
+    S32                  mEmitterDatablockId;
 
-   ParticleEmitter* mEmitter;
-   F32              mVelocity;
+    ParticleEmitter* mEmitter;
+    F32              mVelocity;
 
-  public:
-   ParticleEmitterNode();
-   ~ParticleEmitterNode();
-   
-   ParticleEmitter *getParticleEmitter() {return mEmitter;}
-   
-   // Time/Move Management
-  public:
-   void advanceTime(F32 dt);
+public:
+    ParticleEmitterNode();
+    ~ParticleEmitterNode();
 
-   DECLARE_CONOBJECT(ParticleEmitterNode);
-   static void initPersistFields();
+    ParticleEmitter* getParticleEmitter() { return mEmitter; }
 
-   U32  packUpdate  (NetConnection *conn, U32 mask, BitStream* stream);
-   void unpackUpdate(NetConnection *conn,           BitStream* stream);
+    // Time/Move Management
+public:
+    void advanceTime(F32 dt);
+
+    DECLARE_CONOBJECT(ParticleEmitterNode);
+    static void initPersistFields();
+
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 };
 
 #endif // _H_PARTICLEEMISSIONDUMMY

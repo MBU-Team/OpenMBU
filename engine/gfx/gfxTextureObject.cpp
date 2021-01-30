@@ -9,26 +9,26 @@
 #include "platform/profiler.h"
 
 #ifdef TORQUE_DEBUG
-GFXTextureObject *GFXTextureObject::smHead = NULL;
+GFXTextureObject* GFXTextureObject::smHead = NULL;
 U32 GFXTextureObject::smExtantTOCount = 0;
 
 void GFXTextureObject::dumpExtantTOs()
 {
-   if(!smExtantTOCount)
-   {
-      Con::printf("GFXTextureObject::dumpExtantTOs - no extant TOs to dump. You are A-OK!");
-      return;
-   }
+    if (!smExtantTOCount)
+    {
+        Con::printf("GFXTextureObject::dumpExtantTOs - no extant TOs to dump. You are A-OK!");
+        return;
+    }
 
-   Con::printf("GFXTextureObject Usage Report - %d extant TOs", smExtantTOCount);
-   Con::printf("---------------------------------------------------------------");
-   Con::printf(" Addr   Dim. GFXTextureProfile  Profiler Path");
+    Con::printf("GFXTextureObject Usage Report - %d extant TOs", smExtantTOCount);
+    Con::printf("---------------------------------------------------------------");
+    Con::printf(" Addr   Dim. GFXTextureProfile  Profiler Path");
 
-   for(GFXTextureObject *walk = smHead; walk; walk=walk->mDebugNext)
-      Con::printf(" %x  (%4d, %4d)  %s    %s", walk, walk->getWidth(), 
-                  walk->getHeight(), walk->mProfile->getName(), walk->mDebugCreationPath);
+    for (GFXTextureObject* walk = smHead; walk; walk = walk->mDebugNext)
+        Con::printf(" %x  (%4d, %4d)  %s    %s", walk, walk->getWidth(),
+            walk->getHeight(), walk->mProfile->getName(), walk->mDebugCreationPath);
 
-   Con::printf("----- dump complete -------------------------------------------");
+    Con::printf("----- dump complete -------------------------------------------");
 }
 
 #endif
@@ -36,65 +36,65 @@ void GFXTextureObject::dumpExtantTOs()
 //-----------------------------------------------------------------------------
 // GFXTextureObject
 //-----------------------------------------------------------------------------
-GFXTextureObject::GFXTextureObject(GFXDevice *aDevice, GFXTextureProfile *aProfile) 
+GFXTextureObject::GFXTextureObject(GFXDevice* aDevice, GFXTextureProfile* aProfile)
 {
-   mHashNext = mNext = mPrev = NULL;
+    mHashNext = mNext = mPrev = NULL;
 
-   mDevice = aDevice;
-   mProfile = aProfile;
+    mDevice = aDevice;
+    mProfile = aProfile;
 
-   mTextureFileName = NULL;
-   mProfile        = NULL;
-   mBitmap         = NULL;
-   mMipLevels      = 1;
+    mTextureFileName = NULL;
+    mProfile = NULL;
+    mBitmap = NULL;
+    mMipLevels = 1;
 
-   mTextureSize.set( 0, 0, 0 );
+    mTextureSize.set(0, 0, 0);
 
-   mDead = false;
+    mDead = false;
 
-   cacheId = 0;
-   cacheTime = 0;
+    cacheId = 0;
+    cacheTime = 0;
 
-   mBitmap = NULL;
-   mDDS    = NULL;
+    mBitmap = NULL;
+    mDDS = NULL;
 
 #ifdef TORQUE_DEBUG
-   // Extant tracking.
-   smExtantTOCount++;
-   mDebugCreationPath = gProfiler->getProfilePath();
-   mDebugNext = smHead;
-   mDebugPrev = NULL;
+    // Extant tracking.
+    smExtantTOCount++;
+    mDebugCreationPath = gProfiler->getProfilePath();
+    mDebugNext = smHead;
+    mDebugPrev = NULL;
 
-   if(smHead)
-   {
-      AssertFatal(smHead->mDebugPrev == NULL, "GFXTextureObject::GFXTextureObject - found unexpected previous in current head!");
-      smHead->mDebugPrev = this;
-   }
+    if (smHead)
+    {
+        AssertFatal(smHead->mDebugPrev == NULL, "GFXTextureObject::GFXTextureObject - found unexpected previous in current head!");
+        smHead->mDebugPrev = this;
+    }
 
-   smHead = this;
+    smHead = this;
 #endif
 }
 
 //-----------------------------------------------------------------------------
 // Destructor
 //-----------------------------------------------------------------------------
-GFXTextureObject::~GFXTextureObject() 
+GFXTextureObject::~GFXTextureObject()
 {
-   kill();
+    kill();
 
 #ifdef TORQUE_DEBUG
-   if(smHead == this)
-      smHead = this->mDebugNext;
+    if (smHead == this)
+        smHead = this->mDebugNext;
 
-   if(mDebugNext)
-      mDebugNext->mDebugPrev = mDebugPrev;
+    if (mDebugNext)
+        mDebugNext->mDebugPrev = mDebugPrev;
 
-   if(mDebugPrev)
-      mDebugPrev->mDebugNext = mDebugNext;
+    if (mDebugPrev)
+        mDebugPrev->mDebugNext = mDebugNext;
 
-   mDebugPrev = mDebugNext = NULL;
+    mDebugPrev = mDebugNext = NULL;
 
-   smExtantTOCount--;
+    smExtantTOCount--;
 #endif
 }
 
@@ -107,28 +107,28 @@ GFXTextureObject::~GFXTextureObject()
 //-----------------------------------------------------------------------------
 void GFXTextureObject::kill()
 {
-   if( mDead ) return;
+    if (mDead) return;
 
 #ifdef TORQUE_DEBUG
-   // This makes sure that nobody is forgetting to call kill from the derived
-   // destructor.  If they are, then we should get a pure virtual function
-   // call here.
-   pureVirtualCrash();
+    // This makes sure that nobody is forgetting to call kill from the derived
+    // destructor.  If they are, then we should get a pure virtual function
+    // call here.
+    pureVirtualCrash();
 #endif
 
-   // If we're a dummy, don't do anything...
-   if( !mDevice || !mDevice->mTextureManager ) return;
+    // If we're a dummy, don't do anything...
+    if (!mDevice || !mDevice->mTextureManager) return;
 
-   // Remove ourselves from the texture list and hash
-   mDevice->mTextureManager->deleteTexture(this);
+    // Remove ourselves from the texture list and hash
+    mDevice->mTextureManager->deleteTexture(this);
 
-   // Delete bitmap(s)
-   SAFE_DELETE(mBitmap)
-   SAFE_DELETE(mDDS);
+    // Delete bitmap(s)
+    SAFE_DELETE(mBitmap)
+        SAFE_DELETE(mDDS);
 
-   // Clean up linked list
-   if(mNext) mNext->mPrev = mPrev;
-   if(mPrev) mPrev->mNext = mNext;
+    // Clean up linked list
+    if (mNext) mNext->mPrev = mPrev;
+    if (mPrev) mPrev->mNext = mNext;
 
-   mDead = true;
+    mDead = true;
 }

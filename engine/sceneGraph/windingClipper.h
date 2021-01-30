@@ -10,6 +10,6 @@
 #include "math/mMath.h"
 #endif
 
-   void sgUtil_clipToPlane(Point3F* points, U32& rNumPoints, const PlaneF& rPlane);
+void sgUtil_clipToPlane(Point3F* points, U32& rNumPoints, const PlaneF& rPlane);
 
 #endif

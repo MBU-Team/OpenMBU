@@ -25,46 +25,46 @@ class SimObject;
 /// for fast removal of an object given object*
 class SimNameDictionary
 {
-   enum
-   {
-      DefaultTableSize = 29
-   };
+    enum
+    {
+        DefaultTableSize = 29
+    };
 
-   SimObject **hashTable;  // hash the pointers of the names...
-   S32 hashTableSize;
-   S32 hashEntryCount;
+    SimObject** hashTable;  // hash the pointers of the names...
+    S32 hashTableSize;
+    S32 hashEntryCount;
 
-   void *mutex;
+    void* mutex;
 
 public:
-   void insert(SimObject* obj);
-   void remove(SimObject* obj);
-   SimObject* find(StringTableEntry name);
+    void insert(SimObject* obj);
+    void remove(SimObject* obj);
+    SimObject* find(StringTableEntry name);
 
-   SimNameDictionary();
-   ~SimNameDictionary();
+    SimNameDictionary();
+    ~SimNameDictionary();
 };
 
 class SimManagerNameDictionary
 {
-   enum
-   {
-      DefaultTableSize = 29
-   };
+    enum
+    {
+        DefaultTableSize = 29
+    };
 
-   SimObject **hashTable;  // hash the pointers of the names...
-   S32 hashTableSize;
-   S32 hashEntryCount;
+    SimObject** hashTable;  // hash the pointers of the names...
+    S32 hashTableSize;
+    S32 hashEntryCount;
 
-   void *mutex;
+    void* mutex;
 
 public:
-   void insert(SimObject* obj);
-   void remove(SimObject* obj);
-   SimObject* find(StringTableEntry name);
+    void insert(SimObject* obj);
+    void remove(SimObject* obj);
+    SimObject* find(StringTableEntry name);
 
-   SimManagerNameDictionary();
-   ~SimManagerNameDictionary();
+    SimManagerNameDictionary();
+    ~SimManagerNameDictionary();
 };
 
 //----------------------------------------------------------------------------
@@ -74,22 +74,22 @@ public:
 /// for fast removal of an object given object*
 class SimIdDictionary
 {
-   enum
-   {
-      DefaultTableSize = 4096,
-      TableBitMask = 4095
-   };
-   SimObject *table[DefaultTableSize];
+    enum
+    {
+        DefaultTableSize = 4096,
+        TableBitMask = 4095
+    };
+    SimObject* table[DefaultTableSize];
 
-   void *mutex;
+    void* mutex;
 
 public:
-   void insert(SimObject* obj);
-   void remove(SimObject* obj);
-   SimObject* find(S32 id);
+    void insert(SimObject* obj);
+    void remove(SimObject* obj);
+    SimObject* find(S32 id);
 
-   SimIdDictionary();
-   ~SimIdDictionary();
+    SimIdDictionary();
+    ~SimIdDictionary();
 };
 
 #endif //_SIMDICTIONARY_H_

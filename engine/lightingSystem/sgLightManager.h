@@ -26,10 +26,10 @@
 
 class SceneObject;
 
-static void sgFindObjectsCallback(SceneObject* obj, void *val)
+static void sgFindObjectsCallback(SceneObject* obj, void* val)
 {
-	Vector<SceneObject*> * list = (Vector<SceneObject*>*)val;
-	list->push_back(obj);
+    Vector<SceneObject*>* list = (Vector<SceneObject*>*)val;
+    list->push_back(obj);
 }
 
 
@@ -38,83 +38,83 @@ static void sgFindObjectsCallback(SceneObject* obj, void *val)
 
 class LightInfo
 {
-	friend class LightManager;
+    friend class LightManager;
 
 public:
-	enum Type {
-		Point    = 0,
-		Spot     = 1,
-		Vector   = 2,
-		Ambient  = 3,
-		SGStaticPoint,
-		SGStaticSpot
-	};
-	Type        mType;
+    enum Type {
+        Point = 0,
+        Spot = 1,
+        Vector = 2,
+        Ambient = 3,
+        SGStaticPoint,
+        SGStaticSpot
+    };
+    Type        mType;
 
-	Point3F     mPos;
-	VectorF     mDirection;
-	ColorF      mColor;
-	ColorF      mAmbient;
-	F32         mRadius;
+    Point3F     mPos;
+    VectorF     mDirection;
+    ColorF      mColor;
+    ColorF      mAmbient;
+    F32         mRadius;
 
-//private:
-	S32         mScore;
+    //private:
+    S32         mScore;
 
 public:
-	enum sgFeatures
-	{
-		// in order from most features to least...
-		sgFull = 0,
-		sgNoCube,
-		sgNoSpecCube,
-		sgFeatureCount
-	};
-	sgFeatures sgSupportedFeatures;
+    enum sgFeatures
+    {
+        // in order from most features to least...
+        sgFull = 0,
+        sgNoCube,
+        sgNoSpecCube,
+        sgFeatureCount
+    };
+    sgFeatures sgSupportedFeatures;
 
-	bool sgCanBeSecondary() {return sgSupportedFeatures >= sgNoSpecCube;}
+    bool sgCanBeSecondary() { return sgSupportedFeatures >= sgNoSpecCube; }
 
-	static bool sgAllowSpecular(sgFeatures features) {return features < sgNoSpecCube;}
-	static bool sgAllowCubeMapping(sgFeatures features) {return features < sgNoCube;}
+    static bool sgAllowSpecular(sgFeatures features) { return features < sgNoSpecCube; }
+    static bool sgAllowCubeMapping(sgFeatures features) { return features < sgNoCube; }
 
-	F32 sgSpotAngle;
-	bool sgAssignedToTSObject;
-	bool sgCastsShadows;
-	bool sgDiffuseRestrictZone;
-	bool sgAmbientRestrictZone;
-	S32 sgZone[2];
-	F32 sgLocalAmbientAmount;
-	bool sgSmoothSpotLight;
-	bool sgDoubleSidedAmbient;
-	bool sgAssignedToParticleSystem;
-	StringTableEntry sgLightingModelName;
-	bool sgUseNormals;
-	Point3F sgTempModelInfo;
-	MatrixF sgLightingTransform;
-	PlaneF sgSpotPlane;
+    F32 sgSpotAngle;
+    bool sgAssignedToTSObject;
+    bool sgCastsShadows;
+    bool sgDiffuseRestrictZone;
+    bool sgAmbientRestrictZone;
+    S32 sgZone[2];
+    F32 sgLocalAmbientAmount;
+    bool sgSmoothSpotLight;
+    bool sgDoubleSidedAmbient;
+    bool sgAssignedToParticleSystem;
+    StringTableEntry sgLightingModelName;
+    bool sgUseNormals;
+    Point3F sgTempModelInfo;
+    MatrixF sgLightingTransform;
+    PlaneF sgSpotPlane;
 
-	LightInfo();
-	bool sgIsInZone(S32 zone);
-	bool sgAllowDiffuseZoneLighting(S32 zone);
+    LightInfo();
+    bool sgIsInZone(S32 zone);
+    bool sgAllowDiffuseZoneLighting(S32 zone);
 };
 
 class LightInfoList : public Vector<LightInfo*>
 {
 public:
-	void sgRegisterLight(LightInfo *light);
-	void sgUnregisterLight(LightInfo *light);
+    void sgRegisterLight(LightInfo* light);
+    void sgUnregisterLight(LightInfo* light);
 };
 
 class LightInfoDual
 {
 public:
-	LightInfo *sgLightPrimary;
-	LightInfo *sgLightSecondary;
+    LightInfo* sgLightPrimary;
+    LightInfo* sgLightSecondary;
 
-	LightInfoDual()
-	{
-		sgLightPrimary = NULL;
-		sgLightSecondary = NULL;
-	}
+    LightInfoDual()
+    {
+        sgLightPrimary = NULL;
+        sgLightSecondary = NULL;
+    }
 };
 
 class LightInfoDualList : public Vector<LightInfoDual>
@@ -129,238 +129,238 @@ public:
 class LightManager
 {
 public:
-	enum sgSpecialLightTypesEnum
-	{
-		sgSunLightType,
+    enum sgSpecialLightTypesEnum
+    {
+        sgSunLightType,
 
-		sgSpecialLightTypesCount
-	};
+        sgSpecialLightTypesCount
+    };
 
-	LightManager() {sgInit();}
+    LightManager() { sgInit(); }
 
-	// registered before scene traversal...
-	void sgRegisterGlobalLight(LightInfo *light, SimObject *obj, bool zonealreadyset);
-	void sgUnregisterGlobalLight(LightInfo *light) {sgRegisteredGlobalLights.sgUnregisterLight(light);}
-	// registered per object...
-	void sgRegisterLocalLight(LightInfo *light) {sgRegisteredLocalLights.sgRegisterLight(light);}
-	void sgUnregisterLocalLight(LightInfo *light) {sgRegisteredLocalLights.sgUnregisterLight(light);}
+    // registered before scene traversal...
+    void sgRegisterGlobalLight(LightInfo* light, SimObject* obj, bool zonealreadyset);
+    void sgUnregisterGlobalLight(LightInfo* light) { sgRegisteredGlobalLights.sgUnregisterLight(light); }
+    // registered per object...
+    void sgRegisterLocalLight(LightInfo* light) { sgRegisteredLocalLights.sgRegisterLight(light); }
+    void sgUnregisterLocalLight(LightInfo* light) { sgRegisteredLocalLights.sgUnregisterLight(light); }
 
-	void sgRegisterGlobalLights(bool staticlighting);
-	void sgUnregisterAllLights();
+    void sgRegisterGlobalLights(bool staticlighting);
+    void sgUnregisterAllLights();
 
-	/// Returns all unsorted and un-scored lights (both global and local).
-	void sgGetAllUnsortedLights(LightInfoList &list);
-	/// Copies the best lights list - this DOESN'T find the lights!  Call
-	/// sgSetupLights to populate the list.
-	void sgGetBestLights(LightInfoList &list)
-	{
-		list.clear();
-		list.merge(sgBestLights);
-	}
-	/// Accepts a pre-filtered list instead of using the best lights list
-	/// so interiors can filter lights against zones and then build the
-	/// the dual list...
-	void sgBuildDualLightLists(const LightInfoList &list, LightInfoDualList &listdual);
+    /// Returns all unsorted and un-scored lights (both global and local).
+    void sgGetAllUnsortedLights(LightInfoList& list);
+    /// Copies the best lights list - this DOESN'T find the lights!  Call
+    /// sgSetupLights to populate the list.
+    void sgGetBestLights(LightInfoList& list)
+    {
+        list.clear();
+        list.merge(sgBestLights);
+    }
+    /// Accepts a pre-filtered list instead of using the best lights list
+    /// so interiors can filter lights against zones and then build the
+    /// the dual list...
+    void sgBuildDualLightLists(const LightInfoList& list, LightInfoDualList& listdual);
 
-	/// For DST objects.  Finds the best lights
-	/// including a composite based on the environmental
-	/// ambient lighting amount *and installs them in OpenGL*.
-	void sgSetupLights(SceneObject *obj);
-	/// For the terrain and Atlas.  Finds the best
-	/// lights in the viewing area based on distance to camera.
-	void sgSetupLights(SceneObject *obj, const Point3F &camerapos,
-		const Point3F &cameradir, F32 viewdist, S32 maxlights);
-	/// Finds the best lights that overlap with the bounding box
-	/// based on the box center.
-	void sgSetupLights(SceneObject *obj, const Box3F &box, S32 maxlights);
-	/// Reset the best lights list and all associated data.
-	void sgResetLights();
+    /// For DST objects.  Finds the best lights
+    /// including a composite based on the environmental
+    /// ambient lighting amount *and installs them in OpenGL*.
+    void sgSetupLights(SceneObject* obj);
+    /// For the terrain and Atlas.  Finds the best
+    /// lights in the viewing area based on distance to camera.
+    void sgSetupLights(SceneObject* obj, const Point3F& camerapos,
+        const Point3F& cameradir, F32 viewdist, S32 maxlights);
+    /// Finds the best lights that overlap with the bounding box
+    /// based on the box center.
+    void sgSetupLights(SceneObject* obj, const Box3F& box, S32 maxlights);
+    /// Reset the best lights list and all associated data.
+    void sgResetLights();
 
 private:
-	LightInfo *sgSpecialLights[sgSpecialLightTypesCount];
+    LightInfo* sgSpecialLights[sgSpecialLightTypesCount];
 public:
-	LightInfo *sgGetSpecialLight(sgSpecialLightTypesEnum type);
-	void sgSetSpecialLight(sgSpecialLightTypesEnum type, LightInfo *light) {sgSpecialLights[type] = light;}
-	void sgClearSpecialLights();
+    LightInfo* sgGetSpecialLight(sgSpecialLightTypesEnum type);
+    void sgSetSpecialLight(sgSpecialLightTypesEnum type, LightInfo* light) { sgSpecialLights[type] = light; }
+    void sgClearSpecialLights();
 
 private:
-	// registered before scene traversal...
-	LightInfoList sgRegisteredGlobalLights;
-	// registered per object...
-	LightInfoList sgRegisteredLocalLights;
+    // registered before scene traversal...
+    LightInfoList sgRegisteredGlobalLights;
+    // registered per object...
+    LightInfoList sgRegisteredLocalLights;
 
-	// best lights per object...
-	LightInfoList sgBestLights;
-	void sgFindBestLights(const Box3F &box, S32 maxlights, const Point3F &viewdir, bool camerabased);
+    // best lights per object...
+    LightInfoList sgBestLights;
+    void sgFindBestLights(const Box3F& box, S32 maxlights, const Point3F& viewdir, bool camerabased);
 
-	// used in DTS lighting...
-	void sgScoreLight(LightInfo *light, const Box3F &box, const SphereF &sphere, bool camerabased);
-
-public:
-	enum lightingProfileQualityType
-	{
-		// highest quality - for in-game and final tweaks...
-		lpqtProduction = 0,
-		// medium quality - for lighting layout...
-		lpqtDesign = 1,
-		// low quality - for object placement...
-		lpqtDraft = 2
-	};
-	enum sgLightingPropertiesEnum
-	{
-		sgReceiveSunLightProp,
-		sgAdaptiveSelfIlluminationProp,
-		sgCustomAmbientLightingProp,
-		sgCustomAmbientForSelfIlluminationProp,
-
-		sgPropertyCount
-	};
-	static bool sgGetProperty(U32 prop)
-	{
-		AssertFatal((prop < sgPropertyCount), "Invalid property type!");
-		return sgLightingProperties[prop];
-	}
-	static void sgSetProperty(U32 prop, bool val)
-	{
-		AssertFatal((prop < sgPropertyCount), "Invalid property type!");
-		sgLightingProperties[prop] = val;
-	}
-	static bool sgAllowDiffuseCustomAmbient() {return sgLightingProperties[sgCustomAmbientLightingProp] && (!sgLightingProperties[sgCustomAmbientForSelfIlluminationProp]);}
-	static bool sgAllowAdaptiveSelfIllumination() {return sgLightingProperties[sgAdaptiveSelfIlluminationProp];}
-	static bool sgAllowCollectSelfIlluminationColor() {return !sgLightingProperties[sgCustomAmbientLightingProp];}
-	static bool sgAllowReceiveSunLight() {return sgLightingProperties[sgReceiveSunLightProp] && (!sgAllowDiffuseCustomAmbient());}
-private:
-	static bool sgLightingProperties[sgPropertyCount];
-	static U32 sgLightingProfileQuality;
-	static bool sgLightingProfileAllowShadows;
-	static LightInfo sgDefaultLight;
-	//static bool sgDetailMaps;
-	static bool sgUseDynamicShadows;
-	static U32 sgDynamicShadowQuality;
-	static bool sgUseDynamicLightingDualOptimization;
-	//static bool sgUseDynamicShadowSelfShadowing;
-	//static bool sgUseDynamicShadowSelfShadowingOnPS_2_0;
-
-	static bool sgUseSelfIlluminationColor;
-	static ColorF sgSelfIlluminationColor;
-	//static bool sgDynamicDTSVectorLighting;
-	//static bool sgDynamicParticleSystemLighting;
-	static bool sgFilterZones;
-	static S32 sgZones[2];
-	//static S32 sgShadowDetailSize;
-	static S32 sgMaxBestLights;
-	static bool sgInGUIEditor;
-
-	// user prefs...
-	static bool sgUseDynamicRangeLighting;
-	static bool sgUseDRLHighDynamicRange;
-
-	// mission properties...
-	static bool sgAllowDynamicRangeLighting;
-	static bool sgAllowDRLHighDynamicRange;
-	static bool sgAllowDRLBloom;
-	static bool sgAllowDRLToneMapping;
+    // used in DTS lighting...
+    void sgScoreLight(LightInfo* light, const Box3F& box, const SphereF& sphere, bool camerabased);
 
 public:
-	static U32 sgDynamicShadowDetailSize;
-	static bool sgMultipleDynamicShadows;
-	static bool sgShowCacheStats;
+    enum lightingProfileQualityType
+    {
+        // highest quality - for in-game and final tweaks...
+        lpqtProduction = 0,
+        // medium quality - for lighting layout...
+        lpqtDesign = 1,
+        // low quality - for object placement...
+        lpqtDraft = 2
+    };
+    enum sgLightingPropertiesEnum
+    {
+        sgReceiveSunLightProp,
+        sgAdaptiveSelfIlluminationProp,
+        sgCustomAmbientLightingProp,
+        sgCustomAmbientForSelfIlluminationProp,
 
-	static F32 sgDRLTarget;
-	static F32 sgDRLMax;
-	static F32 sgDRLMin;
-	static F32 sgDRLMultiplier;
-	static F32 sgBloomCutOff;
-	static F32 sgBloomAmount;
-	static F32 sgBloomSeedAmount;
-	static F32 sgAtlasMaxDynamicLights;
+        sgPropertyCount
+    };
+    static bool sgGetProperty(U32 prop)
+    {
+        AssertFatal((prop < sgPropertyCount), "Invalid property type!");
+        return sgLightingProperties[prop];
+    }
+    static void sgSetProperty(U32 prop, bool val)
+    {
+        AssertFatal((prop < sgPropertyCount), "Invalid property type!");
+        sgLightingProperties[prop] = val;
+    }
+    static bool sgAllowDiffuseCustomAmbient() { return sgLightingProperties[sgCustomAmbientLightingProp] && (!sgLightingProperties[sgCustomAmbientForSelfIlluminationProp]); }
+    static bool sgAllowAdaptiveSelfIllumination() { return sgLightingProperties[sgAdaptiveSelfIlluminationProp]; }
+    static bool sgAllowCollectSelfIlluminationColor() { return !sgLightingProperties[sgCustomAmbientLightingProp]; }
+    static bool sgAllowReceiveSunLight() { return sgLightingProperties[sgReceiveSunLightProp] && (!sgAllowDiffuseCustomAmbient()); }
+private:
+    static bool sgLightingProperties[sgPropertyCount];
+    static U32 sgLightingProfileQuality;
+    static bool sgLightingProfileAllowShadows;
+    static LightInfo sgDefaultLight;
+    //static bool sgDetailMaps;
+    static bool sgUseDynamicShadows;
+    static U32 sgDynamicShadowQuality;
+    static bool sgUseDynamicLightingDualOptimization;
+    //static bool sgUseDynamicShadowSelfShadowing;
+    //static bool sgUseDynamicShadowSelfShadowingOnPS_2_0;
 
-	static bool sgAllowDynamicShadows() {return sgUseDynamicShadows;}
-	static U32 sgGetDynamicShadowQuality()
-	{
-		F32 psversion = GFX->getPixelShaderVersion();
-		if((psversion >= 3.0) && (sgDynamicShadowQuality < 1))
-			return 0;
-		if((psversion >= 2.0) && (sgDynamicShadowQuality < 2))
-			return 1;
-		return 2;
+    static bool sgUseSelfIlluminationColor;
+    static ColorF sgSelfIlluminationColor;
+    //static bool sgDynamicDTSVectorLighting;
+    //static bool sgDynamicParticleSystemLighting;
+    static bool sgFilterZones;
+    static S32 sgZones[2];
+    //static S32 sgShadowDetailSize;
+    static S32 sgMaxBestLights;
+    static bool sgInGUIEditor;
 
-		//F32 psversion = GFX->getPixelShaderVersion();
-		//if((psversion >= 3.0) || ((psversion >= 2.0) && sgUseDynamicShadowSelfShadowingOnPS_2_0))
-		//	return sgUseDynamicShadowSelfShadowing;
-		//return false;
-	}
-	static bool sgAllowDynamicLightingDualOptimization() {return sgUseDynamicLightingDualOptimization;}
-	static bool sgAllowDRLSystem() {return sgUseDynamicRangeLighting && (sgAllowDynamicRangeLighting || sgAllowDRLBloom) && !sgInGUIEditor;}
-	static bool sgAllowFullDynamicRangeLighting() {return sgAllowDRLSystem() && sgAllowDynamicRangeLighting;}
-	static bool sgAllowFullHighDynamicRangeLighting() {return sgAllowDRLSystem() && sgUseDRLHighDynamicRange && sgAllowDRLHighDynamicRange;}
-	static bool sgAllowBloom() {return sgAllowDRLSystem() && sgAllowDRLBloom;}
-	static bool sgAllowToneMapping() {return sgAllowDRLSystem() && sgAllowDRLToneMapping;}
-	static ColorF sgGetSelfIlluminationColor(ColorF defaultcol)
-	{
-		if(sgUseSelfIlluminationColor)
-			return sgSelfIlluminationColor;
-		return defaultcol;
-	}
-	static void sgSetAllowDynamicRangeLighting(bool enable) {sgAllowDynamicRangeLighting = enable;}
-	static void sgSetAllowHighDynamicRangeLighting(bool enable) {sgAllowDRLHighDynamicRange = enable;}
-	static void sgSetAllowDRLBloom(bool enable) {sgAllowDRLBloom = enable;}
-	static void sgSetAllowDRLToneMapping(bool enable) {sgAllowDRLToneMapping = enable;}
+    // user prefs...
+    static bool sgUseDynamicRangeLighting;
+    static bool sgUseDRLHighDynamicRange;
 
-	//static GFXTexHandle sgDLightMap;
-	static void sgInit();
-	//static bool sgAllowDetailMaps();
-	static bool sgAllowShadows() {return sgLightingProfileAllowShadows;}
-	static bool sgAllowFullLightMaps() {return (sgLightingProfileQuality == lpqtProduction);}
-	static U32 sgGetLightMapScale()
-	{
-		if(sgLightingProfileQuality == lpqtDesign) return 2;
-		if(sgLightingProfileQuality == lpqtDraft) return 4;
-		return 1;
-	}
-	static void sgGetFilteredLightColor(ColorF &color, ColorF &ambient, S32 objectzone);
-	// adds proper support for self-illumination...
-	//static void sgSetAmbientSelfIllumination(LightInfo *lightinfo, F32 *lightColor,
-	//		F32 *ambientColor);
-	static void sgSetupZoneLighting(bool enable, SimObject *sobj);
+    // mission properties...
+    static bool sgAllowDynamicRangeLighting;
+    static bool sgAllowDRLHighDynamicRange;
+    static bool sgAllowDRLBloom;
+    static bool sgAllowDRLToneMapping;
+
+public:
+    static U32 sgDynamicShadowDetailSize;
+    static bool sgMultipleDynamicShadows;
+    static bool sgShowCacheStats;
+
+    static F32 sgDRLTarget;
+    static F32 sgDRLMax;
+    static F32 sgDRLMin;
+    static F32 sgDRLMultiplier;
+    static F32 sgBloomCutOff;
+    static F32 sgBloomAmount;
+    static F32 sgBloomSeedAmount;
+    static F32 sgAtlasMaxDynamicLights;
+
+    static bool sgAllowDynamicShadows() { return sgUseDynamicShadows; }
+    static U32 sgGetDynamicShadowQuality()
+    {
+        F32 psversion = GFX->getPixelShaderVersion();
+        if ((psversion >= 3.0) && (sgDynamicShadowQuality < 1))
+            return 0;
+        if ((psversion >= 2.0) && (sgDynamicShadowQuality < 2))
+            return 1;
+        return 2;
+
+        //F32 psversion = GFX->getPixelShaderVersion();
+        //if((psversion >= 3.0) || ((psversion >= 2.0) && sgUseDynamicShadowSelfShadowingOnPS_2_0))
+        //	return sgUseDynamicShadowSelfShadowing;
+        //return false;
+    }
+    static bool sgAllowDynamicLightingDualOptimization() { return sgUseDynamicLightingDualOptimization; }
+    static bool sgAllowDRLSystem() { return sgUseDynamicRangeLighting && (sgAllowDynamicRangeLighting || sgAllowDRLBloom) && !sgInGUIEditor; }
+    static bool sgAllowFullDynamicRangeLighting() { return sgAllowDRLSystem() && sgAllowDynamicRangeLighting; }
+    static bool sgAllowFullHighDynamicRangeLighting() { return sgAllowDRLSystem() && sgUseDRLHighDynamicRange && sgAllowDRLHighDynamicRange; }
+    static bool sgAllowBloom() { return sgAllowDRLSystem() && sgAllowDRLBloom; }
+    static bool sgAllowToneMapping() { return sgAllowDRLSystem() && sgAllowDRLToneMapping; }
+    static ColorF sgGetSelfIlluminationColor(ColorF defaultcol)
+    {
+        if (sgUseSelfIlluminationColor)
+            return sgSelfIlluminationColor;
+        return defaultcol;
+    }
+    static void sgSetAllowDynamicRangeLighting(bool enable) { sgAllowDynamicRangeLighting = enable; }
+    static void sgSetAllowHighDynamicRangeLighting(bool enable) { sgAllowDRLHighDynamicRange = enable; }
+    static void sgSetAllowDRLBloom(bool enable) { sgAllowDRLBloom = enable; }
+    static void sgSetAllowDRLToneMapping(bool enable) { sgAllowDRLToneMapping = enable; }
+
+    //static GFXTexHandle sgDLightMap;
+    static void sgInit();
+    //static bool sgAllowDetailMaps();
+    static bool sgAllowShadows() { return sgLightingProfileAllowShadows; }
+    static bool sgAllowFullLightMaps() { return (sgLightingProfileQuality == lpqtProduction); }
+    static U32 sgGetLightMapScale()
+    {
+        if (sgLightingProfileQuality == lpqtDesign) return 2;
+        if (sgLightingProfileQuality == lpqtDraft) return 4;
+        return 1;
+    }
+    static void sgGetFilteredLightColor(ColorF& color, ColorF& ambient, S32 objectzone);
+    // adds proper support for self-illumination...
+    //static void sgSetAmbientSelfIllumination(LightInfo *lightinfo, F32 *lightColor,
+    //		F32 *ambientColor);
+    static void sgSetupZoneLighting(bool enable, SimObject* sobj);
 
 private:
-	static S32 QSORT_CALLBACK sgSortLightsByAddress(const void *, const void *);
-	static S32 QSORT_CALLBACK sgSortLightsByScore(const void *, const void *);
+    static S32 QSORT_CALLBACK sgSortLightsByAddress(const void*, const void*);
+    static S32 QSORT_CALLBACK sgSortLightsByScore(const void*, const void*);
 };
 
 class sgRelightFilter
 {
 public:
-	static bool sgFilterRelight;
-	static bool sgFilterRelightVisible;
-	static bool sgFilterRelightByDistance;
-	//static bool sgFilterRelightByVisiblity;
-	static F32 sgFilterRelightByDistanceRadius;
-	static Point3F sgFilterRelightByDistancePosition;
-	static void sgInit();
-	static bool sgAllowLighting(const Box3F &box, bool forcefilter);
-	static void sgRenderAllowedObjects(void *worldeditor);
+    static bool sgFilterRelight;
+    static bool sgFilterRelightVisible;
+    static bool sgFilterRelightByDistance;
+    //static bool sgFilterRelightByVisiblity;
+    static F32 sgFilterRelightByDistanceRadius;
+    static Point3F sgFilterRelightByDistancePosition;
+    static void sgInit();
+    static bool sgAllowLighting(const Box3F& box, bool forcefilter);
+    static void sgRenderAllowedObjects(void* worldeditor);
 };
 
 class sgStatistics
 {
 public:
-	static U32 sgInteriorLexelCount;
-	static F32 sgInteriorLexelTime;
-	static U32 sgInteriorObjectCount;
-	static U32 sgInteriorObjectIncludedCount;
-	static U32 sgInteriorObjectIlluminationCount;
-	static U32 sgInteriorSurfaceIncludedCount;
-	static U32 sgInteriorSurfaceIlluminationCount;
-	static U32 sgInteriorSurfaceIlluminatedCount;
-	static U32 sgInteriorOccluderCount;
-	static U32 sgTerrainLexelCount;
-	static F32 sgTerrainLexelTime;
-	//static U32 sgTerrainOccluderCount;
+    static U32 sgInteriorLexelCount;
+    static F32 sgInteriorLexelTime;
+    static U32 sgInteriorObjectCount;
+    static U32 sgInteriorObjectIncludedCount;
+    static U32 sgInteriorObjectIlluminationCount;
+    static U32 sgInteriorSurfaceIncludedCount;
+    static U32 sgInteriorSurfaceIlluminationCount;
+    static U32 sgInteriorSurfaceIlluminatedCount;
+    static U32 sgInteriorOccluderCount;
+    static U32 sgTerrainLexelCount;
+    static F32 sgTerrainLexelTime;
+    //static U32 sgTerrainOccluderCount;
 
-	static void sgClear();
-	static void sgPrint();
+    static void sgClear();
+    static void sgPrint();
 };
 
 

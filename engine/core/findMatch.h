@@ -12,24 +12,24 @@
 
 class   FindMatch
 {
-   char*  expression;
-   U32 maxMatches;
+    char* expression;
+    U32 maxMatches;
 
-  public:
-   static bool isMatch( const char *exp, const char *string, bool caseSensitive = false );
-   static bool isMatchMultipleExprs( const char *exps, const char *str, bool caseSensitive );
-   Vector<char *> matchList;
+public:
+    static bool isMatch(const char* exp, const char* string, bool caseSensitive = false);
+    static bool isMatchMultipleExprs(const char* exps, const char* str, bool caseSensitive);
+    Vector<char*> matchList;
 
-   FindMatch( U32 _maxMatches = 256 );
-   FindMatch( char *_expression, U32 _maxMatches = 256 );
-   ~FindMatch();
+    FindMatch(U32 _maxMatches = 256);
+    FindMatch(char* _expression, U32 _maxMatches = 256);
+    ~FindMatch();
 
-   bool findMatch(const char *string, bool caseSensitive = false);
-   void setExpression( const char *_expression );
+    bool findMatch(const char* string, bool caseSensitive = false);
+    void setExpression(const char* _expression);
 
-   S32  numMatches() const   { return(matchList.size());                }
-   bool isFull() const       { return (matchList.size() >= maxMatches); }
-   void clear()              { matchList.clear();                       }
+    S32  numMatches() const { return(matchList.size()); }
+    bool isFull() const { return (matchList.size() >= maxMatches); }
+    void clear() { matchList.clear(); }
 };
 
 #endif // _FINDMATCH_H_

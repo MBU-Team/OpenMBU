@@ -39,14 +39,14 @@
 /// - These functions are useful for working on existing buffers.
 /// - These cannot convert a buffer in place. If unistring is the same memory as
 ///   outbuffer, the behavior is undefined.
-const U32 convertUTF8toUTF16(const UTF8 *unistring, UTF16 *outbuffer, U32 len);
-const U32 convertUTF8toUTF32(const UTF8 *unistring, UTF32 *outbuffer, U32 len);
+const U32 convertUTF8toUTF16(const UTF8* unistring, UTF16* outbuffer, U32 len);
+const U32 convertUTF8toUTF32(const UTF8* unistring, UTF32* outbuffer, U32 len);
 
-const U32 convertUTF16toUTF8( const UTF16 *unistring, UTF8  *outbuffer, U32 len);
-const U32 convertUTF16toUTF32(const UTF16 *unistring, UTF32 *outbuffer, U32 len);
+const U32 convertUTF16toUTF8(const UTF16* unistring, UTF8* outbuffer, U32 len);
+const U32 convertUTF16toUTF32(const UTF16* unistring, UTF32* outbuffer, U32 len);
 
-const U32 convertUTF32toUTF8( const UTF32 *unistring, UTF8  *outbuffer, U32 len);
-const U32 convertUTF32toUTF16(const UTF32 *unistring, UTF16 *outbuffer, U32 len);
+const U32 convertUTF32toUTF8(const UTF32* unistring, UTF8* outbuffer, U32 len);
+const U32 convertUTF32toUTF16(const UTF32* unistring, UTF16* outbuffer, U32 len);
 
 //-----------------------------------------------------------------------------
 /// Functions that convert buffers of unicode code points, allocating a buffer.
@@ -54,14 +54,14 @@ const U32 convertUTF32toUTF16(const UTF32 *unistring, UTF16 *outbuffer, U32 len)
 ///   deleting these buffers.
 /// - Because they allocate memory, do not use these functions in a tight loop.
 /// - These are usefull when you need a new long term copy of a string.
-const UTF16* convertUTF8toUTF16( const UTF8 *unistring);
-const UTF32* convertUTF8toUTF32( const UTF8 *unistring);
+const UTF16* convertUTF8toUTF16(const UTF8* unistring);
+const UTF32* convertUTF8toUTF32(const UTF8* unistring);
 
-const UTF8*  convertUTF16toUTF8( const UTF8 *unistring);
-const UTF32* convertUTF16toUTF32(const UTF16 *unistring);
+const UTF8* convertUTF16toUTF8(const UTF8* unistring);
+const UTF32* convertUTF16toUTF32(const UTF16* unistring);
 
-const UTF8*  convertUTF32toUTF8( const UTF32 *unistring);
-const UTF16* convertUTF32toUTF16(const UTF32 *unistring);
+const UTF8* convertUTF32toUTF8(const UTF32* unistring);
+const UTF16* convertUTF32toUTF16(const UTF32* unistring);
 
 //-----------------------------------------------------------------------------
 /// Functions that converts one unicode codepoint at a time
@@ -71,10 +71,10 @@ const UTF16* convertUTF32toUTF16(const UTF32 *unistring);
 ///   in *codepoint, and set *unitsWalked to the \# of code units *codepoint took up.
 ///   The next Unicode code point should start at *(codepoint + *unitsWalked).
 /// - oneUTF32toUTF8()  requires a 3 byte buffer, and returns the \# of bytes used.
-const UTF32  oneUTF8toUTF32( const UTF8 *codepoint,  U32 *unitsWalked = NULL);
-const UTF32  oneUTF16toUTF32(const UTF16 *codepoint, U32 *unitsWalked = NULL);
+const UTF32  oneUTF8toUTF32(const UTF8* codepoint, U32* unitsWalked = NULL);
+const UTF32  oneUTF16toUTF32(const UTF16* codepoint, U32* unitsWalked = NULL);
 const UTF16  oneUTF32toUTF16(const UTF32 codepoint);
-const U32    oneUTF32toUTF8( const UTF32 codepoint, UTF8 *threeByteCodeunitBuf);
+const U32    oneUTF32toUTF8(const UTF32 codepoint, UTF8* threeByteCodeunitBuf);
 
 //-----------------------------------------------------------------------------
 /// Functions that calculate the length of unicode strings.
@@ -82,13 +82,13 @@ const U32    oneUTF32toUTF8( const UTF32 codepoint, UTF8 *threeByteCodeunitBuf);
 ///   converting it to another format, a dStrlen for UTF8 is not provided here.
 /// - If *unistring does not point to a null terminated string of the correct type,
 ///   the behavior is undefined.
-const U32 dStrlen(const UTF16 *unistring);
-const U32 dStrlen(const UTF32 *unistring);
+const U32 dStrlen(const UTF16* unistring);
+const U32 dStrlen(const UTF32* unistring);
 
 //------------------------------------------------------------------------------
 /// Functions to read and validate UTF BOMs (Byte Order Marker)
 /// For reference: http://en.wikipedia.org/wiki/Byte_Order_Mark
-bool chompUTF8BOM( const char *inString, char **outStringPtr );
-bool isValidUTF8BOM( U8 bom[4] );
+bool chompUTF8BOM(const char* inString, char** outStringPtr);
+bool isValidUTF8BOM(U8 bom[4]);
 
 #endif // _UNICODE_H_

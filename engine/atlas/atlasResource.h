@@ -29,7 +29,7 @@ class AtlasResourceTracer;
 class AtlasResourceEntry;
 class AtlasInstance;
 class AtlasInstanceEntry;
-extern ResourceInstance *constructAtlasChunkFile(Stream &stream);
+extern ResourceInstance* constructAtlasChunkFile(Stream& stream);
 
 /// AtlasResource is used as a shared repository for a given Atlas
 /// geometry and texture set. It stores all the common information -
@@ -49,242 +49,242 @@ extern ResourceInstance *constructAtlasChunkFile(Stream &stream);
 /// manipulations.
 class AtlasResource : public ResourceInstance
 {
-   typedef ResourceInstance Parent;
+    typedef ResourceInstance Parent;
 
 public:
-   typedef long FileOffset;
+    typedef long FileOffset;
 
-   enum DeleteReason
-   {
-      BadDeleteReason,
+    enum DeleteReason
+    {
+        BadDeleteReason,
 
-      DeleteUpdateLod,
-      DeleteWarmupUnimportant,
-      DeleteWarmupImportant,
+        DeleteUpdateLod,
+        DeleteWarmupUnimportant,
+        DeleteWarmupImportant,
 
-      DeleteTextureNoGeom,
-      DeleteTextureLevelTooHigh,
+        DeleteTextureNoGeom,
+        DeleteTextureLevelTooHigh,
 
-      PurgeReason
-   };
+        PurgeReason
+    };
 
-   enum LoadReason
-   {
-      BadLoadReason,
+    enum LoadReason
+    {
+        BadLoadReason,
 
-      CanSplitChildPreload,
-      WarmUpPreload,
+        CanSplitChildPreload,
+        WarmUpPreload,
 
-      ServerPreload,
-      UpdateTextureLoad,
-   };
+        ServerPreload,
+        UpdateTextureLoad,
+    };
 
-   /// @name AtlasData_Statics Statics
-   /// Rather than pass a reference to ourselves into every Entry method, we
-   /// simply store it in a global for easy access. We also do this for some
-   /// other key data.
-   ///
-   /// @see getCurrentChunkData()
-   ///
-   /// @{
+    /// @name AtlasData_Statics Statics
+    /// Rather than pass a reference to ourselves into every Entry method, we
+    /// simply store it in a global for easy access. We also do this for some
+    /// other key data.
+    ///
+    /// @see getCurrentChunkData()
+    ///
+    /// @{
 
-   ///
-   static AtlasResource    *smCurChunkResource;
-   static Point3F          smCurCamPos;
-   static Point3F          smCurObjCamPos;
-   static SceneGraphData   *smCurSGD;
-   static MatrixF          smInvObjTrans;
+    ///
+    static AtlasResource* smCurChunkResource;
+    static Point3F          smCurCamPos;
+    static Point3F          smCurObjCamPos;
+    static SceneGraphData* smCurSGD;
+    static MatrixF          smInvObjTrans;
 
-   static Point2I          smBoundChunkPos;
-   static U32              smBoundChunkLevel;
+    static Point2I          smBoundChunkPos;
+    static U32              smBoundChunkLevel;
 
-   /// @}
+    /// @}
 
-   // Chunk allocation...
-   AtlasResourceEntry **mChunkTable;
-   AtlasResourceEntry *allocChunk(U32 lod, AtlasResourceEntry *parent);
-   AtlasResourceEntry *mChunks;
-   U32 mEntriesAllocated;
-   U32 mEntryCount;
+    // Chunk allocation...
+    AtlasResourceEntry** mChunkTable;
+    AtlasResourceEntry* allocChunk(U32 lod, AtlasResourceEntry* parent);
+    AtlasResourceEntry* mChunks;
+    U32 mEntriesAllocated;
+    U32 mEntryCount;
 
-   /// The resource manager doesn't let us keep the stream so we have to 
-   /// get our filename passed to us a bit later on.  Yay!
-   bool mInitialized;
+    /// The resource manager doesn't let us keep the stream so we have to 
+    /// get our filename passed to us a bit later on.  Yay!
+    bool mInitialized;
 
-   // Tree and scale info...
-   U32 mTreeDepth;
-   F32 mVerticalScale;
-   F32 mBaseChunkSize;
+    // Tree and scale info...
+    U32 mTreeDepth;
+    F32 mVerticalScale;
+    F32 mBaseChunkSize;
 
-   // Default LOD info...
-   F32 mError_LODMax;
-   F32 mDistance_LODMax;
-   F32 mTextureDistance_LODMax;
+    // Default LOD info...
+    F32 mError_LODMax;
+    F32 mDistance_LODMax;
+    F32 mTextureDistance_LODMax;
 
-   // Collision properties.
-   U32 mColGridSize;
-   U32 mColTreeDepth;
+    // Collision properties.
+    U32 mColGridSize;
+    U32 mColTreeDepth;
 
-   // File handles.
-   Stream  *mStream;
-   AtlasTQTFile *mTQTFile;
+    // File handles.
+    Stream* mStream;
+    AtlasTQTFile* mTQTFile;
 
-   /// Load actual geometry info for a chunk.
-   AtlasResourceInfo *loadChunkGeom(U32 idx);
+    /// Load actual geometry info for a chunk.
+    AtlasResourceInfo* loadChunkGeom(U32 idx);
 
-   Thread   *mLoader;
-   volatile bool mRunLoaderThread;
-   void     *mLoadMutex;
+    Thread* mLoader;
+    volatile bool mRunLoaderThread;
+    void* mLoadMutex;
 
-   /// Turns off some internal integrity checks so that we can force-load
-   /// server-side info and the like.
-   bool     mPreloading;
+    /// Turns off some internal integrity checks so that we can force-load
+    /// server-side info and the like.
+    bool     mPreloading;
 
-   void acquireLoadMutex();
-   void releaseLoadMutex();
+    void acquireLoadMutex();
+    void releaseLoadMutex();
 
-   struct ThreadLoadRequest
-   {
-      LoadReason              mReason;
-      F32                     mPriority;
-      AtlasResourceEntry      *mChunk;
+    struct ThreadLoadRequest
+    {
+        LoadReason              mReason;
+        F32                     mPriority;
+        AtlasResourceEntry* mChunk;
 
-      union {
-         AtlasResourceInfo    *mGeom;
-         DDSFile              *mDDS;
-      };
-   };
+        union {
+            AtlasResourceInfo* mGeom;
+            DDSFile* mDDS;
+        };
+    };
 
-   struct DeleteRequest
-   {
-      DeleteRequest()
-      {
-         mReason = BadDeleteReason;
-         mItem = NULL;
-      }
+    struct DeleteRequest
+    {
+        DeleteRequest()
+        {
+            mReason = BadDeleteReason;
+            mItem = NULL;
+        }
 
-      DeleteRequest(AtlasResourceEntry *item, AtlasInstance *who, DeleteReason reason)
-         : mReason(reason), mItem(item), mInstance(who)
-      {
-      }
+        DeleteRequest(AtlasResourceEntry* item, AtlasInstance* who, DeleteReason reason)
+            : mReason(reason), mItem(item), mInstance(who)
+        {
+        }
 
-      DeleteReason         mReason;
-      AtlasResourceEntry   *mItem;
-      AtlasInstance        *mInstance;
-   };
+        DeleteReason         mReason;
+        AtlasResourceEntry* mItem;
+        AtlasInstance* mInstance;
+    };
 
-   FreeListChunker<ThreadLoadRequest> mTLRAlloc;
+    FreeListChunker<ThreadLoadRequest> mTLRAlloc;
 
-   /// We keep track of the last frame we sync'ed on to avoid multiple syncs per
-   /// frame.
-   U32 mLastSyncFrame;
+    /// We keep track of the last frame we sync'ed on to avoid multiple syncs per
+    /// frame.
+    U32 mLastSyncFrame;
 
-   // The general list of requested geometry data.
-   Vector<ThreadLoadRequest*> mGeomRequest;
-   Vector<ThreadLoadRequest*> mTexRequest;
+    // The general list of requested geometry data.
+    Vector<ThreadLoadRequest*> mGeomRequest;
+    Vector<ThreadLoadRequest*> mTexRequest;
 
-   /// @name Thread Queues
-   ///
-   /// These buffers hold things for the thread to immediately process. Request
-   /// feeds the thread, and retire returns loaded resources.
-   ///
-   /// @{
+    /// @name Thread Queues
+    ///
+    /// These buffers hold things for the thread to immediately process. Request
+    /// feeds the thread, and retire returns loaded resources.
+    ///
+    /// @{
 
-   ///
-   volatile ThreadLoadRequest *mLT_GeomRequest[MAX_LOADER_THREAD_REQUESTS];
-   volatile ThreadLoadRequest *mLT_GeomRetire[MAX_LOADER_THREAD_REQUESTS];
-   volatile ThreadLoadRequest *mLT_TexRequest[MAX_LOADER_THREAD_REQUESTS];
-   volatile ThreadLoadRequest *mLT_TexRetire[MAX_LOADER_THREAD_REQUESTS];
+    ///
+    volatile ThreadLoadRequest* mLT_GeomRequest[MAX_LOADER_THREAD_REQUESTS];
+    volatile ThreadLoadRequest* mLT_GeomRetire[MAX_LOADER_THREAD_REQUESTS];
+    volatile ThreadLoadRequest* mLT_TexRequest[MAX_LOADER_THREAD_REQUESTS];
+    volatile ThreadLoadRequest* mLT_TexRetire[MAX_LOADER_THREAD_REQUESTS];
 
-   /// @}
+    /// @}
 
-   void startLoader();
-   bool processThreadGeomRequests();
-   bool processThreadTexRequests();
-   void loaderThread();
-   void stopLoader();
+    void startLoader();
+    bool processThreadGeomRequests();
+    bool processThreadTexRequests();
+    void loaderThread();
+    void stopLoader();
 
-   Vector<GFXTexHandle> mTexFreeList;
+    Vector<GFXTexHandle> mTexFreeList;
 
-   AtlasResourceTracer *mTracer;
+    AtlasResourceTracer* mTracer;
 
-   /// Set this AtlasResource to use the specified chunk and TQT files.
-   bool load(Stream &s);
-   bool initialize(const char *chuFile, const char*tqtFile = NULL);
+    /// Set this AtlasResource to use the specified chunk and TQT files.
+    bool load(Stream& s);
+    bool initialize(const char* chuFile, const char* tqtFile = NULL);
 
-   /// Forces all the info to become resident in memory that the server
-   /// will need for serving collision and the like.
-   void loadServerInfo(AtlasInstance *who);
+    /// Forces all the info to become resident in memory that the server
+    /// will need for serving collision and the like.
+    void loadServerInfo(AtlasInstance* who);
 
-   AtlasResource();
-   ~AtlasResource();
+    AtlasResource();
+    ~AtlasResource();
 
-   /// Get a pointer to the currently active ChunkData. Mostly used internally.
-   static AtlasResource *getCurrentResource()
-   {
-      return smCurChunkResource;
-   }
+    /// Get a pointer to the currently active ChunkData. Mostly used internally.
+    static AtlasResource* getCurrentResource()
+    {
+        return smCurChunkResource;
+    }
 
-   /// set a pointer to the currently active ChunkData. Mostly used internally.
-   static void setCurrentResource(AtlasResource *data)
-   {
-      smCurChunkResource = data;
-   }
+    /// set a pointer to the currently active ChunkData. Mostly used internally.
+    static void setCurrentResource(AtlasResource* data)
+    {
+        smCurChunkResource = data;
+    }
 
-   /// @group requests Thread Interface
-   ///
-   /// Since load/unload is multithreaded, these methods allow us to mark
-   /// what we need loaded or unloaded. All the details of talking to the thread
-   /// are hidden from us.
-   ///
-   /// @{
+    /// @group requests Thread Interface
+    ///
+    /// Since load/unload is multithreaded, these methods allow us to mark
+    /// what we need loaded or unloaded. All the details of talking to the thread
+    /// are hidden from us.
+    ///
+    /// @{
 
-   ///
-   void requestGeomLoad(AtlasResourceEntry *ce, 
-                     AtlasInstance *who, F32 urgency, LoadReason reason);
-   void requestTexLoad(AtlasResourceEntry *ce, 
-                     AtlasInstance *who, F32 urgency, LoadReason reason);
+    ///
+    void requestGeomLoad(AtlasResourceEntry* ce,
+        AtlasInstance* who, F32 urgency, LoadReason reason);
+    void requestTexLoad(AtlasResourceEntry* ce,
+        AtlasInstance* who, F32 urgency, LoadReason reason);
 
-   /// Called to fetch data from the background loader, as well as feed it new
-   /// requests. When in synchronous loading (see AtlasInstance::smSynchronousLoad),
-   /// this is also where loading occurs.
-   bool sync();
+    /// Called to fetch data from the background loader, as well as feed it new
+    /// requests. When in synchronous loading (see AtlasInstance::smSynchronousLoad),
+    /// this is also where loading occurs.
+    bool sync();
 
-   /// @}
+    /// @}
 
 
-   /// Cast a ray. (Done in AtlasResource space).
-   bool castRay(const Point3F &start, const Point3F &end, RayInfo* info, bool emptyCollide);
+    /// Cast a ray. (Done in AtlasResource space).
+    bool castRay(const Point3F& start, const Point3F& end, RayInfo* info, bool emptyCollide);
 
-   /// This is a unified internal collision interface for the terrain.
-   ///
-   /// We end up recursing by bounding box down into the chunks, it makes more
-   /// sense to have one set of functions that take different terminal actions
-   /// rather than having to live with two sets of code. Atlas::buildConvex
-   /// and Atlas::buildPolyList methods simply wrap this, and it fills in
-   /// what is appropriate. If you were superclever you'd go and do your poly
-   /// and convex queries simultaneously.
-   ///
-   /// localMat is used to transform everything from objectspace to worldspace.
-   bool buildCollisionInfo(const Box3F &box, Convex *c, AbstractPolyList *poly);
+    /// This is a unified internal collision interface for the terrain.
+    ///
+    /// We end up recursing by bounding box down into the chunks, it makes more
+    /// sense to have one set of functions that take different terminal actions
+    /// rather than having to live with two sets of code. Atlas::buildConvex
+    /// and Atlas::buildPolyList methods simply wrap this, and it fills in
+    /// what is appropriate. If you were superclever you'd go and do your poly
+    /// and convex queries simultaneously.
+    ///
+    /// localMat is used to transform everything from objectspace to worldspace.
+    bool buildCollisionInfo(const Box3F& box, Convex* c, AbstractPolyList* poly);
 
-   /// Forcibly unload any loaded resources.
-   void purge();
+    /// Forcibly unload any loaded resources.
+    void purge();
 
-   /// Sit and spin until everything is loaded. This version just clears out
-   /// the load queues.
-   void precache();
+    /// Sit and spin until everything is loaded. This version just clears out
+    /// the load queues.
+    void precache();
 
-   /// Return a pointer to a given entry in the tree.
-   AtlasResourceEntry *getResourceEntry(U32 level, Point2I pos)
-   {
-      return mChunkTable[QuadTreeTracer::getNodeIndex(level, pos)];
-   }
+    /// Return a pointer to a given entry in the tree.
+    AtlasResourceEntry* getResourceEntry(U32 level, Point2I pos)
+    {
+        return mChunkTable[QuadTreeTracer::getNodeIndex(level, pos)];
+    }
 
-   S32 mOwnerCount;
+    S32 mOwnerCount;
 
-   void incOwnership();
-   void decOwnership();
+    void incOwnership();
+    void decOwnership();
 };
 
 #endif

@@ -19,40 +19,40 @@
 class GuiConsoleTextCtrl : public GuiControl
 {
 private:
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
 public:
-   enum Constants { MAX_STRING_LENGTH = 255 };
+    enum Constants { MAX_STRING_LENGTH = 255 };
 
 
 protected:
-   const char *mConsoleExpression;
-   const char *mResult;
-   Resource<GFont> mFont;
+    const char* mConsoleExpression;
+    const char* mResult;
+    Resource<GFont> mFont;
 
 public:
 
-   //creation methods
-   DECLARE_CONOBJECT(GuiConsoleTextCtrl);
-   GuiConsoleTextCtrl();
-   static void initPersistFields();
+    //creation methods
+    DECLARE_CONOBJECT(GuiConsoleTextCtrl);
+    GuiConsoleTextCtrl();
+    static void initPersistFields();
 
-   //Parental methods
-   bool onWake();
-   void onSleep();
+    //Parental methods
+    bool onWake();
+    void onSleep();
 
-   //text methods
-   virtual void setText(const char *txt = NULL);
-   const char *getText() { return mConsoleExpression; }
+    //text methods
+    virtual void setText(const char* txt = NULL);
+    const char* getText() { return mConsoleExpression; }
 
-   //rendering methods
-   void calcResize();
-   void onPreRender();    // do special pre render processing
-   void onRender(Point2I offset, const RectI &updateRect);
+    //rendering methods
+    void calcResize();
+    void onPreRender();    // do special pre render processing
+    void onRender(Point2I offset, const RectI& updateRect);
 
-   //Console methods
-   const char *getScriptValue();
-   void setScriptValue(const char *value);
+    //Console methods
+    const char* getScriptValue();
+    void setScriptValue(const char* value);
 };
 
 #endif //_GUI_TEXT_CONTROL_H_

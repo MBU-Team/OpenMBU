@@ -11,53 +11,53 @@ static const U32 csgVersionNumber = TORQUE_VERSION;
 
 U32 getVersionNumber()
 {
-   return csgVersionNumber;
+    return csgVersionNumber;
 }
 
 const char* getVersionString()
 {
-   return TORQUE_GAME_VERSION_STRING;
+    return TORQUE_GAME_VERSION_STRING;
 }
 
 const char* getCompileTimeString()
 {
-   return __DATE__ " at " __TIME__;
+    return __DATE__ " at " __TIME__;
 }
 //----------------------------------------------------------------
 
-ConsoleFunctionGroupBegin( CompileInformation, "Functions to get version information about the current executable." )
+ConsoleFunctionGroupBegin(CompileInformation, "Functions to get version information about the current executable.")
 
-ConsoleFunction(isDebugBuild, bool, 1, 1, "isDebugBuild() - Returns true if the script is running in a debug Torque executable" )
+ConsoleFunction(isDebugBuild, bool, 1, 1, "isDebugBuild() - Returns true if the script is running in a debug Torque executable")
 {
 #ifdef TORQUE_DEBUG
-   return true;
+    return true;
 #else
-   return false;
+    return false;
 #endif
 }
 
-ConsoleFunction( getVersionNumber, S32, 1, 1, "Get the version of the build, as a string.")
+ConsoleFunction(getVersionNumber, S32, 1, 1, "Get the version of the build, as a string.")
 {
-   return getVersionNumber();
+    return getVersionNumber();
 }
 
-ConsoleFunction( getVersionString, const char*, 1, 1, "Get the version of the build, as a string.")
+ConsoleFunction(getVersionString, const char*, 1, 1, "Get the version of the build, as a string.")
 {
-   return getVersionString();
+    return getVersionString();
 }
 
-ConsoleFunction( getCompileTimeString, const char*, 1, 1, "Get the time of compilation.")
+ConsoleFunction(getCompileTimeString, const char*, 1, 1, "Get the time of compilation.")
 {
-   return getCompileTimeString();
+    return getCompileTimeString();
 }
 
-ConsoleFunction( getBuildString, const char*, 1, 1, "Get the type of build, \"Debug\" or \"Release\".")
+ConsoleFunction(getBuildString, const char*, 1, 1, "Get the type of build, \"Debug\" or \"Release\".")
 {
 #ifdef TORQUE_DEBUG
-   return "Debug";
+    return "Debug";
 #else
-   return "Release";
+    return "Release";
 #endif
 }
 
-ConsoleFunctionGroupEnd( CompileInformation );
+ConsoleFunctionGroupEnd(CompileInformation);

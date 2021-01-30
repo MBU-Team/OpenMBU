@@ -13,49 +13,49 @@
 class GuiGraphCtrl : public GuiControl
 {
 private:
-	typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
 public:
-   enum Constants {
-      MaxPlots = 6,
-      MaxDataPoints = 200
-   };
+    enum Constants {
+        MaxPlots = 6,
+        MaxDataPoints = 200
+    };
 
-   enum GraphType {
-      Point,
-      Polyline,
-      Filled,
-      Bar
-   };
+    enum GraphType {
+        Point,
+        Polyline,
+        Filled,
+        Bar
+    };
 
-   struct PlotInfo
-   {
-	  const char	*mAutoPlot;
-	  U32			mAutoPlotDelay;
-	  SimTime		mAutoPlotLastDisplay;
-	  ColorF		mGraphColor;
-	  Vector<F32>	mGraphData;
-	  F32			mGraphMax;
-	  GraphType		mGraphType;
-   };
+    struct PlotInfo
+    {
+        const char* mAutoPlot;
+        U32			mAutoPlotDelay;
+        SimTime		mAutoPlotLastDisplay;
+        ColorF		mGraphColor;
+        Vector<F32>	mGraphData;
+        F32			mGraphMax;
+        GraphType		mGraphType;
+    };
 
-   PlotInfo		mPlots[MaxPlots];
+    PlotInfo		mPlots[MaxPlots];
 
-	//creation methods
-   DECLARE_CONOBJECT(GuiGraphCtrl);
-   GuiGraphCtrl();
+    //creation methods
+    DECLARE_CONOBJECT(GuiGraphCtrl);
+    GuiGraphCtrl();
 
-   //Parental methods
-   bool onWake();
+    //Parental methods
+    bool onWake();
 
-   void onRender(Point2I offset, const RectI &updateRect);
+    void onRender(Point2I offset, const RectI& updateRect);
 
-   // Graph interface
-   void addDatum(S32 plotID, F32 v);
-   F32  getDatum(S32 plotID, S32 samples);
-   void addAutoPlot(S32 plotID, const char *variable, S32 update);
-   void removeAutoPlot(S32 plotID);
-   void setGraphType(S32 plotID, const char *graphType);
+    // Graph interface
+    void addDatum(S32 plotID, F32 v);
+    F32  getDatum(S32 plotID, S32 samples);
+    void addAutoPlot(S32 plotID, const char* variable, S32 update);
+    void removeAutoPlot(S32 plotID);
+    void setGraphType(S32 plotID, const char* graphType);
 };
 
 #endif

@@ -14,16 +14,16 @@
 class GuiBackgroundCtrl : public GuiControl
 {
 private:
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
 public:
-   bool  mDraw;
+    bool  mDraw;
 
-   //creation methods
-   DECLARE_CONOBJECT(GuiBackgroundCtrl);
-   GuiBackgroundCtrl();
+    //creation methods
+    DECLARE_CONOBJECT(GuiBackgroundCtrl);
+    GuiBackgroundCtrl();
 
-   void onRender(Point2I offset, const RectI &updateRect);
+    void onRender(Point2I offset, const RectI& updateRect);
 };
 
 #endif

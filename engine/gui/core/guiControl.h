@@ -59,16 +59,16 @@ class GuiEditCtrl;
 class GuiControl : public SimGroup
 {
 private:
-   typedef SimGroup Parent;
+    typedef SimGroup Parent;
 
 public:
 
     /// @name Control State
     /// @{
 
-    GuiControlProfile *mProfile;
+    GuiControlProfile* mProfile;
 
-	GuiControlProfile *mTooltipProfile; 
+    GuiControlProfile* mTooltipProfile;
 
 
     bool    mVisible;
@@ -80,22 +80,22 @@ public:
     RectI   mBounds;
     Point2I mMinExtent;
 
-	StringTableEntry mLangTableName;
-	LangTable *mLangTable;
+    StringTableEntry mLangTableName;
+    LangTable* mLangTable;
 
     static bool smDesignTime; ///< static GuiControl boolean that specifies if the GUI Editor is active
     /// @}
 
     /// @name Design Time Editor Access
     /// @{
-    static GuiEditCtrl *smEditorHandle; ///< static GuiEditCtrl pointer that gives controls access to editor-NULL if editor is closed
+    static GuiEditCtrl* smEditorHandle; ///< static GuiEditCtrl pointer that gives controls access to editor-NULL if editor is closed
     /// @}
 
     /// @name Keyboard Input
     /// @{
-    GuiControl *mFirstResponder;
-    static GuiControl *smPrevResponder;
-    static GuiControl *smCurResponder;
+    GuiControl* mFirstResponder;
+    static GuiControl* smPrevResponder;
+    static GuiControl* smCurResponder;
     /// @}
 
     enum horizSizingOptions
@@ -125,14 +125,14 @@ protected:
 
     S32 mHorizSizing;      ///< Set from horizSizingOptions.
     S32 mVertSizing;       ///< Set from vertSizingOptions.
-    
+
     StringTableEntry mConsoleVariable;
     StringTableEntry mConsoleCommand;
     StringTableEntry mAltConsoleCommand;
 
     StringTableEntry mAcceleratorKey;
 
-	StringTableEntry mTooltip;
+    StringTableEntry mTooltip;
 
     /// @}
 
@@ -146,7 +146,7 @@ protected:
 
     /// Sets the value of the console variable bound to this control
     /// @param   value   String value to assign to control's console variable
-    void setVariable(const char *value);
+    void setVariable(const char* value);
 
     /// Sets the value of the console variable bound to this control
     /// @param   value   Integer value to assign to control's console variable
@@ -163,15 +163,15 @@ protected:
 public:
     /// Set the name of the console variable which this GuiObject is bound to
     /// @param   variable   Variable name
-    void setConsoleVariable(const char *variable);
+    void setConsoleVariable(const char* variable);
 
     /// Set the name of the console function bound to, such as a script function
     /// a button calls when clicked.
     /// @param   newCmd   Console function to attach to this GuiControl
-    void setConsoleCommand(const char *newCmd);
-    const char * getConsoleCommand(); ///< Returns the name of the function bound to this GuiControl
-	LangTable *getGUILangTable(void);
-	const UTF8 *getGUIString(S32 id);
+    void setConsoleCommand(const char* newCmd);
+    const char* getConsoleCommand(); ///< Returns the name of the function bound to this GuiControl
+    LangTable* getGUILangTable(void);
+    const UTF8* getGUIString(S32 id);
 
     /// @}
 
@@ -198,9 +198,9 @@ public:
     /// @name Accessors
     /// @{
 
-    const Point2I&   getPosition() { return mBounds.point; } ///< Returns position of the control
-    const Point2I&   getExtent() { return mBounds.extent; } ///< Returns extents of the control
-    const Point2I&   getMinExtent() { return mMinExtent; } ///< Returns minimum size the control can be
+    const Point2I& getPosition() { return mBounds.point; } ///< Returns position of the control
+    const Point2I& getExtent() { return mBounds.extent; } ///< Returns extents of the control
+    const Point2I& getMinExtent() { return mMinExtent; } ///< Returns minimum size the control can be
     const S32        getLeft() { return mBounds.point.x; } ///< Returns the X position of the control
     const S32        getTop() { return mBounds.point.y; } ///< Returns the Y position of the control
     const S32        getWidth() { return mBounds.extent.x; } ///< Returns the width of the control
@@ -229,27 +229,27 @@ public:
     ///
     /// @param   rowHeight   The height, in pixels, of a row
     /// @param   columnWidth The width, in pixels, of a column
-    virtual void getScrollLineSizes(U32 *rowHeight, U32 *columnWidth);
+    virtual void getScrollLineSizes(U32* rowHeight, U32* columnWidth);
 
     /// Get information about the cursor.
     /// @param   cursor   Cursor information will be stored here
     /// @param   showCursor Will be set to true if the cursor is visible
     /// @param   lastGuiEvent GuiEvent containing cursor position and modifyer keys (ie ctrl, shift, alt etc)
-    virtual void getCursor(GuiCursor *&cursor, bool &showCursor, const GuiEvent &lastGuiEvent);
+    virtual void getCursor(GuiCursor*& cursor, bool& showCursor, const GuiEvent& lastGuiEvent);
 
     /// @name Children
     /// @{
 
     /// Adds an object as a child of this object.
     /// @param   obj   New child object of this control
-    void addObject(SimObject *obj);
+    void addObject(SimObject* obj);
 
     /// Removes a child object from this control.
     /// @param   obj Object to remove from this control
-    void removeObject(SimObject *obj);
+    void removeObject(SimObject* obj);
 
-    GuiControl *getParent();  ///< Returns the control which owns this one.
-    GuiCanvas *getRoot();     ///< Returns the root canvas of this control.
+    GuiControl* getParent();  ///< Returns the control which owns this one.
+    GuiCanvas* getRoot();     ///< Returns the root canvas of this control.
     /// @}
 
     /// @name Coordinates
@@ -258,12 +258,12 @@ public:
     /// Translates local coordinates (wrt this object) into global coordinates
     ///
     /// @param   src   Local coordinates to translate
-    Point2I localToGlobalCoord(const Point2I &src);
+    Point2I localToGlobalCoord(const Point2I& src);
 
     /// Returns global coordinates translated into local space
     ///
     /// @param   src   Global coordinates to translate
-    Point2I globalToLocalCoord(const Point2I &src);
+    Point2I globalToLocalCoord(const Point2I& src);
     /// @}
 
     /// @name Resizing
@@ -272,40 +272,40 @@ public:
     /// Changes the size and/or position of this control
     /// @param   newPosition   New position of this control
     /// @param   newExtent   New size of this control
-    virtual void resize(const Point2I &newPosition, const Point2I &newExtent);
+    virtual void resize(const Point2I& newPosition, const Point2I& newExtent);
 
     /// Changes the position of this control
     /// @param   newPosition   New position of this control
-    virtual void setPosition( const Point2I &newPosition );
+    virtual void setPosition(const Point2I& newPosition);
 
     /// Changes the size of this control
     /// @param   newExtent   New size of this control
-    virtual void setExtent( const Point2I &newExtent );
+    virtual void setExtent(const Point2I& newExtent);
 
     /// Changes the X position of this control
     /// @param   newXPosition   New X Position of this control
-    virtual void setLeft( S32 newLeft );
+    virtual void setLeft(S32 newLeft);
 
     /// Changes the Y position of this control
     /// @param   newYPosition   New Y Position of this control
-    virtual void setTop( S32 newTop );
+    virtual void setTop(S32 newTop);
 
     /// Changes the width of this control
     /// @param   newWidth   New width of this control
-    virtual void setWidth( S32 newWidth );
+    virtual void setWidth(S32 newWidth);
 
     /// Changes the height of this control
     /// @param   newHeight   New Height of this control
-    virtual void setHeight( S32 newHeight );
+    virtual void setHeight(S32 newHeight);
 
     /// Called when a child control of the object is resized
     /// @param   child   Child object
-    virtual void childResized(GuiControl *child);
+    virtual void childResized(GuiControl* child);
 
     /// Called when this objects parent is resized
     /// @param   oldParentExtent   The old size of the parent object
     /// @param   newParentExtent   The new size of the parent object
-    virtual void parentResized(const Point2I &oldParentExtent, const Point2I &newParentExtent);
+    virtual void parentResized(const Point2I& oldParentExtent, const Point2I& newParentExtent);
     /// @}
 
     /// @name Rendering
@@ -314,14 +314,14 @@ public:
     /// Called when this control is to render itself
     /// @param   offset   The location this control is to begin rendering
     /// @param   updateRect   The screen area this control has drawing access to
-    virtual void onRender(Point2I offset, const RectI &updateRect);
+    virtual void onRender(Point2I offset, const RectI& updateRect);
 
-	virtual bool renderTooltip(Point2I cursorPos);
+    virtual bool renderTooltip(Point2I cursorPos);
 
     /// Called when this control should render its children
     /// @param   offset   The location this control is to begin rendering
     /// @param   updateRect   The screen area this control has drawing access to
-    void renderChildControls(Point2I offset, const RectI &updateRect);
+    void renderChildControls(Point2I offset, const RectI& updateRect);
 
     /// Sets the area (local coordinates) this control wants refreshed each frame
     /// @param   pos   UpperLeft point on rectangle of refresh area
@@ -356,13 +356,13 @@ public:
     virtual void onRemove();
 
     /// Called when one of this objects children is removed
-    virtual void onChildRemoved( GuiControl *child );
+    virtual void onChildRemoved(GuiControl* child);
 
     /// Called when this object is added to the scene
     bool onAdd();
 
     /// Called when this object has a new child
-    virtual void onChildAdded( GuiControl *child );
+    virtual void onChildAdded(GuiControl* child);
 
     /// @}
 
@@ -370,10 +370,10 @@ public:
     /// @{
 
     /// Returns the value of the variable bound to this object
-    virtual const char *getScriptValue();
+    virtual const char* getScriptValue();
 
     /// Sets the value of the variable bound to this object
-    virtual void setScriptValue(const char *value);
+    virtual void setScriptValue(const char* value);
     /// @}
 
     /// @name Input (Keyboard/Mouse)
@@ -390,11 +390,11 @@ public:
     /// Returns the control which the provided point is under, with layering
     /// @param   pt   Point to test
     /// @param   initialLayer  Layer of gui objects to begin the search
-    virtual GuiControl* findHitControl(const Point2I &pt, S32 initialLayer = -1);
+    virtual GuiControl* findHitControl(const Point2I& pt, S32 initialLayer = -1);
 
     /// Lock the mouse within the provided control
     /// @param   lockingControl   Control to lock the mouse within
-    void mouseLock(GuiControl *lockingControl);
+    void mouseLock(GuiControl* lockingControl);
 
     /// Turn on mouse locking with last used lock control
     void mouseLock();
@@ -408,39 +408,39 @@ public:
 
 
     /// General input handler.
-    virtual bool onInputEvent(const InputEvent &event);
+    virtual bool onInputEvent(const InputEvent& event);
 
     /// @name Mouse Events
     /// These functions are called when the input event which is
     /// in the name of the function occurs.
     /// @{
-    virtual void onMouseUp(const GuiEvent &event);
-    virtual void onMouseDown(const GuiEvent &event);
-    virtual void onMouseMove(const GuiEvent &event);
-    virtual void onMouseDragged(const GuiEvent &event);
-    virtual void onMouseEnter(const GuiEvent &event);
-    virtual void onMouseLeave(const GuiEvent &event);
+    virtual void onMouseUp(const GuiEvent& event);
+    virtual void onMouseDown(const GuiEvent& event);
+    virtual void onMouseMove(const GuiEvent& event);
+    virtual void onMouseDragged(const GuiEvent& event);
+    virtual void onMouseEnter(const GuiEvent& event);
+    virtual void onMouseLeave(const GuiEvent& event);
 
-    virtual bool onMouseWheelUp(const GuiEvent &event);
-    virtual bool onMouseWheelDown(const GuiEvent &event);
+    virtual bool onMouseWheelUp(const GuiEvent& event);
+    virtual bool onMouseWheelDown(const GuiEvent& event);
 
-    virtual void onRightMouseDown(const GuiEvent &event);
-    virtual void onRightMouseUp(const GuiEvent &event);
-    virtual void onRightMouseDragged(const GuiEvent &event);
+    virtual void onRightMouseDown(const GuiEvent& event);
+    virtual void onRightMouseUp(const GuiEvent& event);
+    virtual void onRightMouseDragged(const GuiEvent& event);
 
-    virtual void onMiddleMouseDown(const GuiEvent &event);
-    virtual void onMiddleMouseUp(const GuiEvent &event);
-    virtual void onMiddleMouseDragged(const GuiEvent &event);
+    virtual void onMiddleMouseDown(const GuiEvent& event);
+    virtual void onMiddleMouseUp(const GuiEvent& event);
+    virtual void onMiddleMouseDragged(const GuiEvent& event);
 
     /// Called when a mouseDown event occurs on a control and the GUI editor is active
     /// @param   event   the GuiEvent which caused the call to this function
     /// @param   offset   the offset which is representative of the units x and y that the editor takes up on screen
-    virtual void onMouseDownEditor(const GuiEvent &event, Point2I offset);
+    virtual void onMouseDownEditor(const GuiEvent& event, Point2I offset);
 
     /// Called when a rightMouseDown event occurs on a control and the GUI editor is active
     /// @param   event   the GuiEvent which caused the call to this function
     /// @param   offset   the offset which is representative of the units x and y that the editor takes up on screen
-    virtual void onRightMouseDownEditor(const GuiEvent &event, Point2I offset);
+    virtual void onRightMouseDownEditor(const GuiEvent& event, Point2I offset);
 
     /// @}
 
@@ -457,19 +457,19 @@ public:
     /// Find previous tab-accessable control with respect to the provided one
     /// @param   curResponder   Current control
     /// @param   firstCall   Set to true to clear the global previous responder
-    virtual GuiControl* findPrevTabable(GuiControl *curResponder, bool firstCall = true);
+    virtual GuiControl* findPrevTabable(GuiControl* curResponder, bool firstCall = true);
 
     /// Find next tab-accessable control with regards to the provided control.
     ///
     /// @param   curResponder   Current control
     /// @param   firstCall   Set to true to clear the global current responder
-    virtual GuiControl* findNextTabable(GuiControl *curResponder, bool firstCall = true);
+    virtual GuiControl* findNextTabable(GuiControl* curResponder, bool firstCall = true);
     /// @}
 
     /// Returns true if the provided control is a child (grandchild, or greatgrandchild) of this one.
     ///
     /// @param   child   Control to test
-    virtual bool ControlIsChild(GuiControl *child);
+    virtual bool ControlIsChild(GuiControl* child);
 
     /// @name First Responder
     /// A first responder is the control which reacts first, in it's responder chain, to keyboard events
@@ -479,7 +479,7 @@ public:
 
     /// Sets the first responder for child controls
     /// @param   firstResponder   First responder for this chain
-    virtual void setFirstResponder(GuiControl *firstResponder);
+    virtual void setFirstResponder(GuiControl* firstResponder);
 
     /// Sets up this control to be the first in it's group to respond to an input event
     /// @param   value   True if this should be a first responder
@@ -495,7 +495,7 @@ public:
     void clearFirstResponder();
 
     /// Returns the first responder for this chain
-    GuiControl *getFirstResponder() { return mFirstResponder; }
+    GuiControl* getFirstResponder() { return mFirstResponder; }
 
     /// Occurs when the first responder for this chain is lost
     virtual void onLoseFirstResponder();
@@ -523,22 +523,22 @@ public:
 
     /// Happens when a key is depressed
     /// @param   event   Event descriptor (which contains the key)
-    virtual bool onKeyDown(const GuiEvent &event);
+    virtual bool onKeyDown(const GuiEvent& event);
 
     /// Happens when a key is released
     /// @param   event   Event descriptor (which contains the key)
-    virtual bool onKeyUp(const GuiEvent &event);
+    virtual bool onKeyUp(const GuiEvent& event);
 
     /// Happens when the same key that was pressed last press is pressed again
     /// @param   event   Event descriptor (which contains the key)
-    virtual bool onKeyRepeat(const GuiEvent &event);
+    virtual bool onKeyRepeat(const GuiEvent& event);
     /// @}
 
     /// Sets the control profile for this control.
     ///
     /// @see GuiControlProfile
     /// @param   prof   Control profile to apply
-    void setControlProfile(GuiControlProfile *prof);
+    void setControlProfile(GuiControlProfile* prof);
 
     /// Occurs when this control performs its "action"
     virtual void onAction();
@@ -549,7 +549,7 @@ public:
     /// This is mostly used by radio controls.
     /// @{
     void messageSiblings(S32 message);                      ///< Send a message to all siblings
-    virtual void onMessage(GuiControl *sender, S32 msg);    ///< Receive a message from another control
+    virtual void onMessage(GuiControl* sender, S32 msg);    ///< Receive a message from another control
     /// @}
 
     /// @name Canvas Events
@@ -566,7 +566,7 @@ public:
     /// Renders justified text using the profile.
     ///
     /// @note This should move into the graphics library at some point
-    void renderJustifiedText(Point2I offset, Point2I extent, const char *text);
+    void renderJustifiedText(Point2I offset, Point2I extent, const char* text);
 
     void inspectPostApply();
     void inspectPreApply();

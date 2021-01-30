@@ -29,32 +29,32 @@
 //**************************************************************************
 struct LangElement
 {
-   static Vector<LangElement*> elementList;
-   static LangElement * find( StringTableEntry name );
-   static void deleteElements();
-   
-   
-   U8    name[32];
-   
-   LangElement();
-   virtual void print( Stream &stream ){};
-   void setName( char *newName );
+    static Vector<LangElement*> elementList;
+    static LangElement* find(StringTableEntry name);
+    static void deleteElements();
+
+
+    U8    name[32];
+
+    LangElement();
+    virtual void print(Stream& stream) {};
+    void setName(char* newName);
 
 };
 
 //----------------------------------------------------------------------------
 /*!
    Var - Variable - used to specify a variable to be used in a shader.
-   Var stores information such  that when it is printed out, its context 
+   Var stores information such  that when it is printed out, its context
    can be identified and the proper information will automatically be printed.
-   For instance, if a variable is created with 'uniform' set to true, when the 
-   shader function definition is printed, it will automatically add that 
+   For instance, if a variable is created with 'uniform' set to true, when the
+   shader function definition is printed, it will automatically add that
    variable to the incoming parameters of the shader.  There are several
    similar cases such as when a new variable is declared within a shader.
-   
+
    example:
-   
-   @code   
+
+   @code
 
    Var *modelview = new Var;
    modelview->setType( "float4x4" );
@@ -63,9 +63,9 @@ struct LangElement
    modelview->constNum = VC_WORLD_PROJ;
 
    @endcode
-   
+
    it prints out in the shader declaration as:
-   
+
    @code
       ConnectData main( VertData IN,
                         uniform float4x4 modelview : register(C0) )
@@ -75,47 +75,47 @@ struct LangElement
 //----------------------------------------------------------------------------
 struct Var : public LangElement
 {
-   U8    type[32];
-   U8    structName[32];
-   char  connectName[32];
-   U32   constNum;
-   U32   texCoordNum;
-   bool  uniform;       // argument passed in through constant registers
-   bool  vertData;      // argument coming from vertex data
-   bool  connector;     // variable that will be passed to pixel shader
-   bool  sampler;       // texture
-   bool  mapsToSampler; // for ps 1.x shaders - texcoords must be mapped to same sampler stage
+    U8    type[32];
+    U8    structName[32];
+    char  connectName[32];
+    U32   constNum;
+    U32   texCoordNum;
+    bool  uniform;       // argument passed in through constant registers
+    bool  vertData;      // argument coming from vertex data
+    bool  connector;     // variable that will be passed to pixel shader
+    bool  sampler;       // texture
+    bool  mapsToSampler; // for ps 1.x shaders - texcoords must be mapped to same sampler stage
 
-   static U32  texUnitCount;
-   static U32  getTexUnitNum();
-   static void reset();
+    static U32  texUnitCount;
+    static U32  getTexUnitNum();
+    static void reset();
 
-   Var();
-   
-   void setStructName( char *newName );
-   void setConnectName( char *newName );
-   void setType( char *newType );
+    Var();
 
-   virtual void print( Stream &stream );
+    void setStructName(char* newName);
+    void setConnectName(char* newName);
+    void setType(char* newType);
+
+    virtual void print(Stream& stream);
 
 };
 
 //----------------------------------------------------------------------------
 /*!
    MultiLine - Multi Line Statement - This class simply ties multiple
-   
+
    example:
-   
-   @code   
+
+   @code
 
    MultiLine *meta = new MultiLine;
    meta->addStatement( new GenOp( "foo = true;\r\n" ) );
    meta->addStatement( new GenOp( "bar = false;\r\n ) );
 
    @endcode
-   
+
    it prints out in the shader declaration as:
-   
+
    @code
       foo = true;
       bar = false;
@@ -125,12 +125,12 @@ struct Var : public LangElement
 //----------------------------------------------------------------------------
 class MultiLine : public LangElement
 {
-   Vector <LangElement*> mStatementList;
+    Vector <LangElement*> mStatementList;
 
 public:
 
-   void addStatement( LangElement *elem );
-   virtual void print( Stream &stream );
+    void addStatement(LangElement* elem);
+    virtual void print(Stream& stream);
 };
 
 

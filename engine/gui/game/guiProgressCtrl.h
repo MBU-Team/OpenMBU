@@ -13,21 +13,21 @@
 class GuiProgressCtrl : public GuiControl
 {
 private:
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
-   F32 mProgress;
+    F32 mProgress;
 
 public:
-   //creation methods
-   DECLARE_CONOBJECT(GuiProgressCtrl);
-   GuiProgressCtrl();
+    //creation methods
+    DECLARE_CONOBJECT(GuiProgressCtrl);
+    GuiProgressCtrl();
 
-   //console related methods
-   virtual const char *getScriptValue();
-   virtual void setScriptValue(const char *value);
+    //console related methods
+    virtual const char* getScriptValue();
+    virtual void setScriptValue(const char* value);
 
-   void onPreRender();
-   void onRender(Point2I offset, const RectI &updateRect);
+    void onPreRender();
+    void onRender(Point2I offset, const RectI& updateRect);
 };
 
 #endif

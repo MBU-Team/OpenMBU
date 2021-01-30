@@ -14,31 +14,31 @@
 class GuiBitmapCtrl : public GuiControl
 {
 private:
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
 protected:
-   StringTableEntry mBitmapName;
-   GFXTexHandle mTextureObject;
-   Point2I startPoint;
-   bool mWrap;
+    StringTableEntry mBitmapName;
+    GFXTexHandle mTextureObject;
+    Point2I startPoint;
+    bool mWrap;
 
 public:
-   //creation methods
-   DECLARE_CONOBJECT(GuiBitmapCtrl);
-   GuiBitmapCtrl();
-   static void initPersistFields();
+    //creation methods
+    DECLARE_CONOBJECT(GuiBitmapCtrl);
+    GuiBitmapCtrl();
+    static void initPersistFields();
 
-   //Parental methods
-   bool onWake();
-   void onSleep();
-   void inspectPostApply();
-   void setBitmap(const char *name, bool resize = false);
-   void setBitmap(GFXTexHandle handle, bool resize = false);
-   S32 getWidth() const       { return(mTextureObject->getWidth()); }
-   S32 getHeight() const      { return(mTextureObject->getHeight()); }
+    //Parental methods
+    bool onWake();
+    void onSleep();
+    void inspectPostApply();
+    void setBitmap(const char* name, bool resize = false);
+    void setBitmap(GFXTexHandle handle, bool resize = false);
+    S32 getWidth() const { return(mTextureObject->getWidth()); }
+    S32 getHeight() const { return(mTextureObject->getHeight()); }
 
-   void onRender(Point2I offset, const RectI &updateRect);
-   void setValue(S32 x, S32 y);
+    void onRender(Point2I offset, const RectI& updateRect);
+    void setValue(S32 x, S32 y);
 };
 
 #endif

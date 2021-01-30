@@ -17,7 +17,7 @@ IMPLEMENT_CO_NETOBJECT_V1(ParticleEmitterNode);
 //-----------------------------------------------------------------------------
 ParticleEmitterNodeData::ParticleEmitterNodeData()
 {
-   timeMultiple = 1.0;
+    timeMultiple = 1.0;
 }
 
 ParticleEmitterNodeData::~ParticleEmitterNodeData()
@@ -30,9 +30,9 @@ ParticleEmitterNodeData::~ParticleEmitterNodeData()
 //-----------------------------------------------------------------------------
 void ParticleEmitterNodeData::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 
-   addField("timeMultiple", TypeF32, Offset(timeMultiple, ParticleEmitterNodeData));
+    addField("timeMultiple", TypeF32, Offset(timeMultiple, ParticleEmitterNodeData));
 }
 
 //-----------------------------------------------------------------------------
@@ -40,16 +40,16 @@ void ParticleEmitterNodeData::initPersistFields()
 //-----------------------------------------------------------------------------
 bool ParticleEmitterNodeData::onAdd()
 {
-   if( !Parent::onAdd() )
-      return false;
+    if (!Parent::onAdd())
+        return false;
 
-   if( timeMultiple < 0.01 || timeMultiple > 100 )
-   {
-      Con::warnf("ParticleEmitterNodeData::onAdd(%s): timeMultiple must be between 0.01 and 100", getName());
-      timeMultiple = timeMultiple < 0.01 ? 0.01 : 100;
-   }
+    if (timeMultiple < 0.01 || timeMultiple > 100)
+    {
+        Con::warnf("ParticleEmitterNodeData::onAdd(%s): timeMultiple must be between 0.01 and 100", getName());
+        timeMultiple = timeMultiple < 0.01 ? 0.01 : 100;
+    }
 
-   return true;
+    return true;
 }
 
 
@@ -58,10 +58,10 @@ bool ParticleEmitterNodeData::onAdd()
 //-----------------------------------------------------------------------------
 bool ParticleEmitterNodeData::preload(bool server, char errorBuffer[256])
 {
-   if( Parent::preload(server, errorBuffer) == false )
-      return false;
+    if (Parent::preload(server, errorBuffer) == false)
+        return false;
 
-   return true;
+    return true;
 }
 
 
@@ -70,9 +70,9 @@ bool ParticleEmitterNodeData::preload(bool server, char errorBuffer[256])
 //-----------------------------------------------------------------------------
 void ParticleEmitterNodeData::packData(BitStream* stream)
 {
-   Parent::packData(stream);
+    Parent::packData(stream);
 
-   stream->write(timeMultiple);
+    stream->write(timeMultiple);
 }
 
 //-----------------------------------------------------------------------------
@@ -80,9 +80,9 @@ void ParticleEmitterNodeData::packData(BitStream* stream)
 //-----------------------------------------------------------------------------
 void ParticleEmitterNodeData::unpackData(BitStream* stream)
 {
-   Parent::unpackData(stream);
+    Parent::unpackData(stream);
 
-   stream->read(&timeMultiple);
+    stream->read(&timeMultiple);
 }
 
 
@@ -91,14 +91,14 @@ void ParticleEmitterNodeData::unpackData(BitStream* stream)
 //-----------------------------------------------------------------------------
 ParticleEmitterNode::ParticleEmitterNode()
 {
-   // Todo: ScopeAlways?
-   mNetFlags.set(Ghostable);
-   mTypeMask |= EnvironmentObjectType;
+    // Todo: ScopeAlways?
+    mNetFlags.set(Ghostable);
+    mTypeMask |= EnvironmentObjectType;
 
-   mEmitterDatablock   = NULL;
-   mEmitterDatablockId = 0;
-   mEmitter            = NULL;
-   mVelocity           = 1.0;
+    mEmitterDatablock = NULL;
+    mEmitterDatablockId = 0;
+    mEmitter = NULL;
+    mVelocity = 1.0;
 }
 
 //-----------------------------------------------------------------------------
@@ -106,7 +106,7 @@ ParticleEmitterNode::ParticleEmitterNode()
 //-----------------------------------------------------------------------------
 ParticleEmitterNode::~ParticleEmitterNode()
 {
-   //
+    //
 }
 
 //-----------------------------------------------------------------------------
@@ -114,9 +114,9 @@ ParticleEmitterNode::~ParticleEmitterNode()
 //-----------------------------------------------------------------------------
 void ParticleEmitterNode::initPersistFields()
 {
-   Parent::initPersistFields();
-   addField("emitter",  TypeParticleEmitterDataPtr, Offset(mEmitterDatablock, ParticleEmitterNode));
-   addField("velocity", TypeF32,                    Offset(mVelocity,         ParticleEmitterNode));
+    Parent::initPersistFields();
+    addField("emitter", TypeParticleEmitterDataPtr, Offset(mEmitterDatablock, ParticleEmitterNode));
+    addField("velocity", TypeF32, Offset(mVelocity, ParticleEmitterNode));
 }
 
 //-----------------------------------------------------------------------------
@@ -124,37 +124,37 @@ void ParticleEmitterNode::initPersistFields()
 //-----------------------------------------------------------------------------
 bool ParticleEmitterNode::onAdd()
 {
-   if( !Parent::onAdd() )
-      return false;
+    if (!Parent::onAdd())
+        return false;
 
-   if( !mEmitterDatablock && mEmitterDatablockId != 0 )
-   {
-      if( Sim::findObject(mEmitterDatablockId, mEmitterDatablock) == false )
-         Con::errorf(ConsoleLogEntry::General, "ParticleEmitterNode::onAdd: Invalid packet, bad datablockId(mEmitterDatablock): %d", mEmitterDatablockId);
-   }
+    if (!mEmitterDatablock && mEmitterDatablockId != 0)
+    {
+        if (Sim::findObject(mEmitterDatablockId, mEmitterDatablock) == false)
+            Con::errorf(ConsoleLogEntry::General, "ParticleEmitterNode::onAdd: Invalid packet, bad datablockId(mEmitterDatablock): %d", mEmitterDatablockId);
+    }
 
-   if( mEmitterDatablock == NULL )
-      return false;
+    if (mEmitterDatablock == NULL)
+        return false;
 
-   if( isClientObject() )
-   {
-      ParticleEmitter* pEmitter = new ParticleEmitter;
-      pEmitter->onNewDataBlock(mEmitterDatablock);
-      if( pEmitter->registerObject() == false )
-      {
-         Con::warnf(ConsoleLogEntry::General, "Could not register base emitter for particle of class: %s", mDataBlock->getName());
-         delete pEmitter;
-         return false;
-      }
-      mEmitter = pEmitter;
-   }
+    if (isClientObject())
+    {
+        ParticleEmitter* pEmitter = new ParticleEmitter;
+        pEmitter->onNewDataBlock(mEmitterDatablock);
+        if (pEmitter->registerObject() == false)
+        {
+            Con::warnf(ConsoleLogEntry::General, "Could not register base emitter for particle of class: %s", mDataBlock->getName());
+            delete pEmitter;
+            return false;
+        }
+        mEmitter = pEmitter;
+    }
 
-   mObjBox.min.set(-0.5, -0.5, -0.5);
-   mObjBox.max.set( 0.5,  0.5,  0.5);
-   resetWorldBox();
-   addToScene();
+    mObjBox.min.set(-0.5, -0.5, -0.5);
+    mObjBox.max.set(0.5, 0.5, 0.5);
+    resetWorldBox();
+    addToScene();
 
-   return true;
+    return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -162,17 +162,17 @@ bool ParticleEmitterNode::onAdd()
 //-----------------------------------------------------------------------------
 void ParticleEmitterNode::onRemove()
 {
-   removeFromScene();
-   if( isClientObject() || gSPMode )
-   {
-      if( mEmitter )
-      {
-         mEmitter->deleteWhenEmpty();
-         mEmitter = NULL;
-      }
-   }
+    removeFromScene();
+    if (isClientObject() || gSPMode)
+    {
+        if (mEmitter)
+        {
+            mEmitter->deleteWhenEmpty();
+            mEmitter = NULL;
+        }
+    }
 
-   Parent::onRemove();
+    Parent::onRemove();
 }
 
 //-----------------------------------------------------------------------------
@@ -180,13 +180,13 @@ void ParticleEmitterNode::onRemove()
 //-----------------------------------------------------------------------------
 bool ParticleEmitterNode::onNewDataBlock(GameBaseData* dptr)
 {
-   mDataBlock = dynamic_cast<ParticleEmitterNodeData*>(dptr);
-   if( !mDataBlock || !Parent::onNewDataBlock(dptr) )
-      return false;
+    mDataBlock = dynamic_cast<ParticleEmitterNodeData*>(dptr);
+    if (!mDataBlock || !Parent::onNewDataBlock(dptr))
+        return false;
 
-   // Todo: Uncomment if this is a "leaf" class
-   scriptOnNewDataBlock();
-   return true;
+    // Todo: Uncomment if this is a "leaf" class
+    scriptOnNewDataBlock();
+    return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -194,17 +194,17 @@ bool ParticleEmitterNode::onNewDataBlock(GameBaseData* dptr)
 //-----------------------------------------------------------------------------
 void ParticleEmitterNode::advanceTime(F32 dt)
 {
-   Parent::advanceTime(dt);
+    Parent::advanceTime(dt);
 
-   Point3F emitPoint, emitVelocity;
-   Point3F emitAxis(0, 0, 1);
-   getTransform().mulV(emitAxis);
-   getTransform().getColumn(3, &emitPoint);
-   emitVelocity = emitAxis * mVelocity;
+    Point3F emitPoint, emitVelocity;
+    Point3F emitAxis(0, 0, 1);
+    getTransform().mulV(emitAxis);
+    getTransform().getColumn(3, &emitPoint);
+    emitVelocity = emitAxis * mVelocity;
 
-   mEmitter->emitParticles(emitPoint, emitPoint,
-                           emitAxis,
-                           emitVelocity, (U32)(dt * mDataBlock->timeMultiple * 1000.0f));
+    mEmitter->emitParticles(emitPoint, emitPoint,
+        emitAxis,
+        emitVelocity, (U32)(dt * mDataBlock->timeMultiple * 1000.0f));
 }
 
 //-----------------------------------------------------------------------------
@@ -212,17 +212,17 @@ void ParticleEmitterNode::advanceTime(F32 dt)
 //-----------------------------------------------------------------------------
 U32 ParticleEmitterNode::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
 {
-   U32 retMask = Parent::packUpdate(con, mask, stream);
+    U32 retMask = Parent::packUpdate(con, mask, stream);
 
-   mathWrite(*stream, getTransform());
-   mathWrite(*stream, getScale());
-   if( stream->writeFlag(mEmitterDatablock != NULL) )
-   {
-      stream->writeRangedU32(mEmitterDatablock->getId(), DataBlockObjectIdFirst,
-                             DataBlockObjectIdLast);
-   }
+    mathWrite(*stream, getTransform());
+    mathWrite(*stream, getScale());
+    if (stream->writeFlag(mEmitterDatablock != NULL))
+    {
+        stream->writeRangedU32(mEmitterDatablock->getId(), DataBlockObjectIdFirst,
+            DataBlockObjectIdLast);
+    }
 
-   return retMask;
+    return retMask;
 }
 
 //-----------------------------------------------------------------------------
@@ -230,24 +230,24 @@ U32 ParticleEmitterNode::packUpdate(NetConnection* con, U32 mask, BitStream* str
 //-----------------------------------------------------------------------------
 void ParticleEmitterNode::unpackUpdate(NetConnection* con, BitStream* stream)
 {
-   Parent::unpackUpdate(con, stream);
+    Parent::unpackUpdate(con, stream);
 
-   MatrixF temp;
-   Point3F tempScale;
-   mathRead(*stream, &temp);
-   mathRead(*stream, &tempScale);
+    MatrixF temp;
+    Point3F tempScale;
+    mathRead(*stream, &temp);
+    mathRead(*stream, &tempScale);
 
-   if( stream->readFlag() )
-   {
-      mEmitterDatablockId = stream->readRangedU32(DataBlockObjectIdFirst,
-                                                  DataBlockObjectIdLast);
-   }
-   else
-   {
-      mEmitterDatablockId = 0;
-   }
+    if (stream->readFlag())
+    {
+        mEmitterDatablockId = stream->readRangedU32(DataBlockObjectIdFirst,
+            DataBlockObjectIdLast);
+    }
+    else
+    {
+        mEmitterDatablockId = 0;
+    }
 
-   setScale(tempScale);
-   setTransform(temp);
+    setScale(tempScale);
+    setTransform(temp);
 }
 

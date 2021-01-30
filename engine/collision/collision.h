@@ -19,31 +19,31 @@ class SceneObject;
 
 struct Collision
 {
-   SceneObject* object;
-   Point3F point;
-   VectorF normal;
-   U32 material;
-   Point2F texCoord;
+    SceneObject* object;
+    Point3F point;
+    VectorF normal;
+    U32 material;
+    Point2F texCoord;
 
-   // Face and Face dot are currently only set by the extrudedPolyList
-   // clipper.  Values are otherwise undefined.
-   U32 face;                  // Which face was hit
-   F32 faceDot;               // -Dot of face with poly normal
-   F32 distance;
+    // Face and Face dot are currently only set by the extrudedPolyList
+    // clipper.  Values are otherwise undefined.
+    U32 face;                  // Which face was hit
+    F32 faceDot;               // -Dot of face with poly normal
+    F32 distance;
 };
 
 struct CollisionList
 {
-   enum  {
-      MaxCollisions = 64
-   };
-   int count;
-   Collision collision[MaxCollisions];
-   F32 t;
-   // MaxHeight is currently only set by the extrudedPolyList
-   // clipper.  It represents the maximum vertex z value of
-   // the returned collision surfaces.
-   F32 maxHeight;
+    enum {
+        MaxCollisions = 64
+    };
+    int count;
+    Collision collision[MaxCollisions];
+    F32 t;
+    // MaxHeight is currently only set by the extrudedPolyList
+    // clipper.  It represents the maximum vertex z value of
+    // the returned collision surfaces.
+    F32 maxHeight;
 };
 
 
@@ -56,9 +56,9 @@ struct CollisionList
 
 struct BSPNode
 {
-   U32 material;
-   PlaneF plane;
-   BSPNode *frontNode, *backNode;
+    U32 material;
+    PlaneF plane;
+    BSPNode* frontNode, * backNode;
 };
 
 typedef Chunker<BSPNode> BSPTree;

@@ -19,15 +19,15 @@
 // =========================================================
 class PlaneTransformer
 {
-   MatrixF mTransform;
-   Point3F mScale;
+    MatrixF mTransform;
+    Point3F mScale;
 
-   MatrixF mTransposeInverse;
+    MatrixF mTransposeInverse;
 
-  public:
-   void set(const MatrixF& xform, const Point3F& scale);
-   void transform(const PlaneF& plane, PlaneF& result);
-   void setIdentity();
+public:
+    void set(const MatrixF& xform, const Point3F& scale);
+    void transform(const PlaneF& plane, PlaneF& result);
+    void setIdentity();
 };
 
 #endif

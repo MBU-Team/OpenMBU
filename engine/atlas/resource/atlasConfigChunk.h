@@ -15,38 +15,38 @@
 /// @ingroup AtlasResource
 class AtlasConfigChunk : public AtlasChunk
 {
-   struct DictEntry
-   {
-      const char *key;
-      const char *val;
-      DictEntry *nextEntry;
-   };
+    struct DictEntry
+    {
+        const char* key;
+        const char* val;
+        DictEntry* nextEntry;
+    };
 
-   DictEntry *mEntryList;
+    DictEntry* mEntryList;
 
 public:
-   AtlasConfigChunk();
-   ~AtlasConfigChunk();
+    AtlasConfigChunk();
+    ~AtlasConfigChunk();
 
-   typedef AtlasChunk Parent;
+    typedef AtlasChunk Parent;
 
-   virtual void read(Stream *s);
-   virtual void write(Stream *s);
+    virtual void read(Stream* s);
+    virtual void write(Stream* s);
 
-   virtual void process();
+    virtual void process();
 
-   void generate(AtlasChunk *children[4])
-   {
-      AssertISV(false, "AtlasConfigChunk::generate - Not a quadtree chunk type!");
-   }
+    void generate(AtlasChunk* children[4])
+    {
+        AssertISV(false, "AtlasConfigChunk::generate - Not a quadtree chunk type!");
+    }
 
-   AtlasConfigChunk *generateCopy(S32 reformat = -1);
-   virtual U32 getHeadSentinel();
-   virtual U32 getTailSentinel();
+    AtlasConfigChunk* generateCopy(S32 reformat = -1);
+    virtual U32 getHeadSentinel();
+    virtual U32 getTailSentinel();
 
-   void setEntry(const char *key, const char *v);
-   bool clearEntry(const char *key);
-   bool getEntry(const char *key, const char * &v);
+    void setEntry(const char* key, const char* v);
+    bool clearEntry(const char* key);
+    bool getEntry(const char* key, const char*& v);
 };
 
 #endif

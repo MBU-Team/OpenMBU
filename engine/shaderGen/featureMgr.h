@@ -19,24 +19,24 @@
 class FeatureMgr
 {
 
-   Vector <ShaderFeature *> mFeatures;
-   Vector <ShaderFeature *> mAuxFeatures;  // auxiliary features used internally
+    Vector <ShaderFeature*> mFeatures;
+    Vector <ShaderFeature*> mAuxFeatures;  // auxiliary features used internally
 
-   void  init();
-   void  shutdown();
+    void  init();
+    void  shutdown();
 
 
 public:
-   enum Constants
-   {
-      NumAuxFeatures = 1,
-   };
-   
-   FeatureMgr();
-   ~FeatureMgr();
+    enum Constants
+    {
+        NumAuxFeatures = 1,
+    };
 
-   ShaderFeature * get( U32 index );
-   ShaderFeature * getAux( U32 index );
+    FeatureMgr();
+    ~FeatureMgr();
+
+    ShaderFeature* get(U32 index);
+    ShaderFeature* getAux(U32 index);
 
 
 };

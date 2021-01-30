@@ -42,75 +42,75 @@
 /// TSShape::assesmbleShape and TSShape::dissembleShape can be used as examples
 class TSShapeAlloc
 {
-   S32 mMode; ///< read or write
+    S32 mMode; ///< read or write
 
-   /// reading and writing (when reading these are the input; when writing these are the output)
-   S32     * mMemBuffer32;
-   S16     * mMemBuffer16;
-   S8      * mMemBuffer8;
+    /// reading and writing (when reading these are the input; when writing these are the output)
+    S32* mMemBuffer32;
+    S16* mMemBuffer16;
+    S8* mMemBuffer8;
 
-   /// for writing only...
-   S32 mSize32;
-   S32 mSize16;
-   S32 mSize8;
-   S32 mFullSize32;
-   S32 mFullSize16;
-   S32 mFullSize8;
+    /// for writing only...
+    S32 mSize32;
+    S32 mSize16;
+    S32 mSize8;
+    S32 mFullSize32;
+    S32 mFullSize16;
+    S32 mFullSize8;
 
-   /// reading and writing...
-   S32 mMemGuard32;
-   S16 mMemGuard16;
-   S8 mMemGuard8;
+    /// reading and writing...
+    S32 mMemGuard32;
+    S16 mMemGuard16;
+    S8 mMemGuard8;
 
-   /// reading
-   S32 mSaveGuard32;
-   S16 mSaveGuard16;
-   S8 mSaveGuard8;
+    /// reading
+    S32 mSaveGuard32;
+    S16 mSaveGuard16;
+    S8 mSaveGuard8;
 
-   /// reading only...this is the output
-   S8 * mDest;
-   S32 mSize;
-   S32 mMult; ///< mult incoming sizes by this (when 0, then mDest doesn't grow --> skip mode)
+    /// reading only...this is the output
+    S8* mDest;
+    S32 mSize;
+    S32 mMult; ///< mult incoming sizes by this (when 0, then mDest doesn't grow --> skip mode)
 
-   public:
+public:
 
-   enum { ReadMode = 0, WriteMode = 1, PageSize = 1024 }; ///< PageSize must be multiple of 4 so that we can always
-                                                          ///< "over-read" up to next dword
+    enum { ReadMode = 0, WriteMode = 1, PageSize = 1024 }; ///< PageSize must be multiple of 4 so that we can always
+                                                           ///< "over-read" up to next dword
 
-   void setRead(S32 * buff32, S16 * buff16, S8 * buff8, bool clear);
-   void setWrite();
+    void setRead(S32* buff32, S16* buff16, S8* buff8, bool clear);
+    void setWrite();
 
-   // reading only...
-   void doAlloc();
-   void align32(); ///< align on dword boundary
-   S8 * getBuffer() { return mDest; }
-   S32 getSize() { return mSize; }
-   void setSkipMode(bool skip) { mMult = skip ? 0 : 1; }
+    // reading only...
+    void doAlloc();
+    void align32(); ///< align on dword boundary
+    S8* getBuffer() { return mDest; }
+    S32 getSize() { return mSize; }
+    void setSkipMode(bool skip) { mMult = skip ? 0 : 1; }
 
-   /// @name Reading Operations:
-   ///
-   /// get(): reads one or more entries of type from input buffer (doesn't affect output buffer)
-   ///
-   /// copyToShape(): copies entries of type from input buffer to output buffer
-   ///
-   /// allocShape(): creates room for entries of type in output buffer (no effect on input buffer)
-   ///
-   /// getPointer(): gets pointer to next entries of type in input buffer (no effect on input buffer)
-   ///
-   /// @note all operations advance current "position" of input and output buffers
-   ///       writing operations:
-   ///
-   /// set(): adds one entry to appropriate buffer
-   ///
-   /// copyToBuffer(): adds count entries to approrpiate buffer
-   ///
-   /// getBuffer(): returns associated buffer (i.e., getBuffer32 gets 32bit buffer)
-   ///
-   /// getBufferSize(): returns size of associated buffer
-   ///
-   /// @{
+    /// @name Reading Operations:
+    ///
+    /// get(): reads one or more entries of type from input buffer (doesn't affect output buffer)
+    ///
+    /// copyToShape(): copies entries of type from input buffer to output buffer
+    ///
+    /// allocShape(): creates room for entries of type in output buffer (no effect on input buffer)
+    ///
+    /// getPointer(): gets pointer to next entries of type in input buffer (no effect on input buffer)
+    ///
+    /// @note all operations advance current "position" of input and output buffers
+    ///       writing operations:
+    ///
+    /// set(): adds one entry to appropriate buffer
+    ///
+    /// copyToBuffer(): adds count entries to approrpiate buffer
+    ///
+    /// getBuffer(): returns associated buffer (i.e., getBuffer32 gets 32bit buffer)
+    ///
+    /// getBufferSize(): returns size of associated buffer
+    ///
+    /// @{
 
-   #define DECLARE_ALLOC(suffix,type) \
+#define DECLARE_ALLOC(suffix,type) \
    type get##suffix();                \
    void get##suffix(type*,S32);       \
    type * copyToShape##suffix(S32,bool returnSomething=false); \
@@ -127,13 +127,13 @@ class TSShapeAlloc
    void copyToBuffer##suffix(type*,S32);
 
 
-   DECLARE_ALLOC(32,S32)
-   DECLARE_ALLOC(16,S16)
-   DECLARE_ALLOC(8,S8)
-   /// @}
+    DECLARE_ALLOC(32, S32)
+    DECLARE_ALLOC(16, S16)
+    DECLARE_ALLOC(8, S8)
+    /// @}
 
-   void checkGuard();
-   void setGuard();
+    void checkGuard();
+    void setGuard();
 };
 
 #endif // _H_TS_SHAPE_ALLOC_

@@ -21,29 +21,29 @@
 /// with the .dsqs to create a nice animated model.
 class TSShapeConstructor : public SimDataBlock
 {
-   typedef SimDataBlock Parent;
+    typedef SimDataBlock Parent;
 
-   enum {
-      NumSequenceBits = 7,
-      MaxSequences = (1 << NumSequenceBits) - 1
-   };
+    enum {
+        NumSequenceBits = 7,
+        MaxSequences = (1 << NumSequenceBits) - 1
+    };
 
-   StringTableEntry mShape;
-   StringTableEntry mSequence[MaxSequences];
+    StringTableEntry mShape;
+    StringTableEntry mSequence[MaxSequences];
 
-   Resource<TSShape> hShape;
+    Resource<TSShape> hShape;
 
 public:
 
-   TSShapeConstructor();
-   ~TSShapeConstructor();
-   bool onAdd();
-   bool preload(bool server, char errorBuffer[256]);
-   void packData(BitStream* stream);
-   void unpackData(BitStream* stream);
+    TSShapeConstructor();
+    ~TSShapeConstructor();
+    bool onAdd();
+    bool preload(bool server, char errorBuffer[256]);
+    void packData(BitStream* stream);
+    void unpackData(BitStream* stream);
 
-   DECLARE_CONOBJECT(TSShapeConstructor);
-   static void initPersistFields();
+    DECLARE_CONOBJECT(TSShapeConstructor);
+    static void initPersistFields();
 };
 
 #endif

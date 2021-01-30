@@ -12,10 +12,10 @@
 
 struct Mutex
 {
-   static void* createMutex( void );
-   static void destroyMutex( void* );
-   static bool lockMutex( void *mutex, bool block = true);
-   static void unlockMutex( void* );
+    static void* createMutex(void);
+    static void destroyMutex(void*);
+    static bool lockMutex(void* mutex, bool block = true);
+    static void unlockMutex(void*);
 };
 
 /// Helper for simplifying mutex locking code.
@@ -37,42 +37,42 @@ struct Mutex
 class MutexHandle
 {
 private:
-   void *mMutexPtr;
+    void* mMutexPtr;
 
 public:
-   MutexHandle()
-      : mMutexPtr(NULL)
-   {
-   }
+    MutexHandle()
+        : mMutexPtr(NULL)
+    {
+    }
 
-   ~MutexHandle()
-   {
-      if(mMutexPtr)
-         unlock();
-   }
+    ~MutexHandle()
+    {
+        if (mMutexPtr)
+            unlock();
+    }
 
-   bool lock(void *mutex, bool blocking=true)
-   {
-      AssertFatal(!mMutexPtr, "MutexHandle::lock - shouldn't be locking things twice!");
-      
-      bool ret = Mutex::lockMutex(mutex, blocking);
+    bool lock(void* mutex, bool blocking = true)
+    {
+        AssertFatal(!mMutexPtr, "MutexHandle::lock - shouldn't be locking things twice!");
 
-      if(ret)
-      {
-         // We succeeded, do book-keeping.
-         mMutexPtr = mutex;
-      }
-      
-      return ret;
-   }
+        bool ret = Mutex::lockMutex(mutex, blocking);
 
-   void unlock()
-   {
-      AssertFatal(mMutexPtr, "MutexHandle::unlock - didn't have a mutex to unlock!");
+        if (ret)
+        {
+            // We succeeded, do book-keeping.
+            mMutexPtr = mutex;
+        }
 
-      Mutex::unlockMutex(mMutexPtr);
-      mMutexPtr = NULL;
-   }
+        return ret;
+    }
+
+    void unlock()
+    {
+        AssertFatal(mMutexPtr, "MutexHandle::unlock - didn't have a mutex to unlock!");
+
+        Mutex::unlockMutex(mMutexPtr);
+        mMutexPtr = NULL;
+    }
 
 };
 

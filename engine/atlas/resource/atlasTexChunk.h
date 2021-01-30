@@ -19,49 +19,49 @@
 /// @ingroup AtlasResource
 class AtlasTexChunk : public AtlasChunk
 {
-   void writeDDS(Stream *s);
+    void writeDDS(Stream* s);
 public:
-   AtlasTexChunk();
-   ~AtlasTexChunk();
+    AtlasTexChunk();
+    ~AtlasTexChunk();
 
-   typedef AtlasChunk Parent;
-   
-   virtual void read(Stream *s);
-   virtual void write(Stream *s);
-   virtual U32 getHeadSentinel();
-   virtual U32 getTailSentinel();
+    typedef AtlasChunk Parent;
 
-   virtual void process();
+    virtual void read(Stream* s);
+    virtual void write(Stream* s);
+    virtual U32 getHeadSentinel();
+    virtual U32 getTailSentinel();
 
-   void generate(AtlasChunk *children[4]);
+    virtual void process();
 
-   enum TexFormat
-   {
-      FormatJPEG, ///< Use (lossy) JPEG compression.
-      FormatPNG,  ///< Use (lossless) PNG compression.
-      FormatDDS,  ///< Use (fast-to-load, big, lossy) DDS with DXT compression.
-   };
+    void generate(AtlasChunk* children[4]);
 
-   TexFormat mFormat;
+    enum TexFormat
+    {
+        FormatJPEG, ///< Use (lossy) JPEG compression.
+        FormatPNG,  ///< Use (lossless) PNG compression.
+        FormatDDS,  ///< Use (fast-to-load, big, lossy) DDS with DXT compression.
+    };
 
-   GBitmap *bitmap;
-   DDSFile *dds;
+    TexFormat mFormat;
 
-   inline const bool isBitmapTexFormat(const TexFormat f) const
-   {
-      switch(f)
-      {
-      case FormatJPEG:
-      case FormatPNG:
-         return true;
-      }
+    GBitmap* bitmap;
+    DDSFile* dds;
 
-      return false;
-   }
+    inline const bool isBitmapTexFormat(const TexFormat f) const
+    {
+        switch (f)
+        {
+        case FormatJPEG:
+        case FormatPNG:
+            return true;
+        }
 
-   AtlasTexChunk *generateCopy(S32 reformat = -1);
+        return false;
+    }
 
-   static GBitmap *loadDDSIntoGBitmap(const U8 *ddsBuffer, U32 ddsBufferSize);
+    AtlasTexChunk* generateCopy(S32 reformat = -1);
+
+    static GBitmap* loadDDSIntoGBitmap(const U8* ddsBuffer, U32 ddsBufferSize);
 };
 
 #endif

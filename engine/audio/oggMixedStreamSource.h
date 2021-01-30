@@ -14,37 +14,37 @@
 
 #define BUFFERCNT 128
 
-class OggMixedStreamSource: public AudioStreamSource
+class OggMixedStreamSource : public AudioStreamSource
 {
 public:
-      OggMixedStreamSource(const char *filename);
-      virtual ~OggMixedStreamSource();
+    OggMixedStreamSource(const char* filename);
+    virtual ~OggMixedStreamSource();
 
-      virtual bool initStream();
-      virtual bool updateBuffers();
-      virtual void freeStream();
+    virtual bool initStream();
+    virtual bool updateBuffers();
+    virtual void freeStream();
 
-      ALuint GetAvailableBuffer();
-      bool QueueBuffer(ALuint BufferID);
-      void PlayStream();
+    ALuint GetAvailableBuffer();
+    bool QueueBuffer(ALuint BufferID);
+    void PlayStream();
 
-      virtual F32 getElapsedTime()
-      {
-         return 0.0;
-      }
+    virtual F32 getElapsedTime()
+    {
+        return 0.0;
+    }
 
-      virtual F32 getTotalTime()
-      {
-         return 1.0f;
-      }
+    virtual F32 getTotalTime()
+    {
+        return 1.0f;
+    }
 
 private:
-      ALuint mBufferList[BUFFERCNT];
-      bool m_fBufferInUse[BUFFERCNT];
+    ALuint mBufferList[BUFFERCNT];
+    bool m_fBufferInUse[BUFFERCNT];
 
-      bool bBuffersAllocated;
+    bool bBuffersAllocated;
 
-      void clear();
+    void clear();
 };
 
 #endif // _OGGMIXEDSTREAMSOURCE_H_

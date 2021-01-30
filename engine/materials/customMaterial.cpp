@@ -23,23 +23,23 @@ IMPLEMENT_CONOBJECT(CustomMaterial);
 //----------------------------------------------------------------------------
 CustomMaterial::CustomMaterial()
 {
-   dMemset( texFilename, 0, sizeof( texFilename ) );
-   fallback = NULL;
-   mType = custom;
-   dMemset( pass, 0, sizeof( pass ) );
+    dMemset(texFilename, 0, sizeof(texFilename));
+    fallback = NULL;
+    mType = custom;
+    dMemset(pass, 0, sizeof(pass));
 
-   dynamicLightingMaterial = NULL;
+    dynamicLightingMaterial = NULL;
 
-   mMaxTex = 0;
-   mVersion = 1.1;
-   translucent = false;
-   dMemset( mFlags, 0, sizeof( mFlags ) );
-   mCurPass = -1;
-   blendOp = Material::Add;
-   mShaderData = NULL;
-   mShaderDataName = NULL;
-   refract = false;
-   mCullMode = -1;
+    mMaxTex = 0;
+    mVersion = 1.1;
+    translucent = false;
+    dMemset(mFlags, 0, sizeof(mFlags));
+    mCurPass = -1;
+    blendOp = Material::Add;
+    mShaderData = NULL;
+    mShaderDataName = NULL;
+    refract = false;
+    mCullMode = -1;
 }
 
 
@@ -49,21 +49,21 @@ CustomMaterial::CustomMaterial()
 //--------------------------------------------------------------------------
 void CustomMaterial::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 
-   addField("texture",     TypeFilename,  Offset(texFilename, CustomMaterial),MAX_TEX_PER_PASS);
+    addField("texture", TypeFilename, Offset(texFilename, CustomMaterial), MAX_TEX_PER_PASS);
 
-   addField("version",     TypeF32,  Offset(mVersion,  CustomMaterial));
+    addField("version", TypeF32, Offset(mVersion, CustomMaterial));
 
-   addField("fallback",    TypeSimObjectPtr,  Offset(fallback,  CustomMaterial));
-   addField("pass",        TypeSimObjectPtr,  Offset(pass,      CustomMaterial),MAX_PASSES);
+    addField("fallback", TypeSimObjectPtr, Offset(fallback, CustomMaterial));
+    addField("pass", TypeSimObjectPtr, Offset(pass, CustomMaterial), MAX_PASSES);
 
-   addField("dynamicLightingMaterial", TypeSimObjectPtr, Offset(dynamicLightingMaterial, CustomMaterial));
+    addField("dynamicLightingMaterial", TypeSimObjectPtr, Offset(dynamicLightingMaterial, CustomMaterial));
 
-   addField("shader",      TypeString,  Offset(mShaderDataName,   CustomMaterial));
-   addField("blendOp",     TypeEnum,  Offset(blendOp,   CustomMaterial), 1, &mBlendOpTable);
+    addField("shader", TypeString, Offset(mShaderDataName, CustomMaterial));
+    addField("blendOp", TypeEnum, Offset(blendOp, CustomMaterial), 1, &mBlendOpTable);
 
-   addField("refract",     TypeBool, Offset(refract,  CustomMaterial));
+    addField("refract", TypeBool, Offset(refract, CustomMaterial));
 
 }
 
@@ -72,12 +72,12 @@ void CustomMaterial::initPersistFields()
 //--------------------------------------------------------------------------
 bool CustomMaterial::onAdd()
 {
-   if (Parent::onAdd() == false)
-      return false;
+    if (Parent::onAdd() == false)
+        return false;
 
-   mShaderData = static_cast<ShaderData*>(Sim::findObject( mShaderDataName ) );
+    mShaderData = static_cast<ShaderData*>(Sim::findObject(mShaderDataName));
 
-   return true;
+    return true;
 }
 
 //--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ bool CustomMaterial::onAdd()
 //--------------------------------------------------------------------------
 void CustomMaterial::onRemove()
 {
-   Parent::onRemove();
+    Parent::onRemove();
 }
 
 //--------------------------------------------------------------------------
@@ -93,102 +93,102 @@ void CustomMaterial::onRemove()
 //--------------------------------------------------------------------------
 void CustomMaterial::setStageData()
 {
-   if( hasSetStageData ) return;
-   hasSetStageData = true;
+    if (hasSetStageData) return;
+    hasSetStageData = true;
 
-   S32 i;
+    S32 i;
 
-   for( i=0; i<MAX_TEX_PER_PASS; i++ )
-   {
-      if( !texFilename[i] ) continue;
+    for (i = 0; i < MAX_TEX_PER_PASS; i++)
+    {
+        if (!texFilename[i]) continue;
 
-      if(!dStrcmp(texFilename[i], "$dynamiclight"))
-      {
-         mFlags[i] = DynamicLight;
-         mMaxTex = i+1;
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$dynamiclight"))
+        {
+            mFlags[i] = DynamicLight;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-      if( !dStrcmp( texFilename[i], "$lightmap" ) )
-      {
-         mFlags[i] = Lightmap;
-         mMaxTex = i+1;
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$lightmap"))
+        {
+            mFlags[i] = Lightmap;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-      if( !dStrcmp( texFilename[i], "$normmap" ) )
-      {
-         mFlags[i] = NormLightmap;
-         mMaxTex = i+1;
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$normmap"))
+        {
+            mFlags[i] = NormLightmap;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-      if( !dStrcmp( texFilename[i], "$fog" ) )
-      {
-         mFlags[i] = Fog;
-         mMaxTex = i+1;
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$fog"))
+        {
+            mFlags[i] = Fog;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-      if( !dStrcmp( texFilename[i], "$cubemap" ) )
-      {
-         if( mCubemapData )
-         {
-            mFlags[i] = Cube;
-            mMaxTex = i+1;
-         }
-         else
-         {
-            Con::warnf( "Invalid cubemap data for CustomMaterial - %s : %s", getName(), cubemapName );
-         }
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$cubemap"))
+        {
+            if (mCubemapData)
+            {
+                mFlags[i] = Cube;
+                mMaxTex = i + 1;
+            }
+            else
+            {
+                Con::warnf("Invalid cubemap data for CustomMaterial - %s : %s", getName(), cubemapName);
+            }
+            continue;
+        }
 
-      if( !dStrcmp( texFilename[i], "$dynamicCubemap" ) )
-      {
-         mFlags[i] = SGCube;
-         mMaxTex = i+1;
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$dynamicCubemap"))
+        {
+            mFlags[i] = SGCube;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-      if( !dStrcmp( texFilename[i], "$backbuff" ) )
-      {
-         mFlags[i] = BackBuff;
-         mMaxTex = i+1;
-         continue;
-      }
-      
-      if( !dStrcmp( texFilename[i], "$reflectbuff" ) )
-      {
-         mFlags[i] = ReflectBuff;
-         mMaxTex = i+1;
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$backbuff"))
+        {
+            mFlags[i] = BackBuff;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-      if( !dStrcmp( texFilename[i], "$miscbuff" ) )
-      {
-         mFlags[i] = Misc;
-         mMaxTex = i+1;
-         continue;
-      }
+        if (!dStrcmp(texFilename[i], "$reflectbuff"))
+        {
+            mFlags[i] = ReflectBuff;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-      if( texFilename[i] && texFilename[i][0] )
-      {
-         tex[i] = createTexture( texFilename[i], &GFXDefaultStaticDiffuseProfile );
-         mFlags[i] = Standard;
-         mMaxTex = i+1;
-      }
-   }
+        if (!dStrcmp(texFilename[i], "$miscbuff"))
+        {
+            mFlags[i] = Misc;
+            mMaxTex = i + 1;
+            continue;
+        }
 
-   if( mCubemapData )
-   {
-      mCubemapData->createMap();
-   }
+        if (texFilename[i] && texFilename[i][0])
+        {
+            tex[i] = createTexture(texFilename[i], &GFXDefaultStaticDiffuseProfile);
+            mFlags[i] = Standard;
+            mMaxTex = i + 1;
+        }
+    }
 
-   if( mShaderData && !mShaderData->shader )
-   {
-      mShaderData->initShader();
-   }
+    if (mCubemapData)
+    {
+        mCubemapData->createMap();
+    }
+
+    if (mShaderData && !mShaderData->shader)
+    {
+        mShaderData->initShader();
+    }
 }
 
 
@@ -197,72 +197,72 @@ void CustomMaterial::setStageData()
 //--------------------------------------------------------------------------
 void CustomMaterial::cleanup()
 {
-   for( U32 i=0; i<mMaxTex; i++ )
-   {
-      // set up textures
-      switch( mFlags[i] )
-      {
-         case 0:
-         default:
+    for (U32 i = 0; i < mMaxTex; i++)
+    {
+        // set up textures
+        switch (mFlags[i])
+        {
+        case 0:
+        default:
             break;
 
-         case BackBuff:
-         {
+        case BackBuff:
+        {
             // have to unbind render targets or D3D complains
-            GFX->setTexture( i, NULL );
+            GFX->setTexture(i, NULL);
             break;
-         }
-         case ReflectBuff:
-         {
+        }
+        case ReflectBuff:
+        {
             // have to unbind render targets or D3D complains
-            GFX->setTexture( i, NULL );
+            GFX->setTexture(i, NULL);
             break;
-         }
+        }
 
-      }
-   }
+        }
+    }
 
-   if( mCullMode != -1 )
-   {
-      GFX->setCullMode( (GFXCullMode) mCullMode );
-      mCullMode = -1;
-   }
+    if (mCullMode != -1)
+    {
+        GFX->setCullMode((GFXCullMode)mCullMode);
+        mCullMode = -1;
+    }
 
-   GFX->setAlphaBlendEnable( false );
-   GFX->setAlphaTestEnable( false );
-   GFX->setZWriteEnable( true );
-   
-   mCurPass = -1;
+    GFX->setAlphaBlendEnable(false);
+    GFX->setAlphaTestEnable(false);
+    GFX->setZWriteEnable(true);
+
+    mCurPass = -1;
 }
 
 //--------------------------------------------------------------------------
 // Falls back to material that is appropriate for current hardware
 //--------------------------------------------------------------------------
-bool CustomMaterial::setFallbackVersion( SceneGraphData &sgData )
+bool CustomMaterial::setFallbackVersion(SceneGraphData& sgData)
 {
-   if( fallback )
-   {
-      return fallback->setupPass( sgData );
-   }
-   else
-   {
-      return false;  // don't render anything if no fallback
+    if (fallback)
+    {
+        return fallback->setupPass(sgData);
+    }
+    else
+    {
+        return false;  // don't render anything if no fallback
 
-      // this code used to work as temp/hack fixed function
-      // fallback - here for reference
-/*
-      GFX->disableShaders();
-      GFX->setTextureStageColorOp( 0, GFXTOPDisable );
+        // this code used to work as temp/hack fixed function
+        // fallback - here for reference
+  /*
+        GFX->disableShaders();
+        GFX->setTextureStageColorOp( 0, GFXTOPDisable );
 
-      if( mCurPass > 0 )
-      {
-         cleanup();
-         return false;
-      }
+        if( mCurPass > 0 )
+        {
+           cleanup();
+           return false;
+        }
 
-      return true;
-*/
-   }
+        return true;
+  */
+    }
 
 
 
@@ -274,127 +274,127 @@ bool CustomMaterial::setFallbackVersion( SceneGraphData &sgData )
 //--------------------------------------------------------------------------
 void CustomMaterial::setMultipassProjection()
 {
-/*
-   // Note - this only works if the construction function is:
-   //        D3DXMatrixPerspectiveFovRH().  D3DXMatrixPerspectiveRH() does
-   //        NOT work.  See D3D docs for construction details
+    /*
+       // Note - this only works if the construction function is:
+       //        D3DXMatrixPerspectiveFovRH().  D3DXMatrixPerspectiveRH() does
+       //        NOT work.  See D3D docs for construction details
 
-   MatrixF f;
-   D3DXMatrixPerspectiveFovRH( (D3DXMATRIX*)&f, 67.5 * M_PI/180.0, 1.3333333333, 0.101, 500.0 );
-   D3D->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&f );
+       MatrixF f;
+       D3DXMatrixPerspectiveFovRH( (D3DXMATRIX*)&f, 67.5 * M_PI/180.0, 1.3333333333, 0.101, 500.0 );
+       D3D->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&f );
 
-   MatrixF rotMat(EulerF( (M_PI / 2.0), 0.0, 0.0));
-   rotMat.transpose();
-   D3D->MultiplyTransform( D3DTS_PROJECTION, (D3DMATRIX*) &rotMat );
-*/
+       MatrixF rotMat(EulerF( (M_PI / 2.0), 0.0, 0.0));
+       rotMat.transpose();
+       D3D->MultiplyTransform( D3DTS_PROJECTION, (D3DMATRIX*) &rotMat );
+    */
 }
 
 
 //--------------------------------------------------------------------------
 // Setup texture stages
 //--------------------------------------------------------------------------
-void CustomMaterial::setupStages( SceneGraphData &sgData )
+void CustomMaterial::setupStages(SceneGraphData& sgData)
 {
-   for( U32 i=0; i<mMaxTex; i++ )
-   {
-      GFX->setTextureStageColorOp( i, GFXTOPModulate );
+    for (U32 i = 0; i < mMaxTex; i++)
+    {
+        GFX->setTextureStageColorOp(i, GFXTOPModulate);
 
-      // set up textures
-      switch( mFlags[i] )
-      {
-         case 0:
-         default:
+        // set up textures
+        switch (mFlags[i])
+        {
+        case 0:
+        default:
             break;
 
-         case Mask:
-         case Standard:
-         case Bump:
-         case Detail:
-         {
-            GFX->setTextureStageAddressModeU( i, GFXAddressWrap );
-            GFX->setTextureStageAddressModeV( i, GFXAddressWrap );
-            GFX->setTexture( i, tex[i] );
+        case Mask:
+        case Standard:
+        case Bump:
+        case Detail:
+        {
+            GFX->setTextureStageAddressModeU(i, GFXAddressWrap);
+            GFX->setTextureStageAddressModeV(i, GFXAddressWrap);
+            GFX->setTexture(i, tex[i]);
             break;
-         }
-         case Material::DynamicLight:
-         {
-			//GFX->setTextureBorderColor(i, ColorI(0, 0, 0, 0));
+        }
+        case Material::DynamicLight:
+        {
+            //GFX->setTextureBorderColor(i, ColorI(0, 0, 0, 0));
             GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
             GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
-			GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
-			GFX->setTexture(i, sgData.dynamicLight);
+            GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
+            GFX->setTexture(i, sgData.dynamicLight);
             break;
-		 }
-		 case Material::DynamicLightSecondary:
-         {
-			AssertFatal((false), "Custom materials cannot use secondary light textures - how did this happen?");
+        }
+        case Material::DynamicLightSecondary:
+        {
+            AssertFatal((false), "Custom materials cannot use secondary light textures - how did this happen?");
             break;
-		 }
-         case Lightmap:
-         {
-            GFX->setTexture( i, sgData.lightmap );
+        }
+        case Lightmap:
+        {
+            GFX->setTexture(i, sgData.lightmap);
             break;
-         }
-         case NormLightmap:
-         {
-            GFX->setTexture( i, sgData.normLightmap );
+        }
+        case NormLightmap:
+        {
+            GFX->setTexture(i, sgData.normLightmap);
             break;
-         }
-         case Fog:
-         {
-            GFX->setTexture( i, sgData.fogTex );
+        }
+        case Fog:
+        {
+            GFX->setTexture(i, sgData.fogTex);
             break;
-         }
-         case Cube:
-         {
-            GFX->setCubeTexture( i, mCubemapData->cubemap );
+        }
+        case Cube:
+        {
+            GFX->setCubeTexture(i, mCubemapData->cubemap);
             break;
-         }
-         case SGCube:
-         {
-            GFX->setCubeTexture( i, sgData.cubemap );
+        }
+        case SGCube:
+        {
+            GFX->setCubeTexture(i, sgData.cubemap);
             break;
-         }
-         case BackBuff:
-         {
-            GFX->setTexture( i, sgData.backBuffTex );
+        }
+        case BackBuff:
+        {
+            GFX->setTexture(i, sgData.backBuffTex);
             break;
-         }
-         case ReflectBuff:
-         {
-            GFX->setTexture( i, sgData.reflectTex );
+        }
+        case ReflectBuff:
+        {
+            GFX->setTexture(i, sgData.reflectTex);
             break;
-         }
-         case Misc:
-         {
-            GFX->setTexture( i, sgData.miscTex );
+        }
+        case Misc:
+        {
+            GFX->setTexture(i, sgData.miscTex);
             break;
-         }
+        }
 
-      }
-   }
+        }
+    }
 }
 
 
 //--------------------------------------------------------------------------
 // Sets up render states for a specific pass
 //--------------------------------------------------------------------------
-void CustomMaterial::setupSubPass( SceneGraphData &sgData )
+void CustomMaterial::setupSubPass(SceneGraphData& sgData)
 {
-   setBlendState( blendOp );
+    setBlendState(blendOp);
 
-   // activate shader
-   if( mShaderData && mShaderData->shader )
-   {
-      mShaderData->shader->process();
-   }
-   else
-   {
-      GFX->disableShaders();
-      GFX->setTextureStageColorOp( mMaxTex, GFXTOPDisable );
-   }
+    // activate shader
+    if (mShaderData && mShaderData->shader)
+    {
+        mShaderData->shader->process();
+    }
+    else
+    {
+        GFX->disableShaders();
+        GFX->setTextureStageColorOp(mMaxTex, GFXTOPDisable);
+    }
 
-   setupStages( sgData );
+    setupStages(sgData);
 }
 
 
@@ -403,30 +403,30 @@ void CustomMaterial::setupSubPass( SceneGraphData &sgData )
 // refraction is on.
 // Returns false if pass is not found.
 //--------------------------------------------------------------------------
-bool CustomMaterial::setNextRefractPass( bool refractOn )
+bool CustomMaterial::setNextRefractPass(bool refractOn)
 {
-   if( mCurPass == 0 )
-   {
-      if( (refractOn && refract) ||
-          (!refractOn && !refract) )
-      {
-         return true;
-      }
-   }
+    if (mCurPass == 0)
+    {
+        if ((refractOn && refract) ||
+            (!refractOn && !refract))
+        {
+            return true;
+        }
+    }
 
-   U32 i=0;
-   while( pass[i] )
-   {
-      if( (refractOn && pass[i]->refract) ||
-          (!refractOn && !pass[i]->refract) )
-      {
-         mCurPass = i+1;
-         return true;
-      }
-      i++;
-   }
+    U32 i = 0;
+    while (pass[i])
+    {
+        if ((refractOn && pass[i]->refract) ||
+            (!refractOn && !pass[i]->refract))
+        {
+            mCurPass = i + 1;
+            return true;
+        }
+        i++;
+    }
 
-   return false;
+    return false;
 }
 
 
@@ -435,83 +435,83 @@ bool CustomMaterial::setNextRefractPass( bool refractOn )
 // Sets up next rendering pass.  Will increment through passes until it
 // runs out.  Returns false if interated through all passes.
 //--------------------------------------------------------------------------
-bool CustomMaterial::setupPass( SceneGraphData &sgData )
+bool CustomMaterial::setupPass(SceneGraphData& sgData)
 {
-   // custom materials don't glow for the moment...
-   if( sgData.glowPass )
-   {
-      return false;
-   }
+    // custom materials don't glow for the moment...
+    if (sgData.glowPass)
+    {
+        return false;
+    }
 
-   ++mCurPass;
+    ++mCurPass;
 
-   if( mVersion > GFX->getPixelShaderVersion() )
-   {
-      return setFallbackVersion( sgData );
-   }
+    if (mVersion > GFX->getPixelShaderVersion())
+    {
+        return setFallbackVersion(sgData);
+    }
 
-   if( mCurPass > 0 && !pass[mCurPass-1] )
-   {
-      // reset on last pass
-      cleanup();
-      return false;
-   }
+    if (mCurPass > 0 && !pass[mCurPass - 1])
+    {
+        // reset on last pass
+        cleanup();
+        return false;
+    }
 
-   if( !setNextRefractPass( sgData.refractPass ) )
-   {
-      cleanup();
-      return false;
-   }
+    if (!setNextRefractPass(sgData.refractPass))
+    {
+        cleanup();
+        return false;
+    }
 
-   if( mCurPass > 0 )
-   {
-      if( pass[mCurPass-1] )
-      {
-         GFX->setAlphaBlendEnable( true );
-         setMultipassProjection();
+    if (mCurPass > 0)
+    {
+        if (pass[mCurPass - 1])
+        {
+            GFX->setAlphaBlendEnable(true);
+            setMultipassProjection();
 
-         pass[mCurPass-1]->setupSubPass( sgData );
-         mCurPass++;
-         return true;
-      }
-   }
-   else
-   {
-      // do this only on the first pass?
-      setShaderConstants( sgData, 0 );
+            pass[mCurPass - 1]->setupSubPass(sgData);
+            mCurPass++;
+            return true;
+        }
+    }
+    else
+    {
+        // do this only on the first pass?
+        setShaderConstants(sgData, 0);
 
-      if( doubleSided )
-      {
-         GFX->setCullMode( GFXCullNone );
-         mCullMode = GFX->getCullMode();
-      }
+        if (doubleSided)
+        {
+            GFX->setCullMode(GFXCullNone);
+            mCullMode = GFX->getCullMode();
+        }
 
-   }
+    }
 
 
-   if( translucent )
-   {
-      GFX->setAlphaBlendEnable( true );
-      setBlendState( translucentBlendOp );
-      GFX->setZWriteEnable( translucentZWrite );
-      GFX->setAlphaTestEnable( true );
-      GFX->setAlphaRef( 1 );
-      GFX->setAlphaFunc( GFXCmpGreaterEqual );
-      
-      // set up register combiners
-      GFX->setTextureStageAlphaOp( 0, GFXTOPModulate );
-      GFX->setTextureStageAlphaOp( 1, GFXTOPDisable );
-      GFX->setTextureStageAlphaArg1( 0, GFXTATexture );
-      GFX->setTextureStageAlphaArg2( 0, GFXTADiffuse );
-   }
-   else
-   {
-      GFX->setAlphaBlendEnable( false );
-   }
+    if (translucent)
+    {
+        GFX->setAlphaBlendEnable(true);
+        setBlendState(translucentBlendOp);
+        GFX->setZWriteEnable(translucentZWrite);
+        GFX->setAlphaTestEnable(true);
+        GFX->setAlphaRef(1);
+        GFX->setAlphaFunc(GFXCmpGreaterEqual);
 
-   setupSubPass( sgData );
+        // set up register combiners
+        GFX->setTextureStageAlphaOp(0, GFXTOPModulate);
+        GFX->setTextureStageAlphaOp(1, GFXTOPDisable);
+        GFX->setTextureStageAlphaArg1(0, GFXTATexture);
+        GFX->setTextureStageAlphaArg2(0, GFXTADiffuse);
+    }
+    else
+    {
+        GFX->setAlphaBlendEnable(false);
+    }
 
-   return true;
+    setupSubPass(sgData);
+
+    return true;
 }
 
 //--------------------------------------------------------------------------
@@ -537,40 +537,40 @@ Rich - some M$ dude - see http://discuss.microsoft.com/archives/DIRECTXDEV.html
 
 */
 //--------------------------------------------------------------------------
-MatrixF CustomMaterial::setupTexAnim( AnimType animType, Point2F &scrollDir,
-                                F32 scrollSpeed, U32 texUnit )
+MatrixF CustomMaterial::setupTexAnim(AnimType animType, Point2F& scrollDir,
+    F32 scrollSpeed, U32 texUnit)
 {
-   MatrixF mat(true);
+    MatrixF mat(true);
 
-   switch( animType )
-   {
-      case Scroll:
-      {
-         scrollOffset[texUnit] +=  scrollDir * scrollSpeed * mDt;
-         Point3F offset( scrollOffset[texUnit].x, scrollOffset[texUnit].y, 1.0 );
-         mat.setColumn( 3, offset );
-         break;
-      }
+    switch (animType)
+    {
+    case Scroll:
+    {
+        scrollOffset[texUnit] += scrollDir * scrollSpeed * mDt;
+        Point3F offset(scrollOffset[texUnit].x, scrollOffset[texUnit].y, 1.0);
+        mat.setColumn(3, offset);
+        break;
+    }
 
-      default:
-         break;
-   }
+    default:
+        break;
+    }
 
-   return mat;
+    return mat;
 }
 
 //--------------------------------------------------------------------------
 // Set vertex and pixel shader constants
 //--------------------------------------------------------------------------
-void CustomMaterial::setShaderConstants( const SceneGraphData &sgData,
-                                         U32 stageNum )
+void CustomMaterial::setShaderConstants(const SceneGraphData& sgData,
+    U32 stageNum)
 {
-   Parent::setShaderConstants( sgData, stageNum );
-   
-   GFX->setPixelShaderConstF( PC_ACCUM_TIME, (float*)&mAccumTime, 1 );
+    Parent::setShaderConstants(sgData, stageNum);
 
-   //Point4F exp(exposure[stageNum], 0, 0, 0);
-   //GFX->setPixelShaderConstF(PC_EXPOSURE, (float*)&exp, 1);
+    GFX->setPixelShaderConstF(PC_ACCUM_TIME, (float*)&mAccumTime, 1);
+
+    //Point4F exp(exposure[stageNum], 0, 0, 0);
+    //GFX->setPixelShaderConstF(PC_EXPOSURE, (float*)&exp, 1);
 }
 
 //--------------------------------------------------------------------------
@@ -578,60 +578,60 @@ void CustomMaterial::setShaderConstants( const SceneGraphData &sgData,
 //--------------------------------------------------------------------------
 void CustomMaterial::mapMaterial()
 {
-   if( !getName() )
-   {
-      Con::warnf( "Unnamed Material!  Could not map to: %s", mapTo );
-      return;
-   }
+    if (!getName())
+    {
+        Con::warnf("Unnamed Material!  Could not map to: %s", mapTo);
+        return;
+    }
 
-   if( !mapTo )
-   {
-      return;
-   }
+    if (!mapTo)
+    {
+        return;
+    }
 
-   MaterialPropertyMap* pMap = MaterialPropertyMap::get();
-   if( pMap == NULL )
-   {
-      Con::errorf(ConsoleLogEntry::General, "Error, cannot find the global material map object");
-   }
-   else
-   {
-      char matName[128] = { "material: " };
-      char *namePtrs[2];
+    MaterialPropertyMap* pMap = MaterialPropertyMap::get();
+    if (pMap == NULL)
+    {
+        Con::errorf(ConsoleLogEntry::General, "Error, cannot find the global material map object");
+    }
+    else
+    {
+        char matName[128] = { "material: " };
+        char* namePtrs[2];
 
-      U32 strLen = dStrlen( matName );
-      dStrcpy( &matName[strLen], getName() );
-      namePtrs[0] = (char*) mapTo;
-      namePtrs[1] = matName;
-      pMap->addMapping( 2, (const char**) namePtrs );
-   }
+        U32 strLen = dStrlen(matName);
+        dStrcpy(&matName[strLen], getName());
+        namePtrs[0] = (char*)mapTo;
+        namePtrs[1] = matName;
+        pMap->addMapping(2, (const char**)namePtrs);
+    }
 
 }
 
 //--------------------------------------------------------------------------
 // Set lightmaps
 //--------------------------------------------------------------------------
-void CustomMaterial::setLightmaps( SceneGraphData &sgData )
+void CustomMaterial::setLightmaps(SceneGraphData& sgData)
 {
-   // recurse into correct fallback
-   if( mVersion > GFX->getPixelShaderVersion() )
-   {
-      if( fallback )
-      {
-         fallback->setLightmaps( sgData );
-      }
-   }
+    // recurse into correct fallback
+    if (mVersion > GFX->getPixelShaderVersion())
+    {
+        if (fallback)
+        {
+            fallback->setLightmaps(sgData);
+        }
+    }
 
-   S32 passNum = mCurPass;
-   AssertFatal( passNum>=0, "pass invalid" );
+    S32 passNum = mCurPass;
+    AssertFatal(passNum >= 0, "pass invalid");
 
-   if( passNum > 0 )
-   {
-      pass[passNum-1]->setupStages( sgData );
-   }
-   else
-   {
-      setupStages( sgData );
-   }
+    if (passNum > 0)
+    {
+        pass[passNum - 1]->setupStages(sgData);
+    }
+    else
+    {
+        setupStages(sgData);
+    }
 
 }

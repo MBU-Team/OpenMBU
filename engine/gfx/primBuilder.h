@@ -28,32 +28,32 @@
 ///
 namespace PrimBuild
 {
-   void beginToBuffer( GFXPrimitiveType type, U32 maxVerts );
-   GFXVertexBuffer * endToBuffer(U32 &numPrims);
+    void beginToBuffer(GFXPrimitiveType type, U32 maxVerts);
+    GFXVertexBuffer* endToBuffer(U32& numPrims);
 
-   void begin( GFXPrimitiveType type, U32 maxVerts );
-   void end();
+    void begin(GFXPrimitiveType type, U32 maxVerts);
+    void end();
 
-   void vertex2f( F32 x, F32 y );
-   void vertex3f( F32 x, F32 y, F32 z );
+    void vertex2f(F32 x, F32 y);
+    void vertex3f(F32 x, F32 y, F32 z);
 
-   void vertex2fv( F32 *data );
-   inline void vertex2fv( Point2F &pnt ) { vertex2fv( (F32 *)&pnt ); };
+    void vertex2fv(F32* data);
+    inline void vertex2fv(Point2F& pnt) { vertex2fv((F32*)&pnt); };
 
-   void vertex3fv( F32 *data );
-   inline void vertex3fv( Point3F &pnt ) { vertex3fv( (F32 *) &pnt ); };
-   
+    void vertex3fv(F32* data);
+    inline void vertex3fv(Point3F& pnt) { vertex3fv((F32*)&pnt); };
 
-   void color( ColorI );
-   void color( ColorF );
-   void color3i( U8 red, U8 green, U8 blue );
-   void color4i( U8 red, U8 green, U8 blue, U8 alpha );
-   void color3f( F32 red, F32 green, F32 blue );
-   void color4f( F32 red, F32 green, F32 blue, F32 alpha );
 
-   void texCoord2f( F32 x, F32 y );
+    void color(ColorI);
+    void color(ColorF);
+    void color3i(U8 red, U8 green, U8 blue);
+    void color4i(U8 red, U8 green, U8 blue, U8 alpha);
+    void color3f(F32 red, F32 green, F32 blue);
+    void color4f(F32 red, F32 green, F32 blue, F32 alpha);
 
-   void shutdown();
+    void texCoord2f(F32 x, F32 y);
+
+    void shutdown();
 }
 
 #endif

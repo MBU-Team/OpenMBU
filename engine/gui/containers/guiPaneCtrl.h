@@ -24,42 +24,42 @@
 class GuiPaneControl : public GuiControl
 {
 private:
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
-   Resource<GFont>  mFont;
-   bool             mCollapsable;
-   bool             mCollapsed;
-   bool             mBarBehindText;
-   Point2I          mOriginalExtents;
-   StringTableEntry mCaption;
-   StringTableEntry mCaptionID;
-   Point2I          mThumbSize;
+    Resource<GFont>  mFont;
+    bool             mCollapsable;
+    bool             mCollapsed;
+    bool             mBarBehindText;
+    Point2I          mOriginalExtents;
+    StringTableEntry mCaption;
+    StringTableEntry mCaptionID;
+    Point2I          mThumbSize;
 
-   bool mMouseOver;
-   bool mDepressed;
+    bool mMouseOver;
+    bool mDepressed;
 
 public:
-   GuiPaneControl();
+    GuiPaneControl();
 
-   void resize(const Point2I &newPosition, const Point2I &newExtent);
-   void onRender(Point2I offset, const RectI &updateRect);
+    void resize(const Point2I& newPosition, const Point2I& newExtent);
+    void onRender(Point2I offset, const RectI& updateRect);
 
-   bool getCollapsed() { return mCollapsed; };
-   void setCollapsed(bool isCollapsed);
+    bool getCollapsed() { return mCollapsed; };
+    void setCollapsed(bool isCollapsed);
 
-   bool onWake();
-   void onSleep();
+    bool onWake();
+    void onSleep();
 
-   virtual void setCaptionID(S32 id);
-   virtual void setCaptionID(const char *id);
-   void onMouseDown(const GuiEvent &event);
-   void onMouseUp(const GuiEvent &event);
-   void onMouseMove(const GuiEvent &event);
-   void onMouseLeave(const GuiEvent &event);
-   void onMouseEnter(const GuiEvent &event);
+    virtual void setCaptionID(S32 id);
+    virtual void setCaptionID(const char* id);
+    void onMouseDown(const GuiEvent& event);
+    void onMouseUp(const GuiEvent& event);
+    void onMouseMove(const GuiEvent& event);
+    void onMouseLeave(const GuiEvent& event);
+    void onMouseEnter(const GuiEvent& event);
 
-   static void initPersistFields();
-   DECLARE_CONOBJECT(GuiPaneControl);
+    static void initPersistFields();
+    DECLARE_CONOBJECT(GuiPaneControl);
 };
 
 #endif

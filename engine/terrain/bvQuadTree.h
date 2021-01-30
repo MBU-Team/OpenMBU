@@ -22,25 +22,25 @@
 class BVQuadTree
 {
 protected:
-   VectorPtr<BitVector*> mQTHierarchy;
-   U32 mResolution;
+    VectorPtr<BitVector*> mQTHierarchy;
+    U32 mResolution;
 public:
-   BVQuadTree(BitVector *bv = NULL);
-   ~BVQuadTree();
+    BVQuadTree(BitVector* bv = NULL);
+    ~BVQuadTree();
 
-   bool isSet(const Point2F &pos, S32 level) const;
-   bool isClear(const Point2F &pos, S32 level) const;
+    bool isSet(const Point2F& pos, S32 level) const;
+    bool isClear(const Point2F& pos, S32 level) const;
 
-   void init(const BitVector &bv);
+    void init(const BitVector& bv);
 #ifdef BV_QUADTREE_DEBUG
-   void dump() const;
+    void dump() const;
 #endif
-   U32 countLevels() const                               { return(mQTHierarchy.size()); }
+    U32 countLevels() const { return(mQTHierarchy.size()); }
 protected:
-   void buildHierarchy(U32 level);
+    void buildHierarchy(U32 level);
 private:
-   BVQuadTree(const BVQuadTree &);
-   BVQuadTree& operator=(const BVQuadTree &);
+    BVQuadTree(const BVQuadTree&);
+    BVQuadTree& operator=(const BVQuadTree&);
 };
 
 #endif

@@ -12,66 +12,66 @@
 
 //----------------------------------------------------------------------------
 
-struct StaticShapeData: public ShapeBaseData {
-   typedef ShapeBaseData Parent;
+struct StaticShapeData : public ShapeBaseData {
+    typedef ShapeBaseData Parent;
 
-  public:
-   StaticShapeData();
+public:
+    StaticShapeData();
 
-   bool  noIndividualDamage;
-   S32   dynamicTypeField;
-   bool  isShielded;
-   F32   energyPerDamagePoint;
+    bool  noIndividualDamage;
+    S32   dynamicTypeField;
+    bool  isShielded;
+    F32   energyPerDamagePoint;
 
-   //
-   DECLARE_CONOBJECT(StaticShapeData);
-   static void initPersistFields();
-   virtual void packData(BitStream* stream);
-   virtual void unpackData(BitStream* stream);
+    //
+    DECLARE_CONOBJECT(StaticShapeData);
+    static void initPersistFields();
+    virtual void packData(BitStream* stream);
+    virtual void unpackData(BitStream* stream);
 };
 
 
 //----------------------------------------------------------------------------
 
-class StaticShape: public ShapeBase
+class StaticShape : public ShapeBase
 {
-   typedef ShapeBase Parent;
+    typedef ShapeBase Parent;
 
-   StaticShapeData*  mDataBlock;
-   bool              mPowered;
+    StaticShapeData* mDataBlock;
+    bool              mPowered;
 
-   void onUnmount(ShapeBase* obj,S32 node);
+    void onUnmount(ShapeBase* obj, S32 node);
 
-  protected:
-   enum MaskBits {
-      PositionMask = Parent::NextFreeMask,
-	  advancedStaticOptionsMask = Parent::NextFreeMask << 1,
-	  NextFreeMask = Parent::NextFreeMask << 2
-   };
+protected:
+    enum MaskBits {
+        PositionMask = Parent::NextFreeMask,
+        advancedStaticOptionsMask = Parent::NextFreeMask << 1,
+        NextFreeMask = Parent::NextFreeMask << 2
+    };
 
 public:
-   DECLARE_CONOBJECT(StaticShape);
+    DECLARE_CONOBJECT(StaticShape);
 
-   StaticShape();
-   ~StaticShape();
+    StaticShape();
+    ~StaticShape();
 
-   bool onAdd();
-   void onRemove();
-   bool onNewDataBlock(GameBaseData* dptr);
+    bool onAdd();
+    void onRemove();
+    bool onNewDataBlock(GameBaseData* dptr);
 
-   void processTick(const Move *move);
-   void interpolateTick(F32 delta);
-   void setTransform(const MatrixF &mat);
+    void processTick(const Move* move);
+    void interpolateTick(F32 delta);
+    void setTransform(const MatrixF& mat);
 
-   U32  packUpdate  (NetConnection *conn, U32 mask, BitStream *stream);
-   void unpackUpdate(NetConnection *conn,           BitStream *stream);
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 
-   // power
-   void setPowered(bool power)      {mPowered = power;}
-   bool isPowered()                 {return(mPowered);}
+    // power
+    void setPowered(bool power) { mPowered = power; }
+    bool isPowered() { return(mPowered); }
 
-   static void initPersistFields();
-   void inspectPostApply();
+    static void initPersistFields();
+    void inspectPostApply();
 };
 
 

@@ -23,32 +23,32 @@
 
 //--------------------------------------------------------------------------
 
-class AudioBuffer: public ResourceInstance
+class AudioBuffer : public ResourceInstance
 {
-   friend class AudioThread;
+    friend class AudioThread;
 
 private:
-   StringTableEntry  mFilename;
-   bool              mLoading;
-   ALuint            malBuffer;
+    StringTableEntry  mFilename;
+    bool              mLoading;
+    ALuint            malBuffer;
 
-   bool readRIFFchunk(Stream &s, const char *seekLabel, U32 *size);
-   bool readWAV(ResourceObject *obj);
+    bool readRIFFchunk(Stream& s, const char* seekLabel, U32* size);
+    bool readWAV(ResourceObject* obj);
 
 #ifndef TORQUE_NO_OGGVORBIS
-   bool readOgg(ResourceObject *obj);
-   long oggRead(OggVorbisFile* vf, char *buffer,int length,
-		    int bigendianp,int *bitstream);
+    bool readOgg(ResourceObject* obj);
+    long oggRead(OggVorbisFile* vf, char* buffer, int length,
+        int bigendianp, int* bitstream);
 #endif
 
 public:
-   AudioBuffer(StringTableEntry filename);
-   ~AudioBuffer();
-   ALuint getALBuffer();
-   bool isLoading() {return(mLoading);}
+    AudioBuffer(StringTableEntry filename);
+    ~AudioBuffer();
+    ALuint getALBuffer();
+    bool isLoading() { return(mLoading); }
 
-   static Resource<AudioBuffer> find(const char *filename);
-   static ResourceInstance* construct(Stream& stream);
+    static Resource<AudioBuffer> find(const char* filename);
+    static ResourceInstance* construct(Stream& stream);
 
 };
 

@@ -13,5 +13,5 @@ IMPLEMENT_CONOBJECT(GuiRadioCtrl);
 
 GuiRadioCtrl::GuiRadioCtrl()
 {
-   mButtonType = ButtonTypeRadio;
+    mButtonType = ButtonTypeRadio;
 }

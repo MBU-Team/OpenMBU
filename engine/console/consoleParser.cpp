@@ -10,67 +10,67 @@
 namespace Compiler
 {
 
-static ConsoleParser *gParserList = NULL;
-static ConsoleParser *gDefaultParser = NULL;
+    static ConsoleParser* gParserList = NULL;
+    static ConsoleParser* gDefaultParser = NULL;
 
-void freeConsoleParserList(void)
-{
-	ConsoleParser *pParser;
+    void freeConsoleParserList(void)
+    {
+        ConsoleParser* pParser;
 
-	while(pParser = gParserList)
-	{
-		gParserList = pParser->next;
-		delete pParser;
-	}
+        while (pParser = gParserList)
+        {
+            gParserList = pParser->next;
+            delete pParser;
+        }
 
-	gDefaultParser = NULL;
-}
+        gDefaultParser = NULL;
+    }
 
-bool addConsoleParser(char *ext, fnGetCurrentFile gcf, fnGetCurrentLine gcl, fnParse p, fnRestart r, fnSetScanBuffer ssb, bool def /* = false */)
-{
-	AssertFatal(ext && gcf && gcl && p && r, "AddConsoleParser called with one or more NULL arguments");
+    bool addConsoleParser(char* ext, fnGetCurrentFile gcf, fnGetCurrentLine gcl, fnParse p, fnRestart r, fnSetScanBuffer ssb, bool def /* = false */)
+    {
+        AssertFatal(ext && gcf && gcl && p && r, "AddConsoleParser called with one or more NULL arguments");
 
-	ConsoleParser *pParser;
-	if(pParser = new ConsoleParser)
-	{
-		pParser->ext = ext;
-		pParser->getCurrentFile = gcf;
-		pParser->getCurrentLine = gcl;
-		pParser->parse = p;
-		pParser->restart = r;
-		pParser->setScanBuffer = ssb;
+        ConsoleParser* pParser;
+        if (pParser = new ConsoleParser)
+        {
+            pParser->ext = ext;
+            pParser->getCurrentFile = gcf;
+            pParser->getCurrentLine = gcl;
+            pParser->parse = p;
+            pParser->restart = r;
+            pParser->setScanBuffer = ssb;
 
-		if(def)
-			gDefaultParser = pParser;
+            if (def)
+                gDefaultParser = pParser;
 
-		pParser->next = gParserList;
-		gParserList = pParser;
+            pParser->next = gParserList;
+            gParserList = pParser;
 
-		return true;
-	}
-	return false;
-}
+            return true;
+        }
+        return false;
+    }
 
-ConsoleParser * getParserForFile(const char *filename)
-{
-	char *ptr;
+    ConsoleParser* getParserForFile(const char* filename)
+    {
+        char* ptr;
 
-	if(filename == NULL)
-		return gDefaultParser;
+        if (filename == NULL)
+            return gDefaultParser;
 
-	if(ptr = dStrrchr((char *)filename, '.'))
-	{
-		ptr++;
+        if (ptr = dStrrchr((char*)filename, '.'))
+        {
+            ptr++;
 
-		ConsoleParser *p;
-		for(p = gParserList;p;p = p->next)
-		{
-			if(dStricmp(ptr, p->ext) == 0)
-				return p;
-		}
-	}
+            ConsoleParser* p;
+            for (p = gParserList; p; p = p->next)
+            {
+                if (dStricmp(ptr, p->ext) == 0)
+                    return p;
+            }
+        }
 
-	return gDefaultParser;
-}
+        return gDefaultParser;
+    }
 
 } // end namespace Con

@@ -21,125 +21,125 @@ class TerrainBlock;
 
 class MissionAreaEditor : public GuiBitmapCtrl
 {
-   private:
-      typedef GuiBitmapCtrl      Parent;
+private:
+    typedef GuiBitmapCtrl      Parent;
 
-      SimObjectPtr<MissionArea>  mMissionArea;
-      SimObjectPtr<TerrainBlock> mTerrainBlock;
+    SimObjectPtr<MissionArea>  mMissionArea;
+    SimObjectPtr<TerrainBlock> mTerrainBlock;
 
-      GBitmap * createTerrainBitmap();
-      void onUpdate();
+    GBitmap* createTerrainBitmap();
+    void onUpdate();
 
-      void setControlObjPos(const Point2F & pos);
-      bool clampArea(RectI & area);
+    void setControlObjPos(const Point2F& pos);
+    bool clampArea(RectI& area);
 
-      // --------------------------------------------------
-      // conversion
-      VectorF                    mScale;
-      Point2F                    mCenterPos;
+    // --------------------------------------------------
+    // conversion
+    VectorF                    mScale;
+    Point2F                    mCenterPos;
 
-      Point2F worldToScreen(const Point2F &);
-      Point2F screenToWorld(const Point2F &);
+    Point2F worldToScreen(const Point2F&);
+    Point2F screenToWorld(const Point2F&);
 
-      void getScreenMissionArea(RectI & rect);
-      void getScreenMissionArea(RectF & rect);
+    void getScreenMissionArea(RectI& rect);
+    void getScreenMissionArea(RectF& rect);
 
-      void setupScreenTransform(const Point2I & offset);
+    void setupScreenTransform(const Point2I& offset);
 
-      // --------------------------------------------------
-      // mouse
-      enum {
-         DefaultCursor = 0,
-         HandCursor,
-         GrabCursor,
-         VertResizeCursor,
-         HorizResizeCursor,
-         DiagRightResizeCursor,
-         DiagLeftResizeCursor,
-         NumCursors
-      };
+    // --------------------------------------------------
+    // mouse
+    enum {
+        DefaultCursor = 0,
+        HandCursor,
+        GrabCursor,
+        VertResizeCursor,
+        HorizResizeCursor,
+        DiagRightResizeCursor,
+        DiagLeftResizeCursor,
+        NumCursors
+    };
 
-      bool grabCursors();
-      GuiCursor *                mCurrentCursor;
-      GuiCursor *                mCursors[NumCursors];
-      void getCursor(GuiCursor *&cursor, bool &showCursor, const GuiEvent &lastGuiEvent);
-      void setCursor(U32 cursor);
+    bool grabCursors();
+    GuiCursor* mCurrentCursor;
+    GuiCursor* mCursors[NumCursors];
+    void getCursor(GuiCursor*& cursor, bool& showCursor, const GuiEvent& lastGuiEvent);
+    void setCursor(U32 cursor);
 
-      S32                        mLastHitMode;
-      Point2I                    mLastMousePoint;
+    S32                        mLastHitMode;
+    Point2I                    mLastMousePoint;
 
-      // --------------------------------------------------
-      // mission area
-      enum {
-         NUT_SIZE = 3
-      };
+    // --------------------------------------------------
+    // mission area
+    enum {
+        NUT_SIZE = 3
+    };
 
-      enum  {
-         nothing        = 0,
-         sizingLeft     = BIT(0),
-         sizingRight    = BIT(1),
-         sizingTop      = BIT(2),
-         sizingBottom   = BIT(3),
-         moving         = BIT(4)
-      };
+    enum {
+        nothing = 0,
+        sizingLeft = BIT(0),
+        sizingRight = BIT(1),
+        sizingTop = BIT(2),
+        sizingBottom = BIT(3),
+        moving = BIT(4)
+    };
 
-      void updateCursor(S32 hit);
-      bool inNut(const Point2I & pt, S32 x, S32 y);
-      S32 getSizingHitKnobs(const Point2I & pt, const RectI & box);
-      void drawNut(const Point2I & nut);
-      void drawNuts(RectI & box);
+    void updateCursor(S32 hit);
+    bool inNut(const Point2I& pt, S32 x, S32 y);
+    S32 getSizingHitKnobs(const Point2I& pt, const RectI& box);
+    void drawNut(const Point2I& nut);
+    void drawNuts(RectI& box);
 
-   public:
+public:
 
-      MissionAreaEditor();
+    MissionAreaEditor();
 
-      //
-      bool missionAreaObjValid() { return(!mMissionArea.isNull()); }
-      bool terrainObjValid()     { return(!mTerrainBlock.isNull()); }
+    //
+    bool missionAreaObjValid() { return(!mMissionArea.isNull()); }
+    bool terrainObjValid() { return(!mTerrainBlock.isNull()); }
 
-      TerrainBlock * getTerrainObj();
+    TerrainBlock* getTerrainObj();
 
-      const RectI & getArea();
-      void setArea(const RectI & area);
+    const RectI& getArea();
+    void setArea(const RectI& area);
 
-      void updateTerrainBitmap();
+    void updateTerrainBitmap();
 
-      // GuiControl
-      void parentResized(const Point2I &oldParentExtent, const Point2I &newParentExtent);
-      void onRender(Point2I offset, const RectI &updateRect);
-      bool onWake();
-      void onSleep();
+    // GuiControl
+    void parentResized(const Point2I& oldParentExtent, const Point2I& newParentExtent);
+    void onRender(Point2I offset, const RectI& updateRect);
+    bool onWake();
+    void onSleep();
 
-      void onMouseUp(const GuiEvent & event);
-      void onMouseDown(const GuiEvent & event);
-      void onMouseMove(const GuiEvent & event);
-      void onMouseDragged(const GuiEvent & event);
-      void onMouseEnter(const GuiEvent & event);
-      void onMouseLeave(const GuiEvent & event);
+    void onMouseUp(const GuiEvent& event);
+    void onMouseDown(const GuiEvent& event);
+    void onMouseMove(const GuiEvent& event);
+    void onMouseDragged(const GuiEvent& event);
+    void onMouseEnter(const GuiEvent& event);
+    void onMouseLeave(const GuiEvent& event);
 
-      // SimObject
-      bool onAdd();
+    // SimObject
+    bool onAdd();
 
-      // field data..
-      bool        mSquareBitmap;
-      bool        mEnableEditing;
-      bool        mRenderCamera;
+    // field data..
+    bool        mSquareBitmap;
+    bool        mEnableEditing;
+    bool        mRenderCamera;
 
-      ColorI      mHandleFrameColor;
-      ColorI      mHandleFillColor;
-      ColorI      mDefaultObjectColor;
-      ColorI      mWaterObjectColor;
-      ColorI      mMissionBoundsColor;
-      ColorI      mCameraColor;
+    ColorI      mHandleFrameColor;
+    ColorI      mHandleFillColor;
+    ColorI      mDefaultObjectColor;
+    ColorI      mWaterObjectColor;
+    ColorI      mMissionBoundsColor;
+    ColorI      mCameraColor;
 
-      bool        mEnableMirroring;
-      S32         mMirrorIndex;
-      ColorI      mMirrorLineColor;
-      ColorI      mMirrorArrowColor;
+    bool        mEnableMirroring;
+    S32         mMirrorIndex;
+    ColorI      mMirrorLineColor;
+    ColorI      mMirrorArrowColor;
 
-      static void initPersistFields();
+    static void initPersistFields();
 
-      DECLARE_CONOBJECT(MissionAreaEditor);
+    DECLARE_CONOBJECT(MissionAreaEditor);
 };
 
 #endif

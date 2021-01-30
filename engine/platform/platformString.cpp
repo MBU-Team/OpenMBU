@@ -40,7 +40,7 @@ UTF16 getFirstUTF8Char(const UTF8 *string)
 
     UTF8 s[5];
     const UTF8 *ptr;
-    
+
     // Get first UTF-8 char
     for(ptr = string+1;(*ptr & 0xc0) == 0x80 && *ptr;ptr++)
     {
@@ -48,7 +48,7 @@ UTF16 getFirstUTF8Char(const UTF8 *string)
 
     dStrncpy((char *)s, (const char *)string, ptr - string);
     s[ptr - string] = 0;
-    
+
     UTF16 buf[3];
     convertUTF8toUTF16(s, buf, sizeof(buf));
 
@@ -76,34 +76,34 @@ const UTF8 *getNextUTF8Char(const UTF8 *ptr, const U32 n)
 
    return ptr;
 }
-*/ 
+*/
 //-------------------------------------------------------------------------
 
-const char *getCharSetName(const U32 charSet)
+const char* getCharSetName(const U32 charSet)
 {
-   switch(charSet)
-   {
-   case TGE_ANSI_CHARSET:        return "ansi";
-   case TGE_SYMBOL_CHARSET:      return "symbol";
-   case TGE_SHIFTJIS_CHARSET:    return "shiftjis";
-   case TGE_HANGEUL_CHARSET:     return "hangeul";
-   case TGE_HANGUL_CHARSET:      return "hangul";
-   case TGE_GB2312_CHARSET:      return "gb2312";
-   case TGE_CHINESEBIG5_CHARSET: return "chinesebig5";
-   case TGE_OEM_CHARSET:         return "oem";
-   case TGE_JOHAB_CHARSET:       return "johab";
-   case TGE_HEBREW_CHARSET:      return "hebrew";
-   case TGE_ARABIC_CHARSET:      return "arabic";
-   case TGE_GREEK_CHARSET:       return "greek";
-   case TGE_TURKISH_CHARSET:     return "turkish";
-   case TGE_VIETNAMESE_CHARSET:  return "vietnamese";
-   case TGE_THAI_CHARSET:        return "thai";
-   case TGE_EASTEUROPE_CHARSET:  return "easteurope";
-   case TGE_RUSSIAN_CHARSET:     return "russian";
-   case TGE_MAC_CHARSET:         return "mac";
-   case TGE_BALTIC_CHARSET:      return "baltic";
-   }
+    switch (charSet)
+    {
+    case TGE_ANSI_CHARSET:        return "ansi";
+    case TGE_SYMBOL_CHARSET:      return "symbol";
+    case TGE_SHIFTJIS_CHARSET:    return "shiftjis";
+    case TGE_HANGEUL_CHARSET:     return "hangeul";
+    case TGE_HANGUL_CHARSET:      return "hangul";
+    case TGE_GB2312_CHARSET:      return "gb2312";
+    case TGE_CHINESEBIG5_CHARSET: return "chinesebig5";
+    case TGE_OEM_CHARSET:         return "oem";
+    case TGE_JOHAB_CHARSET:       return "johab";
+    case TGE_HEBREW_CHARSET:      return "hebrew";
+    case TGE_ARABIC_CHARSET:      return "arabic";
+    case TGE_GREEK_CHARSET:       return "greek";
+    case TGE_TURKISH_CHARSET:     return "turkish";
+    case TGE_VIETNAMESE_CHARSET:  return "vietnamese";
+    case TGE_THAI_CHARSET:        return "thai";
+    case TGE_EASTEUROPE_CHARSET:  return "easteurope";
+    case TGE_RUSSIAN_CHARSET:     return "russian";
+    case TGE_MAC_CHARSET:         return "mac";
+    case TGE_BALTIC_CHARSET:      return "baltic";
+    }
 
-   AssertISV(false, "getCharSetName - unknown charset! Update table in platformString.cc!");
-   return "";
+    AssertISV(false, "getCharSetName - unknown charset! Update table in platformString.cc!");
+    return "";
 }

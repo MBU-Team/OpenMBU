@@ -68,23 +68,23 @@ typedef const char* StringTableEntry;
   */
 struct FileTime
 {
-   U32 v1;
-   U32 v2;
+    U32 v1;
+    U32 v2;
 };
 
 //------------------------------------------------------------------------------
 //-------------------------------------- Type constants...
 #define __EQUAL_CONST_F F32(0.000001)                             ///< Constant float epsilon used for F32 comparisons
 
-static const F32 Float_One  = F32(1.0);                           ///< Constant float 1.0
+static const F32 Float_One = F32(1.0);                           ///< Constant float 1.0
 static const F32 Float_Half = F32(0.5);                           ///< Constant float 0.5
 static const F32 Float_Zero = F32(0.0);                           ///< Constant float 0.0
-static const F32 Float_Pi   = F32(3.14159265358979323846);        ///< Constant float PI
-static const F32 Float_2Pi  = F32(2.0 * 3.14159265358979323846);  ///< Constant float 2*PI
+static const F32 Float_Pi = F32(3.14159265358979323846);        ///< Constant float PI
+static const F32 Float_2Pi = F32(2.0 * 3.14159265358979323846);  ///< Constant float 2*PI
 
-static const S8  S8_MIN  = S8(-128);                              ///< Constant Min Limit S8
-static const S8  S8_MAX  = S8(127);                               ///< Constant Max Limit S8
-static const U8  U8_MAX  = U8(255);                               ///< Constant Max Limit U8
+static const S8  S8_MIN = S8(-128);                              ///< Constant Min Limit S8
+static const S8  S8_MAX = S8(127);                               ///< Constant Max Limit S8
+static const U8  U8_MAX = U8(255);                               ///< Constant Max Limit U8
 
 static const S16 S16_MIN = S16(-32768);                           ///< Constant Min Limit S16
 static const S16 S16_MAX = S16(32767);                            ///< Constant Max Limit S16

@@ -29,62 +29,62 @@
 /// Helper class for collision detection.
 struct CollisionTest
 {
-   /// @name Basic Settings
-   /// @{
-   Box3F boundingBox;
-   SphereF boundingSphere;
-   static bool renderAlways;
+    /// @name Basic Settings
+    /// @{
+    Box3F boundingBox;
+    SphereF boundingSphere;
+    static bool renderAlways;
 
-   Point3F testPos;
-   /// @}
+    Point3F testPos;
+    /// @}
 
-   /// @name Depth Sort List
-   /// Use a slightly different box and sphere for depthSortList.
-   /// @{
-   Box3F mDepthBox;
-   SphereF mDepthSphere;
-   Point3F mDepthSortExtent;
-   /// @}
+    /// @name Depth Sort List
+    /// Use a slightly different box and sphere for depthSortList.
+    /// @{
+    Box3F mDepthBox;
+    SphereF mDepthSphere;
+    Point3F mDepthSortExtent;
+    /// @}
 
-   /// @name Polytope/BSP test
-   /// @{
-   static bool testPolytope;
-   BSPTree tree;
-   Polytope volume;
-   /// @}
+    /// @name Polytope/BSP test
+    /// @{
+    static bool testPolytope;
+    BSPTree tree;
+    Polytope volume;
+    /// @}
 
-   /// @name Clipped polylists
-   /// @{
-   static bool testClippedPolyList;
-   ClippedPolyList polyList;
-   /// @}
+    /// @name Clipped polylists
+    /// @{
+    static bool testClippedPolyList;
+    ClippedPolyList polyList;
+    /// @}
 
-   /// @name Depth sorted polylists
-   /// @{
-   static bool testDepthSortList;
-   static bool depthSort;
-   static bool depthRender;
-   DepthSortList depthSortList;
-   /// @}
+    /// @name Depth sorted polylists
+    /// @{
+    static bool testDepthSortList;
+    static bool depthSort;
+    static bool depthRender;
+    DepthSortList depthSortList;
+    /// @}
 
-   /// @name Extruded
-   /// @{
-   CollisionList collisionList;
-   static bool testExtrudedPolyList;
-   Polyhedron polyhedron;
-   VectorF extrudeVector;
-   ExtrudedPolyList extrudedList;
-   /// @}
+    /// @name Extruded
+    /// @{
+    CollisionList collisionList;
+    static bool testExtrudedPolyList;
+    Polyhedron polyhedron;
+    VectorF extrudeVector;
+    ExtrudedPolyList extrudedList;
+    /// @}
 
-   /// @name Implementation
-   /// @{
-   CollisionTest();
-   ~CollisionTest();
-   static void consoleInit();
-   static void callback(SceneObject*, void *thisPtr);
-   void collide(const MatrixF& transform);
-   void render();
-   /// @}
+    /// @name Implementation
+    /// @{
+    CollisionTest();
+    ~CollisionTest();
+    static void consoleInit();
+    static void callback(SceneObject*, void* thisPtr);
+    void collide(const MatrixF& transform);
+    void render();
+    /// @}
 };
 
 

@@ -22,18 +22,18 @@
 class CameraFX
 {
 protected:
-   F32      mElapsedTime;
-   F32      mDuration;
-   MatrixF  mCamFXTrans;
+    F32      mElapsedTime;
+    F32      mDuration;
+    MatrixF  mCamFXTrans;
 
 public:
-   CameraFX();
+    CameraFX();
 
-   MatrixF &   getTrans(){ return mCamFXTrans; }
-   bool        isExpired(){ return mElapsedTime >= mDuration; }
-   void        setDuration( F32 duration ){ mDuration = duration; }
+    MatrixF& getTrans() { return mCamFXTrans; }
+    bool        isExpired() { return mElapsedTime >= mDuration; }
+    void        setDuration(F32 duration) { mDuration = duration; }
 
-   virtual void update( F32 dt );
+    virtual void update(F32 dt);
 };
 
 //--------------------------------------------------------------------------
@@ -41,24 +41,24 @@ public:
 //--------------------------------------------------------------------------
 class CameraShake : public CameraFX
 {
-   typedef CameraFX Parent;
+    typedef CameraFX Parent;
 
-   VectorF mFreq;  // these are vectors to represent these values in 3D
-   VectorF mStartAmp;
-   VectorF mAmp;
-   VectorF mTimeOffset;
-   F32     mFalloff;
+    VectorF mFreq;  // these are vectors to represent these values in 3D
+    VectorF mStartAmp;
+    VectorF mAmp;
+    VectorF mTimeOffset;
+    F32     mFalloff;
 
 public:
-   CameraShake();
+    CameraShake();
 
-   void init();
-   void fadeAmplitude();
-   void setFalloff( F32 falloff ){ mFalloff = falloff; }
-   void setFrequency( VectorF &freq ){ mFreq = freq; }
-   void setAmplitude( VectorF &amp ){ mStartAmp = amp; }
+    void init();
+    void fadeAmplitude();
+    void setFalloff(F32 falloff) { mFalloff = falloff; }
+    void setFrequency(VectorF& freq) { mFreq = freq; }
+    void setAmplitude(VectorF& amp) { mStartAmp = amp; }
 
-   virtual void update( F32 dt );
+    virtual void update(F32 dt);
 };
 
 
@@ -67,19 +67,19 @@ public:
 //**************************************************************************
 class CameraFXManager
 {
-   typedef CameraFX * CameraFXPtr;
+    typedef CameraFX* CameraFXPtr;
 
-   LList< CameraFXPtr > mFXList;
-   MatrixF              mCamFXTrans;
+    LList< CameraFXPtr > mFXList;
+    MatrixF              mCamFXTrans;
 
 public:
-   void        addFX( CameraFX *newFX );
-   void        clear();
-   MatrixF &   getTrans(){ return mCamFXTrans; }
-   void        update( F32 dt );
+    void        addFX(CameraFX* newFX);
+    void        clear();
+    MatrixF& getTrans() { return mCamFXTrans; }
+    void        update(F32 dt);
 
-   CameraFXManager();
-   ~CameraFXManager();
+    CameraFXManager();
+    ~CameraFXManager();
 
 };
 

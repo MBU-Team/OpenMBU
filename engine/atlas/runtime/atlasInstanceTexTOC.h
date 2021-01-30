@@ -10,7 +10,7 @@
 #include "atlas/resource/atlasResourceTexTOC.h"
 
 /// @ingroup AtlasRuntime
-class AtlasInstanceTexStub : public AtlasInstanceStub<AtlasTexChunk,AtlasInstanceTexStub>
+class AtlasInstanceTexStub : public AtlasInstanceStub<AtlasTexChunk, AtlasInstanceTexStub>
 {
 public:
 };
@@ -18,23 +18,23 @@ public:
 /// @ingroup AtlasRuntime
 class AtlasInstanceTexTOC : public AtlasInstanceTOC<AtlasInstanceTexStub, AtlasResourceTexTOC>
 {
-   S32 mTextureChunkSize;
+    S32 mTextureChunkSize;
 
 public:
 
-   AtlasInstanceTexTOC()
-   {
-      mTextureChunkSize = -1;
-      mIsQuadtree = true;
-   }
+    AtlasInstanceTexTOC()
+    {
+        mTextureChunkSize = -1;
+        mIsQuadtree = true;
+    }
 
-   inline const S32 getTextureChunkSize()
-   {
-      if(mTextureChunkSize == -1)
-         mTextureChunkSize = getResourceTOC()->getTextureChunkSize();
+    inline const S32 getTextureChunkSize()
+    {
+        if (mTextureChunkSize == -1)
+            mTextureChunkSize = getResourceTOC()->getTextureChunkSize();
 
-      return mTextureChunkSize;
-   }
+        return mTextureChunkSize;
+    }
 };
 
 #endif

@@ -21,8 +21,8 @@ IMPLEMENT_CONOBJECT(EditManager);
 
 EditManager::EditManager()
 {
-   for(U32 i = 0; i < 10; i++)
-      mBookmarks[i] = MatrixF(true);
+    for (U32 i = 0; i < 10; i++)
+        mBookmarks[i] = MatrixF(true);
 }
 
 EditManager::~EditManager()
@@ -33,74 +33,74 @@ EditManager::~EditManager()
 
 bool EditManager::onWake()
 {
-   if(!Parent::onWake())
-      return(false);
+    if (!Parent::onWake())
+        return(false);
 
-   for(SimGroupIterator itr(Sim::getRootGroup());  *itr; ++itr)
-      (*itr)->onEditorEnable();
+    for (SimGroupIterator itr(Sim::getRootGroup()); *itr; ++itr)
+        (*itr)->onEditorEnable();
 
-   gEditingMission = true;
+    gEditingMission = true;
 
-   return(true);
+    return(true);
 }
 
 void EditManager::onSleep()
 {
-   for(SimGroupIterator itr(Sim::getRootGroup());  *itr; ++itr)
-      (*itr)->onEditorDisable();
+    for (SimGroupIterator itr(Sim::getRootGroup()); *itr; ++itr)
+        (*itr)->onEditorDisable();
 
-   gEditingMission = false;
-   Parent::onSleep();
+    gEditingMission = false;
+    Parent::onSleep();
 }
 
 //------------------------------------------------------------------------------
 
 bool EditManager::onAdd()
 {
-   if(!Parent::onAdd())
-      return(false);
+    if (!Parent::onAdd())
+        return(false);
 
-   // hook the namespace
-   const char * name = getName();
-   if(name && name[0] && getClassRep())
-   {
-      Namespace * parent = getClassRep()->getNameSpace();
-      Con::linkNamespaces(parent->mName, name);
-      mNameSpace = Con::lookupNamespace(name);
-   }
+    // hook the namespace
+    const char* name = getName();
+    if (name && name[0] && getClassRep())
+    {
+        Namespace* parent = getClassRep()->getNameSpace();
+        Con::linkNamespaces(parent->mName, name);
+        mNameSpace = Con::lookupNamespace(name);
+    }
 
-   return(true);
+    return(true);
 }
 
 //------------------------------------------------------------------------------
 
-static GameBase * getControlObj()
+static GameBase* getControlObj()
 {
-   GameConnection * connection = GameConnection::getLocalClientConnection();
-   ShapeBase* control = 0;
-   if(connection)
-      control = connection->getControlObject();
-   return(control);
+    GameConnection* connection = GameConnection::getLocalClientConnection();
+    ShapeBase* control = 0;
+    if (connection)
+        control = connection->getControlObject();
+    return(control);
 }
 
-ConsoleMethod( EditManager, setBookmark, void, 3, 3, "(int slot)")
+ConsoleMethod(EditManager, setBookmark, void, 3, 3, "(int slot)")
 {
-   S32 val = dAtoi(argv[2]);
-   if(val < 0 || val > 9)
-      return;
+    S32 val = dAtoi(argv[2]);
+    if (val < 0 || val > 9)
+        return;
 
-   GameBase * control = getControlObj();
-   if(control)
-      object->mBookmarks[val] = control->getTransform();
+    GameBase* control = getControlObj();
+    if (control)
+        object->mBookmarks[val] = control->getTransform();
 }
 
-ConsoleMethod( EditManager, gotoBookmark, void, 3, 3, "(int slot)")
+ConsoleMethod(EditManager, gotoBookmark, void, 3, 3, "(int slot)")
 {
-   S32 val = dAtoi(argv[2]);
-   if(val < 0 || val > 9)
-      return;
+    S32 val = dAtoi(argv[2]);
+    if (val < 0 || val > 9)
+        return;
 
-   GameBase * control = getControlObj();
-   if(control)
-      control->setTransform(object->mBookmarks[val]);
+    GameBase* control = getControlObj();
+    if (control)
+        control->setTransform(object->mBookmarks[val]);
 }

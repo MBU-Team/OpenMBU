@@ -15,89 +15,89 @@
 
 class CreatorTree : public GuiArrayCtrl
 {
-   typedef GuiArrayCtrl Parent;
-   public:
+    typedef GuiArrayCtrl Parent;
+public:
 
-      class Node
-      {
-         public:
-            Node();
-            ~Node();
+    class Node
+    {
+    public:
+        Node();
+        ~Node();
 
-            enum {
-               Group       = BIT(0),
-               Expanded    = BIT(1),
-               Selected    = BIT(2),
-               Root        = BIT(3)
-            };
+        enum {
+            Group = BIT(0),
+            Expanded = BIT(1),
+            Selected = BIT(2),
+            Root = BIT(3)
+        };
 
-            BitSet32             mFlags;
-            S32                  mId;
-            U32                  mTab;
-            Node *               mParent;
-            Vector<Node*>        mChildren;
-            StringTableEntry     mName;
-            StringTableEntry     mValue;
+        BitSet32             mFlags;
+        S32                  mId;
+        U32                  mTab;
+        Node* mParent;
+        Vector<Node*>        mChildren;
+        StringTableEntry     mName;
+        StringTableEntry     mValue;
 
-            void expand(bool exp);
-            void select(bool sel){mFlags.set(Selected, sel);}
+        void expand(bool exp);
+        void select(bool sel) { mFlags.set(Selected, sel); }
 
-            Node * find(S32 id);
+        Node* find(S32 id);
 
-            //
-            bool isGroup(){return(mFlags.test(Group));}
-            bool isExpanded(){return(mFlags.test(Expanded));}
-            bool isSelected(){return(mFlags.test(Selected));}
-            bool isRoot(){return(mFlags.test(Root));}
-            S32 getId(){return(mId);}
-            bool hasChildItem();
-            S32 getSelected();
+        //
+        bool isGroup() { return(mFlags.test(Group)); }
+        bool isExpanded() { return(mFlags.test(Expanded)); }
+        bool isSelected() { return(mFlags.test(Selected)); }
+        bool isRoot() { return(mFlags.test(Root)); }
+        S32 getId() { return(mId); }
+        bool hasChildItem();
+        S32 getSelected();
 
-            //
-            bool isFirst();
-            bool isLast();
-      };
+        //
+        bool isFirst();
+        bool isLast();
+    };
 
-      CreatorTree();
-      ~CreatorTree();
+    CreatorTree();
+    ~CreatorTree();
 
-      //
-      S32                        mCurId;
-      Node *                     mRoot;
-      Vector<Node*>              mNodeList;
+    //
+    S32                        mCurId;
+    Node* mRoot;
+    Vector<Node*>              mNodeList;
 
-      //
-      void buildNode(Node * node, U32 tab);
-      void build();
+    //
+    void buildNode(Node* node, U32 tab);
+    void build();
 
-      //
-      bool addNode(Node * parent, Node * node);
-      Node * createNode(const char * name, const char * value, bool group = false, Node * parent = 0);
-      Node * findNode(S32 id);
-      S32 getSelected(){return(mRoot->getSelected());}
+    //
+    bool addNode(Node* parent, Node* node);
+    Node* createNode(const char* name, const char* value, bool group = false, Node* parent = 0);
+    Node* findNode(S32 id);
+    S32 getSelected() { return(mRoot->getSelected()); }
 
-      //
-      void expandNode(Node * node, bool expand);
-      void selectNode(Node * node, bool select);
+    //
+    void expandNode(Node* node, bool expand);
+    void selectNode(Node* node, bool select);
 
-      //
-      void sort();
-      void clear();
+    //
+    void sort();
+    void clear();
 
-      S32                           mTabSize;
-      S32                           mMaxWidth;
-      S32                           mTxtOffset;
+    S32                           mTabSize;
+    S32                           mMaxWidth;
+    S32                           mTxtOffset;
 
-      // GuiControl
-      void onMouseDown(const GuiEvent & event);
-      void onMouseDragged(const GuiEvent & event);
-      void onMouseUp(const GuiEvent & event);
-      bool onWake();
+    // GuiControl
+    void onMouseDown(const GuiEvent& event);
+    void onMouseDragged(const GuiEvent& event);
+    void onMouseUp(const GuiEvent& event);
+    bool onWake();
 
-      // GuiArrayCtrl
-      void onRenderCell(Point2I offset, Point2I cell, bool, bool);
+    // GuiArrayCtrl
+    void onRenderCell(Point2I offset, Point2I cell, bool, bool);
 
-      DECLARE_CONOBJECT(CreatorTree);
+    DECLARE_CONOBJECT(CreatorTree);
 };
 
 #endif

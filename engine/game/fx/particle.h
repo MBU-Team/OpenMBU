@@ -21,55 +21,55 @@ struct Particle;
 //*****************************************************************************
 class ParticleData : public SimDataBlock
 {
-   typedef SimDataBlock Parent;
+    typedef SimDataBlock Parent;
 
-  public:
-   enum PDConst
-   {
-      PDC_MAX_TEX = 50,
-      PDC_NUM_KEYS = 4,
-   };
+public:
+    enum PDConst
+    {
+        PDC_MAX_TEX = 50,
+        PDC_NUM_KEYS = 4,
+    };
 
-   F32   dragCoefficient;
-   F32   windCoefficient;
-   F32   gravityCoefficient;
+    F32   dragCoefficient;
+    F32   windCoefficient;
+    F32   gravityCoefficient;
 
-   F32   inheritedVelFactor;
-   F32   constantAcceleration;
+    F32   inheritedVelFactor;
+    F32   constantAcceleration;
 
-   S32   lifetimeMS;
-   S32   lifetimeVarianceMS;
+    S32   lifetimeMS;
+    S32   lifetimeVarianceMS;
 
-   F32   spinSpeed;        // degrees per second
-   F32   spinRandomMin;
-   F32   spinRandomMax;
+    F32   spinSpeed;        // degrees per second
+    F32   spinRandomMin;
+    F32   spinRandomMax;
 
-   bool  useInvAlpha;
+    bool  useInvAlpha;
 
-   bool  animateTexture;
-   U32   numFrames;
-   U32   framesPerSec;
+    bool  animateTexture;
+    U32   numFrames;
+    U32   framesPerSec;
 
-   ColorF colors[ PDC_NUM_KEYS ];
-   F32    sizes[ PDC_NUM_KEYS ];
-   F32    times[ PDC_NUM_KEYS ];
+    ColorF colors[PDC_NUM_KEYS];
+    F32    sizes[PDC_NUM_KEYS];
+    F32    times[PDC_NUM_KEYS];
 
-   StringTableEntry  textureNameList[ PDC_MAX_TEX ];
-   GFXTexHandle      textureList[ PDC_MAX_TEX ];
+    StringTableEntry  textureNameList[PDC_MAX_TEX];
+    GFXTexHandle      textureList[PDC_MAX_TEX];
 
-  public:
-   ParticleData();
-   ~ParticleData();
+public:
+    ParticleData();
+    ~ParticleData();
 
-   // move this procedure to Particle
-   void initializeParticle(Particle*, const Point3F&);
+    // move this procedure to Particle
+    void initializeParticle(Particle*, const Point3F&);
 
-   void packData(BitStream* stream);
-   void unpackData(BitStream* stream);
-   bool onAdd();
-   bool preload(bool server, char errorBuffer[256]);
-   DECLARE_CONOBJECT(ParticleData);
-   static void  initPersistFields();
+    void packData(BitStream* stream);
+    void unpackData(BitStream* stream);
+    bool onAdd();
+    bool preload(bool server, char errorBuffer[256]);
+    DECLARE_CONOBJECT(ParticleData);
+    static void  initPersistFields();
 };
 
 
@@ -80,22 +80,22 @@ class ParticleData : public SimDataBlock
 //*****************************************************************************
 struct Particle
 {
-   Point3F  pos;     // current instantaneous position
-   Point3F  vel;     //   "         "         velocity
-   Point3F  acc;     // Constant acceleration
-   Point3F  orientDir;  // direction particle should go if using oriented particles
+    Point3F  pos;     // current instantaneous position
+    Point3F  vel;     //   "         "         velocity
+    Point3F  acc;     // Constant acceleration
+    Point3F  orientDir;  // direction particle should go if using oriented particles
 
-   U32           totalLifetime;   // Total ms that this instance should be "live"
-   ParticleData* dataBlock;       // datablock that contains global parameters for
-                                  //  this instance
-   U32       currentAge;
+    U32           totalLifetime;   // Total ms that this instance should be "live"
+    ParticleData* dataBlock;       // datablock that contains global parameters for
+                                   //  this instance
+    U32       currentAge;
 
 
-   // are these necessary to store here? - they are interpolated in real time
-   ColorF           color;
-   F32              size;
+    // are these necessary to store here? - they are interpolated in real time
+    ColorF           color;
+    F32              size;
 
-   F32              spinSpeed;
+    F32              spinSpeed;
 };
 
 

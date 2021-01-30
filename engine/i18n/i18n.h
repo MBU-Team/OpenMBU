@@ -15,7 +15,7 @@
 #define _L(x)		(getCoreString(x))
 
 // Protos
-extern const UTF8 *getCoreString(S32 id);
+extern const UTF8* getCoreString(S32 id);
 
 #endif // _I18N_H_
 

@@ -12,16 +12,16 @@
 
 class GuiCheckBoxCtrl : public GuiButtonBaseCtrl
 {
-   typedef GuiButtonBaseCtrl Parent;
+    typedef GuiButtonBaseCtrl Parent;
 
 protected:
 public:
-   S32 mIndent;
-   DECLARE_CONOBJECT(GuiCheckBoxCtrl);
-   GuiCheckBoxCtrl();
+    S32 mIndent;
+    DECLARE_CONOBJECT(GuiCheckBoxCtrl);
+    GuiCheckBoxCtrl();
 
-   void onRender(Point2I offset, const RectI &updateRect);
-   bool onWake();
+    void onRender(Point2I offset, const RectI& updateRect);
+    bool onWake();
 };
 
 #endif //_GUI_CHECKBOX_CTRL_H

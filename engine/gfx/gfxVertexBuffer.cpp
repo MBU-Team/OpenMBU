@@ -9,9 +9,9 @@
 //-----------------------------------------------------------------------------
 // Set
 //-----------------------------------------------------------------------------
-void GFXVertexBufferHandleBase::set(GFXDevice *theDevice, U32 numVerts, U32 flags, U32 vertexSize, GFXBufferType type)
+void GFXVertexBufferHandleBase::set(GFXDevice* theDevice, U32 numVerts, U32 flags, U32 vertexSize, GFXBufferType type)
 {
-   RefPtr<GFXVertexBuffer>::operator=( theDevice->allocVertexBuffer(numVerts, flags, vertexSize, type) );
+    RefPtr<GFXVertexBuffer>::operator=(theDevice->allocVertexBuffer(numVerts, flags, vertexSize, type));
 }
 
 

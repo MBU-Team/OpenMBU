@@ -12,25 +12,25 @@
 class GuiControlArrayControl : public GuiControl
 {
 private:
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
-   S32 mCols;
-   Vector<S32> mColumnSizes;
-   S32 mRowSize;
-   S32 mRowSpacing;
-   S32 mColSpacing;
+    S32 mCols;
+    Vector<S32> mColumnSizes;
+    S32 mRowSize;
+    S32 mRowSpacing;
+    S32 mColSpacing;
 
 public:
-   GuiControlArrayControl();
+    GuiControlArrayControl();
 
-   void resize(const Point2I &newPosition, const Point2I &newExtent);
+    void resize(const Point2I& newPosition, const Point2I& newExtent);
 
-   bool onWake();
-   void onSleep();
-   void inspectPostApply();
+    bool onWake();
+    void onSleep();
+    void inspectPostApply();
 
-   static void initPersistFields();
-   DECLARE_CONOBJECT(GuiControlArrayControl);
+    static void initPersistFields();
+    DECLARE_CONOBJECT(GuiControlArrayControl);
 };
 
 #endif

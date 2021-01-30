@@ -18,24 +18,24 @@
 
 class FileObject : public SimObject
 {
-   typedef SimObject Parent;
-   U8 *mFileBuffer;
-   U32 mBufferSize;
-   U32 mCurPos;
-   FileStream stream;
+    typedef SimObject Parent;
+    U8* mFileBuffer;
+    U32 mBufferSize;
+    U32 mCurPos;
+    FileStream stream;
 public:
-   FileObject();
-   ~FileObject();
+    FileObject();
+    ~FileObject();
 
-   bool openForWrite(const char *fileName, const bool append = false);
-   bool openForRead(const char *fileName);
-   bool readMemory(const char *fileName);
-   const U8 *readLine();
-   bool isEOF();
-   void writeLine(const U8 *line);
-   void close();
+    bool openForWrite(const char* fileName, const bool append = false);
+    bool openForRead(const char* fileName);
+    bool readMemory(const char* fileName);
+    const U8* readLine();
+    bool isEOF();
+    void writeLine(const U8* line);
+    void close();
 
-   DECLARE_CONOBJECT(FileObject);
+    DECLARE_CONOBJECT(FileObject);
 };
 
 #endif

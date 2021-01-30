@@ -13,36 +13,36 @@
 #define MAX_ADAPTER_NAME_LEN 512 // This seems pretty generous
 
 
-struct GFXAdapter 
+struct GFXAdapter
 {
-   char name[MAX_ADAPTER_NAME_LEN];
+    char name[MAX_ADAPTER_NAME_LEN];
 
-   GFXAdapterType type;
-   U32 index;
+    GFXAdapterType type;
+    U32 index;
 };
 
 // Implement this class per platform (This is just a class so it can be friend with GFXDevice
-class GFXInit 
+class GFXInit
 {
 private:
-   ///Hold the adapters, primarily for device switching
-   static Vector<GFXAdapter> smAdapters;
+    ///Hold the adapters, primarily for device switching
+    static Vector<GFXAdapter> smAdapters;
 
 public:
-   /// Enumerate all the graphics adapters on the system
-   /// @param   out   Vector to store results in
-   static void enumerateAdapters();
+    /// Enumerate all the graphics adapters on the system
+    /// @param   out   Vector to store results in
+    static void enumerateAdapters();
 
-   /// Creates a GFXDevice based on an adapter from the
-   /// enumerateAdapters method and it can be retrieved
-   /// by calling GFXDevice::get(). This method will fail
-   /// if a GFXDevice exists already.
-   /// @param   adapter   Graphics adapter to create device
-   static void createDevice( GFXAdapter adapter );
+    /// Creates a GFXDevice based on an adapter from the
+    /// enumerateAdapters method and it can be retrieved
+    /// by calling GFXDevice::get(). This method will fail
+    /// if a GFXDevice exists already.
+    /// @param   adapter   Graphics adapter to create device
+    static void createDevice(GFXAdapter adapter);
 
-   /// Get the enumerated adapters.  Should only call this after
-   /// a call to enumerateAdapters.
-   static void getAdapters( Vector<GFXAdapter> *adapters );
+    /// Get the enumerated adapters.  Should only call this after
+    /// a call to enumerateAdapters.
+    static void getAdapters(Vector<GFXAdapter>* adapters);
 };
 
 #endif

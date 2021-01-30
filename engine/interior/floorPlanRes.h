@@ -19,36 +19,36 @@ class Stream;
 
 class FloorPlanResource : public ResourceInstance
 {
-   typedef ResourceInstance Parent;
-   static const U32 smFileVersion;
+    typedef ResourceInstance Parent;
+    static const U32 smFileVersion;
 
-  public:
-   struct Area    // basically a Winding, the info we need from it
-   {
-      S16      pointCount;
-      S32      pointStart;
-      S32      plane;
-      Area()
-      {
-         dMemset( this, 0, sizeof( Area ) );
-      }
-      Area(S16 C, S32 S, S32 P)  { pointCount=C; pointStart=S; plane=P;  }
-   };
+public:
+    struct Area    // basically a Winding, the info we need from it
+    {
+        S16      pointCount;
+        S32      pointStart;
+        S32      plane;
+        Area()
+        {
+            dMemset(this, 0, sizeof(Area));
+        }
+        Area(S16 C, S32 S, S32 P) { pointCount = C; pointStart = S; plane = P; }
+    };
 
-  protected:
-   Vector<PlaneF>       mPlaneTable;
-   Vector<Point3F>      mPointTable;
-   Vector<S32>          mPointLists;
-   Vector<Area>         mAreas;
+protected:
+    Vector<PlaneF>       mPlaneTable;
+    Vector<Point3F>      mPointTable;
+    Vector<S32>          mPointLists;
+    Vector<Area>         mAreas;
 
-  public:
-   FloorPlanResource();
-   ~FloorPlanResource();
+public:
+    FloorPlanResource();
+    ~FloorPlanResource();
 
-   bool     read(Stream& stream);
-   bool     write(Stream& stream) const;
+    bool     read(Stream& stream);
+    bool     write(Stream& stream) const;
 };
 
-extern ResourceInstance * constructFloorPlanFLR(Stream& stream);
+extern ResourceInstance* constructFloorPlanFLR(Stream& stream);
 
 #endif  // _H_FLOORPLANRES_

@@ -14,13 +14,13 @@ S32 gNetBitsReceived = 0;
 
 enum NetPacketType
 {
-   DataPacket,
-   PingPacket,
-   AckPacket,
-   InvalidPacketType,
+    DataPacket,
+    PingPacket,
+    AckPacket,
+    InvalidPacketType,
 };
 
-static const char *packetTypeNames[] =
+static const char* packetTypeNames[] =
 {
    "DataPacket",
    "PingPacket",
@@ -32,232 +32,232 @@ static const char *packetTypeNames[] =
 //-----------------------------------------------------------------
 ConsoleFunction(DNetSetLogging, void, 2, 2, "(bool enabled)")
 {
-   argc;
-   gLogToConsole = dAtob(argv[1]);
+    argc;
+    gLogToConsole = dAtob(argv[1]);
 }
 
 ConnectionProtocol::ConnectionProtocol()
 {
-   mLastSeqRecvd = 0;
-   mHighestAckedSeq = 0;
-   mLastSendSeq = 0; // start sending at 1
-   mAckMask = 0;
-   mLastRecvAckAck = 0;
+    mLastSeqRecvd = 0;
+    mHighestAckedSeq = 0;
+    mLastSendSeq = 0; // start sending at 1
+    mAckMask = 0;
+    mLastRecvAckAck = 0;
 }
-void ConnectionProtocol::buildSendPacketHeader(BitStream *stream, S32 packetType)
+void ConnectionProtocol::buildSendPacketHeader(BitStream* stream, S32 packetType)
 {
-   S32 ackByteCount = ((mLastSeqRecvd - mLastRecvAckAck + 7) >> 3);
-   AssertFatal(ackByteCount <= 4, "Too few ack bytes!");
+    S32 ackByteCount = ((mLastSeqRecvd - mLastRecvAckAck + 7) >> 3);
+    AssertFatal(ackByteCount <= 4, "Too few ack bytes!");
 
-   S32 headerSize = 3 + ackByteCount;
-   S32 datalen = 0;
+    S32 headerSize = 3 + ackByteCount;
+    S32 datalen = 0;
 
-   if(packetType == DataPacket)
-      mLastSendSeq++;
+    if (packetType == DataPacket)
+        mLastSendSeq++;
 
-   stream->writeFlag(true);
-   stream->writeInt(mConnectSequence & 1, 1);
-   stream->writeInt(mLastSendSeq, 9);
-   stream->writeInt(mLastSeqRecvd, 9);
-   stream->writeInt(packetType, 2);
-   stream->writeInt(ackByteCount, 3);
-   stream->writeInt(mAckMask, ackByteCount * 8);
+    stream->writeFlag(true);
+    stream->writeInt(mConnectSequence & 1, 1);
+    stream->writeInt(mLastSendSeq, 9);
+    stream->writeInt(mLastSeqRecvd, 9);
+    stream->writeInt(packetType, 2);
+    stream->writeInt(ackByteCount, 3);
+    stream->writeInt(mAckMask, ackByteCount * 8);
 
-   // if we're resending this header, we can't advance the
-   // sequence recieved (in case this packet drops and the prev one
-   // goes through)
+    // if we're resending this header, we can't advance the
+    // sequence recieved (in case this packet drops and the prev one
+    // goes through)
 
-   if(gLogToConsole)
-      Con::printf("build hdr %d %d", mLastSendSeq, packetType);
+    if (gLogToConsole)
+        Con::printf("build hdr %d %d", mLastSendSeq, packetType);
 
-   if(packetType == DataPacket)
-      mLastSeqRecvdAtSend[mLastSendSeq & 0x1F] = mLastSeqRecvd;
+    if (packetType == DataPacket)
+        mLastSeqRecvdAtSend[mLastSendSeq & 0x1F] = mLastSeqRecvd;
 }
 
 void ConnectionProtocol::sendPingPacket()
 {
-   U8 buffer[16];
-   BitStream bs(buffer, 16);
-   buildSendPacketHeader(&bs, PingPacket);
-   if(gLogToConsole)
-      Con::printf("send ping %d", mLastSendSeq);
+    U8 buffer[16];
+    BitStream bs(buffer, 16);
+    buildSendPacketHeader(&bs, PingPacket);
+    if (gLogToConsole)
+        Con::printf("send ping %d", mLastSendSeq);
 
-   sendPacket(&bs);
+    sendPacket(&bs);
 }
 
 void ConnectionProtocol::sendAckPacket()
 {
-   U8 buffer[16];
-   BitStream bs(buffer, 16);
-   buildSendPacketHeader(&bs, AckPacket);
-   if(gLogToConsole)
-      Con::printf("send ack %d", mLastSendSeq);
+    U8 buffer[16];
+    BitStream bs(buffer, 16);
+    buildSendPacketHeader(&bs, AckPacket);
+    if (gLogToConsole)
+        Con::printf("send ack %d", mLastSendSeq);
 
-   sendPacket(&bs);
+    sendPacket(&bs);
 }
 
 // packets are read directly into the data portion of
 // connection notify packets... makes the events easier to post into
 // the system.
 
-void ConnectionProtocol::processRawPacket(BitStream *pstream)
+void ConnectionProtocol::processRawPacket(BitStream* pstream)
 {
-   // read in the packet header:
+    // read in the packet header:
 
-   // Fixed packet header: 3 bytes
-   //
-   //   1 bit game packet flag
-   //   1 bit connect sequence
-   //   9 bits packet seq number
-   //   9 bits ackstart seq number
-   //   2 bits packet type
-   //   2 bits ack byte count
-   //
-   // type is:
-   //    00 data packet
-   //    01 ping packet
-   //    02 ack packet
+    // Fixed packet header: 3 bytes
+    //
+    //   1 bit game packet flag
+    //   1 bit connect sequence
+    //   9 bits packet seq number
+    //   9 bits ackstart seq number
+    //   2 bits packet type
+    //   2 bits ack byte count
+    //
+    // type is:
+    //    00 data packet
+    //    01 ping packet
+    //    02 ack packet
 
-   // next 1-4 bytes are ack flags
-   //
-   //   header len is 4-9 bytes
-   //   average case 4 byte header
+    // next 1-4 bytes are ack flags
+    //
+    //   header len is 4-9 bytes
+    //   average case 4 byte header
 
-   gNetBitsReceived = pstream->getStreamSize();
+    gNetBitsReceived = pstream->getStreamSize();
 
-   pstream->readFlag(); // get rid of the game info packet bit
-   U32 pkConnectSeqBit  = pstream->readInt(1);
-   U32 pkSequenceNumber = pstream->readInt(9);
-   U32 pkHighestAck     = pstream->readInt(9);
-   U32 pkPacketType     = pstream->readInt(2);
-   S32 pkAckByteCount   = pstream->readInt(3);
+    pstream->readFlag(); // get rid of the game info packet bit
+    U32 pkConnectSeqBit = pstream->readInt(1);
+    U32 pkSequenceNumber = pstream->readInt(9);
+    U32 pkHighestAck = pstream->readInt(9);
+    U32 pkPacketType = pstream->readInt(2);
+    S32 pkAckByteCount = pstream->readInt(3);
 
-   // check connection sequence bit
-   if(pkConnectSeqBit != (mConnectSequence & 1))
-      return;
+    // check connection sequence bit
+    if (pkConnectSeqBit != (mConnectSequence & 1))
+        return;
 
-   if(pkAckByteCount > 4 || pkPacketType >= InvalidPacketType)
-      return;
+    if (pkAckByteCount > 4 || pkPacketType >= InvalidPacketType)
+        return;
 
-   S32 pkAckMask = pstream->readInt(8 * pkAckByteCount);
+    S32 pkAckMask = pstream->readInt(8 * pkAckByteCount);
 
-   // verify packet ordering and acking and stuff
-   // check if the 9-bit sequence is within the packet window
-   // (within 31 packets of the last received sequence number).
+    // verify packet ordering and acking and stuff
+    // check if the 9-bit sequence is within the packet window
+    // (within 31 packets of the last received sequence number).
 
-   pkSequenceNumber |= (mLastSeqRecvd & 0xFFFFFE00);
-   // account for wrap around
-   if(pkSequenceNumber < mLastSeqRecvd)
-      pkSequenceNumber += 0x200;
+    pkSequenceNumber |= (mLastSeqRecvd & 0xFFFFFE00);
+    // account for wrap around
+    if (pkSequenceNumber < mLastSeqRecvd)
+        pkSequenceNumber += 0x200;
 
-   if(pkSequenceNumber > mLastSeqRecvd + 31)
-   {
-      // the sequence number is outside the window... must be out of order
-      // discard.
-      return;
-   }
+    if (pkSequenceNumber > mLastSeqRecvd + 31)
+    {
+        // the sequence number is outside the window... must be out of order
+        // discard.
+        return;
+    }
 
-   pkHighestAck |= (mHighestAckedSeq & 0xFFFFFE00);
-   // account for wrap around
+    pkHighestAck |= (mHighestAckedSeq & 0xFFFFFE00);
+    // account for wrap around
 
-   if(pkHighestAck < mHighestAckedSeq)
-      pkHighestAck += 0x200;
+    if (pkHighestAck < mHighestAckedSeq)
+        pkHighestAck += 0x200;
 
-   if(pkHighestAck > mLastSendSeq)
-   {
-      // the ack number is outside the window... must be an out of order
-      // packet, discard.
-      return;
-   }
+    if (pkHighestAck > mLastSendSeq)
+    {
+        // the ack number is outside the window... must be an out of order
+        // packet, discard.
+        return;
+    }
 
-   if(gLogToConsole)
-   {
-      for(U32 i = mLastSeqRecvd+1; i < pkSequenceNumber; i++)
-         Con::printf("Not recv %d", i);
-      Con::printf("Recv %d %s", pkSequenceNumber, packetTypeNames[pkPacketType]);
-   }
+    if (gLogToConsole)
+    {
+        for (U32 i = mLastSeqRecvd + 1; i < pkSequenceNumber; i++)
+            Con::printf("Not recv %d", i);
+        Con::printf("Recv %d %s", pkSequenceNumber, packetTypeNames[pkPacketType]);
+    }
 
-   // shift up the ack mask by the packet difference
-   // this essentially nacks all the packets dropped
+    // shift up the ack mask by the packet difference
+    // this essentially nacks all the packets dropped
 
-   mAckMask <<= pkSequenceNumber - mLastSeqRecvd;
+    mAckMask <<= pkSequenceNumber - mLastSeqRecvd;
 
-   // if this packet is a data packet (i.e. not a ping packet or an ack packet), ack it
-   if(pkPacketType == DataPacket)
-      mAckMask |= 1;
+    // if this packet is a data packet (i.e. not a ping packet or an ack packet), ack it
+    if (pkPacketType == DataPacket)
+        mAckMask |= 1;
 
-   // do all the notifies...
-   for(U32 i = mHighestAckedSeq+1; i <= pkHighestAck; i++)
-   {
-      bool packetTransmitSuccess = pkAckMask & (1 << (pkHighestAck - i));
-      handleNotify(packetTransmitSuccess);
-      if(gLogToConsole)
-         Con::printf("Ack %d %d", i, packetTransmitSuccess);
+    // do all the notifies...
+    for (U32 i = mHighestAckedSeq + 1; i <= pkHighestAck; i++)
+    {
+        bool packetTransmitSuccess = pkAckMask & (1 << (pkHighestAck - i));
+        handleNotify(packetTransmitSuccess);
+        if (gLogToConsole)
+            Con::printf("Ack %d %d", i, packetTransmitSuccess);
 
-      if(packetTransmitSuccess)
-      {
-         mLastRecvAckAck = mLastSeqRecvdAtSend[i & 0x1F];
-         if(!mConnectionEstablished)
-         {
-            mConnectionEstablished = true;
-            handleConnectionEstablished();
-         }
-      }
-   }
+        if (packetTransmitSuccess)
+        {
+            mLastRecvAckAck = mLastSeqRecvdAtSend[i & 0x1F];
+            if (!mConnectionEstablished)
+            {
+                mConnectionEstablished = true;
+                handleConnectionEstablished();
+            }
+        }
+    }
 
-   // the other side knows more about its window than we do.
-   if(pkSequenceNumber - mLastRecvAckAck > 32)
-      mLastRecvAckAck = pkSequenceNumber - 32;
+    // the other side knows more about its window than we do.
+    if (pkSequenceNumber - mLastRecvAckAck > 32)
+        mLastRecvAckAck = pkSequenceNumber - 32;
 
-   mHighestAckedSeq = pkHighestAck;
+    mHighestAckedSeq = pkHighestAck;
 
-   // first things first...
-   // ackback any pings or accept connects
+    // first things first...
+    // ackback any pings or accept connects
 
-   if(pkPacketType == PingPacket)
-   {
-      // send an ack to the other side
-      // the ack will have the same packet sequence as our last sent packet
-      // if the last packet we sent was the connection accepted packet
-      // we must resend that packet
-      sendAckPacket();
-   }
-   keepAlive(); // notification that the connection is ok
+    if (pkPacketType == PingPacket)
+    {
+        // send an ack to the other side
+        // the ack will have the same packet sequence as our last sent packet
+        // if the last packet we sent was the connection accepted packet
+        // we must resend that packet
+        sendAckPacket();
+    }
+    keepAlive(); // notification that the connection is ok
 
-   if(mLastSeqRecvd != pkSequenceNumber && pkPacketType == DataPacket)
-      handlePacket(pstream);
+    if (mLastSeqRecvd != pkSequenceNumber && pkPacketType == DataPacket)
+        handlePacket(pstream);
 
-   mLastSeqRecvd = pkSequenceNumber;
+    mLastSeqRecvd = pkSequenceNumber;
 }
 
 bool ConnectionProtocol::windowFull()
 {
-   return mLastSendSeq - mHighestAckedSeq >= 30;
+    return mLastSendSeq - mHighestAckedSeq >= 30;
 }
 
-void ConnectionProtocol::writeDemoStartBlock(ResizeBitStream *stream)
+void ConnectionProtocol::writeDemoStartBlock(ResizeBitStream* stream)
 {
-   for(U32 i = 0; i < 32; i++)
-      stream->write(mLastSeqRecvdAtSend[i]);
-   stream->write(mLastSeqRecvd);
-   stream->write(mHighestAckedSeq);
-   stream->write(mLastSendSeq);
-   stream->write(mAckMask);
-   stream->write(mConnectSequence);
-   stream->write(mLastRecvAckAck);
-   stream->write(mConnectionEstablished);
+    for (U32 i = 0; i < 32; i++)
+        stream->write(mLastSeqRecvdAtSend[i]);
+    stream->write(mLastSeqRecvd);
+    stream->write(mHighestAckedSeq);
+    stream->write(mLastSendSeq);
+    stream->write(mAckMask);
+    stream->write(mConnectSequence);
+    stream->write(mLastRecvAckAck);
+    stream->write(mConnectionEstablished);
 }
 
-bool ConnectionProtocol::readDemoStartBlock(BitStream *stream)
+bool ConnectionProtocol::readDemoStartBlock(BitStream* stream)
 {
-   for(U32 i = 0; i < 32; i++)
-      stream->read(&mLastSeqRecvdAtSend[i]);
-   stream->read(&mLastSeqRecvd);
-   stream->read(&mHighestAckedSeq);
-   stream->read(&mLastSendSeq);
-   stream->read(&mAckMask);
-   stream->read(&mConnectSequence);
-   stream->read(&mLastRecvAckAck);
-   stream->read(&mConnectionEstablished);
-   return true;
+    for (U32 i = 0; i < 32; i++)
+        stream->read(&mLastSeqRecvdAtSend[i]);
+    stream->read(&mLastSeqRecvd);
+    stream->read(&mHighestAckedSeq);
+    stream->read(&mLastSendSeq);
+    stream->read(&mAckMask);
+    stream->read(&mConnectSequence);
+    stream->read(&mLastRecvAckAck);
+    stream->read(&mConnectionEstablished);
+    return true;
 }

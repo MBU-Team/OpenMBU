@@ -12,21 +12,21 @@
 
 class GuiConsole : public GuiArrayCtrl
 {
-   private:
-      typedef GuiArrayCtrl Parent;
+private:
+    typedef GuiArrayCtrl Parent;
 
-      Resource<GFont> mFont;
+    Resource<GFont> mFont;
 
-      S32 getMaxWidth(S32 startIndex, S32 endIndex);
+    S32 getMaxWidth(S32 startIndex, S32 endIndex);
 
-   public:
-      GuiConsole();
-      DECLARE_CONOBJECT(GuiConsole);
+public:
+    GuiConsole();
+    DECLARE_CONOBJECT(GuiConsole);
 
-      bool onWake();
+    bool onWake();
 
-      void onPreRender();
-      void onRenderCell(Point2I offset, Point2I cell, bool selected, bool mouseOver);
+    void onPreRender();
+    void onRenderCell(Point2I offset, Point2I cell, bool selected, bool mouseOver);
 };
 
 #endif

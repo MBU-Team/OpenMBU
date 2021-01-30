@@ -17,26 +17,26 @@
 //-----------------------------------------------------------------------------
 // setup scenegraph data
 //-----------------------------------------------------------------------------
-void RenderTranslucentMgr::setupSGData( RenderInst *ri, SceneGraphData &data )
+void RenderTranslucentMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
 {
-   dMemset( &data, 0, sizeof( SceneGraphData ) );
+    dMemset(&data, 0, sizeof(SceneGraphData));
 
-   // do this here for the init, but also in setupLights...
-   dMemcpy(&data.light, &ri->light, sizeof(ri->light));
-   dMemcpy(&data.lightSecondary, &ri->lightSecondary, sizeof(ri->lightSecondary));
-   data.dynamicLight = ri->dynamicLight;
-   data.dynamicLightSecondary = ri->dynamicLightSecondary;
+    // do this here for the init, but also in setupLights...
+    dMemcpy(&data.light, &ri->light, sizeof(ri->light));
+    dMemcpy(&data.lightSecondary, &ri->lightSecondary, sizeof(ri->lightSecondary));
+    data.dynamicLight = ri->dynamicLight;
+    data.dynamicLightSecondary = ri->dynamicLightSecondary;
 
-   data.camPos = gRenderInstManager.getCamPos();
-   data.objTrans = *ri->objXform;
-//   data.backBuffTex = *ri->backBuffTex;
-//   data.cubemap = ri->cubemap;
+    data.camPos = gRenderInstManager.getCamPos();
+    data.objTrans = *ri->objXform;
+    //   data.backBuffTex = *ri->backBuffTex;
+    //   data.cubemap = ri->cubemap;
 
-   data.useFog = true;
-   data.fogTex = getCurrentClientSceneGraph()->getFogTexture();
-   data.fogHeightOffset = getCurrentClientSceneGraph()->getFogHeightOffset();
-   data.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
-   data.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
+    data.useFog = true;
+    data.fogTex = getCurrentClientSceneGraph()->getFogTexture();
+    data.fogHeightOffset = getCurrentClientSceneGraph()->getFogHeightOffset();
+    data.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
+    data.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
 
 }
@@ -44,17 +44,17 @@ void RenderTranslucentMgr::setupSGData( RenderInst *ri, SceneGraphData &data )
 //-----------------------------------------------------------------------------
 // add element
 //-----------------------------------------------------------------------------
-void RenderTranslucentMgr::addElement( RenderInst *inst )
+void RenderTranslucentMgr::addElement(RenderInst* inst)
 {
-   mElementList.increment();
-   MainSortElem &elem = mElementList.last();
-   elem.inst = inst;
-//   elem.key = elem.key2 = 0;
+    mElementList.increment();
+    MainSortElem& elem = mElementList.last();
+    elem.inst = inst;
+    //   elem.key = elem.key2 = 0;
 
-   // sort by distance
-   elem.key = (gRenderInstManager.getCamPos() - inst->sortPoint).lenSquared() * 2500.0 ;
-   elem.key = HIGH_NUM - elem.key;
-   elem.key2 = (U32) inst->matInst;
+       // sort by distance
+    elem.key = (gRenderInstManager.getCamPos() - inst->sortPoint).lenSquared() * 2500.0;
+    elem.key = HIGH_NUM - elem.key;
+    elem.key2 = (U32)inst->matInst;
 }
 
 //-----------------------------------------------------------------------------
@@ -63,248 +63,248 @@ void RenderTranslucentMgr::addElement( RenderInst *inst )
 void RenderTranslucentMgr::render()
 {
 
-   GFX->pushWorldMatrix();
+    GFX->pushWorldMatrix();
 
-   SceneGraphData sgData;
+    SceneGraphData sgData;
 
-   GFX->setCullMode( GFXCullNone );
+    GFX->setCullMode(GFXCullNone);
 
-   // set up register combiners
-   GFX->setTextureStageAlphaOp( 0, GFXTOPModulate );
-   GFX->setTextureStageAlphaOp( 1, GFXTOPDisable );
-   GFX->setTextureStageAlphaArg1( 0, GFXTATexture );
-   GFX->setTextureStageAlphaArg2( 0, GFXTADiffuse );
+    // set up register combiners
+    GFX->setTextureStageAlphaOp(0, GFXTOPModulate);
+    GFX->setTextureStageAlphaOp(1, GFXTOPDisable);
+    GFX->setTextureStageAlphaArg1(0, GFXTATexture);
+    GFX->setTextureStageAlphaArg2(0, GFXTADiffuse);
 
-   GFX->setTextureStageColorOp( 0, GFXTOPModulate );
-   GFX->setTextureStageColorOp( 1, GFXTOPDisable );
+    GFX->setTextureStageColorOp(0, GFXTOPModulate);
+    GFX->setTextureStageColorOp(1, GFXTOPDisable);
 
-   // turn on alpha test
-   GFX->setAlphaTestEnable( true );
-   GFX->setAlphaRef( 1 );
-   GFX->setAlphaFunc( GFXCmpGreaterEqual );
-
-
-   GFX->setZWriteEnable( false );
-
-   GFXVertexBuffer * lastVB = NULL;
-   GFXPrimitiveBuffer * lastPB = NULL;
-
-   U32 numChanges = 0;
-   U32 numDrawCalls = 0;
-
-   U32 binSize = mElementList.size();
-   for( U32 j=0; j<binSize; )
-   {
-      RenderInst *ri = mElementList[j].inst;
-      MatInstance *mat = ri->matInst;
-
-      U32 matListEnd = j;
-
-	  // render these separately...
-	  if(ri->type == RenderInstManager::RIT_ObjectTranslucent)
-	  {
-		  ri->obj->renderObject(ri->state, ri);
-
-		  GFX->setCullMode( GFXCullNone );
-		  GFX->setTextureStageAlphaOp( 0, GFXTOPModulate );
-		  GFX->setTextureStageAlphaOp( 1, GFXTOPDisable );
-		  GFX->setTextureStageAlphaArg1( 0, GFXTATexture );
-		  GFX->setTextureStageAlphaArg2( 0, GFXTADiffuse );
-		  GFX->setTextureStageColorOp( 0, GFXTOPModulate );
-		  GFX->setTextureStageColorOp( 1, GFXTOPDisable );
-		  GFX->setAlphaTestEnable( true );
-		  GFX->setAlphaRef( 1 );
-		  GFX->setAlphaFunc( GFXCmpGreaterEqual );
-		  GFX->setZWriteEnable( false );
-		  lastVB = NULL;
-		  lastPB = NULL;
-		  j++;
-		  continue;
-	  }
-   
-      // handle particles
-      if( ri->particles )
-      {
-         GFX->setTextureStageColorOp( 0, GFXTOPModulate );
-         GFX->setTextureStageColorOp( 1, GFXTOPDisable );
-         GFX->setZWriteEnable( false );
-
-         GFX->setAlphaBlendEnable( true );
-         GFX->setSrcBlend( GFXBlendSrcAlpha );
-
-         if( ri->transFlags )
-            GFX->setDestBlend( GFXBlendInvSrcAlpha);
-         else
-            GFX->setDestBlend( GFXBlendOne );
-
-         GFX->pushWorldMatrix();
-         GFX->setWorldMatrix( *ri->worldXform );
+    // turn on alpha test
+    GFX->setAlphaTestEnable(true);
+    GFX->setAlphaRef(1);
+    GFX->setAlphaFunc(GFXCmpGreaterEqual);
 
 
-         GFX->setTexture( 0, ri->miscTex );
-         GFX->setPrimitiveBuffer( *ri->primBuff );
-         GFX->setVertexBuffer( *ri->vertBuff );
-         GFX->disableShaders();
-         GFX->setupGenericShaders( GFXDevice::GSModColorTexture );
-         GFX->drawIndexedPrimitive( GFXTriangleList, 0, ri->primBuffIndex * 4, 0, ri->primBuffIndex * 2 );
+    GFX->setZWriteEnable(false);
 
-         GFX->popWorldMatrix();
+    GFXVertexBuffer* lastVB = NULL;
+    GFXPrimitiveBuffer* lastPB = NULL;
 
-         lastVB = NULL;    // no longer valid, null it
-         lastPB = NULL;    // no longer valid, null it
+    U32 numChanges = 0;
+    U32 numDrawCalls = 0;
 
-         j++;
-         continue;
-      }
+    U32 binSize = mElementList.size();
+    for (U32 j = 0; j < binSize; )
+    {
+        RenderInst* ri = mElementList[j].inst;
+        MatInstance* mat = ri->matInst;
 
-      // .ifl?
-      if( !mat && !ri->particles )
-      {
-         GFX->setTextureStageColorOp( 0, GFXTOPModulate );
-         GFX->setTextureStageColorOp( 1, GFXTOPDisable );
+        U32 matListEnd = j;
 
-         if( ri->translucent )
-         {
-            GFX->setAlphaBlendEnable( true );
-            GFX->setSrcBlend( GFXBlendSrcAlpha );
+        // render these separately...
+        if (ri->type == RenderInstManager::RIT_ObjectTranslucent)
+        {
+            ri->obj->renderObject(ri->state, ri);
 
-            if( ri->transFlags )
-               GFX->setDestBlend( GFXBlendInvSrcAlpha);
+            GFX->setCullMode(GFXCullNone);
+            GFX->setTextureStageAlphaOp(0, GFXTOPModulate);
+            GFX->setTextureStageAlphaOp(1, GFXTOPDisable);
+            GFX->setTextureStageAlphaArg1(0, GFXTATexture);
+            GFX->setTextureStageAlphaArg2(0, GFXTADiffuse);
+            GFX->setTextureStageColorOp(0, GFXTOPModulate);
+            GFX->setTextureStageColorOp(1, GFXTOPDisable);
+            GFX->setAlphaTestEnable(true);
+            GFX->setAlphaRef(1);
+            GFX->setAlphaFunc(GFXCmpGreaterEqual);
+            GFX->setZWriteEnable(false);
+            lastVB = NULL;
+            lastPB = NULL;
+            j++;
+            continue;
+        }
+
+        // handle particles
+        if (ri->particles)
+        {
+            GFX->setTextureStageColorOp(0, GFXTOPModulate);
+            GFX->setTextureStageColorOp(1, GFXTOPDisable);
+            GFX->setZWriteEnable(false);
+
+            GFX->setAlphaBlendEnable(true);
+            GFX->setSrcBlend(GFXBlendSrcAlpha);
+
+            if (ri->transFlags)
+                GFX->setDestBlend(GFXBlendInvSrcAlpha);
             else
-               GFX->setDestBlend( GFXBlendOne );
-         }
+                GFX->setDestBlend(GFXBlendOne);
 
-         GFX->pushWorldMatrix();
-         GFX->setWorldMatrix( *ri->worldXform );
+            GFX->pushWorldMatrix();
+            GFX->setWorldMatrix(*ri->worldXform);
 
-         GFX->setTexture( 0, ri->miscTex );
-         GFX->setPrimitiveBuffer( *ri->primBuff );
-         GFX->setVertexBuffer( *ri->vertBuff );
-         GFX->disableShaders();
-         GFX->setupGenericShaders( GFXDevice::GSModColorTexture );
-         GFX->drawPrimitive( ri->primBuffIndex );
 
-         GFX->popWorldMatrix();
+            GFX->setTexture(0, ri->miscTex);
+            GFX->setPrimitiveBuffer(*ri->primBuff);
+            GFX->setVertexBuffer(*ri->vertBuff);
+            GFX->disableShaders();
+            GFX->setupGenericShaders(GFXDevice::GSModColorTexture);
+            GFX->drawIndexedPrimitive(GFXTriangleList, 0, ri->primBuffIndex * 4, 0, ri->primBuffIndex * 2);
 
-         lastVB = NULL;    // no longer valid, null it
-         lastPB = NULL;    // no longer valid, null it
+            GFX->popWorldMatrix();
 
-         j++;
-         continue;
-      }
+            lastVB = NULL;    // no longer valid, null it
+            lastPB = NULL;    // no longer valid, null it
 
-      setupSGData( ri, sgData );
+            j++;
+            continue;
+        }
 
-	  bool firstmatpass = true;
-      while( mat->setupPass( sgData ) )
-      {
-         ++numChanges;
+        // .ifl?
+        if (!mat && !ri->particles)
+        {
+            GFX->setTextureStageColorOp(0, GFXTOPModulate);
+            GFX->setTextureStageColorOp(1, GFXTOPDisable);
 
-         U32 a;
-         for( a=j; a<binSize; a++ )
-         {
-            RenderInst *passRI = mElementList[a].inst;
-
-            if( mat != passRI->matInst )
+            if (ri->translucent)
             {
-               break;
+                GFX->setAlphaBlendEnable(true);
+                GFX->setSrcBlend(GFXBlendSrcAlpha);
+
+                if (ri->transFlags)
+                    GFX->setDestBlend(GFXBlendInvSrcAlpha);
+                else
+                    GFX->setDestBlend(GFXBlendOne);
             }
 
+            GFX->pushWorldMatrix();
+            GFX->setWorldMatrix(*ri->worldXform);
 
-			// z sorting and stuff is not working in this mgr...
-			// lighting on hold until this gets fixed...
-			/*// don't break the material multipass rendering...
-			if(firstmatpass)
-			{
-				if(passRI->primitiveFirstPass)
-				{
-					bool &firstpass = *passRI->primitiveFirstPass;
-					if(firstpass)
-					{
-						GFX->setAlphaBlendEnable(false);
-						GFX->setSrcBlend(GFXBlendOne);
-						GFX->setDestBlend(GFXBlendZero);
-						firstpass = false;
-					}
-					else
-					{
-						GFX->setAlphaBlendEnable(true);
-						GFX->setSrcBlend(GFXBlendOne);
-						GFX->setDestBlend(GFXBlendOne);
-					}
-				}
-				else
-				{
-					GFX->setAlphaBlendEnable(false);
-					GFX->setSrcBlend(GFXBlendOne);
-					GFX->setDestBlend(GFXBlendZero);
-				}
-			}*/
+            GFX->setTexture(0, ri->miscTex);
+            GFX->setPrimitiveBuffer(*ri->primBuff);
+            GFX->setVertexBuffer(*ri->vertBuff);
+            GFX->disableShaders();
+            GFX->setupGenericShaders(GFXDevice::GSModColorTexture);
+            GFX->drawPrimitive(ri->primBuffIndex);
 
-			setupLights(passRI, sgData);
+            GFX->popWorldMatrix();
 
+            lastVB = NULL;    // no longer valid, null it
+            lastPB = NULL;    // no longer valid, null it
 
-            GFX->setVertexShaderConstF( 0, (float*)passRI->worldXform, 4 );
+            j++;
+            continue;
+        }
 
-            MatrixF objTrans = *passRI->objXform;
-            objTrans.transpose();
-            GFX->setVertexShaderConstF( VC_OBJ_TRANS, (float*)&objTrans, 4 );
-            objTrans.transpose();
-            objTrans.inverse();
+        setupSGData(ri, sgData);
 
-            Point3F eyePos = gRenderInstManager.getCamPos();
-            objTrans.mulP( eyePos );
-            GFX->setVertexShaderConstF( VC_EYE_POS, (float*)&eyePos, 1 );
+        bool firstmatpass = true;
+        while (mat->setupPass(sgData))
+        {
+            ++numChanges;
 
-            //Point3F lightDir = passRI->lightDir;
-            //objTrans.mulV( lightDir );
-            //GFX->setVertexShaderConstF( VC_LIGHT_DIR1, (float*)&lightDir, 1 );
-
-
-            // fill in cubemap data
-            //-------------------------
-            if( mat->hasCubemap() )
+            U32 a;
+            for (a = j; a < binSize; a++)
             {
-               Point3F cubeEyePos = gRenderInstManager.getCamPos() - passRI->objXform->getPosition();
-               GFX->setVertexShaderConstF( VC_CUBE_EYE_POS, (float*)&cubeEyePos, 1 );
+                RenderInst* passRI = mElementList[a].inst;
 
-               MatrixF cubeTrans = *passRI->objXform;
-               cubeTrans.setPosition( Point3F( 0.0, 0.0, 0.0 ) );
-               cubeTrans.transpose();
-               GFX->setVertexShaderConstF( VC_CUBE_TRANS, (float*)&cubeTrans, 3 );
+                if (mat != passRI->matInst)
+                {
+                    break;
+                }
+
+
+                // z sorting and stuff is not working in this mgr...
+                // lighting on hold until this gets fixed...
+                /*// don't break the material multipass rendering...
+                if(firstmatpass)
+                {
+                    if(passRI->primitiveFirstPass)
+                    {
+                        bool &firstpass = *passRI->primitiveFirstPass;
+                        if(firstpass)
+                        {
+                            GFX->setAlphaBlendEnable(false);
+                            GFX->setSrcBlend(GFXBlendOne);
+                            GFX->setDestBlend(GFXBlendZero);
+                            firstpass = false;
+                        }
+                        else
+                        {
+                            GFX->setAlphaBlendEnable(true);
+                            GFX->setSrcBlend(GFXBlendOne);
+                            GFX->setDestBlend(GFXBlendOne);
+                        }
+                    }
+                    else
+                    {
+                        GFX->setAlphaBlendEnable(false);
+                        GFX->setSrcBlend(GFXBlendOne);
+                        GFX->setDestBlend(GFXBlendZero);
+                    }
+                }*/
+
+                setupLights(passRI, sgData);
+
+
+                GFX->setVertexShaderConstF(0, (float*)passRI->worldXform, 4);
+
+                MatrixF objTrans = *passRI->objXform;
+                objTrans.transpose();
+                GFX->setVertexShaderConstF(VC_OBJ_TRANS, (float*)&objTrans, 4);
+                objTrans.transpose();
+                objTrans.inverse();
+
+                Point3F eyePos = gRenderInstManager.getCamPos();
+                objTrans.mulP(eyePos);
+                GFX->setVertexShaderConstF(VC_EYE_POS, (float*)&eyePos, 1);
+
+                //Point3F lightDir = passRI->lightDir;
+                //objTrans.mulV( lightDir );
+                //GFX->setVertexShaderConstF( VC_LIGHT_DIR1, (float*)&lightDir, 1 );
+
+
+                // fill in cubemap data
+                //-------------------------
+                if (mat->hasCubemap())
+                {
+                    Point3F cubeEyePos = gRenderInstManager.getCamPos() - passRI->objXform->getPosition();
+                    GFX->setVertexShaderConstF(VC_CUBE_EYE_POS, (float*)&cubeEyePos, 1);
+
+                    MatrixF cubeTrans = *passRI->objXform;
+                    cubeTrans.setPosition(Point3F(0.0, 0.0, 0.0));
+                    cubeTrans.transpose();
+                    GFX->setVertexShaderConstF(VC_CUBE_TRANS, (float*)&cubeTrans, 3);
+                }
+
+                // set buffers
+                if (lastVB != passRI->vertBuff->getPointer())
+                {
+                    GFX->setVertexBuffer(*passRI->vertBuff);
+                    lastVB = passRI->vertBuff->getPointer();
+                }
+                if (lastPB != passRI->primBuff->getPointer())
+                {
+                    GFX->setPrimitiveBuffer(*passRI->primBuff);
+                    lastPB = passRI->primBuff->getPointer();
+                }
+
+                // draw it
+                GFX->drawPrimitive(passRI->primBuffIndex);
+
+                ++numDrawCalls;
             }
 
-            // set buffers
-            if( lastVB != passRI->vertBuff->getPointer() )
-            {
-               GFX->setVertexBuffer( *passRI->vertBuff );
-               lastVB = passRI->vertBuff->getPointer();
-            }
-            if( lastPB != passRI->primBuff->getPointer() )
-            {
-               GFX->setPrimitiveBuffer( *passRI->primBuff );
-               lastPB = passRI->primBuff->getPointer();
-            }
+            matListEnd = a;
+            firstmatpass = false;
+        }
 
-            // draw it
-            GFX->drawPrimitive( passRI->primBuffIndex );
+        // force increment if none happened, otherwise go to end of batch
+        j = (j == matListEnd) ? j + 1 : matListEnd;
 
-            ++numDrawCalls;
-         }
-         
-         matListEnd = a;
-		 firstmatpass = false;
-      }
+    }
 
-      // force increment if none happened, otherwise go to end of batch
-      j = ( j == matListEnd ) ? j+1 : matListEnd;
+    GFX->setZEnable(true);
+    GFX->setZWriteEnable(true);
+    GFX->setAlphaTestEnable(false);
+    GFX->setAlphaBlendEnable(false);
 
-   }
-
-   GFX->setZEnable( true );
-   GFX->setZWriteEnable( true );
-   GFX->setAlphaTestEnable( false );
-   GFX->setAlphaBlendEnable( false );
-
-   GFX->popWorldMatrix();
+    GFX->popWorldMatrix();
 }

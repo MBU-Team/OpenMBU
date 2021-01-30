@@ -6,16 +6,16 @@
 #define _GLOWBUFFER_H_
 
 #ifndef _GAMEBASE_H_
-   #include "game/gameBase.h"
+#include "game/gameBase.h"
 #endif
 #ifndef _SHADERDATA_H_
-   #include "materials/shaderData.h"
+#include "materials/shaderData.h"
 #endif
 #ifndef _GFXDEVICE_H_
-   #include "gfx/gfxDevice.h"
+#include "gfx/gfxDevice.h"
 #endif
 #ifndef _GFXTEXTUREHANDLE_H_
-   #include "gfx/gfxTextureHandle.h"
+#include "gfx/gfxTextureHandle.h"
 #endif
 
 
@@ -26,44 +26,44 @@ class GFXVertexBuffer;
 //**************************************************************************
 class GlowBuffer : public SimObject
 {
-   typedef SimObject Parent;
+    typedef SimObject Parent;
 
 private:
-   //--------------------------------------------------------------
-   // Data
-   //--------------------------------------------------------------
-   ShaderData        * mBlurShader;
-   const char        * mBlurShaderName;
-   GFXTexHandle        mSurface[3];
-   S32                 mCallbackHandle;
-   bool                mDisabled;
+    //--------------------------------------------------------------
+    // Data
+    //--------------------------------------------------------------
+    ShaderData* mBlurShader;
+    const char* mBlurShaderName;
+    GFXTexHandle        mSurface[3];
+    S32                 mCallbackHandle;
+    bool                mDisabled;
 
-   GFXVertexBufferHandle<GFXVertexPT> mVertBuff;
+    GFXVertexBufferHandle<GFXVertexPT> mVertBuff;
 
-   void setupOrthoGeometry();
-   MatrixF setupOrthoProjection();
-   void setupRenderStates();
-   void setupPixelOffsets( Point4F offsets, bool horizontal );
-   void blur();
-   static void texManagerCallback( GFXTexCallbackCode code, void *userData );
+    void setupOrthoGeometry();
+    MatrixF setupOrthoProjection();
+    void setupRenderStates();
+    void setupPixelOffsets(Point4F offsets, bool horizontal);
+    void blur();
+    static void texManagerCallback(GFXTexCallbackCode code, void* userData);
 
 public:
-   //--------------------------------------------------------------
-   // Procedures
-   //--------------------------------------------------------------
-   GlowBuffer();
+    //--------------------------------------------------------------
+    // Procedures
+    //--------------------------------------------------------------
+    GlowBuffer();
 
-   static void initPersistFields();
+    static void initPersistFields();
 
-   bool onAdd();
-   void onRemove();
+    bool onAdd();
+    void onRemove();
 
-   void init();
-   void copyToScreen( RectI &viewport );
-   void setAsRenderTarget();
-   bool isDisabled(){ return mDisabled; }
+    void init();
+    void copyToScreen(RectI& viewport);
+    void setAsRenderTarget();
+    bool isDisabled() { return mDisabled; }
 
-   DECLARE_CONOBJECT(GlowBuffer);
+    DECLARE_CONOBJECT(GlowBuffer);
 };
 
 

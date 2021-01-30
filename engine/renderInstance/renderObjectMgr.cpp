@@ -10,13 +10,13 @@
 //-----------------------------------------------------------------------------
 void RenderObjectMgr::render()
 {
-   for( U32 i=0; i<mElementList.size(); i++ )
-   {
-      RenderInst *ri = mElementList[i].inst;
-	  if(ri->type == RenderInstManager::RIT_Shadow)
-         ri->obj->renderShadow( ri->state, ri );
-	  else
-         ri->obj->renderObject( ri->state, ri );
-   }
+    for (U32 i = 0; i < mElementList.size(); i++)
+    {
+        RenderInst* ri = mElementList[i].inst;
+        if (ri->type == RenderInstManager::RIT_Shadow)
+            ri->obj->renderShadow(ri->state, ri);
+        else
+            ri->obj->renderObject(ri->state, ri);
+    }
 
 }

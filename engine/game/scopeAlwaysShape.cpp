@@ -8,23 +8,23 @@
 
 class ScopeAlwaysShape : public StaticShape
 {
-      typedef StaticShape Parent;
+    typedef StaticShape Parent;
 
-   public:
-      ScopeAlwaysShape();
-      static void initPersistFields();
-      DECLARE_CONOBJECT(ScopeAlwaysShape);
+public:
+    ScopeAlwaysShape();
+    static void initPersistFields();
+    DECLARE_CONOBJECT(ScopeAlwaysShape);
 };
 
 ScopeAlwaysShape::ScopeAlwaysShape()
 {
-   mNetFlags.set(Ghostable|ScopeAlways);
-   mTypeMask |= ShadowCasterObjectType;
+    mNetFlags.set(Ghostable | ScopeAlways);
+    mTypeMask |= ShadowCasterObjectType;
 }
 
 void ScopeAlwaysShape::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 }
 
 IMPLEMENT_CO_NETOBJECT_V1(ScopeAlwaysShape);

@@ -11,64 +11,64 @@ IMPLEMENT_CONOBJECT(GuiInspectorTypeEnum);
 
 GuiControl* GuiInspectorTypeEnum::constructEditControl()
 {
-   GuiControl* retCtrl = new GuiPopUpMenuCtrl();
+    GuiControl* retCtrl = new GuiPopUpMenuCtrl();
 
-   // If we couldn't construct the control, bail!
-   if( retCtrl == NULL )
-      return retCtrl;
+    // If we couldn't construct the control, bail!
+    if (retCtrl == NULL)
+        return retCtrl;
 
-   GuiPopUpMenuCtrl *menu = dynamic_cast<GuiPopUpMenuCtrl*>(retCtrl);
+    GuiPopUpMenuCtrl* menu = dynamic_cast<GuiPopUpMenuCtrl*>(retCtrl);
 
-   // Let's make it look pretty.
-   retCtrl->setField( "profile", "InspectorTypeEnumProfile" );
+    // Let's make it look pretty.
+    retCtrl->setField("profile", "InspectorTypeEnumProfile");
 
-   menu->setField("text", getData());
+    menu->setField("text", getData());
 
-   registerEditControl( retCtrl );
+    registerEditControl(retCtrl);
 
-   // Configure it to update our value when the popup is closed
-   char szBuffer[512];
-   dSprintf( szBuffer, 512, "%d.apply(%d.getText());",getId(),menu->getId() );
-   menu->setField("Command", szBuffer );
+    // Configure it to update our value when the popup is closed
+    char szBuffer[512];
+    dSprintf(szBuffer, 512, "%d.apply(%d.getText());", getId(), menu->getId());
+    menu->setField("Command", szBuffer);
 
-   //now add the entries
-   for(S32 i = 0; i < mField->table->size; i++)
-      menu->addEntry(mField->table->table[i].label, mField->table->table[i].index);
+    //now add the entries
+    for (S32 i = 0; i < mField->table->size; i++)
+        menu->addEntry(mField->table->table[i].label, mField->table->table[i].index);
 
-   return retCtrl;
+    return retCtrl;
 }
 
 void GuiInspectorTypeEnum::consoleInit()
 {
-   Parent::consoleInit();
+    Parent::consoleInit();
 
-   ConsoleBaseType::getType(TypeEnum)->setInspectorFieldType("GuiInspectorTypeEnum");
+    ConsoleBaseType::getType(TypeEnum)->setInspectorFieldType("GuiInspectorTypeEnum");
 }
 
-void GuiInspectorTypeEnum::updateValue( StringTableEntry newValue )
+void GuiInspectorTypeEnum::updateValue(StringTableEntry newValue)
 {
-   GuiPopUpMenuCtrl *ctrl = dynamic_cast<GuiPopUpMenuCtrl*>( mEdit );
-   if( ctrl != NULL )
-      ctrl->setText( newValue );
+    GuiPopUpMenuCtrl* ctrl = dynamic_cast<GuiPopUpMenuCtrl*>(mEdit);
+    if (ctrl != NULL)
+        ctrl->setText(newValue);
 }
 
-void GuiInspectorTypeEnum::setData( StringTableEntry data )
+void GuiInspectorTypeEnum::setData(StringTableEntry data)
 {
-   if( mField == NULL || mTarget == NULL )
-      return;
+    if (mField == NULL || mTarget == NULL)
+        return;
 
-   mTarget->setDataField( mField->pFieldname, NULL, data );
+    mTarget->setDataField(mField->pFieldname, NULL, data);
 
-   // Force our edit to update
-   updateValue( data );
+    // Force our edit to update
+    updateValue(data);
 }
 
 StringTableEntry  GuiInspectorTypeEnum::getData()
 {
-   if( mField == NULL || mTarget == NULL )
-      return "";
+    if (mField == NULL || mTarget == NULL)
+        return "";
 
-   return mTarget->getDataField( mField->pFieldname, NULL );
+    return mTarget->getDataField(mField->pFieldname, NULL);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,38 +78,38 @@ IMPLEMENT_CONOBJECT(GuiInspectorTypeCheckBox);
 
 GuiControl* GuiInspectorTypeCheckBox::constructEditControl()
 {
-   GuiControl* retCtrl = new GuiCheckBoxCtrl();
+    GuiControl* retCtrl = new GuiCheckBoxCtrl();
 
-   // If we couldn't construct the control, bail!
-   if( retCtrl == NULL )
-      return retCtrl;
+    // If we couldn't construct the control, bail!
+    if (retCtrl == NULL)
+        return retCtrl;
 
-   GuiCheckBoxCtrl *check = dynamic_cast<GuiCheckBoxCtrl*>(retCtrl);
+    GuiCheckBoxCtrl* check = dynamic_cast<GuiCheckBoxCtrl*>(retCtrl);
 
-   // Let's make it look pretty.
-   retCtrl->setField( "profile", "InspectorTypeCheckboxProfile" );
-   retCtrl->setField( "text", "" );
+    // Let's make it look pretty.
+    retCtrl->setField("profile", "InspectorTypeCheckboxProfile");
+    retCtrl->setField("text", "");
 
-   check->mIndent = 4;
+    check->mIndent = 4;
 
-   retCtrl->setScriptValue( getData() );
+    retCtrl->setScriptValue(getData());
 
-   registerEditControl( retCtrl );
+    registerEditControl(retCtrl);
 
-   // Configure it to update our value when the popup is closed
-   char szBuffer[512];
-   dSprintf( szBuffer, 512, "%d.apply(%d.getValue());",getId(),check->getId() );
-   check->setField("Command", szBuffer );
+    // Configure it to update our value when the popup is closed
+    char szBuffer[512];
+    dSprintf(szBuffer, 512, "%d.apply(%d.getValue());", getId(), check->getId());
+    check->setField("Command", szBuffer);
 
-   return retCtrl;
+    return retCtrl;
 }
 
 
 void GuiInspectorTypeCheckBox::consoleInit()
 {
-   Parent::consoleInit();
+    Parent::consoleInit();
 
-   ConsoleBaseType::getType(TypeBool)->setInspectorFieldType("GuiInspectorTypeCheckBox");
+    ConsoleBaseType::getType(TypeBool)->setInspectorFieldType("GuiInspectorTypeCheckBox");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -119,56 +119,56 @@ IMPLEMENT_CONOBJECT(GuiInspectorTypeGuiProfile);
 
 void GuiInspectorTypeGuiProfile::consoleInit()
 {
-   Parent::consoleInit();
+    Parent::consoleInit();
 
-   ConsoleBaseType::getType(TypeGuiProfile)->setInspectorFieldType("GuiInspectorTypeGuiProfile");
+    ConsoleBaseType::getType(TypeGuiProfile)->setInspectorFieldType("GuiInspectorTypeGuiProfile");
 }
 
-static S32 QSORT_CALLBACK stringCompare(const void *a,const void *b)
+static S32 QSORT_CALLBACK stringCompare(const void* a, const void* b)
 {
-   StringTableEntry sa = *(StringTableEntry*)a;
-   StringTableEntry sb = *(StringTableEntry*)b;
-   return(dStricmp(sb, sa));
+    StringTableEntry sa = *(StringTableEntry*)a;
+    StringTableEntry sb = *(StringTableEntry*)b;
+    return(dStricmp(sb, sa));
 }
 
 GuiControl* GuiInspectorTypeGuiProfile::constructEditControl()
 {
-   GuiControl* retCtrl = new GuiPopUpMenuCtrl();
+    GuiControl* retCtrl = new GuiPopUpMenuCtrl();
 
-   // If we couldn't construct the control, bail!
-   if( retCtrl == NULL )
-      return retCtrl;
+    // If we couldn't construct the control, bail!
+    if (retCtrl == NULL)
+        return retCtrl;
 
-   GuiPopUpMenuCtrl *menu = dynamic_cast<GuiPopUpMenuCtrl*>(retCtrl);
+    GuiPopUpMenuCtrl* menu = dynamic_cast<GuiPopUpMenuCtrl*>(retCtrl);
 
-   // Let's make it look pretty.
-   retCtrl->setField( "profile", "InspectorTypeEnumProfile" );
+    // Let's make it look pretty.
+    retCtrl->setField("profile", "InspectorTypeEnumProfile");
 
-   menu->setField("text", getData());
+    menu->setField("text", getData());
 
-   registerEditControl( retCtrl );
+    registerEditControl(retCtrl);
 
-   // Configure it to update our value when the popup is closed
-   char szBuffer[512];
-   dSprintf( szBuffer, 512, "%d.apply(%d.getText());",getId(),menu->getId() );
-   menu->setField("Command", szBuffer );
+    // Configure it to update our value when the popup is closed
+    char szBuffer[512];
+    dSprintf(szBuffer, 512, "%d.apply(%d.getText());", getId(), menu->getId());
+    menu->setField("Command", szBuffer);
 
-   Vector<StringTableEntry> entries;
+    Vector<StringTableEntry> entries;
 
-   SimGroup * grp = Sim::getGuiDataGroup();
-   for(SimGroup::iterator i = grp->begin(); i != grp->end(); i++)
-   {
-      GuiControlProfile * profile = dynamic_cast<GuiControlProfile *>(*i);
-      if(profile)
-         entries.push_back(profile->getName());
-   }
+    SimGroup* grp = Sim::getGuiDataGroup();
+    for (SimGroup::iterator i = grp->begin(); i != grp->end(); i++)
+    {
+        GuiControlProfile* profile = dynamic_cast<GuiControlProfile*>(*i);
+        if (profile)
+            entries.push_back(profile->getName());
+    }
 
-   // sort the entries
-   dQsort(entries.address(), entries.size(), sizeof(StringTableEntry), stringCompare);
-   for(U32 j = 0; j < entries.size(); j++)
-      menu->addEntry(entries[j], 0);
+    // sort the entries
+    dQsort(entries.address(), entries.size(), sizeof(StringTableEntry), stringCompare);
+    for (U32 j = 0; j < entries.size(); j++)
+        menu->addEntry(entries[j], 0);
 
-   return retCtrl;
+    return retCtrl;
 }
 
 
@@ -179,70 +179,70 @@ IMPLEMENT_CONOBJECT(GuiInspectorTypeFileName);
 
 void GuiInspectorTypeFileName::consoleInit()
 {
-   Parent::consoleInit();
+    Parent::consoleInit();
 
-   ConsoleBaseType::getType(TypeFilename)->setInspectorFieldType("GuiInspectorTypeFileName");
+    ConsoleBaseType::getType(TypeFilename)->setInspectorFieldType("GuiInspectorTypeFileName");
 }
 
 GuiControl* GuiInspectorTypeFileName::constructEditControl()
 {
-   GuiControl* retCtrl = new GuiTextEditCtrl();
+    GuiControl* retCtrl = new GuiTextEditCtrl();
 
-   // If we couldn't construct the control, bail!
-   if( retCtrl == NULL )
-      return retCtrl;
+    // If we couldn't construct the control, bail!
+    if (retCtrl == NULL)
+        return retCtrl;
 
-   // Let's make it look pretty.
-   retCtrl->setField( "profile", "GuiInspectorTextEditProfile" );
+    // Let's make it look pretty.
+    retCtrl->setField("profile", "GuiInspectorTextEditProfile");
 
-   // Don't forget to register ourselves
-   registerEditControl( retCtrl );
+    // Don't forget to register ourselves
+    registerEditControl(retCtrl);
 
-   char szBuffer[512];
-   dSprintf( szBuffer, 512, "%d.apply(%d.getText());",getId(),retCtrl->getId() );
-   retCtrl->setField("AltCommand", szBuffer );
-   retCtrl->setField("Validate", szBuffer );
+    char szBuffer[512];
+    dSprintf(szBuffer, 512, "%d.apply(%d.getText());", getId(), retCtrl->getId());
+    retCtrl->setField("AltCommand", szBuffer);
+    retCtrl->setField("Validate", szBuffer);
 
-   mBrowseButton = new GuiButtonCtrl();
+    mBrowseButton = new GuiButtonCtrl();
 
-   if( mBrowseButton != NULL )
-   {
-      RectI browseRect( Point2I( ( mBounds.point.x + mBounds.extent.x) - 26, mBounds.point.y + 2), Point2I(20, mBounds.extent.y - 4) );
-      char szBuffer[512];
-      dSprintf( szBuffer, 512, "getLoadFilename(\"*.*\", \"%d.apply\", \"%s\");",getId(), getData());
-      mBrowseButton->setField( "Command", szBuffer );
-      mBrowseButton->setField( "text", "..." );
-      mBrowseButton->setField( "Profile", "GuiInspectorTypeFileNameProfile" );
-      mBrowseButton->registerObject();
-      addObject( mBrowseButton );
+    if (mBrowseButton != NULL)
+    {
+        RectI browseRect(Point2I((mBounds.point.x + mBounds.extent.x) - 26, mBounds.point.y + 2), Point2I(20, mBounds.extent.y - 4));
+        char szBuffer[512];
+        dSprintf(szBuffer, 512, "getLoadFilename(\"*.*\", \"%d.apply\", \"%s\");", getId(), getData());
+        mBrowseButton->setField("Command", szBuffer);
+        mBrowseButton->setField("text", "...");
+        mBrowseButton->setField("Profile", "GuiInspectorTypeFileNameProfile");
+        mBrowseButton->registerObject();
+        addObject(mBrowseButton);
 
-      // Position
-      mBrowseButton->resize( browseRect.point, browseRect.extent );
-   }
+        // Position
+        mBrowseButton->resize(browseRect.point, browseRect.extent);
+    }
 
-   return retCtrl;
+    return retCtrl;
 }
 
-void GuiInspectorTypeFileName::resize( const Point2I &newPosition, const Point2I &newExtent )
+void GuiInspectorTypeFileName::resize(const Point2I& newPosition, const Point2I& newExtent)
 {
-   Parent::resize( newPosition, newExtent );
+    Parent::resize(newPosition, newExtent);
 
-   if( mEdit != NULL )
-   {
-      // Calculate Caption Rect
-      RectI captionRect( mBounds.point , Point2I( mFloor( mBounds.extent.x * (F32)( (F32)GuiInspectorField::smCaptionWidth / 100.0 ) ) - 2, mBounds.extent.y ) );
+    if (mEdit != NULL)
+    {
+        // Calculate Caption Rect
+        RectI captionRect(mBounds.point, Point2I(mFloor(mBounds.extent.x * (F32)((F32)GuiInspectorField::smCaptionWidth / 100.0)) - 2, mBounds.extent.y));
 
-      // Calculate Edit Field Rect
-      RectI editFieldRect( Point2I( captionRect.extent.x + 1, 0 ) , Point2I( mBounds.extent.x - ( captionRect.extent.x + 25 ) , mBounds.extent.y ) );
+        // Calculate Edit Field Rect
+        RectI editFieldRect(Point2I(captionRect.extent.x + 1, 0), Point2I(mBounds.extent.x - (captionRect.extent.x + 25), mBounds.extent.y));
 
-      mEdit->resize( editFieldRect.point, editFieldRect.extent );
+        mEdit->resize(editFieldRect.point, editFieldRect.extent);
 
-      if( mBrowseButton != NULL )
-      {
-         RectI browseRect( Point2I( ( mBounds.point.x + mBounds.extent.x) - 26, 2), Point2I(20, mBounds.extent.y - 4) );
-         mBrowseButton->resize( browseRect.point, browseRect.extent );
-      }
-   }
+        if (mBrowseButton != NULL)
+        {
+            RectI browseRect(Point2I((mBounds.point.x + mBounds.extent.x) - 26, 2), Point2I(20, mBounds.extent.y - 4));
+            mBrowseButton->resize(browseRect.point, browseRect.extent);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -252,63 +252,63 @@ IMPLEMENT_CONOBJECT(GuiInspectorTypeColor);
 
 GuiControl* GuiInspectorTypeColor::constructEditControl()
 {
-   GuiControl* retCtrl = new GuiTextEditCtrl();
+    GuiControl* retCtrl = new GuiTextEditCtrl();
 
-   // If we couldn't construct the control, bail!
-   if( retCtrl == NULL )
-      return retCtrl;
+    // If we couldn't construct the control, bail!
+    if (retCtrl == NULL)
+        return retCtrl;
 
-   // Let's make it look pretty.
-   retCtrl->setField( "profile", "GuiInspectorTextEditProfile" );
+    // Let's make it look pretty.
+    retCtrl->setField("profile", "GuiInspectorTextEditProfile");
 
-   // Don't forget to register ourselves
-   registerEditControl( retCtrl );
+    // Don't forget to register ourselves
+    registerEditControl(retCtrl);
 
-   char szBuffer[512];
-   dSprintf( szBuffer, 512, "%d.apply(%d.getText());",getId(), retCtrl->getId() );
-   retCtrl->setField("AltCommand", szBuffer );
-   retCtrl->setField("Validate", szBuffer );
+    char szBuffer[512];
+    dSprintf(szBuffer, 512, "%d.apply(%d.getText());", getId(), retCtrl->getId());
+    retCtrl->setField("AltCommand", szBuffer);
+    retCtrl->setField("Validate", szBuffer);
 
-   mBrowseButton = new GuiButtonCtrl();
+    mBrowseButton = new GuiButtonCtrl();
 
-   if( mBrowseButton != NULL )
-   {
-      RectI browseRect( Point2I( ( mBounds.point.x + mBounds.extent.x) - 26, mBounds.point.y + 2), Point2I(20, mBounds.extent.y - 4) );
-      char szBuffer[512];
-      dSprintf( szBuffer, 512, "%s(\"%s\", \"%d.apply\");", mColorFunction, getData(), getId());
-      mBrowseButton->setField( "Command", szBuffer );
-      mBrowseButton->setField( "text", "..." );
-      mBrowseButton->setField( "Profile", "GuiInspectorTypeFileNameProfile" );
-      mBrowseButton->registerObject();
-      addObject( mBrowseButton );
+    if (mBrowseButton != NULL)
+    {
+        RectI browseRect(Point2I((mBounds.point.x + mBounds.extent.x) - 26, mBounds.point.y + 2), Point2I(20, mBounds.extent.y - 4));
+        char szBuffer[512];
+        dSprintf(szBuffer, 512, "%s(\"%s\", \"%d.apply\");", mColorFunction, getData(), getId());
+        mBrowseButton->setField("Command", szBuffer);
+        mBrowseButton->setField("text", "...");
+        mBrowseButton->setField("Profile", "GuiInspectorTypeFileNameProfile");
+        mBrowseButton->registerObject();
+        addObject(mBrowseButton);
 
-      // Position
-      mBrowseButton->resize( browseRect.point, browseRect.extent );
-   }
+        // Position
+        mBrowseButton->resize(browseRect.point, browseRect.extent);
+    }
 
-   return retCtrl;
+    return retCtrl;
 }
 
-void GuiInspectorTypeColor::resize( const Point2I &newPosition, const Point2I &newExtent )
+void GuiInspectorTypeColor::resize(const Point2I& newPosition, const Point2I& newExtent)
 {
-   Parent::resize( newPosition, newExtent );
+    Parent::resize(newPosition, newExtent);
 
-   if( mEdit != NULL )
-   {
-      // Calculate Caption Rect
-      RectI captionRect( mBounds.point , Point2I( mFloor( mBounds.extent.x * (F32)( (F32)GuiInspectorField::smCaptionWidth / 100.0 ) ) - 2, mBounds.extent.y ) );
+    if (mEdit != NULL)
+    {
+        // Calculate Caption Rect
+        RectI captionRect(mBounds.point, Point2I(mFloor(mBounds.extent.x * (F32)((F32)GuiInspectorField::smCaptionWidth / 100.0)) - 2, mBounds.extent.y));
 
-      // Calculate Edit Field Rect
-      RectI editFieldRect( Point2I( captionRect.extent.x + 1, 0 ) , Point2I( mBounds.extent.x - ( captionRect.extent.x + 25 ) , mBounds.extent.y ) );
+        // Calculate Edit Field Rect
+        RectI editFieldRect(Point2I(captionRect.extent.x + 1, 0), Point2I(mBounds.extent.x - (captionRect.extent.x + 25), mBounds.extent.y));
 
-      mEdit->resize( editFieldRect.point, editFieldRect.extent );
+        mEdit->resize(editFieldRect.point, editFieldRect.extent);
 
-      if( mBrowseButton != NULL )
-      {
-         RectI browseRect( Point2I( ( mBounds.point.x + mBounds.extent.x) - 26, 2), Point2I(20, mBounds.extent.y - 4) );
-         mBrowseButton->resize( browseRect.point, browseRect.extent );
-      }
-   }
+        if (mBrowseButton != NULL)
+        {
+            RectI browseRect(Point2I((mBounds.point.x + mBounds.extent.x) - 26, 2), Point2I(20, mBounds.extent.y - 4));
+            mBrowseButton->resize(browseRect.point, browseRect.extent);
+        }
+    }
 }
 
 
@@ -319,14 +319,14 @@ IMPLEMENT_CONOBJECT(GuiInspectorTypeColorI);
 
 void GuiInspectorTypeColorI::consoleInit()
 {
-   Parent::consoleInit();
+    Parent::consoleInit();
 
-   ConsoleBaseType::getType(TypeColorI)->setInspectorFieldType("GuiInspectorTypeColorI");
+    ConsoleBaseType::getType(TypeColorI)->setInspectorFieldType("GuiInspectorTypeColorI");
 }
 
 GuiInspectorTypeColorI::GuiInspectorTypeColorI()
 {
-   mColorFunction = StringTable->insert("getColorI");
+    mColorFunction = StringTable->insert("getColorI");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -336,14 +336,14 @@ IMPLEMENT_CONOBJECT(GuiInspectorTypeColorF);
 
 void GuiInspectorTypeColorF::consoleInit()
 {
-   Parent::consoleInit();
+    Parent::consoleInit();
 
-   ConsoleBaseType::getType(TypeColorF)->setInspectorFieldType("GuiInspectorTypeColorF");
+    ConsoleBaseType::getType(TypeColorF)->setInspectorFieldType("GuiInspectorTypeColorF");
 }
 
 GuiInspectorTypeColorF::GuiInspectorTypeColorF()
 {
-   mColorFunction = StringTable->insert("getColorF");
+    mColorFunction = StringTable->insert("getColorF");
 }
 
 

@@ -72,7 +72,7 @@ class LightManager
                                                 ///
                                                 ///  @param lightingScene  Set to true if we're calculating
                                                 ///                        lightmaps.
-	  const LightInfo& getLight(U32 light) { return *mLights[light]; }
+      const LightInfo& getLight(U32 light) { return *mLights[light]; }
       void addLight(LightInfo *);
       void removeLight(LightInfo *);
 

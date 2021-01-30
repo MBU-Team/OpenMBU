@@ -20,7 +20,7 @@
 #include "lightingSystem/sgLighting.h"
 #include "sim/netConnection.h"
 
-extern void wireCube(F32 size,Point3F pos);
+extern void wireCube(F32 size, Point3F pos);
 
 static const U32 sgAllowedDynamicTypes = 0xffffff;
 
@@ -30,33 +30,33 @@ IMPLEMENT_CO_DATABLOCK_V1(StaticShapeData);
 
 StaticShapeData::StaticShapeData()
 {
-   dynamicTypeField     = 0;
+    dynamicTypeField = 0;
 
-   genericShadowLevel = StaticShape_GenericShadowLevel;
-   noShadowLevel = StaticShape_NoShadowLevel;
-   noIndividualDamage = false;
+    genericShadowLevel = StaticShape_GenericShadowLevel;
+    noShadowLevel = StaticShape_NoShadowLevel;
+    noIndividualDamage = false;
 }
 
 void StaticShapeData::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 
-   addField("noIndividualDamage",   TypeBool, Offset(noIndividualDamage,   StaticShapeData));
-   addField("dynamicType",          TypeS32,  Offset(dynamicTypeField,     StaticShapeData));
+    addField("noIndividualDamage", TypeBool, Offset(noIndividualDamage, StaticShapeData));
+    addField("dynamicType", TypeS32, Offset(dynamicTypeField, StaticShapeData));
 }
 
 void StaticShapeData::packData(BitStream* stream)
 {
-   Parent::packData(stream);
-   stream->writeFlag(noIndividualDamage);
-   stream->write(dynamicTypeField);
+    Parent::packData(stream);
+    stream->writeFlag(noIndividualDamage);
+    stream->write(dynamicTypeField);
 }
 
 void StaticShapeData::unpackData(BitStream* stream)
 {
-   Parent::unpackData(stream);
-   noIndividualDamage = stream->readFlag();
-   stream->read(&dynamicTypeField);
+    Parent::unpackData(stream);
+    noIndividualDamage = stream->readFlag();
+    stream->read(&dynamicTypeField);
 }
 
 
@@ -66,10 +66,10 @@ IMPLEMENT_CO_NETOBJECT_V1(StaticShape);
 
 StaticShape::StaticShape()
 {
-   overrideOptions = false;
+    overrideOptions = false;
 
-   mTypeMask |= StaticShapeObjectType | StaticObjectType;
-   mDataBlock = 0;
+    mTypeMask |= StaticShapeObjectType | StaticObjectType;
+    mDataBlock = 0;
 }
 
 StaticShape::~StaticShape()
@@ -81,56 +81,56 @@ StaticShape::~StaticShape()
 
 void StaticShape::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 
-   addGroup("Lighting");
-   addField("receiveSunLight", TypeBool, Offset(receiveSunLight, SceneObject));
-   addField("receiveLMLighting", TypeBool, Offset(receiveLMLighting, SceneObject));
-   //addField("useAdaptiveSelfIllumination", TypeBool, Offset(useAdaptiveSelfIllumination, SceneObject));
-   addField("useCustomAmbientLighting", TypeBool, Offset(useCustomAmbientLighting, SceneObject));
-   //addField("customAmbientSelfIllumination", TypeBool, Offset(customAmbientForSelfIllumination, SceneObject));
-   addField("customAmbientLighting", TypeColorF, Offset(customAmbientLighting, SceneObject));
-   addField("lightGroupName", TypeString, Offset(lightGroupName, SceneObject));
-   endGroup("Lighting");
+    addGroup("Lighting");
+    addField("receiveSunLight", TypeBool, Offset(receiveSunLight, SceneObject));
+    addField("receiveLMLighting", TypeBool, Offset(receiveLMLighting, SceneObject));
+    //addField("useAdaptiveSelfIllumination", TypeBool, Offset(useAdaptiveSelfIllumination, SceneObject));
+    addField("useCustomAmbientLighting", TypeBool, Offset(useCustomAmbientLighting, SceneObject));
+    //addField("customAmbientSelfIllumination", TypeBool, Offset(customAmbientForSelfIllumination, SceneObject));
+    addField("customAmbientLighting", TypeColorF, Offset(customAmbientLighting, SceneObject));
+    addField("lightGroupName", TypeString, Offset(lightGroupName, SceneObject));
+    endGroup("Lighting");
 }
 
 void StaticShape::inspectPostApply()
 {
-   if(isServerObject()) {
-      setMaskBits(0xffffffff);
-   }
+    if (isServerObject()) {
+        setMaskBits(0xffffffff);
+    }
 }
 
 bool StaticShape::onAdd()
 {
-   if(!Parent::onAdd() || !mDataBlock)
-      return false;
+    if (!Parent::onAdd() || !mDataBlock)
+        return false;
 
-   // We need to modify our type mask based on what our datablock says...
-   mTypeMask |= (mDataBlock->dynamicTypeField & sgAllowedDynamicTypes);
+    // We need to modify our type mask based on what our datablock says...
+    mTypeMask |= (mDataBlock->dynamicTypeField & sgAllowedDynamicTypes);
 
-   addToScene();
+    addToScene();
 
-   if (isServerObject())
-      scriptOnAdd();
-   return true;
+    if (isServerObject())
+        scriptOnAdd();
+    return true;
 }
 
 bool StaticShape::onNewDataBlock(GameBaseData* dptr)
 {
-   mDataBlock = dynamic_cast<StaticShapeData*>(dptr);
-   if (!mDataBlock || !Parent::onNewDataBlock(dptr))
-      return false;
+    mDataBlock = dynamic_cast<StaticShapeData*>(dptr);
+    if (!mDataBlock || !Parent::onNewDataBlock(dptr))
+        return false;
 
-   scriptOnNewDataBlock();
-   return true;
+    scriptOnNewDataBlock();
+    return true;
 }
 
 void StaticShape::onRemove()
 {
-   scriptOnRemove();
-   removeFromScene();
-   Parent::onRemove();
+    scriptOnRemove();
+    removeFromScene();
+    Parent::onRemove();
 }
 
 
@@ -138,146 +138,146 @@ void StaticShape::onRemove()
 
 void StaticShape::processTick(const Move* move)
 {
-   Parent::processTick(move);
+    Parent::processTick(move);
 
-   // Image Triggers
-   if (move && mDamageState == Enabled) {
-      setImageTriggerState(0,move->trigger[0]);
-      setImageTriggerState(1,move->trigger[1]);
-   }
+    // Image Triggers
+    if (move && mDamageState == Enabled) {
+        setImageTriggerState(0, move->trigger[0]);
+        setImageTriggerState(1, move->trigger[1]);
+    }
 
-   if (isMounted()) {
-      MatrixF mat;
-      mMount.object->getMountTransform(mMount.node,&mat);
-      Parent::setTransform(mat);
-      Parent::setRenderTransform(mat);
-   }
+    if (isMounted()) {
+        MatrixF mat;
+        mMount.object->getMountTransform(mMount.node, &mat);
+        Parent::setTransform(mat);
+        Parent::setRenderTransform(mat);
+    }
 }
 
 void StaticShape::interpolateTick(F32)
 {
-   if (isMounted()) {
-      MatrixF mat;
-      mMount.object->getRenderMountTransform(mMount.node,&mat);
-      Parent::setRenderTransform(mat);
-   }
+    if (isMounted()) {
+        MatrixF mat;
+        mMount.object->getRenderMountTransform(mMount.node, &mat);
+        Parent::setRenderTransform(mat);
+    }
 }
 
 void StaticShape::setTransform(const MatrixF& mat)
 {
-   Parent::setTransform(mat);
-   setMaskBits(PositionMask);
+    Parent::setTransform(mat);
+    setMaskBits(PositionMask);
 }
 
-void StaticShape::onUnmount(ShapeBase*,S32)
+void StaticShape::onUnmount(ShapeBase*, S32)
 {
-   // Make sure the client get's the final server pos.
-   setMaskBits(PositionMask);
-}
-
-
-//----------------------------------------------------------------------------
-
-U32 StaticShape::packUpdate(NetConnection *connection, U32 mask, BitStream *bstream)
-{
-   U32 retMask = Parent::packUpdate(connection,mask,bstream);
-   if (bstream->writeFlag(mask & PositionMask)) {
-
-      // Write the transform (do _not_ use writeAffineTransform.  Since this is a static
-      //  object, the transform must be RIGHT THE *&)*$&^ ON or it will goof up the
-      //  syncronization between the client and the server.
-      mathWrite(*bstream,mObjToWorld);
-      mathWrite(*bstream, mObjScale);
-   }
-
-   // powered?
-   bstream->writeFlag(mPowered);
-
-	// these fields are static, so try to avoid transmit
-	if(bstream->writeFlag(mask & advancedStaticOptionsMask))
-	{
-		bstream->writeFlag(receiveSunLight);
-		bstream->writeFlag(useAdaptiveSelfIllumination);
-		bstream->writeFlag(useCustomAmbientLighting);
-		bstream->writeFlag(customAmbientForSelfIllumination);
-		bstream->write(customAmbientLighting);
-		bstream->writeFlag(receiveLMLighting);
-		if(isServerObject())
-		{
-			lightIds.clear();
-			findLightGroup(connection);
-	
-		    U32 maxcount = getMin(lightIds.size(), SG_TSSTATIC_MAX_LIGHTS);
-		    bstream->writeInt(maxcount, SG_TSSTATIC_MAX_LIGHT_SHIFT);
-		    for(U32 i=0; i<maxcount; i++)
-			{
-			    bstream->writeInt(lightIds[i], NetConnection::GhostIdBitSize);
-			}
-		}
-		else
-		{
-			// recording demo...
-		    U32 maxcount = getMin(lightIds.size(), SG_TSSTATIC_MAX_LIGHTS);
-		    bstream->writeInt(maxcount, SG_TSSTATIC_MAX_LIGHT_SHIFT);
-		    for(U32 i=0; i<maxcount; i++)
-			{
-			    bstream->writeInt(lightIds[i], NetConnection::GhostIdBitSize);
-			}
-		}
-	}
-
-   return retMask;
-}
-
-void StaticShape::unpackUpdate(NetConnection *connection, BitStream *bstream)
-{
-   Parent::unpackUpdate(connection,bstream);
-   if (bstream->readFlag()) {
-      MatrixF mat;
-//      bstream->readAffineTransform(&mat);
-      mathRead(*bstream,&mat);
-      Parent::setTransform(mat);
-      Parent::setRenderTransform(mat);
-
-      VectorF scale;
-      mathRead(*bstream, &scale);
-      setScale(scale);
-   }
-
-   // powered?
-   mPowered = bstream->readFlag();
-
-	if(bstream->readFlag())
-	{
-		receiveSunLight = bstream->readFlag();
-		useAdaptiveSelfIllumination = bstream->readFlag();
-		useCustomAmbientLighting = bstream->readFlag();
-		customAmbientForSelfIllumination = bstream->readFlag();
-		bstream->read(&customAmbientLighting);
-		receiveLMLighting = bstream->readFlag();
-
-		U32 count = bstream->readInt(SG_TSSTATIC_MAX_LIGHT_SHIFT);
-		lightIds.clear();
-		for(U32 i=0; i<count; i++)
-		{
-			S32 id = bstream->readInt(NetConnection::GhostIdBitSize);
-			lightIds.push_back(id);
-		}
-	}
+    // Make sure the client get's the final server pos.
+    setMaskBits(PositionMask);
 }
 
 
 //----------------------------------------------------------------------------
-ConsoleMethod( StaticShape, setPoweredState, void, 3, 3, "(bool isPowered)")
+
+U32 StaticShape::packUpdate(NetConnection* connection, U32 mask, BitStream* bstream)
 {
-   if(!object->isServerObject())
-      return;
-   object->setPowered(dAtob(argv[2]));
+    U32 retMask = Parent::packUpdate(connection, mask, bstream);
+    if (bstream->writeFlag(mask & PositionMask)) {
+
+        // Write the transform (do _not_ use writeAffineTransform.  Since this is a static
+        //  object, the transform must be RIGHT THE *&)*$&^ ON or it will goof up the
+        //  syncronization between the client and the server.
+        mathWrite(*bstream, mObjToWorld);
+        mathWrite(*bstream, mObjScale);
+    }
+
+    // powered?
+    bstream->writeFlag(mPowered);
+
+    // these fields are static, so try to avoid transmit
+    if (bstream->writeFlag(mask & advancedStaticOptionsMask))
+    {
+        bstream->writeFlag(receiveSunLight);
+        bstream->writeFlag(useAdaptiveSelfIllumination);
+        bstream->writeFlag(useCustomAmbientLighting);
+        bstream->writeFlag(customAmbientForSelfIllumination);
+        bstream->write(customAmbientLighting);
+        bstream->writeFlag(receiveLMLighting);
+        if (isServerObject())
+        {
+            lightIds.clear();
+            findLightGroup(connection);
+
+            U32 maxcount = getMin(lightIds.size(), SG_TSSTATIC_MAX_LIGHTS);
+            bstream->writeInt(maxcount, SG_TSSTATIC_MAX_LIGHT_SHIFT);
+            for (U32 i = 0; i < maxcount; i++)
+            {
+                bstream->writeInt(lightIds[i], NetConnection::GhostIdBitSize);
+            }
+        }
+        else
+        {
+            // recording demo...
+            U32 maxcount = getMin(lightIds.size(), SG_TSSTATIC_MAX_LIGHTS);
+            bstream->writeInt(maxcount, SG_TSSTATIC_MAX_LIGHT_SHIFT);
+            for (U32 i = 0; i < maxcount; i++)
+            {
+                bstream->writeInt(lightIds[i], NetConnection::GhostIdBitSize);
+            }
+        }
+    }
+
+    return retMask;
 }
 
-ConsoleMethod( StaticShape, getPoweredState, bool, 2, 2, "")
+void StaticShape::unpackUpdate(NetConnection* connection, BitStream* bstream)
 {
-   if(!object->isServerObject())
-      return(false);
-   return(object->isPowered());
+    Parent::unpackUpdate(connection, bstream);
+    if (bstream->readFlag()) {
+        MatrixF mat;
+        //      bstream->readAffineTransform(&mat);
+        mathRead(*bstream, &mat);
+        Parent::setTransform(mat);
+        Parent::setRenderTransform(mat);
+
+        VectorF scale;
+        mathRead(*bstream, &scale);
+        setScale(scale);
+    }
+
+    // powered?
+    mPowered = bstream->readFlag();
+
+    if (bstream->readFlag())
+    {
+        receiveSunLight = bstream->readFlag();
+        useAdaptiveSelfIllumination = bstream->readFlag();
+        useCustomAmbientLighting = bstream->readFlag();
+        customAmbientForSelfIllumination = bstream->readFlag();
+        bstream->read(&customAmbientLighting);
+        receiveLMLighting = bstream->readFlag();
+
+        U32 count = bstream->readInt(SG_TSSTATIC_MAX_LIGHT_SHIFT);
+        lightIds.clear();
+        for (U32 i = 0; i < count; i++)
+        {
+            S32 id = bstream->readInt(NetConnection::GhostIdBitSize);
+            lightIds.push_back(id);
+        }
+    }
+}
+
+
+//----------------------------------------------------------------------------
+ConsoleMethod(StaticShape, setPoweredState, void, 3, 3, "(bool isPowered)")
+{
+    if (!object->isServerObject())
+        return;
+    object->setPowered(dAtob(argv[2]));
+}
+
+ConsoleMethod(StaticShape, getPoweredState, bool, 2, 2, "")
+{
+    if (!object->isServerObject())
+        return(false);
+    return(object->isPowered());
 }

@@ -27,10 +27,10 @@
 
 class MissionMarkerData : public ShapeBaseData
 {
-   private:
-      typedef ShapeBaseData      Parent;
-   public:
-      DECLARE_CONOBJECT(MissionMarkerData);
+private:
+    typedef ShapeBaseData      Parent;
+public:
+    DECLARE_CONOBJECT(MissionMarkerData);
 };
 
 //------------------------------------------------------------------------------
@@ -38,40 +38,40 @@ class MissionMarkerData : public ShapeBaseData
 //------------------------------------------------------------------------------
 class MissionMarker : public ShapeBase
 {
-   private:
-      typedef ShapeBase          Parent;
+private:
+    typedef ShapeBase          Parent;
 
-   protected:
-      enum MaskBits {
-         PositionMask = Parent::NextFreeMask,
-         NextFreeMask = Parent::NextFreeMask << 1
-      };
-      MissionMarkerData *        mDataBlock;
-      bool                       mAddedToScene;
+protected:
+    enum MaskBits {
+        PositionMask = Parent::NextFreeMask,
+        NextFreeMask = Parent::NextFreeMask << 1
+    };
+    MissionMarkerData* mDataBlock;
+    bool                       mAddedToScene;
 
-   public:
-      MissionMarker();
+public:
+    MissionMarker();
 
-      // GameBase
-      bool onNewDataBlock(GameBaseData *dptr);
+    // GameBase
+    bool onNewDataBlock(GameBaseData* dptr);
 
-      // SceneObject
-      void setTransform(const MatrixF &mat);
+    // SceneObject
+    void setTransform(const MatrixF& mat);
 
-      // SimObject
-      bool onAdd();
-      void onRemove();
-      void onEditorEnable();
-      void onEditorDisable();
+    // SimObject
+    bool onAdd();
+    void onRemove();
+    void onEditorEnable();
+    void onEditorDisable();
 
-      void inspectPostApply();
+    void inspectPostApply();
 
-      // NetObject
-      U32  packUpdate  (NetConnection *conn, U32 mask, BitStream *stream);
-      void unpackUpdate(NetConnection *conn,           BitStream *stream);
+    // NetObject
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 
-      DECLARE_CONOBJECT(MissionMarker);
-      static void initPersistFields();
+    DECLARE_CONOBJECT(MissionMarker);
+    static void initPersistFields();
 };
 
 //------------------------------------------------------------------------------
@@ -80,47 +80,47 @@ class MissionMarker : public ShapeBase
 class WayPoint;
 class WayPointTeam
 {
-   public:
-      WayPointTeam();
+public:
+    WayPointTeam();
 
-      S32         mTeamId;
-      WayPoint *  mWayPoint;
+    S32         mTeamId;
+    WayPoint* mWayPoint;
 };
-DefineConsoleType( TypeWayPointTeam )
+DefineConsoleType(TypeWayPointTeam)
 
 class WayPoint : public MissionMarker
 {
-   private:
-      typedef MissionMarker         Parent;
+private:
+    typedef MissionMarker         Parent;
 
-   public:
-      enum WayPointMasks {
-         UpdateNameMask    = Parent::NextFreeMask,
-         UpdateTeamMask    = Parent::NextFreeMask << 1,
-         UpdateHiddenMask  = Parent::NextFreeMask << 2,
-         NextFreeMask      = Parent::NextFreeMask << 3
-      };
+public:
+    enum WayPointMasks {
+        UpdateNameMask = Parent::NextFreeMask,
+        UpdateTeamMask = Parent::NextFreeMask << 1,
+        UpdateHiddenMask = Parent::NextFreeMask << 2,
+        NextFreeMask = Parent::NextFreeMask << 3
+    };
 
-      WayPoint();
+    WayPoint();
 
-      // ShapeBase: only ever added to scene if in the editor
-      void setHidden(bool hidden);
+    // ShapeBase: only ever added to scene if in the editor
+    void setHidden(bool hidden);
 
-      // SimObject
-      bool onAdd();
-      void inspectPostApply();
+    // SimObject
+    bool onAdd();
+    void inspectPostApply();
 
-      // NetObject
-      U32 packUpdate(NetConnection *conn, U32 mask, BitStream *stream);
-      void unpackUpdate(NetConnection *conn, BitStream *stream);
+    // NetObject
+    U32 packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 
-      // field data
-      StringTableEntry              mName;
-      WayPointTeam                  mTeam;
+    // field data
+    StringTableEntry              mName;
+    WayPointTeam                  mTeam;
 
-      static void initPersistFields();
+    static void initPersistFields();
 
-      DECLARE_CONOBJECT(WayPoint);
+    DECLARE_CONOBJECT(WayPoint);
 };
 
 //------------------------------------------------------------------------------
@@ -129,35 +129,35 @@ class WayPoint : public MissionMarker
 
 class SpawnSphere : public MissionMarker
 {
-   private:
-      typedef MissionMarker         Parent;
-      static Sphere                 smSphere;
+private:
+    typedef MissionMarker         Parent;
+    static Sphere                 smSphere;
 
-   public:
-      SpawnSphere();
+public:
+    SpawnSphere();
 
-      // SimObject
-      bool onAdd();
-      void inspectPostApply();
+    // SimObject
+    bool onAdd();
+    void inspectPostApply();
 
-      // NetObject
-      enum SpawnSphereMasks {
-         UpdateSphereMask = Parent::NextFreeMask,
-         NextFreeMask = Parent::NextFreeMask << 1
-      };
+    // NetObject
+    enum SpawnSphereMasks {
+        UpdateSphereMask = Parent::NextFreeMask,
+        NextFreeMask = Parent::NextFreeMask << 1
+    };
 
-      U32  packUpdate  (NetConnection *conn, U32 mask, BitStream *stream);
-      void unpackUpdate(NetConnection *conn,           BitStream *stream);
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 
-      // field data
-      F32      mRadius;
-      F32      mSphereWeight;
-      F32      mIndoorWeight;
-      F32      mOutdoorWeight;
+    // field data
+    F32      mRadius;
+    F32      mSphereWeight;
+    F32      mIndoorWeight;
+    F32      mOutdoorWeight;
 
-      static void initPersistFields();
+    static void initPersistFields();
 
-      DECLARE_CONOBJECT(SpawnSphere);
+    DECLARE_CONOBJECT(SpawnSphere);
 };
 
 #endif

@@ -15,34 +15,34 @@ class TSDecalMesh
 {
 public:
 
-   /// The mesh that we are decaling
-   TSMesh * targetMesh;
+    /// The mesh that we are decaling
+    TSMesh* targetMesh;
 
-   /// @name Topology
-   /// @{
-   ToolVector<TSDrawPrimitive> primitives;
-   ToolVector<U16> indices;
-   /// @}
+    /// @name Topology
+    /// @{
+    ToolVector<TSDrawPrimitive> primitives;
+    ToolVector<U16> indices;
+    /// @}
 
-   /// @name Render Data
-   /// indexed by decal frame...
-   /// @{
-   ToolVector<S32> startPrimitive;
-   ToolVector<Point4F> texgenS;
-   ToolVector<Point4F> texgenT;
-   /// @}
+    /// @name Render Data
+    /// indexed by decal frame...
+    /// @{
+    ToolVector<S32> startPrimitive;
+    ToolVector<Point4F> texgenS;
+    ToolVector<Point4F> texgenT;
+    /// @}
 
-   /// We only allow 1 material per decal...
-   S32 materialIndex;
+    /// We only allow 1 material per decal...
+    S32 materialIndex;
 
-   /// override render function
-   void render(S32 frame, S32 decalFrame, TSMaterialList *);
+    /// override render function
+    void render(S32 frame, S32 decalFrame, TSMaterialList*);
 
-   void disassemble();
-   void assemble(bool skip);
+    void disassemble();
+    void assemble(bool skip);
 
-   static void initDecalMaterials();
-   static void resetDecalMaterials();
+    static void initDecalMaterials();
+    static void resetDecalMaterials();
 };
 
 

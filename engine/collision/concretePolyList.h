@@ -19,48 +19,48 @@
 /// @see AbstractPolyList
 class ConcretePolyList : public AbstractPolyList
 {
-  public:
+public:
 
-   struct Poly {
-      PlaneF plane;
-      SceneObject* object;
-      U32 material;
-      U32 vertexStart;
-      U32 vertexCount;
-      U32 surfaceKey;
-   };
+    struct Poly {
+        PlaneF plane;
+        SceneObject* object;
+        U32 material;
+        U32 vertexStart;
+        U32 vertexCount;
+        U32 surfaceKey;
+    };
 
-   typedef Vector<PlaneF> PlaneList;
-   typedef Vector<Point3F> VertexList;
-   typedef Vector<Poly>   PolyList;
-   typedef Vector<U32>    IndexList;
+    typedef Vector<PlaneF> PlaneList;
+    typedef Vector<Point3F> VertexList;
+    typedef Vector<Poly>   PolyList;
+    typedef Vector<U32>    IndexList;
 
-   PolyList   mPolyList;
-   VertexList mVertexList;
-   IndexList  mIndexList;
+    PolyList   mPolyList;
+    VertexList mVertexList;
+    IndexList  mIndexList;
 
-   PlaneList  mPolyPlaneList;
+    PlaneList  mPolyPlaneList;
 
-  public:
-   ConcretePolyList();
-   ~ConcretePolyList();
-   void clear();
+public:
+    ConcretePolyList();
+    ~ConcretePolyList();
+    void clear();
 
-   // Virtual methods
-   U32  addPoint(const Point3F& p);
-   U32  addPlane(const PlaneF& plane);
-   void begin(U32 material,U32 surfaceKey);
-   void plane(U32 v1,U32 v2,U32 v3);
-   void plane(const PlaneF& p);
-   void plane(const U32 index);
-   void vertex(U32 vi);
-   void end();
+    // Virtual methods
+    U32  addPoint(const Point3F& p);
+    U32  addPlane(const PlaneF& plane);
+    void begin(U32 material, U32 surfaceKey);
+    void plane(U32 v1, U32 v2, U32 v3);
+    void plane(const PlaneF& p);
+    void plane(const U32 index);
+    void vertex(U32 vi);
+    void end();
 
-   void render();
-   bool isEmpty() const;
+    void render();
+    bool isEmpty() const;
 
-  protected:
-   const PlaneF& getIndexedPlane(const U32 index);
+protected:
+    const PlaneF& getIndexedPlane(const U32 index);
 };
 
 #endif  // _H_EARLYOUTPOLYLIST_

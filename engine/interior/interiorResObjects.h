@@ -29,102 +29,102 @@ class Stream;
 
 struct InteriorDictEntry
 {
-   char name[32];
-   char value[32];
+    char name[32];
+    char value[32];
 };
 
 class InteriorDict : public Vector<InteriorDictEntry>
 {
 public:
-   void read(Stream& stream);
-   void write(Stream& stream) const;
+    void read(Stream& stream);
+    void write(Stream& stream) const;
 };
 
 class InteriorResTrigger
 {
-  public:
-   enum Constants {
-      MaxNameChars = 255
-   };
+public:
+    enum Constants {
+        MaxNameChars = 255
+    };
 
-   char       mName[MaxNameChars+1];
-   StringTableEntry mDataBlock;
-   InteriorDict mDictionary;
+    char       mName[MaxNameChars + 1];
+    StringTableEntry mDataBlock;
+    InteriorDict mDictionary;
 
-   Point3F    mOffset;
-   Polyhedron mPolyhedron;
+    Point3F    mOffset;
+    Polyhedron mPolyhedron;
 
-  public:
-   InteriorResTrigger() { }
+public:
+    InteriorResTrigger() { }
 
-   bool read(Stream& stream);
-   bool write(Stream& stream) const;
+    bool read(Stream& stream);
+    bool write(Stream& stream) const;
 };
 
 class InteriorPathFollower
 {
-  public:
-   struct WayPoint {
-      Point3F  pos;
-      QuatF    rot;
-      U32      msToNext;
-      U32      smoothingType;
-   };
-   StringTableEntry         mName;
-   StringTableEntry         mDataBlock;
-   U32                      mInteriorResIndex;
-   U32                      mPathIndex;
-   Point3F                  mOffset;
-   Vector<U32>              mTriggerIds;
-   Vector<WayPoint>         mWayPoints;
-   U32                      mTotalMS;
-   InteriorDict mDictionary;
+public:
+    struct WayPoint {
+        Point3F  pos;
+        QuatF    rot;
+        U32      msToNext;
+        U32      smoothingType;
+    };
+    StringTableEntry         mName;
+    StringTableEntry         mDataBlock;
+    U32                      mInteriorResIndex;
+    U32                      mPathIndex;
+    Point3F                  mOffset;
+    Vector<U32>              mTriggerIds;
+    Vector<WayPoint>         mWayPoints;
+    U32                      mTotalMS;
+    InteriorDict mDictionary;
 
-  public:
-   InteriorPathFollower();
-   ~InteriorPathFollower();
+public:
+    InteriorPathFollower();
+    ~InteriorPathFollower();
 
-   bool read(Stream& stream);
-   bool write(Stream& stream) const;
+    bool read(Stream& stream);
+    bool write(Stream& stream) const;
 };
 
 
 class AISpecialNode
 {
-   public:
-      enum
-      {
-         chute = 0,
-      };
+public:
+    enum
+    {
+        chute = 0,
+    };
 
-   public:
-      StringTableEntry  mName;
-      Point3F           mPos;
-      //U32               mType;
+public:
+    StringTableEntry  mName;
+    Point3F           mPos;
+    //U32               mType;
 
-  public:
-   AISpecialNode();
-   ~AISpecialNode();
+public:
+    AISpecialNode();
+    ~AISpecialNode();
 
-   bool read(Stream& stream);
-   bool write(Stream& stream) const;
+    bool read(Stream& stream);
+    bool write(Stream& stream) const;
 
 };
 
 class ItrGameEntity
 {
-   public:
-      StringTableEntry  mDataBlock;
-      StringTableEntry  mGameClass;
-      Point3F           mPos;
-      InteriorDict mDictionary;
+public:
+    StringTableEntry  mDataBlock;
+    StringTableEntry  mGameClass;
+    Point3F           mPos;
+    InteriorDict mDictionary;
 
-  public:
-   ItrGameEntity();
-   ~ItrGameEntity();
+public:
+    ItrGameEntity();
+    ~ItrGameEntity();
 
-   bool read(Stream& stream);
-   bool write(Stream& stream) const;
+    bool read(Stream& stream);
+    bool write(Stream& stream) const;
 
 };
 

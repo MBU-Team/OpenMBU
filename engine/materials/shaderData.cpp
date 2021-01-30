@@ -8,7 +8,7 @@
 #include "core/bitStream.h"
 #include "gfx/gfxShaderMgr.h"
 
-IMPLEMENT_CONOBJECT( ShaderData );
+IMPLEMENT_CONOBJECT(ShaderData);
 
 //****************************************************************************
 // Shader Data
@@ -20,14 +20,14 @@ IMPLEMENT_CONOBJECT( ShaderData );
 //----------------------------------------------------------------------------
 ShaderData::ShaderData()
 {
-   DXVertexShaderName = NULL;
-   DXPixelShaderName = NULL;
+    DXVertexShaderName = NULL;
+    DXPixelShaderName = NULL;
 
-   OGLVertexShaderName = NULL;
-   OGLPixelShaderName = NULL;
+    OGLVertexShaderName = NULL;
+    OGLPixelShaderName = NULL;
 
-   pixVersion = 1.0;
-   shader = NULL;
+    pixVersion = 1.0;
+    shader = NULL;
 }
 
 //--------------------------------------------------------------------------
@@ -35,15 +35,15 @@ ShaderData::ShaderData()
 //--------------------------------------------------------------------------
 void ShaderData::initPersistFields()
 {
-   Parent::initPersistFields();
-   
-   addField("DXVertexShaderFile",  TypeString, Offset(DXVertexShaderName,   ShaderData));
-   addField("DXPixelShaderFile",   TypeFilename, Offset(DXPixelShaderName,  ShaderData));
+    Parent::initPersistFields();
 
-   addField("OGLVertexShaderFile",  TypeString, Offset(OGLVertexShaderName,   ShaderData));
-   addField("OGLPixelShaderFile",   TypeFilename, Offset(OGLPixelShaderName,  ShaderData));
+    addField("DXVertexShaderFile", TypeString, Offset(DXVertexShaderName, ShaderData));
+    addField("DXPixelShaderFile", TypeFilename, Offset(DXPixelShaderName, ShaderData));
 
-   addField("pixVersion",  TypeF32, Offset(pixVersion,   ShaderData));
+    addField("OGLVertexShaderFile", TypeString, Offset(OGLVertexShaderName, ShaderData));
+    addField("OGLPixelShaderFile", TypeFilename, Offset(OGLPixelShaderName, ShaderData));
+
+    addField("pixVersion", TypeF32, Offset(pixVersion, ShaderData));
 }
 
 //--------------------------------------------------------------------------
@@ -51,12 +51,12 @@ void ShaderData::initPersistFields()
 //--------------------------------------------------------------------------
 bool ShaderData::onAdd()
 {
-   if( !Parent::onAdd() )
-      return false;
+    if (!Parent::onAdd())
+        return false;
 
-   initShader();
+    initShader();
 
-   return true;
+    return true;
 }
 
 //--------------------------------------------------------------------------
@@ -64,26 +64,26 @@ bool ShaderData::onAdd()
 //--------------------------------------------------------------------------
 bool ShaderData::initShader()
 {
-   if( shader ) return true;
+    if (shader) return true;
 
-   // get shader type from GFX layer
-   switch( GFX->getAdapterType() )
-   {
-      case Direct3D9:
-      {
-         shader = GFX->createShader( (char*)DXVertexShaderName, 
-                                     (char*)DXPixelShaderName, 
-                                     pixVersion );
-         break;
-      }
-      
-      default:
-         return false;
-   }
-   
-   
-   
-   return true;
+    // get shader type from GFX layer
+    switch (GFX->getAdapterType())
+    {
+    case Direct3D9:
+    {
+        shader = GFX->createShader((char*)DXVertexShaderName,
+            (char*)DXPixelShaderName,
+            pixVersion);
+        break;
+    }
+
+    default:
+        return false;
+    }
+
+
+
+    return true;
 
 }
 
@@ -92,24 +92,24 @@ bool ShaderData::initShader()
 //--------------------------------------------------------------------------
 bool ShaderData::reloadShader()
 {
-   if(!shader) return false;
+    if (!shader) return false;
 
-   GFX->destroyShader(shader);
-   shader = NULL;
+    GFX->destroyShader(shader);
+    shader = NULL;
 
-   // get shader type from GFX layer
-   switch(GFX->getAdapterType()) {
-      case Direct3D9: {
-         shader = GFX->createShader((char*)DXVertexShaderName, 
-            (char*)DXPixelShaderName, 
+    // get shader type from GFX layer
+    switch (GFX->getAdapterType()) {
+    case Direct3D9: {
+        shader = GFX->createShader((char*)DXVertexShaderName,
+            (char*)DXPixelShaderName,
             pixVersion);
-         break;
-                      }
-      default:
-         return false;
-   }
+        break;
+    }
+    default:
+        return false;
+    }
 
-   return true;
+    return true;
 }
 
 //--------------------------------------------------------------------------
@@ -117,12 +117,12 @@ bool ShaderData::reloadShader()
 //--------------------------------------------------------------------------
 void ShaderData::destroyShader()
 {
-   if(!shader) return;
+    if (!shader) return;
 
-   GFX->destroyShader(shader);
-   shader = NULL;
+    GFX->destroyShader(shader);
+    shader = NULL;
 
-   return;
+    return;
 }
 
 //--------------------------------------------------------------------------
@@ -130,5 +130,5 @@ void ShaderData::destroyShader()
 //--------------------------------------------------------------------------
 ConsoleMethod(ShaderData, reload, bool, 2, 2, "Rebuilds both the vertex and pixel shaders.")
 {
-   return object->reloadShader();
+    return object->reloadShader();
 }

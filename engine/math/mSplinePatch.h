@@ -25,30 +25,30 @@
 class SplCtrlPts
 {
 private:
-   /// Vector of points in the spline
-   Vector <Point3F > mPoints;
+    /// Vector of points in the spline
+    Vector <Point3F > mPoints;
 
 public:
 
-   SplCtrlPts();
-   virtual ~SplCtrlPts();
+    SplCtrlPts();
+    virtual ~SplCtrlPts();
 
-   /// Gets the number of points in the spline
-   U32               getNumPoints(){ return mPoints.size(); }
-   /// Gets the point at the given index
-   /// @param pointNum index of the point in question
-   const Point3F *   getPoint( U32 pointNum );
-   /// Sets a point at the given index to the point given
-   /// @param point New value for the given point
-   /// @param pointNum index of the given point
-   void              setPoint( Point3F &point, U32 pointNum );
-   /// Adds a point to the end of the spline
-   /// @param point New point to be added
-   void              addPoint( Point3F &point );
-   /// Clears existing points and enters new points
-   /// @param pts List of points to be added
-   /// @param num Number of points to be added
-   void              submitPoints( Point3F *pts, U32 num );
+    /// Gets the number of points in the spline
+    U32               getNumPoints() { return mPoints.size(); }
+    /// Gets the point at the given index
+    /// @param pointNum index of the point in question
+    const Point3F* getPoint(U32 pointNum);
+    /// Sets a point at the given index to the point given
+    /// @param point New value for the given point
+    /// @param pointNum index of the given point
+    void              setPoint(Point3F& point, U32 pointNum);
+    /// Adds a point to the end of the spline
+    /// @param point New point to be added
+    void              addPoint(Point3F& point);
+    /// Clears existing points and enters new points
+    /// @param pts List of points to be added
+    /// @param num Number of points to be added
+    void              submitPoints(Point3F* pts, U32 num);
 };
 
 //------------------------------------------------------------------------------
@@ -78,31 +78,31 @@ public:
 class SplinePatch
 {
 private:
-   U32         mNumReqControlPoints;
-   SplCtrlPts  mControlPoints;
+    U32         mNumReqControlPoints;
+    SplCtrlPts  mControlPoints;
 
 protected:
-   void     setNumReqControlPoints( U32 numPts ){ mNumReqControlPoints = numPts; }
+    void     setNumReqControlPoints(U32 numPts) { mNumReqControlPoints = numPts; }
 
 public:
 
-   SplinePatch();
+    SplinePatch();
 
-   U32                  getNumReqControlPoints(){ return mNumReqControlPoints; }
-   const SplCtrlPts *   getControlPoints(){ return &mControlPoints; }
-   const Point3F *      getControlPoint( U32 index ){ return mControlPoints.getPoint( index ); }
+    U32                  getNumReqControlPoints() { return mNumReqControlPoints; }
+    const SplCtrlPts* getControlPoints() { return &mControlPoints; }
+    const Point3F* getControlPoint(U32 index) { return mControlPoints.getPoint(index); }
 
-   // virtuals
-   virtual void         setControlPoint( Point3F &point, int index );
-   /// If you have a preconstructed "SplCtrlPts" class, submit it with this function.
-   /// @see SplCtrlPts
-   virtual void         submitControlPoints( SplCtrlPts &points ){ mControlPoints = points; }
-   /// Recalc function.  Do not call this ever - only SplineUtil needs this.
-   /// @see SplineUtil
-   virtual void         calc( F32 t, Point3F &result) = 0;
-   /// Recalc function.  Do not call this ever - only SplineUtil needs this.
-   /// @see SplineUtil
-   virtual void         calc( Point3F *points, F32 t, Point3F &result ) = 0;
+    // virtuals
+    virtual void         setControlPoint(Point3F& point, int index);
+    /// If you have a preconstructed "SplCtrlPts" class, submit it with this function.
+    /// @see SplCtrlPts
+    virtual void         submitControlPoints(SplCtrlPts& points) { mControlPoints = points; }
+    /// Recalc function.  Do not call this ever - only SplineUtil needs this.
+    /// @see SplineUtil
+    virtual void         calc(F32 t, Point3F& result) = 0;
+    /// Recalc function.  Do not call this ever - only SplineUtil needs this.
+    /// @see SplineUtil
+    virtual void         calc(Point3F* points, F32 t, Point3F& result) = 0;
 
 };
 

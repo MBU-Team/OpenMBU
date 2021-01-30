@@ -14,115 +14,115 @@
 //-----------------------------------------------------------------------------
 // Constructor - with TextureObject
 //-----------------------------------------------------------------------------
-GFXTexHandle::GFXTexHandle( GFXTextureObject *obj )
+GFXTexHandle::GFXTexHandle(GFXTextureObject* obj)
 {
-   RefObjectRef::set(obj);
+    RefObjectRef::set(obj);
 }
 
 //-----------------------------------------------------------------------------
 // Constructor - with TexHandle
 //-----------------------------------------------------------------------------
-GFXTexHandle::GFXTexHandle( const GFXTexHandle &handle )
+GFXTexHandle::GFXTexHandle(const GFXTexHandle& handle)
 {
-   RefObjectRef::set(handle.getPointer());
+    RefObjectRef::set(handle.getPointer());
 }
 
 //-----------------------------------------------------------------------------
 // Constructor - load a texture
 //-----------------------------------------------------------------------------
-GFXTexHandle::GFXTexHandle( StringTableEntry texName, GFXTextureProfile *profile )
+GFXTexHandle::GFXTexHandle(StringTableEntry texName, GFXTextureProfile* profile)
 {
-   AssertFatal( texName, "Texture name is NULL" );
-   RefObjectRef::set( GFX->mTextureManager->createTexture( texName, profile ) );
+    AssertFatal(texName, "Texture name is NULL");
+    RefObjectRef::set(GFX->mTextureManager->createTexture(texName, profile));
 }
 
 //-----------------------------------------------------------------------------
 // set - load a texture
 //-----------------------------------------------------------------------------
-bool GFXTexHandle::set( StringTableEntry texName, GFXTextureProfile *profile )
+bool GFXTexHandle::set(StringTableEntry texName, GFXTextureProfile* profile)
 {
-   AssertFatal( texName, "Texture name is NULL" );
-   RefObjectRef::set( GFX->mTextureManager->createTexture( texName, profile ) );
-   return isValid();
+    AssertFatal(texName, "Texture name is NULL");
+    RefObjectRef::set(GFX->mTextureManager->createTexture(texName, profile));
+    return isValid();
 }
 
 //-----------------------------------------------------------------------------
 // Constructor - register a bitmap
 //-----------------------------------------------------------------------------
-GFXTexHandle::GFXTexHandle( GBitmap *bmp, GFXTextureProfile *profile, bool deleteBmp )
+GFXTexHandle::GFXTexHandle(GBitmap* bmp, GFXTextureProfile* profile, bool deleteBmp)
 {
-   AssertFatal( bmp, "Bitmap is NULL" );
-   RefObjectRef::set( GFX->mTextureManager->createTexture( bmp, profile, deleteBmp ) );
+    AssertFatal(bmp, "Bitmap is NULL");
+    RefObjectRef::set(GFX->mTextureManager->createTexture(bmp, profile, deleteBmp));
 }
 
 //-----------------------------------------------------------------------------
 // set - register a bitmap
 //-----------------------------------------------------------------------------
-bool GFXTexHandle::set( GBitmap *bmp, GFXTextureProfile *profile, bool deleteBmp  )
+bool GFXTexHandle::set(GBitmap* bmp, GFXTextureProfile* profile, bool deleteBmp)
 {
-   AssertFatal( bmp, "Bitmap is NULL" );
-   RefObjectRef::set( GFX->mTextureManager->createTexture( bmp, profile, deleteBmp ) );
-   return getPointer();
+    AssertFatal(bmp, "Bitmap is NULL");
+    RefObjectRef::set(GFX->mTextureManager->createTexture(bmp, profile, deleteBmp));
+    return getPointer();
 }
 
 //-----------------------------------------------------------------------------
 // Constructor - register a bitmap
 //-----------------------------------------------------------------------------
-GFXTexHandle::GFXTexHandle( DDSFile *dds, GFXTextureProfile *profile, bool deleteDDS )
+GFXTexHandle::GFXTexHandle(DDSFile* dds, GFXTextureProfile* profile, bool deleteDDS)
 {
-   AssertFatal( dds, "Bitmap is NULL" );
-   RefObjectRef::set( GFX->mTextureManager->createTexture( dds, profile, deleteDDS ) );
+    AssertFatal(dds, "Bitmap is NULL");
+    RefObjectRef::set(GFX->mTextureManager->createTexture(dds, profile, deleteDDS));
 }
 
 //-----------------------------------------------------------------------------
 // set - register a bitmap
 //-----------------------------------------------------------------------------
-bool GFXTexHandle::set( DDSFile *dds, GFXTextureProfile *profile, bool deleteDDS )
+bool GFXTexHandle::set(DDSFile* dds, GFXTextureProfile* profile, bool deleteDDS)
 {
-   AssertFatal( dds, "Bitmap is NULL" );
-   RefObjectRef::set( GFX->mTextureManager->createTexture( dds, profile, deleteDDS ) );
-   return getPointer();
+    AssertFatal(dds, "Bitmap is NULL");
+    RefObjectRef::set(GFX->mTextureManager->createTexture(dds, profile, deleteDDS));
+    return getPointer();
 }
 
 //-----------------------------------------------------------------------------
 // Constructor - register an anonymous texture
 //-----------------------------------------------------------------------------
-GFXTexHandle::GFXTexHandle( U32 width, U32 height, GFXFormat format, GFXTextureProfile *profile, U32 numMipLevels)
+GFXTexHandle::GFXTexHandle(U32 width, U32 height, GFXFormat format, GFXTextureProfile* profile, U32 numMipLevels)
 {
-   RefObjectRef::set( GFX->mTextureManager->createTexture( width, height, format, profile, numMipLevels ) );
+    RefObjectRef::set(GFX->mTextureManager->createTexture(width, height, format, profile, numMipLevels));
 }
 
 //-----------------------------------------------------------------------------
 // set - register an anonymous texture
 //-----------------------------------------------------------------------------
-bool GFXTexHandle::set( U32 width, U32 height, GFXFormat format, GFXTextureProfile *profile, U32 numMipLevels)
+bool GFXTexHandle::set(U32 width, U32 height, GFXFormat format, GFXTextureProfile* profile, U32 numMipLevels)
 {
-   RefObjectRef::set( GFX->mTextureManager->createTexture( width, height, format, profile, numMipLevels ) );
-   return getPointer();
+    RefObjectRef::set(GFX->mTextureManager->createTexture(width, height, format, profile, numMipLevels));
+    return getPointer();
 }
 
 //-----------------------------------------------------------------------------
 // set - register an anonymous volume texture
 //-----------------------------------------------------------------------------
-bool GFXTexHandle::set( U32 width, U32 height, U32 depth, void *pixels, GFXFormat format, GFXTextureProfile *profile, U32 numMipLevels )
+bool GFXTexHandle::set(U32 width, U32 height, U32 depth, void* pixels, GFXFormat format, GFXTextureProfile* profile, U32 numMipLevels)
 {
-   RefObjectRef::set( GFX->mTextureManager->createTexture( width, height, depth, pixels, format, profile ) );
-   return getPointer();
+    RefObjectRef::set(GFX->mTextureManager->createTexture(width, height, depth, pixels, format, profile));
+    return getPointer();
 }
 
 //-----------------------------------------------------------------------------
 // getBitmap
 //-----------------------------------------------------------------------------
-GBitmap * GFXTexHandle::getBitmap()
+GBitmap* GFXTexHandle::getBitmap()
 {
-   if( getPointer() )
-   {
-      return getPointer()->getBitmap();
-   }
-   else
-   {
-      return NULL;
-   }
+    if (getPointer())
+    {
+        return getPointer()->getBitmap();
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -130,6 +130,6 @@ GBitmap * GFXTexHandle::getBitmap()
 //-----------------------------------------------------------------------------
 void GFXTexHandle::refresh()
 {
-   GFX->mTextureManager->reloadTexture( getPointer() );
+    GFX->mTextureManager->reloadTexture(getPointer());
 }
 

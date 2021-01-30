@@ -13,11 +13,11 @@
 class RenderTranslucentMgr : public RenderElemMgr
 {
 private:
-   void setupSGData( RenderInst *ri, SceneGraphData &data );
-   void addElement( RenderInst *inst );
+    void setupSGData(RenderInst* ri, SceneGraphData& data);
+    void addElement(RenderInst* inst);
 
 public:
-   virtual void render();
+    virtual void render();
 };
 
 

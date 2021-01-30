@@ -21,56 +21,56 @@
 //-----------------------------------------------------------------------------
 void ScreenShotD3D::captureStandard()
 {
-   LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice *>(GFX)->getDevice();
+    LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice*>(GFX)->getDevice();
 
-   Point2I size = GFX->getVideoMode().resolution;
+    Point2I size = GFX->getVideoMode().resolution;
 
-   // set up the 2 copy surfaces
-   GFXTexHandle tex[2];
-   IDirect3DSurface9 *surface[2];
-   
-   tex[0].set( size.x, size.y, GFXFormatR8G8B8X8, &GFXDefaultRenderTargetProfile );
-   tex[1].set( size.x, size.y, GFXFormatR8G8B8X8, &GFXSystemMemProfile );
-   
-   // grab the back buffer
-   IDirect3DSurface9 * backBuffer;
-   D3DDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer );
+    // set up the 2 copy surfaces
+    GFXTexHandle tex[2];
+    IDirect3DSurface9* surface[2];
 
-   // grab the top level surface of tex 0
-   GFXD3DTextureObject *to = (GFXD3DTextureObject *) &(*tex[0]);
-   D3DAssert( to->get2DTex()->GetSurfaceLevel( 0, &surface[0] ), NULL );
+    tex[0].set(size.x, size.y, GFXFormatR8G8B8X8, &GFXDefaultRenderTargetProfile);
+    tex[1].set(size.x, size.y, GFXFormatR8G8B8X8, &GFXSystemMemProfile);
 
-   // use StretchRect because it allows a copy from a multisample surface
-   // to a normal rendertarget surface
-   D3DDevice->StretchRect( backBuffer, NULL, surface[0], NULL, D3DTEXF_NONE );
+    // grab the back buffer
+    IDirect3DSurface9* backBuffer;
+    D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
 
-   // grab the top level surface of tex 1
-   to = (GFXD3DTextureObject *) &(*tex[1]);
-   D3DAssert( to->get2DTex()->GetSurfaceLevel( 0, &surface[1] ), NULL );
+    // grab the top level surface of tex 0
+    GFXD3DTextureObject* to = (GFXD3DTextureObject*)&(*tex[0]);
+    D3DAssert(to->get2DTex()->GetSurfaceLevel(0, &surface[0]), NULL);
 
-   // copy the data from the render target to the system memory texture
-   D3DDevice->GetRenderTargetData( surface[0], surface[1] );
-   
-   // save it off
-   D3DXIMAGE_FILEFORMAT format;
-   
-   if( dStrstr( (const char*)mFilename, ".jpg" ) )
-   {
-      format = D3DXIFF_JPG;
-   }
-   else
-   {
-      format = D3DXIFF_PNG;
-   }
-   
-   D3DXSaveSurfaceToFile( mFilename, format, surface[1], NULL, NULL );
+    // use StretchRect because it allows a copy from a multisample surface
+    // to a normal rendertarget surface
+    D3DDevice->StretchRect(backBuffer, NULL, surface[0], NULL, D3DTEXF_NONE);
 
-   // release the COM pointers
-   surface[0]->Release();
-   surface[1]->Release();
-   backBuffer->Release();
+    // grab the top level surface of tex 1
+    to = (GFXD3DTextureObject*)&(*tex[1]);
+    D3DAssert(to->get2DTex()->GetSurfaceLevel(0, &surface[1]), NULL);
 
-   mPending = false;
+    // copy the data from the render target to the system memory texture
+    D3DDevice->GetRenderTargetData(surface[0], surface[1]);
+
+    // save it off
+    D3DXIMAGE_FILEFORMAT format;
+
+    if (dStrstr((const char*)mFilename, ".jpg"))
+    {
+        format = D3DXIFF_JPG;
+    }
+    else
+    {
+        format = D3DXIFF_PNG;
+    }
+
+    D3DXSaveSurfaceToFile(mFilename, format, surface[1], NULL, NULL);
+
+    // release the COM pointers
+    surface[0]->Release();
+    surface[1]->Release();
+    backBuffer->Release();
+
+    mPending = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -90,113 +90,113 @@ void ScreenShotD3D::captureStandard()
 //-----------------------------------------------------------------------------
 void ScreenShotD3D::captureCustom()
 {
-   LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice *>(GFX)->getDevice();
+    LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice*>(GFX)->getDevice();
 
-   const F32 width = 512;
-   const F32 height = 512;
+    const F32 width = 512;
+    const F32 height = 512;
 
-   
-   // set up render target surface
-   GFXTexHandle tex;
-   IDirect3DSurface9 *surface;
-   
-   tex.set( width, height, GFXFormatR8G8B8X8, &GFXDefaultRenderTargetProfile );
-   GFXD3DTextureObject *to = (GFXD3DTextureObject *) &(*tex);
-   D3DAssert( to->get2DTex()->GetSurfaceLevel( 0, &surface ), NULL );
-   
-   // store current matrices
-   GFX->pushWorldMatrix();
-   MatrixF proj = GFX->getProjectionMatrix();
 
-   // store previous depth buffer
-   IDirect3DSurface9 *prevDepthSurface;
-   D3DDevice->GetDepthStencilSurface( &prevDepthSurface );
+    // set up render target surface
+    GFXTexHandle tex;
+    IDirect3DSurface9* surface;
 
-   // set projection to 90 degrees vertical and horizontal
-   MatrixF matProj;
-   D3DXMatrixPerspectiveFovRH( (D3DXMATRIX *) &matProj, D3DX_PI/2, 1.0f, 0.1f, 1000.0f );
-   matProj.transpose();
+    tex.set(width, height, GFXFormatR8G8B8X8, &GFXDefaultRenderTargetProfile);
+    GFXD3DTextureObject* to = (GFXD3DTextureObject*)&(*tex);
+    D3DAssert(to->get2DTex()->GetSurfaceLevel(0, &surface), NULL);
 
-   // set projection to match Torque space
-   MatrixF rotMat(EulerF( (M_PI / 2.0), 0.0, 0.0));
+    // store current matrices
+    GFX->pushWorldMatrix();
+    MatrixF proj = GFX->getProjectionMatrix();
 
-   matProj.mul(rotMat);
-   GFX->setProjectionMatrix(matProj);
-   
-   // grab camera transform from tsCtrl
-   GuiTSCtrl *tsCtrl;
-   tsCtrl = dynamic_cast<GuiTSCtrl*>( Sim::findObject("PlayGui") );
+    // store previous depth buffer
+    IDirect3DSurface9* prevDepthSurface;
+    D3DDevice->GetDepthStencilSurface(&prevDepthSurface);
 
-   CameraQuery query;
-   tsCtrl->processCameraQuery( &query );
-   MatrixF camMatrix = query.cameraMatrix.inverse();
+    // set projection to 90 degrees vertical and horizontal
+    MatrixF matProj;
+    D3DXMatrixPerspectiveFovRH((D3DXMATRIX*)&matProj, D3DX_PI / 2, 1.0f, 0.1f, 1000.0f);
+    matProj.transpose();
 
-   GFX->setWorldMatrix( camMatrix );
+    // set projection to match Torque space
+    MatrixF rotMat(EulerF((M_PI / 2.0), 0.0, 0.0));
 
-   // setup viewport
-   RectI oldVp = GFX->getViewport();
-   RectI vp( Point2I(0,0), Point2I( width, height ) );
-   GFX->setViewport( vp );
+    matProj.mul(rotMat);
+    GFX->setProjectionMatrix(matProj);
 
-   // render a frame
-   GFX->pushActiveRenderSurfaces();
-   GFX->setActiveRenderSurface( tex );
-   GFX->setZEnable( true );
-   GFX->beginScene();
-   GFX->clear( GFXClearZBuffer | GFXClearStencil | GFXClearTarget, ColorI( 255, 0, 255 ), 1.0f, 0 );
+    // grab camera transform from tsCtrl
+    GuiTSCtrl* tsCtrl;
+    tsCtrl = dynamic_cast<GuiTSCtrl*>(Sim::findObject("PlayGui"));
 
-   getCurrentClientSceneGraph()->renderScene( InteriorObjectType );
+    CameraQuery query;
+    tsCtrl->processCameraQuery(&query);
+    MatrixF camMatrix = query.cameraMatrix.inverse();
 
-   GFX->endScene();
-   GFX->popActiveRenderSurfaces();
+    GFX->setWorldMatrix(camMatrix);
 
-   // save the screenshot
-   D3DXSaveSurfaceToFile( dT( "testScreen.png" ), D3DXIFF_PNG, surface, NULL, NULL );
+    // setup viewport
+    RectI oldVp = GFX->getViewport();
+    RectI vp(Point2I(0, 0), Point2I(width, height));
+    GFX->setViewport(vp);
 
-   // cleanup
-   surface->Release();
-   GFX->popWorldMatrix();
-   GFX->setProjectionMatrix( proj );
+    // render a frame
+    GFX->pushActiveRenderSurfaces();
+    GFX->setActiveRenderSurface(tex);
+    GFX->setZEnable(true);
+    GFX->beginScene();
+    GFX->clear(GFXClearZBuffer | GFXClearStencil | GFXClearTarget, ColorI(255, 0, 255), 1.0f, 0);
+
+    getCurrentClientSceneGraph()->renderScene(InteriorObjectType);
+
+    GFX->endScene();
+    GFX->popActiveRenderSurfaces();
+
+    // save the screenshot
+    D3DXSaveSurfaceToFile(dT("testScreen.png"), D3DXIFF_PNG, surface, NULL, NULL);
+
+    // cleanup
+    surface->Release();
+    GFX->popWorldMatrix();
+    GFX->setProjectionMatrix(proj);
 }
 
-void saveRT_to_bitmap(GFXTexHandle &texToSave, const char *filename)
+void saveRT_to_bitmap(GFXTexHandle& texToSave, const char* filename)
 {
-   LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice *>(GFX)->getDevice();
+    LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice*>(GFX)->getDevice();
 
-   Point2I size(texToSave.getWidth(), texToSave.getHeight());
+    Point2I size(texToSave.getWidth(), texToSave.getHeight());
 
-   GFXTexHandle sysTex;
-   sysTex.set( size.x, size.y, GFXFormatR8G8B8X8, &GFXSystemMemProfile );
+    GFXTexHandle sysTex;
+    sysTex.set(size.x, size.y, GFXFormatR8G8B8X8, &GFXSystemMemProfile);
 
-   IDirect3DSurface9 *surface[2];
+    IDirect3DSurface9* surface[2];
 
-   // grab the top level surface of tex to save
-   GFXD3DTextureObject *to = (GFXD3DTextureObject *) &(*texToSave);
-   D3DAssert( to->get2DTex()->GetSurfaceLevel( 0, &surface[0] ), NULL );
+    // grab the top level surface of tex to save
+    GFXD3DTextureObject* to = (GFXD3DTextureObject*)&(*texToSave);
+    D3DAssert(to->get2DTex()->GetSurfaceLevel(0, &surface[0]), NULL);
 
-   // grab the top level surface of tex 1
-   to = (GFXD3DTextureObject *) &(*sysTex);
-   D3DAssert( to->get2DTex()->GetSurfaceLevel( 0, &surface[1] ), NULL );
+    // grab the top level surface of tex 1
+    to = (GFXD3DTextureObject*)&(*sysTex);
+    D3DAssert(to->get2DTex()->GetSurfaceLevel(0, &surface[1]), NULL);
 
-   // copy the data from the render target to the system memory texture
-   D3DDevice->GetRenderTargetData( surface[0], surface[1] );
+    // copy the data from the render target to the system memory texture
+    D3DDevice->GetRenderTargetData(surface[0], surface[1]);
 
-   // save it off
-   D3DXIMAGE_FILEFORMAT format;
+    // save it off
+    D3DXIMAGE_FILEFORMAT format;
 
-   if( dStrstr( (const char*)filename, ".jpg" ) )
-   {
-      format = D3DXIFF_JPG;
-   }
-   else
-   {
-      format = D3DXIFF_PNG;
-   }
+    if (dStrstr((const char*)filename, ".jpg"))
+    {
+        format = D3DXIFF_JPG;
+    }
+    else
+    {
+        format = D3DXIFF_PNG;
+    }
 
-   D3DXSaveSurfaceToFileA( filename, format, surface[1], NULL, NULL );
+    D3DXSaveSurfaceToFileA(filename, format, surface[1], NULL, NULL);
 
-   // release the COM pointers
-   surface[0]->Release();
-   surface[1]->Release();
+    // release the COM pointers
+    surface[0]->Release();
+    surface[1]->Release();
 }
 

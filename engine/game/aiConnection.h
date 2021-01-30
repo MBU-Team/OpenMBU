@@ -17,22 +17,22 @@
 
 class AIConnection : public GameConnection
 {
-   typedef GameConnection Parent;
+    typedef GameConnection Parent;
 
 protected:
-   Move mMove;
+    Move mMove;
 
 public:
-   AIConnection();
-   DECLARE_CONOBJECT( AIConnection );
+    AIConnection();
+    DECLARE_CONOBJECT(AIConnection);
 
-   // Interface
-   const Move& getMove();
-   void setMove(Move *m);
+    // Interface
+    const Move& getMove();
+    void setMove(Move* m);
 
-   // GameConnection overrides
-   void clearMoves(U32 n);
-   virtual void getMoveList(Move **,U32 *numMoves);
+    // GameConnection overrides
+    void clearMoves(U32 n);
+    virtual void getMoveList(Move**, U32* numMoves);
 };
 
 

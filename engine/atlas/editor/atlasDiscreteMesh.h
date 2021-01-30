@@ -25,61 +25,61 @@
 class AtlasDiscreteMesh
 {
 public:
-   AtlasDiscreteMesh();
-   ~AtlasDiscreteMesh();
+    AtlasDiscreteMesh();
+    ~AtlasDiscreteMesh();
 
-   U32 mVertexCount;
-   Point3F *mPos;
-   Point3F *mNormal;
-   Point2F *mTex;
+    U32 mVertexCount;
+    Point3F* mPos;
+    Point3F* mNormal;
+    Point2F* mTex;
 
-   bool mHasMorphData;
-   Point3F *mPosMorphOffset;
-   Point2F *mTexMorphOffset;
+    bool mHasMorphData;
+    Point3F* mPosMorphOffset;
+    Point2F* mTexMorphOffset;
 
-   U32 mIndexCount;
-   U16 *mIndex;
+    U32 mIndexCount;
+    U16* mIndex;
 
-   /// If we own data, then we'll delete it when we get destructed.
-   bool mOwnsData;
+    /// If we own data, then we'll delete it when we get destructed.
+    bool mOwnsData;
 
-   /// Make a new mesh that contains a simplified version of this one,
-   /// decimated to target faces.
-   ///
-   /// Contains proper morph data.
-   AtlasDiscreteMesh *decimate(U32 target);
+    /// Make a new mesh that contains a simplified version of this one,
+    /// decimated to target faces.
+    ///
+    /// Contains proper morph data.
+    AtlasDiscreteMesh* decimate(U32 target);
 
-   /// Combine a set of meshes into a new one. This just appends all their
-   /// data together. A good followup step is to do a weld.
-   void combine(Vector<AtlasDiscreteMesh*> &meshes);
+    /// Combine a set of meshes into a new one. This just appends all their
+    /// data together. A good followup step is to do a weld.
+    void combine(Vector<AtlasDiscreteMesh*>& meshes);
 
-   /// Merge verts within threshold units of one another. 
-   void weld(F32 posThreshold, F32 texThreshold = 0.001f);
+    /// Merge verts within threshold units of one another. 
+    void weld(F32 posThreshold, F32 texThreshold = 0.001f);
 
-   ///  Apply the given remap table to our indices.
-   void remap(const Vector<U16> &remapTable);
+    ///  Apply the given remap table to our indices.
+    void remap(const Vector<U16>& remapTable);
 
-   /// Condition a mesh for better rendering.
-   ///
-   /// Stuff like:
-   ///      - Optimize for vertex caching.
-   ///      - Optimize so verts are present in order they were first drawn.
-   ///      - and whatever else we can think of.
-   void conditionMesh();
-   
-   /// Transform the texture coordinates by multiply and add on each axis.
-   void transformTexCoords(Point2F s, Point2F t);
+    /// Condition a mesh for better rendering.
+    ///
+    /// Stuff like:
+    ///      - Optimize for vertex caching.
+    ///      - Optimize so verts are present in order they were first drawn.
+    ///      - and whatever else we can think of.
+    void conditionMesh();
 
-   /// Transform the positions by multiply and add on x and y axes.
-   void transformPositions(Point2F s, Point2F t);
+    /// Transform the texture coordinates by multiply and add on each axis.
+    void transformTexCoords(Point2F s, Point2F t);
 
-   /// Clip against a half-plane. Pass it pointers to to ADMs and it will
-   /// fill them. If one is empty then it that side's data will be discarded.
-   ///
-   /// Properly generates interpolated texcoords. Ignores morph data.
-   void clipAgainstPlane(PlaneF p, AtlasDiscreteMesh *front, AtlasDiscreteMesh *back);
+    /// Transform the positions by multiply and add on x and y axes.
+    void transformPositions(Point2F s, Point2F t);
 
-   Box3F calcBounds();
+    /// Clip against a half-plane. Pass it pointers to to ADMs and it will
+    /// fill them. If one is empty then it that side's data will be discarded.
+    ///
+    /// Properly generates interpolated texcoords. Ignores morph data.
+    void clipAgainstPlane(PlaneF p, AtlasDiscreteMesh* front, AtlasDiscreteMesh* back);
+
+    Box3F calcBounds();
 };
 
 #endif

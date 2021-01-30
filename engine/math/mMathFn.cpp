@@ -9,11 +9,11 @@
 
 
 void mTransformPlane(const MatrixF& mat,
-                     const Point3F& scale,
-                     const PlaneF&  plane,
-                     PlaneF*        result)
+    const Point3F& scale,
+    const PlaneF& plane,
+    PlaneF* result)
 {
-   m_matF_x_scale_x_planeF(mat, &scale.x, &plane.x, &result->x);
+    m_matF_x_scale_x_planeF(mat, &scale.x, &plane.x, &result->x);
 }
 
 

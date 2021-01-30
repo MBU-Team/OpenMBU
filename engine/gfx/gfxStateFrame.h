@@ -19,35 +19,35 @@
 //-----------------------------------------------------------------------------
 class GFXStateFrame
 {
-   struct GlobalFragment
-   {
-      GlobalFragment *next;
+    struct GlobalFragment
+    {
+        GlobalFragment* next;
 
-      U32 state;
-      U32 oldVal;
-   };
+        U32 state;
+        U32 oldVal;
+    };
 
-   struct Fragment : GlobalFragment
-   {
-      U32 stage;
-   };
+    struct Fragment : GlobalFragment
+    {
+        U32 stage;
+    };
 
-   static FreeListChunker<GlobalFragment> mGlobalChunker;
-   static FreeListChunker<Fragment>       mFragmentChunker;
+    static FreeListChunker<GlobalFragment> mGlobalChunker;
+    static FreeListChunker<Fragment>       mFragmentChunker;
 
-   GlobalFragment *  mGlobals;
-   Fragment       *  mTexture;
-   Fragment       *  mSampler;
-   bool              mEnable;
+    GlobalFragment* mGlobals;
+    Fragment* mTexture;
+    Fragment* mSampler;
+    bool              mEnable;
 
- public:
+public:
 
-   void init();
-   void rollback();
+    void init();
+    void rollback();
 
-   void trackRenderState(U32 state, U32 value);
-   void trackSamplerState(U32 stage, U32 type, U32 value);
-   void trackTextureStageState(U32 stage, U32 type, U32 value);
+    void trackRenderState(U32 state, U32 value);
+    void trackSamplerState(U32 stage, U32 type, U32 value);
+    void trackTextureStageState(U32 stage, U32 type, U32 value);
 
 };
 

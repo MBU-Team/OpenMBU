@@ -19,21 +19,21 @@ class GameBase;
 
 class EditManager : public GuiControl
 {
-   private:
-      typedef GuiControl Parent;
+private:
+    typedef GuiControl Parent;
 
-   public:
-      EditManager();
-      ~EditManager();
+public:
+    EditManager();
+    ~EditManager();
 
-      bool onWake();
-      void onSleep();
+    bool onWake();
+    void onSleep();
 
-      // SimObject
-      bool onAdd();
+    // SimObject
+    bool onAdd();
 
-      MatrixF mBookmarks[10];
-      DECLARE_CONOBJECT(EditManager);
+    MatrixF mBookmarks[10];
+    DECLARE_CONOBJECT(EditManager);
 };
 
 extern bool gEditingMission;

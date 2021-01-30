@@ -19,27 +19,27 @@
 #endif
 
 // Define Core Console Types
-DefineConsoleType( TypeF32 )
-DefineConsoleType( TypeS8 )
-DefineConsoleType( TypeS32 )
-DefineConsoleType( TypeS32Vector )
-DefineConsoleType( TypeBool )
-DefineConsoleType( TypeBoolVector )
-DefineConsoleType( TypeF32Vector )
-DefineConsoleType( TypeString )
-DefineConsoleType( TypeCaseString )
-DefineConsoleType( TypeFilename )
-DefineConsoleType( TypeEnum )
-DefineConsoleType( TypeFlag )
-DefineConsoleType( TypeColorI )
-DefineConsoleType( TypeColorF )
-DefineConsoleType( TypeSimObjectPtr )
+DefineConsoleType(TypeF32)
+DefineConsoleType(TypeS8)
+DefineConsoleType(TypeS32)
+DefineConsoleType(TypeS32Vector)
+DefineConsoleType(TypeBool)
+DefineConsoleType(TypeBoolVector)
+DefineConsoleType(TypeF32Vector)
+DefineConsoleType(TypeString)
+DefineConsoleType(TypeCaseString)
+DefineConsoleType(TypeFilename)
+DefineConsoleType(TypeEnum)
+DefineConsoleType(TypeFlag)
+DefineConsoleType(TypeColorI)
+DefineConsoleType(TypeColorF)
+DefineConsoleType(TypeSimObjectPtr)
 
-DefineConsoleType( TypeShader )
-DefineConsoleType( TypeCustomMaterial )
-DefineConsoleType( TypeCubemap )
-DefineConsoleType( TypeProjectileDataPtr )
-DefineConsoleType( TypeParticleEmitterDataPtr );
+DefineConsoleType(TypeShader)
+DefineConsoleType(TypeCustomMaterial)
+DefineConsoleType(TypeCubemap)
+DefineConsoleType(TypeProjectileDataPtr)
+DefineConsoleType(TypeParticleEmitterDataPtr);
 
 /*
    // Game types

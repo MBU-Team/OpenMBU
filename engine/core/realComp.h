@@ -16,12 +16,12 @@
 
 inline bool isEqual(F32 a, F32 b)
 {
-   return mFabs(a - b) < __EQUAL_CONST_F;
+    return mFabs(a - b) < __EQUAL_CONST_F;
 }
 
 inline bool isZero(F32 a)
 {
-   return mFabs(a) < __EQUAL_CONST_F;
+    return mFabs(a) < __EQUAL_CONST_F;
 }
 
 #endif //_REALCOMP_H_

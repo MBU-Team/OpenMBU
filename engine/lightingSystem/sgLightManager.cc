@@ -24,7 +24,7 @@ bool LightManager::sgUseSelfIlluminationColor = false;
 ColorF LightManager::sgSelfIlluminationColor = ColorF(0.0f, 0.0f, 0.0f);
 //bool LightManager::sgDynamicDTSVectorLighting = false;
 bool LightManager::sgFilterZones = false;
-S32 LightManager::sgZones[2] = {-1, -1};
+S32 LightManager::sgZones[2] = { -1, -1 };
 //S32 LightManager::sgShadowDetailSize = 0;
 //bool LightManager::sgDynamicParticleSystemLighting = true;
 U32 LightManager::sgLightingProfileQuality = LightManager::lpqtProduction;
@@ -82,72 +82,72 @@ F32 sgStatistics::sgTerrainLexelTime = 0;
 
 LightInfo::LightInfo()
 {
-	mType = Vector;
-	mPos = Point3F(0, 0, 0);
-	mDirection = Point3F(0, 0, 1);
-	mColor = ColorF(0, 0, 0);
-	mAmbient = ColorF(0, 0, 0);
-	mRadius = 1;
-	mScore = 0;
+    mType = Vector;
+    mPos = Point3F(0, 0, 0);
+    mDirection = Point3F(0, 0, 1);
+    mColor = ColorF(0, 0, 0);
+    mAmbient = ColorF(0, 0, 0);
+    mRadius = 1;
+    mScore = 0;
 
-	// default to this for weapon fire, explosions, ...
-	sgSupportedFeatures = sgNoSpecCube;
-	sgSpotAngle = 90.0;
-	sgAssignedToTSObject = false;
-	sgCastsShadows = true;
-	sgDiffuseRestrictZone = false;
-	sgAmbientRestrictZone = false;
-	sgZone[0] = -1;
-	sgZone[1] = -1;
-	sgLocalAmbientAmount = 0.0;
-	sgSmoothSpotLight = false;
-	sgDoubleSidedAmbient = false;
-	sgAssignedToParticleSystem = false;
-	sgLightingModelName = NULL;
-	sgUseNormals = true;
-	sgSpotPlane = PlaneF(0, 0, 0, 0);
+    // default to this for weapon fire, explosions, ...
+    sgSupportedFeatures = sgNoSpecCube;
+    sgSpotAngle = 90.0;
+    sgAssignedToTSObject = false;
+    sgCastsShadows = true;
+    sgDiffuseRestrictZone = false;
+    sgAmbientRestrictZone = false;
+    sgZone[0] = -1;
+    sgZone[1] = -1;
+    sgLocalAmbientAmount = 0.0;
+    sgSmoothSpotLight = false;
+    sgDoubleSidedAmbient = false;
+    sgAssignedToParticleSystem = false;
+    sgLightingModelName = NULL;
+    sgUseNormals = true;
+    sgSpotPlane = PlaneF(0, 0, 0, 0);
 
-	sgLightingTransform.identity();
+    sgLightingTransform.identity();
 }
 
 bool LightInfo::sgIsInZone(S32 zone)
 {
-	if((zone == sgZone[0]) || (zone ==sgZone[1]))
-		return true;
-	return false;
+    if ((zone == sgZone[0]) || (zone == sgZone[1]))
+        return true;
+    return false;
 }
 
 bool LightInfo::sgAllowDiffuseZoneLighting(S32 zone)
 {
-	if(!sgDiffuseRestrictZone)
-		return true;
-	if(sgIsInZone(zone))
-		return true;
-	return false;
+    if (!sgDiffuseRestrictZone)
+        return true;
+    if (sgIsInZone(zone))
+        return true;
+    return false;
 }
 
-void LightInfoList::sgRegisterLight(LightInfo *light)
+void LightInfoList::sgRegisterLight(LightInfo* light)
 {
-	if(!light)
-		return;
-	// just add the light, we'll try to scan for dupes later...
-	push_back(light);
+    if (!light)
+        return;
+    // just add the light, we'll try to scan for dupes later...
+    push_back(light);
 }
 
-void LightInfoList::sgUnregisterLight(LightInfo *light)
+void LightInfoList::sgUnregisterLight(LightInfo* light)
 {
-	// remove all of them...
-	LightInfoList &list = *this;
-	for(U32 i=0; i<list.size(); i++)
-	{
-		if(list[i] != light)
-			continue;
-		// this moves last to i, which allows
-		// the search to continue forward...
-		list.erase_fast(i);
-		// want to check this location again...
-		i--;
-	}
+    // remove all of them...
+    LightInfoList& list = *this;
+    for (U32 i = 0; i < list.size(); i++)
+    {
+        if (list[i] != light)
+            continue;
+        // this moves last to i, which allows
+        // the search to continue forward...
+        list.erase_fast(i);
+        // want to check this location again...
+        i--;
+    }
 }
 
 
@@ -155,475 +155,475 @@ void LightInfoList::sgUnregisterLight(LightInfo *light)
 //-----------------------------------------------
 
 
-void LightManager::sgBuildDualLightLists(const LightInfoList &list, LightInfoDualList &listdual)
+void LightManager::sgBuildDualLightLists(const LightInfoList& list, LightInfoDualList& listdual)
 {
-	LightInfoList pri, sec;
+    LightInfoList pri, sec;
 
-	// clean up...
-	listdual.clear();
+    // clean up...
+    listdual.clear();
 
-	// sort...
-	for(U32 i=0; i<list.size(); i++)
-	{
-		LightInfo *light = list[i];
+    // sort...
+    for (U32 i = 0; i < list.size(); i++)
+    {
+        LightInfo* light = list[i];
 
-		if((light->mType == LightInfo::Vector) ||
-		   (light->mType == LightInfo::Ambient))
-		{
-			// non-group-able...
-			listdual.increment();
-			listdual.last().sgLightPrimary = light;
-			listdual.last().sgLightSecondary = NULL;
-			continue;
-		}
+        if ((light->mType == LightInfo::Vector) ||
+            (light->mType == LightInfo::Ambient))
+        {
+            // non-group-able...
+            listdual.increment();
+            listdual.last().sgLightPrimary = light;
+            listdual.last().sgLightSecondary = NULL;
+            continue;
+        }
 
-		// sort...
-		if(light->sgCanBeSecondary())
-			sec.push_back(light);
-		else
-			pri.push_back(light);
-	}
+        // sort...
+        if (light->sgCanBeSecondary())
+            sec.push_back(light);
+        else
+            pri.push_back(light);
+    }
 
-	// build using primary lights...
-	// these can only go in slot one...
-	while(pri.size())
-	{
-		listdual.increment();
-		listdual.last().sgLightPrimary = pri[0];
-		listdual.last().sgLightSecondary = NULL;
-		pri.erase_fast(U32(0));
-		
-		if(sec.size() <= 0)
-			continue;
+    // build using primary lights...
+    // these can only go in slot one...
+    while (pri.size())
+    {
+        listdual.increment();
+        listdual.last().sgLightPrimary = pri[0];
+        listdual.last().sgLightSecondary = NULL;
+        pri.erase_fast(U32(0));
 
-		// piggyback any available secondary lights...
-		listdual.last().sgLightSecondary = sec[0];
-		sec.erase_fast(U32(0));
-	}
+        if (sec.size() <= 0)
+            continue;
 
-	// use up any extra secondary lights...
-	// treat these as primary lights...
-	while(sec.size())
-	{
-		listdual.increment();
-		listdual.last().sgLightPrimary = sec[0];
-		listdual.last().sgLightSecondary = NULL;
-		sec.erase_fast(U32(0));
-		
-		if(sec.size() <= 0)
-			continue;
+        // piggyback any available secondary lights...
+        listdual.last().sgLightSecondary = sec[0];
+        sec.erase_fast(U32(0));
+    }
 
-		// piggyback any available secondary lights...
-		listdual.last().sgLightSecondary = sec[0];
-		sec.erase_fast(U32(0));
-	}
+    // use up any extra secondary lights...
+    // treat these as primary lights...
+    while (sec.size())
+    {
+        listdual.increment();
+        listdual.last().sgLightPrimary = sec[0];
+        listdual.last().sgLightSecondary = NULL;
+        sec.erase_fast(U32(0));
+
+        if (sec.size() <= 0)
+            continue;
+
+        // piggyback any available secondary lights...
+        listdual.last().sgLightSecondary = sec[0];
+        sec.erase_fast(U32(0));
+    }
 }
 
-LightInfo *LightManager::sgGetSpecialLight(sgSpecialLightTypesEnum type)
+LightInfo* LightManager::sgGetSpecialLight(sgSpecialLightTypesEnum type)
 {
-	if(sgSpecialLights[type])
-		return sgSpecialLights[type];
-	// return a default light...
-	return &sgDefaultLight;
+    if (sgSpecialLights[type])
+        return sgSpecialLights[type];
+    // return a default light...
+    return &sgDefaultLight;
 }
 
-void LightManager::sgRegisterGlobalLight(LightInfo *light, SimObject *obj, bool zonealreadyset)
+void LightManager::sgRegisterGlobalLight(LightInfo* light, SimObject* obj, bool zonealreadyset)
 {
-	if(!zonealreadyset)
-	{
-		SceneObject *sceneobj = dynamic_cast<SceneObject *>(obj);
-		if(sceneobj)
-		{
-			U32 count = getMin(sceneobj->getNumCurrZones(), U32(2));
-			for(U32 i=0; i<count; i++)
-				light->sgZone[i] = sceneobj->getCurrZone(i);
-		}
-	}
+    if (!zonealreadyset)
+    {
+        SceneObject* sceneobj = dynamic_cast<SceneObject*>(obj);
+        if (sceneobj)
+        {
+            U32 count = getMin(sceneobj->getNumCurrZones(), U32(2));
+            for (U32 i = 0; i < count; i++)
+                light->sgZone[i] = sceneobj->getCurrZone(i);
+        }
+    }
 
-	sgRegisteredGlobalLights.sgRegisterLight(light);
+    sgRegisteredGlobalLights.sgRegisterLight(light);
 
-	// not here!!!
-	/*if(light->mType == LightInfo::Vector)
-	{
-	if(sgGetSpecialLight(sgSunLightType) == &sgDefaultLight)
-	sgSetSpecialLight(sgSunLightType, light);
-	}*/
+    // not here!!!
+    /*if(light->mType == LightInfo::Vector)
+    {
+    if(sgGetSpecialLight(sgSunLightType) == &sgDefaultLight)
+    sgSetSpecialLight(sgSunLightType, light);
+    }*/
 }
 
 void LightManager::sgRegisterGlobalLights(bool staticlighting)
 {
-	// make sure we're clean...
-	sgUnregisterAllLights();
+    // make sure we're clean...
+    sgUnregisterAllLights();
 
-	// ask all light objects to register themselves...
-	SimSet *lightset = Sim::getLightSet();
-	for(SimObject **itr=lightset->begin(); itr!=lightset->end(); itr++)
-		(*itr)->registerLights(this, staticlighting);
+    // ask all light objects to register themselves...
+    SimSet* lightset = Sim::getLightSet();
+    for (SimObject** itr = lightset->begin(); itr != lightset->end(); itr++)
+        (*itr)->registerLights(this, staticlighting);
 }
 
 void LightManager::sgUnregisterAllLights()
 {
-	sgRegisteredGlobalLights.clear();
-	sgRegisteredLocalLights.clear();
+    sgRegisteredGlobalLights.clear();
+    sgRegisteredLocalLights.clear();
 
-	dMemset(&sgSpecialLights, 0, sizeof(sgSpecialLights));
+    dMemset(&sgSpecialLights, 0, sizeof(sgSpecialLights));
 }
 
-void LightManager::sgGetAllUnsortedLights(LightInfoList &list)
+void LightManager::sgGetAllUnsortedLights(LightInfoList& list)
 {
-	list.clear();
-	list.merge(sgRegisteredGlobalLights);
-	list.merge(sgRegisteredLocalLights);
+    list.clear();
+    list.merge(sgRegisteredGlobalLights);
+    list.merge(sgRegisteredLocalLights);
 
-	// find dupes...
-	dQsort(list.address(), list.size(), sizeof(LightInfo*), sgSortLightsByAddress);
-	LightInfo *last = NULL;
-	for(U32 i=0; i<list.size(); i++)
-	{
-		if(list[i] == last)
-		{
-			list.erase(i);
-			i--;
-			continue;
-		}
-		last = list[i];
-	}
+    // find dupes...
+    dQsort(list.address(), list.size(), sizeof(LightInfo*), sgSortLightsByAddress);
+    LightInfo* last = NULL;
+    for (U32 i = 0; i < list.size(); i++)
+    {
+        if (list[i] == last)
+        {
+            list.erase(i);
+            i--;
+            continue;
+        }
+        last = list[i];
+    }
 }
 
-void LightManager::sgSetupLights(SceneObject *obj)
+void LightManager::sgSetupLights(SceneObject* obj)
 {
-	sgResetLights();
+    sgResetLights();
 
-	bool outside = false;
-	for(U32 i=0; i<obj->getNumCurrZones(); i++)
-	{
-		if(obj->getCurrZone(i) == 0)
-		{
-			outside = true;
-			break;
-		}
-	}
+    bool outside = false;
+    for (U32 i = 0; i < obj->getNumCurrZones(); i++)
+    {
+        if (obj->getCurrZone(i) == 0)
+        {
+            outside = true;
+            break;
+        }
+    }
 
-	sgSetProperty(sgReceiveSunLightProp, obj->receiveSunLight);
-	sgSetProperty(sgAdaptiveSelfIlluminationProp, obj->useAdaptiveSelfIllumination);
-	sgSetProperty(sgCustomAmbientLightingProp, obj->useCustomAmbientLighting);
-	sgSetProperty(sgCustomAmbientForSelfIlluminationProp, obj->customAmbientForSelfIllumination);
+    sgSetProperty(sgReceiveSunLightProp, obj->receiveSunLight);
+    sgSetProperty(sgAdaptiveSelfIlluminationProp, obj->useAdaptiveSelfIllumination);
+    sgSetProperty(sgCustomAmbientLightingProp, obj->useCustomAmbientLighting);
+    sgSetProperty(sgCustomAmbientForSelfIlluminationProp, obj->customAmbientForSelfIllumination);
 
-	ColorF ambientColor;
-	ColorF selfillum = obj->customAmbientLighting;
+    ColorF ambientColor;
+    ColorF selfillum = obj->customAmbientLighting;
 
-	LightInfo *sun = sgGetSpecialLight(sgSunLightType);
-	if(obj->getLightingAmbientColor(&ambientColor))
-	{
-		const F32 directionalFactor = 0.5f;
-		const F32 ambientFactor = 0.5f;
+    LightInfo* sun = sgGetSpecialLight(sgSunLightType);
+    if (obj->getLightingAmbientColor(&ambientColor))
+    {
+        const F32 directionalFactor = 0.5f;
+        const F32 ambientFactor = 0.5f;
 
-		dMemset(&obj->mLightingInfo.smAmbientLight, 0, sizeof(obj->mLightingInfo.smAmbientLight));
+        dMemset(&obj->mLightingInfo.smAmbientLight, 0, sizeof(obj->mLightingInfo.smAmbientLight));
 
-		LightInfo &light = obj->mLightingInfo.smAmbientLight;
-		light.mType = LightInfo::Ambient;
-		light.mDirection = VectorF(0.0, 0.0, -1.0);
-		light.sgCastsShadows = sun->sgCastsShadows;
+        LightInfo& light = obj->mLightingInfo.smAmbientLight;
+        light.mType = LightInfo::Ambient;
+        light.mDirection = VectorF(0.0, 0.0, -1.0);
+        light.sgCastsShadows = sun->sgCastsShadows;
 
-		// players, vehicles, ...
-		if(obj->overrideOptions)
-		{
-			if(outside)
-			{
-				light.mType = LightInfo::Vector;
-				light.mDirection = sun->mDirection;
-			}
-			//else
-			//{
-				light.mColor = ambientColor * directionalFactor;
-				light.mAmbient = ambientColor * ambientFactor;
-			//}
-		}// beyond here are the static dts options...
-		else if(sgAllowDiffuseCustomAmbient())
-		{
-			light.mColor = obj->customAmbientLighting * 0.25;
-			light.mAmbient = obj->customAmbientLighting * 0.75;
-		}
-		else if(sgAllowReceiveSunLight() && sun)
-		{
-			light.mType = LightInfo::Vector;
-			if(outside)
-				light.mDirection = sun->mDirection;
-			if(obj->receiveLMLighting)
-				light.mColor = ambientColor * 0.8;
-			else
-				light.mColor = sun->mColor;
-			light.mAmbient = sun->mAmbient;
-		}
-		else if(obj->receiveLMLighting)
-		{
-			light.mColor = ambientColor * directionalFactor;
-			light.mAmbient = ambientColor * ambientFactor;
-		}
+        // players, vehicles, ...
+        if (obj->overrideOptions)
+        {
+            if (outside)
+            {
+                light.mType = LightInfo::Vector;
+                light.mDirection = sun->mDirection;
+            }
+            //else
+            //{
+            light.mColor = ambientColor * directionalFactor;
+            light.mAmbient = ambientColor * ambientFactor;
+            //}
+        }// beyond here are the static dts options...
+        else if (sgAllowDiffuseCustomAmbient())
+        {
+            light.mColor = obj->customAmbientLighting * 0.25;
+            light.mAmbient = obj->customAmbientLighting * 0.75;
+        }
+        else if (sgAllowReceiveSunLight() && sun)
+        {
+            light.mType = LightInfo::Vector;
+            if (outside)
+                light.mDirection = sun->mDirection;
+            if (obj->receiveLMLighting)
+                light.mColor = ambientColor * 0.8;
+            else
+                light.mColor = sun->mColor;
+            light.mAmbient = sun->mAmbient;
+        }
+        else if (obj->receiveLMLighting)
+        {
+            light.mColor = ambientColor * directionalFactor;
+            light.mAmbient = ambientColor * ambientFactor;
+        }
 
-		if(sgAllowCollectSelfIlluminationColor())
-		{
-			selfillum = light.mAmbient + light.mColor;
-			selfillum.clamp();
-		}
+        if (sgAllowCollectSelfIlluminationColor())
+        {
+            selfillum = light.mAmbient + light.mColor;
+            selfillum.clamp();
+        }
 
-		light.mPos = light.mDirection * -10000.0;
-		sgRegisterLocalLight(&obj->mLightingInfo.smAmbientLight);
-	}
+        light.mPos = light.mDirection * -10000.0;
+        sgRegisterLocalLight(&obj->mLightingInfo.smAmbientLight);
+    }
 
-	// install assigned baked lights from simgroup...
-	// step one get the objects...
-	U32 i;
-	NetConnection *connection = NetConnection::getConnectionToServer();
+    // install assigned baked lights from simgroup...
+    // step one get the objects...
+    U32 i;
+    NetConnection* connection = NetConnection::getConnectionToServer();
 
-	for(i=0; i<obj->lightIds.size(); i++)
-	{
-		SimObject *sim = connection->resolveGhost(obj->lightIds[i]);
-		if(!sim)
-			continue;
+    for (i = 0; i < obj->lightIds.size(); i++)
+    {
+        SimObject* sim = connection->resolveGhost(obj->lightIds[i]);
+        if (!sim)
+            continue;
 
-		sgLightObject *light = dynamic_cast<sgLightObject*>(sim);
-		if(!light)
-			continue;
+        sgLightObject* light = dynamic_cast<sgLightObject*>(sim);
+        if (!light)
+            continue;
 
-		sgLightObjectData *data = static_cast<sgLightObjectData *>(light->getDataBlock());
-		if((data) && (data->sgStatic) && (data->mLightOn) && (light->mEnable))
-		{
-			light->mLight.sgAssignedToTSObject = true;
-			sgRegisterLocalLight(&light->mLight);
-		}
-	}
+        sgLightObjectData* data = static_cast<sgLightObjectData*>(light->getDataBlock());
+        if ((data) && (data->sgStatic) && (data->mLightOn) && (light->mEnable))
+        {
+            light->mLight.sgAssignedToTSObject = true;
+            sgRegisterLocalLight(&light->mLight);
+        }
+    }
 
-	// step three install dynamic lights...
-	sgUseSelfIlluminationColor = sgGetProperty(sgAdaptiveSelfIlluminationProp);
-	if(sgUseSelfIlluminationColor)
-		sgSelfIlluminationColor = selfillum;
+    // step three install dynamic lights...
+    sgUseSelfIlluminationColor = sgGetProperty(sgAdaptiveSelfIlluminationProp);
+    if (sgUseSelfIlluminationColor)
+        sgSelfIlluminationColor = selfillum;
 
-	sgSetupZoneLighting(true, obj);
+    sgSetupZoneLighting(true, obj);
 
-	sgFindBestLights(obj->getRenderWorldBox(), sgMaxBestLights, Point3F(0, 0, 0), false);
+    sgFindBestLights(obj->getRenderWorldBox(), sgMaxBestLights, Point3F(0, 0, 0), false);
 }
 
-void LightManager::sgSetupLights(SceneObject *obj, const Point3F &camerapos,
-								 const Point3F &cameradir, F32 viewdist, S32 maxlights)
+void LightManager::sgSetupLights(SceneObject* obj, const Point3F& camerapos,
+    const Point3F& cameradir, F32 viewdist, S32 maxlights)
 {
-	sgResetLights();
+    sgResetLights();
 
-	sgSetupZoneLighting(true, obj);
+    sgSetupZoneLighting(true, obj);
 
-	Box3F box;
-	box.max = camerapos + Point3F(viewdist, viewdist, viewdist);
-	box.min = camerapos - Point3F(viewdist, viewdist, viewdist);
-	sgFindBestLights(box, maxlights, cameradir, true);
+    Box3F box;
+    box.max = camerapos + Point3F(viewdist, viewdist, viewdist);
+    box.min = camerapos - Point3F(viewdist, viewdist, viewdist);
+    sgFindBestLights(box, maxlights, cameradir, true);
 }
 
-void LightManager::sgSetupLights(SceneObject *obj, const Box3F &box, S32 maxlights)
+void LightManager::sgSetupLights(SceneObject* obj, const Box3F& box, S32 maxlights)
 {
-	sgResetLights();
-	sgSetupZoneLighting(true, obj);
-	sgFindBestLights(box, maxlights, Point3F(0, 0, 0), true);
+    sgResetLights();
+    sgSetupZoneLighting(true, obj);
+    sgFindBestLights(box, maxlights, Point3F(0, 0, 0), true);
 }
 
 void LightManager::sgResetLights()
 {
-	sgSetupZoneLighting(false, NULL);
-	sgRegisteredLocalLights.clear();
-	sgBestLights.clear();
+    sgSetupZoneLighting(false, NULL);
+    sgRegisteredLocalLights.clear();
+    sgBestLights.clear();
 }
 
-void LightManager::sgFindBestLights(const Box3F &box, S32 maxlights, const Point3F &viewdi, bool camerabased)
+void LightManager::sgFindBestLights(const Box3F& box, S32 maxlights, const Point3F& viewdi, bool camerabased)
 {
-	sgBestLights.clear();
+    sgBestLights.clear();
 
-	// gets them all and removes any dupes...
-	sgGetAllUnsortedLights(sgBestLights);
+    // gets them all and removes any dupes...
+    sgGetAllUnsortedLights(sgBestLights);
 
-	SphereF sphere;
-	box.getCenter(&sphere.center);
-	sphere.radius = Point3F(box.max - sphere.center).len();
+    SphereF sphere;
+    box.getCenter(&sphere.center);
+    sphere.radius = Point3F(box.max - sphere.center).len();
 
-	for(U32 i=0; i<sgBestLights.size(); i++)
-		sgScoreLight(sgBestLights[i], box, sphere, camerabased);
+    for (U32 i = 0; i < sgBestLights.size(); i++)
+        sgScoreLight(sgBestLights[i], box, sphere, camerabased);
 
-	dQsort(sgBestLights.address(), sgBestLights.size(), sizeof(LightInfo*), sgSortLightsByScore);
+    dQsort(sgBestLights.address(), sgBestLights.size(), sizeof(LightInfo*), sgSortLightsByScore);
 
-	for(U32 i=0; i<sgBestLights.size(); i++)
-	{
-		if((sgBestLights[i]->mScore > 0) && (i < maxlights))
-			continue;
+    for (U32 i = 0; i < sgBestLights.size(); i++)
+    {
+        if ((sgBestLights[i]->mScore > 0) && (i < maxlights))
+            continue;
 
-		sgBestLights.setSize(i);
-		break;
-	}
+        sgBestLights.setSize(i);
+        break;
+    }
 }
 
-void LightManager::sgScoreLight(LightInfo *light, const Box3F &box, const SphereF &sphere, bool camerabased)
+void LightManager::sgScoreLight(LightInfo* light, const Box3F& box, const SphereF& sphere, bool camerabased)
 {
-	if(sgFilterZones && light->sgDiffuseRestrictZone)
-	{
-		bool allowdiffuse = false;
-		if(sgZones[0] > -1)
-		{
-			if(light->sgAllowDiffuseZoneLighting(sgZones[0]))
-				allowdiffuse = true;
-			else if(sgZones[1] > -1)
-			{
-				if(light->sgAllowDiffuseZoneLighting(sgZones[1]))
-					allowdiffuse = true;
-			}
-		}
+    if (sgFilterZones && light->sgDiffuseRestrictZone)
+    {
+        bool allowdiffuse = false;
+        if (sgZones[0] > -1)
+        {
+            if (light->sgAllowDiffuseZoneLighting(sgZones[0]))
+                allowdiffuse = true;
+            else if (sgZones[1] > -1)
+            {
+                if (light->sgAllowDiffuseZoneLighting(sgZones[1]))
+                    allowdiffuse = true;
+            }
+        }
 
-		if(!allowdiffuse)
-		{
-			light->mScore = 0;
-			return;
-		}
-	}
+        if (!allowdiffuse)
+        {
+            light->mScore = 0;
+            return;
+        }
+    }
 
 
-	F32 distintensity = 1;
-	F32 colorintensity = 1;
-	F32 weight = SG_LIGHTMANAGER_DYNAMIC_PRIORITY;
+    F32 distintensity = 1;
+    F32 colorintensity = 1;
+    F32 weight = SG_LIGHTMANAGER_DYNAMIC_PRIORITY;
 
-	if(camerabased)
-	{
-		sgLightingModel &model = sgLightingModelManager::sgGetLightingModel(light->sgLightingModelName);
-		model.sgSetState(light);
-		F32 maxrad = model.sgGetMaxRadius(true);
-		model.sgResetState();
+    if (camerabased)
+    {
+        sgLightingModel& model = sgLightingModelManager::sgGetLightingModel(light->sgLightingModelName);
+        model.sgSetState(light);
+        F32 maxrad = model.sgGetMaxRadius(true);
+        model.sgResetState();
 
-		Point3F vect = sphere.center - light->mPos;
-		F32 dist = vect.len();
-		F32 distlightview = sphere.radius + maxrad;
+        Point3F vect = sphere.center - light->mPos;
+        F32 dist = vect.len();
+        F32 distlightview = sphere.radius + maxrad;
 
-		if(distlightview <= 0)
-			distintensity = 0.0f;
-		else
-		{
-			distintensity = 1.0f - (dist / distlightview);
-			distintensity = mClampF(distintensity, 0.0f, 1.0f);
-		}
-	}
-	else
-	{
-		// side test...
-		if((light->mType == LightInfo::Spot) || (light->mType == LightInfo::SGStaticSpot))
-		{
-			bool anyfront = false;
-			F32 x, y, z;
+        if (distlightview <= 0)
+            distintensity = 0.0f;
+        else
+        {
+            distintensity = 1.0f - (dist / distlightview);
+            distintensity = mClampF(distintensity, 0.0f, 1.0f);
+        }
+    }
+    else
+    {
+        // side test...
+        if ((light->mType == LightInfo::Spot) || (light->mType == LightInfo::SGStaticSpot))
+        {
+            bool anyfront = false;
+            F32 x, y, z;
 
-			for(U32 i=0; i<8; i++)
-			{
-				if(i & 0x1)
-					x = box.max.x;
-				else
-					x = box.min.x;
+            for (U32 i = 0; i < 8; i++)
+            {
+                if (i & 0x1)
+                    x = box.max.x;
+                else
+                    x = box.min.x;
 
-				if(i & 0x2)
-					y = box.max.y;
-				else
-					y = box.min.y;
+                if (i & 0x2)
+                    y = box.max.y;
+                else
+                    y = box.min.y;
 
-				if(i & 0x4)
-					z = box.max.z;
-				else
-					z = box.min.z;
+                if (i & 0x4)
+                    z = box.max.z;
+                else
+                    z = box.min.z;
 
-				if(light->sgSpotPlane.whichSide(Point3F(x, y, z)) == PlaneF::Back)
-					continue;
+                if (light->sgSpotPlane.whichSide(Point3F(x, y, z)) == PlaneF::Back)
+                    continue;
 
-				anyfront = true;
-				break;
-			}
+                anyfront = true;
+                break;
+            }
 
-			if(!anyfront)
-			{
-				light->mScore = 0;
-				return;
-			}
-		}
+            if (!anyfront)
+            {
+                light->mScore = 0;
+                return;
+            }
+        }
 
-		if((light->mType == LightInfo::Vector) || (light->mType == LightInfo::Ambient))
-		{
-			colorintensity =
-				(light->mColor.red   + light->mAmbient.red) * 0.346f +
-				(light->mColor.green + light->mAmbient.green) * 0.588f + 
-				(light->mColor.blue  + light->mAmbient.blue) * 0.070f;
-			distintensity = 1;
-			weight = SG_LIGHTMANAGER_SUN_PRIORITY;
-		}
-		else
-		{
-			if(light->sgAssignedToParticleSystem)
-			{
-				colorintensity = SG_PARTICLESYSTEMLIGHT_FIXED_INTENSITY;
-			}
-			else
-			{
-				colorintensity =
-					(light->mColor.red * 0.3333f) +
-					(light->mColor.green * 0.3333f) +
-					(light->mColor.blue * 0.3333f);
-			}
+        if ((light->mType == LightInfo::Vector) || (light->mType == LightInfo::Ambient))
+        {
+            colorintensity =
+                (light->mColor.red + light->mAmbient.red) * 0.346f +
+                (light->mColor.green + light->mAmbient.green) * 0.588f +
+                (light->mColor.blue + light->mAmbient.blue) * 0.070f;
+            distintensity = 1;
+            weight = SG_LIGHTMANAGER_SUN_PRIORITY;
+        }
+        else
+        {
+            if (light->sgAssignedToParticleSystem)
+            {
+                colorintensity = SG_PARTICLESYSTEMLIGHT_FIXED_INTENSITY;
+            }
+            else
+            {
+                colorintensity =
+                    (light->mColor.red * 0.3333f) +
+                    (light->mColor.green * 0.3333f) +
+                    (light->mColor.blue * 0.3333f);
+            }
 
-			sgLightingModel &model = sgLightingModelManager::sgGetLightingModel(light->sgLightingModelName);
-			model.sgSetState(light);
-			distintensity = model.sgScoreLight(light, sphere);
-			model.sgResetState();
+            sgLightingModel& model = sgLightingModelManager::sgGetLightingModel(light->sgLightingModelName);
+            model.sgSetState(light);
+            distintensity = model.sgScoreLight(light, sphere);
+            model.sgResetState();
 
-			if(light->sgAssignedToTSObject)
-				weight = SG_LIGHTMANAGER_ASSIGNED_PRIORITY;
-			else if((light->mType == LightInfo::SGStaticPoint) || (light->mType == LightInfo::SGStaticSpot))
-				weight = SG_LIGHTMANAGER_STATIC_PRIORITY;
-		}
-	}
+            if (light->sgAssignedToTSObject)
+                weight = SG_LIGHTMANAGER_ASSIGNED_PRIORITY;
+            else if ((light->mType == LightInfo::SGStaticPoint) || (light->mType == LightInfo::SGStaticSpot))
+                weight = SG_LIGHTMANAGER_STATIC_PRIORITY;
+        }
+    }
 
-	F32 intensity = colorintensity * distintensity;
-	if(intensity < SG_MIN_LEXEL_INTENSITY)
-		intensity = 0;
-	light->mScore = S32(intensity * weight * 1024.0f);
+    F32 intensity = colorintensity * distintensity;
+    if (intensity < SG_MIN_LEXEL_INTENSITY)
+        intensity = 0;
+    light->mScore = S32(intensity * weight * 1024.0f);
 }
 
 void LightManager::sgInit()
 {
-	for(U32 i=0; i<sgPropertyCount; i++)
-		sgLightingProperties[i] = false;
+    for (U32 i = 0; i < sgPropertyCount; i++)
+        sgLightingProperties[i] = false;
 
-	//Con::addVariable("$pref::OpenGL::sgDynamicDTSVectorLighting", TypeBool, &sgDynamicDTSVectorLighting);
-	//Con::addVariable("$pref::TS::sgShadowDetailSize", TypeS32, &sgShadowDetailSize);
-	//Con::addVariable("$pref::OpenGL::sgDynamicParticleSystemLighting", TypeBool, &sgDynamicParticleSystemLighting);
-	Con::addVariable("$pref::LightManager::sgMaxBestLights", TypeS32, &sgMaxBestLights);
-	Con::addVariable("$pref::LightManager::sgLightingProfileQuality", TypeS32, &sgLightingProfileQuality);
-	Con::addVariable("$pref::LightManager::sgLightingProfileAllowShadows", TypeBool, &sgLightingProfileAllowShadows);
+    //Con::addVariable("$pref::OpenGL::sgDynamicDTSVectorLighting", TypeBool, &sgDynamicDTSVectorLighting);
+    //Con::addVariable("$pref::TS::sgShadowDetailSize", TypeS32, &sgShadowDetailSize);
+    //Con::addVariable("$pref::OpenGL::sgDynamicParticleSystemLighting", TypeBool, &sgDynamicParticleSystemLighting);
+    Con::addVariable("$pref::LightManager::sgMaxBestLights", TypeS32, &sgMaxBestLights);
+    Con::addVariable("$pref::LightManager::sgLightingProfileQuality", TypeS32, &sgLightingProfileQuality);
+    Con::addVariable("$pref::LightManager::sgLightingProfileAllowShadows", TypeBool, &sgLightingProfileAllowShadows);
 
-	Con::addVariable("$pref::LightManager::sgUseDynamicShadows", TypeBool, &sgUseDynamicShadows);
-	//Con::addVariable("$pref::LightManager::sgUseDynamicShadowSelfShadowing", TypeBool, &sgUseDynamicShadowSelfShadowing);
-	//Con::addVariable("$pref::LightManager::sgUseDynamicShadowSelfShadowingOnPS_2_0", TypeBool, &sgUseDynamicShadowSelfShadowingOnPS_2_0);
-	//Con::addVariable("$pref::LightManager::sgUseBloom", TypeBool, &sgUseBloom);
-	//Con::addVariable("$pref::LightManager::sgUseToneMapping", TypeBool, &sgUseToneMapping);
-	Con::addVariable("$pref::LightManager::sgUseDynamicRangeLighting", TypeBool, &sgUseDynamicRangeLighting);
-	Con::addVariable("$pref::LightManager::sgUseDRLHighDynamicRange", TypeBool, &sgUseDRLHighDynamicRange);
-	Con::addVariable("$pref::LightManager::sgUseDynamicLightingDualOptimization", TypeBool, &sgUseDynamicLightingDualOptimization);
+    Con::addVariable("$pref::LightManager::sgUseDynamicShadows", TypeBool, &sgUseDynamicShadows);
+    //Con::addVariable("$pref::LightManager::sgUseDynamicShadowSelfShadowing", TypeBool, &sgUseDynamicShadowSelfShadowing);
+    //Con::addVariable("$pref::LightManager::sgUseDynamicShadowSelfShadowingOnPS_2_0", TypeBool, &sgUseDynamicShadowSelfShadowingOnPS_2_0);
+    //Con::addVariable("$pref::LightManager::sgUseBloom", TypeBool, &sgUseBloom);
+    //Con::addVariable("$pref::LightManager::sgUseToneMapping", TypeBool, &sgUseToneMapping);
+    Con::addVariable("$pref::LightManager::sgUseDynamicRangeLighting", TypeBool, &sgUseDynamicRangeLighting);
+    Con::addVariable("$pref::LightManager::sgUseDRLHighDynamicRange", TypeBool, &sgUseDRLHighDynamicRange);
+    Con::addVariable("$pref::LightManager::sgUseDynamicLightingDualOptimization", TypeBool, &sgUseDynamicLightingDualOptimization);
 
-	Con::addVariable("$pref::LightManager::sgDynamicShadowDetailSize", TypeS32, &sgDynamicShadowDetailSize);
-	Con::addVariable("$pref::LightManager::sgDynamicShadowQuality", TypeS32, &sgDynamicShadowQuality);
-	Con::addVariable("$pref::LightManager::sgMultipleDynamicShadows", TypeBool, &sgMultipleDynamicShadows);
-	Con::addVariable("$pref::LightManager::sgShowCacheStats", TypeBool, &sgShowCacheStats);
+    Con::addVariable("$pref::LightManager::sgDynamicShadowDetailSize", TypeS32, &sgDynamicShadowDetailSize);
+    Con::addVariable("$pref::LightManager::sgDynamicShadowQuality", TypeS32, &sgDynamicShadowQuality);
+    Con::addVariable("$pref::LightManager::sgMultipleDynamicShadows", TypeBool, &sgMultipleDynamicShadows);
+    Con::addVariable("$pref::LightManager::sgShowCacheStats", TypeBool, &sgShowCacheStats);
 
-	//Con::addVariable("$pref::LightManager::sgDRLTarget", TypeF32, &sgDRLTarget);
-	//Con::addVariable("$pref::LightManager::sgDRLMax", TypeF32, &sgDRLMax);
-	//Con::addVariable("$pref::LightManager::sgDRLMin", TypeF32, &sgDRLMin);
-	//Con::addVariable("$pref::LightManager::sgDRLMultiplier", TypeF32, &sgDRLMultiplier);
+    //Con::addVariable("$pref::LightManager::sgDRLTarget", TypeF32, &sgDRLTarget);
+    //Con::addVariable("$pref::LightManager::sgDRLMax", TypeF32, &sgDRLMax);
+    //Con::addVariable("$pref::LightManager::sgDRLMin", TypeF32, &sgDRLMin);
+    //Con::addVariable("$pref::LightManager::sgDRLMultiplier", TypeF32, &sgDRLMultiplier);
 
-	//Con::addVariable("$pref::LightManager::sgBloomCutOff", TypeF32, &sgBloomCutOff);
-	//Con::addVariable("$pref::LightManager::sgBloomAmount", TypeF32, &sgBloomAmount);
-	//Con::addVariable("$pref::LightManager::sgBloomSeedAmount", TypeF32, &sgBloomSeedAmount);
+    //Con::addVariable("$pref::LightManager::sgBloomCutOff", TypeF32, &sgBloomCutOff);
+    //Con::addVariable("$pref::LightManager::sgBloomAmount", TypeF32, &sgBloomAmount);
+    //Con::addVariable("$pref::LightManager::sgBloomSeedAmount", TypeF32, &sgBloomSeedAmount);
 
-	Con::addVariable("$pref::LightManager::sgAtlasMaxDynamicLights", TypeF32, &sgAtlasMaxDynamicLights);
+    Con::addVariable("$pref::LightManager::sgAtlasMaxDynamicLights", TypeF32, &sgAtlasMaxDynamicLights);
 
-	Con::addVariable("$LightManager::sgInGUIEditor", TypeBool, &sgInGUIEditor);
+    Con::addVariable("$LightManager::sgInGUIEditor", TypeBool, &sgInGUIEditor);
 
-	sgRelightFilter::sgInit();
+    sgRelightFilter::sgInit();
 }
 /*
 bool LightManager::sgAllowDetailMaps()
@@ -631,76 +631,76 @@ bool LightManager::sgAllowDetailMaps()
 return true;
 }
 */
-void LightManager::sgGetFilteredLightColor(ColorF &color, ColorF &ambient, S32 objectzone)
+void LightManager::sgGetFilteredLightColor(ColorF& color, ColorF& ambient, S32 objectzone)
 {
-	sgMissionLightingFilter *filterbasezone = NULL;
-	sgMissionLightingFilter *filtercurrentzone = NULL;
-	SimSet *filters = Sim::getsgMissionLightingFilterSet();
+    sgMissionLightingFilter* filterbasezone = NULL;
+    sgMissionLightingFilter* filtercurrentzone = NULL;
+    SimSet* filters = Sim::getsgMissionLightingFilterSet();
 
-	for(SimObject ** itr = filters->begin(); itr != filters->end(); itr++)
-	{
-		sgMissionLightingFilter *filter = dynamic_cast<sgMissionLightingFilter*>(*itr);
-		if(!filter)
-			continue;
+    for (SimObject** itr = filters->begin(); itr != filters->end(); itr++)
+    {
+        sgMissionLightingFilter* filter = dynamic_cast<sgMissionLightingFilter*>(*itr);
+        if (!filter)
+            continue;
 
-		S32 zone = filter->getCurrZone(0);
-		if(zone == 0)
-			filterbasezone = filter;
-		if(zone == objectzone)
-		{
-			filtercurrentzone = filter;
-			break;
-		}
-	}
+        S32 zone = filter->getCurrZone(0);
+        if (zone == 0)
+            filterbasezone = filter;
+        if (zone == objectzone)
+        {
+            filtercurrentzone = filter;
+            break;
+        }
+    }
 
-	if(filtercurrentzone)
-		filterbasezone = filtercurrentzone;
+    if (filtercurrentzone)
+        filterbasezone = filtercurrentzone;
 
-	if(!filterbasezone)
-		return;
+    if (!filterbasezone)
+        return;
 
-	sgMissionLightingFilterData *datablock = (sgMissionLightingFilterData *)filterbasezone->getDataBlock();
+    sgMissionLightingFilterData* datablock = (sgMissionLightingFilterData*)filterbasezone->getDataBlock();
 
-	if(!datablock)
-		return;
+    if (!datablock)
+        return;
 
-	ColorF composite = datablock->sgLightingFilter * datablock->sgLightingIntensity;
+    ColorF composite = datablock->sgLightingFilter * datablock->sgLightingIntensity;
 
-	color *= composite;
-	color.clamp();
+    color *= composite;
+    color.clamp();
 
-	ambient *= composite;
-	ambient.clamp();
+    ambient *= composite;
+    ambient.clamp();
 
-	if(!datablock->sgCinematicFilter)
-		return;
+    if (!datablock->sgCinematicFilter)
+        return;
 
-	// must use the lighting filter intensity
-	// to lock the reference value relative
-	// to the lighting intensity
-	composite = datablock->sgCinematicFilterReferenceColor *
-		datablock->sgCinematicFilterReferenceIntensity *
-		datablock->sgLightingIntensity;
+    // must use the lighting filter intensity
+    // to lock the reference value relative
+    // to the lighting intensity
+    composite = datablock->sgCinematicFilterReferenceColor *
+        datablock->sgCinematicFilterReferenceIntensity *
+        datablock->sgLightingIntensity;
 
-	F32 intensity = color.red + color.green + color.blue + ambient.red + ambient.green + ambient.blue;
-	F32 intensityref = composite.red + composite.green + composite.blue;
+    F32 intensity = color.red + color.green + color.blue + ambient.red + ambient.green + ambient.blue;
+    F32 intensityref = composite.red + composite.green + composite.blue;
 
-	intensity -= intensityref;
+    intensity -= intensityref;
 
-	// blue is too intense...
-	if(intensity > 0.0f)
-		intensity *= 0.25f;
+    // blue is too intense...
+    if (intensity > 0.0f)
+        intensity *= 0.25f;
 
-	F32 redoffset = 1.0f - ((intensity) * 0.1f * datablock->sgCinematicFilterAmount);
-	F32 blueoffset = 1.0f + ((intensity) * 0.1f * datablock->sgCinematicFilterAmount);
-	F32 greenoffset = 1.0f - ((1.0f - getMin(redoffset, blueoffset)) * 0.5f);
+    F32 redoffset = 1.0f - ((intensity) * 0.1f * datablock->sgCinematicFilterAmount);
+    F32 blueoffset = 1.0f + ((intensity) * 0.1f * datablock->sgCinematicFilterAmount);
+    F32 greenoffset = 1.0f - ((1.0f - getMin(redoffset, blueoffset)) * 0.5f);
 
-	ColorF multiplier = ColorF(redoffset, greenoffset, blueoffset);
+    ColorF multiplier = ColorF(redoffset, greenoffset, blueoffset);
 
-	color *= multiplier;
-	color.clamp();
-	ambient *= multiplier;
-	ambient.clamp();
+    color *= multiplier;
+    color.clamp();
+    ambient *= multiplier;
+    ambient.clamp();
 }
 /*
 // adds proper support for self-illumination...
@@ -716,192 +716,192 @@ sgSelfIlluminationColor = ColorF(ambientColor[0], ambientColor[1], ambientColor[
 }
 }
 */
-void LightManager::sgSetupZoneLighting(bool enable, SimObject *sobj)
+void LightManager::sgSetupZoneLighting(bool enable, SimObject* sobj)
 {
-	sgFilterZones = false;
-	// these must be -2...
-	sgZones[0] = -2;
-	sgZones[1] = -2;
-	if(!enable)
-		return;
-	if(dynamic_cast<InteriorInstance *>(sobj))
-		return;
-	//if(dynamic_cast<TerrainBlock *>(sobj))
-	//	return;
-	SceneObject *obj = dynamic_cast<SceneObject *>(sobj);
-	if(!obj)
-		return;
-	sgFilterZones = true;
-	U32 count = getMin(obj->getNumCurrZones(), U32(2));
-	for(U32 i=0; i<count; i++)
-	{
-		sgZones[i] = obj->getCurrZone(i);
-	}
+    sgFilterZones = false;
+    // these must be -2...
+    sgZones[0] = -2;
+    sgZones[1] = -2;
+    if (!enable)
+        return;
+    if (dynamic_cast<InteriorInstance*>(sobj))
+        return;
+    //if(dynamic_cast<TerrainBlock *>(sobj))
+    //	return;
+    SceneObject* obj = dynamic_cast<SceneObject*>(sobj);
+    if (!obj)
+        return;
+    sgFilterZones = true;
+    U32 count = getMin(obj->getNumCurrZones(), U32(2));
+    for (U32 i = 0; i < count; i++)
+    {
+        sgZones[i] = obj->getCurrZone(i);
+    }
 }
 /*
 void LightManager::sgScoreLight(LightInfo *lightinfo, const SphereF &sphere)
 {
-	if(LightManager::sgFilterZones && lightinfo->sgDiffuseRestrictZone)
-	{
-		bool allowdiffuse = false;
-		if(LightManager::sgZones[0] > -1)
-		{
-			if(lightinfo->sgAllowDiffuseZoneLighting(LightManager::sgZones[0]))
-				allowdiffuse = true;
-			else if(LightManager::sgZones[1] > -1)
-			{
-				if(lightinfo->sgAllowDiffuseZoneLighting(LightManager::sgZones[1]))
-					allowdiffuse = true;
-			}
-		}
+    if(LightManager::sgFilterZones && lightinfo->sgDiffuseRestrictZone)
+    {
+        bool allowdiffuse = false;
+        if(LightManager::sgZones[0] > -1)
+        {
+            if(lightinfo->sgAllowDiffuseZoneLighting(LightManager::sgZones[0]))
+                allowdiffuse = true;
+            else if(LightManager::sgZones[1] > -1)
+            {
+                if(lightinfo->sgAllowDiffuseZoneLighting(LightManager::sgZones[1]))
+                    allowdiffuse = true;
+            }
+        }
 
-		if(!allowdiffuse)
-		{
-			lightinfo->mScore = 0;
-			return;
-		}
-	}
+        if(!allowdiffuse)
+        {
+            lightinfo->mScore = 0;
+            return;
+        }
+    }
 
-	F32 distintensity = 1;
-	F32 colorintensity = 1;
-	F32 weight = SG_LIGHTMANAGER_DYNAMIC_PRIORITY;
+    F32 distintensity = 1;
+    F32 colorintensity = 1;
+    F32 weight = SG_LIGHTMANAGER_DYNAMIC_PRIORITY;
 
-	if((lightinfo->mType == LightInfo::Vector) || (lightinfo->mType == LightInfo::Ambient))
-	{
-		colorintensity = (lightinfo->mColor.red   + lightinfo->mAmbient.red) * 0.346f +
-			(lightinfo->mColor.green + lightinfo->mAmbient.green) * 0.588f + 
-			(lightinfo->mColor.blue  + lightinfo->mAmbient.blue) * 0.070f;
-		distintensity = 1;
-		weight = SG_LIGHTMANAGER_SUN_PRIORITY;
-	}
-	else
-	{
-		if(lightinfo->sgAssignedToParticleSystem)
-		{
-			colorintensity = SG_PARTICLESYSTEMLIGHT_FIXED_INTENSITY;
-		}
-		else
-		{
-			colorintensity = (lightinfo->mColor.red * 0.3333f) +
-				(lightinfo->mColor.green * 0.3333f) +
-				(lightinfo->mColor.blue * 0.3333f);
-		}
+    if((lightinfo->mType == LightInfo::Vector) || (lightinfo->mType == LightInfo::Ambient))
+    {
+        colorintensity = (lightinfo->mColor.red   + lightinfo->mAmbient.red) * 0.346f +
+            (lightinfo->mColor.green + lightinfo->mAmbient.green) * 0.588f +
+            (lightinfo->mColor.blue  + lightinfo->mAmbient.blue) * 0.070f;
+        distintensity = 1;
+        weight = SG_LIGHTMANAGER_SUN_PRIORITY;
+    }
+    else
+    {
+        if(lightinfo->sgAssignedToParticleSystem)
+        {
+            colorintensity = SG_PARTICLESYSTEMLIGHT_FIXED_INTENSITY;
+        }
+        else
+        {
+            colorintensity = (lightinfo->mColor.red * 0.3333f) +
+                (lightinfo->mColor.green * 0.3333f) +
+                (lightinfo->mColor.blue * 0.3333f);
+        }
 
-		sgLightingModel &model = sgLightingModelManager::sgGetLightingModel(sglightinfo.sgLightingModelName);
-		model.sgSetState(lightInfo);
-		distintensity = model.sgScoreLight(lightinfo, sphere);
-		model.sgResetState();
+        sgLightingModel &model = sgLightingModelManager::sgGetLightingModel(sglightinfo.sgLightingModelName);
+        model.sgSetState(lightInfo);
+        distintensity = model.sgScoreLight(lightinfo, sphere);
+        model.sgResetState();
 
-		if(lightinfo->sgAssignedToTSObject)
-			weight = SG_LIGHTMANAGER_ASSIGNED_PRIORITY;
-		else if((lightinfo->mType == LightInfo::SGStaticPoint) || (lightinfo->mType == LightInfo::SGStaticSpot))
-			weight = SG_LIGHTMANAGER_STATIC_PRIORITY;
-	}
+        if(lightinfo->sgAssignedToTSObject)
+            weight = SG_LIGHTMANAGER_ASSIGNED_PRIORITY;
+        else if((lightinfo->mType == LightInfo::SGStaticPoint) || (lightinfo->mType == LightInfo::SGStaticSpot))
+            weight = SG_LIGHTMANAGER_STATIC_PRIORITY;
+    }
 
-	F32 intensity = colorintensity * distintensity;
-	if(intensity < 0.004f)
-		intensity = 0;
-	lightinfo->mScore = S32(intensity * weight * 1024.0f);
+    F32 intensity = colorintensity * distintensity;
+    if(intensity < 0.004f)
+        intensity = 0;
+    lightinfo->mScore = S32(intensity * weight * 1024.0f);
 }
 */
 void sgStatistics::sgClear()
 {
-	sgInteriorLexelCount = 0;
-	sgInteriorLexelTime = 0;
-	sgInteriorObjectCount = 0;
-	sgInteriorObjectIncludedCount = 0;
-	sgInteriorObjectIlluminationCount = 0;
-	sgInteriorSurfaceIncludedCount = 0;
-	sgInteriorSurfaceIlluminationCount = 0;
-	sgInteriorSurfaceIlluminatedCount = 0;
-	sgInteriorOccluderCount = 0;
-	sgTerrainLexelCount = 0;
-	sgTerrainLexelTime = 0;
-	//sgTerrainOccluderCount = 0;
+    sgInteriorLexelCount = 0;
+    sgInteriorLexelTime = 0;
+    sgInteriorObjectCount = 0;
+    sgInteriorObjectIncludedCount = 0;
+    sgInteriorObjectIlluminationCount = 0;
+    sgInteriorSurfaceIncludedCount = 0;
+    sgInteriorSurfaceIlluminationCount = 0;
+    sgInteriorSurfaceIlluminatedCount = 0;
+    sgInteriorOccluderCount = 0;
+    sgTerrainLexelCount = 0;
+    sgTerrainLexelTime = 0;
+    //sgTerrainOccluderCount = 0;
 }
 
 void sgStatistics::sgPrint()
 {
-	Con::printf("");
-	Con::printf("  Lighting Pack lighting system stats:");
-	Con::printf("    Interior Lexel Count:                %d", sgInteriorLexelCount);
-	Con::printf("    Interior Lexel Time:                 %f", sgInteriorLexelTime);
-	Con::printf("    Interior Object Count:               %d", sgInteriorObjectCount);
-	Con::printf("    Interior Object Included Count:      %d", sgInteriorObjectIncludedCount);
-	Con::printf("    Interior Object Illumination Count:  %d", sgInteriorObjectIlluminationCount);
-	Con::printf("    Interior Surface Included Count:     %d", sgInteriorSurfaceIncludedCount);
-	Con::printf("    Interior Surface Illumination Count: %d", sgInteriorSurfaceIlluminationCount);
-	Con::printf("    Interior Surface Illuminated Count:  %d", sgInteriorSurfaceIlluminatedCount);
-	Con::printf("    Interior Occluder Count:             %d", sgInteriorOccluderCount);
-	Con::printf("    Terrain Lexel Count:                 %d", sgTerrainLexelCount);
-	Con::printf("    Terrain Lexel Time:                  %f", sgTerrainLexelTime);
+    Con::printf("");
+    Con::printf("  Lighting Pack lighting system stats:");
+    Con::printf("    Interior Lexel Count:                %d", sgInteriorLexelCount);
+    Con::printf("    Interior Lexel Time:                 %f", sgInteriorLexelTime);
+    Con::printf("    Interior Object Count:               %d", sgInteriorObjectCount);
+    Con::printf("    Interior Object Included Count:      %d", sgInteriorObjectIncludedCount);
+    Con::printf("    Interior Object Illumination Count:  %d", sgInteriorObjectIlluminationCount);
+    Con::printf("    Interior Surface Included Count:     %d", sgInteriorSurfaceIncludedCount);
+    Con::printf("    Interior Surface Illumination Count: %d", sgInteriorSurfaceIlluminationCount);
+    Con::printf("    Interior Surface Illuminated Count:  %d", sgInteriorSurfaceIlluminatedCount);
+    Con::printf("    Interior Occluder Count:             %d", sgInteriorOccluderCount);
+    Con::printf("    Terrain Lexel Count:                 %d", sgTerrainLexelCount);
+    Con::printf("    Terrain Lexel Time:                  %f", sgTerrainLexelTime);
 }
 
 S32 QSORT_CALLBACK LightManager::sgSortLightsByAddress(const void* a, const void* b)
 {
-	return ((*(LightInfo**)b) - (*(LightInfo**)a));
+    return ((*(LightInfo**)b) - (*(LightInfo**)a));
 }
 
 S32 QSORT_CALLBACK LightManager::sgSortLightsByScore(const void* a, const void* b)
 {
-	return((*(LightInfo**)b)->mScore - (*(LightInfo**)a)->mScore);
+    return((*(LightInfo**)b)->mScore - (*(LightInfo**)a)->mScore);
 }
 
 void sgRelightFilter::sgInit()
 {
-	Con::addVariable("SceneLighting::sgFilterRelight", TypeBool, &sgRelightFilter::sgFilterRelight);
-	Con::addVariable("SceneLighting::sgFilterRelightVisible", TypeBool, &sgRelightFilter::sgFilterRelightVisible);
-	Con::addVariable("SceneLighting::sgFilterRelightByDistance", TypeBool, &sgRelightFilter::sgFilterRelightByDistance);
-	//Con::addVariable("SceneLighting::sgFilterRelightByVisiblity", TypeBool, &sgRelightFilter::sgFilterRelightByVisiblity);
-	Con::addVariable("SceneLighting::sgFilterRelightByDistanceRadius", TypeF32, &sgRelightFilter::sgFilterRelightByDistanceRadius);
-	Con::addVariable("SceneLighting::sgFilterRelightByDistancePosition", TypePoint3F, &sgRelightFilter::sgFilterRelightByDistancePosition);
+    Con::addVariable("SceneLighting::sgFilterRelight", TypeBool, &sgRelightFilter::sgFilterRelight);
+    Con::addVariable("SceneLighting::sgFilterRelightVisible", TypeBool, &sgRelightFilter::sgFilterRelightVisible);
+    Con::addVariable("SceneLighting::sgFilterRelightByDistance", TypeBool, &sgRelightFilter::sgFilterRelightByDistance);
+    //Con::addVariable("SceneLighting::sgFilterRelightByVisiblity", TypeBool, &sgRelightFilter::sgFilterRelightByVisiblity);
+    Con::addVariable("SceneLighting::sgFilterRelightByDistanceRadius", TypeF32, &sgRelightFilter::sgFilterRelightByDistanceRadius);
+    Con::addVariable("SceneLighting::sgFilterRelightByDistancePosition", TypePoint3F, &sgRelightFilter::sgFilterRelightByDistancePosition);
 }
 
-bool sgRelightFilter::sgAllowLighting(const Box3F &box, bool forcefilter)
+bool sgRelightFilter::sgAllowLighting(const Box3F& box, bool forcefilter)
 {
-	if((sgRelightFilter::sgFilterRelight && sgRelightFilter::sgFilterRelightByDistance) || forcefilter)
-	{
-		if(!sgRelightFilter::sgFilterRelightVisible)
-			return false;
+    if ((sgRelightFilter::sgFilterRelight && sgRelightFilter::sgFilterRelightByDistance) || forcefilter)
+    {
+        if (!sgRelightFilter::sgFilterRelightVisible)
+            return false;
 
-		Point3F min, max;
+        Point3F min, max;
 
-		min = EditTSCtrl::smCamPos;
-		min.x = min.x - sgRelightFilter::sgFilterRelightByDistanceRadius;
-		min.y = min.y - sgRelightFilter::sgFilterRelightByDistanceRadius;
-		min.z = min.z - sgRelightFilter::sgFilterRelightByDistanceRadius;
+        min = EditTSCtrl::smCamPos;
+        min.x = min.x - sgRelightFilter::sgFilterRelightByDistanceRadius;
+        min.y = min.y - sgRelightFilter::sgFilterRelightByDistanceRadius;
+        min.z = min.z - sgRelightFilter::sgFilterRelightByDistanceRadius;
 
-		max = EditTSCtrl::smCamPos;
-		max.x = max.x + sgRelightFilter::sgFilterRelightByDistanceRadius;
-		max.y = max.y + sgRelightFilter::sgFilterRelightByDistanceRadius;
-		max.z = max.z + sgRelightFilter::sgFilterRelightByDistanceRadius;
+        max = EditTSCtrl::smCamPos;
+        max.x = max.x + sgRelightFilter::sgFilterRelightByDistanceRadius;
+        max.y = max.y + sgRelightFilter::sgFilterRelightByDistanceRadius;
+        max.z = max.z + sgRelightFilter::sgFilterRelightByDistanceRadius;
 
-		Box3F lightbox = Box3F(min, max);
+        Box3F lightbox = Box3F(min, max);
 
-		if(!box.isOverlapped(lightbox))
-			return false;
-	}
+        if (!box.isOverlapped(lightbox))
+            return false;
+    }
 
-	return true;
+    return true;
 }
 
-void sgRelightFilter::sgRenderAllowedObjects(void *editor)
+void sgRelightFilter::sgRenderAllowedObjects(void* editor)
 {
-	U32 i;
-	WorldEditor *worldeditor = (WorldEditor *)editor;
-	Vector<SceneObject *> objects;
-	gServerContainer.findObjects(InteriorObjectType, sgFindObjectsCallback, &objects);
-	for(i = 0; i < objects.size(); i++)
-	{
-		SceneObject * obj = objects[i];
-		if(worldeditor->objClassIgnored(obj))
-			continue;
+    U32 i;
+    WorldEditor* worldeditor = (WorldEditor*)editor;
+    Vector<SceneObject*> objects;
+    gServerContainer.findObjects(InteriorObjectType, sgFindObjectsCallback, &objects);
+    for (i = 0; i < objects.size(); i++)
+    {
+        SceneObject* obj = objects[i];
+        if (worldeditor->objClassIgnored(obj))
+            continue;
 
-		if(!sgRelightFilter::sgAllowLighting(obj->getWorldBox(), true))
-			continue;
+        if (!sgRelightFilter::sgAllowLighting(obj->getWorldBox(), true))
+            continue;
 
-		ColorI color = ColorI(255, 0, 255);
-		worldeditor->renderObjectBox(obj, color);
-	}
+        ColorI color = ColorI(255, 0, 255);
+        worldeditor->renderObjectBox(obj, color);
+    }
 }
 

@@ -16,11 +16,11 @@
 
 class GuiRadioCtrl : public GuiCheckBoxCtrl
 {
-   typedef GuiCheckBoxCtrl Parent;
+    typedef GuiCheckBoxCtrl Parent;
 
 public:
-   DECLARE_CONOBJECT(GuiRadioCtrl);
-   GuiRadioCtrl();
+    DECLARE_CONOBJECT(GuiRadioCtrl);
+    GuiRadioCtrl();
 };
 
 #endif //_GUI_RADIO_CTRL_H

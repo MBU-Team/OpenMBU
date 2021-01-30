@@ -25,40 +25,40 @@
 class GuiBitmapButtonCtrl : public GuiButtonCtrl
 {
 private:
-   typedef GuiButtonCtrl Parent;
+    typedef GuiButtonCtrl Parent;
 
 protected:
-   StringTableEntry mBitmapName;
+    StringTableEntry mBitmapName;
 
-   GFXTexHandle mTextureNormal;
-   GFXTexHandle mTextureHilight;
-   GFXTexHandle mTextureDepressed;
-   GFXTexHandle mTextureInactive;
+    GFXTexHandle mTextureNormal;
+    GFXTexHandle mTextureHilight;
+    GFXTexHandle mTextureDepressed;
+    GFXTexHandle mTextureInactive;
 
-   void renderButton(GFXTexHandle texture, Point2I &offset, const RectI& updateRect);
+    void renderButton(GFXTexHandle texture, Point2I& offset, const RectI& updateRect);
 
 public:
-   DECLARE_CONOBJECT(GuiBitmapButtonCtrl);
-   GuiBitmapButtonCtrl();
+    DECLARE_CONOBJECT(GuiBitmapButtonCtrl);
+    GuiBitmapButtonCtrl();
 
-   static void initPersistFields();
+    static void initPersistFields();
 
-   //Parent methods
-   bool onWake();
-   void onSleep();
-   void inspectPostApply();
+    //Parent methods
+    bool onWake();
+    void onSleep();
+    void inspectPostApply();
 
-   void setBitmap(const char *name);
+    void setBitmap(const char* name);
 
-   void onRender(Point2I offset, const RectI &updateRect);
+    void onRender(Point2I offset, const RectI& updateRect);
 };
 
 class GuiBitmapButtonTextCtrl : public GuiBitmapButtonCtrl
 {
-   typedef GuiBitmapButtonCtrl Parent;
+    typedef GuiBitmapButtonCtrl Parent;
 public:
-   DECLARE_CONOBJECT(GuiBitmapButtonTextCtrl);
-   void onRender(Point2I offset, const RectI &updateRect);
+    DECLARE_CONOBJECT(GuiBitmapButtonTextCtrl);
+    void onRender(Point2I offset, const RectI& updateRect);
 };
 
 #endif //_GUI_BITMAP_BUTTON_CTRL_H

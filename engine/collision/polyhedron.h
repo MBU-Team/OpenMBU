@@ -17,28 +17,28 @@
 
 struct Polyhedron
 {
-   struct Edge
-   {
-      // Edge vertices must be oriented clockwise
-      // for face[0]
-      U32 face[2];
-      U32 vertex[2];
-   };
+    struct Edge
+    {
+        // Edge vertices must be oriented clockwise
+        // for face[0]
+        U32 face[2];
+        U32 vertex[2];
+    };
 
-   Vector<Point3F> pointList;
-   Vector<PlaneF> planeList;
-   Vector<Edge> edgeList;
+    Vector<Point3F> pointList;
+    Vector<PlaneF> planeList;
+    Vector<Edge> edgeList;
 
-   // Misc support methods
-   Polyhedron() {
-      VECTOR_SET_ASSOCIATION(pointList);
-      VECTOR_SET_ASSOCIATION(planeList);
-      VECTOR_SET_ASSOCIATION(edgeList);
-   }
+    // Misc support methods
+    Polyhedron() {
+        VECTOR_SET_ASSOCIATION(pointList);
+        VECTOR_SET_ASSOCIATION(planeList);
+        VECTOR_SET_ASSOCIATION(edgeList);
+    }
 
-   void buildBox(const MatrixF& mat, const Box3F& box);
-   void render();
-   void render(const VectorF& vec,F32 time);
+    void buildBox(const MatrixF& mat, const Box3F& box);
+    void render();
+    void render(const VectorF& vec, F32 time);
 };
 
 

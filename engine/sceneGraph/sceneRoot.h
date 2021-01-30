@@ -17,24 +17,24 @@
 /// Root of scene graph.
 class SceneRoot : public SceneObject
 {
-   typedef SceneObject Parent;
+    typedef SceneObject Parent;
 
-  protected:
-   bool onSceneAdd(SceneGraph *graph);
-   void onSceneRemove();
+protected:
+    bool onSceneAdd(SceneGraph* graph);
+    void onSceneRemove();
 
-   bool getOverlappingZones(SceneObject *obj, U32 *zones, U32 *numZones);
+    bool getOverlappingZones(SceneObject* obj, U32* zones, U32* numZones);
 
-   bool prepRenderImage(SceneState *state, const U32 stateKey, const U32 startZone,
-                        const bool modifyBaseZoneState);
+    bool prepRenderImage(SceneState* state, const U32 stateKey, const U32 startZone,
+        const bool modifyBaseZoneState);
 
-   bool scopeObject(const Point3F&        rootPosition,
-                    const F32             rootDistance,
-                    bool*                 zoneScopeState);
+    bool scopeObject(const Point3F& rootPosition,
+        const F32             rootDistance,
+        bool* zoneScopeState);
 
-  public:
-   SceneRoot();
-   ~SceneRoot();
+public:
+    SceneRoot();
+    ~SceneRoot();
 };
 
 extern SceneRoot* gClientSceneRoot;     ///< Client's scene graph root.

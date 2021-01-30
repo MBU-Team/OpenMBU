@@ -7,127 +7,127 @@
 
 #include "audio/oggMixedStreamSource.h"
 
-OggMixedStreamSource::OggMixedStreamSource(const char *filename)
+OggMixedStreamSource::OggMixedStreamSource(const char* filename)
 {
-   bIsValid = false;
-   bBuffersAllocated = false;
-   for(int i = 0; i < BUFFERCNT; i++)
-   {
-      mBufferList[i] = 0;
-      m_fBufferInUse[i] = false;
-   }
+    bIsValid = false;
+    bBuffersAllocated = false;
+    for (int i = 0; i < BUFFERCNT; i++)
+    {
+        mBufferList[i] = 0;
+        m_fBufferInUse[i] = false;
+    }
 
 
-   mHandle = NULL_AUDIOHANDLE;
-   mSource = NULL;
+    mHandle = NULL_AUDIOHANDLE;
+    mSource = NULL;
 
-   mFilename = filename;
-   mPosition = Point3F(0.f,0.f,0.f);
+    mFilename = filename;
+    mPosition = Point3F(0.f, 0.f, 0.f);
 
-   dMemset(&mDescription, 0, sizeof(Audio::Description));
-   mEnvironment = 0;
-   mPosition.set(0.f,0.f,0.f);
-   mDirection.set(0.f,1.f,0.f);
-   mPitch = 1.f;
-   mScore = 0.f;
-   mCullTime = 0;
+    dMemset(&mDescription, 0, sizeof(Audio::Description));
+    mEnvironment = 0;
+    mPosition.set(0.f, 0.f, 0.f);
+    mDirection.set(0.f, 1.f, 0.f);
+    mPitch = 1.f;
+    mScore = 0.f;
+    mCullTime = 0;
 
-   bFinishedPlaying = false;
-   bIsValid = false;
-   bBuffersAllocated = false;
+    bFinishedPlaying = false;
+    bIsValid = false;
+    bBuffersAllocated = false;
 }
 
 OggMixedStreamSource::~OggMixedStreamSource()
 {
-   if(bIsValid)
-      freeStream();
+    if (bIsValid)
+        freeStream();
 }
 
 bool OggMixedStreamSource::initStream()
 {
-   alSourceStop(mSource);
-   alSourcei(mSource, AL_BUFFER, 0);
+    alSourceStop(mSource);
+    alSourcei(mSource, AL_BUFFER, 0);
 
-   // Clear Error Code
-   alGetError();
+    // Clear Error Code
+    alGetError();
 
-   alGenBuffers(BUFFERCNT, mBufferList);
-   if (alGetError() != AL_NO_ERROR)
-      return false;
+    alGenBuffers(BUFFERCNT, mBufferList);
+    if (alGetError() != AL_NO_ERROR)
+        return false;
 
-   bBuffersAllocated = true;
+    bBuffersAllocated = true;
 
-   alSourcei(mSource, AL_LOOPING, AL_FALSE);
+    alSourcei(mSource, AL_LOOPING, AL_FALSE);
 
-   bIsValid = true;
+    bIsValid = true;
 
-   return true;
+    return true;
 }
 
 bool OggMixedStreamSource::updateBuffers()
 {
-   // buffers are updated from theora player
-   return true;
+    // buffers are updated from theora player
+    return true;
 }
 
 void OggMixedStreamSource::freeStream()
 {
-   // free the al buffers
-   if(bBuffersAllocated)
-   {
-      alSourceStop(mSource);
-      alSourcei(mSource, AL_BUFFER, 0);
-      alDeleteBuffers(BUFFERCNT, mBufferList);
+    // free the al buffers
+    if (bBuffersAllocated)
+    {
+        alSourceStop(mSource);
+        alSourcei(mSource, AL_BUFFER, 0);
+        alDeleteBuffers(BUFFERCNT, mBufferList);
 
-      alGetError();
+        alGetError();
 
-      for(int i = 0; i < BUFFERCNT; i++)
-      {
-         mBufferList[i] = 0;
-         m_fBufferInUse[i] = false;
-      }
+        for (int i = 0; i < BUFFERCNT; i++)
+        {
+            mBufferList[i] = 0;
+            m_fBufferInUse[i] = false;
+        }
 
-      bBuffersAllocated = false;
-   }
+        bBuffersAllocated = false;
+    }
 }
 
 ALuint OggMixedStreamSource::GetAvailableBuffer()
 {
-   if(!bBuffersAllocated)
-      return 0;
+    if (!bBuffersAllocated)
+        return 0;
 
-   // test for unused buffers
-   for(int i = 0; i < BUFFERCNT; i++)
-   {
-      if(!m_fBufferInUse[i])
-      {
-         m_fBufferInUse[i] = true;
-         return mBufferList[i];
-      }
-   }
+    // test for unused buffers
+    for (int i = 0; i < BUFFERCNT; i++)
+    {
+        if (!m_fBufferInUse[i])
+        {
+            m_fBufferInUse[i] = true;
+            return mBufferList[i];
+        }
+    }
 
-   alGetError();
+    alGetError();
 
-   // test for processed buffers
-   ALint         processed;
-   alGetSourcei(mSource, AL_BUFFERS_PROCESSED, &processed);
+    // test for processed buffers
+    ALint         processed;
+    alGetSourcei(mSource, AL_BUFFERS_PROCESSED, &processed);
 
-   if(!processed)
-      return 0; // no available buffers
+    if (!processed)
+        return 0; // no available buffers
 
-   ALuint BufferID;
-   alSourceUnqueueBuffers(mSource, 1, &BufferID);
+    ALuint BufferID;
+    alSourceUnqueueBuffers(mSource, 1, &BufferID);
 
-   if (alGetError() != AL_NO_ERROR)
-      return 0; // something went wrong..
+    if (alGetError() != AL_NO_ERROR)
+        return 0; // something went wrong..
 
-   return BufferID;
+    return BufferID;
 }
 
 bool OggMixedStreamSource::QueueBuffer(ALuint BufferID)
 {
-   alSourceQueueBuffers(mSource, 1, &BufferID);
-   if (alGetError() != AL_NO_ERROR)
-      return false;
-   return true;
+    alSourceQueueBuffers(mSource, 1, &BufferID);
+    if (alGetError() != AL_NO_ERROR)
+        return false;
+    return true;
 }

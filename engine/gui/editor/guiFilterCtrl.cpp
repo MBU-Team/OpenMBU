@@ -14,226 +14,226 @@ IMPLEMENT_CONOBJECT(GuiFilterCtrl);
 
 GuiFilterCtrl::GuiFilterCtrl()
 {
-   mControlPointRequest = 7;
-   mFilter.setSize(7);
-   identity();
+    mControlPointRequest = 7;
+    mFilter.setSize(7);
+    identity();
 }
 
 
 void GuiFilterCtrl::initPersistFields()
 {
-   Parent::initPersistFields();
-   addField("controlPoints", TypeS32, Offset(mControlPointRequest, GuiFilterCtrl));
-   addField("filter", TypeF32Vector, Offset(mFilter, GuiFilterCtrl));
+    Parent::initPersistFields();
+    addField("controlPoints", TypeS32, Offset(mControlPointRequest, GuiFilterCtrl));
+    addField("filter", TypeF32Vector, Offset(mFilter, GuiFilterCtrl));
 }
 
-ConsoleMethod( GuiFilterCtrl, getValue, const char*, 2, 2, "Return a tuple containing all the values in the filter.")
+ConsoleMethod(GuiFilterCtrl, getValue, const char*, 2, 2, "Return a tuple containing all the values in the filter.")
 {
-   argv;
-   static char buffer[512];
-   const Filter *filter = object->get();
-   *buffer = 0;
+    argv;
+    static char buffer[512];
+    const Filter* filter = object->get();
+    *buffer = 0;
 
-   for (U32 i=0; i < filter->size(); i++)
-   {
-      char value[32];
-      dSprintf(value, 31, "%1.5f ", *(filter->begin()+i) );
-      dStrcat(buffer, value);
-   }
+    for (U32 i = 0; i < filter->size(); i++)
+    {
+        char value[32];
+        dSprintf(value, 31, "%1.5f ", *(filter->begin() + i));
+        dStrcat(buffer, value);
+    }
 
-   return buffer;
+    return buffer;
 }
 
-ConsoleMethod( GuiFilterCtrl, setValue, void, 3, 20, "(f1, f2, ...)"
-              "Reset the filter to use the specified points, spread equidistantly across the domain.")
+ConsoleMethod(GuiFilterCtrl, setValue, void, 3, 20, "(f1, f2, ...)"
+    "Reset the filter to use the specified points, spread equidistantly across the domain.")
 {
-   Filter filter;
+    Filter filter;
 
-   argc -= 2;
-   argv += 2;
+    argc -= 2;
+    argv += 2;
 
-   filter.set(argc, argv);
-	object->set(filter);
+    filter.set(argc, argv);
+    object->set(filter);
 }
 
-ConsoleMethod( GuiFilterCtrl, identity, void, 2, 2, "Reset the filtering.")
+ConsoleMethod(GuiFilterCtrl, identity, void, 2, 2, "Reset the filtering.")
 {
-   object->identity();
+    object->identity();
 }
 
 bool GuiFilterCtrl::onWake()
 {
-   if (!Parent::onWake())
-      return false;
+    if (!Parent::onWake())
+        return false;
 
-   if (U32(mControlPointRequest) != mFilter.size())
-   {
-      mFilter.setSize(mControlPointRequest);
-      identity();
-   }
+    if (U32(mControlPointRequest) != mFilter.size())
+    {
+        mFilter.setSize(mControlPointRequest);
+        identity();
+    }
 
-   return true;
+    return true;
 }
 
 
 void GuiFilterCtrl::identity()
 {
-   S32 size = mFilter.size()-1;
-   for (U32 i=0; S32(i) <= size; i++)
-      mFilter[i] = (F32)i/(F32)size;
+    S32 size = mFilter.size() - 1;
+    for (U32 i = 0; S32(i) <= size; i++)
+        mFilter[i] = (F32)i / (F32)size;
 }
 
 
-void GuiFilterCtrl::onMouseDown(const GuiEvent &event)
+void GuiFilterCtrl::onMouseDown(const GuiEvent& event)
 {
-   mouseLock();
-   setFirstResponder();
+    mouseLock();
+    setFirstResponder();
 
-   Point2I p = globalToLocalCoord(event.mousePoint);
+    Point2I p = globalToLocalCoord(event.mousePoint);
 
-   // determine which knot (offset same as in onRender)
-   F32 w = F32(mBounds.extent.x-4) / F32(mFilter.size()-1);
-   F32 val = (F32(p.x) + (w / 2.f)) / w;
-   mCurKnot = S32(val);
+    // determine which knot (offset same as in onRender)
+    F32 w = F32(mBounds.extent.x - 4) / F32(mFilter.size() - 1);
+    F32 val = (F32(p.x) + (w / 2.f)) / w;
+    mCurKnot = S32(val);
 
-   mFilter[mCurKnot] = 1.0f - F32(getMin(getMax(0, p.y), mBounds.extent.y)/(F32)mBounds.extent.y);
-   setUpdate();
+    mFilter[mCurKnot] = 1.0f - F32(getMin(getMax(0, p.y), mBounds.extent.y) / (F32)mBounds.extent.y);
+    setUpdate();
 }
 
 
-void GuiFilterCtrl::onMouseDragged(const GuiEvent &event)
+void GuiFilterCtrl::onMouseDragged(const GuiEvent& event)
 {
-   mouseLock();
-   setFirstResponder();
+    mouseLock();
+    setFirstResponder();
 
-   Point2I p = globalToLocalCoord(event.mousePoint);
-   mFilter[mCurKnot] = 1.0f - F32(getMin(getMax(0, p.y), mBounds.extent.y)/(F32)mBounds.extent.y);
-   setUpdate();
+    Point2I p = globalToLocalCoord(event.mousePoint);
+    mFilter[mCurKnot] = 1.0f - F32(getMin(getMax(0, p.y), mBounds.extent.y) / (F32)mBounds.extent.y);
+    setUpdate();
 }
 
-void GuiFilterCtrl::onMouseUp(const GuiEvent &)
+void GuiFilterCtrl::onMouseUp(const GuiEvent&)
 {
-   mouseUnlock();
-   if (mConsoleCommand[0])
-      Con::evaluate(mConsoleCommand, false);
+    mouseUnlock();
+    if (mConsoleCommand[0])
+        Con::evaluate(mConsoleCommand, false);
 }
 
 void GuiFilterCtrl::onPreRender()
 {
-   if(U32(mControlPointRequest) != mFilter.size())
-   {
-      mFilter.setSize(mControlPointRequest);
-      identity();
-      setUpdate();
-   }
+    if (U32(mControlPointRequest) != mFilter.size())
+    {
+        mFilter.setSize(mControlPointRequest);
+        identity();
+        setUpdate();
+    }
 }
 
-void GuiFilterCtrl::onRender(Point2I offset, const RectI &updateRect)
+void GuiFilterCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
-   Point2I pos = offset;
-   Point2I ext = mBounds.extent;
+    Point2I pos = offset;
+    Point2I ext = mBounds.extent;
 
-   RectI r(pos, ext);
-   GFX->drawRectFill(r, ColorI(255,255,255));
-   GFX->drawRect(r, ColorI(0,0,0));
+    RectI r(pos, ext);
+    GFX->drawRectFill(r, ColorI(255, 255, 255));
+    GFX->drawRect(r, ColorI(0, 0, 0));
 
-   // shrink by 2 pixels
-   pos.x += 2;
-   pos.y += 2;
-   ext.x -= 4;
-   ext.y -= 4;
+    // shrink by 2 pixels
+    pos.x += 2;
+    pos.y += 2;
+    ext.x -= 4;
+    ext.y -= 4;
 
-   // draw the identity line
-   GFX->drawLine(pos.x, pos.y + ext.y, pos.x + ext.x, pos.y, ColorF( 0.9f, 0.9f, 0.9f ) );
+    // draw the identity line
+    GFX->drawLine(pos.x, pos.y + ext.y, pos.x + ext.x, pos.y, ColorF(0.9f, 0.9f, 0.9f));
 
-   // draw the curv
-   GFXVertexBufferHandle<GFXVertexPC> verts(GFX, ext.x, GFXBufferTypeVolatile);
+    // draw the curv
+    GFXVertexBufferHandle<GFXVertexPC> verts(GFX, ext.x, GFXBufferTypeVolatile);
 
-   verts.lock();
+    verts.lock();
 
-   F32 scale = 1.f / F32( ext.x );
-   for ( U32 i = 0; i < ext.x; i++)
-   {
-      F32 index = F32(i) * scale;
-      S32 y = (S32)(ext.y*(1.0f-mFilter.getValue(index)));
+    F32 scale = 1.f / F32(ext.x);
+    for (U32 i = 0; i < ext.x; i++)
+    {
+        F32 index = F32(i) * scale;
+        S32 y = (S32)(ext.y * (1.0f - mFilter.getValue(index)));
 
-      verts[i].point.set( pos.x + i, pos.y + y, 0.f );
-      verts[i].color = GFXVertexColor( ColorF( 0.4f, 0.4f, 0.4f ) );
-   }
+        verts[i].point.set(pos.x + i, pos.y + y, 0.f);
+        verts[i].color = GFXVertexColor(ColorF(0.4f, 0.4f, 0.4f));
+    }
 
-   verts.unlock();
+    verts.unlock();
 
-   GFX->setVertexBuffer( verts );
-   GFX->drawPrimitive( GFXLineStrip, 0, ext.x - 1 );
+    GFX->setVertexBuffer(verts);
+    GFX->drawPrimitive(GFXLineStrip, 0, ext.x - 1);
 
-   // draw the knots
-   for (U32 k=0; k < mFilter.size(); k++)
-   {
-      RectI r;
-      r.point.x = (S32)(((F32)ext.x/(F32)(mFilter.size()-1)*(F32)k));
-      r.point.y = (S32)(ext.y - ((F32)ext.y * mFilter[k]));
-      r.point += pos + Point2I(-2,-2);
-      r.extent = Point2I(5,5);
+    // draw the knots
+    for (U32 k = 0; k < mFilter.size(); k++)
+    {
+        RectI r;
+        r.point.x = (S32)(((F32)ext.x / (F32)(mFilter.size() - 1) * (F32)k));
+        r.point.y = (S32)(ext.y - ((F32)ext.y * mFilter[k]));
+        r.point += pos + Point2I(-2, -2);
+        r.extent = Point2I(5, 5);
 
-      GFX->drawRectFill(r, ColorI(255,0,0));
-   }
+        GFX->drawRectFill(r, ColorI(255, 0, 0));
+    }
 
-   renderChildControls(offset, updateRect);
+    renderChildControls(offset, updateRect);
 }
 
 
 
 //--------------------------------------
-void Filter::set(S32 argc, const char *argv[])
+void Filter::set(S32 argc, const char* argv[])
 {
-   setSize(0);
-   if (argc == 1)
-   {  // in the form of one string "1.0 1.0 1.0"
-      char list[1024];
-      dStrcpy(list, *argv);    // strtok modifies the string so we need to copy it
-      char *value = dStrtok(list, " ");
-      while (value)
-      {
-         push_back(dAtof(value));
-         value = dStrtok(NULL, " ");
-      }
-   }
-   else
-   {  // in the form of seperate strings "1.0" "1.0" "1.0"
-      for (; argc ; argc--, argv++)
-         push_back(dAtof(*argv));
-   }
+    setSize(0);
+    if (argc == 1)
+    {  // in the form of one string "1.0 1.0 1.0"
+        char list[1024];
+        dStrcpy(list, *argv);    // strtok modifies the string so we need to copy it
+        char* value = dStrtok(list, " ");
+        while (value)
+        {
+            push_back(dAtof(value));
+            value = dStrtok(NULL, " ");
+        }
+    }
+    else
+    {  // in the form of seperate strings "1.0" "1.0" "1.0"
+        for (; argc; argc--, argv++)
+            push_back(dAtof(*argv));
+    }
 }
 
 
 //--------------------------------------
 F32 Filter::getValue(F32 x) const
 {
-   if (size() < 2)
-      return 0.0f;
+    if (size() < 2)
+        return 0.0f;
 
-   x = mClampF(x, 0.0f, 1.0f);
-   x *= F32(size()-1);
+    x = mClampF(x, 0.0f, 1.0f);
+    x *= F32(size() - 1);
 
-   F32 p0,p1,p2,p3;
-   S32 i1 = (S32)mFloor(x);
-   S32 i2 = i1+1;
-   F32 dt = x - F32(i1);
+    F32 p0, p1, p2, p3;
+    S32 i1 = (S32)mFloor(x);
+    S32 i2 = i1 + 1;
+    F32 dt = x - F32(i1);
 
-   p1 = *(begin()+i1);
-   p2 = *(begin()+i2);
+    p1 = *(begin() + i1);
+    p2 = *(begin() + i2);
 
-   if (i1 == 0)
-      p0 = p1 + (p1 - p2);
-   else
-      p0 = *(begin()+i1-1);
+    if (i1 == 0)
+        p0 = p1 + (p1 - p2);
+    else
+        p0 = *(begin() + i1 - 1);
 
-   if (i2 == S32(size()-1))
-      p3 = p2 + (p2 - p1);
-   else
-      p3 = *(begin()+i2+1);
+    if (i2 == S32(size() - 1))
+        p3 = p2 + (p2 - p1);
+    else
+        p3 = *(begin() + i2 + 1);
 
-   return mClampF( mCatmullrom(dt, p0, p1, p2, p3), 0.0f, 1.0f );
+    return mClampF(mCatmullrom(dt, p0, p1, p2, p3), 0.0f, 1.0f);
 }
 
 

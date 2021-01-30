@@ -13,30 +13,30 @@
 /// Formerly contained a certificate, showing that something was valid.
 class Auth2Certificate
 {
-   U32 xxx;
+    U32 xxx;
 };
 
 /// Formerly contained data indicating whether a user is valid.
 struct AuthInfo
 {
-   enum {
-      MaxNameLen = 31,
-   };
+    enum {
+        MaxNameLen = 31,
+    };
 
-   bool valid;
-   char name[MaxNameLen + 1];
+    bool valid;
+    char name[MaxNameLen + 1];
 };
 
 /// Formerly validated the server's authentication info.
 inline bool validateAuthenticatedServer()
 {
-   return true;
+    return true;
 }
 
 /// Formerly validated the client's authentication info.
 inline bool validateAuthenticatedClient()
 {
-   return true;
+    return true;
 }
 
 #endif

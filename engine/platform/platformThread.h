@@ -10,25 +10,25 @@
 #include "platform/types.h"
 #endif
 
-typedef void (*ThreadRunFunction)(void *);
+typedef void (*ThreadRunFunction)(void*);
 
 class Thread
 {
-   protected:
-      void *mData;
+protected:
+    void* mData;
 
-   public:
-      Thread(ThreadRunFunction func = 0, void *arg = 0, bool start_thread = true);
-      virtual ~Thread();
+public:
+    Thread(ThreadRunFunction func = 0, void* arg = 0, bool start_thread = true);
+    virtual ~Thread();
 
-      virtual void start();
-      virtual bool join();
+    virtual void start();
+    virtual bool join();
 
-      virtual void run(void *arg = 0);
+    virtual void run(void* arg = 0);
 
-      virtual bool isAlive();
+    virtual bool isAlive();
 
-      static U32 getCurrentThreadId();
+    static U32 getCurrentThreadId();
 };
 
 #endif

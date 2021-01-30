@@ -101,91 +101,91 @@
 
 class fluid
 {
-//------------------------------------------------------------------------------
-//  Public Types
-//
+    //------------------------------------------------------------------------------
+    //  Public Types
+    //
 public:
-    typedef f32 compute_fog_fn( f32 DeltaZ, f32 D );
+    typedef f32 compute_fog_fn(f32 DeltaZ, f32 D);
 
-//------------------------------------------------------------------------------
-//  Public Functions
-//
+    //------------------------------------------------------------------------------
+    //  Public Functions
+    //
 public:
-            fluid               ( void );
-           ~fluid               ();
+    fluid(void);
+    ~fluid();
 
     //
     // Render (in FluidRender.cpp):
     //
-    void    Render              ( bool& EyeSubmerged );
+    void    Render(bool& EyeSubmerged);
 
     //
     // Setup per frame (in FluidSupport.cpp):
     //
-    void    SetEyePosition      ( f32 X, f32 Y, f32 Z );
-    void    SetFrustrumPlanes   ( f32* pFrustrumPlanes );
+    void    SetEyePosition(f32 X, f32 Y, f32 Z);
+    void    SetFrustrumPlanes(f32* pFrustrumPlanes);
 
     //
     // Setup at initialization (in FluidSupport.cpp):
     //
-    void    SetInfo             ( f32& X0,
-                                  f32& Y0,
-                                  f32& SizeX,
-                                  f32& SizeY,
-                                  f32  SurfaceZ,
-                                  f32  WaveAmplitude,
-                                  f32& Opacity,
-                                  f32& EnvMapIntensity,
-                                  s32  RemoveWetEdges,
-								  bool UseDepthMap,
-								  f32  TessellationSurface,
-								  f32  TessellationShore,
-								  f32  SurfaceParallax,
-								  f32  FlowAngle,
-								  f32  FlowRate,
-								  f32  DistortGridScale,
-								  f32  DistortMagnitude,
-								  f32  DistortTime,
-                          ColorF SpecColor,
-                          F32  SpecPower );			// MM: Added Various Parameters.
+    void    SetInfo(f32& X0,
+        f32& Y0,
+        f32& SizeX,
+        f32& SizeY,
+        f32  SurfaceZ,
+        f32  WaveAmplitude,
+        f32& Opacity,
+        f32& EnvMapIntensity,
+        s32  RemoveWetEdges,
+        bool UseDepthMap,
+        f32  TessellationSurface,
+        f32  TessellationShore,
+        f32  SurfaceParallax,
+        f32  FlowAngle,
+        f32  FlowRate,
+        f32  DistortGridScale,
+        f32  DistortMagnitude,
+        f32  DistortTime,
+        ColorF SpecColor,
+        F32  SpecPower);			// MM: Added Various Parameters.
 
-    void    SetTerrainData      ( u16* pTerrainData );
+    void    SetTerrainData(u16* pTerrainData);
 
-/*
-    void    SetTextures         ( TextureHandle Base,
-                                  TextureHandle EnvMapOverTexture,
-                                  TextureHandle EnvMapUnderTexture,
-								  TextureHandle ShoreTexture,
-								  TextureHandle DepthTexture,
-								  TextureHandle ShoreDepthTexture,
-                          TextureHandle SpecMaskTexture  );	// MM: Added Various Textures.
+    /*
+        void    SetTextures         ( TextureHandle Base,
+                                      TextureHandle EnvMapOverTexture,
+                                      TextureHandle EnvMapUnderTexture,
+                                      TextureHandle ShoreTexture,
+                                      TextureHandle DepthTexture,
+                                      TextureHandle ShoreDepthTexture,
+                              TextureHandle SpecMaskTexture  );	// MM: Added Various Textures.
 
-    void    SetLightMapTexture  ( TextureHandle LightMapTexture );
-*/
-    void    SetFogParameters    ( f32 R, f32 G, f32 B, f32 VisibleDistance );
-    void    SetFogFn            ( compute_fog_fn* pFogFn );
+        void    SetLightMapTexture  ( TextureHandle LightMapTexture );
+    */
+    void    SetFogParameters(f32 R, f32 G, f32 B, f32 VisibleDistance);
+    void    SetFogFn(compute_fog_fn* pFogFn);
 
     //
     // Run time interrogation (in FluidSupport.cpp):
     //
-    s32     IsFluidAtXY         ( f32 X, f32 Y )    const;
+    s32     IsFluidAtXY(f32 X, f32 Y)    const;
 
-//------------------------------------------------------------------------------
-//  Private Types
-//
+    //------------------------------------------------------------------------------
+    //  Private Types
+    //
 private:
     struct plane { f32 A, B, C, D; };
-    struct rgba  { f32 R, G, B, A; };
-    struct xyz   { f32 X, Y, Z;    };
-    struct uv    { f32 U, V;       };
+    struct rgba { f32 R, G, B, A; };
+    struct xyz { f32 X, Y, Z; };
+    struct uv { f32 U, V; };
 
     struct node
     {
         s32     Level;
         s32     MaskIndexX, MaskIndexY;
         s32     BlockX0, BlockY0;       // World Block
-        f32     X0,      Y0;            // World Position
-        f32     X1,      Y1;            // World Position
+        f32     X0, Y0;            // World Position
+        f32     X1, Y1;            // World Position
         byte    ClipBits[4];
     };
 
@@ -194,7 +194,7 @@ private:
         f32     X0, Y0;
         f32     X1, Y1;
         f32     Distance[4];    // Distance from eye
-        f32     LOD     [4];    // Level of detail
+        f32     LOD[4];    // Level of detail
     };
 
     // Rendering phases:
@@ -213,19 +213,19 @@ private:
         rgba    RGBA3;      // Phase 3    - MM: EnvMap Colour/Alpha.
         uv      UV3;        // Phase 3    - EnvMap UV
         rgba    RGBA4;      // Phase 4    - Fog Color/Alpha
- 		uv		UV4;		// Test       - MM: Depth Alpha Map.
+        uv		UV4;		// Test       - MM: Depth Alpha Map.
         ColorF  SPECULAR;
-   };
+    };
 
-//------------------------------------------------------------------------------
-//  Private Variables
-//
+    //------------------------------------------------------------------------------
+    //  Private Variables
+    //
 public:
-    s32     m_SquareX0,   m_SquareY0;       // Anchor in terrain squares
+    s32     m_SquareX0, m_SquareY0;       // Anchor in terrain squares
     s32     m_SquaresInX, m_SquaresInY;     // Number of squares in fluid region
 private:
-   f32      m_DepthTexelX, m_DepthTexelY;   // MM: Added Depth Texel X/Y.
-    s32     m_BlocksInX,  m_BlocksInY;      // Number of blocks in fluid region
+    f32      m_DepthTexelX, m_DepthTexelY;   // MM: Added Depth Texel X/Y.
+    s32     m_BlocksInX, m_BlocksInY;      // Number of blocks in fluid region
     f32     m_SurfaceZ;                     // Altitude of fluid surface
     s32     m_RemoveWetEdges;               // Dry fill all edges of the fluid block
     s32     m_HighResMode;                  // Blocks are 4x4 (high res) or 8x8 squares (normal)
@@ -239,31 +239,31 @@ private:
     f32     m_EnvMapIntensity;            // MM: Added Over/Under Env Texture Support.
     f32     m_WaveAmplitude;
     f32     m_WaveFactor;
-    u16*    m_pTerrain;         // 256x256 data for the terrain
-	bool	m_UseDepthMap;					// MM: Use Depth Map Flag?
-	F32		m_TessellationSurface;			// MM: Tessellation Surface.
-	F32		m_TessellationShore;			// MM: Tessellation Shore.
-	F32		m_SurfaceParallax;				// MM: Surface Parallax.
-	F32		m_FlowAngle;					// MM: Flow Angle.
-	F32		m_FlowRate;						// MM: Flow Rate.
-	F32		m_FlowMagnitudeS;				// MM: Flow Magnitude S.
-	F32		m_FlowMagnitudeT;				// MM: Flow Magnitude T.
-	F32		m_DistortGridScale;				// MM: Distort Grid Scale.
-	F32		m_DistortMagnitude;				// MM: Distort Magnitude.
-	F32		m_DistortTime;					// MM: Distort Time.
-   ColorF   m_SpecColor;
-   F32      m_SpecPower;
+    u16* m_pTerrain;         // 256x256 data for the terrain
+    bool	m_UseDepthMap;					// MM: Use Depth Map Flag?
+    F32		m_TessellationSurface;			// MM: Tessellation Surface.
+    F32		m_TessellationShore;			// MM: Tessellation Shore.
+    F32		m_SurfaceParallax;				// MM: Surface Parallax.
+    F32		m_FlowAngle;					// MM: Flow Angle.
+    F32		m_FlowRate;						// MM: Flow Rate.
+    F32		m_FlowMagnitudeS;				// MM: Flow Magnitude S.
+    F32		m_FlowMagnitudeT;				// MM: Flow Magnitude T.
+    F32		m_DistortGridScale;				// MM: Distort Grid Scale.
+    F32		m_DistortMagnitude;				// MM: Distort Magnitude.
+    F32		m_DistortTime;					// MM: Distort Time.
+    ColorF   m_SpecColor;
+    F32      m_SpecPower;
 
-/*
-    TextureHandle     m_BaseTexture;
-    TextureHandle     m_EnvMapOverTexture;   // MM: Added Over/Under Env Texture Support.
-    TextureHandle     m_EnvMapUnderTexture;   // MM: Added Over/Under Env Texture Support.
-    TextureHandle     m_LightMapTexture;
-	TextureHandle	  m_ShoreTexture;		// MM: Added Shore Texture.
-	TextureHandle	  m_DepthTexture;		// MM: Added Depth Texture.
-	TextureHandle	  m_ShoreDepthTexture;	// MM: Added Shore-Depth Texture.
-   TextureHandle    m_SpecMaskTex;
-*/
+    /*
+        TextureHandle     m_BaseTexture;
+        TextureHandle     m_EnvMapOverTexture;   // MM: Added Over/Under Env Texture Support.
+        TextureHandle     m_EnvMapUnderTexture;   // MM: Added Over/Under Env Texture Support.
+        TextureHandle     m_LightMapTexture;
+        TextureHandle	  m_ShoreTexture;		// MM: Added Shore Texture.
+        TextureHandle	  m_DepthTexture;		// MM: Added Depth Texture.
+        TextureHandle	  m_ShoreDepthTexture;	// MM: Added Shore-Depth Texture.
+       TextureHandle    m_SpecMaskTex;
+    */
 
     f32     m_Step[5];          // [0] =  0
                                 // [1] = 1/4 block step
@@ -279,8 +279,8 @@ private:
 
     static  s32     m_MaskOffset[6];  // Offset for given level into masks.
 
-    byte            m_RejectMask[ 1 + 1 + 2 + 8 + 32 + 128 ];
-    byte            m_AcceptMask[ 1 + 1 + 2 + 8 + 32 ];
+    byte            m_RejectMask[1 + 1 + 2 + 8 + 32 + 128];
+    byte            m_AcceptMask[1 + 1 + 2 + 8 + 32];
 
     //
     // Shared among instances of fluid.
@@ -290,8 +290,8 @@ private:
     static  s32     m_VAllocated;
     static  s32     m_VUsed;
 
-    static  s16*    m_pIndex;
-    static  s16*    m_pINext;
+    static  s16* m_pIndex;
+    static  s16* m_pINext;
     static  s16     m_IOffset;
     static  s32     m_IAllocated;
     static  s32     m_IUsed;
@@ -311,58 +311,58 @@ public:
     s32     m_ShowEnvMap;
     s32     m_ShowFog;
 
-//------------------------------------------------------------------------------
-//  Private Functions
-//
+    //------------------------------------------------------------------------------
+    //  Private Functions
+    //
 private:
 
     //
     // Functions in FluidSupport.cpp:
     //
-    s32     GetAcceptBit            ( s32 Level, s32 IndexX, s32 IndexY ) const;
-    s32     GetRejectBit            ( s32 Level, s32 IndexX, s32 IndexY ) const;
-    void    SetAcceptBit            ( s32 Level, s32 IndexX, s32 IndexY, s32 Value );
-    void    SetRejectBit            ( s32 Level, s32 IndexX, s32 IndexY, s32 Value );
-    void    BuildLowerMasks         ( void );
-    void    RebuildMasks            ( void );
-    void    FloodFill               ( u8* pGrid, s32 x, s32 y, s32 SizeX, s32 SizeY );
+    s32     GetAcceptBit(s32 Level, s32 IndexX, s32 IndexY) const;
+    s32     GetRejectBit(s32 Level, s32 IndexX, s32 IndexY) const;
+    void    SetAcceptBit(s32 Level, s32 IndexX, s32 IndexY, s32 Value);
+    void    SetRejectBit(s32 Level, s32 IndexX, s32 IndexY, s32 Value);
+    void    BuildLowerMasks(void);
+    void    RebuildMasks(void);
+    void    FloodFill(u8* pGrid, s32 x, s32 y, s32 SizeX, s32 SizeY);
 
     //
     // Functions in FluidQuadTree.cpp
     //
-    void    RunQuadTree             ( bool& EyeSubmerged );
+    void    RunQuadTree(bool& EyeSubmerged);
 
-    f32     ComputeLOD              ( f32 Distance );
-    byte    ComputeClipBits         ( f32 X, f32 Y, f32 Z );
+    f32     ComputeLOD(f32 Distance);
+    byte    ComputeClipBits(f32 X, f32 Y, f32 Z);
 
-    void    ProcessNode             ( node&  Node  );
-    void    ProcessBlock            ( block& Block );
+    void    ProcessNode(node& Node);
+    void    ProcessBlock(block& Block);
 
-    void    ProcessBlockLODHigh     ( block& Block );
-    void    ProcessBlockLODMorph    ( block& Block );
-    void    ProcessBlockLODTrans    ( block& Block );
-    void    ProcessBlockLODLow      ( block& Block );
+    void    ProcessBlockLODHigh(block& Block);
+    void    ProcessBlockLODMorph(block& Block);
+    void    ProcessBlockLODTrans(block& Block);
+    void    ProcessBlockLODLow(block& Block);
 
-    void    SetupVert               ( f32 X, f32 Y, f32 Distance, vertex* pV );
+    void    SetupVert(f32 X, f32 Y, f32 Distance, vertex* pV);
 
-    void    InterpolateVerts        ( vertex* pV0,
-                                      vertex* pV1,
-                                      vertex* pV2,
-                                      vertex* pV3,
-                                      vertex* pV4,
-                                      f32     LOD0,
-                                      f32     LOD4 );
+    void    InterpolateVerts(vertex* pV0,
+        vertex* pV1,
+        vertex* pV2,
+        vertex* pV3,
+        vertex* pV4,
+        f32     LOD0,
+        f32     LOD4);
 
-    void    InterpolateVert         ( vertex* pV0,
-                                      vertex* pV1,
-                                      vertex* pV2,
-                                      f32     LOD );
+    void    InterpolateVert(vertex* pV0,
+        vertex* pV1,
+        vertex* pV2,
+        f32     LOD);
 
-    void    ReleaseVertexMemory     ( void );
-    vertex* AcquireVertices         ( s32 Count );
-    void    AddTriangleIndices      ( s16 I1, s16 I2, s16 I3 );
+    void    ReleaseVertexMemory(void);
+    vertex* AcquireVertices(s32 Count);
+    void    AddTriangleIndices(s16 I1, s16 I2, s16 I3);
 
-    void    CalcVertSpecular        ();
+    void    CalcVertSpecular();
 };
 
 //==============================================================================

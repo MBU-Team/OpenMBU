@@ -15,23 +15,23 @@
 
 class GuiBubbleTextCtrl : public GuiTextCtrl
 {
-  private:
-   typedef GuiTextCtrl Parent;
+private:
+    typedef GuiTextCtrl Parent;
 
-  protected:
-     bool mInAction;
-   GuiControl *mDlg;
-   GuiControl *mPopup;
-   GuiMLTextCtrl *mMLText;
+protected:
+    bool mInAction;
+    GuiControl* mDlg;
+    GuiControl* mPopup;
+    GuiMLTextCtrl* mMLText;
 
-   void popBubble();
+    void popBubble();
 
-  public:
-   DECLARE_CONOBJECT(GuiBubbleTextCtrl);
+public:
+    DECLARE_CONOBJECT(GuiBubbleTextCtrl);
 
-   GuiBubbleTextCtrl() { mInAction = false; }
+    GuiBubbleTextCtrl() { mInAction = false; }
 
-   virtual void onMouseDown(const GuiEvent &event);
+    virtual void onMouseDown(const GuiEvent& event);
 };
 
 #endif /* _GUI_BUBBLE_TEXT_CONTROL_H_ */

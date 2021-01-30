@@ -18,26 +18,26 @@
 //-----------------------------------------------------------------------
 enum RegisterType
 {
-   RT_POSITION = 0,
-   RT_NORMAL,
-   RT_TEXCOORD,
-   RT_COLOR,
-   RT_FOG,
+    RT_POSITION = 0,
+    RT_NORMAL,
+    RT_TEXCOORD,
+    RT_COLOR,
+    RT_FOG,
 };
 
 enum Components
 {
-   C_VERT_STRUCT = 0,
-   C_CONNECTOR,
-   C_VERT_MAIN,
-   C_PIX_MAIN,
+    C_VERT_STRUCT = 0,
+    C_CONNECTOR,
+    C_VERT_MAIN,
+    C_PIX_MAIN,
 
 };
 
 
 struct VertexData
 {
-   U32 vertFlags;
+    U32 vertFlags;
 };
 
 

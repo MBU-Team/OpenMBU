@@ -9,43 +9,43 @@
 
 class Win32RedBookDevice : public RedBookDevice
 {
-   private:
-      typedef RedBookDevice   Parent;
+private:
+    typedef RedBookDevice   Parent;
 
-      U32         mDeviceId;
+    U32         mDeviceId;
 
-      void setLastError(const char *);
-      void setLastError(U32);
+    void setLastError(const char*);
+    void setLastError(U32);
 
-      MIXERCONTROLDETAILS           mMixerVolumeDetails;
-      MIXERCONTROLDETAILS_UNSIGNED  mMixerVolumeValue;
+    MIXERCONTROLDETAILS           mMixerVolumeDetails;
+    MIXERCONTROLDETAILS_UNSIGNED  mMixerVolumeValue;
 
-	  union {
-		HMIXEROBJ mVolumeDeviceId;
-		UINT mAuxVolumeDeviceId;
-	  };
+    union {
+        HMIXEROBJ mVolumeDeviceId;
+        UINT mAuxVolumeDeviceId;
+    };
 
-      U32   mOriginalVolume;
-      bool  mVolumeInitialized;
+    U32   mOriginalVolume;
+    bool  mVolumeInitialized;
 
-      bool  mUsingMixer;
+    bool  mUsingMixer;
 
-      void openVolume();
-      void closeVolume();
+    void openVolume();
+    void closeVolume();
 
-   public:
-      Win32RedBookDevice();
-      ~Win32RedBookDevice();
+public:
+    Win32RedBookDevice();
+    ~Win32RedBookDevice();
 
-      U32 getDeviceId();
+    U32 getDeviceId();
 
-      bool open();
-      bool close();
-      bool play(U32);
-      bool stop();
-      bool getTrackCount(U32 *);
-      bool getVolume(F32 *);
-      bool setVolume(F32);
+    bool open();
+    bool close();
+    bool play(U32);
+    bool stop();
+    bool getTrackCount(U32*);
+    bool getVolume(F32*);
+    bool setVolume(F32);
 };
 
 //------------------------------------------------------------------------------
@@ -53,43 +53,43 @@ class Win32RedBookDevice : public RedBookDevice
 //------------------------------------------------------------------------------
 void installRedBookDevices()
 {
-   U32 bufSize = ::GetLogicalDriveStrings(0,0);
+    U32 bufSize = ::GetLogicalDriveStrings(0, 0);
 
-   char * buf = new char[bufSize];
+    char* buf = new char[bufSize];
 
-   ::GetLogicalDriveStringsA(bufSize, buf);
+    ::GetLogicalDriveStringsA(bufSize, buf);
 
-   char * str = buf;
-   while(*str)
-   {
-      if(::GetDriveTypeA(str) == DRIVE_CDROM)
-      {
-         Win32RedBookDevice * device = new Win32RedBookDevice;
-         device->mDeviceName = new char[dStrlen(str) + 1];
-         dStrcpy(device->mDeviceName, str);
+    char* str = buf;
+    while (*str)
+    {
+        if (::GetDriveTypeA(str) == DRIVE_CDROM)
+        {
+            Win32RedBookDevice* device = new Win32RedBookDevice;
+            device->mDeviceName = new char[dStrlen(str) + 1];
+            dStrcpy(device->mDeviceName, str);
 
-         RedBook::installDevice(device);
-      }
-      str += dStrlen(str) + 1;
-   }
+            RedBook::installDevice(device);
+        }
+        str += dStrlen(str) + 1;
+    }
 
-   delete [] buf;
+    delete[] buf;
 }
 
 void handleRedBookCallback(U32 code, U32 deviceId)
 {
-   if(code != MCI_NOTIFY_SUCCESSFUL)
-      return;
+    if (code != MCI_NOTIFY_SUCCESSFUL)
+        return;
 
-   Win32RedBookDevice * device = dynamic_cast<Win32RedBookDevice*>(RedBook::getCurrentDevice());
-   if(!device)
-      return;
+    Win32RedBookDevice* device = dynamic_cast<Win32RedBookDevice*>(RedBook::getCurrentDevice());
+    if (!device)
+        return;
 
-   if(device->getDeviceId() != deviceId)
-      return;
+    if (device->getDeviceId() != deviceId)
+        return;
 
-   // only installed callback on play (no callback if play is aborted)
-   RedBook::handleCallback(RedBook::PlayFinished);
+    // only installed callback on play (no callback if play is aborted)
+    RedBook::handleCallback(RedBook::PlayFinished);
 }
 
 //------------------------------------------------------------------------------
@@ -97,383 +97,383 @@ void handleRedBookCallback(U32 code, U32 deviceId)
 //------------------------------------------------------------------------------
 Win32RedBookDevice::Win32RedBookDevice()
 {
-   mVolumeInitialized = false;
+    mVolumeInitialized = false;
 }
 
 Win32RedBookDevice::~Win32RedBookDevice()
 {
-   close();
+    close();
 }
 
 U32 Win32RedBookDevice::getDeviceId()
 {
-   return(mDeviceId);
+    return(mDeviceId);
 }
 
 bool Win32RedBookDevice::open()
 {
-   if(mAcquired)
-   {
-      setLastError("Device is already open.");
-      return(false);
-   }
+    if (mAcquired)
+    {
+        setLastError("Device is already open.");
+        return(false);
+    }
 
-   U32 error;
+    U32 error;
 
-   // open the device
-   MCI_OPEN_PARMS openParms;
+    // open the device
+    MCI_OPEN_PARMS openParms;
 #ifdef UNICODE
-   openParms.lpstrDeviceType = (LPCWSTR)MCI_DEVTYPE_CD_AUDIO;
+    openParms.lpstrDeviceType = (LPCWSTR)MCI_DEVTYPE_CD_AUDIO;
 
-   UTF16 buf[512];
-   convertUTF8toUTF16((UTF8 *)mDeviceName, buf, sizeof(buf));
-   openParms.lpstrElementName = buf;
+    UTF16 buf[512];
+    convertUTF8toUTF16((UTF8*)mDeviceName, buf, sizeof(buf));
+    openParms.lpstrElementName = buf;
 #else
-   openParms.lpstrDeviceType = (LPCSTR)MCI_DEVTYPE_CD_AUDIO;
-   openParms.lpstrElementName = mDeviceName;
+    openParms.lpstrDeviceType = (LPCSTR)MCI_DEVTYPE_CD_AUDIO;
+    openParms.lpstrElementName = mDeviceName;
 #endif
 
-   error = mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID, (DWORD_PTR)(LPMCI_OPEN_PARMS)&openParms);
-   if(error)
-   {
-      // attempt to open as a shared device
-      error = mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID|MCI_OPEN_SHAREABLE, (DWORD_PTR)(LPMCI_OPEN_PARMS)&openParms);
-      if(error)
-      {
-         setLastError(error);
-         return(false);
-      }
-   }
+    error = mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID, (DWORD_PTR)(LPMCI_OPEN_PARMS)&openParms);
+    if (error)
+    {
+        // attempt to open as a shared device
+        error = mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID | MCI_OPEN_SHAREABLE, (DWORD_PTR)(LPMCI_OPEN_PARMS)&openParms);
+        if (error)
+        {
+            setLastError(error);
+            return(false);
+        }
+    }
 
-   // set time mode to milliseconds
-   MCI_SET_PARMS setParms;
-   setParms.dwTimeFormat = MCI_FORMAT_MILLISECONDS;
+    // set time mode to milliseconds
+    MCI_SET_PARMS setParms;
+    setParms.dwTimeFormat = MCI_FORMAT_MILLISECONDS;
 
-   error = mciSendCommand(openParms.wDeviceID, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD_PTR)(LPMCI_SET_PARMS)&setParms);
-   if(error)
-   {
-      setLastError(error);
-      return(false);
-   }
+    error = mciSendCommand(openParms.wDeviceID, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD_PTR)(LPMCI_SET_PARMS)&setParms);
+    if (error)
+    {
+        setLastError(error);
+        return(false);
+    }
 
-   //
-   mDeviceId = openParms.wDeviceID;
-   mAcquired = true;
+    //
+    mDeviceId = openParms.wDeviceID;
+    mAcquired = true;
 
-   openVolume();
-   setLastError("");
-   return(true);
+    openVolume();
+    setLastError("");
+    return(true);
 }
 
 bool Win32RedBookDevice::close()
 {
-   if(!mAcquired)
-   {
-      setLastError("Device has not been acquired");
-      return(false);
-   }
+    if (!mAcquired)
+    {
+        setLastError("Device has not been acquired");
+        return(false);
+    }
 
-   stop();
+    stop();
 
-   U32 error;
+    U32 error;
 
-   MCI_GENERIC_PARMS closeParms;
-   error = mciSendCommand(mDeviceId, MCI_CLOSE, 0, (DWORD_PTR)(LPMCI_GENERIC_PARMS)&closeParms);
-   if(error)
-   {
-      setLastError(error);
-      return(false);
-   }
+    MCI_GENERIC_PARMS closeParms;
+    error = mciSendCommand(mDeviceId, MCI_CLOSE, 0, (DWORD_PTR)(LPMCI_GENERIC_PARMS)&closeParms);
+    if (error)
+    {
+        setLastError(error);
+        return(false);
+    }
 
-   mAcquired = false;
-   closeVolume();
-   setLastError("");
-   return(true);
+    mAcquired = false;
+    closeVolume();
+    setLastError("");
+    return(true);
 }
 
 bool Win32RedBookDevice::play(U32 track)
 {
-   if(!mAcquired)
-   {
-      setLastError("Device has not been acquired");
-      return(false);
-   }
+    if (!mAcquired)
+    {
+        setLastError("Device has not been acquired");
+        return(false);
+    }
 
-   U32 numTracks;
-   if(!getTrackCount(&numTracks))
-      return(false);
+    U32 numTracks;
+    if (!getTrackCount(&numTracks))
+        return(false);
 
-   if(track >= numTracks)
-   {
-      setLastError("Track index is out of range");
-      return(false);
-   }
+    if (track >= numTracks)
+    {
+        setLastError("Track index is out of range");
+        return(false);
+    }
 
-   MCI_STATUS_PARMS statusParms;
+    MCI_STATUS_PARMS statusParms;
 
-   // get track start time
-   statusParms.dwItem = MCI_STATUS_POSITION;
-   statusParms.dwTrack = track + 1;
+    // get track start time
+    statusParms.dwItem = MCI_STATUS_POSITION;
+    statusParms.dwTrack = track + 1;
 
-   U32 error;
-   error = mciSendCommand(mDeviceId, MCI_STATUS, MCI_STATUS_ITEM|MCI_TRACK|MCI_WAIT,
-      (DWORD_PTR)(LPMCI_STATUS_PARMS)&statusParms);
+    U32 error;
+    error = mciSendCommand(mDeviceId, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK | MCI_WAIT,
+        (DWORD_PTR)(LPMCI_STATUS_PARMS)&statusParms);
 
-   if(error)
-   {
-      setLastError(error);
-      return(false);
-   }
+    if (error)
+    {
+        setLastError(error);
+        return(false);
+    }
 
-   MCI_PLAY_PARMS playParms;
-   playParms.dwFrom = statusParms.dwReturn;
+    MCI_PLAY_PARMS playParms;
+    playParms.dwFrom = statusParms.dwReturn;
 
-   // get track end time
-   statusParms.dwItem = MCI_STATUS_LENGTH;
-   error = mciSendCommand(mDeviceId, MCI_STATUS, MCI_STATUS_ITEM|MCI_TRACK|MCI_WAIT,
-      (DWORD_PTR)(LPMCI_STATUS_PARMS)&statusParms);
+    // get track end time
+    statusParms.dwItem = MCI_STATUS_LENGTH;
+    error = mciSendCommand(mDeviceId, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK | MCI_WAIT,
+        (DWORD_PTR)(LPMCI_STATUS_PARMS)&statusParms);
 
-   if(error)
-   {
-      setLastError(error);
-      return(false);
-   }
+    if (error)
+    {
+        setLastError(error);
+        return(false);
+    }
 
-   playParms.dwTo = playParms.dwFrom + statusParms.dwReturn;
+    playParms.dwTo = playParms.dwFrom + statusParms.dwReturn;
 
-   // play the track
-   playParms.dwCallback = MAKELONG(winState.appWindow, 0);
-   error = mciSendCommand(mDeviceId, MCI_PLAY, MCI_FROM|MCI_TO|MCI_NOTIFY,
-      (DWORD_PTR)(LPMCI_PLAY_PARMS)&playParms);
+    // play the track
+    playParms.dwCallback = MAKELONG(winState.appWindow, 0);
+    error = mciSendCommand(mDeviceId, MCI_PLAY, MCI_FROM | MCI_TO | MCI_NOTIFY,
+        (DWORD_PTR)(LPMCI_PLAY_PARMS)&playParms);
 
-   if(error)
-   {
-      setLastError(error);
-      return(false);
-   }
+    if (error)
+    {
+        setLastError(error);
+        return(false);
+    }
 
-   setLastError("");
-   return(true);
+    setLastError("");
+    return(true);
 }
 
 bool Win32RedBookDevice::stop()
 {
-   if(!mAcquired)
-   {
-      setLastError("Device has not been acquired");
-      return(false);
-   }
+    if (!mAcquired)
+    {
+        setLastError("Device has not been acquired");
+        return(false);
+    }
 
-   MCI_GENERIC_PARMS genParms;
+    MCI_GENERIC_PARMS genParms;
 
-   U32 error = mciSendCommand(mDeviceId, MCI_STOP, 0, (DWORD_PTR)(LPMCI_GENERIC_PARMS)&genParms);
-   if(error)
-   {
-      setLastError(error);
-      return(false);
-   }
+    U32 error = mciSendCommand(mDeviceId, MCI_STOP, 0, (DWORD_PTR)(LPMCI_GENERIC_PARMS)&genParms);
+    if (error)
+    {
+        setLastError(error);
+        return(false);
+    }
 
-   setLastError("");
-   return(true);
+    setLastError("");
+    return(true);
 }
 
-bool Win32RedBookDevice::getTrackCount(U32 * numTracks)
+bool Win32RedBookDevice::getTrackCount(U32* numTracks)
 {
-   if(!mAcquired)
-   {
-      setLastError("Device has not been acquired");
-      return(false);
-   }
+    if (!mAcquired)
+    {
+        setLastError("Device has not been acquired");
+        return(false);
+    }
 
-   MCI_STATUS_PARMS statusParms;
+    MCI_STATUS_PARMS statusParms;
 
-   statusParms.dwItem = MCI_STATUS_NUMBER_OF_TRACKS;
-   U32 error = mciSendCommand(mDeviceId, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)(LPMCI_STATUS_PARMS)&statusParms);
-   if(error)
-   {
-      setLastError(error);
-      return(false);
-   }
+    statusParms.dwItem = MCI_STATUS_NUMBER_OF_TRACKS;
+    U32 error = mciSendCommand(mDeviceId, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)(LPMCI_STATUS_PARMS)&statusParms);
+    if (error)
+    {
+        setLastError(error);
+        return(false);
+    }
 
-   *numTracks = statusParms.dwReturn;
-   return(true);
+    *numTracks = statusParms.dwReturn;
+    return(true);
 }
 
-bool Win32RedBookDevice::getVolume(F32 * volume)
+bool Win32RedBookDevice::getVolume(F32* volume)
 {
-   if(!mAcquired)
-   {
-      setLastError("Device has not been acquired");
-      return(false);
-   }
+    if (!mAcquired)
+    {
+        setLastError("Device has not been acquired");
+        return(false);
+    }
 
-   if(!mVolumeInitialized)
-   {
-      setLastError("Volume failed to initialize");
-      return(false);
-   }
+    if (!mVolumeInitialized)
+    {
+        setLastError("Volume failed to initialize");
+        return(false);
+    }
 
-   U32 vol = 0;
-   if(mUsingMixer)
-   {
-      mixerGetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_GETCONTROLDETAILSF_VALUE);
-      vol = mMixerVolumeValue.dwValue;
-   }
-   else
-      auxGetVolume(mAuxVolumeDeviceId, (unsigned long *)&vol);
+    U32 vol = 0;
+    if (mUsingMixer)
+    {
+        mixerGetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_GETCONTROLDETAILSF_VALUE);
+        vol = mMixerVolumeValue.dwValue;
+    }
+    else
+        auxGetVolume(mAuxVolumeDeviceId, (unsigned long*)&vol);
 
-   vol &= 0xffff;
-   *volume = F32(vol) / 65535.f;
+    vol &= 0xffff;
+    *volume = F32(vol) / 65535.f;
 
-   setLastError("");
-   return(true);
+    setLastError("");
+    return(true);
 }
 
 bool Win32RedBookDevice::setVolume(F32 volume)
 {
-   if(!mAcquired)
-   {
-      setLastError("Device has not been acquired");
-      return(false);
-   }
+    if (!mAcquired)
+    {
+        setLastError("Device has not been acquired");
+        return(false);
+    }
 
-   if(!mVolumeInitialized)
-   {
-      setLastError("Volume failed to initialize");
-      return(false);
-   }
+    if (!mVolumeInitialized)
+    {
+        setLastError("Volume failed to initialize");
+        return(false);
+    }
 
-   // move into a U32 - left/right U16 volumes
-   U32 vol = U32(volume * 65536.f);
-   if(vol > 0xffff)
-      vol = 0xffff;
+    // move into a U32 - left/right U16 volumes
+    U32 vol = U32(volume * 65536.f);
+    if (vol > 0xffff)
+        vol = 0xffff;
 
-   if(mUsingMixer)
-   {
-      mMixerVolumeValue.dwValue = vol;
-      mixerSetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_SETCONTROLDETAILSF_VALUE);
-   }
-   else
-   {
-      vol |= vol << 16;
-      auxSetVolume(mAuxVolumeDeviceId, vol);
-   }
+    if (mUsingMixer)
+    {
+        mMixerVolumeValue.dwValue = vol;
+        mixerSetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_SETCONTROLDETAILSF_VALUE);
+    }
+    else
+    {
+        vol |= vol << 16;
+        auxSetVolume(mAuxVolumeDeviceId, vol);
+    }
 
-   setLastError("");
-   return(true);
+    setLastError("");
+    return(true);
 }
 
 //------------------------------------------------------------------------------
 
 void Win32RedBookDevice::openVolume()
 {
-   setLastError("");
+    setLastError("");
 
-   // first attempt to get the volume control through the mixer API
-   S32 i;
-   for(i = mixerGetNumDevs() - 1; i >= 0; i--)
-   {
-      // open the mixer
-      if(mixerOpen((HMIXER*)&mVolumeDeviceId, i, 0, 0, 0) == MMSYSERR_NOERROR)
-      {
-         MIXERLINE lineInfo;
-         memset(&lineInfo, 0, sizeof(lineInfo));
-         lineInfo.cbStruct = sizeof(lineInfo);
-         lineInfo.dwComponentType = MIXERLINE_COMPONENTTYPE_SRC_COMPACTDISC;
+    // first attempt to get the volume control through the mixer API
+    S32 i;
+    for (i = mixerGetNumDevs() - 1; i >= 0; i--)
+    {
+        // open the mixer
+        if (mixerOpen((HMIXER*)&mVolumeDeviceId, i, 0, 0, 0) == MMSYSERR_NOERROR)
+        {
+            MIXERLINE lineInfo;
+            memset(&lineInfo, 0, sizeof(lineInfo));
+            lineInfo.cbStruct = sizeof(lineInfo);
+            lineInfo.dwComponentType = MIXERLINE_COMPONENTTYPE_SRC_COMPACTDISC;
 
-         // get the cdaudio line
-         if(mixerGetLineInfo(mVolumeDeviceId, &lineInfo, MIXER_GETLINEINFOF_COMPONENTTYPE) == MMSYSERR_NOERROR)
-         {
-            MIXERLINECONTROLS lineControls;
-            MIXERCONTROL volumeControl;
-
-            memset(&lineControls, 0, sizeof(lineControls));
-            lineControls.cbStruct = sizeof(lineControls);
-            lineControls.dwLineID = lineInfo.dwLineID;
-            lineControls.dwControlType = MIXERCONTROL_CONTROLTYPE_VOLUME;
-            lineControls.cControls = 1;
-            lineControls.cbmxctrl = sizeof(volumeControl);
-            lineControls.pamxctrl = &volumeControl;
-
-            memset(&volumeControl, 0, sizeof(volumeControl));
-            volumeControl.cbStruct = sizeof(volumeControl);
-
-            // get the volume control
-            if(mixerGetLineControls(mVolumeDeviceId, &lineControls, MIXER_GETLINECONTROLSF_ONEBYTYPE) == MMSYSERR_NOERROR)
+            // get the cdaudio line
+            if (mixerGetLineInfo(mVolumeDeviceId, &lineInfo, MIXER_GETLINEINFOF_COMPONENTTYPE) == MMSYSERR_NOERROR)
             {
-               memset(&mMixerVolumeDetails, 0, sizeof(mMixerVolumeDetails));
-               mMixerVolumeDetails.cbStruct = sizeof(mMixerVolumeDetails);
-               mMixerVolumeDetails.dwControlID = volumeControl.dwControlID;
-               mMixerVolumeDetails.cChannels = 1;
-               mMixerVolumeDetails.cbDetails = sizeof(mMixerVolumeValue);
-               mMixerVolumeDetails.paDetails = &mMixerVolumeValue;
+                MIXERLINECONTROLS lineControls;
+                MIXERCONTROL volumeControl;
 
-               memset(&mMixerVolumeValue, 0, sizeof(mMixerVolumeValue));
+                memset(&lineControls, 0, sizeof(lineControls));
+                lineControls.cbStruct = sizeof(lineControls);
+                lineControls.dwLineID = lineInfo.dwLineID;
+                lineControls.dwControlType = MIXERCONTROL_CONTROLTYPE_VOLUME;
+                lineControls.cControls = 1;
+                lineControls.cbmxctrl = sizeof(volumeControl);
+                lineControls.pamxctrl = &volumeControl;
 
-               // query the current value
-               if(mixerGetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_GETCONTROLDETAILSF_VALUE) == MMSYSERR_NOERROR)
-               {
-                  mUsingMixer = true;
-                  mVolumeInitialized = true;
-                  mOriginalVolume = mMixerVolumeValue.dwValue;
-                  return;
-               }
+                memset(&volumeControl, 0, sizeof(volumeControl));
+                volumeControl.cbStruct = sizeof(volumeControl);
+
+                // get the volume control
+                if (mixerGetLineControls(mVolumeDeviceId, &lineControls, MIXER_GETLINECONTROLSF_ONEBYTYPE) == MMSYSERR_NOERROR)
+                {
+                    memset(&mMixerVolumeDetails, 0, sizeof(mMixerVolumeDetails));
+                    mMixerVolumeDetails.cbStruct = sizeof(mMixerVolumeDetails);
+                    mMixerVolumeDetails.dwControlID = volumeControl.dwControlID;
+                    mMixerVolumeDetails.cChannels = 1;
+                    mMixerVolumeDetails.cbDetails = sizeof(mMixerVolumeValue);
+                    mMixerVolumeDetails.paDetails = &mMixerVolumeValue;
+
+                    memset(&mMixerVolumeValue, 0, sizeof(mMixerVolumeValue));
+
+                    // query the current value
+                    if (mixerGetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_GETCONTROLDETAILSF_VALUE) == MMSYSERR_NOERROR)
+                    {
+                        mUsingMixer = true;
+                        mVolumeInitialized = true;
+                        mOriginalVolume = mMixerVolumeValue.dwValue;
+                        return;
+                    }
+                }
             }
-         }
-      }
+        }
 
-      mixerClose((HMIXER)mVolumeDeviceId);
-   }
+        mixerClose((HMIXER)mVolumeDeviceId);
+    }
 
-   // try aux
-   for(i = auxGetNumDevs() - 1; i >= 0; i--)
-   {
-      AUXCAPS caps;
-      auxGetDevCaps(i, &caps, sizeof(AUXCAPS));
-      if((caps.wTechnology == AUXCAPS_CDAUDIO) && (caps.dwSupport & AUXCAPS_VOLUME))
-      {
-         mAuxVolumeDeviceId = i;
-         mVolumeInitialized = true;
-         mUsingMixer = false;
-         auxGetVolume(i, (unsigned long *)&mOriginalVolume);
-         return;
-      }
-   }
+    // try aux
+    for (i = auxGetNumDevs() - 1; i >= 0; i--)
+    {
+        AUXCAPS caps;
+        auxGetDevCaps(i, &caps, sizeof(AUXCAPS));
+        if ((caps.wTechnology == AUXCAPS_CDAUDIO) && (caps.dwSupport & AUXCAPS_VOLUME))
+        {
+            mAuxVolumeDeviceId = i;
+            mVolumeInitialized = true;
+            mUsingMixer = false;
+            auxGetVolume(i, (unsigned long*)&mOriginalVolume);
+            return;
+        }
+    }
 
-   setLastError("Volume failed to initialize");
+    setLastError("Volume failed to initialize");
 }
 
 void Win32RedBookDevice::closeVolume()
 {
-   setLastError("");
-   if(!mVolumeInitialized)
-      return;
+    setLastError("");
+    if (!mVolumeInitialized)
+        return;
 
-   if(mUsingMixer)
-   {
-      mMixerVolumeValue.dwValue = mOriginalVolume;
-      mixerSetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_SETCONTROLDETAILSF_VALUE);
-      mixerClose((HMIXER)mVolumeDeviceId);
-   }
-   else
-      auxSetVolume(mAuxVolumeDeviceId, mOriginalVolume);
+    if (mUsingMixer)
+    {
+        mMixerVolumeValue.dwValue = mOriginalVolume;
+        mixerSetControlDetails(mVolumeDeviceId, &mMixerVolumeDetails, MIXER_SETCONTROLDETAILSF_VALUE);
+        mixerClose((HMIXER)mVolumeDeviceId);
+    }
+    else
+        auxSetVolume(mAuxVolumeDeviceId, mOriginalVolume);
 
-   mVolumeInitialized = false;
+    mVolumeInitialized = false;
 }
 
 //------------------------------------------------------------------------------
 
-void Win32RedBookDevice::setLastError(const char * error)
+void Win32RedBookDevice::setLastError(const char* error)
 {
-   RedBook::setLastError(error);
+    RedBook::setLastError(error);
 }
 
 void Win32RedBookDevice::setLastError(U32 errorId)
 {
-   char buffer[256];
-   if(!mciGetErrorStringA(errorId, buffer, sizeof(buffer) - 1))
-      setLastError("Failed to get MCI error string!");
-   else
-      setLastError(buffer);
+    char buffer[256];
+    if (!mciGetErrorStringA(errorId, buffer, sizeof(buffer) - 1))
+        setLastError("Failed to get MCI error string!");
+    else
+        setLastError(buffer);
 }
 

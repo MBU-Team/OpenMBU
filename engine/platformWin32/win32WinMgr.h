@@ -10,15 +10,15 @@
 class Win32WinMgr
 {
 public:
-   Win32WinMgr( U32 uniqueIDNum, WNDPROC winProc );
-   ~Win32WinMgr();
+    Win32WinMgr(U32 uniqueIDNum, WNDPROC winProc);
+    ~Win32WinMgr();
 
-   void createWindow( const char *windowTitle, const U32 x, const U32 y, const U32 width, const U32 height, const U32 frequency, bool fullscreen );
-   void destroyWindow();
+    void createWindow(const char* windowTitle, const U32 x, const U32 y, const U32 width, const U32 height, const U32 frequency, bool fullscreen);
+    void destroyWindow();
 
-   RectI getCenteredWindowRect( const U32 width, const U32 height, bool fullscreen );
+    RectI getCenteredWindowRect(const U32 width, const U32 height, bool fullscreen);
 
-   void resizeWindow( const U32 width, const U32 height, bool fullscreen );
+    void resizeWindow(const U32 width, const U32 height, bool fullscreen);
 };
 
 #endif // _WIN32WINMGR_H_

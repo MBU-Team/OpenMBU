@@ -15,16 +15,16 @@
 
 class GuiInputCtrl : public GuiControl
 {
-   private:
-      typedef GuiControl Parent;
+private:
+    typedef GuiControl Parent;
 
-   public:
-      DECLARE_CONOBJECT(GuiInputCtrl);
+public:
+    DECLARE_CONOBJECT(GuiInputCtrl);
 
-      bool onWake();
-      void onSleep();
+    bool onWake();
+    void onSleep();
 
-      bool onInputEvent( const InputEvent &event );
+    bool onInputEvent(const InputEvent& event);
 };
 
 #endif // _GUI_INPUTCTRL_H

@@ -25,18 +25,18 @@
 namespace Audio
 {
 
-bool OpenALInit();
-void OpenALShutdown();
+    bool OpenALInit();
+    void OpenALShutdown();
 
-bool OpenALDLLInit();
-void OpenALDLLShutdown();
+    bool OpenALDLLInit();
+    void OpenALDLLShutdown();
 
-// special alx flags
+    // special alx flags
 #define AL_GAIN_LINEAR                  0xFF01
 
 // helpers
-F32 DBToLinear(F32 value);
-F32 linearToDB(F32 value);
+    F32 DBToLinear(F32 value);
+    F32 linearToDB(F32 value);
 
 }  // end namespace Audio
 

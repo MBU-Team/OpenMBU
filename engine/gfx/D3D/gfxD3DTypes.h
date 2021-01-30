@@ -12,40 +12,40 @@
 
 //-----------------------------------------------------------------------------
 
-class GFXD3DPrimitiveBuffer : public GFXPrimitiveBuffer 
+class GFXD3DPrimitiveBuffer : public GFXPrimitiveBuffer
 {
-   public:
-      IDirect3DIndexBuffer9 *ib;
-      RefPtr<GFXD3DPrimitiveBuffer> mVolatileBuffer;
-      U32 mVolatileStart;
+public:
+    IDirect3DIndexBuffer9* ib;
+    RefPtr<GFXD3DPrimitiveBuffer> mVolatileBuffer;
+    U32 mVolatileStart;
 
-      bool                  mIsFirstLock;
+    bool                  mIsFirstLock;
 
-      GFXD3DPrimitiveBuffer(GFXDevice *device, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType);
-      ~GFXD3DPrimitiveBuffer();
+    GFXD3DPrimitiveBuffer(GFXDevice* device, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType);
+    ~GFXD3DPrimitiveBuffer();
 
-      virtual void lock(U16 indexStart, U16 indexEnd, U16 **indexPtr);
-      virtual void unlock();
+    virtual void lock(U16 indexStart, U16 indexEnd, U16** indexPtr);
+    virtual void unlock();
 
-      virtual void prepare();      
+    virtual void prepare();
 
 #ifdef TORQUE_DEBUG
-   //GFXD3DPrimitiveBuffer *next;
+    //GFXD3DPrimitiveBuffer *next;
 #endif
 };
 
-inline GFXD3DPrimitiveBuffer::GFXD3DPrimitiveBuffer(GFXDevice *device, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType) 
-   : GFXPrimitiveBuffer(device, indexCount, primitiveCount, bufferType)
+inline GFXD3DPrimitiveBuffer::GFXD3DPrimitiveBuffer(GFXDevice* device, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType)
+    : GFXPrimitiveBuffer(device, indexCount, primitiveCount, bufferType)
 {
-   mVolatileStart = 0;
-   ib             = NULL;
-   mIsFirstLock   = true;
+    mVolatileStart = 0;
+    ib = NULL;
+    mIsFirstLock = true;
 }
 
-inline GFXD3DPrimitiveBuffer::~GFXD3DPrimitiveBuffer() 
+inline GFXD3DPrimitiveBuffer::~GFXD3DPrimitiveBuffer()
 {
-   if(mBufferType != GFXBufferTypeVolatile)
-      SAFE_RELEASE( ib );
+    if (mBufferType != GFXBufferTypeVolatile)
+        SAFE_RELEASE(ib);
 }
 
 #endif

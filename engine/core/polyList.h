@@ -22,33 +22,33 @@
 
 class PolyList
 {
-  public:
-   struct Poly {
-     public:
-      PlaneF plane;
-      U32    material;
+public:
+    struct Poly {
+    public:
+        PlaneF plane;
+        U32    material;
 
-      U16   vStart;
-      U16   vCount;
+        U16   vStart;
+        U16   vCount;
 
-      // NOTE: USE THESE FUNCTIONS!  The above exposed implementation is likely
-      //  to change soon.
-     public:
-      U16 getVIndex(U16 n) const { return U16(vStart + n); }
-      U16 getVCount()      const { return vCount;     }
+        // NOTE: USE THESE FUNCTIONS!  The above exposed implementation is likely
+        //  to change soon.
+    public:
+        U16 getVIndex(U16 n) const { return U16(vStart + n); }
+        U16 getVCount()      const { return vCount; }
 
-      const PlaneF& getPlane()    const { return plane;    }
-      U32           getMaterial() const { return material; }
-   };
+        const PlaneF& getPlane()    const { return plane; }
+        U32           getMaterial() const { return material; }
+    };
 
-  public:
-   PolyList() {
-      VECTOR_SET_ASSOCIATION(mPolys);
-      VECTOR_SET_ASSOCIATION(mVertices);
-   }
+public:
+    PolyList() {
+        VECTOR_SET_ASSOCIATION(mPolys);
+        VECTOR_SET_ASSOCIATION(mVertices);
+    }
 
-   Vector<Poly>    mPolys;
-   Vector<Point3F> mVertices;
+    Vector<Poly>    mPolys;
+    Vector<Point3F> mVertices;
 };
 
 #endif //_POLYLIST_H_

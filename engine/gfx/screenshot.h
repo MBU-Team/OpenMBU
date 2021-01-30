@@ -11,7 +11,7 @@
 /*!
    This class will eventually support various capabilities such as panoramics,
    high rez captures, and cubemap captures.
-   
+
    Right now it just captures standard screenshots, but it does support
    captures from multisample back buffers, so antialiased captures will work.
 */
@@ -19,35 +19,35 @@
 
 class ScreenShot
 {
-   GFXTexHandle   mRenderSurface;
-   U32            mSurfWidth;
-   U32            mSurfHeight;
-   
-   static void texManagerCallback( GFXTexCallbackCode code, void *userData );
-          void setupSurface( U32 width, U32 height );
+    GFXTexHandle   mRenderSurface;
+    U32            mSurfWidth;
+    U32            mSurfHeight;
+
+    static void texManagerCallback(GFXTexCallbackCode code, void* userData);
+    void setupSurface(U32 width, U32 height);
 
 public:
-   
-   bool     mPending;        // necessary to synch capture before backbuffer flips - see GuiCanvas
+
+    bool     mPending;        // necessary to synch capture before backbuffer flips - see GuiCanvas
 
 #ifdef UNICODE
-   UTF16 mFilename[512];
+    UTF16 mFilename[512];
 #else
-   char mFilename[256];
+    char mFilename[256];
 #endif
-   
-      
-   ScreenShot();
-   
-   /// captures the back buffer
-   virtual void captureStandard(){}
-   
-   // captures a custom size - test
-   virtual void captureCustom(){}
+
+
+    ScreenShot();
+
+    /// captures the back buffer
+    virtual void captureStandard() {}
+
+    // captures a custom size - test
+    virtual void captureCustom() {}
 
 
 };
 
-extern ScreenShot *gScreenShot;
+extern ScreenShot* gScreenShot;
 
 #endif  // _SCREENSHOT_H_

@@ -33,39 +33,39 @@ class TextureHandle;
 /// pass as a model instead of a silly old billboard.
 class TSLastDetail
 {
-   U32 mNumEquatorSteps; ///< number steps around the equator of the globe
-   U32 mNumPolarSteps;   ///< number of steps to go from equator to each polar region (0 means equator only)
-   F32 mPolarAngle;      ///< angle in radians of sub-polar regions
-   bool mIncludePoles;   ///< include poles in snapshot?
+    U32 mNumEquatorSteps; ///< number steps around the equator of the globe
+    U32 mNumPolarSteps;   ///< number of steps to go from equator to each polar region (0 means equator only)
+    F32 mPolarAngle;      ///< angle in radians of sub-polar regions
+    bool mIncludePoles;   ///< include poles in snapshot?
 
-   Point3F mCenter;
+    Point3F mCenter;
 
-   /// remember these values so we can save some work next time we render...
-   U32 mBitmapIndex;
-   F32 mRotY;
+    /// remember these values so we can save some work next time we render...
+    U32 mBitmapIndex;
+    F32 mRotY;
 
-   Vector<GBitmap*> mBitmaps;       ///< Rendered bitmaps
-   Vector<GFXTexHandle> mTextures;///< Texture handles for those bitmaps
+    Vector<GBitmap*> mBitmaps;       ///< Rendered bitmaps
+    Vector<GFXTexHandle> mTextures;///< Texture handles for those bitmaps
 
-   Point3F mPoints[4];   ///< always draw poly defined by these points...
-   static Point3F smNorms[4];
-   static Point2F smTVerts[4];
+    Point3F mPoints[4];   ///< always draw poly defined by these points...
+    static Point3F smNorms[4];
+    static Point2F smTVerts[4];
 
-   public:
+public:
 
     /// This indicates that the TSLastDetail need neither clear nor set gl render states.
    ///
    /// If you're doing a more complex renderer this is a useful trick.
-   static bool smDirtyMode;
+    static bool smDirtyMode;
 
-   TSLastDetail(TSShapeInstance * shape, U32 numEquatorSteps, U32 numPolarSteps, F32 polarAngle, bool includePoles, S32 dl, S32 dim);
-   ~TSLastDetail();
+    TSLastDetail(TSShapeInstance* shape, U32 numEquatorSteps, U32 numPolarSteps, F32 polarAngle, bool includePoles, S32 dl, S32 dim);
+    ~TSLastDetail();
 
-   void render(F32 alpha, bool drawFog);
-   void renderNoFog(F32 alpha);
-   void renderFog_Combine(F32 alpha);
-   void renderFog_MultiCombine(F32 alpha);
-   void chooseView(const MatrixF &, const Point3F & scale);
+    void render(F32 alpha, bool drawFog);
+    void renderNoFog(F32 alpha);
+    void renderFog_Combine(F32 alpha);
+    void renderFog_MultiCombine(F32 alpha);
+    void chooseView(const MatrixF&, const Point3F& scale);
 };
 
 

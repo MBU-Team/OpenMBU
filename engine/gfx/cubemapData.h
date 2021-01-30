@@ -14,31 +14,31 @@ class GFXCubemap;
 //**************************************************************************
 class CubemapData : public SimObject
 {
-   typedef SimObject Parent;
+    typedef SimObject Parent;
 
-   //--------------------------------------------------------------
-   // Data
-   //--------------------------------------------------------------
+    //--------------------------------------------------------------
+    // Data
+    //--------------------------------------------------------------
 public:
 
-   GFXCubemap  *     cubemap;
-   StringTableEntry  cubeFaceFile[6];
-   GFXTexHandle      cubeFace[6];
-   bool              dynamic;
+    GFXCubemap* cubemap;
+    StringTableEntry  cubeFaceFile[6];
+    GFXTexHandle      cubeFace[6];
+    bool              dynamic;
 
-   //--------------------------------------------------------------
-   // Procedures
-   //--------------------------------------------------------------
+    //--------------------------------------------------------------
+    // Procedures
+    //--------------------------------------------------------------
 public:
-   CubemapData();
-   ~CubemapData();
+    CubemapData();
+    ~CubemapData();
 
-   bool onAdd();
-   static void initPersistFields();
+    bool onAdd();
+    static void initPersistFields();
 
-   void createMap();
+    void createMap();
 
-   DECLARE_CONOBJECT(CubemapData);
+    DECLARE_CONOBJECT(CubemapData);
 };
 
 

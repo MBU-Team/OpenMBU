@@ -24,8 +24,8 @@
 
 enum GameConnectionConstants
 {
-   MaxClients = 126,
-   DataBlockQueueCount = 16
+    MaxClients = 126,
+    DataBlockQueueCount = 16
 };
 
 class AudioProfile;
@@ -41,270 +41,270 @@ struct AuthInfo;
 class GameConnection : public NetConnection
 {
 private:
-   typedef NetConnection Parent;
+    typedef NetConnection Parent;
 
-   enum PrivateConstants {
-      MoveCountBits = 5,
-      /// MaxMoveCount should not exceed the MoveManager's
-      /// own maximum (MaxMoveQueueSize)
-      MaxMoveCount = 30,
-   };
-   typedef Vector<Move> MoveList;
+    enum PrivateConstants {
+        MoveCountBits = 5,
+        /// MaxMoveCount should not exceed the MoveManager's
+        /// own maximum (MaxMoveQueueSize)
+        MaxMoveCount = 30,
+    };
+    typedef Vector<Move> MoveList;
 
-   SimObjectPtr<ShapeBase> mControlObject;
-   SimObjectPtr<ShapeBase> mCameraObject;
-   U32 mDataBlockSequence;
-   char mDisconnectReason[256];
+    SimObjectPtr<ShapeBase> mControlObject;
+    SimObjectPtr<ShapeBase> mCameraObject;
+    U32 mDataBlockSequence;
+    char mDisconnectReason[256];
 
-   U32  mMissionCRC;             // crc of the current mission file from the server
+    U32  mMissionCRC;             // crc of the current mission file from the server
 
 private:
-   U32 mLastControlRequestTime;
-   S32 mDataBlockModifiedKey;
-   S32 mMaxDataBlockModifiedKey;
+    U32 mLastControlRequestTime;
+    S32 mDataBlockModifiedKey;
+    S32 mMaxDataBlockModifiedKey;
 
-   /// @name Client side first/third person
-   /// @{
+    /// @name Client side first/third person
+    /// @{
 
-   ///
-   bool  mFirstPerson;     ///< Are we currently first person or not.
-   bool  mUpdateFirstPerson; ///< Set to notify client or server of first person change.
-   bool  mUpdateCameraFov; ///< Set to notify server of camera FOV change.
-   F32   mCameraFov;       ///< Current camera fov (in degrees).
-   F32   mCameraPos;       ///< Current camera pos (0-1).
-   F32   mCameraSpeed;     ///< Camera in/out speed.
-   /// @}
+    ///
+    bool  mFirstPerson;     ///< Are we currently first person or not.
+    bool  mUpdateFirstPerson; ///< Set to notify client or server of first person change.
+    bool  mUpdateCameraFov; ///< Set to notify server of camera FOV change.
+    F32   mCameraFov;       ///< Current camera fov (in degrees).
+    F32   mCameraPos;       ///< Current camera pos (0-1).
+    F32   mCameraSpeed;     ///< Camera in/out speed.
+    /// @}
 
-   /// @name Move Packets
-   /// Write/read move data to the packet.
-   /// @{
+    /// @name Move Packets
+    /// Write/read move data to the packet.
+    /// @{
 
-   ///
-   void moveWritePacket(BitStream *bstream);
-   void moveReadPacket(BitStream *bstream);
-   /// @}
+    ///
+    void moveWritePacket(BitStream* bstream);
+    void moveReadPacket(BitStream* bstream);
+    /// @}
 public:
 
-   /// @name Protocol Versions
-   ///
-   /// Protocol versions are used to indicated changes in network traffic.
-   /// These could be changes in how any object transmits or processes
-   /// network information. You can specify backwards compatibility by
-   /// specifying a MinRequireProtocolVersion.  If the client
-   /// protocol is >= this min value, the connection is accepted.
-   ///
-   /// Torque (V12) SDK 1.0 uses protocol  =  1
-   ///
-   /// Torque SDK 1.1 uses protocol = 2
-   /// Torque SDK 1.4 uses protocol = 12
-   /// @{
-   static const U32 CurrentProtocolVersion;
-   static const U32 MinRequiredProtocolVersion;
-   /// @}
+    /// @name Protocol Versions
+    ///
+    /// Protocol versions are used to indicated changes in network traffic.
+    /// These could be changes in how any object transmits or processes
+    /// network information. You can specify backwards compatibility by
+    /// specifying a MinRequireProtocolVersion.  If the client
+    /// protocol is >= this min value, the connection is accepted.
+    ///
+    /// Torque (V12) SDK 1.0 uses protocol  =  1
+    ///
+    /// Torque SDK 1.1 uses protocol = 2
+    /// Torque SDK 1.4 uses protocol = 12
+    /// @{
+    static const U32 CurrentProtocolVersion;
+    static const U32 MinRequiredProtocolVersion;
+    /// @}
 
-   /// Configuration
-   enum Constants {
-      BlockTypeMove = NetConnectionBlockTypeCount,
-      GameConnectionBlockTypeCount,
-      MaxConnectArgs = 16,
-      DataBlocksDone = NumConnectionMessages,
-      DataBlocksDownloadDone,
-   };
+    /// Configuration
+    enum Constants {
+        BlockTypeMove = NetConnectionBlockTypeCount,
+        GameConnectionBlockTypeCount,
+        MaxConnectArgs = 16,
+        DataBlocksDone = NumConnectionMessages,
+        DataBlocksDownloadDone,
+    };
 
-   /// Set connection arguments; these are passed to the server when we connect.
-   void setConnectArgs(U32 argc, const char **argv);
+    /// Set connection arguments; these are passed to the server when we connect.
+    void setConnectArgs(U32 argc, const char** argv);
 
-   /// Set the server password to use when we join.
-   void setJoinPassword(const char *password);
+    /// Set the server password to use when we join.
+    void setJoinPassword(const char* password);
 
-   /// @name Event Handling
-   /// @{
+    /// @name Event Handling
+    /// @{
 
-   virtual void onTimedOut();
-   virtual void onConnectTimedOut();
-   virtual void onDisconnect(const char *reason);
-   virtual void onConnectionRejected(const char *reason);
-   virtual void onConnectionEstablished(bool isInitiator);
-   virtual void handleStartupError(const char *errorString);
-   /// @}
+    virtual void onTimedOut();
+    virtual void onConnectTimedOut();
+    virtual void onDisconnect(const char* reason);
+    virtual void onConnectionRejected(const char* reason);
+    virtual void onConnectionEstablished(bool isInitiator);
+    virtual void handleStartupError(const char* errorString);
+    /// @}
 
-   /// @name Packet I/O
-   /// @{
+    /// @name Packet I/O
+    /// @{
 
-   virtual void writeConnectRequest(BitStream *stream);
-   virtual bool readConnectRequest(BitStream *stream, const char **errorString);
-   virtual void writeConnectAccept(BitStream *stream);
-   virtual bool readConnectAccept(BitStream *stream, const char **errorString);
-   /// @}
+    virtual void writeConnectRequest(BitStream* stream);
+    virtual bool readConnectRequest(BitStream* stream, const char** errorString);
+    virtual void writeConnectAccept(BitStream* stream);
+    virtual bool readConnectAccept(BitStream* stream, const char** errorString);
+    /// @}
 
-   bool canRemoteCreate();
+    bool canRemoteCreate();
 
 private:
-   /// @name Connection State
-   /// This data is set with setConnectArgs() and setJoinPassword(), and
-   /// sent across the wire when we connect.
-   /// @{
+    /// @name Connection State
+    /// This data is set with setConnectArgs() and setJoinPassword(), and
+    /// sent across the wire when we connect.
+    /// @{
 
-   U32      mConnectArgc;
-   char *mConnectArgv[MaxConnectArgs];
-   char *mJoinPassword;
-   /// @}
+    U32      mConnectArgc;
+    char* mConnectArgv[MaxConnectArgs];
+    char* mJoinPassword;
+    /// @}
 
 protected:
-   struct GamePacketNotify : public NetConnection::PacketNotify
-   {
-      S32 cameraFov;
-      GamePacketNotify();
-   };
-   PacketNotify *allocNotify();
+    struct GamePacketNotify : public NetConnection::PacketNotify
+    {
+        S32 cameraFov;
+        GamePacketNotify();
+    };
+    PacketNotify* allocNotify();
 
-   U32 mLastMoveAck;
-   U32 mLastClientMove;
-   U32 mFirstMoveIndex;
-   U32 mMoveCredit;
-   U32 mLastControlObjectChecksum;
+    U32 mLastMoveAck;
+    U32 mLastClientMove;
+    U32 mFirstMoveIndex;
+    U32 mMoveCredit;
+    U32 mLastControlObjectChecksum;
 
-   Vector<SimDataBlock *> mDataBlockLoadList;
+    Vector<SimDataBlock*> mDataBlockLoadList;
 
-   MoveList    mMoveList;
-   bool        mAIControlled;
-   AuthInfo *  mAuthInfo;
+    MoveList    mMoveList;
+    bool        mAIControlled;
+    AuthInfo* mAuthInfo;
 
-   static S32  mLagThresholdMS;
-   S32         mLastPacketTime;
-   bool        mLagging;
+    static S32  mLagThresholdMS;
+    S32         mLastPacketTime;
+    bool        mLagging;
 
-   /// @name Flashing
-   ////
-   /// Note, these variables are not networked, they are for the local connection only.
-   /// @{
-   F32 mDamageFlash;
-   F32 mWhiteOut;
+    /// @name Flashing
+    ////
+    /// Note, these variables are not networked, they are for the local connection only.
+    /// @{
+    F32 mDamageFlash;
+    F32 mWhiteOut;
 
-   F32   mBlackOut;
-   S32   mBlackOutTimeMS;
-   S32   mBlackOutStartTimeMS;
-   bool  mFadeToBlack;
+    F32   mBlackOut;
+    S32   mBlackOutTimeMS;
+    S32   mBlackOutStartTimeMS;
+    bool  mFadeToBlack;
 
-   /// @}
+    /// @}
 
-   /// @name Packet I/O
-   /// @{
+    /// @name Packet I/O
+    /// @{
 
-   void readPacket      (BitStream *bstream);
-   void writePacket     (BitStream *bstream, PacketNotify *note);
-   void packetReceived  (PacketNotify *note);
-   void packetDropped   (PacketNotify *note);
-   void connectionError (const char *errorString);
+    void readPacket(BitStream* bstream);
+    void writePacket(BitStream* bstream, PacketNotify* note);
+    void packetReceived(PacketNotify* note);
+    void packetDropped(PacketNotify* note);
+    void connectionError(const char* errorString);
 
-   void writeDemoStartBlock   (ResizeBitStream *stream);
-   bool readDemoStartBlock    (BitStream *stream);
-   void handleRecordedBlock   (U32 type, U32 size, void *data);
-   /// @}
+    void writeDemoStartBlock(ResizeBitStream* stream);
+    bool readDemoStartBlock(BitStream* stream);
+    void handleRecordedBlock(U32 type, U32 size, void* data);
+    /// @}
 
 public:
 
-   DECLARE_CONOBJECT(GameConnection);
-   void handleConnectionMessage(U32 message, U32 sequence, U32 ghostCount);
-   void preloadDataBlock(SimDataBlock *block);
-   void fileDownloadSegmentComplete();
-   void preloadNextDataBlock(bool hadNew);
-   static void consoleInit();
+    DECLARE_CONOBJECT(GameConnection);
+    void handleConnectionMessage(U32 message, U32 sequence, U32 ghostCount);
+    void preloadDataBlock(SimDataBlock* block);
+    void fileDownloadSegmentComplete();
+    void preloadNextDataBlock(bool hadNew);
+    static void consoleInit();
 
-   void setDisconnectReason(const char *reason);
-   GameConnection();
-   ~GameConnection();
+    void setDisconnectReason(const char* reason);
+    GameConnection();
+    ~GameConnection();
 
-   U32 getDataBlockSequence() { return mDataBlockSequence; }
-   void setDataBlockSequence(U32 seq) { mDataBlockSequence = seq; }
+    U32 getDataBlockSequence() { return mDataBlockSequence; }
+    void setDataBlockSequence(U32 seq) { mDataBlockSequence = seq; }
 
-   bool onAdd();
-   void onRemove();
+    bool onAdd();
+    void onRemove();
 
-   static GameConnection *getConnectionToServer() { return dynamic_cast<GameConnection*>((NetConnection *) mServerConnection); }
-   static GameConnection *getLocalClientConnection() { return dynamic_cast<GameConnection*>((NetConnection *) mLocalClientConnection); }
+    static GameConnection* getConnectionToServer() { return dynamic_cast<GameConnection*>((NetConnection*)mServerConnection); }
+    static GameConnection* getLocalClientConnection() { return dynamic_cast<GameConnection*>((NetConnection*)mLocalClientConnection); }
 
-   /// @name Control object
-   /// @{
+    /// @name Control object
+    /// @{
 
-   ///
-   void setControlObject(ShapeBase *co);
-   ShapeBase* getControlObject()  { return  mControlObject; }
-   void setCameraObject(ShapeBase *co);
-   ShapeBase* getCameraObject();
-   bool getControlCameraTransform(F32 dt,MatrixF* mat);
-   bool getControlCameraVelocity(Point3F *vel);
+    ///
+    void setControlObject(ShapeBase* co);
+    ShapeBase* getControlObject() { return  mControlObject; }
+    void setCameraObject(ShapeBase* co);
+    ShapeBase* getCameraObject();
+    bool getControlCameraTransform(F32 dt, MatrixF* mat);
+    bool getControlCameraVelocity(Point3F* vel);
 
-   bool getControlCameraFov(F32 * fov);
-   bool setControlCameraFov(F32 fov);
-   bool isValidControlCameraFov(F32 fov);
-   
-   void setFirstPerson(bool firstPerson);
-   
-   /// @}
+    bool getControlCameraFov(F32* fov);
+    bool setControlCameraFov(F32 fov);
+    bool isValidControlCameraFov(F32 fov);
 
-   void detectLag();
+    void setFirstPerson(bool firstPerson);
 
-   /// @name Datablock management
-   /// @{
+    /// @}
 
-   S32  getDataBlockModifiedKey     ()  { return mDataBlockModifiedKey; }
-   void setDataBlockModifiedKey     (S32 key)  { mDataBlockModifiedKey = key; }
-   S32  getMaxDataBlockModifiedKey  ()  { return mMaxDataBlockModifiedKey; }
-   void setMaxDataBlockModifiedKey  (S32 key)  { mMaxDataBlockModifiedKey = key; }
-   /// @}
+    void detectLag();
 
-   /// @name Fade control
-   /// @{
+    /// @name Datablock management
+    /// @{
 
-   F32 getDamageFlash() { return mDamageFlash; }
-   F32 getWhiteOut() { return mWhiteOut; }
+    S32  getDataBlockModifiedKey() { return mDataBlockModifiedKey; }
+    void setDataBlockModifiedKey(S32 key) { mDataBlockModifiedKey = key; }
+    S32  getMaxDataBlockModifiedKey() { return mMaxDataBlockModifiedKey; }
+    void setMaxDataBlockModifiedKey(S32 key) { mMaxDataBlockModifiedKey = key; }
+    /// @}
 
-   void setBlackOut(bool fadeToBlack, S32 timeMS);
-   F32  getBlackOut();
-   /// @}
+    /// @name Fade control
+    /// @{
 
-   /// @name Move Management
-   /// @{
+    F32 getDamageFlash() { return mDamageFlash; }
+    F32 getWhiteOut() { return mWhiteOut; }
 
-   void           pushMove(const Move &mv);
-   bool           getNextMove(Move &curMove);
-   bool           isBacklogged();
-   virtual void   getMoveList(Move**,U32* numMoves);
-   virtual void   clearMoves(U32 count);
-   void           collectMove(U32 simTime);
-   virtual bool   areMovesPending();
-   void           incMoveCredit(U32 count);
-   /// @}
+    void setBlackOut(bool fadeToBlack, S32 timeMS);
+    F32  getBlackOut();
+    /// @}
 
-   /// @name Authentication
-   ///
-   /// This is remnant code from Tribes 2.
-   /// @{
+    /// @name Move Management
+    /// @{
 
-   void            setAuthInfo(const AuthInfo *info);
-   const AuthInfo *getAuthInfo();
-   /// @}
+    void           pushMove(const Move& mv);
+    bool           getNextMove(Move& curMove);
+    bool           isBacklogged();
+    virtual void   getMoveList(Move**, U32* numMoves);
+    virtual void   clearMoves(U32 count);
+    void           collectMove(U32 simTime);
+    virtual bool   areMovesPending();
+    void           incMoveCredit(U32 count);
+    /// @}
 
-   /// @name Sound
-   /// @{
+    /// @name Authentication
+    ///
+    /// This is remnant code from Tribes 2.
+    /// @{
 
-   void play2D(const AudioProfile *profile);
-   void play3D(const AudioProfile *profile, const MatrixF *transform);
-   /// @}
+    void            setAuthInfo(const AuthInfo* info);
+    const AuthInfo* getAuthInfo();
+    /// @}
 
-   /// @name Misc.
-   /// @{
+    /// @name Sound
+    /// @{
 
-   bool isFirstPerson()  { return mCameraPos == 0; }
-   bool isAIControlled() { return mAIControlled; }
+    void play2D(const AudioProfile* profile);
+    void play3D(const AudioProfile* profile, const MatrixF* transform);
+    /// @}
 
-   void doneScopingScene();
-   void demoPlaybackComplete();
+    /// @name Misc.
+    /// @{
 
-   void setMissionCRC(U32 crc)           { mMissionCRC = crc; }
-   U32  getMissionCRC()           { return(mMissionCRC); }
-   /// @}
+    bool isFirstPerson() { return mCameraPos == 0; }
+    bool isAIControlled() { return mAIControlled; }
+
+    void doneScopingScene();
+    void demoPlaybackComplete();
+
+    void setMissionCRC(U32 crc) { mMissionCRC = crc; }
+    U32  getMissionCRC() { return(mMissionCRC); }
+    /// @}
 };
 
 #endif

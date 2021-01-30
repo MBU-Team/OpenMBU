@@ -22,59 +22,59 @@
 
 class MaterialPropertyMap : public SimObject
 {
-   typedef SimObject Parent;
+    typedef SimObject Parent;
 
-   static SimObjectPtr<MaterialPropertyMap> smMap;
+    static SimObjectPtr<MaterialPropertyMap> smMap;
 
-  public:
-   enum MaterialType {
-      Default
-   };
+public:
+    enum MaterialType {
+        Default
+    };
 
-   enum MaterialFlags {
-      None = 0 << 0
-   };
+    enum MaterialFlags {
+        None = 0 << 0
+    };
 
-   struct MapEntry {
-      StringTableEntry  name;
-      StringTableEntry  detailMapName;
-      StringTableEntry  environMapName;
-      StringTableEntry  bumpMapName;
-      StringTableEntry  materialName;
+    struct MapEntry {
+        StringTableEntry  name;
+        StringTableEntry  detailMapName;
+        StringTableEntry  environMapName;
+        StringTableEntry  bumpMapName;
+        StringTableEntry  materialName;
 
 
-      MaterialType      matType;
-      U32               matFlags;
+        MaterialType      matType;
+        U32               matFlags;
 
-      float             environMapFactor;
+        float             environMapFactor;
 
-      S32               sound;
-      ColorF            puffColor[2];
-   };
+        S32               sound;
+        ColorF            puffColor[2];
+    };
 
-  public:
-   MaterialPropertyMap();
-   ~MaterialPropertyMap();
+public:
+    MaterialPropertyMap();
+    ~MaterialPropertyMap();
 
-   static MaterialPropertyMap * get(); // the MPM instance is a singleton, this gets a pointer to it.  
+    static MaterialPropertyMap* get(); // the MPM instance is a singleton, this gets a pointer to it.  
 
-   const MapEntry* getMapEntry(StringTableEntry) const;
-   const MapEntry* getMapEntryFromIndex(S32 index) const;
-   S32 getIndexFromName(StringTableEntry name) const;
+    const MapEntry* getMapEntry(StringTableEntry) const;
+    const MapEntry* getMapEntryFromIndex(S32 index) const;
+    S32 getIndexFromName(StringTableEntry name) const;
 
-   DECLARE_CONOBJECT(MaterialPropertyMap);
+    DECLARE_CONOBJECT(MaterialPropertyMap);
 
-   // Should only be used by console functions
-  public:
-   bool addMapping(const S32, const char**);
+    // Should only be used by console functions
+public:
+    bool addMapping(const S32, const char**);
 
-   //-------------------------------------- Internal interface
-  private:
-   MapEntry* getNCMapEntry(StringTableEntry);
-   
-   //-------------------------------------- Data
-  private:
-   Vector<MapEntry>  mMapEntries;
+    //-------------------------------------- Internal interface
+private:
+    MapEntry* getNCMapEntry(StringTableEntry);
+
+    //-------------------------------------- Data
+private:
+    Vector<MapEntry>  mMapEntries;
 };
 
 #endif  // _H_MATERIALPROPERTYMAPPING_

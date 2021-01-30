@@ -36,69 +36,69 @@
 ///
 class TelnetConsole
 {
-   NetSocket mAcceptSocket;
-   S32 mAcceptPort;
+    NetSocket mAcceptSocket;
+    S32 mAcceptPort;
 
-   enum {
-      PasswordMaxLength = 32  ///< Maximum length of the telnet and listen passwords.
-   };
+    enum {
+        PasswordMaxLength = 32  ///< Maximum length of the telnet and listen passwords.
+    };
 
-   bool mRemoteEchoEnabled;
-   char mTelnetPassword[PasswordMaxLength+1];
-   char mListenPassword[PasswordMaxLength+1];
-   ConsoleEvent mPostEvent;
+    bool mRemoteEchoEnabled;
+    char mTelnetPassword[PasswordMaxLength + 1];
+    char mListenPassword[PasswordMaxLength + 1];
+    ConsoleEvent mPostEvent;
 
-   /// State of a TelnetClient.
-   enum State
-   {
-      PasswordTryOne,      ///< Allow three password attempts.
-      PasswordTryTwo,
-      PasswordTryThree,
-      DisconnectThisDude,  ///< If they've failed all three, disconnect them.
-      FullAccessConnected, ///< They presented the telnetPassword, they get full access.
-      ReadOnlyConnected    ///< They presented the listenPassword, they get read only access.
-   };
+    /// State of a TelnetClient.
+    enum State
+    {
+        PasswordTryOne,      ///< Allow three password attempts.
+        PasswordTryTwo,
+        PasswordTryThree,
+        DisconnectThisDude,  ///< If they've failed all three, disconnect them.
+        FullAccessConnected, ///< They presented the telnetPassword, they get full access.
+        ReadOnlyConnected    ///< They presented the listenPassword, they get read only access.
+    };
 
-   /// Represents a connection to the telnet console.
-   ///
-   /// This is also a linked list.
-   struct TelnetClient
-   {
-      NetSocket socket;
-      char curLine[Con::MaxLineLength];
-      S32 curPos;
-      S32 state;                       ///< State of the client.
-                                       ///  @see TelnetConsole::State
-      TelnetClient *nextClient;
-   };
-   TelnetClient *mClientList;
-   TelnetConsole();
-   ~TelnetConsole();
+    /// Represents a connection to the telnet console.
+    ///
+    /// This is also a linked list.
+    struct TelnetClient
+    {
+        NetSocket socket;
+        char curLine[Con::MaxLineLength];
+        S32 curPos;
+        S32 state;                       ///< State of the client.
+                                         ///  @see TelnetConsole::State
+        TelnetClient* nextClient;
+    };
+    TelnetClient* mClientList;
+    TelnetConsole();
+    ~TelnetConsole();
 
 public:
-   static void create();    ///< Initialize the telnet console.
-   static void destroy();   ///< Shut down the telnet console.
-   void process();          ///< Called by the main loop to let the console process commands
-                            ///  and connections.
+    static void create();    ///< Initialize the telnet console.
+    static void destroy();   ///< Shut down the telnet console.
+    void process();          ///< Called by the main loop to let the console process commands
+                             ///  and connections.
 
-   /// Configure the parameter for the telnet console.
-   ///
-   /// @param    port           Port on which to listen for connections.
-   /// @param    telnetPassword Password for full access to the console.
-   /// @param    listenPassword Password for read-only access to the console.
-   /// @param    remoteEcho     Enable/disable echoing input back to the client
-   void setTelnetParameters(S32 port, const char *telnetPassword, const char *listenPassword, bool remoteEcho = false);
+    /// Configure the parameter for the telnet console.
+    ///
+    /// @param    port           Port on which to listen for connections.
+    /// @param    telnetPassword Password for full access to the console.
+    /// @param    listenPassword Password for read-only access to the console.
+    /// @param    remoteEcho     Enable/disable echoing input back to the client
+    void setTelnetParameters(S32 port, const char* telnetPassword, const char* listenPassword, bool remoteEcho = false);
 
-   /// Callback to handle a line from the console.
-   ///
-   /// @note This is used internally by the class; you
-   ///       shouldn't need to call it.
-   ///
-   /// @see Con::addConsumer()
-   void processConsoleLine(const char *line);
+    /// Callback to handle a line from the console.
+    ///
+    /// @note This is used internally by the class; you
+    ///       shouldn't need to call it.
+    ///
+    /// @see Con::addConsumer()
+    void processConsoleLine(const char* line);
 };
 
-extern TelnetConsole *TelConsole;
+extern TelnetConsole* TelConsole;
 
 #endif
 

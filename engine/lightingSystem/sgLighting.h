@@ -92,7 +92,7 @@
 
 #define SG_LIGHTINGPACK_SHOW_ALL_INFORMATION	true
 
-char *sgGetLightingPackInformation(bool fullinfo=false);
+char* sgGetLightingPackInformation(bool fullinfo = false);
 
 
 #endif//_SGLIGHTING_H_

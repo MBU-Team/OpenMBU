@@ -14,12 +14,12 @@ GFX_DeclareTextureProfile(DRLTargetTextureProfile);
 class sgFormatManager
 {
 public:
-	static GFXFormat sgShadowTextureFormat_2_0;
-	static GFXFormat sgShadowTextureFormat_1_1;
-	static GFXFormat sgShadowZTextureFormat;
-	static GFXFormat sgDRLTextureFormat;
-	static GFXFormat sgHDRTextureFormat;
-	static void sgInit();
+    static GFXFormat sgShadowTextureFormat_2_0;
+    static GFXFormat sgShadowTextureFormat_1_1;
+    static GFXFormat sgShadowZTextureFormat;
+    static GFXFormat sgDRLTextureFormat;
+    static GFXFormat sgHDRTextureFormat;
+    static void sgInit();
 };
 
 

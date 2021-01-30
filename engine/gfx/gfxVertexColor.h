@@ -14,41 +14,41 @@
 /// The purpose of this class is to get around the crazy stupid way that Direct3D/Windows
 /// does color. Since they decided to be different than the rest of the world, who use
 /// RGBA, and use BGRA, we must do this...
-class GFXVertexColor 
+class GFXVertexColor
 {
-   
-   private:
-      U32 packedColorData;
 
-   public:
-      enum ColorOrdering 
-      {
-         RGBA,
-         BGRA,
-      };
+private:
+    U32 packedColorData;
 
-      static ColorOrdering sVertexColorOrdering;
+public:
+    enum ColorOrdering
+    {
+        RGBA,
+        BGRA,
+    };
 
-      GFXVertexColor()
-      {
-         packedColorData = 255 << 24; // Black with full alpha
-      }
+    static ColorOrdering sVertexColorOrdering;
 
-      GFXVertexColor( const ColorI &color );
-      GFXVertexColor( const ColorF &color );
+    GFXVertexColor()
+    {
+        packedColorData = 255 << 24; // Black with full alpha
+    }
 
-      void set( U8 red, U8 green, U8 blue, U8 alpha = 255 );
-      void set( const ColorI &color ) { set( color.red, color.green, color.blue, color.alpha ); }
-      void set( const ColorF &color ) { set( U8( color.red * 255 ), U8( color.green * 255 ), U8( color.blue * 255 ), U8( color.alpha * 255 ) ); }
+    GFXVertexColor(const ColorI& color);
+    GFXVertexColor(const ColorF& color);
 
-      GFXVertexColor &operator=( const ColorI &color ) { set( color ); return *this; }
-      GFXVertexColor &operator=( const ColorF &color ) { set( color ); return *this; }
+    void set(U8 red, U8 green, U8 blue, U8 alpha = 255);
+    void set(const ColorI& color) { set(color.red, color.green, color.blue, color.alpha); }
+    void set(const ColorF& color) { set(U8(color.red * 255), U8(color.green * 255), U8(color.blue * 255), U8(color.alpha * 255)); }
 
-      operator U32*() { return &packedColorData; }
+    GFXVertexColor& operator=(const ColorI& color) { set(color); return *this; }
+    GFXVertexColor& operator=(const ColorF& color) { set(color); return *this; }
 
-      void getColor( ColorI *color ) const;
+    operator U32* () { return &packedColorData; }
 
-      const U32& getPackedColorData() const { return packedColorData; }
+    void getColor(ColorI* color) const;
+
+    const U32& getPackedColorData() const { return packedColorData; }
 };
 
 //-----------------------------------------------------------------------------

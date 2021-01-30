@@ -34,17 +34,17 @@ public:
     StringTableEntry mName;
     StringTableEntry mPackage;
 
-    Namespace *mParent;
-    Namespace *mNext;
-    AbstractClassRep *mClassRep;
+    Namespace* mParent;
+    Namespace* mNext;
+    AbstractClassRep* mClassRep;
     U32 mRefCountToParent;
 
     struct Entry
     {
         enum {
-            GroupMarker                  = -3,
-            OverloadMarker               = -2,
-            InvalidFunctionType          = -1,
+            GroupMarker = -3,
+            OverloadMarker = -2,
+            InvalidFunctionType = -1,
             ScriptFunctionType,
             StringCallbackType,
             IntCallbackType,
@@ -53,16 +53,16 @@ public:
             BoolCallbackType
         };
 
-        Namespace *mNamespace;
-        Entry *mNext;
+        Namespace* mNamespace;
+        Entry* mNext;
         StringTableEntry mFunctionName;
         S32 mType;
         S32 mMinArgs;
         S32 mMaxArgs;
-        const char *mUsage;
+        const char* mUsage;
         StringTableEntry mPackage;
 
-        CodeBlock *mCode;
+        CodeBlock* mCode;
         U32 mFunctionOffset;
         union {
             StringCallback mStringCallbackFunc;
@@ -75,64 +75,64 @@ public:
         Entry();
         void clear();
 
-        const char *execute(S32 argc, const char **argv, ExprEvalState *state);
+        const char* execute(S32 argc, const char** argv, ExprEvalState* state);
 
     };
-    Entry *mEntryList;
+    Entry* mEntryList;
 
-    Entry **mHashTable;
+    Entry** mHashTable;
     U32 mHashSize;
     U32 mHashSequence;  ///< @note The hash sequence is used by the autodoc console facility
                         ///        as a means of testing reference state.
 
     Namespace();
-    void addFunction(StringTableEntry name, CodeBlock *cb, U32 functionOffset);
-    void addCommand(StringTableEntry name,StringCallback, const char *usage, S32 minArgs, S32 maxArgs);
-    void addCommand(StringTableEntry name,IntCallback, const char *usage, S32 minArgs, S32 maxArgs);
-    void addCommand(StringTableEntry name,FloatCallback, const char *usage, S32 minArgs, S32 maxArgs);
-    void addCommand(StringTableEntry name,VoidCallback, const char *usage, S32 minArgs, S32 maxArgs);
-    void addCommand(StringTableEntry name,BoolCallback, const char *usage, S32 minArgs, S32 maxArgs);
+    void addFunction(StringTableEntry name, CodeBlock* cb, U32 functionOffset);
+    void addCommand(StringTableEntry name, StringCallback, const char* usage, S32 minArgs, S32 maxArgs);
+    void addCommand(StringTableEntry name, IntCallback, const char* usage, S32 minArgs, S32 maxArgs);
+    void addCommand(StringTableEntry name, FloatCallback, const char* usage, S32 minArgs, S32 maxArgs);
+    void addCommand(StringTableEntry name, VoidCallback, const char* usage, S32 minArgs, S32 maxArgs);
+    void addCommand(StringTableEntry name, BoolCallback, const char* usage, S32 minArgs, S32 maxArgs);
 
-    void addOverload(const char *name, const char* altUsage);
+    void addOverload(const char* name, const char* altUsage);
 
     void markGroup(const char* name, const char* usage);
-    char * lastUsage;
+    char* lastUsage;
 
-    void getEntryList(Vector<Entry *> *);
+    void getEntryList(Vector<Entry*>*);
 
-    Entry *lookup(StringTableEntry name);
-    Entry *lookupRecursive(StringTableEntry name);
-    Entry *createLocalEntry(StringTableEntry name);
+    Entry* lookup(StringTableEntry name);
+    Entry* lookupRecursive(StringTableEntry name);
+    Entry* createLocalEntry(StringTableEntry name);
     void buildHashTable();
     void clearEntries();
-    bool classLinkTo(Namespace *parent);
+    bool classLinkTo(Namespace* parent);
 
-    const char *tabComplete(const char *prevText, S32 baseLen, bool fForward);
+    const char* tabComplete(const char* prevText, S32 baseLen, bool fForward);
 
     static U32 mCacheSequence;
     static DataChunker mCacheAllocator;
     static DataChunker mAllocator;
     static void trashCache();
-    static Namespace *mNamespaceList;
-    static Namespace *mGlobalNamespace;
+    static Namespace* mNamespaceList;
+    static Namespace* mGlobalNamespace;
 
     static void init();
     static void shutdown();
-    static Namespace *global();
+    static Namespace* global();
 
-    static Namespace *find(StringTableEntry name, StringTableEntry package=NULL);
+    static Namespace* find(StringTableEntry name, StringTableEntry package = NULL);
 
     static void activatePackage(StringTableEntry name);
     static void deactivatePackage(StringTableEntry name);
     static void dumpClasses();
     static void dumpFunctions();
-    static void printNamespaceEntries(Namespace * g);
+    static void printNamespaceEntries(Namespace* g);
     static void unlinkPackages();
     static void relinkPackages();
     static bool isPackage(StringTableEntry name);
 };
 
-extern char *typeValueEmpty;
+extern char* typeValueEmpty;
 
 class Dictionary
 {
@@ -147,49 +147,49 @@ public:
         };
 
         StringTableEntry name;
-        Entry *nextEntry;
+        Entry* nextEntry;
         S32 type;
-        char *sval;
+        char* sval;
         U32 ival;  // doubles as strlen when type = -1
         F32 fval;
         U32 bufferLen;
-        void *dataPtr;
+        void* dataPtr;
 
         Entry(StringTableEntry name);
         ~Entry();
 
         U32 getIntValue()
         {
-            if(type <= TypeInternalString)
+            if (type <= TypeInternalString)
                 return ival;
             else
                 return dAtoi(Con::getData(type, dataPtr, 0));
         }
         F32 getFloatValue()
         {
-            if(type <= TypeInternalString)
+            if (type <= TypeInternalString)
                 return fval;
             else
                 return dAtof(Con::getData(type, dataPtr, 0));
         }
-        const char *getStringValue()
+        const char* getStringValue()
         {
-            if(type == TypeInternalString)
+            if (type == TypeInternalString)
                 return sval;
-            if(type == TypeInternalFloat)
+            if (type == TypeInternalFloat)
                 return Con::getData(TypeF32, &fval, 0);
-            else if(type == TypeInternalInt)
+            else if (type == TypeInternalInt)
                 return Con::getData(TypeS32, &ival, 0);
             else
                 return Con::getData(type, dataPtr, 0);
         }
         void setIntValue(U32 val)
         {
-            if(type <= TypeInternalString)
+            if (type <= TypeInternalString)
             {
                 fval = (F32)val;
                 ival = val;
-                if(sval != typeValueEmpty)
+                if (sval != typeValueEmpty)
                 {
                     dFree(sval);
                     sval = typeValueEmpty;
@@ -199,17 +199,17 @@ public:
             }
             else
             {
-                const char *dptr = Con::getData(TypeS32, &val, 0);
+                const char* dptr = Con::getData(TypeS32, &val, 0);
                 Con::setData(type, dataPtr, 0, 1, &dptr);
             }
         }
         void setFloatValue(F32 val)
         {
-            if(type <= TypeInternalString)
+            if (type <= TypeInternalString)
             {
                 fval = val;
                 ival = static_cast<U32>(val);
-                if(sval != typeValueEmpty)
+                if (sval != typeValueEmpty)
                 {
                     dFree(sval);
                     sval = typeValueEmpty;
@@ -219,11 +219,11 @@ public:
             }
             else
             {
-                const char *dptr = Con::getData(TypeF32, &val, 0);
+                const char* dptr = Con::getData(TypeF32, &val, 0);
                 Con::setData(type, dataPtr, 0, 1, &dptr);
             }
         }
-        void setStringValue(const char *value);
+        void setStringValue(const char* value);
     };
 
 private:
@@ -232,38 +232,38 @@ private:
         Dictionary* owner;
         S32 size;
         S32 count;
-        Entry **data;
+        Entry** data;
     };
 
-    HashTableData *hashTable;
-    ExprEvalState *exprState;
+    HashTableData* hashTable;
+    ExprEvalState* exprState;
 public:
     StringTableEntry scopeName;
-    Namespace *scopeNamespace;
-    CodeBlock *code;
+    Namespace* scopeNamespace;
+    CodeBlock* code;
     U32 ip;
 
     Dictionary();
-    Dictionary(ExprEvalState *state, Dictionary* ref=NULL);
+    Dictionary(ExprEvalState* state, Dictionary* ref = NULL);
     ~Dictionary();
-    Entry *lookup(StringTableEntry name);
-    Entry *add(StringTableEntry name);
-    void setState(ExprEvalState *state, Dictionary* ref=NULL);
-    void remove(Entry *);
+    Entry* lookup(StringTableEntry name);
+    Entry* add(StringTableEntry name);
+    void setState(ExprEvalState* state, Dictionary* ref = NULL);
+    void remove(Entry*);
     void reset();
 
-    void exportVariables(const char *varString, const char *fileName, bool append);
-    void deleteVariables(const char *varString);
+    void exportVariables(const char* varString, const char* fileName, bool append);
+    void deleteVariables(const char* varString);
 
-    void setVariable(StringTableEntry name, const char *value);
-    const char *getVariable(StringTableEntry name, bool *valid = NULL);
+    void setVariable(StringTableEntry name, const char* value);
+    const char* getVariable(StringTableEntry name, bool* valid = NULL);
 
-    void addVariable(const char *name, S32 type, void *dataPtr);
+    void addVariable(const char* name, S32 type, void* dataPtr);
     bool removeVariable(StringTableEntry name);
 
     /// Return the best tab completion for prevText, with the length
     /// of the pre-tab string in baseLen.
-    const char *tabComplete(const char *prevText, S32 baseLen, bool);
+    const char* tabComplete(const char* prevText, S32 baseLen, bool);
 };
 
 class ExprEvalState
@@ -273,8 +273,8 @@ public:
     /// @{
 
     ///
-    SimObject *thisObject;
-    Dictionary::Entry *currentVariable;
+    SimObject* thisObject;
+    Dictionary::Entry* currentVariable;
     bool traceOn;
 
     ExprEvalState();
@@ -287,17 +287,17 @@ public:
 
     ///
     Dictionary globalVars;
-    Vector<Dictionary *> stack;
+    Vector<Dictionary*> stack;
     void setCurVarName(StringTableEntry name);
     void setCurVarNameCreate(StringTableEntry name);
     S32 getIntVariable();
     F64 getFloatVariable();
-    const char *getStringVariable();
+    const char* getStringVariable();
     void setIntVariable(S32 val);
     void setFloatVariable(F64 val);
-    void setStringVariable(const char *str);
+    void setStringVariable(const char* str);
 
-    void pushFrame(StringTableEntry frameName, Namespace *ns);
+    void pushFrame(StringTableEntry frameName, Namespace* ns);
     void popFrame();
 
     /// Puts a reference to an existing stack frame

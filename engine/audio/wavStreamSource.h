@@ -10,40 +10,40 @@
 #include "audio/audioStreamSource.h"
 #endif
 
-class WavStreamSource: public AudioStreamSource
+class WavStreamSource : public AudioStreamSource
 {
-	public:
-		WavStreamSource(const char *filename);
-		virtual ~WavStreamSource();
+public:
+    WavStreamSource(const char* filename);
+    virtual ~WavStreamSource();
 
-		virtual bool initStream();
-		virtual bool updateBuffers();
-		virtual void freeStream();
-      virtual F32 getElapsedTime();
-      virtual F32 getTotalTime();
+    virtual bool initStream();
+    virtual bool updateBuffers();
+    virtual void freeStream();
+    virtual F32 getElapsedTime();
+    virtual F32 getTotalTime();
 
-	private: 
-		ALuint				    mBufferList[NUMBUFFERS];
-		S32						mNumBuffers;
-		S32						mBufferSize;
-		Stream				   *stream;
+private:
+    ALuint				    mBufferList[NUMBUFFERS];
+    S32						mNumBuffers;
+    S32						mBufferSize;
+    Stream* stream;
 
-		bool					bReady;
-		bool					bFinished;
+    bool					bReady;
+    bool					bFinished;
 
-		ALenum  format;
-		ALsizei size;
-		ALsizei freq;
+    ALenum  format;
+    ALsizei size;
+    ALsizei freq;
 
-		ALuint			DataSize;
-		ALuint			DataLeft;
-		ALuint			dataStart;
-		ALuint			buffersinqueue;
+    ALuint			DataSize;
+    ALuint			DataLeft;
+    ALuint			dataStart;
+    ALuint			buffersinqueue;
 
-		bool			bBuffersAllocated;
+    bool			bBuffersAllocated;
 
-		void clear();
-		void resetStream();
-};  
+    void clear();
+    void resetStream();
+};
 
 #endif // _AUDIOSTREAMSOURCE_H_

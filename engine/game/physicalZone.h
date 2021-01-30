@@ -19,54 +19,54 @@ class Convex;
 // -------------------------------------------------------------------------
 class PhysicalZone : public SceneObject
 {
-   typedef SceneObject Parent;
+    typedef SceneObject Parent;
 
-  protected:
-   bool onAdd();
-   void onRemove();
+protected:
+    bool onAdd();
+    void onRemove();
 
-   enum UpdateMasks {
-      InitialUpdateMask = 1 << 0,
-      ActiveMask        = 1 << 1
-   };
+    enum UpdateMasks {
+        InitialUpdateMask = 1 << 0,
+        ActiveMask = 1 << 1
+    };
 
-  public:
-   void setTransform(const MatrixF &mat);
+public:
+    void setTransform(const MatrixF& mat);
 
-  protected:
-   F32        mVelocityMod;
-   F32        mGravityMod;
-   Point3F    mAppliedForce;
+protected:
+    F32        mVelocityMod;
+    F32        mGravityMod;
+    Point3F    mAppliedForce;
 
-   // Basically ripped from trigger
-   Polyhedron           mPolyhedron;
-   EarlyOutPolyList     mClippedList;
+    // Basically ripped from trigger
+    Polyhedron           mPolyhedron;
+    EarlyOutPolyList     mClippedList;
 
-   bool mActive;
+    bool mActive;
 
-   Convex* mConvexList;
-   void buildConvex(const Box3F& box, Convex* convex);
+    Convex* mConvexList;
+    void buildConvex(const Box3F& box, Convex* convex);
 
-  public:
-   PhysicalZone();
-   ~PhysicalZone();
+public:
+    PhysicalZone();
+    ~PhysicalZone();
 
-   F32 getVelocityMod() const      { return mVelocityMod; }
-   F32 getGravityMod()  const      { return mGravityMod;  }
-   const Point3F& getForce() const { return mAppliedForce; }
+    F32 getVelocityMod() const { return mVelocityMod; }
+    F32 getGravityMod()  const { return mGravityMod; }
+    const Point3F& getForce() const { return mAppliedForce; }
 
-   void setPolyhedron(const Polyhedron&);
-   bool testObject(SceneObject*);
+    void setPolyhedron(const Polyhedron&);
+    bool testObject(SceneObject*);
 
-   void activate();
-   void deactivate();
-   bool isActive() const { return mActive; }
+    void activate();
+    void deactivate();
+    bool isActive() const { return mActive; }
 
-   DECLARE_CONOBJECT(PhysicalZone);
-   static void initPersistFields();
+    DECLARE_CONOBJECT(PhysicalZone);
+    static void initPersistFields();
 
-   U32  packUpdate  (NetConnection *conn, U32 mask, BitStream *stream);
-   void unpackUpdate(NetConnection *conn,           BitStream *stream);
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 };
 
 #endif // _H_PHYSICALZONE

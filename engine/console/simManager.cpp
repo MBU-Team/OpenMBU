@@ -25,352 +25,352 @@ namespace Sim
 {
 
 
-//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------
-// event queue variables:
+    //---------------------------------------------------------------------------
+    // event queue variables:
 
-SimTime gCurrentTime;
-SimTime gTargetTime;
+    SimTime gCurrentTime;
+    SimTime gTargetTime;
 
-void *gEventQueueMutex;
-SimEvent *gEventQueue;
-U32 gEventSequence;
+    void* gEventQueueMutex;
+    SimEvent* gEventQueue;
+    U32 gEventSequence;
 
-//---------------------------------------------------------------------------
-// event queue init/shutdown
+    //---------------------------------------------------------------------------
+    // event queue init/shutdown
 
-static void initEventQueue()
-{
-   gCurrentTime = 0;
-   gTargetTime = 0;
-   gEventSequence = 1;
-   gEventQueue = NULL;
-   gEventQueueMutex = Mutex::createMutex();
-}
+    static void initEventQueue()
+    {
+        gCurrentTime = 0;
+        gTargetTime = 0;
+        gEventSequence = 1;
+        gEventQueue = NULL;
+        gEventQueueMutex = Mutex::createMutex();
+    }
 
-static void shutdownEventQueue()
-{
-   // Delete all pending events
-   Mutex::lockMutex(gEventQueueMutex);
-   SimEvent *walk = gEventQueue;
-   while(walk)
-   {
-      SimEvent *temp = walk->nextEvent;
-      delete walk;
-      walk = temp;
-   }
-   Mutex::unlockMutex(gEventQueueMutex);
-   Mutex::destroyMutex(gEventQueueMutex);
-}
+    static void shutdownEventQueue()
+    {
+        // Delete all pending events
+        Mutex::lockMutex(gEventQueueMutex);
+        SimEvent* walk = gEventQueue;
+        while (walk)
+        {
+            SimEvent* temp = walk->nextEvent;
+            delete walk;
+            walk = temp;
+        }
+        Mutex::unlockMutex(gEventQueueMutex);
+        Mutex::destroyMutex(gEventQueueMutex);
+    }
 
-//---------------------------------------------------------------------------
-// event post
+    //---------------------------------------------------------------------------
+    // event post
 
-U32 postEvent(SimObject *destObject, SimEvent* event,U32 time)
-{
-	AssertFatal(time >= gCurrentTime,
-		"Sim::postEvent: Cannot go back in time. (flux capacitor unavailable -- BJG)");
-   AssertFatal(destObject, "Destination object for event doesn't exist.");
+    U32 postEvent(SimObject* destObject, SimEvent* event, U32 time)
+    {
+        AssertFatal(time >= gCurrentTime,
+            "Sim::postEvent: Cannot go back in time. (flux capacitor unavailable -- BJG)");
+        AssertFatal(destObject, "Destination object for event doesn't exist.");
 
-   Mutex::lockMutex(gEventQueueMutex);
+        Mutex::lockMutex(gEventQueueMutex);
 
-   event->time = time;
-   event->destObject = destObject;
+        event->time = time;
+        event->destObject = destObject;
 
-   if(!destObject)
-   {
-      delete event;
+        if (!destObject)
+        {
+            delete event;
 
-      Mutex::unlockMutex(gEventQueueMutex);
+            Mutex::unlockMutex(gEventQueueMutex);
 
-      return InvalidEventId;
-   }
-   event->sequenceCount = gEventSequence++;
-   SimEvent **walk = &gEventQueue;
-   SimEvent *current;
-   
-   while((current = *walk) != NULL && (current->time < event->time))
-      walk = &(current->nextEvent);
-   
-   // [tom, 6/24/2005] This ensures that SimEvents are dispatched in the same order that they are posted.
-   // This is needed to ensure Con::threadSafeExecute() executes script code in the correct order.
-   while((current = *walk) != NULL && (current->time == event->time))
-      walk = &(current->nextEvent);
-   
-   event->nextEvent = current;
-   *walk = event;
+            return InvalidEventId;
+        }
+        event->sequenceCount = gEventSequence++;
+        SimEvent** walk = &gEventQueue;
+        SimEvent* current;
 
-   U32 seqCount = event->sequenceCount;
+        while ((current = *walk) != NULL && (current->time < event->time))
+            walk = &(current->nextEvent);
 
-   Mutex::unlockMutex(gEventQueueMutex);
+        // [tom, 6/24/2005] This ensures that SimEvents are dispatched in the same order that they are posted.
+        // This is needed to ensure Con::threadSafeExecute() executes script code in the correct order.
+        while ((current = *walk) != NULL && (current->time == event->time))
+            walk = &(current->nextEvent);
 
-   return seqCount;
-}
+        event->nextEvent = current;
+        *walk = event;
 
-//---------------------------------------------------------------------------
-// event cancellation
+        U32 seqCount = event->sequenceCount;
 
-void cancelEvent(U32 eventSequence)
-{
-   Mutex::lockMutex(gEventQueueMutex);
+        Mutex::unlockMutex(gEventQueueMutex);
 
-   SimEvent **walk = &gEventQueue;
-   SimEvent *current;
-   
-   while((current = *walk) != NULL)
-   {
-      if(current->sequenceCount == eventSequence)
-      {
-         *walk = current->nextEvent;
-         delete current;
-         Mutex::unlockMutex(gEventQueueMutex);
-         return;
-      }
-      else
-         walk = &(current->nextEvent);
-   }
+        return seqCount;
+    }
 
-   Mutex::unlockMutex(gEventQueueMutex);
-}
+    //---------------------------------------------------------------------------
+    // event cancellation
 
-void cancelPendingEvents(SimObject *obj)
-{
-   Mutex::lockMutex(gEventQueueMutex);
+    void cancelEvent(U32 eventSequence)
+    {
+        Mutex::lockMutex(gEventQueueMutex);
 
-   SimEvent **walk = &gEventQueue;
-   SimEvent *current;
-   
-   while((current = *walk) != NULL)
-   {
-      if(current->destObject == obj)
-      {
-         *walk = current->nextEvent;
-         delete current;
-      }
-      else
-         walk = &(current->nextEvent);
-   }
-   Mutex::unlockMutex(gEventQueueMutex);
-}
+        SimEvent** walk = &gEventQueue;
+        SimEvent* current;
 
-//---------------------------------------------------------------------------
-// event pending test
+        while ((current = *walk) != NULL)
+        {
+            if (current->sequenceCount == eventSequence)
+            {
+                *walk = current->nextEvent;
+                delete current;
+                Mutex::unlockMutex(gEventQueueMutex);
+                return;
+            }
+            else
+                walk = &(current->nextEvent);
+        }
 
-bool isEventPending(U32 eventSequence)
-{
-   Mutex::lockMutex(gEventQueueMutex);
+        Mutex::unlockMutex(gEventQueueMutex);
+    }
 
-   for(SimEvent *walk = gEventQueue; walk; walk = walk->nextEvent)
-      if(walk->sequenceCount == eventSequence)
-      {
-         Mutex::unlockMutex(gEventQueueMutex);
-         return true;
-      }
-   Mutex::unlockMutex(gEventQueueMutex);
-   return false;
-}
+    void cancelPendingEvents(SimObject* obj)
+    {
+        Mutex::lockMutex(gEventQueueMutex);
 
-U32 getEventTimeLeft(U32 eventSequence)
-{
-   Mutex::lockMutex(gEventQueueMutex);
+        SimEvent** walk = &gEventQueue;
+        SimEvent* current;
 
-   for(SimEvent *walk = gEventQueue; walk; walk = walk->nextEvent)
-      if(walk->sequenceCount == eventSequence)
-      {
-         SimTime t = walk->time - getCurrentTime();
-         Mutex::unlockMutex(gEventQueueMutex);
-         return t;
-      }
+        while ((current = *walk) != NULL)
+        {
+            if (current->destObject == obj)
+            {
+                *walk = current->nextEvent;
+                delete current;
+            }
+            else
+                walk = &(current->nextEvent);
+        }
+        Mutex::unlockMutex(gEventQueueMutex);
+    }
 
-   Mutex::unlockMutex(gEventQueueMutex);
+    //---------------------------------------------------------------------------
+    // event pending test
 
-   return 0;   
-}
+    bool isEventPending(U32 eventSequence)
+    {
+        Mutex::lockMutex(gEventQueueMutex);
 
-U32 getScheduleDuration(U32 eventSequence)
-{
-   for(SimEvent *walk = gEventQueue; walk; walk = walk->nextEvent)
-      if(walk->sequenceCount == eventSequence)
-         return (walk->time-walk->startTime);
-   return 0;
-}
+        for (SimEvent* walk = gEventQueue; walk; walk = walk->nextEvent)
+            if (walk->sequenceCount == eventSequence)
+            {
+                Mutex::unlockMutex(gEventQueueMutex);
+                return true;
+            }
+        Mutex::unlockMutex(gEventQueueMutex);
+        return false;
+    }
 
-U32 getTimeSinceStart(U32 eventSequence)
-{
-   for(SimEvent *walk = gEventQueue; walk; walk = walk->nextEvent)
-      if(walk->sequenceCount == eventSequence)
-         return (getCurrentTime()-walk->startTime);
-   return 0;
-}
+    U32 getEventTimeLeft(U32 eventSequence)
+    {
+        Mutex::lockMutex(gEventQueueMutex);
 
-//---------------------------------------------------------------------------
-// event timing
+        for (SimEvent* walk = gEventQueue; walk; walk = walk->nextEvent)
+            if (walk->sequenceCount == eventSequence)
+            {
+                SimTime t = walk->time - getCurrentTime();
+                Mutex::unlockMutex(gEventQueueMutex);
+                return t;
+            }
 
-void advanceToTime(SimTime targetTime)
-{
-   AssertFatal(targetTime >= gCurrentTime, "EventQueue::process: cannot advance to time in the past.");
+        Mutex::unlockMutex(gEventQueueMutex);
 
-   Mutex::lockMutex(gEventQueueMutex);
-   gTargetTime = targetTime;
-   while(gEventQueue && gEventQueue->time <= targetTime)
-   {
-      SimEvent *event = gEventQueue;
-      gEventQueue = gEventQueue->nextEvent;
-      AssertFatal(event->time >= gCurrentTime,
-			"SimEventQueue::pop: Cannot go back in time (flux capacitor not installed - BJG).");
-      gCurrentTime = event->time;
-      SimObject *obj = event->destObject;
+        return 0;
+    }
 
-      if(!obj->isDeleted())
-         event->process(obj);
-      delete event;
-   }
-	gCurrentTime = targetTime;
-   Mutex::unlockMutex(gEventQueueMutex);
-}
+    U32 getScheduleDuration(U32 eventSequence)
+    {
+        for (SimEvent* walk = gEventQueue; walk; walk = walk->nextEvent)
+            if (walk->sequenceCount == eventSequence)
+                return (walk->time - walk->startTime);
+        return 0;
+    }
 
-void advanceTime(SimTime delta)
-{
-   advanceToTime(gCurrentTime + delta);
-}
+    U32 getTimeSinceStart(U32 eventSequence)
+    {
+        for (SimEvent* walk = gEventQueue; walk; walk = walk->nextEvent)
+            if (walk->sequenceCount == eventSequence)
+                return (getCurrentTime() - walk->startTime);
+        return 0;
+    }
 
-U32 getCurrentTime()
-{
-   return gCurrentTime;
-}
+    //---------------------------------------------------------------------------
+    // event timing
 
-U32 getTargetTime()
-{
-   return gTargetTime;
-}
+    void advanceToTime(SimTime targetTime)
+    {
+        AssertFatal(targetTime >= gCurrentTime, "EventQueue::process: cannot advance to time in the past.");
 
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+        Mutex::lockMutex(gEventQueueMutex);
+        gTargetTime = targetTime;
+        while (gEventQueue && gEventQueue->time <= targetTime)
+        {
+            SimEvent* event = gEventQueue;
+            gEventQueue = gEventQueue->nextEvent;
+            AssertFatal(event->time >= gCurrentTime,
+                "SimEventQueue::pop: Cannot go back in time (flux capacitor not installed - BJG).");
+            gCurrentTime = event->time;
+            SimObject* obj = event->destObject;
 
-SimGroup *gRootGroup = NULL;
-SimManagerNameDictionary *gNameDictionary;
-SimIdDictionary *gIdDictionary;
-U32 gNextObjectId;
+            if (!obj->isDeleted())
+                event->process(obj);
+            delete event;
+        }
+        gCurrentTime = targetTime;
+        Mutex::unlockMutex(gEventQueueMutex);
+    }
 
-static void initRoot()
-{
-   gIdDictionary = new SimIdDictionary;
-   gNameDictionary = new SimManagerNameDictionary;
+    void advanceTime(SimTime delta)
+    {
+        advanceToTime(gCurrentTime + delta);
+    }
 
-   gRootGroup = new SimGroup();
-   gRootGroup->setId(RootGroupId);
-   gRootGroup->assignName("RootGroup");
-   gRootGroup->registerObject();
+    U32 getCurrentTime()
+    {
+        return gCurrentTime;
+    }
 
-   gNextObjectId = DynamicObjectIdFirst;
-}
+    U32 getTargetTime()
+    {
+        return gTargetTime;
+    }
 
-static void shutdownRoot()
-{
-   gRootGroup->deleteObject();
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
 
-   delete gNameDictionary;
-   delete gIdDictionary;
-}
+    SimGroup* gRootGroup = NULL;
+    SimManagerNameDictionary* gNameDictionary;
+    SimIdDictionary* gIdDictionary;
+    U32 gNextObjectId;
 
-//---------------------------------------------------------------------------
+    static void initRoot()
+    {
+        gIdDictionary = new SimIdDictionary;
+        gNameDictionary = new SimManagerNameDictionary;
 
-SimObject* findObject(const char* name)
-{
-   SimObject *obj;
-   char c = *name;
-   if(c == '/')
-      return gRootGroup->findObject(name + 1 );
-   if(c >= '0' && c <= '9')
-   {
-      // it's an id group
-      const char* temp = name + 1;
-      for(;;)
-      {
-         c = *temp++;
-         if(!c)
-            return findObject(dAtoi(name));
-         else if(c == '/')
-         {
-            obj = findObject(dAtoi(name));
-            if(!obj)
-               return NULL;
-            return obj->findObject(temp);
-         }
-      }
-   }
-   S32 len;
+        gRootGroup = new SimGroup();
+        gRootGroup->setId(RootGroupId);
+        gRootGroup->assignName("RootGroup");
+        gRootGroup->registerObject();
 
-   for(len = 0; name[len] != 0 && name[len] != '/'; len++)
-      ;
-   StringTableEntry stName = StringTable->lookupn(name, len);
-   if(!stName)
-      return NULL;
-   obj = gNameDictionary->find(stName);
-   if(!name[len])
-      return obj;
-   if(!obj)
-      return NULL;
-   return obj->findObject(name + len + 1);
-}
+        gNextObjectId = DynamicObjectIdFirst;
+    }
 
-SimObject* findObject(SimObjectId id)
-{
-	return gIdDictionary->find(id);
-}
+    static void shutdownRoot()
+    {
+        gRootGroup->deleteObject();
 
-SimGroup *getRootGroup()
-{
-   return gRootGroup;
-}
+        delete gNameDictionary;
+        delete gIdDictionary;
+    }
 
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+
+    SimObject* findObject(const char* name)
+    {
+        SimObject* obj;
+        char c = *name;
+        if (c == '/')
+            return gRootGroup->findObject(name + 1);
+        if (c >= '0' && c <= '9')
+        {
+            // it's an id group
+            const char* temp = name + 1;
+            for (;;)
+            {
+                c = *temp++;
+                if (!c)
+                    return findObject(dAtoi(name));
+                else if (c == '/')
+                {
+                    obj = findObject(dAtoi(name));
+                    if (!obj)
+                        return NULL;
+                    return obj->findObject(temp);
+                }
+            }
+        }
+        S32 len;
+
+        for (len = 0; name[len] != 0 && name[len] != '/'; len++)
+            ;
+        StringTableEntry stName = StringTable->lookupn(name, len);
+        if (!stName)
+            return NULL;
+        obj = gNameDictionary->find(stName);
+        if (!name[len])
+            return obj;
+        if (!obj)
+            return NULL;
+        return obj->findObject(name + len + 1);
+    }
+
+    SimObject* findObject(SimObjectId id)
+    {
+        return gIdDictionary->find(id);
+    }
+
+    SimGroup* getRootGroup()
+    {
+        return gRootGroup;
+    }
+
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
 
 #define InstantiateNamedSet(set) g##set = new SimSet; g##set->registerObject(#set); gRootGroup->addObject(g##set)
 #define InstantiateNamedGroup(set) g##set = new SimGroup; g##set->registerObject(#set); gRootGroup->addObject(g##set)
 
-SimDataBlockGroup *gDataBlockGroup;
-SimDataBlockGroup *getDataBlockGroup()
-{
-   return gDataBlockGroup;
-}
+    SimDataBlockGroup* gDataBlockGroup;
+    SimDataBlockGroup* getDataBlockGroup()
+    {
+        return gDataBlockGroup;
+    }
 
 
-void init()
-{
-   initEventQueue();
-   initRoot();
+    void init()
+    {
+        initEventQueue();
+        initRoot();
 
-   InstantiateNamedSet(ActiveActionMapSet);
-   InstantiateNamedSet(GhostAlwaysSet);
-   InstantiateNamedSet(LightSet);
-   InstantiateNamedSet(WayPointSet);
-   InstantiateNamedSet(fxReplicatorSet);
-   InstantiateNamedSet(fxFoliageSet);
-   InstantiateNamedSet(reflectiveSet);
-   InstantiateNamedSet(MaterialSet);
-   InstantiateNamedGroup(ActionMapGroup);
-   InstantiateNamedGroup(ClientGroup);
-   InstantiateNamedGroup(GuiGroup);
-   InstantiateNamedGroup(GuiDataGroup);
-   InstantiateNamedGroup(TCPGroup);
-   InstantiateNamedGroup(ClientConnectionGroup);
-   InstantiateNamedGroup(ChunkFileGroup);
-   
-   InstantiateNamedSet(sgMissionLightingFilterSet);
+        InstantiateNamedSet(ActiveActionMapSet);
+        InstantiateNamedSet(GhostAlwaysSet);
+        InstantiateNamedSet(LightSet);
+        InstantiateNamedSet(WayPointSet);
+        InstantiateNamedSet(fxReplicatorSet);
+        InstantiateNamedSet(fxFoliageSet);
+        InstantiateNamedSet(reflectiveSet);
+        InstantiateNamedSet(MaterialSet);
+        InstantiateNamedGroup(ActionMapGroup);
+        InstantiateNamedGroup(ClientGroup);
+        InstantiateNamedGroup(GuiGroup);
+        InstantiateNamedGroup(GuiDataGroup);
+        InstantiateNamedGroup(TCPGroup);
+        InstantiateNamedGroup(ClientConnectionGroup);
+        InstantiateNamedGroup(ChunkFileGroup);
 
-   gDataBlockGroup = new SimDataBlockGroup();
-   gDataBlockGroup->registerObject("DataBlockGroup");
-   gRootGroup->addObject(gDataBlockGroup);
-}
+        InstantiateNamedSet(sgMissionLightingFilterSet);
 
-void shutdown()
-{
-   shutdownRoot();
-   shutdownEventQueue();
-}
+        gDataBlockGroup = new SimDataBlockGroup();
+        gDataBlockGroup->registerObject("DataBlockGroup");
+        gRootGroup->addObject(gDataBlockGroup);
+    }
+
+    void shutdown()
+    {
+        shutdownRoot();
+        shutdownEventQueue();
+    }
 
 }
 
@@ -379,23 +379,23 @@ void shutdown()
 
 SimDataBlockGroup::SimDataBlockGroup()
 {
-   mLastModifiedKey = 0;
+    mLastModifiedKey = 0;
 }
 
-S32 QSORT_CALLBACK SimDataBlockGroup::compareModifiedKey(const void* a,const void* b)
+S32 QSORT_CALLBACK SimDataBlockGroup::compareModifiedKey(const void* a, const void* b)
 {
-	return (reinterpret_cast<const SimDataBlock* >(a))->getModifiedKey() -
-		(reinterpret_cast<const SimDataBlock*>(b))->getModifiedKey();
+    return (reinterpret_cast<const SimDataBlock*>(a))->getModifiedKey() -
+        (reinterpret_cast<const SimDataBlock*>(b))->getModifiedKey();
 }
 
 
 void SimDataBlockGroup::sort()
 {
-   if(mLastModifiedKey != SimDataBlock::getNextModifiedKey())
-   {
-      mLastModifiedKey = SimDataBlock::getNextModifiedKey();
-    	dQsort(objectList.address(),objectList.size(),sizeof(SimObject *),compareModifiedKey);
-   }
+    if (mLastModifiedKey != SimDataBlock::getNextModifiedKey())
+    {
+        mLastModifiedKey = SimDataBlock::getNextModifiedKey();
+        dQsort(objectList.address(), objectList.size(), sizeof(SimObject*), compareModifiedKey);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -403,69 +403,69 @@ void SimDataBlockGroup::sort()
 
 bool SimObject::registerObject()
 {
-	mFlags.clear(Deleted | Removed);
+    mFlags.clear(Deleted | Removed);
 
-   if(!mId)
-      mId = Sim::gNextObjectId++;
+    if (!mId)
+        mId = Sim::gNextObjectId++;
 
-   AssertFatal(Sim::gIdDictionary && Sim::gNameDictionary, 
-      "SimObject::registerObject - tried to register an object before Sim::init()!");
+    AssertFatal(Sim::gIdDictionary && Sim::gNameDictionary,
+        "SimObject::registerObject - tried to register an object before Sim::init()!");
 
-   Sim::gIdDictionary->insert(this);	
+    Sim::gIdDictionary->insert(this);
 
-   Sim::gNameDictionary->insert(this);
+    Sim::gNameDictionary->insert(this);
 
-	// Notify object
-   bool ret = onAdd();
+    // Notify object
+    bool ret = onAdd();
 
-   if(!ret)
-      unregisterObject();
+    if (!ret)
+        unregisterObject();
 
-   AssertFatal(!ret || isProperlyAdded(), "Object did not call SimObject::onAdd()");
-   return ret;
+    AssertFatal(!ret || isProperlyAdded(), "Object did not call SimObject::onAdd()");
+    return ret;
 }
 
 //---------------------------------------------------------------------------
 
 void SimObject::unregisterObject()
 {
-   mFlags.set(Removed);
+    mFlags.set(Removed);
 
-   // Notify object first
-   onRemove();
+    // Notify object first
+    onRemove();
 
-   // Clear out any pending notifications before
-   // we call our own, just in case they delete
-   // something that we have referenced.
-   clearAllNotifications();
+    // Clear out any pending notifications before
+    // we call our own, just in case they delete
+    // something that we have referenced.
+    clearAllNotifications();
 
-   // Notify all objects that are waiting for delete
-   // messages
-   if (getGroup())
-      getGroup()->removeObject(this);
+    // Notify all objects that are waiting for delete
+    // messages
+    if (getGroup())
+        getGroup()->removeObject(this);
 
-   processDeleteNotifies();
+    processDeleteNotifies();
 
-   // Do removals from the Sim.
-   Sim::gNameDictionary->remove(this);
-   Sim::gIdDictionary->remove(this);
-   Sim::cancelPendingEvents(this);
+    // Do removals from the Sim.
+    Sim::gNameDictionary->remove(this);
+    Sim::gIdDictionary->remove(this);
+    Sim::cancelPendingEvents(this);
 }
 
 //---------------------------------------------------------------------------
 
 void SimObject::deleteObject()
 {
-	AssertFatal(mFlags.test(Added),
-		"SimObject::deleteObject: Object not registered.");
-	AssertFatal(!isDeleted(),"SimManager::deleteObject: "
-		"Object has already been deleted");
-	AssertFatal(!isRemoved(),"SimManager::deleteObject: "
-		"Object in the process of being removed");
-	mFlags.set(Deleted);
+    AssertFatal(mFlags.test(Added),
+        "SimObject::deleteObject: Object not registered.");
+    AssertFatal(!isDeleted(), "SimManager::deleteObject: "
+        "Object has already been deleted");
+    AssertFatal(!isRemoved(), "SimManager::deleteObject: "
+        "Object in the process of being removed");
+    mFlags.set(Deleted);
 
-   unregisterObject();
-   delete this;
+    unregisterObject();
+    delete this;
 }
 
 //---------------------------------------------------------------------------
@@ -473,57 +473,57 @@ void SimObject::deleteObject()
 
 void SimObject::setId(SimObjectId newId)
 {
-   if(!mFlags.test(Added))
-   {
-      mId = newId;
-      return;
-   }
+    if (!mFlags.test(Added))
+    {
+        mId = newId;
+        return;
+    }
 
-   // get this object out of the id dictionary if it's in it
-   Sim::gIdDictionary->remove(this);
+    // get this object out of the id dictionary if it's in it
+    Sim::gIdDictionary->remove(this);
 
-	// Free current Id.
-	// Assign new one.
-   mId = newId ? newId : Sim::gNextObjectId++;
-	Sim::gIdDictionary->insert(this);
+    // Free current Id.
+    // Assign new one.
+    mId = newId ? newId : Sim::gNextObjectId++;
+    Sim::gIdDictionary->insert(this);
 }
 
-void SimObject::assignName(const char *name)
+void SimObject::assignName(const char* name)
 {
-   StringTableEntry newName = NULL;
-   if(name[0])
-      newName = StringTable->insert(name);
+    StringTableEntry newName = NULL;
+    if (name[0])
+        newName = StringTable->insert(name);
 
-   if(mGroup)
-      mGroup->nameDictionary.remove(this);
-   if(mFlags.test(Added))
-      Sim::gNameDictionary->remove(this);
+    if (mGroup)
+        mGroup->nameDictionary.remove(this);
+    if (mFlags.test(Added))
+        Sim::gNameDictionary->remove(this);
 
-   objectName = newName;
+    objectName = newName;
 
-   if(mGroup)
-      mGroup->nameDictionary.insert(this);
-   if(mFlags.test(Added))
-      Sim::gNameDictionary->insert(this);
+    if (mGroup)
+        mGroup->nameDictionary.insert(this);
+    if (mFlags.test(Added))
+        Sim::gNameDictionary->insert(this);
 }
 
 //---------------------------------------------------------------------------
 
 bool SimObject::registerObject(U32 id)
 {
-   setId(id);
-   return registerObject();
+    setId(id);
+    return registerObject();
 }
 
-bool SimObject::registerObject(const char *name)
+bool SimObject::registerObject(const char* name)
 {
-   assignName(name);
-   return registerObject();
+    assignName(name);
+    return registerObject();
 }
 
-bool SimObject::registerObject(const char *name, U32 id)
+bool SimObject::registerObject(const char* name, U32 id)
 {
-   setId(id);
-   assignName(name);
-   return registerObject();
+    setId(id);
+    assignName(name);
+    return registerObject();
 }

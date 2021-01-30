@@ -40,18 +40,18 @@
 class GuiInspectorTypeEnum : public GuiInspectorField
 {
 private:
-   typedef GuiInspectorField Parent;
+    typedef GuiInspectorField Parent;
 public:
-   DECLARE_CONOBJECT(GuiInspectorTypeEnum);
-   static void consoleInit();
+    DECLARE_CONOBJECT(GuiInspectorTypeEnum);
+    static void consoleInit();
 
-   //////////////////////////////////////////////////////////////////////////
-   // Override able methods for custom edit fields
-   //////////////////////////////////////////////////////////////////////////
-   virtual GuiControl*        constructEditControl();
-   virtual void               setData( StringTableEntry data );
-   virtual StringTableEntry   getData();
-   virtual void               updateValue( StringTableEntry newValue );
+    //////////////////////////////////////////////////////////////////////////
+    // Override able methods for custom edit fields
+    //////////////////////////////////////////////////////////////////////////
+    virtual GuiControl* constructEditControl();
+    virtual void               setData(StringTableEntry data);
+    virtual StringTableEntry   getData();
+    virtual void               updateValue(StringTableEntry newValue);
 };
 
 
@@ -61,15 +61,15 @@ public:
 class GuiInspectorTypeCheckBox : public GuiInspectorField
 {
 private:
-   typedef GuiInspectorField Parent;
+    typedef GuiInspectorField Parent;
 public:
-   DECLARE_CONOBJECT(GuiInspectorTypeCheckBox);
-   static void consoleInit();
+    DECLARE_CONOBJECT(GuiInspectorTypeCheckBox);
+    static void consoleInit();
 
-   //////////////////////////////////////////////////////////////////////////
-   // Override able methods for custom edit fields (Both are REQUIRED)
-   //////////////////////////////////////////////////////////////////////////
-   virtual GuiControl* constructEditControl();
+    //////////////////////////////////////////////////////////////////////////
+    // Override able methods for custom edit fields (Both are REQUIRED)
+    //////////////////////////////////////////////////////////////////////////
+    virtual GuiControl* constructEditControl();
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,15 +78,15 @@ public:
 class GuiInspectorTypeGuiProfile : public GuiInspectorTypeEnum
 {
 private:
-   typedef GuiInspectorTypeEnum Parent;
+    typedef GuiInspectorTypeEnum Parent;
 public:
-   DECLARE_CONOBJECT(GuiInspectorTypeGuiProfile);
-   static void consoleInit();
+    DECLARE_CONOBJECT(GuiInspectorTypeGuiProfile);
+    static void consoleInit();
 
-   //////////////////////////////////////////////////////////////////////////
-   // Override able methods for custom edit fields (Both are REQUIRED)
-   //////////////////////////////////////////////////////////////////////////
-   virtual GuiControl* constructEditControl();
+    //////////////////////////////////////////////////////////////////////////
+    // Override able methods for custom edit fields (Both are REQUIRED)
+    //////////////////////////////////////////////////////////////////////////
+    virtual GuiControl* constructEditControl();
 };
 
 
@@ -96,18 +96,18 @@ public:
 class GuiInspectorTypeFileName : public GuiInspectorField
 {
 private:
-   typedef GuiInspectorField Parent;
+    typedef GuiInspectorField Parent;
 public:
-   DECLARE_CONOBJECT(GuiInspectorTypeFileName);
-   static void consoleInit();
+    DECLARE_CONOBJECT(GuiInspectorTypeFileName);
+    static void consoleInit();
 
-   SimObjectPtr<GuiButtonCtrl>   mBrowseButton;
+    SimObjectPtr<GuiButtonCtrl>   mBrowseButton;
 
-   //////////////////////////////////////////////////////////////////////////
-   // Override able methods for custom edit fields
-   //////////////////////////////////////////////////////////////////////////
-   virtual GuiControl*        constructEditControl();
-   virtual void               resize(const Point2I &newPosition, const Point2I &newExtent);
+    //////////////////////////////////////////////////////////////////////////
+    // Override able methods for custom edit fields
+    //////////////////////////////////////////////////////////////////////////
+    virtual GuiControl* constructEditControl();
+    virtual void               resize(const Point2I& newPosition, const Point2I& newExtent);
 };
 
 
@@ -117,18 +117,18 @@ public:
 class GuiInspectorTypeColor : public GuiInspectorField
 {
 private:
-   typedef GuiInspectorField Parent;
+    typedef GuiInspectorField Parent;
 public:
-   DECLARE_CONOBJECT(GuiInspectorTypeColor);
+    DECLARE_CONOBJECT(GuiInspectorTypeColor);
 
-   StringTableEntry  mColorFunction;
-   SimObjectPtr<GuiButtonCtrl>   mBrowseButton;
+    StringTableEntry  mColorFunction;
+    SimObjectPtr<GuiButtonCtrl>   mBrowseButton;
 
-   //////////////////////////////////////////////////////////////////////////
-   // Override able methods for custom edit fields
-   //////////////////////////////////////////////////////////////////////////
-   virtual GuiControl*        constructEditControl();
-   virtual void               resize(const Point2I &newPosition, const Point2I &newExtent);
+    //////////////////////////////////////////////////////////////////////////
+    // Override able methods for custom edit fields
+    //////////////////////////////////////////////////////////////////////////
+    virtual GuiControl* constructEditControl();
+    virtual void               resize(const Point2I& newPosition, const Point2I& newExtent);
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,12 +137,12 @@ public:
 class GuiInspectorTypeColorI : public GuiInspectorTypeColor
 {
 private:
-   typedef GuiInspectorTypeColor Parent;
+    typedef GuiInspectorTypeColor Parent;
 public:
-   GuiInspectorTypeColorI();
+    GuiInspectorTypeColorI();
 
-   DECLARE_CONOBJECT(GuiInspectorTypeColorI);
-   static void consoleInit();
+    DECLARE_CONOBJECT(GuiInspectorTypeColorI);
+    static void consoleInit();
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,12 +151,12 @@ public:
 class GuiInspectorTypeColorF : public GuiInspectorTypeColor
 {
 private:
-   typedef GuiInspectorTypeColor Parent;
+    typedef GuiInspectorTypeColor Parent;
 public:
-   GuiInspectorTypeColorF();
+    GuiInspectorTypeColorF();
 
-   DECLARE_CONOBJECT(GuiInspectorTypeColorF);
-   static void consoleInit();
+    DECLARE_CONOBJECT(GuiInspectorTypeColorF);
+    static void consoleInit();
 };
 
 #endif

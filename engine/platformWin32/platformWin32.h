@@ -51,56 +51,56 @@
 
 struct Win32PlatState
 {
-   FILE *log_fp;
-   HINSTANCE hinstOpenGL;
-   HINSTANCE hinstGLU;
-   HINSTANCE hinstOpenAL;
-   HWND appWindow;
-   HDC appDC;
-   HINSTANCE appInstance;
-   HGLRC hGLRC;
-   DWORD processId;
-   WNDCLASSEX wc;
+    FILE* log_fp;
+    HINSTANCE hinstOpenGL;
+    HINSTANCE hinstGLU;
+    HINSTANCE hinstOpenAL;
+    HWND appWindow;
+    HDC appDC;
+    HINSTANCE appInstance;
+    HGLRC hGLRC;
+    DWORD processId;
+    WNDCLASSEX wc;
 #ifdef UNICODE
-   HIMC imeHandle;
+    HIMC imeHandle;
 #endif
 
-   S32 desktopBitsPixel;
-   S32 desktopWidth;
-   S32 desktopHeight;
-   U32 currentTime;
+    S32 desktopBitsPixel;
+    S32 desktopWidth;
+    S32 desktopHeight;
+    U32 currentTime;
 
-   Win32PlatState();
+    Win32PlatState();
 };
 
 extern Win32PlatState winState;
 
-extern void setModifierKeys( S32 modKeys );
+extern void setModifierKeys(S32 modKeys);
 
-extern S32 ( WINAPI * qwglSwapIntervalEXT )(S32 interval );
-extern BOOL  ( WINAPI * qwglGetDeviceGammaRamp3DFX )(HDC, LPVOID );
-extern BOOL  ( WINAPI * qwglSetDeviceGammaRamp3DFX )(HDC, LPVOID );
-extern S32   ( WINAPI * qwglChoosePixelFormat )(HDC, CONST PIXELFORMATDESCRIPTOR *);
-extern S32   ( WINAPI * qwglDescribePixelFormat) (HDC, S32, UINT, LPPIXELFORMATDESCRIPTOR);
-extern S32   ( WINAPI * qwglGetPixelFormat )(HDC);
-extern BOOL  ( WINAPI * qwglSetPixelFormat )(HDC, S32, CONST PIXELFORMATDESCRIPTOR *);
-extern BOOL  ( WINAPI * qwglSwapBuffers )(HDC);
-extern BOOL  ( WINAPI * qwglCopyContext )(HGLRC, HGLRC, UINT);
-extern HGLRC ( WINAPI * qwglCreateContext )(HDC);
-extern HGLRC ( WINAPI * qwglCreateLayerContext )(HDC, S32);
-extern BOOL  ( WINAPI * qwglDeleteContext )(HGLRC);
-extern HGLRC ( WINAPI * qwglGetCurrentContext )(VOID);
-extern HDC   ( WINAPI * qwglGetCurrentDC )(VOID);
-extern PROC  ( WINAPI * qwglGetProcAddress )(LPCSTR);
-extern BOOL  ( WINAPI * qwglMakeCurrent )(HDC, HGLRC);
-extern BOOL  ( WINAPI * qwglShareLists )(HGLRC, HGLRC);
-extern BOOL  ( WINAPI * qwglUseFontBitmaps )(HDC, DWORD, DWORD, DWORD);
-extern BOOL  ( WINAPI * qwglUseFontOutlines )(HDC, DWORD, DWORD, DWORD, FLOAT, FLOAT, S32, LPGLYPHMETRICSFLOAT);
-extern BOOL ( WINAPI * qwglDescribeLayerPlane )(HDC, S32, S32, UINT, LPLAYERPLANEDESCRIPTOR);
-extern S32  ( WINAPI * qwglSetLayerPaletteEntries )(HDC, S32, S32, S32, CONST COLORREF *);
-extern S32  ( WINAPI * qwglGetLayerPaletteEntries )(HDC, S32, S32, S32, COLORREF *);
-extern BOOL ( WINAPI * qwglRealizeLayerPalette )(HDC, S32, BOOL);
-extern BOOL ( WINAPI * qwglSwapLayerBuffers )(HDC, UINT);
+extern S32(WINAPI* qwglSwapIntervalEXT)(S32 interval);
+extern BOOL(WINAPI* qwglGetDeviceGammaRamp3DFX)(HDC, LPVOID);
+extern BOOL(WINAPI* qwglSetDeviceGammaRamp3DFX)(HDC, LPVOID);
+extern S32(WINAPI* qwglChoosePixelFormat)(HDC, CONST PIXELFORMATDESCRIPTOR*);
+extern S32(WINAPI* qwglDescribePixelFormat) (HDC, S32, UINT, LPPIXELFORMATDESCRIPTOR);
+extern S32(WINAPI* qwglGetPixelFormat)(HDC);
+extern BOOL(WINAPI* qwglSetPixelFormat)(HDC, S32, CONST PIXELFORMATDESCRIPTOR*);
+extern BOOL(WINAPI* qwglSwapBuffers)(HDC);
+extern BOOL(WINAPI* qwglCopyContext)(HGLRC, HGLRC, UINT);
+extern HGLRC(WINAPI* qwglCreateContext)(HDC);
+extern HGLRC(WINAPI* qwglCreateLayerContext)(HDC, S32);
+extern BOOL(WINAPI* qwglDeleteContext)(HGLRC);
+extern HGLRC(WINAPI* qwglGetCurrentContext)(VOID);
+extern HDC(WINAPI* qwglGetCurrentDC)(VOID);
+extern PROC(WINAPI* qwglGetProcAddress)(LPCSTR);
+extern BOOL(WINAPI* qwglMakeCurrent)(HDC, HGLRC);
+extern BOOL(WINAPI* qwglShareLists)(HGLRC, HGLRC);
+extern BOOL(WINAPI* qwglUseFontBitmaps)(HDC, DWORD, DWORD, DWORD);
+extern BOOL(WINAPI* qwglUseFontOutlines)(HDC, DWORD, DWORD, DWORD, FLOAT, FLOAT, S32, LPGLYPHMETRICSFLOAT);
+extern BOOL(WINAPI* qwglDescribeLayerPlane)(HDC, S32, S32, UINT, LPLAYERPLANEDESCRIPTOR);
+extern S32(WINAPI* qwglSetLayerPaletteEntries)(HDC, S32, S32, S32, CONST COLORREF*);
+extern S32(WINAPI* qwglGetLayerPaletteEntries)(HDC, S32, S32, S32, COLORREF*);
+extern BOOL(WINAPI* qwglRealizeLayerPalette)(HDC, S32, BOOL);
+extern BOOL(WINAPI* qwglSwapLayerBuffers)(HDC, UINT);
 
 
 #endif //_PLATFORMWIN32_H_

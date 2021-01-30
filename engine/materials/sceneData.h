@@ -16,44 +16,44 @@ class GFXCubemap;
 //**************************************************************************
 struct SceneGraphData
 {
-   // textures
-   GFXTexHandle dynamicLight;
-   GFXTexHandle dynamicLightSecondary;
-   GFXTexHandle lightmap;
-   GFXTexHandle normLightmap;
-   GFXTexHandle fogTex;
-   GFXTexHandle backBuffTex;
-   GFXTexHandle reflectTex;
-   GFXTexHandle miscTex;
-   
-   // lighting
-   LightInfo   light;
-   LightInfo   lightSecondary;
-   bool        useLightDir;   // use light dir instead of position - used for sunlight outdoors
+    // textures
+    GFXTexHandle dynamicLight;
+    GFXTexHandle dynamicLightSecondary;
+    GFXTexHandle lightmap;
+    GFXTexHandle normLightmap;
+    GFXTexHandle fogTex;
+    GFXTexHandle backBuffTex;
+    GFXTexHandle reflectTex;
+    GFXTexHandle miscTex;
 
-   // fog   
-   F32         fogHeightOffset;
-   F32         fogInvHeightRange;
-   F32         visDist;
-   bool        useFog;
-   
-   // misc
-   Point3F        camPos;
-   MatrixF        objTrans;
-   VertexData *   vertData;
-   GFXCubemap *   cubemap;
-   bool           glowPass;
-   bool           refractPass;
+    // lighting
+    LightInfo   light;
+    LightInfo   lightSecondary;
+    bool        useLightDir;   // use light dir instead of position - used for sunlight outdoors
+
+    // fog   
+    F32         fogHeightOffset;
+    F32         fogInvHeightRange;
+    F32         visDist;
+    bool        useFog;
+
+    // misc
+    Point3F        camPos;
+    MatrixF        objTrans;
+    VertexData* vertData;
+    GFXCubemap* cubemap;
+    bool           glowPass;
+    bool           refractPass;
 
 
-   //-----------------------------------------------------------------------
-   // Constructor
-   //-----------------------------------------------------------------------
-   SceneGraphData()
-      : lightmap(), normLightmap(), fogTex()
-   {
-      dMemset( this, 0, sizeof( SceneGraphData ) );
-   }
+    //-----------------------------------------------------------------------
+    // Constructor
+    //-----------------------------------------------------------------------
+    SceneGraphData()
+        : lightmap(), normLightmap(), fogTex()
+    {
+        dMemset(this, 0, sizeof(SceneGraphData));
+    }
 
 };
 

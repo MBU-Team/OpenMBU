@@ -16,29 +16,29 @@
 /// Helper class to keep track of bans.
 class BanList : public SimObject
 {
-   typedef SimObject Parent;
+    typedef SimObject Parent;
 public:
 
-   struct BanInfo
-   {
-      S32      uniqueId;
-      char     transportAddress[128];
-      S32      bannedUntil;
-   };
+    struct BanInfo
+    {
+        S32      uniqueId;
+        char     transportAddress[128];
+        S32      bannedUntil;
+    };
 
-   Vector<BanInfo> list;
+    Vector<BanInfo> list;
 
-   BanList(){}
-   ~BanList(){}
+    BanList() {}
+    ~BanList() {}
 
-   void addBan(S32 uniqueId, const char *TA, S32 banTime);
-   void addBanRelative(S32 uniqueId, const char *TA, S32 numSeconds);
-   void removeBan(S32 uniqueId, const char *TA);
-   bool isBanned(S32 uniqueId, const char *TA);
-   bool isTAEq(const char *bannedTA, const char *TA);
-   void exportToFile(const char *fileName);
+    void addBan(S32 uniqueId, const char* TA, S32 banTime);
+    void addBanRelative(S32 uniqueId, const char* TA, S32 numSeconds);
+    void removeBan(S32 uniqueId, const char* TA);
+    bool isBanned(S32 uniqueId, const char* TA);
+    bool isTAEq(const char* bannedTA, const char* TA);
+    void exportToFile(const char* fileName);
 
-   DECLARE_CONOBJECT(BanList);
+    DECLARE_CONOBJECT(BanList);
 };
 
 extern BanList gBanList;

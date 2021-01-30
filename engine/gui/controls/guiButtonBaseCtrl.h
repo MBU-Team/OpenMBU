@@ -18,51 +18,51 @@
 
 class GuiButtonBaseCtrl : public GuiControl
 {
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
 protected:
-   StringTableEntry mButtonText;
-   StringTableEntry mButtonTextID;
-   bool mDepressed;
-   bool mMouseOver;
-   bool mStateOn;
-   S32 mButtonType;
-   S32 mRadioGroup;
+    StringTableEntry mButtonText;
+    StringTableEntry mButtonTextID;
+    bool mDepressed;
+    bool mMouseOver;
+    bool mStateOn;
+    S32 mButtonType;
+    S32 mRadioGroup;
 public:
-   enum {
-      ButtonTypePush,
-      ButtonTypeCheck,
-      ButtonTypeRadio,
-   };
+    enum {
+        ButtonTypePush,
+        ButtonTypeCheck,
+        ButtonTypeRadio,
+    };
 
-   GuiButtonBaseCtrl();
-   bool onWake();
+    GuiButtonBaseCtrl();
+    bool onWake();
 
-   DECLARE_CONOBJECT(GuiButtonBaseCtrl);
-   static void initPersistFields();
+    DECLARE_CONOBJECT(GuiButtonBaseCtrl);
+    static void initPersistFields();
 
-   void setText(const char *text);
-   void setTextID(S32 id);
-   void setTextID(const char *id);
-   const char *getText();
+    void setText(const char* text);
+    void setTextID(S32 id);
+    void setTextID(const char* id);
+    const char* getText();
 
-   void acceleratorKeyPress(U32 index);
-   void acceleratorKeyRelease(U32 index);
+    void acceleratorKeyPress(U32 index);
+    void acceleratorKeyRelease(U32 index);
 
-   void onMouseDown(const GuiEvent &);
-   void onMouseUp(const GuiEvent &);
+    void onMouseDown(const GuiEvent&);
+    void onMouseUp(const GuiEvent&);
 
-   void onMouseEnter(const GuiEvent &);
-   void onMouseLeave(const GuiEvent &);
+    void onMouseEnter(const GuiEvent&);
+    void onMouseLeave(const GuiEvent&);
 
-   bool onKeyDown(const GuiEvent &event);
-   bool onKeyUp(const GuiEvent &event);
+    bool onKeyDown(const GuiEvent& event);
+    bool onKeyUp(const GuiEvent& event);
 
-   void setScriptValue(const char *value);
-   const char *getScriptValue();
+    void setScriptValue(const char* value);
+    const char* getScriptValue();
 
-   void onMessage(GuiControl *,S32 msg);
-   void onAction();
+    void onMessage(GuiControl*, S32 msg);
+    void onAction();
 
 };
 

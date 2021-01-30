@@ -14,21 +14,21 @@
 class DemoGame : public GameInterface
 {
 public:
-   void textureKill();
-   void textureResurrect();
-   void refreshWindow();
+    void textureKill();
+    void textureResurrect();
+    void refreshWindow();
 
-   int main(int argc, const char **argv);
+    int main(int argc, const char** argv);
 
-   void processPacketReceiveEvent(PacketReceiveEvent *event);
-   void processMouseMoveEvent(MouseMoveEvent *event);
-   void processInputEvent(InputEvent *event);
-   void processQuitEvent();
-   void processTimeEvent(TimeEvent *event);
-   void processConsoleEvent(ConsoleEvent *event);
-   void processConnectedAcceptEvent(ConnectedAcceptEvent *event);
-   void processConnectedReceiveEvent(ConnectedReceiveEvent *event);
-   void processConnectedNotifyEvent(ConnectedNotifyEvent *event);
+    void processPacketReceiveEvent(PacketReceiveEvent* event);
+    void processMouseMoveEvent(MouseMoveEvent* event);
+    void processInputEvent(InputEvent* event);
+    void processQuitEvent();
+    void processTimeEvent(TimeEvent* event);
+    void processConsoleEvent(ConsoleEvent* event);
+    void processConnectedAcceptEvent(ConnectedAcceptEvent* event);
+    void processConnectedReceiveEvent(ConnectedReceiveEvent* event);
+    void processConnectedNotifyEvent(ConnectedNotifyEvent* event);
 };
 
 #endif

@@ -13,11 +13,11 @@
 class RenderInteriorMgr : public RenderElemMgr
 {
 private:
-   void setupSGData( RenderInst *ri, SceneGraphData &data );
+    void setupSGData(RenderInst* ri, SceneGraphData& data);
 
 public:
-   virtual void render();
-   virtual void addElement( RenderInst *inst );
+    virtual void render();
+    virtual void addElement(RenderInst* inst);
 };
 
 

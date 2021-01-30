@@ -11,29 +11,29 @@
 class GFXD3DCardProfiler : public GFXCardProfiler
 {
 private:
-   typedef GFXCardProfiler Parent;
+    typedef GFXCardProfiler Parent;
 
-   GFXD3DDevice *mDevice;
+    GFXD3DDevice* mDevice;
 
-   LPDIRECT3DDEVICE9 mD3DDevice;
-   UINT mAdapterOrdinal;
+    LPDIRECT3DDEVICE9 mD3DDevice;
+    UINT mAdapterOrdinal;
 
-   char * mVersionString;
-   const char * mVendorString;
-   char * mCardString;
+    char* mVersionString;
+    const char* mVendorString;
+    char* mCardString;
 
 public:
-   GFXD3DCardProfiler();
-   ~GFXD3DCardProfiler();
-   void init();
+    GFXD3DCardProfiler();
+    ~GFXD3DCardProfiler();
+    void init();
 
 protected:
-   const char* getVersionString();
-   const char* getCardString();
-   const char* getVendorString();
-   const char* getRendererString();
-   void setupCardCapabilities();
-   bool _queryCardCap(const char *query, U32 &foundResult);
+    const char* getVersionString();
+    const char* getCardString();
+    const char* getVendorString();
+    const char* getRendererString();
+    void setupCardCapabilities();
+    bool _queryCardCap(const char* query, U32& foundResult);
 };
 
 #endif

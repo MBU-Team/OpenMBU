@@ -12,61 +12,61 @@
 class ConsoleBaseType
 {
 protected:
-   /// This is used to generate unique IDs for each type.
-   static S32 smConsoleTypeCount;
+    /// This is used to generate unique IDs for each type.
+    static S32 smConsoleTypeCount;
 
-   /// We maintain a linked list of all console types; this is its head.
-   static ConsoleBaseType *smListHead;
+    /// We maintain a linked list of all console types; this is its head.
+    static ConsoleBaseType* smListHead;
 
-   /// Next item in the list of all console types.
-   ConsoleBaseType *mListNext;
+    /// Next item in the list of all console types.
+    ConsoleBaseType* mListNext;
 
-   /// Destructor is private to avoid people mucking up the list.
-   ~ConsoleBaseType();
+    /// Destructor is private to avoid people mucking up the list.
+    ~ConsoleBaseType();
 
-   S32      mTypeID;
-   dsize_t  mTypeSize;
-   const char *mTypeName;
-   const char *mInspectorFieldType;
+    S32      mTypeID;
+    dsize_t  mTypeSize;
+    const char* mTypeName;
+    const char* mInspectorFieldType;
 
 public:
 
-   /// @name cbt_list List Interface
-   ///
-   /// Interface for accessing/traversing the list of types.
+    /// @name cbt_list List Interface
+    ///
+    /// Interface for accessing/traversing the list of types.
 
-   /// Get the head of the list.
-   static ConsoleBaseType *getListHead();
+    /// Get the head of the list.
+    static ConsoleBaseType* getListHead();
 
-   /// Get the item that follows this item in the list.
-   ConsoleBaseType *getListNext() const
-   {
-      return mListNext;
-   }
+    /// Get the item that follows this item in the list.
+    ConsoleBaseType* getListNext() const
+    {
+        return mListNext;
+    }
 
-   /// Called once to initialize the console type system.
-   static void initialize();
+    /// Called once to initialize the console type system.
+    static void initialize();
 
-   /// Call me to get a pointer to a type's info.
-   static ConsoleBaseType *getType(const S32 typeID);
+    /// Call me to get a pointer to a type's info.
+    static ConsoleBaseType* getType(const S32 typeID);
 
-   /// @}
+    /// @}
 
-   /// The constructor is responsible for linking an element into the
-   /// master list, registering the type ID, etc.
-   ConsoleBaseType(const S32 size, S32 *idPtr, const char *aTypeName);
+    /// The constructor is responsible for linking an element into the
+    /// master list, registering the type ID, etc.
+    ConsoleBaseType(const S32 size, S32* idPtr, const char* aTypeName);
 
-   const S32 getTypeID() const { return mTypeID; }
-   const S32 getTypeSize() const { return mTypeSize; }
-   const char *getTypeName() const { return mTypeName; }
+    const S32 getTypeID() const { return mTypeID; }
+    const S32 getTypeSize() const { return mTypeSize; }
+    const char* getTypeName() const { return mTypeName; }
 
-   void setInspectorFieldType(const char *type) { mInspectorFieldType = type; }
-   const char *getInspectorFieldType() { return mInspectorFieldType; }
+    void setInspectorFieldType(const char* type) { mInspectorFieldType = type; }
+    const char* getInspectorFieldType() { return mInspectorFieldType; }
 
-   virtual void setData(void *dptr, S32 argc, const char **argv, EnumTable *tbl, BitSet32 flag)=0;
-   virtual const char *getData(void *dptr, EnumTable *tbl, BitSet32 flag )=0;
-   virtual const char *getTypeClassName()=0;
-   virtual const bool isDatablock() { return false; };
+    virtual void setData(void* dptr, S32 argc, const char** argv, EnumTable* tbl, BitSet32 flag) = 0;
+    virtual const char* getData(void* dptr, EnumTable* tbl, BitSet32 flag) = 0;
+    virtual const char* getTypeClassName() = 0;
+    virtual const bool isDatablock() { return false; };
 };
 
 #define DefineConsoleType( type ) extern S32 type;

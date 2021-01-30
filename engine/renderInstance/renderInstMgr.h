@@ -28,64 +28,64 @@ class RenderElemMgr;
 //**************************************************************************
 struct RenderInst
 {
-   GFXVertexBufferHandleBase * vertBuff;
-   GFXPrimitiveBufferHandle  * primBuff;
+    GFXVertexBufferHandleBase* vertBuff;
+    GFXPrimitiveBufferHandle* primBuff;
 
-   GFXPrimitive *prim;
+    GFXPrimitive* prim;
 
-   U32 primBuffIndex;
-   //U32 primStartIndex;
-   //U32 primCount;
-   MatInstance * matInst;
+    U32 primBuffIndex;
+    //U32 primStartIndex;
+    //U32 primCount;
+    MatInstance* matInst;
 
-   // transforms
-   MatrixF *worldXform;     // world/projection transform
-   MatrixF *objXform;       // obj space transform
+    // transforms
+    MatrixF* worldXform;     // world/projection transform
+    MatrixF* objXform;       // obj space transform
 
-   SceneState *state;               // need this for straight up object renders
-   SceneObject *obj;                // need this for straight up object renders
+    SceneState* state;               // need this for straight up object renders
+    SceneObject* obj;                // need this for straight up object renders
 
-   // sorting
-   U8 type;                   // sort overrides (draw sky last, etc.)
-   Point3F sortPoint;         // just points for now - nothing usese plane
-
-
-   // misc 
-   bool  translucent;  // this could be passed into addInst()?
-   bool  particles;
-   U8    transFlags;
-   bool  reflective;
-
-   // mesh related
-   S32   mountedObjIdx;  // for debug rendering on ShapeBase objects
-   U32   texWrapFlags;
+    // sorting
+    U8 type;                   // sort overrides (draw sky last, etc.)
+    Point3F sortPoint;         // just points for now - nothing usese plane
 
 
-   // lighting...
-   bool *primitiveFirstPass;
-   LightInfo light;
-   LightInfo lightSecondary;
-   GFXTexHandle dynamicLight;
-   GFXTexHandle dynamicLightSecondary;
+    // misc 
+    bool  translucent;  // this could be passed into addInst()?
+    bool  particles;
+    U8    transFlags;
+    bool  reflective;
+
+    // mesh related
+    S32   mountedObjIdx;  // for debug rendering on ShapeBase objects
+    U32   texWrapFlags;
 
 
-   // textures
-   GFXTexHandle *lightmap;
-   GFXTexHandle *normLightmap;
-   GFXTexHandle *fogTex;
-   GFXTexHandle *backBuffTex;
-   GFXTexHandle *reflectTex;
-   GFXTextureObject *miscTex;
-   GFXCubemap   *cubemap;
+    // lighting...
+    bool* primitiveFirstPass;
+    LightInfo light;
+    LightInfo lightSecondary;
+    GFXTexHandle dynamicLight;
+    GFXTexHandle dynamicLightSecondary;
 
 
-   // methods
-   void clear()
-   {
-      dMemset( this, 0, sizeof(RenderInst) );
-   }
+    // textures
+    GFXTexHandle* lightmap;
+    GFXTexHandle* normLightmap;
+    GFXTexHandle* fogTex;
+    GFXTexHandle* backBuffTex;
+    GFXTexHandle* reflectTex;
+    GFXTextureObject* miscTex;
+    GFXCubemap* cubemap;
 
-   void calcSortPoint( SceneObject *obj, const Point3F &camPosition );
+
+    // methods
+    void clear()
+    {
+        dMemset(this, 0, sizeof(RenderInst));
+    }
+
+    void calcSortPoint(SceneObject* obj, const Point3F& camPosition);
 };
 
 
@@ -94,99 +94,99 @@ struct RenderInst
 //**************************************************************************
 class RenderInstManager
 {
-   //-------------------------------------
-   // structs / enum
-   //-------------------------------------
+    //-------------------------------------
+    // structs / enum
+    //-------------------------------------
 public:
 
-   enum RenderInstType
-   {
-      RIT_Interior = 0,
-      RIT_InteriorDynamicLighting,
-      RIT_Mesh,
-      RIT_Shadow,
-      RIT_Sky,
-      RIT_Object,      // terrain, water, etc. objects that do their own rendering
-      RIT_ObjectTranslucent,// self rendering, but sorted with RIT_Translucent
-      RIT_Decal,
-      RIT_Water,
-      RIT_Foliage,
-      RIT_Translucent,
-      RIT_Begin,
-      RIT_NumTypess
-   };
+    enum RenderInstType
+    {
+        RIT_Interior = 0,
+        RIT_InteriorDynamicLighting,
+        RIT_Mesh,
+        RIT_Shadow,
+        RIT_Sky,
+        RIT_Object,      // terrain, water, etc. objects that do their own rendering
+        RIT_ObjectTranslucent,// self rendering, but sorted with RIT_Translucent
+        RIT_Decal,
+        RIT_Water,
+        RIT_Foliage,
+        RIT_Translucent,
+        RIT_Begin,
+        RIT_NumTypess
+    };
 
 private:
 
-   // bins are rendered in this order
-   enum RenderBinTypes
-   {
-      Sky = 0,
-      Begin,
-      Interior,
-      InteriorDynamicLighting,
-      Mesh,
-      MiscObject,
-      Shadow,
-      Decal,
-      Refraction,
-      Water,
-      Glow,
-      Foliage,
-      Translucent,
-      NumRenderBins
-   };
+    // bins are rendered in this order
+    enum RenderBinTypes
+    {
+        Sky = 0,
+        Begin,
+        Interior,
+        InteriorDynamicLighting,
+        Mesh,
+        MiscObject,
+        Shadow,
+        Decal,
+        Refraction,
+        Water,
+        Glow,
+        Foliage,
+        Translucent,
+        NumRenderBins
+    };
 
 
-   //-------------------------------------
-   // data
-   //-------------------------------------
-   Chunker< RenderInst >      mRIAllocator;
-   Chunker< MatrixF >         mXformAllocator;
-   Vector< RenderElemMgr * >  mRenderBins;
+    //-------------------------------------
+    // data
+    //-------------------------------------
+    Chunker< RenderInst >      mRIAllocator;
+    Chunker< MatrixF >         mXformAllocator;
+    Vector< RenderElemMgr* >  mRenderBins;
 
-   // for lighting passes...
-   Chunker<bool>         mPrimitiveFirstPassAllocator;
+    // for lighting passes...
+    Chunker<bool>         mPrimitiveFirstPassAllocator;
 
-   bool mInitialized;
-   ShaderData *mBlankShader;
-   MatInstance *mWarningMat;
-   Point3F mCamPos;
+    bool mInitialized;
+    ShaderData* mBlankShader;
+    MatInstance* mWarningMat;
+    Point3F mCamPos;
 
-   void initBins();
-   void uninitBins();
-   void initWarnMat();
+    void initBins();
+    void uninitBins();
+    void initWarnMat();
 
 public:
 
-   //-------------------------------------
-   // main interface
-   //-------------------------------------
-   RenderInstManager();
-   ~RenderInstManager();
+    //-------------------------------------
+    // main interface
+    //-------------------------------------
+    RenderInstManager();
+    ~RenderInstManager();
 
-   RenderInst * allocInst()
-   {
-      RenderInst *inst = mRIAllocator.alloc();
-      inst->clear();
-      return inst;
-   }
-   void addInst( RenderInst *inst );
-   MatrixF * allocXform(){ return mXformAllocator.alloc(); }
+    RenderInst* allocInst()
+    {
+        RenderInst* inst = mRIAllocator.alloc();
+        inst->clear();
+        return inst;
+    }
+    void addInst(RenderInst* inst);
+    MatrixF* allocXform() { return mXformAllocator.alloc(); }
 
-   // for lighting...
-   bool *allocPrimitiveFirstPass(){ return mPrimitiveFirstPassAllocator.alloc(); }
+    // for lighting...
+    bool* allocPrimitiveFirstPass() { return mPrimitiveFirstPassAllocator.alloc(); }
 
-   void init();
-   void clear();  // clear instances, matrices
-   void sort();
-   void render();
-   void renderToZBuff();
-   void renderGlow();
+    void init();
+    void clear();  // clear instances, matrices
+    void sort();
+    void render();
+    void renderToZBuff();
+    void renderGlow();
 
-   void setCamPos( Point3F &camPos ){ mCamPos = camPos; }
-   Point3F getCamPos(){ return mCamPos; }
-   MatInstance *getWarningMat(){ return mWarningMat; }
+    void setCamPos(Point3F& camPos) { mCamPos = camPos; }
+    Point3F getCamPos() { return mCamPos; }
+    MatInstance* getWarningMat() { return mWarningMat; }
 };
 
 extern RenderInstManager gRenderInstManager;

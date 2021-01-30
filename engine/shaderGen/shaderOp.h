@@ -16,7 +16,7 @@
    so they became more generalized helper classes.  Along with LangElement
    classes, they are the building blocks for the procedurally generated
    shaders.
-   
+
    Each shader is a linked list of LangElements.  The list is generated
    when the features of the shader are processed.  When all the features
    are processed, then ShaderGen prints them out by traversing the linked
@@ -35,10 +35,10 @@
 class ShaderOp : public LangElement
 {
 protected:
-   LangElement * mInput[2];
+    LangElement* mInput[2];
 
 public:
-   ShaderOp( LangElement *in1, LangElement *in2 );
+    ShaderOp(LangElement* in1, LangElement* in2);
 };
 
 //----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ public:
    @endcode
 
    The output in the shader file would be:
-   
+
    @code
    float foo = 8.0 * 5.0;
    @endcode
@@ -67,11 +67,11 @@ public:
 //----------------------------------------------------------------------------
 class DecOp : public ShaderOp
 {
-   typedef ShaderOp Parent;
+    typedef ShaderOp Parent;
 
 public:
-   DecOp( Var *in1 );
-   virtual void print( Stream &stream );
+    DecOp(Var* in1);
+    virtual void print(Stream& stream);
 };
 
 
@@ -83,13 +83,13 @@ public:
 //----------------------------------------------------------------------------
 class EchoOp : public ShaderOp
 {
-   typedef ShaderOp Parent;
-   const char * mStatement;
+    typedef ShaderOp Parent;
+    const char* mStatement;
 
 public:
-   EchoOp( const char * statement );
-   ~EchoOp();
-   virtual void print( Stream &stream );
+    EchoOp(const char* statement);
+    ~EchoOp();
+    virtual void print(Stream& stream);
 };
 
 
@@ -100,33 +100,33 @@ public:
    take as many variables as you can throw at it.  It takes a string and parses
    it for the '@' symbol which it replaces with passed in parameters.  Similar
    to the C statement printf().  Here's an example:
-   
+
    @code
    ( assuming three variables var1, var2, var3 exist and their assigned names
      are var1Name, var2Name, and var3Name )
-   
+
    LangElement *statement = new GenOp( "  @ = @ * @.x + @.y;", var1, var1, var2, var3 );
-   
+
    @endcode
 
    The output in the shader file would be:
-   
+
    @code
-   
+
    var1Name = var1Name * var2Name.x + var3Name.y;
-   
+
    @endcode
 */
 //----------------------------------------------------------------------------
 class GenOp : public ShaderOp
 {
-   typedef ShaderOp Parent;
+    typedef ShaderOp Parent;
 
-   Vector<LangElement *> mElemList;
+    Vector<LangElement*> mElemList;
 
 public:
-   GenOp( const char * statement, ... );
-   virtual void print( Stream &stream );
+    GenOp(const char* statement, ...);
+    virtual void print(Stream& stream);
 
 };
 

@@ -20,20 +20,20 @@ class GameBase;
 class GameTSCtrl : public GuiTSCtrl
 {
 private:
-   typedef GuiTSCtrl Parent;
+    typedef GuiTSCtrl Parent;
 
 public:
-   GameTSCtrl();
+    GameTSCtrl();
 
-   bool processCameraQuery(CameraQuery *query);
-   void renderWorld(const RectI &updateRect);
+    bool processCameraQuery(CameraQuery* query);
+    void renderWorld(const RectI& updateRect);
 
-   void onMouseMove(const GuiEvent &evt);
-   void onRender(Point2I offset, const RectI &updateRect);
+    void onMouseMove(const GuiEvent& evt);
+    void onRender(Point2I offset, const RectI& updateRect);
 
-   static void consoleInit();
+    static void consoleInit();
 
-   DECLARE_CONOBJECT(GameTSCtrl);
+    DECLARE_CONOBJECT(GameTSCtrl);
 };
 
 #endif

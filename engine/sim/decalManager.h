@@ -16,110 +16,110 @@
 /// DataBlock implementation for decals.
 class DecalData : public GameBaseData
 {
-   typedef GameBaseData Parent;
+    typedef GameBaseData Parent;
 
-   //-------------------------------------- Console set variables
-  public:
-   F32               sizeX;
-   F32               sizeY;
-   StringTableEntry  textureName;
-   
-   bool selfIlluminated;
-   U32 lifeSpan;
+    //-------------------------------------- Console set variables
+public:
+    F32               sizeX;
+    F32               sizeY;
+    StringTableEntry  textureName;
 
-   //-------------------------------------- load set variables
-  public:
-   GFXTexHandle textureHandle;
+    bool selfIlluminated;
+    U32 lifeSpan;
 
-  public:
-   DecalData();
-   ~DecalData();
-	
-   void packData(BitStream*);
-   void unpackData(BitStream*);
-   bool preload(bool server, char errorBuffer[256]);
+    //-------------------------------------- load set variables
+public:
+    GFXTexHandle textureHandle;
 
-   DECLARE_CONOBJECT(DecalData);
-   static void initPersistFields();
+public:
+    DecalData();
+    ~DecalData();
+
+    void packData(BitStream*);
+    void unpackData(BitStream*);
+    bool preload(bool server, char errorBuffer[256]);
+
+    DECLARE_CONOBJECT(DecalData);
+    static void initPersistFields();
 };
 
 /// Store an instance of a decal.
 struct DecalInstance
 {
-   DecalData* decalData;
-   Point3F    point[4];
-   
-   U32 ownerId;
+    DecalData* decalData;
+    Point3F    point[4];
 
-   U32            allocTime;
-   F32            fade;
-   DecalInstance* next;
+    U32 ownerId;
+
+    U32            allocTime;
+    F32            fade;
+    DecalInstance* next;
 };
 
 /// Manage decals in the world.
 class DecalManager : public SceneObject
 {
-   typedef SceneObject Parent;
+    typedef SceneObject Parent;
 
-   Vector<DecalInstance*> mDecalQueue;
-   bool                   mQueueDirty;
+    Vector<DecalInstance*> mDecalQueue;
+    bool                   mQueueDirty;
 
 public:
-   void addDecal(const Point3F& pos,
-                 const Point3F& rot,
-                 Point3F normal,
-                 const Point3F& scale,
-                 DecalData*, U32);
-   void ageDecal(U32);
-   void findSpace();
-   
-   static U32             smMaxNumDecals;
-   static U32             smDecalTimeout;
+    void addDecal(const Point3F& pos,
+        const Point3F& rot,
+        Point3F normal,
+        const Point3F& scale,
+        DecalData*, U32);
+    void ageDecal(U32);
+    void findSpace();
 
-   static bool sgThisIsSelfIlluminated;
-   static bool sgLastWasSelfIlluminated;
+    static U32             smMaxNumDecals;
+    static U32             smDecalTimeout;
 
-   static const U32          csmFreePoolBlockSize;
-   Vector<DecalInstance*>    mFreePoolBlocks;
-   DecalInstance*            mFreePool;
+    static bool sgThisIsSelfIlluminated;
+    static bool sgLastWasSelfIlluminated;
 
-  protected:
-   bool prepRenderImage(SceneState *state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState);
-   void renderObject(SceneState *state, RenderInst *);
+    static const U32          csmFreePoolBlockSize;
+    Vector<DecalInstance*>    mFreePoolBlocks;
+    DecalInstance* mFreePool;
 
-   DecalInstance* allocateDecalInstance();
-   void freeDecalInstance(DecalInstance*);
+protected:
+    bool prepRenderImage(SceneState* state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState);
+    void renderObject(SceneState* state, RenderInst*);
 
-  public:
-   DecalManager();
-   ~DecalManager();
+    DecalInstance* allocateDecalInstance();
+    void freeDecalInstance(DecalInstance*);
 
-   static void consoleInit();
+public:
+    DecalManager();
+    ~DecalManager();
 
-   /// @name Decal Addition
-   ///
-   /// These functions allow you to add new decals to the world.
-   /// @{
-   void addDecal(const Point3F& pos,
-                 const Point3F& rot,
-                 Point3F normal,
-                 const Point3F& scale,
-                 DecalData*);
-   void addDecal(const Point3F& pos,
-                 const Point3F& rot,
-                 Point3F normal,
-                 DecalData*);
-   void addDecal(const Point3F& pos,
-                 Point3F normal,
-                 DecalData*);
-   /// @}
+    static void consoleInit();
 
-   void dataDeleted(DecalData *data);
+    /// @name Decal Addition
+    ///
+    /// These functions allow you to add new decals to the world.
+    /// @{
+    void addDecal(const Point3F& pos,
+        const Point3F& rot,
+        Point3F normal,
+        const Point3F& scale,
+        DecalData*);
+    void addDecal(const Point3F& pos,
+        const Point3F& rot,
+        Point3F normal,
+        DecalData*);
+    void addDecal(const Point3F& pos,
+        Point3F normal,
+        DecalData*);
+    /// @}
 
-   void renderDecal();
-   DECLARE_CONOBJECT(DecalManager);
+    void dataDeleted(DecalData* data);
 
-   static bool smDecalsOn;
+    void renderDecal();
+    DECLARE_CONOBJECT(DecalManager);
+
+    static bool smDecalsOn;
 };
 
 extern DecalManager* gDecalManager;

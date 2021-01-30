@@ -22,41 +22,41 @@ class Stream;
 //
 class GPalette
 {
-  public:
-   enum PaletteType {
-      RGB,
-      RGBA
-   };
+public:
+    enum PaletteType {
+        RGB,
+        RGBA
+    };
 
-  protected:
-   PaletteType m_paletteType;
-   ColorI      m_pColors[256];
+protected:
+    PaletteType m_paletteType;
+    ColorI      m_pColors[256];
 
-  public:
-   GPalette();
-   virtual ~GPalette();
+public:
+    GPalette();
+    virtual ~GPalette();
 
-   PaletteType getPaletteType() const;
-   void setPaletteType(const PaletteType pt) { m_paletteType = pt; }
+    PaletteType getPaletteType() const;
+    void setPaletteType(const PaletteType pt) { m_paletteType = pt; }
 
-   const ColorI* getColors() const;
-   ColorI*       getColors();
-   const ColorI& getColor(const U32 in_index) const;
-   ColorI&       getColor(const U32 in_index);
+    const ColorI* getColors() const;
+    ColorI* getColors();
+    const ColorI& getColor(const U32 in_index) const;
+    ColorI& getColor(const U32 in_index);
 
-   //-------------------------------------- Supplimentary output members
-  public:
-   bool readMSPalette(Stream& io_rStream);
-   bool readMSPalette(const char* in_pFileName);
-   bool writeMSPalette(Stream& io_rStream) const;
-   bool writeMSPalette(const char* in_pFileName) const;
+    //-------------------------------------- Supplimentary output members
+public:
+    bool readMSPalette(Stream& io_rStream);
+    bool readMSPalette(const char* in_pFileName);
+    bool writeMSPalette(Stream& io_rStream) const;
+    bool writeMSPalette(const char* in_pFileName) const;
 
-   //-------------------------------------- Persistent members
-  public:
-   bool read(Stream& io_rStream);
-   bool write(Stream& io_rStream) const;
-  private:
-   static const U32 csm_fileVersion;
+    //-------------------------------------- Persistent members
+public:
+    bool read(Stream& io_rStream);
+    bool write(Stream& io_rStream) const;
+private:
+    static const U32 csm_fileVersion;
 };
 
 //------------------------------------------------------------------------------
@@ -65,35 +65,35 @@ class GPalette
 inline GPalette::PaletteType
 GPalette::getPaletteType() const
 {
-   return m_paletteType;
+    return m_paletteType;
 }
 
 inline const ColorI*
 GPalette::getColors() const
 {
-   return m_pColors;
+    return m_pColors;
 }
 
 inline ColorI*
 GPalette::getColors()
 {
-   return m_pColors;
+    return m_pColors;
 }
 
 inline const ColorI&
 GPalette::getColor(const U32 in_index) const
 {
-   AssertFatal(in_index < 256, "Out of range index");
+    AssertFatal(in_index < 256, "Out of range index");
 
-   return m_pColors[in_index];
+    return m_pColors[in_index];
 }
 
 inline ColorI&
 GPalette::getColor(const U32 in_index)
 {
-   AssertFatal(in_index < 256, "Out of range index");
+    AssertFatal(in_index < 256, "Out of range index");
 
-   return m_pColors[in_index];
+    return m_pColors[in_index];
 }
 
 #endif //_GPALETTE_H_

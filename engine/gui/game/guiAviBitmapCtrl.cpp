@@ -46,7 +46,7 @@
 IMPLEMENT_CONOBJECT(GuiAviBitmapCtrl);
 GuiAviBitmapCtrl::GuiAviBitmapCtrl()
 {
-   mDone = true;
+    mDone = true;
 }
 GuiAviBitmapCtrl::~GuiAviBitmapCtrl()
 {
@@ -54,10 +54,10 @@ GuiAviBitmapCtrl::~GuiAviBitmapCtrl()
 
 void GuiAviBitmapCtrl::initPersistFields()
 {
-   Parent::initPersistFields();
-   addGroup("Misc");		// MM: Added Group Header.
-   addField("done",     TypeBool,   Offset(mDone, GuiAviBitmapCtrl));
-   endGroup("Misc");		// MM: Added Group Footer.
+    Parent::initPersistFields();
+    addGroup("Misc");		// MM: Added Group Header.
+    addField("done", TypeBool, Offset(mDone, GuiAviBitmapCtrl));
+    endGroup("Misc");		// MM: Added Group Footer.
 }
 #else
 
@@ -72,21 +72,21 @@ void GuiAviBitmapCtrl::initPersistFields()
 
 
 //----------------------------------------------------------------------------
-ConsoleMethod( GuiAviBitmapCtrl, setFilename, void, 3, 3, "(string filename)")
+ConsoleMethod(GuiAviBitmapCtrl, setFilename, void, 3, 3, "(string filename)")
 {
-   object->setFilename(argv[2]);
+    object->setFilename(argv[2]);
 }
 
 //----------------------------------------------------------------------------
-ConsoleMethod( GuiAviBitmapCtrl, play, void, 2, 2, "Start playback.")
+ConsoleMethod(GuiAviBitmapCtrl, play, void, 2, 2, "Start playback.")
 {
-   object->movieStart();
+    object->movieStart();
 }
 
 //----------------------------------------------------------------------------
-ConsoleMethod( GuiAviBitmapCtrl, stop, void, 2, 2, "Stop playback.")
+ConsoleMethod(GuiAviBitmapCtrl, stop, void, 2, 2, "Stop playback.")
 {
-   object->movieStop();
+    object->movieStop();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -94,41 +94,41 @@ ConsoleMethod( GuiAviBitmapCtrl, stop, void, 2, 2, "Stop playback.")
 
 bool GuiAviBitmapCtrl::sndOpen()
 {
-   mAudioLatency = 0;
-   
-   #if 0
-   // streaming disabled in this build
+    mAudioLatency = 0;
 
-   // Open up the audio.  Taking the easy way and using two separate streams.
-   // Don't treat as error if it doesn't open- 
-   dSprintf(fileBuffer, sizeof(fileBuffer), "%s", mWavFilename);
-   Audio::Description desc;
-   desc.mIs3D = false;
-   desc.mVolume = 1.0f;
-   desc.mIsLooping = false;
-   desc.mType = Audio::MusicAudioType;
-   mWavHandle = alxCreateSource(&desc, fileBuffer, 0);
-   #endif    
+#if 0
+    // streaming disabled in this build
 
-   mWavHandle = NULL_AUDIOHANDLE;
-   // alxGetContexti(ALC_BUFFER_LATENCY, &mAudioLatency);
-   
-   return (mWavHandle != NULL_AUDIOHANDLE);
+    // Open up the audio.  Taking the easy way and using two separate streams.
+    // Don't treat as error if it doesn't open- 
+    dSprintf(fileBuffer, sizeof(fileBuffer), "%s", mWavFilename);
+    Audio::Description desc;
+    desc.mIs3D = false;
+    desc.mVolume = 1.0f;
+    desc.mIsLooping = false;
+    desc.mType = Audio::MusicAudioType;
+    mWavHandle = alxCreateSource(&desc, fileBuffer, 0);
+#endif    
+
+    mWavHandle = NULL_AUDIOHANDLE;
+    // alxGetContexti(ALC_BUFFER_LATENCY, &mAudioLatency);
+
+    return (mWavHandle != NULL_AUDIOHANDLE);
 }
 
 void GuiAviBitmapCtrl::sndStart()
 {
-   if (mWavHandle != NULL_AUDIOHANDLE)
-      alxPlay(mWavHandle);
+    if (mWavHandle != NULL_AUDIOHANDLE)
+        alxPlay(mWavHandle);
 }
 
 void GuiAviBitmapCtrl::sndStop()
 {
-   if (mWavHandle != NULL_AUDIOHANDLE)
-   {
-      alxStop(mWavHandle);
-      mWavHandle = NULL_AUDIOHANDLE;
-   }
+    if (mWavHandle != NULL_AUDIOHANDLE)
+    {
+        alxStop(mWavHandle);
+        mWavHandle = NULL_AUDIOHANDLE;
+    }
 }
 
 
@@ -152,32 +152,32 @@ IMPLEMENT_CONOBJECT(GuiAviBitmapCtrl);
 
 GuiAviBitmapCtrl::GuiAviBitmapCtrl()
 {
-   mAviFilename = StringTable->insert("");
-   mTextureHandles = NULL;
+    mAviFilename = StringTable->insert("");
+    mTextureHandles = NULL;
 
-   mPFile = NULL;
-   mPAviVideo = NULL;
-   mBPlaying = false;
-   mDone = false;
-   mLetterBox = false;
-   mTimePlayStart = -1;
-   mPVBuf = NULL;
-   mPBuf = NULL;
-   mPBiSrc = mPBiDst = NULL;
-   mHic = NULL;
-   mFccHandler = 0;
-   mSwapRB = true;
-   mSpeed = 1.0;
-   mWavHandle = NULL_AUDIOHANDLE;
+    mPFile = NULL;
+    mPAviVideo = NULL;
+    mBPlaying = false;
+    mDone = false;
+    mLetterBox = false;
+    mTimePlayStart = -1;
+    mPVBuf = NULL;
+    mPBuf = NULL;
+    mPBiSrc = mPBiDst = NULL;
+    mHic = NULL;
+    mFccHandler = 0;
+    mSwapRB = true;
+    mSpeed = 1.0;
+    mWavHandle = NULL_AUDIOHANDLE;
 
-   AVIFileInit();   
+    AVIFileInit();
 }
 
 //----------------------------------------------------------------------------
 GuiAviBitmapCtrl::~GuiAviBitmapCtrl()
 {
-   vcmClose();
-   AVIFileExit();   
+    vcmClose();
+    AVIFileExit();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -187,30 +187,30 @@ GuiAviBitmapCtrl::~GuiAviBitmapCtrl()
 //
 S32 GuiAviBitmapCtrl::fileOpen()
 {
-   S32 rval;
-   if (!dStrcmp(mAviFilename,"")) 
-      return MOVERR_NOVIDEOSTREAM;
+    S32 rval;
+    if (!dStrcmp(mAviFilename, ""))
+        return MOVERR_NOVIDEOSTREAM;
 
-   rval = AVIFileOpen(&mPFile, mAviFilename, OF_SHARE_DENY_WRITE, 0);
-   if (rval)
-   {
-      fileClose();
-      return rval;
-   }
-   
-   return MOVERR_OK;
+    rval = AVIFileOpen(&mPFile, mAviFilename, OF_SHARE_DENY_WRITE, 0);
+    if (rval)
+    {
+        fileClose();
+        return rval;
+    }
+
+    return MOVERR_OK;
 }
 
 // Close a file
 //
-S32 GuiAviBitmapCtrl::fileClose ()
+S32 GuiAviBitmapCtrl::fileClose()
 {
-   if (mPFile)
-   {
-      AVIFileRelease(mPFile);
-      mPFile = NULL;
-   }
-   return MOVERR_OK;
+    if (mPFile)
+    {
+        AVIFileRelease(mPFile);
+        mPFile = NULL;
+    }
+    return MOVERR_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -224,47 +224,47 @@ S32 GuiAviBitmapCtrl::fileClose ()
 //
 S32 GuiAviBitmapCtrl::movieOpen()
 {
-   S32 rval;
+    S32 rval;
 
-   // Open first video stream found
-   // Note that we don't handle multiple video streams
-   rval = AVIFileGetStream(mPFile, &mPAviVideo, streamtypeVIDEO, 0);
-   if (rval == AVIERR_NODATA)
-   {
-      mPAviVideo = NULL;
+    // Open first video stream found
+    // Note that we don't handle multiple video streams
+    rval = AVIFileGetStream(mPFile, &mPAviVideo, streamtypeVIDEO, 0);
+    if (rval == AVIERR_NODATA)
+    {
+        mPAviVideo = NULL;
 
-      return MOVERR_NOVIDEOSTREAM;
-   }
+        return MOVERR_NOVIDEOSTREAM;
+    }
 
-   // Get video stream info
-   AVISTREAMINFO avis;
+    // Get video stream info
+    AVISTREAMINFO avis;
 
-   AVIStreamInfo(mPAviVideo, &avis, sizeof(avis));
+    AVIStreamInfo(mPAviVideo, &avis, sizeof(avis));
 
-   mFrate = F32(avis.dwRate)/F32(avis.dwScale);
+    mFrate = F32(avis.dwRate) / F32(avis.dwScale);
 
-   // Open vids
-   rval = vidsVideoOpen();
-   if (rval)
-      return rval;
+    // Open vids
+    rval = vidsVideoOpen();
+    if (rval)
+        return rval;
 
-   return MOVERR_OK;
+    return MOVERR_OK;
 }
 
 // Close movie stream
 //
 S32 GuiAviBitmapCtrl::movieClose()
 {
-   // Make sure movie is stopped
-   movieStop();
+    // Make sure movie is stopped
+    movieStop();
 
-   // Release streams
-   if (mPAviVideo)
-      AVIStreamRelease(mPAviVideo);
+    // Release streams
+    if (mPAviVideo)
+        AVIStreamRelease(mPAviVideo);
 
-   mPAviVideo = 0;
-   
-   return MOVERR_OK;
+    mPAviVideo = 0;
+
+    return MOVERR_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -274,68 +274,68 @@ S32 GuiAviBitmapCtrl::movieClose()
 //
 S32 GuiAviBitmapCtrl::vidsVideoOpen()
 {
-   if (!mPAviVideo)
-      return VIDSERR_NOVIDEO;
+    if (!mPAviVideo)
+        return VIDSERR_NOVIDEO;
 
-   mTimePlayStart = -1;
+    mTimePlayStart = -1;
 
-   // Get stream info
-   AVISTREAMINFO avis;
+    // Get stream info
+    AVISTREAMINFO avis;
 
-   AVIStreamInfo(mPAviVideo, &avis, sizeof(avis));
+    AVIStreamInfo(mPAviVideo, &avis, sizeof(avis));
 
-   mVidsFirst = mVidsCurrent = avis.dwStart;
-   mVidsLast  = avis.dwStart + avis.dwLength - 1;
+    mVidsFirst = mVidsCurrent = avis.dwStart;
+    mVidsLast = avis.dwStart + avis.dwLength - 1;
 
-   mVidsPrevious = mVidsCurrent-1;
-   
-   // This was not initialized and causing problems in RTEST- 
-   mVidsPrevKey = -100000;
+    mVidsPrevious = mVidsCurrent - 1;
 
-   // Read first frame to get source info
-   S32 cb, rval;
-   BITMAPINFOHEADER biFormat;
+    // This was not initialized and causing problems in RTEST- 
+    mVidsPrevKey = -100000;
 
-   AVIStreamFormatSize(mPAviVideo, 0, (long *) &cb);
-   if (cb != sizeof(BITMAPINFOHEADER))
-      return -1;
-   rval = AVIStreamReadFormat(mPAviVideo, 0, &biFormat, (long *) &cb);
-   rval = rval;
-      
-   // Open VCM for this instance
-   if (vcmOpen(avis.fccHandler, &biFormat))
-   {
-      vidsVideoClose();
-      
-      return VIDSERR_VCM;
-   }
+    // Read first frame to get source info
+    S32 cb, rval;
+    BITMAPINFOHEADER biFormat;
 
-   // Create temporary buffer
-   mCBVBuf = biFormat.biHeight * ALIGNULONG(biFormat.biWidth)
-            * biFormat.biBitCount/8;
-   mPVBuf = (unsigned char *) dMalloc(mCBVBuf);
-   AssertFatal(mPVBuf, "Out of memory");
-   dMemset(mPVBuf, 0, mCBVBuf);
-   
-   // Reset internal skip count
-   mPlayFSkipped = 0;
+    AVIStreamFormatSize(mPAviVideo, 0, (long*)&cb);
+    if (cb != sizeof(BITMAPINFOHEADER))
+        return -1;
+    rval = AVIStreamReadFormat(mPAviVideo, 0, &biFormat, (long*)&cb);
+    rval = rval;
 
-   return VIDSERR_OK;
+    // Open VCM for this instance
+    if (vcmOpen(avis.fccHandler, &biFormat))
+    {
+        vidsVideoClose();
+
+        return VIDSERR_VCM;
+    }
+
+    // Create temporary buffer
+    mCBVBuf = biFormat.biHeight * ALIGNULONG(biFormat.biWidth)
+        * biFormat.biBitCount / 8;
+    mPVBuf = (unsigned char*)dMalloc(mCBVBuf);
+    AssertFatal(mPVBuf, "Out of memory");
+    dMemset(mPVBuf, 0, mCBVBuf);
+
+    // Reset internal skip count
+    mPlayFSkipped = 0;
+
+    return VIDSERR_OK;
 }
 
 // Close VIDS
 //
 S32 GuiAviBitmapCtrl::vidsVideoClose()
 {
-   if (mPVBuf)
-   {
-      dFree(mPVBuf);
-      mPVBuf = NULL;
-   }
+    if (mPVBuf)
+    {
+        dFree(mPVBuf);
+        mPVBuf = NULL;
+    }
 
-   vcmClose();
+    vcmClose();
 
-   return VIDSERR_OK;
+    return VIDSERR_OK;
 }
 
 // Start video, note that all decode/draw is done in vidsDraw()
@@ -343,128 +343,128 @@ S32 GuiAviBitmapCtrl::vidsVideoClose()
 // If fStart < 0, then start on current frame
 //
 S32 GuiAviBitmapCtrl::vidsVideoStart()
-{   
-   // Begin VCM
-   if (vcmBegin())
-   {
-      vidsVideoStop();
+{
+    // Begin VCM
+    if (vcmBegin())
+    {
+        vidsVideoStop();
 
-      return VIDSERR_VCM;
-   }
+        return VIDSERR_VCM;
+    }
 
-   // Pass seperate start message to VCM only when playing
-   if (mBPlaying)
-      vcmDrawStart();
+    // Pass seperate start message to VCM only when playing
+    if (mBPlaying)
+        vcmDrawStart();
 
-   // Get start time
-   mTimePlayStart = getMilliseconds();
-   mTimePlayStartPos = AVIStreamSampleToTime(mPAviVideo, mVidsCurrent);
-   
-   // Init play stats
-   mPlayFPrev = mVidsCurrent;
-   
-   return VIDSERR_OK;
+    // Get start time
+    mTimePlayStart = getMilliseconds();
+    mTimePlayStartPos = AVIStreamSampleToTime(mPAviVideo, mVidsCurrent);
+
+    // Init play stats
+    mPlayFPrev = mVidsCurrent;
+
+    return VIDSERR_OK;
 }
 
 // Stop video
 //
 S32 GuiAviBitmapCtrl::vidsVideoStop()
 {
-   vcmDrawStop();
-   vcmEnd();
+    vcmDrawStop();
+    vcmEnd();
 
-   mTimePlayStart = -1;
-   
-   return VIDSERR_OK;
+    mTimePlayStart = -1;
+
+    return VIDSERR_OK;
 }
-         
+
 // Draw current frame of video
 //
 S32 GuiAviBitmapCtrl::vidsVideoDraw()
 {
-   // Check if started
-   if (mTimePlayStart < 0)
-      return VIDSERR_NOTSTARTED;
+    // Check if started
+    if (mTimePlayStart < 0)
+        return VIDSERR_NOTSTARTED;
 
-   if (mBPlaying)
-   {
-      S32 lTime = mTimePlayStartPos + (getMilliseconds() - mTimePlayStart);
+    if (mBPlaying)
+    {
+        S32 lTime = mTimePlayStartPos + (getMilliseconds() - mTimePlayStart);
 
-      mVidsCurrent = vidsTimeToSample(lTime);
+        mVidsCurrent = vidsTimeToSample(lTime);
 
-      if (mVidsCurrent > mVidsLast)
-         mVidsCurrent = mVidsLast;
+        if (mVidsCurrent > mVidsLast)
+            mVidsCurrent = mVidsLast;
 
-      if (mVidsCurrent == mVidsPrevious)
-         // Going too fast!  Should actually return a ms
-         //  count so calling app can Sleep() if desired.
-         return VIDSERR_OK;
-   }
-   else
-   {
-      if (mVidsCurrent > mVidsLast)
-         mVidsCurrent = mVidsLast;
-      
-      if (mVidsCurrent == mVidsPrevious)      
-         vidsResetDraw();
-   }
+        if (mVidsCurrent == mVidsPrevious)
+            // Going too fast!  Should actually return a ms
+            //  count so calling app can Sleep() if desired.
+            return VIDSERR_OK;
+    }
+    else
+    {
+        if (mVidsCurrent > mVidsLast)
+            mVidsCurrent = mVidsLast;
 
-   if (!vidsSync())
-      return VIDSERR_OK; // don't draw this frame
+        if (mVidsCurrent == mVidsPrevious)
+            vidsResetDraw();
+    }
 
-   S32 rval = AVIStreamRead(mPAviVideo,
-                           mVidsCurrent,
-                          1,
-                          mPVBuf,
-                          mCBVBuf,
-                          NULL,
-                          NULL);
-   if (rval)
-      return VIDSERR_READ;
-   
-   if (vcmDraw())
-      return VIDSERR_VCM;
+    if (!vidsSync())
+        return VIDSERR_OK; // don't draw this frame
 
-   mVidsPrevious = mVidsCurrent;
-   
-   if (mBPlaying)
-   {
-      mPlayFSkipped += mVidsCurrent-mPlayFPrev-1;
-      mPlayFPrev = mVidsCurrent;
+    S32 rval = AVIStreamRead(mPAviVideo,
+        mVidsCurrent,
+        1,
+        mPVBuf,
+        mCBVBuf,
+        NULL,
+        NULL);
+    if (rval)
+        return VIDSERR_READ;
 
-      if (mVidsCurrent == mVidsLast)
-      {
-         mVidsCurrent = -1;
+    if (vcmDraw())
+        return VIDSERR_VCM;
 
-         return movieStop();
-      }  
-   }
+    mVidsPrevious = mVidsCurrent;
 
-   return VIDSERR_OK;
+    if (mBPlaying)
+    {
+        mPlayFSkipped += mVidsCurrent - mPlayFPrev - 1;
+        mPlayFPrev = mVidsCurrent;
+
+        if (mVidsCurrent == mVidsLast)
+        {
+            mVidsCurrent = -1;
+
+            return movieStop();
+        }
+    }
+
+    return VIDSERR_OK;
 }
 
 // Convert ms to sample (frame)
 //
 S32 GuiAviBitmapCtrl::vidsTimeToSample(S32 lTime)
 {
-   S32 lSamp = AVIStreamTimeToSample(mPAviVideo, lTime);
+    S32 lSamp = AVIStreamTimeToSample(mPAviVideo, lTime);
 
-   return lSamp;
+    return lSamp;
 }
 
 // TRUE if frame is KEY, if frame < 0 then check current frame
 //
 bool GuiAviBitmapCtrl::vidsIsKey(S32 frame /* = -1 */)
 {
-   if (!mPAviVideo)
-      return false;
+    if (!mPAviVideo)
+        return false;
 
-   if (frame < 0)
-      frame = mVidsCurrent;
-   
-   return AVIStreamIsKeyFrame(mPAviVideo, frame);
+    if (frame < 0)
+        frame = mVidsCurrent;
+
+    return AVIStreamIsKeyFrame(mPAviVideo, frame);
 }
-   
+
 //////////////////////////////////////////////////////////////////////////////
 // Internal video routines
 
@@ -476,59 +476,59 @@ bool GuiAviBitmapCtrl::vidsSync()
 #define dist(x,y) ((x)-(y))
 #define ABS_(x) (x<0 ? (-(x)) : (x))
 
-   if (mVidsCurrent < mVidsPrevious) // seeked back - reset draw
-      mVidsPrevious = -1;
+    if (mVidsCurrent < mVidsPrevious) // seeked back - reset draw
+        mVidsPrevious = -1;
 
-   if (dist(mVidsCurrent, mVidsPrevious) == 1)
-   {
-      // normal situation
-      // fall thru and draw
-   }
-   else
-   {
-      // SKIPPED
-      if (AVIStreamIsKeyFrame(mPAviVideo, mVidsCurrent))
-      {
-         // we are on KF boundry just reset and start here
-         mVidsPrevKey = mVidsCurrent;
-         mVidsNextKey = AVIStreamNextKeyFrame(mPAviVideo, mVidsCurrent);
-         // fall thru and draw
-      }
-      else
-      {
-         if (dist(mVidsCurrent, mVidsPrevious) == 2)
-         {
-            // one frame off - just draw
-            vidsCatchup();
+    if (dist(mVidsCurrent, mVidsPrevious) == 1)
+    {
+        // normal situation
+        // fall thru and draw
+    }
+    else
+    {
+        // SKIPPED
+        if (AVIStreamIsKeyFrame(mPAviVideo, mVidsCurrent))
+        {
+            // we are on KF boundry just reset and start here
+            mVidsPrevKey = mVidsCurrent;
+            mVidsNextKey = AVIStreamNextKeyFrame(mPAviVideo, mVidsCurrent);
             // fall thru and draw
-         }
-         else
-         {
-             // We are greater than one frame off:
-             //  if we went past a K frame, update K frame info then:
-             //  if we are closer to previous frame than catchup and draw
-             //  if we are closer to next KEY frame than don't draw
-            if ((mVidsNextKey < mVidsCurrent) || (mVidsPrevKey > mVidsCurrent))   // seeked past previous key frame
+        }
+        else
+        {
+            if (dist(mVidsCurrent, mVidsPrevious) == 2)
             {
-                // went past a K frame
-               mVidsPrevKey = AVIStreamPrevKeyFrame (mPAviVideo, mVidsCurrent);
-               mVidsNextKey = AVIStreamNextKeyFrame (mPAviVideo, mVidsCurrent);
+                // one frame off - just draw
+                vidsCatchup();
+                // fall thru and draw
             }
-
-            if (ABS_(dist(mVidsCurrent, mVidsPrevKey)) <= ABS_(dist(mVidsCurrent, mVidsNextKey)))
-               vidsCatchup();
-               // fall thru and draw
             else
-               if (mBPlaying)
-                  return false; // m_vidsPrev NOT updated
-               else
-                 vidsCatchup();  // if not playing than we want to
-                                 // draw the current frame
-         }
-      }
-   }
+            {
+                // We are greater than one frame off:
+                //  if we went past a K frame, update K frame info then:
+                //  if we are closer to previous frame than catchup and draw
+                //  if we are closer to next KEY frame than don't draw
+                if ((mVidsNextKey < mVidsCurrent) || (mVidsPrevKey > mVidsCurrent))   // seeked past previous key frame
+                {
+                    // went past a K frame
+                    mVidsPrevKey = AVIStreamPrevKeyFrame(mPAviVideo, mVidsCurrent);
+                    mVidsNextKey = AVIStreamNextKeyFrame(mPAviVideo, mVidsCurrent);
+                }
 
-   return true;
+                if (ABS_(dist(mVidsCurrent, mVidsPrevKey)) <= ABS_(dist(mVidsCurrent, mVidsNextKey)))
+                    vidsCatchup();
+                // fall thru and draw
+                else
+                    if (mBPlaying)
+                        return false; // m_vidsPrev NOT updated
+                    else
+                        vidsCatchup();  // if not playing than we want to
+                                        // draw the current frame
+            }
+        }
+    }
+
+    return true;
 }
 
 // Readies to draw (but doesn't draw) m_vidsCurrent.
@@ -538,98 +538,98 @@ bool GuiAviBitmapCtrl::vidsSync()
 //
 void GuiAviBitmapCtrl::vidsCatchup()
 {
-   if (mVidsPrevious < mVidsPrevKey)
-     mVidsPrevious = mVidsPrevKey-1;
+    if (mVidsPrevious < mVidsPrevKey)
+        mVidsPrevious = mVidsPrevKey - 1;
 
-   S32 catchup = mVidsPrevious+1;
-   
-   while (catchup < mVidsCurrent)
-   {
-      S32 rval = AVIStreamRead(mPAviVideo,
-                             catchup,
-                            1,
-                            mPVBuf,
-                            mCBVBuf,
-                            NULL,
-                            NULL);
+    S32 catchup = mVidsPrevious + 1;
 
-      if (rval) 
-         break;
+    while (catchup < mVidsCurrent)
+    {
+        S32 rval = AVIStreamRead(mPAviVideo,
+            catchup,
+            1,
+            mPVBuf,
+            mCBVBuf,
+            NULL,
+            NULL);
 
-      if (!mBPlaying )
-         vcmDrawIn();
-      else
-         vcmDrawIn(ICDECOMPRESS_HURRYUP);
-      
-      mVidsPrevious = catchup++;
-   }
+        if (rval)
+            break;
+
+        if (!mBPlaying)
+            vcmDrawIn();
+        else
+            vcmDrawIn(ICDECOMPRESS_HURRYUP);
+
+        mVidsPrevious = catchup++;
+    }
 }
 
 // Note that between vcmOpen() and vcmClose(), the source information does not
 //  change.  If it does, open a new one.
 //
-S32 GuiAviBitmapCtrl::vcmOpen (FOURCC fccHandler, BITMAPINFOHEADER * pbiSrc)
+S32 GuiAviBitmapCtrl::vcmOpen(FOURCC fccHandler, BITMAPINFOHEADER* pbiSrc)
 {
-   if (fccHandler == 0)
-      mFccHandler = pbiSrc->biCompression;
-   else
-      mFccHandler = fccHandler;
+    if (fccHandler == 0)
+        mFccHandler = pbiSrc->biCompression;
+    else
+        mFccHandler = fccHandler;
 
-   if (mFccHandler == FOURCC_IV50)
-      mFccHandler = FOURCC_iv50;
+    if (mFccHandler == FOURCC_IV50)
+        mFccHandler = FOURCC_iv50;
 
-   // Open codec
-   mHic = ICLocate(ICTYPE_VIDEO, fccHandler, pbiSrc, 0, ICMODE_DECOMPRESS);
-   if (!mHic) return AVIERR_NOCOMPRESSOR;
+    // Open codec
+    mHic = ICLocate(ICTYPE_VIDEO, fccHandler, pbiSrc, 0, ICMODE_DECOMPRESS);
+    if (!mHic) return AVIERR_NOCOMPRESSOR;
 
-   delete [] mPBiSrc;
-   mPBiSrc = (BITMAPINFOHEADER *) new char [sizeof (BITMAPINFOHEADER) +
-                                           256 * sizeof (RGBQUAD)];
+    delete[] mPBiSrc;
+    mPBiSrc = (BITMAPINFOHEADER*) new char[sizeof(BITMAPINFOHEADER) +
+        256 * sizeof(RGBQUAD)];
 
-   delete [] mPBiDst;
-   mPBiDst = (BITMAPINFOHEADER *) new char [sizeof (BITMAPINFOHEADER) +
-                                           256 * sizeof (RGBQUAD)];
-   AssertFatal(mPBiSrc && mPBiDst, "Out of memory");
+    delete[] mPBiDst;
+    mPBiDst = (BITMAPINFOHEADER*) new char[sizeof(BITMAPINFOHEADER) +
+        256 * sizeof(RGBQUAD)];
+    AssertFatal(mPBiSrc && mPBiDst, "Out of memory");
 
-   dMemcpy(mPBiSrc, pbiSrc, sizeof(BITMAPINFOHEADER));
+    dMemcpy(mPBiSrc, pbiSrc, sizeof(BITMAPINFOHEADER));
 
-   // Initialize destination bitmap header
-   dMemcpy (mPBiDst, mPBiSrc, sizeof(BITMAPINFOHEADER));
-   // Default destination bitmap header
-   mPBiDst->biBitCount    = 24;
-   mPBiDst->biCompression = BI_RGB;
-   mPBiDst->biSizeImage   = mPBiDst->biHeight * ALIGNULONG(mPBiDst->biWidth)*mPBiDst->biBitCount/8;
-          
-   // Create temporary buffer
-   mCBuf = mPBiDst->biSizeImage;
-   mPBuf = (U8 *) dMalloc(mCBuf);
-   AssertFatal(mPBuf, "Out of memory");
-   dMemset(mPBuf, 0, mCBuf);
+    // Initialize destination bitmap header
+    dMemcpy(mPBiDst, mPBiSrc, sizeof(BITMAPINFOHEADER));
+    // Default destination bitmap header
+    mPBiDst->biBitCount = 24;
+    mPBiDst->biCompression = BI_RGB;
+    mPBiDst->biSizeImage = mPBiDst->biHeight * ALIGNULONG(mPBiDst->biWidth) * mPBiDst->biBitCount / 8;
 
-   return VCMERR_OK;
+    // Create temporary buffer
+    mCBuf = mPBiDst->biSizeImage;
+    mPBuf = (U8*)dMalloc(mCBuf);
+    AssertFatal(mPBuf, "Out of memory");
+    dMemset(mPBuf, 0, mCBuf);
+
+    return VCMERR_OK;
 }
 
 S32 GuiAviBitmapCtrl::vcmClose()
 {
-   if (mPBiSrc) delete [] mPBiSrc;
-   if (mPBiDst) delete [] mPBiDst;
-   mPBiSrc = mPBiDst = NULL;
+    if (mPBiSrc) delete[] mPBiSrc;
+    if (mPBiDst) delete[] mPBiDst;
+    mPBiSrc = mPBiDst = NULL;
 
-   if (mPBuf)
-   {
-      dFree(mPBuf);
-      mPBuf = NULL;
-   }
-   
-   if (mHic)
-   {
-      ICClose(mHic);
-      mHic = NULL;
-   }
+    if (mPBuf)
+    {
+        dFree(mPBuf);
+        mPBuf = NULL;
+    }
 
-   mFccHandler = 0;
+    if (mHic)
+    {
+        ICClose(mHic);
+        mHic = NULL;
+    }
 
-   return VCMERR_OK;
+    mFccHandler = 0;
+
+    return VCMERR_OK;
 }
 
 // vcmBegin() and vcmEnd() (de)initializes a series of vcmDraw()'s
@@ -642,29 +642,29 @@ S32 GuiAviBitmapCtrl::vcmClose()
 //
 S32 GuiAviBitmapCtrl::vcmBegin()
 {
-   S32 rval;
+    S32 rval;
 
-   if (!mHic)
-      return VCMERR_INTERNAL;
+    if (!mHic)
+        return VCMERR_INTERNAL;
 
-   rval = ICDecompressExQuery(mHic, 0,
-                     mPBiSrc, NULL, 0, 0, mBitmapWidth, mBitmapHeight,
-                     mPBiDst, NULL, 0, 0, mBitmapWidth, mBitmapHeight);
+    rval = ICDecompressExQuery(mHic, 0,
+        mPBiSrc, NULL, 0, 0, mBitmapWidth, mBitmapHeight,
+        mPBiDst, NULL, 0, 0, mBitmapWidth, mBitmapHeight);
 
-   if (rval) return rval;
+    if (rval) return rval;
 
-   rval = ICDecompressExBegin(mHic, 0,
-                     mPBiSrc, NULL, 0, 0, mBitmapWidth, mBitmapHeight,
-                     mPBiDst, NULL, 0, 0, mBitmapWidth, mBitmapHeight);
+    rval = ICDecompressExBegin(mHic, 0,
+        mPBiSrc, NULL, 0, 0, mBitmapWidth, mBitmapHeight,
+        mPBiDst, NULL, 0, 0, mBitmapWidth, mBitmapHeight);
 
-   if (rval) return rval;
+    if (rval) return rval;
 
-   return AVIERR_OK;
+    return AVIERR_OK;
 }
 
 S32 GuiAviBitmapCtrl::vcmEnd()
 {
-   return VCMERR_OK;
+    return VCMERR_OK;
 }
 
 // vcmDrawStart/vcmDrawStop are not absolutely necessary but some codecs
@@ -672,125 +672,125 @@ S32 GuiAviBitmapCtrl::vcmEnd()
 //
 S32 GuiAviBitmapCtrl::vcmDrawStart()
 {
-   // Send ICM_DRAW_BEGIN.
-   // this is only for telling   the codec what our frame rate is - zero out all other members.
-   ICDrawBegin(mHic,
-              0, 0, 0, 0,
-              0, 0, 0, 0,
-              NULL,
-              0, 0, 0, 0,
-              (DWORD) (1.0/mFrate * 1000.0 * 1000.0), // dwRate
-              (DWORD) (1000*1000));                   // dwScale
+    // Send ICM_DRAW_BEGIN.
+    // this is only for telling   the codec what our frame rate is - zero out all other members.
+    ICDrawBegin(mHic,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        NULL,
+        0, 0, 0, 0,
+        (DWORD)(1.0 / mFrate * 1000.0 * 1000.0), // dwRate
+        (DWORD)(1000 * 1000));                   // dwScale
 
-   // Send ICM_DRAW_START.
-   ICDrawStart(mHic);
+// Send ICM_DRAW_START.
+    ICDrawStart(mHic);
 
-   return VCMERR_OK;
+    return VCMERR_OK;
 }
 
 S32 GuiAviBitmapCtrl::vcmDrawStop()
 {
-   // Send ICM_DRAW_STOP
-   ICDrawStop(mHic);
+    // Send ICM_DRAW_STOP
+    ICDrawStop(mHic);
 
-   // Send ICM_DRAW_END
-   ICDrawEnd(mHic);
-   
-   return VCMERR_OK;
+    // Send ICM_DRAW_END
+    ICDrawEnd(mHic);
+
+    return VCMERR_OK;
 }
 
 S32 GuiAviBitmapCtrl::vcmDraw(U64 dwICflags)
 {
-   S32 rval;
+    S32 rval;
 
-   rval = ICDecompressEx(mHic, dwICflags,
-                         mPBiSrc, mPVBuf, 0, 0, mBitmapWidth, mBitmapHeight,
-                         mPBiDst, mPBuf, 0, 0, mBitmapWidth, mBitmapHeight);
+    rval = ICDecompressEx(mHic, dwICflags,
+        mPBiSrc, mPVBuf, 0, 0, mBitmapWidth, mBitmapHeight,
+        mPBiDst, mPBuf, 0, 0, mBitmapWidth, mBitmapHeight);
 
-   if (rval)
-      // Normal in case of ICM_HURRYUP flag (rval = 1)
-     return rval;
+    if (rval)
+        // Normal in case of ICM_HURRYUP flag (rval = 1)
+        return rval;
 
-   for (U32 j = 0; j < mHeightCount; j++)
-   {
-      U32 y = j * 256;
-      U32 height = getMin(mBitmapHeight - y, U32(256));
-         
-      for (U32 i = 0; i < mWidthCount; i++)
-      {
-         U32 index = j * mWidthCount + i;
-         U32 x = i * 256;
-         U32 width = getMin(mBitmapWidth - x, U32(256));
-         GBitmap *bmp = mTextureHandles[index].getBitmap();
-            
-         for (U32 lp = 0; lp < height; lp++)
-         {
-            const U8 *src = &mPBuf[3*((mBitmapHeight-(y+lp+1))*mBitmapAlignedWidth + x)];
-            U8 *dest = bmp->getAddress(0, lp);
+    for (U32 j = 0; j < mHeightCount; j++)
+    {
+        U32 y = j * 256;
+        U32 height = getMin(mBitmapHeight - y, U32(256));
 
-            // counting on the artist to switch the R & B channels so we don't have to in runtime
-            if (!mSwapRB)
-               dMemcpy(dest, src, width*3);
-            else
-               for (U32 k = 0; k < width; ++k) 
-               {
-                  *dest++ = src[2];
-                  *dest++ = src[1];
-                  *dest++ = src[0]; 
-                  src += 3;
-               }
-         }
-         
-         mTextureHandles[index].refresh();
-      }
-   }
+        for (U32 i = 0; i < mWidthCount; i++)
+        {
+            U32 index = j * mWidthCount + i;
+            U32 x = i * 256;
+            U32 width = getMin(mBitmapWidth - x, U32(256));
+            GBitmap* bmp = mTextureHandles[index].getBitmap();
 
-   return VCMERR_OK;
+            for (U32 lp = 0; lp < height; lp++)
+            {
+                const U8* src = &mPBuf[3 * ((mBitmapHeight - (y + lp + 1)) * mBitmapAlignedWidth + x)];
+                U8* dest = bmp->getAddress(0, lp);
+
+                // counting on the artist to switch the R & B channels so we don't have to in runtime
+                if (!mSwapRB)
+                    dMemcpy(dest, src, width * 3);
+                else
+                    for (U32 k = 0; k < width; ++k)
+                    {
+                        *dest++ = src[2];
+                        *dest++ = src[1];
+                        *dest++ = src[0];
+                        src += 3;
+                    }
+            }
+
+            mTextureHandles[index].refresh();
+        }
+    }
+
+    return VCMERR_OK;
 }
 
 S32 GuiAviBitmapCtrl::vcmDrawIn(U64 dwICflags)
 {
-   // If we are not displaying frames, IVI still writes to the buffer
-   S32 rval = ICDecompressEx(mHic, dwICflags,
-                   mPBiSrc, mPVBuf, 0, 0, mBitmapWidth, mBitmapHeight,
-                   mPBiDst, mPBuf,  0, 0, mBitmapWidth, mBitmapHeight);
+    // If we are not displaying frames, IVI still writes to the buffer
+    S32 rval = ICDecompressEx(mHic, dwICflags,
+        mPBiSrc, mPVBuf, 0, 0, mBitmapWidth, mBitmapHeight,
+        mPBiDst, mPBuf, 0, 0, mBitmapWidth, mBitmapHeight);
 
-   if (rval)
-      // Normal in case of ICM_HURRYUP flag (rval = 1)
-     return rval;
+    if (rval)
+        // Normal in case of ICM_HURRYUP flag (rval = 1)
+        return rval;
 
-   return VCMERR_OK;
+    return VCMERR_OK;
 }
 
 void GuiAviBitmapCtrl::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 
-   addGroup("Media");		
-   addField("aviFilename", TypeFilename, Offset(mAviFilename, GuiAviBitmapCtrl));
-   addField("wavFilename", TypeFilename, Offset(mWavFilename, GuiAviBitmapCtrl));
-   endGroup("Media");		
+    addGroup("Media");
+    addField("aviFilename", TypeFilename, Offset(mAviFilename, GuiAviBitmapCtrl));
+    addField("wavFilename", TypeFilename, Offset(mWavFilename, GuiAviBitmapCtrl));
+    endGroup("Media");
 
-   addGroup("Misc");		
-   addField("swapRB",      TypeBool,   Offset(mSwapRB, GuiAviBitmapCtrl));
-   addField("done",        TypeBool,   Offset(mDone, GuiAviBitmapCtrl));
-   addField("letterBox",   TypeBool,   Offset(mLetterBox, GuiAviBitmapCtrl));
-   addField("speed",       TypeF32,    Offset(mSpeed, GuiAviBitmapCtrl));
-   endGroup("Misc");		
+    addGroup("Misc");
+    addField("swapRB", TypeBool, Offset(mSwapRB, GuiAviBitmapCtrl));
+    addField("done", TypeBool, Offset(mDone, GuiAviBitmapCtrl));
+    addField("letterBox", TypeBool, Offset(mLetterBox, GuiAviBitmapCtrl));
+    addField("speed", TypeF32, Offset(mSpeed, GuiAviBitmapCtrl));
+    endGroup("Misc");
 }
 
 //----------------------------------------------------------------------------
-void GuiAviBitmapCtrl::setFilename(const char *filename)
+void GuiAviBitmapCtrl::setFilename(const char* filename)
 {
-   bool awake = mAwake;
+    bool awake = mAwake;
 
-   if (awake)
-      onSleep();
-   
-   mAviFilename = StringTable->insert(filename);
+    if (awake)
+        onSleep();
 
-   if (awake)
-      onWake();
+    mAviFilename = StringTable->insert(filename);
+
+    if (awake)
+        onWake();
 }
 
 // Start a movie, i.e. begin play from stopped state
@@ -798,124 +798,124 @@ void GuiAviBitmapCtrl::setFilename(const char *filename)
 //
 S32 GuiAviBitmapCtrl::movieStart()
 {
-   if (!mPAviVideo)
-      return MOVERR_NOVIDEOSTREAM;
+    if (!mPAviVideo)
+        return MOVERR_NOVIDEOSTREAM;
 
-   // Check if starting without stopping
-   if (mBPlaying)
-      return MOVERR_PLAYING;
-   
-   mBPlaying = true;
-   
-   sndStart();
-   
-   // Start video, note only one state var, play or stop
-   vidsVideoStart();
-   setUpdate();
+    // Check if starting without stopping
+    if (mBPlaying)
+        return MOVERR_PLAYING;
 
-   return MOVERR_OK;
+    mBPlaying = true;
+
+    sndStart();
+
+    // Start video, note only one state var, play or stop
+    vidsVideoStart();
+    setUpdate();
+
+    return MOVERR_OK;
 }
 
 // Stop playing a movie
 //
 S32 GuiAviBitmapCtrl::movieStop()
 {
-   mBPlaying = false;
-   vidsVideoStop();
-   
-   sndStop();
+    mBPlaying = false;
+    vidsVideoStop();
 
-   // notify the script
-   // Con::executef(this,1,"movieStopped");
-   
-   mDone = true;
-   
-   return MOVERR_OK;
+    sndStop();
+
+    // notify the script
+    // Con::executef(this,1,"movieStopped");
+
+    mDone = true;
+
+    return MOVERR_OK;
 }
 
 //----------------------------------------------------------------------------
 bool GuiAviBitmapCtrl::onWake()
 {
-   if (!Parent::onWake()) return false;
+    if (!Parent::onWake()) return false;
 
-   if (fileOpen() || movieOpen()) 
-   {
-      mDone = true;
+    if (fileOpen() || movieOpen())
+    {
+        mDone = true;
 
-		// we return TRUE here, or else the damn thing gets deleted and that's
-		// just plain bad.
+        // we return TRUE here, or else the damn thing gets deleted and that's
+        // just plain bad.
 
-      return true;
-   }
+        return true;
+    }
 
-   sndOpen();
-   
-   mBitmapWidth = mPBiSrc->biWidth;
-   mBitmapAlignedWidth = ALIGNULONG(mBitmapWidth);
-   mBitmapHeight = mPBiSrc->biHeight;
-   mWidthCount = mBitmapWidth / 256;
-   mHeightCount = mBitmapHeight / 256;
-   if (mBitmapWidth % 256)
-      mWidthCount++;
-   if (mBitmapHeight % 256)
-      mHeightCount++;
-   mNumTextures = mWidthCount * mHeightCount;
-   mTextureHandles = new TextureHandle[mNumTextures];
-   for (U32 j = 0; j < mHeightCount; j++)
-   {
-      U32 y = j * 256;
-      U32 height = getMin(mBitmapWidth - y, U32(256));
-         
-      for (U32 i = 0; i < mWidthCount; i++)
-      {
-         char nameBuffer[64];
-         U32 index = j * mWidthCount + i;
-            
-         dSprintf(nameBuffer, sizeof(nameBuffer), "%s_#%d_#%d", mAviFilename, i, j);
-         mTextureHandles[index] = TextureHandle(nameBuffer, RegisteredTexture, true);
-         if (!bool(mTextureHandles[index]))   
-         {
-            U32 x = i * 256;
-            U32 width = getMin(mBitmapWidth - x, U32(256));
-            
-            const GBitmap *bmp = new GBitmap(width, height, false, GBitmap::RGB);
-               
-            mTextureHandles[index] = TextureHandle(nameBuffer, bmp, true);
-         }
-      }
-   }
+    sndOpen();
 
-   return true;
+    mBitmapWidth = mPBiSrc->biWidth;
+    mBitmapAlignedWidth = ALIGNULONG(mBitmapWidth);
+    mBitmapHeight = mPBiSrc->biHeight;
+    mWidthCount = mBitmapWidth / 256;
+    mHeightCount = mBitmapHeight / 256;
+    if (mBitmapWidth % 256)
+        mWidthCount++;
+    if (mBitmapHeight % 256)
+        mHeightCount++;
+    mNumTextures = mWidthCount * mHeightCount;
+    mTextureHandles = new TextureHandle[mNumTextures];
+    for (U32 j = 0; j < mHeightCount; j++)
+    {
+        U32 y = j * 256;
+        U32 height = getMin(mBitmapWidth - y, U32(256));
+
+        for (U32 i = 0; i < mWidthCount; i++)
+        {
+            char nameBuffer[64];
+            U32 index = j * mWidthCount + i;
+
+            dSprintf(nameBuffer, sizeof(nameBuffer), "%s_#%d_#%d", mAviFilename, i, j);
+            mTextureHandles[index] = TextureHandle(nameBuffer, RegisteredTexture, true);
+            if (!bool(mTextureHandles[index]))
+            {
+                U32 x = i * 256;
+                U32 width = getMin(mBitmapWidth - x, U32(256));
+
+                const GBitmap* bmp = new GBitmap(width, height, false, GBitmap::RGB);
+
+                mTextureHandles[index] = TextureHandle(nameBuffer, bmp, true);
+            }
+        }
+    }
+
+    return true;
 }
 
 //----------------------------------------------------------------------------
 void GuiAviBitmapCtrl::onSleep()
 {
-   movieClose();
-   fileClose();
+    movieClose();
+    fileClose();
 
-   if (mTextureHandles)
-   {
-      delete [] mTextureHandles;
-      mTextureHandles = NULL;
-   }
+    if (mTextureHandles)
+    {
+        delete[] mTextureHandles;
+        mTextureHandles = NULL;
+    }
 
-   Parent::onSleep();
+    Parent::onSleep();
 }
 
 //----------------------------------------------------------------------------
 void GuiAviBitmapCtrl::onMouseDown(const GuiEvent&)
 {
-   // end the movie NOW!
-   movieStop();
+    // end the movie NOW!
+    movieStop();
 }
 
 //----------------------------------------------------------------------------
 bool GuiAviBitmapCtrl::onKeyDown(const GuiEvent&)
 {
-   // end the movie NOW!
-   movieStop();
-   return true;
+    // end the movie NOW!
+    movieStop();
+    return true;
 }
 
 //----------------------------------------------------------------------------
@@ -923,85 +923,85 @@ bool GuiAviBitmapCtrl::onKeyDown(const GuiEvent&)
 
 S32 GuiAviBitmapCtrl::getMilliseconds()
 {
-   F32   ms;
-   
-   if (mSpeed > 0)
-   {
-      ms = Platform::getRealMilliseconds();
-      ms *= mSpeed;
-   }
-   else
-   {
-      // Try to force the glitch (negative speed)- 
-      static F32 deterministicClock = 0.0f;
-      ms = deterministicClock;
-      deterministicClock -= mSpeed;
-   }
-   
-   return S32(ms);
+    F32   ms;
+
+    if (mSpeed > 0)
+    {
+        ms = Platform::getRealMilliseconds();
+        ms *= mSpeed;
+    }
+    else
+    {
+        // Try to force the glitch (negative speed)- 
+        static F32 deterministicClock = 0.0f;
+        ms = deterministicClock;
+        deterministicClock -= mSpeed;
+    }
+
+    return S32(ms);
 }
 
 //----------------------------------------------------------------------------
-void GuiAviBitmapCtrl::onRender(Point2I offset, const RectI &updateRect)
+void GuiAviBitmapCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
-   vidsVideoDraw();
-   
-   if (mTextureHandles)
-   {
-      RectI    displayRect(mBounds);
-      S32      verticalDisplace = 0;
-      
-      if (mLetterBox)
-      {
-         // Our supplied picture is 3/4 height 640x360 for 640x480 res.  But let's allow
-         // for a regular full-window version since it might come in handy elsewhere (so
-         // letterBox is public flag on the GUI).  
-         verticalDisplace = (mBounds.extent.y >> 3);
-         displayRect.extent.y = (displayRect.extent.y * 3 >> 2);
-         displayRect.point.y += verticalDisplace;
-         RectI upperRect(offset.x, offset.y, displayRect.extent.x, verticalDisplace + 1);
-         GFX->drawRectFill(upperRect, mProfile->mFillColorHL);
-      }
+    vidsVideoDraw();
 
-      // Scale into the letterbox-
-      F32 widthScale = F32(displayRect.extent.x) / F32(mBitmapWidth);
-      F32 heightScale = F32(displayRect.extent.y) / F32(mBitmapHeight);
+    if (mTextureHandles)
+    {
+        RectI    displayRect(mBounds);
+        S32      verticalDisplace = 0;
 
-      offset.y += verticalDisplace;
+        if (mLetterBox)
+        {
+            // Our supplied picture is 3/4 height 640x360 for 640x480 res.  But let's allow
+            // for a regular full-window version since it might come in handy elsewhere (so
+            // letterBox is public flag on the GUI).  
+            verticalDisplace = (mBounds.extent.y >> 3);
+            displayRect.extent.y = (displayRect.extent.y * 3 >> 2);
+            displayRect.point.y += verticalDisplace;
+            RectI upperRect(offset.x, offset.y, displayRect.extent.x, verticalDisplace + 1);
+            GFX->drawRectFill(upperRect, mProfile->mFillColorHL);
+        }
 
-      GFX->setBitmapModulation(ColorF(1,1,1));
-      for (U32 i = 0; i < mWidthCount; i++)
-      {
-         for (U32 j = 0; j < mHeightCount; j++)
-         {
-            TextureHandle t = mTextureHandles[j * mWidthCount + i];
-            RectI stretchRegion;
+        // Scale into the letterbox-
+        F32 widthScale = F32(displayRect.extent.x) / F32(mBitmapWidth);
+        F32 heightScale = F32(displayRect.extent.y) / F32(mBitmapHeight);
 
-            stretchRegion.point.x = i * 256 * widthScale + offset.x;
-            stretchRegion.point.y = j * 256 * heightScale + offset.y;
-            stretchRegion.extent.x = (i * 256 + t.getWidth()) * widthScale + offset.x - stretchRegion.point.x;
-            stretchRegion.extent.y = (j * 256 + t.getHeight()) * heightScale + offset.y - stretchRegion.point.y;
-            dglDrawBitmapStretch(t, stretchRegion);
-         }
-      }
+        offset.y += verticalDisplace;
 
-      if (mLetterBox)
-      {
-         // For some reason the above loop draws white below, and this rect fill has to
-         // come after - got to look at that math...  Also don't know why we need the
-         // extra width & height here...
-         RectI lowerRect(offset.x, mBounds.extent.y - verticalDisplace - 1,
-                                       mBounds.extent.x + 2, verticalDisplace + 2);
-         GFX->drawRectFill(lowerRect, mProfile->mFillColorHL);
-      }
+        GFX->setBitmapModulation(ColorF(1, 1, 1));
+        for (U32 i = 0; i < mWidthCount; i++)
+        {
+            for (U32 j = 0; j < mHeightCount; j++)
+            {
+                TextureHandle t = mTextureHandles[j * mWidthCount + i];
+                RectI stretchRegion;
 
-      renderChildControls(offset, updateRect);
+                stretchRegion.point.x = i * 256 * widthScale + offset.x;
+                stretchRegion.point.y = j * 256 * heightScale + offset.y;
+                stretchRegion.extent.x = (i * 256 + t.getWidth()) * widthScale + offset.x - stretchRegion.point.x;
+                stretchRegion.extent.y = (j * 256 + t.getHeight()) * heightScale + offset.y - stretchRegion.point.y;
+                dglDrawBitmapStretch(t, stretchRegion);
+            }
+        }
 
-      if (mBPlaying)
-         setUpdate();
-   }
-   else
-      Parent::onRender(offset, updateRect);
+        if (mLetterBox)
+        {
+            // For some reason the above loop draws white below, and this rect fill has to
+            // come after - got to look at that math...  Also don't know why we need the
+            // extra width & height here...
+            RectI lowerRect(offset.x, mBounds.extent.y - verticalDisplace - 1,
+                mBounds.extent.x + 2, verticalDisplace + 2);
+            GFX->drawRectFill(lowerRect, mProfile->mFillColorHL);
+        }
+
+        renderChildControls(offset, updateRect);
+
+        if (mBPlaying)
+            setUpdate();
+    }
+    else
+        Parent::onRender(offset, updateRect);
 }
 
 #endif /* ENABLE_AVI_GUI */
@@ -1014,17 +1014,17 @@ IMPLEMENT_CONOBJECT(GuiAviBitmapCtrl);
 
 GuiAviBitmapCtrl::GuiAviBitmapCtrl()
 {
-   mAviFilename = StringTable->insert("");
-   mTextureHandles = NULL;
+    mAviFilename = StringTable->insert("");
+    mTextureHandles = NULL;
 
-   mMPEG = NULL;
-   mBPlaying = false;
-   mDone = false;
-   mLetterBox = false;
-   mSurface = NULL;
-   mPBuf = NULL;
-   mDecodeLock = NULL;
-   mWavHandle = NULL_AUDIOHANDLE;
+    mMPEG = NULL;
+    mBPlaying = false;
+    mDone = false;
+    mLetterBox = false;
+    mSurface = NULL;
+    mPBuf = NULL;
+    mDecodeLock = NULL;
+    mWavHandle = NULL_AUDIOHANDLE;
 }
 
 //----------------------------------------------------------------------------
@@ -1039,41 +1039,41 @@ GuiAviBitmapCtrl::~GuiAviBitmapCtrl()
 //
 S32 GuiAviBitmapCtrl::fileOpen()
 {
-   char fileBuffer[256];
+    char fileBuffer[256];
 
-   if (!dStrcmp(mAviFilename,""))
-      return MOVERR_NOVIDEOSTREAM;
+    if (!dStrcmp(mAviFilename, ""))
+        return MOVERR_NOVIDEOSTREAM;
 
-   // FixMe: Should convert this to have a dir attribute...
-   dSprintf(fileBuffer, sizeof(fileBuffer), "FixMe/textures/%s", mAviFilename);
+    // FixMe: Should convert this to have a dir attribute...
+    dSprintf(fileBuffer, sizeof(fileBuffer), "FixMe/textures/%s", mAviFilename);
 
-   // Convert filename from .avi to .mpg
-   char *ext;
-   ext = dStrstr(static_cast<const char *>(fileBuffer), ".avi");
-   if (!ext)
-      ext = dStrstr(static_cast<const char *>(fileBuffer), ".AVI");
-   if (ext)
-      dStrcpy(ext, ".mpg");
+    // Convert filename from .avi to .mpg
+    char* ext;
+    ext = dStrstr(static_cast<const char*>(fileBuffer), ".avi");
+    if (!ext)
+        ext = dStrstr(static_cast<const char*>(fileBuffer), ".AVI");
+    if (ext)
+        dStrcpy(ext, ".mpg");
 
-   mMPEG = SMPEG_new(fileBuffer, &mInfo, 0);
-   if (!mMPEG || (SMPEG_status(mMPEG) == SMPEG_ERROR))
-   {
-      fileClose();
-      return MOVERR_NOVIDEOSTREAM;
-   }
-   return MOVERR_OK;
+    mMPEG = SMPEG_new(fileBuffer, &mInfo, 0);
+    if (!mMPEG || (SMPEG_status(mMPEG) == SMPEG_ERROR))
+    {
+        fileClose();
+        return MOVERR_NOVIDEOSTREAM;
+    }
+    return MOVERR_OK;
 }
 
 // Close a file
 //
-S32 GuiAviBitmapCtrl::fileClose ()
+S32 GuiAviBitmapCtrl::fileClose()
 {
-   if (mMPEG)
-   {
-      SMPEG_delete(mMPEG);
-      mMPEG = NULL;
-   }
-   return MOVERR_OK;
+    if (mMPEG)
+    {
+        SMPEG_delete(mMPEG);
+        mMPEG = NULL;
+    }
+    return MOVERR_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1087,48 +1087,48 @@ S32 GuiAviBitmapCtrl::fileClose ()
 //
 S32 GuiAviBitmapCtrl::movieOpen()
 {
-   // If the file was opened successfully, it's an MPEG video
-   return MOVERR_OK;
+    // If the file was opened successfully, it's an MPEG video
+    return MOVERR_OK;
 }
 
 // Close movie stream
 //
 S32 GuiAviBitmapCtrl::movieClose()
 {
-   // Make sure movie is stopped
-   movieStop();
+    // Make sure movie is stopped
+    movieStop();
 
-   return MOVERR_OK;
+    return MOVERR_OK;
 }
 
 
 void GuiAviBitmapCtrl::initPersistFields()
 {
-   Parent::initPersistFields();
+    Parent::initPersistFields();
 
-   addGroup("Media");		
-   addField("aviFilename", TypeFilename, Offset(mAviFilename, GuiAviBitmapCtrl));
-   addField("wavFilename", TypeFilename, Offset(mWavFilename, GuiAviBitmapCtrl));
-   endGroup("Media");		
+    addGroup("Media");
+    addField("aviFilename", TypeFilename, Offset(mAviFilename, GuiAviBitmapCtrl));
+    addField("wavFilename", TypeFilename, Offset(mWavFilename, GuiAviBitmapCtrl));
+    endGroup("Media");
 
-   addGroup("Misc");		
-   addField("done",        TypeBool,   Offset(mDone, GuiAviBitmapCtrl));
-   addField("letterBox",   TypeBool,   Offset(mLetterBox, GuiAviBitmapCtrl));
-   endGroup("Misc");		
+    addGroup("Misc");
+    addField("done", TypeBool, Offset(mDone, GuiAviBitmapCtrl));
+    addField("letterBox", TypeBool, Offset(mLetterBox, GuiAviBitmapCtrl));
+    endGroup("Misc");
 }
 
 //----------------------------------------------------------------------------
-void GuiAviBitmapCtrl::setFilename(const char *filename)
+void GuiAviBitmapCtrl::setFilename(const char* filename)
 {
-   bool awake = mAwake;
+    bool awake = mAwake;
 
-   if (awake)
-      onSleep();
-   
-   mAviFilename = StringTable->insert(filename);
+    if (awake)
+        onSleep();
 
-   if (awake)
-      onWake();
+    mAviFilename = StringTable->insert(filename);
+
+    if (awake)
+        onWake();
 }
 
 // Start a movie, i.e. begin play from stopped state
@@ -1136,242 +1136,242 @@ void GuiAviBitmapCtrl::setFilename(const char *filename)
 //
 S32 GuiAviBitmapCtrl::movieStart()
 {
-   if (!mMPEG)
-      return MOVERR_NOVIDEOSTREAM;
+    if (!mMPEG)
+        return MOVERR_NOVIDEOSTREAM;
 
-   // Check if starting without stopping
-   if (mBPlaying)
-      return MOVERR_PLAYING;
-   
-   mBPlaying = true;
-   
-   sndStart();
-   
-   // Start video, note only one state var, play or stop
-   SMPEG_play(mMPEG);
+    // Check if starting without stopping
+    if (mBPlaying)
+        return MOVERR_PLAYING;
 
-   return MOVERR_OK;
+    mBPlaying = true;
+
+    sndStart();
+
+    // Start video, note only one state var, play or stop
+    SMPEG_play(mMPEG);
+
+    return MOVERR_OK;
 }
 
 // Stop playing a movie
 //
 S32 GuiAviBitmapCtrl::movieStop()
 {
-   mBPlaying = false;
+    mBPlaying = false;
 
-   if (mMPEG)
-   {
-      SMPEG_stop(mMPEG);
-   }
-   sndStop();
+    if (mMPEG)
+    {
+        SMPEG_stop(mMPEG);
+    }
+    sndStop();
 
-   // notify the script
-   // Con::executef(this,1,"movieStopped");
-   
-   mDone = true;
-   
-   return MOVERR_OK;
+    // notify the script
+    // Con::executef(this,1,"movieStopped");
+
+    mDone = true;
+
+    return MOVERR_OK;
 }
 
 //----------------------------------------------------------------------------
 bool GuiAviBitmapCtrl::onWake()
 {
-   if (!Parent::onWake()) return false;
+    if (!Parent::onWake()) return false;
 
-   if (fileOpen() || movieOpen()) 
-   {
-      mDone = true;
-      // Never return false from onWake, the object will be freed, but
-      // not removed from the gui framework, so the game crashes later.
-      return true;
-   }
+    if (fileOpen() || movieOpen())
+    {
+        mDone = true;
+        // Never return false from onWake, the object will be freed, but
+        // not removed from the gui framework, so the game crashes later.
+        return true;
+    }
 
-   sndOpen();
-   
-   mBitmapWidth = mInfo.width;
-   mBitmapAlignedWidth = ALIGNULONG(mBitmapWidth);
-   AssertFatal(mBitmapAlignedWidth == mBitmapWidth, "Unaligned MPEG data");
-   mBitmapHeight = mInfo.height;
-   mWidthCount = mBitmapWidth / 256;
-   mHeightCount = mBitmapHeight / 256;
-   if (mBitmapWidth % 256)
-      mWidthCount++;
-   if (mBitmapHeight % 256)
-      mHeightCount++;
-   mNumTextures = mWidthCount * mHeightCount;
-   mTextureHandles = new TextureHandle[mNumTextures];
-   for (U32 j = 0; j < mHeightCount; j++)
-   {
-      U32 y = j * 256;
-      U32 height = getMin(mBitmapWidth - y, U32(256));
-         
-      for (U32 i = 0; i < mWidthCount; i++)
-      {
-         char nameBuffer[64];
-         U32 index = j * mWidthCount + i;
-            
-         dSprintf(nameBuffer, sizeof(nameBuffer), "%s_#%d_#%d", mAviFilename, i, j);
-         mTextureHandles[index] = TextureHandle(nameBuffer, RegisteredTexture, true);
-         if (!bool(mTextureHandles[index]))   
-         {
-            U32 x = i * 256;
-            U32 width = getMin(mBitmapWidth - x, U32(256));
-            
-            const GBitmap *bmp = new GBitmap(width, height, false, GBitmap::RGB);
-               
-            mTextureHandles[index] = TextureHandle(nameBuffer, bmp, true);
-         }
-      }
-   }
+    sndOpen();
 
-   // Allocate the SDL surface for the YUV decoding
-   // It shore wood be nice if SDL could decode YUV to GL textures...
-   mPBuf = (U8 *) dMalloc(mBitmapWidth*3*mBitmapHeight);
-   AssertFatal(mPBuf, "Out of memory for buffer.");
-   mSurface = SDL_CreateRGBSurfaceFrom(mPBuf,
-                                       mBitmapWidth, mBitmapHeight, 24,
-                                       mBitmapWidth*3, 
-                                       0x000000FF, 0x0000FF00, 0x00FF0000, 0);
-   AssertFatal(mSurface, "Out of memory for a surface!");
+    mBitmapWidth = mInfo.width;
+    mBitmapAlignedWidth = ALIGNULONG(mBitmapWidth);
+    AssertFatal(mBitmapAlignedWidth == mBitmapWidth, "Unaligned MPEG data");
+    mBitmapHeight = mInfo.height;
+    mWidthCount = mBitmapWidth / 256;
+    mHeightCount = mBitmapHeight / 256;
+    if (mBitmapWidth % 256)
+        mWidthCount++;
+    if (mBitmapHeight % 256)
+        mHeightCount++;
+    mNumTextures = mWidthCount * mHeightCount;
+    mTextureHandles = new TextureHandle[mNumTextures];
+    for (U32 j = 0; j < mHeightCount; j++)
+    {
+        U32 y = j * 256;
+        U32 height = getMin(mBitmapWidth - y, U32(256));
 
-   // Target the decoding to our surface
-   mDecodeLock = SDL_CreateMutex();
-   AssertFatal(mDecodeLock, "Out of memory for a decode lock!");
-   SMPEG_setdisplay(mMPEG, mSurface, mDecodeLock, NULL);
+        for (U32 i = 0; i < mWidthCount; i++)
+        {
+            char nameBuffer[64];
+            U32 index = j * mWidthCount + i;
 
-   return true;
+            dSprintf(nameBuffer, sizeof(nameBuffer), "%s_#%d_#%d", mAviFilename, i, j);
+            mTextureHandles[index] = TextureHandle(nameBuffer, RegisteredTexture, true);
+            if (!bool(mTextureHandles[index]))
+            {
+                U32 x = i * 256;
+                U32 width = getMin(mBitmapWidth - x, U32(256));
+
+                const GBitmap* bmp = new GBitmap(width, height, false, GBitmap::RGB);
+
+                mTextureHandles[index] = TextureHandle(nameBuffer, bmp, true);
+            }
+        }
+    }
+
+    // Allocate the SDL surface for the YUV decoding
+    // It shore wood be nice if SDL could decode YUV to GL textures...
+    mPBuf = (U8*)dMalloc(mBitmapWidth * 3 * mBitmapHeight);
+    AssertFatal(mPBuf, "Out of memory for buffer.");
+    mSurface = SDL_CreateRGBSurfaceFrom(mPBuf,
+        mBitmapWidth, mBitmapHeight, 24,
+        mBitmapWidth * 3,
+        0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+    AssertFatal(mSurface, "Out of memory for a surface!");
+
+    // Target the decoding to our surface
+    mDecodeLock = SDL_CreateMutex();
+    AssertFatal(mDecodeLock, "Out of memory for a decode lock!");
+    SMPEG_setdisplay(mMPEG, mSurface, mDecodeLock, NULL);
+
+    return true;
 }
 
 //----------------------------------------------------------------------------
 void GuiAviBitmapCtrl::onSleep()
 {
-   movieClose();
-   fileClose();
+    movieClose();
+    fileClose();
 
-   if (mSurface)
-   {
-      SDL_FreeSurface(mSurface);
-      mSurface = NULL;
-   }
+    if (mSurface)
+    {
+        SDL_FreeSurface(mSurface);
+        mSurface = NULL;
+    }
 
-   if (mPBuf)
-   {
-      dFree(mPBuf);
-      mPBuf = NULL;
-   }
-   
-   if (mTextureHandles)
-   {
-      delete [] mTextureHandles;
-      mTextureHandles = NULL;
-   }
+    if (mPBuf)
+    {
+        dFree(mPBuf);
+        mPBuf = NULL;
+    }
 
-   Parent::onSleep();
+    if (mTextureHandles)
+    {
+        delete[] mTextureHandles;
+        mTextureHandles = NULL;
+    }
+
+    Parent::onSleep();
 }
 
 //----------------------------------------------------------------------------
 void GuiAviBitmapCtrl::onMouseDown(const GuiEvent&)
 {
-   // end the movie NOW!
-   movieStop();
+    // end the movie NOW!
+    movieStop();
 }
 
 //----------------------------------------------------------------------------
 bool GuiAviBitmapCtrl::onKeyDown(const GuiEvent&)
 {
-   // end the movie NOW!
-   movieStop();
-   return true;
+    // end the movie NOW!
+    movieStop();
+    return true;
 }
 
 //----------------------------------------------------------------------------
-void GuiAviBitmapCtrl::onRender(Point2I offset, const RectI &updateRect)
+void GuiAviBitmapCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
-   if (mTextureHandles)
-   {
-      RectI    displayRect(mBounds);
-      S32      verticalDisplace = 0;
-      
-      // Get the converted RGB data from SMPEG
-      SDL_LockMutex(mDecodeLock);
-      for (U32 j = 0; j < mHeightCount; j++)
-      {
-         U32 y = j * 256;
-         U32 height = getMin(mBitmapHeight - y, U32(256));
+    if (mTextureHandles)
+    {
+        RectI    displayRect(mBounds);
+        S32      verticalDisplace = 0;
 
-         for (U32 i = 0; i < mWidthCount; i++)
-         {
-            U32 index = j * mWidthCount + i;
-            U32 x = i * 256;
-            U32 width = getMin(mBitmapWidth - x, U32(256));
-            GBitmap *bmp = mTextureHandles[index].getBitmap();
-            
-            for (U32 lp = 0; lp < height; lp++)
+        // Get the converted RGB data from SMPEG
+        SDL_LockMutex(mDecodeLock);
+        for (U32 j = 0; j < mHeightCount; j++)
+        {
+            U32 y = j * 256;
+            U32 height = getMin(mBitmapHeight - y, U32(256));
+
+            for (U32 i = 0; i < mWidthCount; i++)
             {
-               const U8 *src = &mPBuf[3*((y+lp)*mBitmapAlignedWidth + x)];
-               U8 *dest = bmp->getAddress(0, lp);
+                U32 index = j * mWidthCount + i;
+                U32 x = i * 256;
+                U32 width = getMin(mBitmapWidth - x, U32(256));
+                GBitmap* bmp = mTextureHandles[index].getBitmap();
 
-               dMemcpy(dest, src, width*3);
+                for (U32 lp = 0; lp < height; lp++)
+                {
+                    const U8* src = &mPBuf[3 * ((y + lp) * mBitmapAlignedWidth + x)];
+                    U8* dest = bmp->getAddress(0, lp);
+
+                    dMemcpy(dest, src, width * 3);
+                }
+                mTextureHandles[index].refresh();
             }
-            mTextureHandles[index].refresh();
-         }
-      }
-      SDL_UnlockMutex(mDecodeLock);
+        }
+        SDL_UnlockMutex(mDecodeLock);
 
-      if (mLetterBox)
-      {
-         // Our supplied picture is 3/4 height 640x360 for 640x480 res.  But let's allow
-         // for a regular full-window version since it might come in handy elsewhere (so
-         // letterBox is public flag on the GUI).
-         verticalDisplace = (mBounds.extent.y >> 3);
-         displayRect.extent.y = (displayRect.extent.y * 3 >> 2);
-         displayRect.point.y += verticalDisplace;
-         RectI upperRect(offset.x, offset.y, displayRect.extent.x, verticalDisplace + 1);
-         GFX->drawRectFill(upperRect, mProfile->mFillColorHL);
-      }
+        if (mLetterBox)
+        {
+            // Our supplied picture is 3/4 height 640x360 for 640x480 res.  But let's allow
+            // for a regular full-window version since it might come in handy elsewhere (so
+            // letterBox is public flag on the GUI).
+            verticalDisplace = (mBounds.extent.y >> 3);
+            displayRect.extent.y = (displayRect.extent.y * 3 >> 2);
+            displayRect.point.y += verticalDisplace;
+            RectI upperRect(offset.x, offset.y, displayRect.extent.x, verticalDisplace + 1);
+            GFX->drawRectFill(upperRect, mProfile->mFillColorHL);
+        }
 
-      // Scale into the letterbox-
-      F32 widthScale = F32(displayRect.extent.x) / F32(mBitmapWidth);
-      F32 heightScale = F32(displayRect.extent.y) / F32(mBitmapHeight);
+        // Scale into the letterbox-
+        F32 widthScale = F32(displayRect.extent.x) / F32(mBitmapWidth);
+        F32 heightScale = F32(displayRect.extent.y) / F32(mBitmapHeight);
 
-      offset.y += verticalDisplace;
+        offset.y += verticalDisplace;
 
-      GFX->setBitmapModulation(ColorF(1,1,1));
-      for (U32 i = 0; i < mWidthCount; i++)
-      {
-         for (U32 j = 0; j < mHeightCount; j++)
-         {
-            TextureHandle t = mTextureHandles[j * mWidthCount + i];
-            RectI stretchRegion;
+        GFX->setBitmapModulation(ColorF(1, 1, 1));
+        for (U32 i = 0; i < mWidthCount; i++)
+        {
+            for (U32 j = 0; j < mHeightCount; j++)
+            {
+                TextureHandle t = mTextureHandles[j * mWidthCount + i];
+                RectI stretchRegion;
 
-            stretchRegion.point.x = i * 256 * widthScale + offset.x;
-            stretchRegion.point.y = j * 256 * heightScale + offset.y;
-            stretchRegion.extent.x = (i * 256 + t.getWidth()) * widthScale + offset.x - stretchRegion.point.x;
-            stretchRegion.extent.y = (j * 256 + t.getHeight()) * heightScale + offset.y - stretchRegion.point.y;
-            dglDrawBitmapStretch(t, stretchRegion);
-         }
-      }
+                stretchRegion.point.x = i * 256 * widthScale + offset.x;
+                stretchRegion.point.y = j * 256 * heightScale + offset.y;
+                stretchRegion.extent.x = (i * 256 + t.getWidth()) * widthScale + offset.x - stretchRegion.point.x;
+                stretchRegion.extent.y = (j * 256 + t.getHeight()) * heightScale + offset.y - stretchRegion.point.y;
+                dglDrawBitmapStretch(t, stretchRegion);
+            }
+        }
 
-      if (mLetterBox)
-      {
-         // For some reason the above loop draws white below, and this rect fill has to
-         // come after - got to look at that math...  Also don't know why we need the
-         // extra width & height here...
-         RectI lowerRect(offset.x, mBounds.extent.y - verticalDisplace - 1,
-                                       mBounds.extent.x + 2, verticalDisplace + 2);
-         GFX->drawRectFill(lowerRect, mProfile->mFillColorHL);
-      }
+        if (mLetterBox)
+        {
+            // For some reason the above loop draws white below, and this rect fill has to
+            // come after - got to look at that math...  Also don't know why we need the
+            // extra width & height here...
+            RectI lowerRect(offset.x, mBounds.extent.y - verticalDisplace - 1,
+                mBounds.extent.x + 2, verticalDisplace + 2);
+            GFX->drawRectFill(lowerRect, mProfile->mFillColorHL);
+        }
 
-      renderChildControls(offset, updateRect);
+        renderChildControls(offset, updateRect);
 
-      mBPlaying = (SMPEG_status(mMPEG) == SMPEG_PLAYING);
-      if (mBPlaying)
-         setUpdate();
-      else
-         movieStop();
-   }
-   else
-      Parent::onRender(offset, updateRect);
+        mBPlaying = (SMPEG_status(mMPEG) == SMPEG_PLAYING);
+        if (mBPlaying)
+            setUpdate();
+        else
+            movieStop();
+    }
+    else
+        Parent::onRender(offset, updateRect);
 }
 
 #endif /* ENABLE_MPG_GUI */

@@ -174,9 +174,9 @@
 #endif
 
 #ifdef TORQUE_LIB
-   #ifndef TORQUE_NO_OGGVORBIS
-   #define TORQUE_NO_OGGVORBIS
-   #endif
+#ifndef TORQUE_NO_OGGVORBIS
+#define TORQUE_NO_OGGVORBIS
+#endif
 #endif
 
 // Someday, it might make sense to do some pragma magic here so we error

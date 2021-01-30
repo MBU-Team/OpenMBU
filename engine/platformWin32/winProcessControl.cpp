@@ -7,15 +7,15 @@
 
 void Platform::postQuitMessage(const U32 in_quitVal)
 {
-   PostQuitMessage(in_quitVal);
+    PostQuitMessage(in_quitVal);
 }
 
 void Platform::debugBreak()
 {
-   DebugBreak();
+    DebugBreak();
 }
 
 void Platform::forceShutdown(S32 returnValue)
 {
-   ExitProcess(returnValue);
+    ExitProcess(returnValue);
 }

@@ -16,34 +16,34 @@
 
 class WinConsole
 {
-   bool winConsoleEnabled;
+    bool winConsoleEnabled;
 
-   HANDLE stdOut;
-   HANDLE stdIn;
-   HANDLE stdErr;
-   ConsoleEvent postEvent;
-   char inbuf[512];
-   S32  inpos;
-   bool lineOutput;
-   char curTabComplete[512];
-   S32  tabCompleteStart;
-   char rgCmds[MAX_CMDS][512];
-   S32  iCmdIndex;
+    HANDLE stdOut;
+    HANDLE stdIn;
+    HANDLE stdErr;
+    ConsoleEvent postEvent;
+    char inbuf[512];
+    S32  inpos;
+    bool lineOutput;
+    char curTabComplete[512];
+    S32  tabCompleteStart;
+    char rgCmds[MAX_CMDS][512];
+    S32  iCmdIndex;
 
-   void printf(const char *s, ...);
+    void printf(const char* s, ...);
 
 public:
-   WinConsole();
-   ~WinConsole();
+    WinConsole();
+    ~WinConsole();
 
-   void process();
-   void enable(bool);
-   void processConsoleLine(const char *consoleLine);
-   static void create();
-   static void destroy();
-   static bool isEnabled();
+    void process();
+    void enable(bool);
+    void processConsoleLine(const char* consoleLine);
+    static void create();
+    static void destroy();
+    static bool isEnabled();
 };
 
-extern WinConsole *WindowsConsole;
+extern WinConsole* WindowsConsole;
 
 #endif

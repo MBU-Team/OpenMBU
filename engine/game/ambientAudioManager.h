@@ -26,32 +26,32 @@ class InteriorInstance;
 class AmbientAudioManager
 {
 
-   private:
-      F32                              mOutsideScale;    ///< 0:inside -> 1:outside
-      Vector<AudioEmitter*>            mEmitters;
-      SimObjectPtr<InteriorInstance>   mInteriorInstance;
+private:
+    F32                              mOutsideScale;    ///< 0:inside -> 1:outside
+    Vector<AudioEmitter*>            mEmitters;
+    SimObjectPtr<InteriorInstance>   mInteriorInstance;
 
-      SimObjectPtr<AudioEnvironment>   mCurrentEnvironment;
-      F32                              mEnvironmentScale;
+    SimObjectPtr<AudioEnvironment>   mCurrentEnvironment;
+    F32                              mEnvironmentScale;
 
-      AUDIOHANDLE                      mInteriorAudioHandle;
-      AUDIOHANDLE                      mPowerAudioHandle;
-      bool                             mLastAlarmState;
+    AUDIOHANDLE                      mInteriorAudioHandle;
+    AUDIOHANDLE                      mPowerAudioHandle;
+    bool                             mLastAlarmState;
 
-      bool getOutsideScale(F32 *, InteriorInstance **);
-      void updateEnvironment();
-      void updateEmitter(AudioEmitter *);
-      void stopInteriorAudio();
+    bool getOutsideScale(F32*, InteriorInstance**);
+    void updateEnvironment();
+    void updateEmitter(AudioEmitter*);
+    void stopInteriorAudio();
 
-   public:
-      SimObjectPtr<AudioProfile>       mPowerUpProfile;
-      SimObjectPtr<AudioProfile>       mPowerDownProfile;
+public:
+    SimObjectPtr<AudioProfile>       mPowerUpProfile;
+    SimObjectPtr<AudioProfile>       mPowerDownProfile;
 
-      AmbientAudioManager();
+    AmbientAudioManager();
 
-      void addEmitter(AudioEmitter*);
-      void removeEmitter(AudioEmitter*);
-      void update();
+    void addEmitter(AudioEmitter*);
+    void removeEmitter(AudioEmitter*);
+    void update();
 };
 
 extern AmbientAudioManager gAmbientAudioManager;

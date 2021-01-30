@@ -14,31 +14,31 @@
 
 struct TrackedAutoGenShader
 {
-   StringTableEntry fileName;
-   bool shaderInMemory;
-   char *shaderData;
-   U32 shaderDataSize;
+    StringTableEntry fileName;
+    bool shaderInMemory;
+    char* shaderData;
+    U32 shaderDataSize;
 
-   TrackedAutoGenShader() : fileName( NULL ), shaderInMemory( false ), shaderData( NULL ) {};
-   ~TrackedAutoGenShader()
-   {
-      if( shaderData != NULL && shaderInMemory )
-         delete [] shaderData;
-   }
-   
+    TrackedAutoGenShader() : fileName(NULL), shaderInMemory(false), shaderData(NULL) {};
+    ~TrackedAutoGenShader()
+    {
+        if (shaderData != NULL && shaderInMemory)
+            delete[] shaderData;
+    }
+
 };
 
 namespace ShaderGenManager
 {
-   extern Vector<TrackedAutoGenShader> _mTrackedShaders;
-   extern Stream *_mOpenStream;
-   extern Stream *_mOpenReadStream;
+    extern Vector<TrackedAutoGenShader> _mTrackedShaders;
+    extern Stream* _mOpenStream;
+    extern Stream* _mOpenReadStream;
 
-   Stream *openNewShaderStream( const char *fileName, bool shaderInMemory = false );
-   void closeNewShaderStream( Stream *s );
+    Stream* openNewShaderStream(const char* fileName, bool shaderInMemory = false);
+    void closeNewShaderStream(Stream* s);
 
-   Stream *readShaderStream( const char *fileName );
-   void closeShaderStream( Stream *s );
+    Stream* readShaderStream(const char* fileName);
+    void closeShaderStream(Stream* s);
 };
 
 #endif

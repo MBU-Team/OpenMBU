@@ -19,7 +19,7 @@
 #endif
 
 // Static class variables:
-InputManager*  Input::smManager;
+InputManager* Input::smManager;
 bool           Input::smActive;
 bool           Input::smLastKeyboardActivated;
 bool           Input::smLastMouseActivated;
@@ -39,15 +39,15 @@ static void fillAsciiTable();
 //------------------------------------------------------------------------------
 struct AsciiData
 {
-   struct KeyData
-   {
-      U16   ascii;
-      bool  isDeadChar;
-   };
+    struct KeyData
+    {
+        U16   ascii;
+        bool  isDeadChar;
+    };
 
-   KeyData upper;
-   KeyData lower;
-   KeyData goofy;
+    KeyData upper;
+    KeyData lower;
+    KeyData goofy;
 };
 
 
@@ -58,300 +58,300 @@ static AsciiData AsciiTable[NUM_KEYS];
 //------------------------------------------------------------------------------
 void Input::init()
 {
-   Con::printf( "Input Init:" );
+    Con::printf("Input Init:");
 
-   destroy();
+    destroy();
 
 #ifdef LOG_INPUT
-   struct tm* newTime;
-   time_t aclock;
-   time( &aclock );
-   newTime = localtime( &aclock );
-   asctime( newTime );
+    struct tm* newTime;
+    time_t aclock;
+    time(&aclock);
+    newTime = localtime(&aclock);
+    asctime(newTime);
 
-   gInputLog = CreateFile( L"input.log", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
-   log( "Input log opened at %s\n", asctime( newTime ) );
+    gInputLog = CreateFile(L"input.log", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    log("Input log opened at %s\n", asctime(newTime));
 #endif
 
-   smActive = false;
-   smLastKeyboardActivated = true;
-   smLastMouseActivated = true;
-   smLastJoystickActivated = true;
+    smActive = false;
+    smLastKeyboardActivated = true;
+    smLastMouseActivated = true;
+    smLastJoystickActivated = true;
 
-   OSVERSIONINFO OSVersionInfo;
-   dMemset( &OSVersionInfo, 0, sizeof( OSVERSIONINFO ) );
-   OSVersionInfo.dwOSVersionInfoSize = sizeof( OSVERSIONINFO );
-   if ( GetVersionEx( &OSVersionInfo ) )
-   {
+    OSVERSIONINFO OSVersionInfo;
+    dMemset(&OSVersionInfo, 0, sizeof(OSVERSIONINFO));
+    OSVersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    if (GetVersionEx(&OSVersionInfo))
+    {
 #ifdef LOG_INPUT
-      log( "Operating System:\n" );
-      switch ( OSVersionInfo.dwPlatformId )
-      {
-         case VER_PLATFORM_WIN32s:
-            log( "  Win32s on Windows 3.1 version %d.%d\n", OSVersionInfo.dwMajorVersion, OSVersionInfo.dwMinorVersion );
+        log("Operating System:\n");
+        switch (OSVersionInfo.dwPlatformId)
+        {
+        case VER_PLATFORM_WIN32s:
+            log("  Win32s on Windows 3.1 version %d.%d\n", OSVersionInfo.dwMajorVersion, OSVersionInfo.dwMinorVersion);
             break;
 
-         case VER_PLATFORM_WIN32_WINDOWS:
-            log( "  Windows 95 version %d.%d\n", OSVersionInfo.dwMajorVersion, OSVersionInfo.dwMinorVersion );
-            log( "  Build number %d\n", LOWORD( OSVersionInfo.dwBuildNumber ) );
+        case VER_PLATFORM_WIN32_WINDOWS:
+            log("  Windows 95 version %d.%d\n", OSVersionInfo.dwMajorVersion, OSVersionInfo.dwMinorVersion);
+            log("  Build number %d\n", LOWORD(OSVersionInfo.dwBuildNumber));
             break;
 
-         case VER_PLATFORM_WIN32_NT:
-            log( "  WinNT version %d.%d\n", OSVersionInfo.dwMajorVersion, OSVersionInfo.dwMinorVersion );
-            log( "  Build number %d\n", OSVersionInfo.dwBuildNumber );
+        case VER_PLATFORM_WIN32_NT:
+            log("  WinNT version %d.%d\n", OSVersionInfo.dwMajorVersion, OSVersionInfo.dwMinorVersion);
+            log("  Build number %d\n", OSVersionInfo.dwBuildNumber);
             break;
-      }
+        }
 
-      if ( OSVersionInfo.szCSDVersion != NULL )
-         log( "  %s\n", OSVersionInfo.szCSDVersion );
+        if (OSVersionInfo.szCSDVersion != NULL)
+            log("  %s\n", OSVersionInfo.szCSDVersion);
 
-      log( "\n" );
+        log("\n");
 #endif
 
-      if ( !( OSVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT && OSVersionInfo.dwMajorVersion < 5 ) )
-      {
-         smManager = new DInputManager;
-         if ( !smManager->enable() )
-         {
-            Con::printf( "   DirectInput not enabled." );
-            delete smManager;
-            smManager = NULL;
-         }
-         else
-         {
-            DInputManager::init();
-            Con::printf( "   DirectInput enabled." );
-         }
-      }
-      else
-         Con::printf( "  WinNT detected -- DirectInput not enabled." );
-   }
+        if (!(OSVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT && OSVersionInfo.dwMajorVersion < 5))
+        {
+            smManager = new DInputManager;
+            if (!smManager->enable())
+            {
+                Con::printf("   DirectInput not enabled.");
+                delete smManager;
+                smManager = NULL;
+            }
+            else
+            {
+                DInputManager::init();
+                Con::printf("   DirectInput enabled.");
+            }
+        }
+        else
+            Con::printf("  WinNT detected -- DirectInput not enabled.");
+    }
 
-   fillAsciiTable();
-   Con::printf( "" );
+    fillAsciiTable();
+    Con::printf("");
 }
 
 //------------------------------------------------------------------------------
-ConsoleFunction( isJoystickDetected, bool, 1, 1, "isJoystickDetected()" )
+ConsoleFunction(isJoystickDetected, bool, 1, 1, "isJoystickDetected()")
 {
-   argc; argv;
-   return( DInputDevice::joystickDetected() );
+    argc; argv;
+    return(DInputDevice::joystickDetected());
 }
 
 //------------------------------------------------------------------------------
-ConsoleFunction( getJoystickAxes, const char*, 2, 2, "getJoystickAxes( instance )" )
+ConsoleFunction(getJoystickAxes, const char*, 2, 2, "getJoystickAxes( instance )")
 {
-   argc;
-   DInputManager* mgr = dynamic_cast<DInputManager*>( Input::getManager() );
-   if ( mgr )
-      return( mgr->getJoystickAxesString( dAtoi( argv[1] ) ) );
+    argc;
+    DInputManager* mgr = dynamic_cast<DInputManager*>(Input::getManager());
+    if (mgr)
+        return(mgr->getJoystickAxesString(dAtoi(argv[1])));
 
-   return( "" );
+    return("");
 }
 
 //------------------------------------------------------------------------------
 static void fillAsciiTable()
 {
 #ifdef LOG_INPUT
-   char buf[256];
-   Input::log( "--- Filling the ASCII table! ---\n" );
+    char buf[256];
+    Input::log("--- Filling the ASCII table! ---\n");
 #endif
 
-   //HKL   layout = GetKeyboardLayout( 0 );
-   U8    state[256];
-   U16   ascii[2];
-   U32   dikCode, vKeyCode, keyCode;
-   S32   result;
+    //HKL   layout = GetKeyboardLayout( 0 );
+    U8    state[256];
+    U16   ascii[2];
+    U32   dikCode, vKeyCode, keyCode;
+    S32   result;
 
-   dMemset( &AsciiTable, 0, sizeof( AsciiTable ) );
-   dMemset( &state, 0, sizeof( state ) );
+    dMemset(&AsciiTable, 0, sizeof(AsciiTable));
+    dMemset(&state, 0, sizeof(state));
 
-   for ( keyCode = KEY_FIRST; keyCode < NUM_KEYS; keyCode++ )
-   {
-      ascii[0] = ascii[1] = 0;
-      dikCode  = Key_to_DIK( keyCode );
-      if ( dikCode )
-      {
-         //vKeyCode = MapVirtualKeyEx( dikCode, 1, layout );
-         vKeyCode = MapVirtualKey( dikCode, 1 );
+    for (keyCode = KEY_FIRST; keyCode < NUM_KEYS; keyCode++)
+    {
+        ascii[0] = ascii[1] = 0;
+        dikCode = Key_to_DIK(keyCode);
+        if (dikCode)
+        {
+            //vKeyCode = MapVirtualKeyEx( dikCode, 1, layout );
+            vKeyCode = MapVirtualKey(dikCode, 1);
 #ifdef LOG_INPUT
-         dSprintf( buf, sizeof( buf ), "KC: %#04X DK: %#04X VK: %#04X\n",
-               keyCode, dikCode, vKeyCode );
-         Input::log( buf );
+            dSprintf(buf, sizeof(buf), "KC: %#04X DK: %#04X VK: %#04X\n",
+                keyCode, dikCode, vKeyCode);
+            Input::log(buf);
 #endif
 
-         // Lower case:
-         ascii[0] = ascii[1] = 0;
-         //result = ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
-         result = ToAscii( vKeyCode, dikCode, state, ascii, 0 );
+            // Lower case:
+            ascii[0] = ascii[1] = 0;
+            //result = ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
+            result = ToAscii(vKeyCode, dikCode, state, ascii, 0);
 #ifdef LOG_INPUT
-         dSprintf( buf, sizeof( buf ), "  LOWER- R: %d A[0]: %#06X A[1]: %#06X\n",
-               result, ascii[0], ascii[1] );
-         Input::log( buf );
+            dSprintf(buf, sizeof(buf), "  LOWER- R: %d A[0]: %#06X A[1]: %#06X\n",
+                result, ascii[0], ascii[1]);
+            Input::log(buf);
 #endif
-         if ( result == 2 )
-            AsciiTable[keyCode].lower.ascii = ascii[1] ? ascii[1] : ( ascii[0] >> 8 );
-         else if ( result == 1 )
-            AsciiTable[keyCode].lower.ascii = ascii[0];
-         else if ( result < 0 )
-         {
-            AsciiTable[keyCode].lower.ascii = ascii[0];
-            AsciiTable[keyCode].lower.isDeadChar = true;
-            // Need to clear the dead character from the keyboard layout:
-            //ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
-            ToAscii( vKeyCode, dikCode, state, ascii, 0 );
-         }
+            if (result == 2)
+                AsciiTable[keyCode].lower.ascii = ascii[1] ? ascii[1] : (ascii[0] >> 8);
+            else if (result == 1)
+                AsciiTable[keyCode].lower.ascii = ascii[0];
+            else if (result < 0)
+            {
+                AsciiTable[keyCode].lower.ascii = ascii[0];
+                AsciiTable[keyCode].lower.isDeadChar = true;
+                // Need to clear the dead character from the keyboard layout:
+                //ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
+                ToAscii(vKeyCode, dikCode, state, ascii, 0);
+            }
 
-         // Upper case:
-         ascii[0] = ascii[1] = 0;
-         state[VK_SHIFT] = 0x80;
-         //result = ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
-         result = ToAscii( vKeyCode, dikCode, state, ascii, 0 );
+            // Upper case:
+            ascii[0] = ascii[1] = 0;
+            state[VK_SHIFT] = 0x80;
+            //result = ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
+            result = ToAscii(vKeyCode, dikCode, state, ascii, 0);
 #ifdef LOG_INPUT
-         dSprintf( buf, sizeof( buf ), "  UPPER- R: %d A[0]: %#06X A[1]: %#06X\n",
-               result, ascii[0], ascii[1] );
-         Input::log( buf );
+            dSprintf(buf, sizeof(buf), "  UPPER- R: %d A[0]: %#06X A[1]: %#06X\n",
+                result, ascii[0], ascii[1]);
+            Input::log(buf);
 #endif
-         if ( result == 2 )
-            AsciiTable[keyCode].upper.ascii = ascii[1] ? ascii[1] : ( ascii[0] >> 8 );
-         else if ( result == 1 )
-            AsciiTable[keyCode].upper.ascii = ascii[0];
-         else if ( result < 0 )
-         {
-            AsciiTable[keyCode].upper.ascii = ascii[0];
-            AsciiTable[keyCode].upper.isDeadChar = true;
-            // Need to clear the dead character from the keyboard layout:
-            //ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
-            ToAscii( vKeyCode, dikCode, state, ascii, 0 );
-         }
-         state[VK_SHIFT] = 0;
+            if (result == 2)
+                AsciiTable[keyCode].upper.ascii = ascii[1] ? ascii[1] : (ascii[0] >> 8);
+            else if (result == 1)
+                AsciiTable[keyCode].upper.ascii = ascii[0];
+            else if (result < 0)
+            {
+                AsciiTable[keyCode].upper.ascii = ascii[0];
+                AsciiTable[keyCode].upper.isDeadChar = true;
+                // Need to clear the dead character from the keyboard layout:
+                //ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
+                ToAscii(vKeyCode, dikCode, state, ascii, 0);
+            }
+            state[VK_SHIFT] = 0;
 
-         // Foreign mod case:
-         ascii[0] = ascii[1] = 0;
-         state[VK_CONTROL] = 0x80;
-         state[VK_MENU] = 0x80;
-         //result = ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
-         result = ToAscii( vKeyCode, dikCode, state, ascii, 0 );
+            // Foreign mod case:
+            ascii[0] = ascii[1] = 0;
+            state[VK_CONTROL] = 0x80;
+            state[VK_MENU] = 0x80;
+            //result = ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
+            result = ToAscii(vKeyCode, dikCode, state, ascii, 0);
 #ifdef LOG_INPUT
-         dSprintf( buf, sizeof( buf ), "  GOOFY- R: %d A[0]: %#06X A[1]: %#06X\n",
-               result, ascii[0], ascii[1] );
-         Input::log( buf );
+            dSprintf(buf, sizeof(buf), "  GOOFY- R: %d A[0]: %#06X A[1]: %#06X\n",
+                result, ascii[0], ascii[1]);
+            Input::log(buf);
 #endif
-         if ( result == 2 )
-            AsciiTable[keyCode].goofy.ascii = ascii[1] ? ascii[1] : ( ascii[0] >> 8 );
-         else if ( result == 1 )
-            AsciiTable[keyCode].goofy.ascii = ascii[0];
-         else if ( result < 0 )
-         {
-            AsciiTable[keyCode].goofy.ascii = ascii[0];
-            AsciiTable[keyCode].goofy.isDeadChar = true;
-            // Need to clear the dead character from the keyboard layout:
-            //ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
-            ToAscii( vKeyCode, dikCode, state, ascii, 0 );
-         }
-         state[VK_CONTROL] = 0;
-         state[VK_MENU] = 0;
-      }
-   }
+            if (result == 2)
+                AsciiTable[keyCode].goofy.ascii = ascii[1] ? ascii[1] : (ascii[0] >> 8);
+            else if (result == 1)
+                AsciiTable[keyCode].goofy.ascii = ascii[0];
+            else if (result < 0)
+            {
+                AsciiTable[keyCode].goofy.ascii = ascii[0];
+                AsciiTable[keyCode].goofy.isDeadChar = true;
+                // Need to clear the dead character from the keyboard layout:
+                //ToAsciiEx( vKeyCode, dikCode, state, ascii, 0, layout );
+                ToAscii(vKeyCode, dikCode, state, ascii, 0);
+            }
+            state[VK_CONTROL] = 0;
+            state[VK_MENU] = 0;
+        }
+    }
 
 #ifdef LOG_INPUT
-   Input::log( "--- Finished filling the ASCII table! ---\n\n" );
+    Input::log("--- Finished filling the ASCII table! ---\n\n");
 #endif
 }
 
 //------------------------------------------------------------------------------
-U16 Input::getKeyCode( U16 asciiCode )
+U16 Input::getKeyCode(U16 asciiCode)
 {
-   U16 keyCode = 0;
-   U16 i;
+    U16 keyCode = 0;
+    U16 i;
 
-   // This is done three times so the lowerkey will always
-   // be found first. Some foreign keyboards have duplicate
-   // chars on some keys.
-   for ( i = KEY_FIRST; i < NUM_KEYS && !keyCode; i++ )
-   {
-      if ( AsciiTable[i].lower.ascii == asciiCode )
-      {
-         keyCode = i;
-         break;
-      };
-   }
+    // This is done three times so the lowerkey will always
+    // be found first. Some foreign keyboards have duplicate
+    // chars on some keys.
+    for (i = KEY_FIRST; i < NUM_KEYS && !keyCode; i++)
+    {
+        if (AsciiTable[i].lower.ascii == asciiCode)
+        {
+            keyCode = i;
+            break;
+        };
+    }
 
-   for ( i = KEY_FIRST; i < NUM_KEYS && !keyCode; i++ )
-   {
-      if ( AsciiTable[i].upper.ascii == asciiCode )
-      {
-         keyCode = i;
-         break;
-      };
-   }
+    for (i = KEY_FIRST; i < NUM_KEYS && !keyCode; i++)
+    {
+        if (AsciiTable[i].upper.ascii == asciiCode)
+        {
+            keyCode = i;
+            break;
+        };
+    }
 
-   for ( i = KEY_FIRST; i < NUM_KEYS && !keyCode; i++ )
-   {
-      if ( AsciiTable[i].goofy.ascii == asciiCode )
-      {
-         keyCode = i;
-         break;
-      };
-   }
+    for (i = KEY_FIRST; i < NUM_KEYS && !keyCode; i++)
+    {
+        if (AsciiTable[i].goofy.ascii == asciiCode)
+        {
+            keyCode = i;
+            break;
+        };
+    }
 
-   return( keyCode );
+    return(keyCode);
 }
 
 //------------------------------------------------------------------------------
-U16 Input::getAscii( U16 keyCode, KEY_STATE keyState )
+U16 Input::getAscii(U16 keyCode, KEY_STATE keyState)
 {
-   if ( keyCode >= NUM_KEYS )
-      return 0;
+    if (keyCode >= NUM_KEYS)
+        return 0;
 
-   switch ( keyState )
-   {
-      case STATE_LOWER:
-         return AsciiTable[keyCode].lower.ascii;
-      case STATE_UPPER:
-         return AsciiTable[keyCode].upper.ascii;
-      case STATE_GOOFY:
-         return AsciiTable[keyCode].goofy.ascii;
-      default:
-         return(0);
+    switch (keyState)
+    {
+    case STATE_LOWER:
+        return AsciiTable[keyCode].lower.ascii;
+    case STATE_UPPER:
+        return AsciiTable[keyCode].upper.ascii;
+    case STATE_GOOFY:
+        return AsciiTable[keyCode].goofy.ascii;
+    default:
+        return(0);
 
-   }
+    }
 }
 
 //------------------------------------------------------------------------------
 void Input::destroy()
 {
-   if ( smManager && smManager->isEnabled() )
-   {
-      smManager->disable();
-      delete smManager;
-      smManager = NULL;
-   }
+    if (smManager && smManager->isEnabled())
+    {
+        smManager->disable();
+        delete smManager;
+        smManager = NULL;
+    }
 
 #ifdef LOG_INPUT
-   if ( gInputLog )
-   {
-      log( "*** CLOSING LOG ***\n" );
-      CloseHandle( gInputLog );
-      gInputLog = NULL;
-   }
+    if (gInputLog)
+    {
+        log("*** CLOSING LOG ***\n");
+        CloseHandle(gInputLog);
+        gInputLog = NULL;
+    }
 #endif
 }
 
 //------------------------------------------------------------------------------
 bool Input::enable()
 {
-   if ( smManager && !smManager->isEnabled() )
-      return( smManager->enable() );
+    if (smManager && !smManager->isEnabled())
+        return(smManager->enable());
 
-   return( false );
+    return(false);
 }
 
 //------------------------------------------------------------------------------
 void Input::disable()
 {
-   if ( smManager && smManager->isEnabled() )
-      smManager->disable();
+    if (smManager && smManager->isEnabled())
+        smManager->disable();
 }
 
 //------------------------------------------------------------------------------
@@ -359,127 +359,127 @@ void Input::disable()
 void Input::activate()
 {
 #ifdef UNICODE
-   winState.imeHandle = ImmGetContext( winState.appWindow );
-   ImmReleaseContext( winState.appWindow, winState.imeHandle );
+    winState.imeHandle = ImmGetContext(winState.appWindow);
+    ImmReleaseContext(winState.appWindow, winState.imeHandle);
 #endif
 
-   DInputDevice::resetModifierKeys();
-   if ( !Con::getBoolVariable( "$enableDirectInput" ) )
-      return;
+    DInputDevice::resetModifierKeys();
+    if (!Con::getBoolVariable("$enableDirectInput"))
+        return;
 
-   if ( smManager && smManager->isEnabled() && !smActive )
-   {
-      Con::printf( "Activating DirectInput..." );
+    if (smManager && smManager->isEnabled() && !smActive)
+    {
+        Con::printf("Activating DirectInput...");
 #ifdef LOG_INPUT
-      Input::log( "Activating DirectInput...\n" );
+        Input::log("Activating DirectInput...\n");
 #endif
-      smActive = true;
-      DInputManager* dInputManager = dynamic_cast<DInputManager*>( smManager );
-      if ( dInputManager )
-      {
-         if ( dInputManager->isKeyboardEnabled() && smLastKeyboardActivated )
-            dInputManager->activateKeyboard();
+        smActive = true;
+        DInputManager* dInputManager = dynamic_cast<DInputManager*>(smManager);
+        if (dInputManager)
+        {
+            if (dInputManager->isKeyboardEnabled() && smLastKeyboardActivated)
+                dInputManager->activateKeyboard();
 
-         if ( GFX->getVideoMode().fullScreen )
-         {
-            // DirectInput Mouse Hook-Up:
-            if ( dInputManager->isMouseEnabled() && smLastMouseActivated )
-               dInputManager->activateMouse();
-         }
-         else
-            dInputManager->deactivateMouse();
+            if (GFX->getVideoMode().fullScreen)
+            {
+                // DirectInput Mouse Hook-Up:
+                if (dInputManager->isMouseEnabled() && smLastMouseActivated)
+                    dInputManager->activateMouse();
+            }
+            else
+                dInputManager->deactivateMouse();
 
-         if ( dInputManager->isJoystickEnabled() && smLastJoystickActivated )
-            dInputManager->activateJoystick();
-      }
-   }
+            if (dInputManager->isJoystickEnabled() && smLastJoystickActivated)
+                dInputManager->activateJoystick();
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
 void Input::deactivate()
 {
-   if ( smManager && smManager->isEnabled() && smActive )
-   {
+    if (smManager && smManager->isEnabled() && smActive)
+    {
 #ifdef LOG_INPUT
-      Input::log( "Deactivating DirectInput...\n" );
+        Input::log("Deactivating DirectInput...\n");
 #endif
-      DInputManager* dInputManager = dynamic_cast<DInputManager*>( smManager );
+        DInputManager* dInputManager = dynamic_cast<DInputManager*>(smManager);
 
-      if ( dInputManager )
-      {
-         smLastKeyboardActivated = dInputManager->isKeyboardActive();
-         smLastMouseActivated    = dInputManager->isMouseActive();
-         smLastJoystickActivated = dInputManager->isJoystickActive();
+        if (dInputManager)
+        {
+            smLastKeyboardActivated = dInputManager->isKeyboardActive();
+            smLastMouseActivated = dInputManager->isMouseActive();
+            smLastJoystickActivated = dInputManager->isJoystickActive();
 
-         dInputManager->deactivateKeyboard();
-         dInputManager->deactivateMouse();
-         dInputManager->deactivateJoystick();
-      }
+            dInputManager->deactivateKeyboard();
+            dInputManager->deactivateMouse();
+            dInputManager->deactivateJoystick();
+        }
 
-      smActive = false;
-      Con::printf( "DirectInput deactivated." );
-   }
+        smActive = false;
+        Con::printf("DirectInput deactivated.");
+    }
 }
 
 //------------------------------------------------------------------------------
 void Input::reactivate()
 {
-   // This is soo hacky...
-   //SetForegroundWindow( winState.appWindow );
-   //PostMessage( winState.appWindow, WM_ACTIVATE, WA_ACTIVE, NULL );
-   SetForegroundWindow( winState.appWindow );
-   PostMessage( winState.appWindow, WM_ACTIVATE, WA_ACTIVE, NULL );
+    // This is soo hacky...
+    //SetForegroundWindow( winState.appWindow );
+    //PostMessage( winState.appWindow, WM_ACTIVATE, WA_ACTIVE, NULL );
+    SetForegroundWindow(winState.appWindow);
+    PostMessage(winState.appWindow, WM_ACTIVATE, WA_ACTIVE, NULL);
 }
 
 //------------------------------------------------------------------------------
 bool Input::isEnabled()
 {
-   if ( smManager )
-      return smManager->isEnabled();
-   return false;
+    if (smManager)
+        return smManager->isEnabled();
+    return false;
 }
 
 //------------------------------------------------------------------------------
 bool Input::isActive()
 {
-   return smActive;
+    return smActive;
 }
 
 //------------------------------------------------------------------------------
 void Input::process()
 {
-   if ( smManager && smManager->isEnabled() && smActive )
-      smManager->process();
+    if (smManager && smManager->isEnabled() && smActive)
+        smManager->process();
 }
 
 //------------------------------------------------------------------------------
 InputManager* Input::getManager()
 {
-   return( smManager );
+    return(smManager);
 }
 
 #ifdef LOG_INPUT
 //------------------------------------------------------------------------------
-void Input::log( const char* format, ... )
+void Input::log(const char* format, ...)
 {
-   if ( !gInputLog )
-      return;
+    if (!gInputLog)
+        return;
 
-   va_list argptr;
-   va_start( argptr, format );
+    va_list argptr;
+    va_start(argptr, format);
 
-   char buffer[512];
-   dVsprintf( buffer, 511, format, argptr );
-   DWORD bytes;
-   WriteFile( gInputLog, buffer, dStrlen( buffer ), &bytes, NULL );
+    char buffer[512];
+    dVsprintf(buffer, 511, format, argptr);
+    DWORD bytes;
+    WriteFile(gInputLog, buffer, dStrlen(buffer), &bytes, NULL);
 
-   va_end( argptr );
+    va_end(argptr);
 }
 
-ConsoleFunction( inputLog, void, 2, 2, "inputLog( string )" )
+ConsoleFunction(inputLog, void, 2, 2, "inputLog( string )")
 {
-   argc;
-   Input::log( "%s\n", argv[1] );
+    argc;
+    Input::log("%s\n", argv[1]);
 }
 #endif // LOG_INPUT
 
@@ -768,61 +768,61 @@ KEY_OEM_102,         // 0xE2  VK_OEM_102
 //------------------------------------------------------------------------------
 U8 TranslateOSKeyCode(U8 vcode)
 {
-   return VcodeRemap[vcode];
+    return VcodeRemap[vcode];
 }
 
 //-----------------------------------------------------------------------------
 // Clipboard functions
 const char* Platform::getClipboard()
 {
-   HGLOBAL hGlobal;
-   LPVOID  pGlobal;
+    HGLOBAL hGlobal;
+    LPVOID  pGlobal;
 
-	//make sure we can access the clipboard
-	if (!IsClipboardFormatAvailable(CF_TEXT))
-		return "";
-   if (!OpenClipboard(NULL))
-		return "";
+    //make sure we can access the clipboard
+    if (!IsClipboardFormatAvailable(CF_TEXT))
+        return "";
+    if (!OpenClipboard(NULL))
+        return "";
 
-   hGlobal = GetClipboardData(CF_TEXT);
-   pGlobal = GlobalLock(hGlobal);
-	S32 cbLength = strlen((char *)pGlobal);
-   char  *returnBuf = Con::getReturnBuffer(cbLength + 1);
-	strcpy(returnBuf, (char *)pGlobal);
-	returnBuf[cbLength] = '\0';
-   GlobalUnlock(hGlobal);
-   CloseClipboard();
+    hGlobal = GetClipboardData(CF_TEXT);
+    pGlobal = GlobalLock(hGlobal);
+    S32 cbLength = strlen((char*)pGlobal);
+    char* returnBuf = Con::getReturnBuffer(cbLength + 1);
+    strcpy(returnBuf, (char*)pGlobal);
+    returnBuf[cbLength] = '\0';
+    GlobalUnlock(hGlobal);
+    CloseClipboard();
 
-	//note - this function never returns NULL
-	return returnBuf;
+    //note - this function never returns NULL
+    return returnBuf;
 }
 
 //-----------------------------------------------------------------------------
-bool Platform::setClipboard(const char *text)
+bool Platform::setClipboard(const char* text)
 {
-	if (!text)
-		return false;
+    if (!text)
+        return false;
 
-	//make sure we can access the clipboard
-   if (!OpenClipboard(NULL))
-		return false;
+    //make sure we can access the clipboard
+    if (!OpenClipboard(NULL))
+        return false;
 
-	S32 cbLength = strlen(text);
+    S32 cbLength = strlen(text);
 
-	HGLOBAL hGlobal;
-	LPVOID  pGlobal;
+    HGLOBAL hGlobal;
+    LPVOID  pGlobal;
 
-	hGlobal = GlobalAlloc(GHND, cbLength + 1);
-	pGlobal = GlobalLock (hGlobal);
+    hGlobal = GlobalAlloc(GHND, cbLength + 1);
+    pGlobal = GlobalLock(hGlobal);
 
-	strcpy((char *)pGlobal, text);
+    strcpy((char*)pGlobal, text);
 
-	GlobalUnlock(hGlobal);
+    GlobalUnlock(hGlobal);
 
-	EmptyClipboard();
-	SetClipboardData(CF_TEXT, hGlobal);
-	CloseClipboard();
+    EmptyClipboard();
+    SetClipboardData(CF_TEXT, hGlobal);
+    CloseClipboard();
 
-	return true;
+    return true;
 }
 

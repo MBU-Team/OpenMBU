@@ -9,25 +9,25 @@
 typedef Vector<char*> CharVector;
 static CharVector gPlatformDirectoryExcludeList;
 
-void Platform::addExcludedDirectory(const char *pDir)
+void Platform::addExcludedDirectory(const char* pDir)
 {
-   gPlatformDirectoryExcludeList.push_back(dStrdup(pDir));
+    gPlatformDirectoryExcludeList.push_back(dStrdup(pDir));
 }
 
 void Platform::clearExcludedDirectories()
 {
-   while(gPlatformDirectoryExcludeList.size())
-   {
-      dFree(gPlatformDirectoryExcludeList.last());
-      gPlatformDirectoryExcludeList.pop_back();
-   }
+    while (gPlatformDirectoryExcludeList.size())
+    {
+        dFree(gPlatformDirectoryExcludeList.last());
+        gPlatformDirectoryExcludeList.pop_back();
+    }
 }
 
-bool Platform::isExcludedDirectory(const char *pDir)
+bool Platform::isExcludedDirectory(const char* pDir)
 {
-   for(CharVector::iterator i=gPlatformDirectoryExcludeList.begin(); i!=gPlatformDirectoryExcludeList.end(); i++)
-      if(!dStrcmp(pDir, *i))
-         return true;
+    for (CharVector::iterator i = gPlatformDirectoryExcludeList.begin(); i != gPlatformDirectoryExcludeList.end(); i++)
+        if (!dStrcmp(pDir, *i))
+            return true;
 
-   return false;
+    return false;
 }

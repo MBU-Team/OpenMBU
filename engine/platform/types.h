@@ -36,15 +36,15 @@ typedef const char* StringTableEntry;
 //-------------------------------------- Type constants...
 #define __EQUAL_CONST_F F32(0.000001)                             ///< Constant float epsilon used for F32 comparisons
 
-static const F32 Float_One  = F32(1.0);                           ///< Constant float 1.0
+static const F32 Float_One = F32(1.0);                           ///< Constant float 1.0
 static const F32 Float_Half = F32(0.5);                           ///< Constant float 0.5
 static const F32 Float_Zero = F32(0.0);                           ///< Constant float 0.0
-static const F32 Float_Pi   = F32(3.14159265358979323846);        ///< Constant float PI
-static const F32 Float_2Pi  = F32(2.0 * 3.14159265358979323846);  ///< Constant float 2*PI
+static const F32 Float_Pi = F32(3.14159265358979323846);        ///< Constant float PI
+static const F32 Float_2Pi = F32(2.0 * 3.14159265358979323846);  ///< Constant float 2*PI
 
-static const S8  S8_MIN  = S8(-128);                              ///< Constant Min Limit S8
-static const S8  S8_MAX  = S8(127);                               ///< Constant Max Limit S8
-static const U8  U8_MAX  = U8(255);                               ///< Constant Max Limit U8
+static const S8  S8_MIN = S8(-128);                              ///< Constant Min Limit S8
+static const S8  S8_MAX = S8(127);                               ///< Constant Max Limit S8
+static const U8  U8_MAX = U8(255);                               ///< Constant Max Limit U8
 
 static const S16 S16_MIN = S16(-32768);                           ///< Constant Min Limit S16
 static const S16 S16_MAX = S16(32767);                            ///< Constant Max Limit S16
@@ -93,18 +93,18 @@ U32 getBinLog2(U32 io_num);
  */
 inline bool isPow2(const U32 in_num)
 {
-   return (in_num == getNextPow2(in_num));
+    return (in_num == getNextPow2(in_num));
 }
 
 inline U32 getFastBinLog2(const U32 value)
 {
-   const F32 floatValue = (const F32)value;
-   return (*((U32 *) &floatValue) >> 23) - 127;
+    const F32 floatValue = (const F32)value;
+    return (*((U32*)&floatValue) >> 23) - 127;
 }
 
 inline U32 getFastBinLog2(const F32 value)
 {
-   return (*((U32 *) &value) >> 23) - 127;
+    return (*((U32*)&value) >> 23) - 127;
 }
 
 /**
@@ -114,8 +114,8 @@ inline U32 getFastBinLog2(const F32 value)
  */
 inline U16 endianSwap(const U16 in_swap)
 {
-   return U16(((in_swap >> 8) & 0x00ff) |
-              ((in_swap << 8) & 0xff00));
+    return U16(((in_swap >> 8) & 0x00ff) |
+        ((in_swap << 8) & 0xff00));
 }
 
 /**
@@ -125,10 +125,10 @@ inline U16 endianSwap(const U16 in_swap)
  */
 inline U32 endianSwap(const U32 in_swap)
 {
-   return U32(((in_swap >> 24) & 0x000000ff) |
-              ((in_swap >>  8) & 0x0000ff00) |
-              ((in_swap <<  8) & 0x00ff0000) |
-              ((in_swap << 24) & 0xff000000));
+    return U32(((in_swap >> 24) & 0x000000ff) |
+        ((in_swap >> 8) & 0x0000ff00) |
+        ((in_swap << 8) & 0x00ff0000) |
+        ((in_swap << 24) & 0xff000000));
 }
 
 //----------------Many versions of min and max-------------
@@ -137,97 +137,97 @@ inline U32 endianSwap(const U32 in_swap)
 /// Returns the lesser of the two parameters: a & b.
 inline U32 getMin(U32 a, U32 b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the lesser of the two parameters: a & b.
 inline U16 getMin(U16 a, U16 b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the lesser of the two parameters: a & b.
 inline U8 getMin(U8 a, U8 b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the lesser of the two parameters: a & b.
 inline S32 getMin(S32 a, S32 b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the lesser of the two parameters: a & b.
 inline S16 getMin(S16 a, S16 b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the lesser of the two parameters: a & b.
 inline S8 getMin(S8 a, S8 b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the lesser of the two parameters: a & b.
 inline float getMin(float a, float b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the lesser of the two parameters: a & b.
 inline double getMin(double a, double b)
 {
-   return a>b ? b : a;
+    return a > b ? b : a;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline U32 getMax(U32 a, U32 b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline U16 getMax(U16 a, U16 b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline U8 getMax(U8 a, U8 b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline S32 getMax(S32 a, S32 b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline S16 getMax(S16 a, S16 b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline S8 getMax(S8 a, S8 b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline float getMax(float a, float b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 /// Returns the greater of the two parameters: a & b.
 inline double getMax(double a, double b)
 {
-   return a>b ? a : b;
+    return a > b ? a : b;
 }
 
 //-------------------------------------- Use this instead of Win32 FOURCC()

@@ -21,21 +21,21 @@
 /// @see SplinePatch
 class QuadPatch : public SplinePatch
 {
-   typedef SplinePatch Parent;
+    typedef SplinePatch Parent;
 
 private:
-   Point3F a, b, c;
+    Point3F a, b, c;
 
-   void calcABC( const Point3F *points );
+    void calcABC(const Point3F* points);
 
 public:
 
-   QuadPatch();
+    QuadPatch();
 
-   virtual void   calc( F32 t, Point3F &result );
-   virtual void   calc( Point3F *points, F32 t, Point3F &result );
-   virtual void   setControlPoint( Point3F &point, int index );
-   virtual void   submitControlPoints( SplCtrlPts &points );
+    virtual void   calc(F32 t, Point3F& result);
+    virtual void   calc(Point3F* points, F32 t, Point3F& result);
+    virtual void   setControlPoint(Point3F& point, int index);
+    virtual void   submitControlPoints(SplCtrlPts& points);
 
 
 };

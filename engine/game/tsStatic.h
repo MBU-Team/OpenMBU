@@ -24,93 +24,93 @@ class Shadow;
 //--------------------------------------------------------------------------
 class TSStaticConvex : public Convex
 {
-   typedef Convex Parent;
-   friend class TSStatic;
+    typedef Convex Parent;
+    friend class TSStatic;
 
-  protected:
-   TSStatic* pStatic;
-   MatrixF*  nodeTransform;
+protected:
+    TSStatic* pStatic;
+    MatrixF* nodeTransform;
 
-  public:
-   U32       hullId;
-   Box3F     box;
+public:
+    U32       hullId;
+    Box3F     box;
 
-  public:
-   TSStaticConvex() { mType = TSStaticConvexType; nodeTransform = 0; }
-   TSStaticConvex(const TSStaticConvex& cv) {
-      mType      = TSStaticConvexType;
-      mObject    = cv.mObject;
-      pStatic    = cv.pStatic;
-      nodeTransform = cv.nodeTransform;
-      hullId     = cv.hullId;
-      box        = box;
-   }
+public:
+    TSStaticConvex() { mType = TSStaticConvexType; nodeTransform = 0; }
+    TSStaticConvex(const TSStaticConvex& cv) {
+        mType = TSStaticConvexType;
+        mObject = cv.mObject;
+        pStatic = cv.pStatic;
+        nodeTransform = cv.nodeTransform;
+        hullId = cv.hullId;
+        box = box;
+    }
 
-   void findNodeTransform();
-   const MatrixF& getTransform() const;
-   Box3F getBoundingBox() const;
-   Box3F getBoundingBox(const MatrixF& mat, const Point3F& scale) const;
-   Point3F      support(const VectorF& v) const;
-   void         getFeatures(const MatrixF& mat,const VectorF& n, ConvexFeature* cf);
-   void         getPolyList(AbstractPolyList* list);
+    void findNodeTransform();
+    const MatrixF& getTransform() const;
+    Box3F getBoundingBox() const;
+    Box3F getBoundingBox(const MatrixF& mat, const Point3F& scale) const;
+    Point3F      support(const VectorF& v) const;
+    void         getFeatures(const MatrixF& mat, const VectorF& n, ConvexFeature* cf);
+    void         getPolyList(AbstractPolyList* list);
 };
 
 //--------------------------------------------------------------------------
 class TSStatic : public SceneObject
 {
-   typedef SceneObject Parent;
-   friend class TSStaticConvex;
+    typedef SceneObject Parent;
+    friend class TSStaticConvex;
 
-   static U32 smUniqueIdentifier;
+    static U32 smUniqueIdentifier;
 
-   enum Constants {
-      MaxCollisionShapes = 8
-   };
+    enum Constants {
+        MaxCollisionShapes = 8
+    };
 
-   enum MaskBits {
-	  advancedStaticOptionsMask = Parent::NextFreeMask,
-	  NextFreeMask = Parent::NextFreeMask << 1
-   };
-   
-  protected:
-   bool onAdd();
-   void onRemove();
+    enum MaskBits {
+        advancedStaticOptionsMask = Parent::NextFreeMask,
+        NextFreeMask = Parent::NextFreeMask << 1
+    };
 
-   // Collision
-   bool castRay(const Point3F &start, const Point3F &end, RayInfo* info);
-   bool buildPolyList(AbstractPolyList* polyList, const Box3F &box, const SphereF& sphere);
-   void buildConvex(const Box3F& box, Convex* convex);
-  protected:
-   Convex* mConvexList;
+protected:
+    bool onAdd();
+    void onRemove();
 
-   StringTableEntry  mShapeName;
-   U32               mShapeHash;
-   Resource<TSShape> mShape;
-   TSShapeInstance*  mShapeInstance;
-   Shadow * mShadow;
+    // Collision
+    bool castRay(const Point3F& start, const Point3F& end, RayInfo* info);
+    bool buildPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere);
+    void buildConvex(const Box3F& box, Convex* convex);
+protected:
+    Convex* mConvexList;
 
-   Vector<S32>            mCollisionDetails;
-   Vector<S32>            mLOSDetails;
+    StringTableEntry  mShapeName;
+    U32               mShapeHash;
+    Resource<TSShape> mShape;
+    TSShapeInstance* mShapeInstance;
+    Shadow* mShadow;
 
-   // Rendering
-  protected:
-   bool prepRenderImage  ( SceneState *state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState=false);
-   void renderObject     ( SceneState *state);
-   //void renderShadow     ( F32 dist, F32 fogAmount);
-   void setTransform     ( const MatrixF &mat);
+    Vector<S32>            mCollisionDetails;
+    Vector<S32>            mLOSDetails;
 
-  public:
-   TSStatic();
-   ~TSStatic();
+    // Rendering
+protected:
+    bool prepRenderImage(SceneState* state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState = false);
+    void renderObject(SceneState* state);
+    //void renderShadow     ( F32 dist, F32 fogAmount);
+    void setTransform(const MatrixF& mat);
 
-   DECLARE_CONOBJECT(TSStatic);
-   static void initPersistFields();
+public:
+    TSStatic();
+    ~TSStatic();
 
-   U32  packUpdate  (NetConnection *conn, U32 mask, BitStream *stream);
-   void unpackUpdate(NetConnection *conn,           BitStream *stream);
+    DECLARE_CONOBJECT(TSStatic);
+    static void initPersistFields();
+
+    U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
+    void unpackUpdate(NetConnection* conn, BitStream* stream);
 
 
-   void inspectPostApply();
+    void inspectPostApply();
 };
 
 #endif // _H_TSSTATIC

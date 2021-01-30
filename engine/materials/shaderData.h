@@ -18,38 +18,38 @@
 //**************************************************************************
 class ShaderData : public SimObject
 {
-   typedef SimObject Parent;
+    typedef SimObject Parent;
 
 public:
 
-   //--------------------------------------------------------------
-   // Data
-   //--------------------------------------------------------------
-   GFXShader             * shader;
+    //--------------------------------------------------------------
+    // Data
+    //--------------------------------------------------------------
+    GFXShader* shader;
 
-   F32                     pixVersion;
-   StringTableEntry        DXVertexShaderName;
-   StringTableEntry        DXPixelShaderName;
+    F32                     pixVersion;
+    StringTableEntry        DXVertexShaderName;
+    StringTableEntry        DXPixelShaderName;
 
-   StringTableEntry        OGLVertexShaderName;
-   StringTableEntry        OGLPixelShaderName;
+    StringTableEntry        OGLVertexShaderName;
+    StringTableEntry        OGLPixelShaderName;
 
 
-   //--------------------------------------------------------------
-   // Procedures
-   //--------------------------------------------------------------
+    //--------------------------------------------------------------
+    // Procedures
+    //--------------------------------------------------------------
 private:
 
 public:
-   ShaderData();
+    ShaderData();
 
-   static void initPersistFields();
-   bool onAdd();
-   bool initShader();
-   bool reloadShader();
-   void destroyShader();
+    static void initPersistFields();
+    bool onAdd();
+    bool initShader();
+    bool reloadShader();
+    void destroyShader();
 
-   DECLARE_CONOBJECT(ShaderData);
+    DECLARE_CONOBJECT(ShaderData);
 };
 
 

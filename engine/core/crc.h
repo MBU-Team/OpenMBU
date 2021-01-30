@@ -10,8 +10,8 @@
 
 class Stream;
 
-U32 calculateCRC(const void * buffer, S32 len, U32 crcVal = INITIAL_CRC_VALUE);
-U32 calculateCRCStream(Stream *stream, U32 crcVal = INITIAL_CRC_VALUE);
+U32 calculateCRC(const void* buffer, S32 len, U32 crcVal = INITIAL_CRC_VALUE);
+U32 calculateCRCStream(Stream* stream, U32 crcVal = INITIAL_CRC_VALUE);
 
 #endif
 

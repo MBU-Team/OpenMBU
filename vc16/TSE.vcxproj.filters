@@ -2749,9 +2749,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\engine\gui\game\guiAviBitmapCtrl.~cp">
-      <Filter>Source Files\gui\game</Filter>
-    </None>
     <None Include="..\engine\.editorconfig" />
   </ItemGroup>
   <ItemGroup>

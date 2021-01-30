@@ -19,17 +19,17 @@ class AtlasTextureSchema;
 class AtlasClassFactory
 {
 public:
-   /// Get a new instance of a TOC class given a name.
-   static AtlasTOC *factoryTOC(const char *name);
+    /// Get a new instance of a TOC class given a name.
+    static AtlasTOC* factoryTOC(const char* name);
 
-   /// Get the name of a TOC class given an instance.
-   static const char *getTOCName(AtlasTOC *toc);
+    /// Get the name of a TOC class given an instance.
+    static const char* getTOCName(AtlasTOC* toc);
 
-   /// Map schema names to schema instances.
-   static AtlasTextureSchema *factorySchema(const char *name);
+    /// Map schema names to schema instances.
+    static AtlasTextureSchema* factorySchema(const char* name);
 
-   /// Map schema instances to schema names.
-   static const char *getSchemaName(AtlasTextureSchema *schema);
+    /// Map schema instances to schema names.
+    static const char* getSchemaName(AtlasTextureSchema* schema);
 };
 
 #endif

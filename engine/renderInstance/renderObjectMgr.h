@@ -11,7 +11,7 @@
 //**************************************************************************
 class RenderObjectMgr : public RenderElemMgr
 {
-   void sort(){}  // don't sort them
-   void render();
+    void sort() {}  // don't sort them
+    void render();
 
 };

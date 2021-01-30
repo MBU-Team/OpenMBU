@@ -28,37 +28,37 @@
 
 class AudioStreamSource
 {
-	public:
-        //need this because subclasses are deleted through base pointer
-        virtual ~AudioStreamSource() {}
-		virtual bool initStream() = 0;
-		virtual bool updateBuffers() = 0;
-		virtual void freeStream() = 0;
-      virtual F32 getElapsedTime() = 0;
-      virtual F32 getTotalTime() = 0;
-		//void clear();
+public:
+    //need this because subclasses are deleted through base pointer
+    virtual ~AudioStreamSource() {}
+    virtual bool initStream() = 0;
+    virtual bool updateBuffers() = 0;
+    virtual void freeStream() = 0;
+    virtual F32 getElapsedTime() = 0;
+    virtual F32 getTotalTime() = 0;
+    //void clear();
 
-		AUDIOHANDLE             mHandle;
-		ALuint				    mSource;
+    AUDIOHANDLE             mHandle;
+    ALuint				    mSource;
 
-		Audio::Description      mDescription;
-		AudioSampleEnvironment *mEnvironment;
+    Audio::Description      mDescription;
+    AudioSampleEnvironment* mEnvironment;
 
-		Point3F                 mPosition;
-		Point3F                 mDirection;
-		F32                     mPitch;
-		F32                     mScore;
-		U32                     mCullTime;
+    Point3F                 mPosition;
+    Point3F                 mDirection;
+    F32                     mPitch;
+    F32                     mScore;
+    U32                     mCullTime;
 
-		bool					bFinishedPlaying;
-		bool					bIsValid;
+    bool					bFinishedPlaying;
+    bool					bIsValid;
 
 #ifdef TORQUE_OS_LINUX
-                void checkPosition();
+    void checkPosition();
 #endif             
 
-	protected:
-		const char* mFilename;
+protected:
+    const char* mFilename;
 };
 
 #endif // _AUDIOSTREAMSOURCE_H_

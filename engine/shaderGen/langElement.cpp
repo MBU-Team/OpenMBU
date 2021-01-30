@@ -15,26 +15,26 @@ Vector<LangElement*> LangElement::elementList;
 //--------------------------------------------------------------------------
 LangElement::LangElement()
 {
-   elementList.push_back( this );
+    elementList.push_back(this);
 
-   static U32 tempNum = 0;
-   dSprintf( (char*)name, sizeof(name), "tempName%d", tempNum++ );
+    static U32 tempNum = 0;
+    dSprintf((char*)name, sizeof(name), "tempName%d", tempNum++);
 }
 
 //--------------------------------------------------------------------------
 // Find element of specified name
 //--------------------------------------------------------------------------
-LangElement * LangElement::find( StringTableEntry name )
+LangElement* LangElement::find(StringTableEntry name)
 {
-   for( U32 i=0; i<elementList.size(); i++ )
-   {
-      if( !dStrcmp( (char*)elementList[i]->name, name ) )
-      {
-         return elementList[i];
-      }
-   }
-   
-   return NULL;
+    for (U32 i = 0; i < elementList.size(); i++)
+    {
+        if (!dStrcmp((char*)elementList[i]->name, name))
+        {
+            return elementList[i];
+        }
+    }
+
+    return NULL;
 }
 
 //--------------------------------------------------------------------------
@@ -42,21 +42,21 @@ LangElement * LangElement::find( StringTableEntry name )
 //--------------------------------------------------------------------------
 void LangElement::deleteElements()
 {
-   for( U32 i=0; i<elementList.size(); i++ )
-   {
-      delete elementList[i];
-   }
-   
-   elementList.setSize( 0 );
+    for (U32 i = 0; i < elementList.size(); i++)
+    {
+        delete elementList[i];
+    }
+
+    elementList.setSize(0);
 
 }
 
 //--------------------------------------------------------------------------
 // Set name
 //--------------------------------------------------------------------------
-void LangElement::setName( char *newName )
+void LangElement::setName(char* newName)
 {
-   dStrcpy( (char*)name, newName );
+    dStrcpy((char*)name, newName);
 }
 
 //**************************************************************************
@@ -66,55 +66,55 @@ U32 Var::texUnitCount = 0;
 
 Var::Var()
 {
-   dStrcpy( (char*)type, "float4" );
-   structName[0] = '\0';
-   uniform = false;
-   vertData = false;
-   connector = false;
-   sampler = false;
-   mapsToSampler = false;
-   texCoordNum = 0;
+    dStrcpy((char*)type, "float4");
+    structName[0] = '\0';
+    uniform = false;
+    vertData = false;
+    connector = false;
+    sampler = false;
+    mapsToSampler = false;
+    texCoordNum = 0;
 }
 
 
 //--------------------------------------------------------------------------
 // Set struct name
 //--------------------------------------------------------------------------
-void Var::setStructName( char *newName )
+void Var::setStructName(char* newName)
 {
-   dStrcpy( (char*)structName, newName );
+    dStrcpy((char*)structName, newName);
 }
 
 //--------------------------------------------------------------------------
 // Set connect name
 //--------------------------------------------------------------------------
-void Var::setConnectName( char *newName )
+void Var::setConnectName(char* newName)
 {
-   dStrcpy( (char*)connectName, newName );
+    dStrcpy((char*)connectName, newName);
 }
 
 //--------------------------------------------------------------------------
 // Set type
 //--------------------------------------------------------------------------
-void Var::setType( char *newType )
+void Var::setType(char* newType)
 {
-   dStrcpy( (char*)type, newType );
+    dStrcpy((char*)type, newType);
 }
 
 //--------------------------------------------------------------------------
 // print
 //--------------------------------------------------------------------------
-void Var::print( Stream &stream )
+void Var::print(Stream& stream)
 {
-   if( structName[0] != '\0' )
-   {
-      stream.write( dStrlen((char*)structName), structName );
-      stream.write( 1, "." );
-   }
+    if (structName[0] != '\0')
+    {
+        stream.write(dStrlen((char*)structName), structName);
+        stream.write(1, ".");
+    }
 
 
 
-   stream.write( dStrlen((char*)name), name );
+    stream.write(dStrlen((char*)name), name);
 }
 
 //--------------------------------------------------------------------------
@@ -122,7 +122,7 @@ void Var::print( Stream &stream )
 //--------------------------------------------------------------------------
 U32 Var::getTexUnitNum()
 {
-   return texUnitCount++;
+    return texUnitCount++;
 }
 
 //--------------------------------------------------------------------------
@@ -130,29 +130,29 @@ U32 Var::getTexUnitNum()
 //--------------------------------------------------------------------------
 void Var::reset()
 {
-   texUnitCount = 0;
+    texUnitCount = 0;
 }
 
 //**************************************************************************
 // Multi line statement
 //**************************************************************************
-void MultiLine::addStatement( LangElement *elem )
+void MultiLine::addStatement(LangElement* elem)
 {
-   AssertFatal( elem, "Attempting to add empty statement" );
+    AssertFatal(elem, "Attempting to add empty statement");
 
-   mStatementList.push_back( elem );
+    mStatementList.push_back(elem);
 }
 
 //--------------------------------------------------------------------------
 // Print
 //--------------------------------------------------------------------------
-void MultiLine::print( Stream &stream )
+void MultiLine::print(Stream& stream)
 {
-   for( U32 i=0; i<mStatementList.size(); i++ )
-   {
-      mStatementList[i]->print( stream );
-   }
+    for (U32 i = 0; i < mStatementList.size(); i++)
+    {
+        mStatementList[i]->print(stream);
+    }
 
-} 
+}
 
 

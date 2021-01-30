@@ -14,8 +14,8 @@
 //---------------------------------------------------------------------------
 // Debug stuff:
 Point3F lineTestStart = Point3F(0, 0, 0);
-Point3F lineTestEnd =   Point3F(0, 1000, 0);
-Point3F lineTestIntersect =  Point3F(0, 0, 0);
+Point3F lineTestEnd = Point3F(0, 1000, 0);
+Point3F lineTestIntersect = Point3F(0, 0, 0);
 bool gSnapLine = false;
 
 //----------------------------------------------------------------------------
@@ -29,76 +29,76 @@ GameTSCtrl::GameTSCtrl()
 
 void GameTSCtrl::consoleInit()
 {
-   Con::addVariable("Game::renderPreview", TypeBool, &gRenderPreview);
+    Con::addVariable("Game::renderPreview", TypeBool, &gRenderPreview);
 }
 
 //---------------------------------------------------------------------------
-bool GameTSCtrl::processCameraQuery(CameraQuery *camq)
+bool GameTSCtrl::processCameraQuery(CameraQuery* camq)
 {
-   GameUpdateCameraFov();
-   return GameProcessCameraQuery(camq) || gRenderPreview; // Might be wrong - Matt
+    GameUpdateCameraFov();
+    return GameProcessCameraQuery(camq) || gRenderPreview; // Might be wrong - Matt
 }
 
 //---------------------------------------------------------------------------
-void GameTSCtrl::renderWorld(const RectI &updateRect)
+void GameTSCtrl::renderWorld(const RectI& updateRect)
 {
-   GameRenderWorld();
-   GFX->setClipRect(updateRect);
+    GameRenderWorld();
+    GFX->setClipRect(updateRect);
 }
 
 //---------------------------------------------------------------------------
-void GameTSCtrl::onMouseMove(const GuiEvent &evt)
+void GameTSCtrl::onMouseMove(const GuiEvent& evt)
 {
-   if(gSnapLine)
-      return;
+    if (gSnapLine)
+        return;
 
-   MatrixF mat;
-   Point3F vel;
-   if ( GameGetCameraTransform(&mat, &vel) )
-   {
-      Point3F pos;
-      mat.getColumn(3,&pos);
-      Point3F screenPoint(evt.mousePoint.x, evt.mousePoint.y, -1);
-      Point3F worldPoint;
-      if (unproject(screenPoint, &worldPoint)) {
-         Point3F vec = worldPoint - pos;
-         lineTestStart = pos;
-         vec.normalizeSafe();
-         lineTestEnd = pos + vec * 1000;
-      }
-   }
+    MatrixF mat;
+    Point3F vel;
+    if (GameGetCameraTransform(&mat, &vel))
+    {
+        Point3F pos;
+        mat.getColumn(3, &pos);
+        Point3F screenPoint(evt.mousePoint.x, evt.mousePoint.y, -1);
+        Point3F worldPoint;
+        if (unproject(screenPoint, &worldPoint)) {
+            Point3F vec = worldPoint - pos;
+            lineTestStart = pos;
+            vec.normalizeSafe();
+            lineTestEnd = pos + vec * 1000;
+        }
+    }
 }
 
-void GameTSCtrl::onRender(Point2I offset, const RectI &updateRect)
+void GameTSCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
-   bool disableSPMode = false;
-   if (gRenderPreview && !gSPMode)
-      disableSPMode = true;
+    bool disableSPMode = false;
+    if (gRenderPreview && !gSPMode)
+        disableSPMode = true;
 
-   if (gRenderPreview)
-      gSPMode = true;
+    if (gRenderPreview)
+        gSPMode = true;
 
-   // check if should bother with a render
-   GameConnection * con = GameConnection::getConnectionToServer();
-   bool skipRender = !con || (con->getWhiteOut() >= 1.f) || (con->getDamageFlash() >= 1.f) || (con->getBlackOut() >= 1.f);
+    // check if should bother with a render
+    GameConnection* con = GameConnection::getConnectionToServer();
+    bool skipRender = !con || (con->getWhiteOut() >= 1.f) || (con->getDamageFlash() >= 1.f) || (con->getBlackOut() >= 1.f);
 
-   if (gRenderPreview)
-      skipRender = false;
+    if (gRenderPreview)
+        skipRender = false;
 
-   if(!skipRender)
-      Parent::onRender(offset, updateRect);
+    if (!skipRender)
+        Parent::onRender(offset, updateRect);
 
-   GFX->setViewport( updateRect );
-   CameraQuery camq;
-   if(GameProcessCameraQuery(&camq))
-      GameRenderFilters(camq);
+    GFX->setViewport(updateRect);
+    CameraQuery camq;
+    if (GameProcessCameraQuery(&camq))
+        GameRenderFilters(camq);
 
-   if (disableSPMode)
-      gSPMode = false;
+    if (disableSPMode)
+        gSPMode = false;
 }
 
 //--------------------------------------------------------------------------
-ConsoleFunction( snapToggle, void, 1, 1, "()" )
+ConsoleFunction(snapToggle, void, 1, 1, "()")
 {
-   gSnapLine = !gSnapLine;
+    gSnapLine = !gSnapLine;
 }

@@ -18,50 +18,50 @@
 
 struct CameraQuery
 {
-   SimObject*  object;
-   F32         nearPlane;
-   F32         farPlane;
-   F32         fov;
-   MatrixF     cameraMatrix;
+    SimObject* object;
+    F32         nearPlane;
+    F32         farPlane;
+    F32         fov;
+    MatrixF     cameraMatrix;
 
-   //Point3F position;
-   //Point3F viewVector;
-   //Point3F upVector;
+    //Point3F position;
+    //Point3F viewVector;
+    //Point3F upVector;
 };
 
 class GuiTSCtrl : public GuiControl
 {
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
-   MatrixF     mSaveModelview;
-   MatrixF     mSaveProjection;
-   RectI       mSaveViewport;
+    MatrixF     mSaveModelview;
+    MatrixF     mSaveProjection;
+    RectI       mSaveViewport;
 
 
-   static U32     smFrameCount;
-   F32            mCameraZRot;
-   F32            mForceFOV;
+    static U32     smFrameCount;
+    F32            mCameraZRot;
+    F32            mForceFOV;
 
-   sgDRLSystem drlSystem;
+    sgDRLSystem drlSystem;
 
 public:
-   CameraQuery    mLastCameraQuery;
-   GuiTSCtrl();
+    CameraQuery    mLastCameraQuery;
+    GuiTSCtrl();
 
-   void onPreRender();
-   void onRender(Point2I offset, const RectI &updateRect);
-   virtual bool processCameraQuery(CameraQuery *query);
-   virtual void renderWorld(const RectI &updateRect);
+    void onPreRender();
+    void onRender(Point2I offset, const RectI& updateRect);
+    virtual bool processCameraQuery(CameraQuery* query);
+    virtual void renderWorld(const RectI& updateRect);
 
-   static void initPersistFields();
-   static void consoleInit();
+    static void initPersistFields();
+    static void consoleInit();
 
-   virtual void onRemove();
+    virtual void onRemove();
 
-   bool project(const Point3F &pt, Point3F *dest); // returns screen space X,Y and Z for world space point
-   bool unproject(const Point3F &pt, Point3F *dest); // returns world space point for X, Y and Z
+    bool project(const Point3F& pt, Point3F* dest); // returns screen space X,Y and Z for world space point
+    bool unproject(const Point3F& pt, Point3F* dest); // returns world space point for X, Y and Z
 
-   DECLARE_CONOBJECT(GuiTSCtrl);
+    DECLARE_CONOBJECT(GuiTSCtrl);
 };
 
 #endif

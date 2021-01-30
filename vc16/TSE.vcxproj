@@ -3959,7 +3959,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\engine\.editorconfig" />
-    <None Include="..\engine\gui\game\guiAviBitmapCtrl.~cp" />
     <CustomBuild Include="..\engine\math\mMathAMD_ASM.asm">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(ProjectDir)..\bin\nasm\nasmw.exe" -f win32 "%(FullPath)" -o "$(IntDir)%(Filename).obj"
 </Command>

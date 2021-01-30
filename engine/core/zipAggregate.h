@@ -18,49 +18,49 @@ class ZipDirFileHeader;
 
 class ZipAggregate
 {
-  public:
-   struct FileEntry {
-      enum {
-         Uncompressed = 0,
-         Compressed   = 1 << 0
-      };
+public:
+    struct FileEntry {
+        enum {
+            Uncompressed = 0,
+            Compressed = 1 << 0
+        };
 
-      const char* pPath;
-      const char* pFileName;
-      U32 fileOffset;
-      U32 fileSize;
-      U32 compressedFileSize;
-      U32 flags;
-   };
+        const char* pPath;
+        const char* pFileName;
+        U32 fileOffset;
+        U32 fileSize;
+        U32 compressedFileSize;
+        U32 flags;
+    };
 
-   //-------------------------------------- Instance scope members and decls.
-  private:
-   char*             m_pZipFileName;
-   Vector<FileEntry> m_fileList;
+    //-------------------------------------- Instance scope members and decls.
+private:
+    char* m_pZipFileName;
+    Vector<FileEntry> m_fileList;
 
-   void enterZipDirRecord(const ZipDirFileHeader& in_rHeader);
-   bool createZipDirectory(Stream*);
-   void destroyZipDirectory();
+    void enterZipDirRecord(const ZipDirFileHeader& in_rHeader);
+    bool createZipDirectory(Stream*);
+    void destroyZipDirectory();
 
-   ZipAggregate(const ZipAggregate&);   // disallowed
-  public:
-   ZipAggregate();
-   ~ZipAggregate();
+    ZipAggregate(const ZipAggregate&);   // disallowed
+public:
+    ZipAggregate();
+    ~ZipAggregate();
 
-   // Opening/Manipulation interface...
-  public:
-   bool openAggregate(const char* in_pFileName);
-   void closeAggregate();
-   bool refreshAggregate();
+    // Opening/Manipulation interface...
+public:
+    bool openAggregate(const char* in_pFileName);
+    void closeAggregate();
+    bool refreshAggregate();
 
-   // Entry iteration interface...
-  public:
-   typedef Vector<FileEntry>::const_iterator iterator;
+    // Entry iteration interface...
+public:
+    typedef Vector<FileEntry>::const_iterator iterator;
 
-   U32 numEntries() const                           { return m_fileList.size(); }
-   const FileEntry& operator[](const U32 idx) const { return m_fileList[idx]; }
-   iterator begin() const                           { return m_fileList.begin(); }
-   iterator end() const                             { return m_fileList.end(); }
+    U32 numEntries() const { return m_fileList.size(); }
+    const FileEntry& operator[](const U32 idx) const { return m_fileList[idx]; }
+    iterator begin() const { return m_fileList.begin(); }
+    iterator end() const { return m_fileList.end(); }
 };
 
 #endif //_ZIPAGGREGATE_H_

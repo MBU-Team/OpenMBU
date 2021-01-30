@@ -22,13 +22,13 @@ class NetObject;
 
 struct CameraScopeQuery
 {
-   NetObject *camera;       ///< Pointer to the viewing object.
-   Point3F pos;             ///< Position in world space
-   Point3F orientation;     ///< Viewing vector in world space
-   F32 fov;                 ///< Viewing angle/2
-   F32 sinFov;              ///< sin(fov/2);
-   F32 cosFov;              ///< cos(fov/2);
-   F32 visibleDistance;     ///< Visible distance.
+    NetObject* camera;       ///< Pointer to the viewing object.
+    Point3F pos;             ///< Position in world space
+    Point3F orientation;     ///< Viewing vector in world space
+    F32 fov;                 ///< Viewing angle/2
+    F32 sinFov;              ///< sin(fov/2);
+    F32 cosFov;              ///< cos(fov/2);
+    F32 visibleDistance;     ///< Visible distance.
 };
 
 struct GhostInfo;
@@ -200,204 +200,204 @@ struct GhostInfo;
 /// the documentation on AbstractClassRep for more details.
 ///
 /// @nosubgrouping
-class NetObject: public SimObject
+class NetObject : public SimObject
 {
-   // The Ghost Manager needs read/write access
-   friend class  NetConnection;
-   friend struct GhostInfo;
-   friend class  ProcessList;
+    // The Ghost Manager needs read/write access
+    friend class  NetConnection;
+    friend struct GhostInfo;
+    friend class  ProcessList;
 
-   // Not the best way to do this, but the event needs access to mNetFlags
-   friend class GhostAlwaysObjectEvent;
+    // Not the best way to do this, but the event needs access to mNetFlags
+    friend class GhostAlwaysObjectEvent;
 
 private:
-   typedef SimObject Parent;
+    typedef SimObject Parent;
 
-   /// Mask indicating which states are dirty and need to be retransmitted on this
-   /// object.
-   U32 mDirtyMaskBits;
+    /// Mask indicating which states are dirty and need to be retransmitted on this
+    /// object.
+    U32 mDirtyMaskBits;
 
-   /// @name Dirty List
-   ///
-   /// Whenever a NetObject becomes "dirty", we add it to the dirty list.
-   /// We also remove ourselves on the destructor.
-   ///
-   /// This is done so that when we want to send updates (in NetConnection),
-   /// it's very fast to find the objects that need to be updated.
-   /// @{
+    /// @name Dirty List
+    ///
+    /// Whenever a NetObject becomes "dirty", we add it to the dirty list.
+    /// We also remove ourselves on the destructor.
+    ///
+    /// This is done so that when we want to send updates (in NetConnection),
+    /// it's very fast to find the objects that need to be updated.
+    /// @{
 
-   /// Static pointer to the head of the dirty NetObject list.
-   static NetObject *mDirtyList;
+    /// Static pointer to the head of the dirty NetObject list.
+    static NetObject* mDirtyList;
 
-   /// Next item in the dirty list...
-   NetObject *mPrevDirtyList;
+    /// Next item in the dirty list...
+    NetObject* mPrevDirtyList;
 
-   /// Previous item in the dirty list...
-   NetObject *mNextDirtyList;
+    /// Previous item in the dirty list...
+    NetObject* mNextDirtyList;
 
-   /// @}
+    /// @}
 protected:
 
-   /// Pointer to the server object; used only when we are doing "short-circuited" networking.
-   ///
-   /// When we are running with client and server on the same system (which can happen be either
-   /// when we are doing a single player game, or if we're hosting a multiplayer game and having
-   /// someone playing on the same instance), we can do some short circuited code to enhance
-   /// performance.
-   ///
-   /// This variable is used to make it simpler; if we are running in short-circuited mode, it's set
-   /// to the object on the server that this NetObject is ghosting.
-   ///
-   /// @note "Premature optimization is the root of all evil" - Donald Knuth. The current codebase
-   ///       uses this feature in three small places, mostly for non-speed-related purposes.
-   SimObjectPtr<NetObject> mServerObject;
+    /// Pointer to the server object; used only when we are doing "short-circuited" networking.
+    ///
+    /// When we are running with client and server on the same system (which can happen be either
+    /// when we are doing a single player game, or if we're hosting a multiplayer game and having
+    /// someone playing on the same instance), we can do some short circuited code to enhance
+    /// performance.
+    ///
+    /// This variable is used to make it simpler; if we are running in short-circuited mode, it's set
+    /// to the object on the server that this NetObject is ghosting.
+    ///
+    /// @note "Premature optimization is the root of all evil" - Donald Knuth. The current codebase
+    ///       uses this feature in three small places, mostly for non-speed-related purposes.
+    SimObjectPtr<NetObject> mServerObject;
 
-   enum NetFlags
-   {
-      IsGhost           =  BIT(1),   ///< This is a ghost.
-      ScopeAlways       =  BIT(6),  ///< Object always ghosts to clients.
-      ScopeLocal        =  BIT(7),  ///< Ghost only to local client.
-      Ghostable         =  BIT(8),  ///< Set if this object CAN ghost.
+    enum NetFlags
+    {
+        IsGhost = BIT(1),   ///< This is a ghost.
+        ScopeAlways = BIT(6),  ///< Object always ghosts to clients.
+        ScopeLocal = BIT(7),  ///< Ghost only to local client.
+        Ghostable = BIT(8),  ///< Set if this object CAN ghost.
 
-      MaxNetFlagBit     =  15
-   };
+        MaxNetFlagBit = 15
+    };
 
-   BitSet32 mNetFlags;              ///< Flag values from NetFlags
-   U32 mNetIndex;                   ///< The index of this ghost in the GhostManager on the server.
+    BitSet32 mNetFlags;              ///< Flag values from NetFlags
+    U32 mNetIndex;                   ///< The index of this ghost in the GhostManager on the server.
 
-   GhostInfo *mFirstObjectRef;      ///< Head of a linked list storing GhostInfos referencing this NetObject.
+    GhostInfo* mFirstObjectRef;      ///< Head of a linked list storing GhostInfos referencing this NetObject.
 
 public:
-   NetObject();
-   ~NetObject();
+    NetObject();
+    ~NetObject();
 
-   /// @name Miscellaneous
-   /// @{
-   DECLARE_CONOBJECT(NetObject);
-   static void initPersistFields();
-   bool onAdd();
-   void onRemove();
-   /// @}
+    /// @name Miscellaneous
+    /// @{
+    DECLARE_CONOBJECT(NetObject);
+    static void initPersistFields();
+    bool onAdd();
+    void onRemove();
+    /// @}
 
-   static void collapseDirtyList();
+    static void collapseDirtyList();
 
-   /// Used to mark a bit as dirty; ie, that its corresponding set of fields need to be transmitted next update.
-   ///
-   /// @param   orMask   Bit(s) to set
-   void setMaskBits(U32 orMask);
+    /// Used to mark a bit as dirty; ie, that its corresponding set of fields need to be transmitted next update.
+    ///
+    /// @param   orMask   Bit(s) to set
+    void setMaskBits(U32 orMask);
 
-   /// Clear the specified bits from the dirty mask.
-   ///
-   /// @param   orMask   Bits to clear
-   void clearMaskBits(U32 orMask);
+    /// Clear the specified bits from the dirty mask.
+    ///
+    /// @param   orMask   Bits to clear
+    void clearMaskBits(U32 orMask);
 
-   ///  Scope the object to all connections.
-   ///
-   ///  The object is marked as ScopeAlways and is immediately ghosted to
-   ///  all active connections.  This function has no effect if the object
-   ///  is not marked as Ghostable.
-   void setScopeAlways();
+    ///  Scope the object to all connections.
+    ///
+    ///  The object is marked as ScopeAlways and is immediately ghosted to
+    ///  all active connections.  This function has no effect if the object
+    ///  is not marked as Ghostable.
+    void setScopeAlways();
 
-   /// Stop scoping the object to all connections.
-   ///
-   /// The object's ScopeAlways flag is cleared and the object is removed from
-   /// all current active connections.
-   void clearScopeAlways();
+    /// Stop scoping the object to all connections.
+    ///
+    /// The object's ScopeAlways flag is cleared and the object is removed from
+    /// all current active connections.
+    void clearScopeAlways();
 
-   /// This returns a value which is used to prioritize which objects need to be updated.
-   ///
-   /// In NetObject, our returned priority is 0.1 * updateSkips, so that less recently
-   /// updated objects are more likely to be updated.
-   ///
-   /// In subclasses, this can be adjusted. For instance, ShapeBase provides priority
-   /// based on proximity to the camera.
-   ///
-   /// @param  focusObject    Information from a previous call to onCameraScopeQuery.
-   /// @param  updateMask     Current update mask.
-   /// @param  updateSkips    Number of ticks we haven't been updated for.
-   /// @returns A floating point value indicating priority. These are typically < 5.0.
-   virtual F32 getUpdatePriority(CameraScopeQuery *focusObject, U32 updateMask, S32 updateSkips);
+    /// This returns a value which is used to prioritize which objects need to be updated.
+    ///
+    /// In NetObject, our returned priority is 0.1 * updateSkips, so that less recently
+    /// updated objects are more likely to be updated.
+    ///
+    /// In subclasses, this can be adjusted. For instance, ShapeBase provides priority
+    /// based on proximity to the camera.
+    ///
+    /// @param  focusObject    Information from a previous call to onCameraScopeQuery.
+    /// @param  updateMask     Current update mask.
+    /// @param  updateSkips    Number of ticks we haven't been updated for.
+    /// @returns A floating point value indicating priority. These are typically < 5.0.
+    virtual F32 getUpdatePriority(CameraScopeQuery* focusObject, U32 updateMask, S32 updateSkips);
 
-   /// Instructs this object to pack its state for transfer over the network.
-   ///
-   /// @param   conn    Net connection being used
-   /// @param   mask    Mask indicating fields to transmit.
-   /// @param   stream  Bitstream to pack data to
-   ///
-   /// @returns Any bits which were not dealt with. The value is stored by the networking
-   ///          system. Don't set bits you weren't passed.
-   virtual U32  packUpdate(NetConnection * conn, U32 mask, BitStream *stream);
+    /// Instructs this object to pack its state for transfer over the network.
+    ///
+    /// @param   conn    Net connection being used
+    /// @param   mask    Mask indicating fields to transmit.
+    /// @param   stream  Bitstream to pack data to
+    ///
+    /// @returns Any bits which were not dealt with. The value is stored by the networking
+    ///          system. Don't set bits you weren't passed.
+    virtual U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
 
-   /// Instructs this object to read state data previously packed with packUpdate.
-   ///
-   /// @param   conn    Net connection being used
-   /// @param   stream  stream to read from
-   virtual void unpackUpdate(NetConnection * conn, BitStream *stream);
+    /// Instructs this object to read state data previously packed with packUpdate.
+    ///
+    /// @param   conn    Net connection being used
+    /// @param   stream  stream to read from
+    virtual void unpackUpdate(NetConnection* conn, BitStream* stream);
 
-   /// Queries the object about information used to determine scope.
-   ///
-   /// Something that is 'in scope' is somehow interesting to the client.
-   ///
-   /// If we are a NetConnection's scope object, it calls this method to determine
-   /// how things should be scoped; basically, we tell it our field of view with camInfo,
-   /// and have the opportunity to manually mark items as "in scope" as we see fit.
-   ///
-   /// By default, we just mark all ghostable objects as in scope.
-   ///
-   /// @param   cr         Net connection requesting scope information.
-   /// @param   camInfo    Information about what this object can see.
-   virtual void onCameraScopeQuery(NetConnection *cr, CameraScopeQuery *camInfo);
+    /// Queries the object about information used to determine scope.
+    ///
+    /// Something that is 'in scope' is somehow interesting to the client.
+    ///
+    /// If we are a NetConnection's scope object, it calls this method to determine
+    /// how things should be scoped; basically, we tell it our field of view with camInfo,
+    /// and have the opportunity to manually mark items as "in scope" as we see fit.
+    ///
+    /// By default, we just mark all ghostable objects as in scope.
+    ///
+    /// @param   cr         Net connection requesting scope information.
+    /// @param   camInfo    Information about what this object can see.
+    virtual void onCameraScopeQuery(NetConnection* cr, CameraScopeQuery* camInfo);
 
-   /// Get the ghost index of this object.
-   U32 getNetIndex() { return mNetIndex; }
+    /// Get the ghost index of this object.
+    U32 getNetIndex() { return mNetIndex; }
 
-   bool isServerObject() const;  ///< Is this a server object?
-   bool isClientObject() const;  ///< Is this a client object?
+    bool isServerObject() const;  ///< Is this a server object?
+    bool isClientObject() const;  ///< Is this a client object?
 
-   bool isGhost() const;         ///< Is this is a ghost?
-   bool isScopeLocal() const;    ///< Should this object only be visible to the client which created it?
-   bool isScopeable() const;     ///< Is this object subject to scoping?
-   bool isGhostable() const;     ///< Is this object ghostable?
-   bool isGhostAlways() const;   ///< Should this object always be ghosted?
+    bool isGhost() const;         ///< Is this is a ghost?
+    bool isScopeLocal() const;    ///< Should this object only be visible to the client which created it?
+    bool isScopeable() const;     ///< Is this object subject to scoping?
+    bool isGhostable() const;     ///< Is this object ghostable?
+    bool isGhostAlways() const;   ///< Should this object always be ghosted?
 };
 
 //-----------------------------------------------------------------------------
 
 inline bool NetObject::isGhost() const
 {
-   return mNetFlags.test(IsGhost);
+    return mNetFlags.test(IsGhost);
 }
 
 inline bool NetObject::isClientObject() const
 {
-   return mNetFlags.test(IsGhost);
+    return mNetFlags.test(IsGhost);
 }
 
 inline bool NetObject::isServerObject() const
 {
-   return !mNetFlags.test(IsGhost);
+    return !mNetFlags.test(IsGhost);
 }
 
 inline bool NetObject::isScopeLocal() const
 {
-   return mNetFlags.test(ScopeLocal);
+    return mNetFlags.test(ScopeLocal);
 }
 
 inline bool NetObject::isScopeable() const
 {
-   return mNetFlags.test(Ghostable) && !mNetFlags.test(ScopeAlways);
+    return mNetFlags.test(Ghostable) && !mNetFlags.test(ScopeAlways);
 }
 
 inline bool NetObject::isGhostable() const
 {
-   return mNetFlags.test(Ghostable);
+    return mNetFlags.test(Ghostable);
 }
 
 inline bool NetObject::isGhostAlways() const
 {
-   AssertFatal(mNetFlags.test(Ghostable) || mNetFlags.test(ScopeAlways) == false,
-               "That's strange, a ScopeAlways non-ghostable object?  Something wrong here");
-   return mNetFlags.test(Ghostable) && mNetFlags.test(ScopeAlways);
+    AssertFatal(mNetFlags.test(Ghostable) || mNetFlags.test(ScopeAlways) == false,
+        "That's strange, a ScopeAlways non-ghostable object?  Something wrong here");
+    return mNetFlags.test(Ghostable) && mNetFlags.test(ScopeAlways);
 }
 
 #endif

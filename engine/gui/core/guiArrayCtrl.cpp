@@ -14,406 +14,406 @@ IMPLEMENT_CONOBJECT(GuiArrayCtrl);
 
 GuiArrayCtrl::GuiArrayCtrl()
 {
-   mActive = true;
+    mActive = true;
 
-   mCellSize.set(80, 30);
-   mSize = Point2I(5, 30);
-   mSelectedCell.set(-1, -1);
-   mMouseOverCell.set(-1, -1);
-   mHeaderDim.set(0, 0);
+    mCellSize.set(80, 30);
+    mSize = Point2I(5, 30);
+    mSelectedCell.set(-1, -1);
+    mMouseOverCell.set(-1, -1);
+    mHeaderDim.set(0, 0);
 }
 
 bool GuiArrayCtrl::onWake()
 {
-   if (! Parent::onWake())
-      return false;
+    if (!Parent::onWake())
+        return false;
 
-   //get the font
-   mFont = mProfile->mFont;
+    //get the font
+    mFont = mProfile->mFont;
 
-   return true;
+    return true;
 }
 
 void GuiArrayCtrl::onSleep()
 {
-   Parent::onSleep();
-   mFont = NULL;
+    Parent::onSleep();
+    mFont = NULL;
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
 void GuiArrayCtrl::setSize(Point2I newSize)
 {
-   mSize = newSize;
-   Point2I newExtent(newSize.x * mCellSize.x + mHeaderDim.x, newSize.y * mCellSize.y + mHeaderDim.y);
+    mSize = newSize;
+    Point2I newExtent(newSize.x * mCellSize.x + mHeaderDim.x, newSize.y * mCellSize.y + mHeaderDim.y);
 
-   resize(mBounds.point, newExtent);
+    resize(mBounds.point, newExtent);
 }
 
-void GuiArrayCtrl::getScrollDimensions(S32 &cell_size, S32 &num_cells)
+void GuiArrayCtrl::getScrollDimensions(S32& cell_size, S32& num_cells)
 {
-   cell_size = mCellSize.y;
-   num_cells = mSize.y;
+    cell_size = mCellSize.y;
+    num_cells = mSize.y;
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
 bool GuiArrayCtrl::cellSelected(Point2I cell)
 {
-   if (cell.x < 0 || cell.x >= mSize.x || cell.y < 0 || cell.y >= mSize.y)
-   {
-      mSelectedCell = Point2I(-1,-1);
-      return false;
-   }
+    if (cell.x < 0 || cell.x >= mSize.x || cell.y < 0 || cell.y >= mSize.y)
+    {
+        mSelectedCell = Point2I(-1, -1);
+        return false;
+    }
 
-   mSelectedCell = cell;
-   scrollSelectionVisible();
-   onCellSelected(cell);
-	setUpdate();
-   return true;
+    mSelectedCell = cell;
+    scrollSelectionVisible();
+    onCellSelected(cell);
+    setUpdate();
+    return true;
 }
 
 void GuiArrayCtrl::onCellSelected(Point2I cell)
 {
-  	Con::executef(this, 3, "onSelect", Con::getFloatArg(cell.x), Con::getFloatArg(cell.y));
+    Con::executef(this, 3, "onSelect", Con::getFloatArg(cell.x), Con::getFloatArg(cell.y));
 
-   //call the console function
-   if (mConsoleCommand[0])
-      Con::evaluate(mConsoleCommand, false);
+    //call the console function
+    if (mConsoleCommand[0])
+        Con::evaluate(mConsoleCommand, false);
 }
 
 void GuiArrayCtrl::setSelectedCell(Point2I cell)
 {
-   cellSelected(cell);
+    cellSelected(cell);
 }
 
 Point2I GuiArrayCtrl::getSelectedCell()
 {
-   return mSelectedCell;
+    return mSelectedCell;
 }
 
 void GuiArrayCtrl::scrollSelectionVisible()
 {
-   scrollCellVisible(mSelectedCell);
+    scrollCellVisible(mSelectedCell);
 }
 
 void GuiArrayCtrl::scrollCellVisible(Point2I cell)
 {
-   //make sure we have a parent
-   //make sure we have a valid cell selected
-   GuiScrollCtrl *parent = dynamic_cast<GuiScrollCtrl*>(getParent());
-   if(!parent || cell.x < 0 || cell.y < 0)
-      return;
+    //make sure we have a parent
+    //make sure we have a valid cell selected
+    GuiScrollCtrl* parent = dynamic_cast<GuiScrollCtrl*>(getParent());
+    if (!parent || cell.x < 0 || cell.y < 0)
+        return;
 
-   RectI cellBounds(cell.x * mCellSize.x, cell.y * mCellSize.y, mCellSize.x, mCellSize.y);
-   parent->scrollRectVisible(cellBounds);
+    RectI cellBounds(cell.x * mCellSize.x, cell.y * mCellSize.y, mCellSize.x, mCellSize.y);
+    parent->scrollRectVisible(cellBounds);
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
 void GuiArrayCtrl::onRenderColumnHeaders(Point2I offset, Point2I parentOffset, Point2I headerDim)
 {
-   if (mProfile->mBorder)
-   {
-      RectI cellR(offset.x + headerDim.x, parentOffset.y, mBounds.extent.x - headerDim.x, headerDim.y);
-      GFX->drawRectFill(cellR, mProfile->mBorderColor);
-   }
+    if (mProfile->mBorder)
+    {
+        RectI cellR(offset.x + headerDim.x, parentOffset.y, mBounds.extent.x - headerDim.x, headerDim.y);
+        GFX->drawRectFill(cellR, mProfile->mBorderColor);
+    }
 }
 
 void GuiArrayCtrl::onRenderRowHeader(Point2I offset, Point2I parentOffset, Point2I headerDim, Point2I cell)
 {
-   ColorI color;
-   RectI cellR;
-   if (cell.x % 2)
-      color.set(255, 0, 0, 255);
-   else
-      color.set(0, 255, 0, 255);
+    ColorI color;
+    RectI cellR;
+    if (cell.x % 2)
+        color.set(255, 0, 0, 255);
+    else
+        color.set(0, 255, 0, 255);
 
-   cellR.point.set(parentOffset.x, offset.y);
-   cellR.extent.set(headerDim.x, mCellSize.y);
-   GFX->drawRectFill(cellR, color);
+    cellR.point.set(parentOffset.x, offset.y);
+    cellR.extent.set(headerDim.x, mCellSize.y);
+    GFX->drawRectFill(cellR, color);
 }
 
 void GuiArrayCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, bool mouseOver)
 {
-   ColorI color(255 * (cell.x % 2), 255 * (cell.y % 2), 255 * ((cell.x + cell.y) % 2), 255);
-   if (selected)
-   {
-      color.set(255, 0, 0, 255);
-   }
-   else if (mouseOver)
-   {
-      color.set(0, 0, 255, 255);
-   }
+    ColorI color(255 * (cell.x % 2), 255 * (cell.y % 2), 255 * ((cell.x + cell.y) % 2), 255);
+    if (selected)
+    {
+        color.set(255, 0, 0, 255);
+    }
+    else if (mouseOver)
+    {
+        color.set(0, 0, 255, 255);
+    }
 
-   //draw the cell
-   RectI cellR(offset.x, offset.y, mCellSize.x, mCellSize.y);
-   GFX->drawRectFill(cellR, color);
+    //draw the cell
+    RectI cellR(offset.x, offset.y, mCellSize.x, mCellSize.y);
+    GFX->drawRectFill(cellR, color);
 }
 
-void GuiArrayCtrl::onRender(Point2I offset, const RectI &updateRect)
+void GuiArrayCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
-   //make sure we have a parent
-   GuiControl *parent = getParent();
-   if (! parent)
-      return;
+    //make sure we have a parent
+    GuiControl* parent = getParent();
+    if (!parent)
+        return;
 
-   S32 i, j;
-   RectI headerClip;
-   RectI clipRect(updateRect.point, updateRect.extent);
+    S32 i, j;
+    RectI headerClip;
+    RectI clipRect(updateRect.point, updateRect.extent);
 
-   Point2I parentOffset = parent->localToGlobalCoord(Point2I(0, 0));
+    Point2I parentOffset = parent->localToGlobalCoord(Point2I(0, 0));
 
-   //if we have column headings
-   if (mHeaderDim.y > 0)
-   {
-      headerClip.point.x =   parentOffset.x + mHeaderDim.x;
-      headerClip.point.y =   parentOffset.y;
-      headerClip.extent.x =  clipRect.extent.x;// - headerClip.point.x; // This seems to fix some strange problems with some Gui's, bug? -pw
-      headerClip.extent.y =  mHeaderDim.y;
+    //if we have column headings
+    if (mHeaderDim.y > 0)
+    {
+        headerClip.point.x = parentOffset.x + mHeaderDim.x;
+        headerClip.point.y = parentOffset.y;
+        headerClip.extent.x = clipRect.extent.x;// - headerClip.point.x; // This seems to fix some strange problems with some Gui's, bug? -pw
+        headerClip.extent.y = mHeaderDim.y;
 
-      if (headerClip.intersect(clipRect))
-      {
-         GFX->setClipRect(headerClip);
-
-         //now render the header
-         onRenderColumnHeaders(offset, parentOffset, mHeaderDim);
-
-         clipRect.point.y = headerClip.point.y + headerClip.extent.y - 1;
-      }
-      offset.y += mHeaderDim.y;
-   }
-
-   //if we have row headings
-   if (mHeaderDim.x > 0)
-   {
-      clipRect.point.x = getMax(clipRect.point.x, parentOffset.x + mHeaderDim.x);
-      offset.x += mHeaderDim.x;
-   }
-
-   //save the original for clipping the row headers
-   RectI origClipRect = clipRect;
-
-   for (j = 0; j < mSize.y; j++)
-   {
-      //skip until we get to a visible row
-      if ((j + 1) * mCellSize.y + offset.y < updateRect.point.y)
-         continue;
-
-      //break once we've reached the last visible row
-      if(j * mCellSize.y + offset.y >= updateRect.point.y + updateRect.extent.y)
-         break;
-
-      //render the header
-      if (mHeaderDim.x > 0)
-      {
-         headerClip.point.x = parentOffset.x;
-         headerClip.extent.x = mHeaderDim.x;
-         headerClip.point.y = offset.y + j * mCellSize.y;
-         headerClip.extent.y = mCellSize.y;
-         if (headerClip.intersect(origClipRect))
-         {
+        if (headerClip.intersect(clipRect))
+        {
             GFX->setClipRect(headerClip);
 
-            //render the row header
-            onRenderRowHeader(Point2I(0, offset.y + j * mCellSize.y),
-                              Point2I(parentOffset.x, offset.y + j * mCellSize.y),
-                              mHeaderDim, Point2I(0, j));
-         }
-      }
+            //now render the header
+            onRenderColumnHeaders(offset, parentOffset, mHeaderDim);
 
-      //render the cells for the row
-      for (i = 0; i < mSize.x; i++)
-      {
-         //skip past columns off the left edge
-         if ((i + 1) * mCellSize.x + offset.x < updateRect.point.x)
+            clipRect.point.y = headerClip.point.y + headerClip.extent.y - 1;
+        }
+        offset.y += mHeaderDim.y;
+    }
+
+    //if we have row headings
+    if (mHeaderDim.x > 0)
+    {
+        clipRect.point.x = getMax(clipRect.point.x, parentOffset.x + mHeaderDim.x);
+        offset.x += mHeaderDim.x;
+    }
+
+    //save the original for clipping the row headers
+    RectI origClipRect = clipRect;
+
+    for (j = 0; j < mSize.y; j++)
+    {
+        //skip until we get to a visible row
+        if ((j + 1) * mCellSize.y + offset.y < updateRect.point.y)
             continue;
 
-         //break once past the last visible column
-         if (i * mCellSize.x + offset.x >= updateRect.point.x + updateRect.extent.x)
+        //break once we've reached the last visible row
+        if (j * mCellSize.y + offset.y >= updateRect.point.y + updateRect.extent.y)
             break;
 
-         S32 cellx = offset.x + i * mCellSize.x;
-         S32 celly = offset.y + j * mCellSize.y;
+        //render the header
+        if (mHeaderDim.x > 0)
+        {
+            headerClip.point.x = parentOffset.x;
+            headerClip.extent.x = mHeaderDim.x;
+            headerClip.point.y = offset.y + j * mCellSize.y;
+            headerClip.extent.y = mCellSize.y;
+            if (headerClip.intersect(origClipRect))
+            {
+                GFX->setClipRect(headerClip);
 
-         RectI cellClip(cellx, celly, mCellSize.x, mCellSize.y);
+                //render the row header
+                onRenderRowHeader(Point2I(0, offset.y + j * mCellSize.y),
+                    Point2I(parentOffset.x, offset.y + j * mCellSize.y),
+                    mHeaderDim, Point2I(0, j));
+            }
+        }
 
-         //make sure the cell is within the update region
-         if (cellClip.intersect(clipRect))
-         {
-            //set the clip rect
-            GFX->setClipRect(cellClip);
+        //render the cells for the row
+        for (i = 0; i < mSize.x; i++)
+        {
+            //skip past columns off the left edge
+            if ((i + 1) * mCellSize.x + offset.x < updateRect.point.x)
+                continue;
 
-            //render the cell
-            onRenderCell(Point2I(cellx, celly), Point2I(i, j),
-               i == mSelectedCell.x && j == mSelectedCell.y,
-               i == mMouseOverCell.x && j == mMouseOverCell.y);
-         }
-      }
-   }
+            //break once past the last visible column
+            if (i * mCellSize.x + offset.x >= updateRect.point.x + updateRect.extent.x)
+                break;
+
+            S32 cellx = offset.x + i * mCellSize.x;
+            S32 celly = offset.y + j * mCellSize.y;
+
+            RectI cellClip(cellx, celly, mCellSize.x, mCellSize.y);
+
+            //make sure the cell is within the update region
+            if (cellClip.intersect(clipRect))
+            {
+                //set the clip rect
+                GFX->setClipRect(cellClip);
+
+                //render the cell
+                onRenderCell(Point2I(cellx, celly), Point2I(i, j),
+                    i == mSelectedCell.x && j == mSelectedCell.y,
+                    i == mMouseOverCell.x && j == mMouseOverCell.y);
+            }
+        }
+    }
 }
 
-void GuiArrayCtrl::onMouseDown(const GuiEvent &event)
+void GuiArrayCtrl::onMouseDown(const GuiEvent& event)
 {
-   if ( !mActive || !mAwake || !mVisible )
-      return;
+    if (!mActive || !mAwake || !mVisible)
+        return;
 
-   //let the guiControl method take care of the rest
-   Parent::onMouseDown(event);
+    //let the guiControl method take care of the rest
+    Parent::onMouseDown(event);
 
-   Point2I pt = globalToLocalCoord(event.mousePoint);
-   pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
-   Point2I cell(
-         (pt.x < 0 ? -1 : pt.x / mCellSize.x), 
-         (pt.y < 0 ? -1 : pt.y / mCellSize.y)
-      );
+    Point2I pt = globalToLocalCoord(event.mousePoint);
+    pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
+    Point2I cell(
+        (pt.x < 0 ? -1 : pt.x / mCellSize.x),
+        (pt.y < 0 ? -1 : pt.y / mCellSize.y)
+    );
 
-   if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
-   {
+    if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
+    {
 
-      //store the previously selected cell
-      Point2I prevSelected = mSelectedCell;
+        //store the previously selected cell
+        Point2I prevSelected = mSelectedCell;
 
-      //select the new cell
-      cellSelected(Point2I(cell.x, cell.y));
+        //select the new cell
+        cellSelected(Point2I(cell.x, cell.y));
 
-      //if we double clicked on the *same* cell, evaluate the altConsole Command
-      if ( ( event.mouseClickCount > 1 ) && ( prevSelected == mSelectedCell ) && mAltConsoleCommand[0] )
-         Con::evaluate( mAltConsoleCommand, false );
-   }
+        //if we double clicked on the *same* cell, evaluate the altConsole Command
+        if ((event.mouseClickCount > 1) && (prevSelected == mSelectedCell) && mAltConsoleCommand[0])
+            Con::evaluate(mAltConsoleCommand, false);
+    }
 }
 
-void GuiArrayCtrl::onMouseEnter(const GuiEvent &event)
+void GuiArrayCtrl::onMouseEnter(const GuiEvent& event)
 {
-   Point2I pt = globalToLocalCoord(event.mousePoint);
-   pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
+    Point2I pt = globalToLocalCoord(event.mousePoint);
+    pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
 
-   //get the cell
-   Point2I cell((pt.x < 0 ? -1 : pt.x / mCellSize.x), (pt.y < 0 ? -1 : pt.y / mCellSize.y));
-   if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
-   {
-      mMouseOverCell = cell;
-      setUpdateRegion(Point2I(cell.x * mCellSize.x + mHeaderDim.x,
-                              cell.y * mCellSize.y + mHeaderDim.y), mCellSize );
-   }
+    //get the cell
+    Point2I cell((pt.x < 0 ? -1 : pt.x / mCellSize.x), (pt.y < 0 ? -1 : pt.y / mCellSize.y));
+    if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
+    {
+        mMouseOverCell = cell;
+        setUpdateRegion(Point2I(cell.x * mCellSize.x + mHeaderDim.x,
+            cell.y * mCellSize.y + mHeaderDim.y), mCellSize);
+    }
 }
 
-void GuiArrayCtrl::onMouseLeave(const GuiEvent & /*event*/)
+void GuiArrayCtrl::onMouseLeave(const GuiEvent& /*event*/)
 {
-   setUpdateRegion(Point2I(mMouseOverCell.x * mCellSize.x + mHeaderDim.x,
-                           mMouseOverCell.y * mCellSize.y + mHeaderDim.y), mCellSize);
-   mMouseOverCell.set(-1,-1);
+    setUpdateRegion(Point2I(mMouseOverCell.x * mCellSize.x + mHeaderDim.x,
+        mMouseOverCell.y * mCellSize.y + mHeaderDim.y), mCellSize);
+    mMouseOverCell.set(-1, -1);
 }
 
-void GuiArrayCtrl::onMouseDragged(const GuiEvent &event)
+void GuiArrayCtrl::onMouseDragged(const GuiEvent& event)
 {
-   // for the array control, the behaviour of onMouseDragged is the same
-   // as on mouse moved - basically just recalc the currend mouse over cell
-   // and set the update regions if necessary
-   GuiArrayCtrl::onMouseMove(event);
+    // for the array control, the behaviour of onMouseDragged is the same
+    // as on mouse moved - basically just recalc the currend mouse over cell
+    // and set the update regions if necessary
+    GuiArrayCtrl::onMouseMove(event);
 }
 
-void GuiArrayCtrl::onMouseMove(const GuiEvent &event)
+void GuiArrayCtrl::onMouseMove(const GuiEvent& event)
 {
-   Point2I pt = globalToLocalCoord(event.mousePoint);
-   pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
-   Point2I cell((pt.x < 0 ? -1 : pt.x / mCellSize.x), (pt.y < 0 ? -1 : pt.y / mCellSize.y));
-   if (cell.x != mMouseOverCell.x || cell.y != mMouseOverCell.y)
-   {
-      if (mMouseOverCell.x != -1)
-      {
-         setUpdateRegion(Point2I(mMouseOverCell.x * mCellSize.x + mHeaderDim.x,
-                           mMouseOverCell.y * mCellSize.y + mHeaderDim.y), mCellSize);
-      }
+    Point2I pt = globalToLocalCoord(event.mousePoint);
+    pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
+    Point2I cell((pt.x < 0 ? -1 : pt.x / mCellSize.x), (pt.y < 0 ? -1 : pt.y / mCellSize.y));
+    if (cell.x != mMouseOverCell.x || cell.y != mMouseOverCell.y)
+    {
+        if (mMouseOverCell.x != -1)
+        {
+            setUpdateRegion(Point2I(mMouseOverCell.x * mCellSize.x + mHeaderDim.x,
+                mMouseOverCell.y * mCellSize.y + mHeaderDim.y), mCellSize);
+        }
 
-      if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
-      {
-         setUpdateRegion(Point2I(cell.x * mCellSize.x + mHeaderDim.x,
-                           cell.y * mCellSize.y + mHeaderDim.y), mCellSize);
-         mMouseOverCell = cell;
-      }
-      else
-         mMouseOverCell.set(-1,-1);
-   }
+        if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
+        {
+            setUpdateRegion(Point2I(cell.x * mCellSize.x + mHeaderDim.x,
+                cell.y * mCellSize.y + mHeaderDim.y), mCellSize);
+            mMouseOverCell = cell;
+        }
+        else
+            mMouseOverCell.set(-1, -1);
+    }
 }
 
-bool GuiArrayCtrl::onKeyDown(const GuiEvent &event)
+bool GuiArrayCtrl::onKeyDown(const GuiEvent& event)
 {
-   //if this control is a dead end, kill the event
-   if ((! mVisible) || (! mActive) || (! mAwake)) return true;
+    //if this control is a dead end, kill the event
+    if ((!mVisible) || (!mActive) || (!mAwake)) return true;
 
-   //get the parent
-   S32 pageSize = 1;
-   GuiControl *parent = getParent();
-   if (parent && mCellSize.y > 0)
-   {
-      pageSize = getMax(1, (parent->mBounds.extent.y / mCellSize.y) - 1);
-   }
+    //get the parent
+    S32 pageSize = 1;
+    GuiControl* parent = getParent();
+    if (parent && mCellSize.y > 0)
+    {
+        pageSize = getMax(1, (parent->mBounds.extent.y / mCellSize.y) - 1);
+    }
 
-   Point2I delta(0,0);
-   switch (event.keyCode)
-   {
-      case KEY_LEFT:
-         delta.set(-1, 0);
-         break;
-      case KEY_RIGHT:
-         delta.set(1, 0);
-         break;
-      case KEY_UP:
-         delta.set(0, -1);
-         break;
-      case KEY_DOWN:
-         delta.set(0, 1);
-         break;
-      case KEY_PAGE_UP:
-         delta.set(0, -pageSize);
-         break;
-      case KEY_PAGE_DOWN:
-         delta.set(0, pageSize);
-         break;
-      case KEY_HOME:
-         cellSelected( Point2I( 0, 0 ) );
-         return( true );
-      case KEY_END:
-         cellSelected( Point2I( 0, mSize.y - 1 ) );
-         return( true );
-      default:
-         return Parent::onKeyDown(event);
-   }
-   if (mSize.x < 1 || mSize.y < 1)
-      return true;
+    Point2I delta(0, 0);
+    switch (event.keyCode)
+    {
+    case KEY_LEFT:
+        delta.set(-1, 0);
+        break;
+    case KEY_RIGHT:
+        delta.set(1, 0);
+        break;
+    case KEY_UP:
+        delta.set(0, -1);
+        break;
+    case KEY_DOWN:
+        delta.set(0, 1);
+        break;
+    case KEY_PAGE_UP:
+        delta.set(0, -pageSize);
+        break;
+    case KEY_PAGE_DOWN:
+        delta.set(0, pageSize);
+        break;
+    case KEY_HOME:
+        cellSelected(Point2I(0, 0));
+        return(true);
+    case KEY_END:
+        cellSelected(Point2I(0, mSize.y - 1));
+        return(true);
+    default:
+        return Parent::onKeyDown(event);
+    }
+    if (mSize.x < 1 || mSize.y < 1)
+        return true;
 
-   //select the first cell if no previous cell was selected
-   if (mSelectedCell.x == -1 || mSelectedCell.y == -1)
-   {
-      cellSelected(Point2I(0,0));
-      return true;
-   }
+    //select the first cell if no previous cell was selected
+    if (mSelectedCell.x == -1 || mSelectedCell.y == -1)
+    {
+        cellSelected(Point2I(0, 0));
+        return true;
+    }
 
-   //select the cell
-   Point2I cell = mSelectedCell;
-   cell.x = getMax(0, getMin(mSize.x - 1, cell.x + delta.x));
-   cell.y = getMax(0, getMin(mSize.y - 1, cell.y + delta.y));
-   cellSelected(cell);
+    //select the cell
+    Point2I cell = mSelectedCell;
+    cell.x = getMax(0, getMin(mSize.x - 1, cell.x + delta.x));
+    cell.y = getMax(0, getMin(mSize.y - 1, cell.y + delta.y));
+    cellSelected(cell);
 
-   return true;
+    return true;
 }
 
-void GuiArrayCtrl::onRightMouseDown(const GuiEvent &event)
+void GuiArrayCtrl::onRightMouseDown(const GuiEvent& event)
 {
-   if ( !mActive || !mAwake || !mVisible )
-      return;
+    if (!mActive || !mAwake || !mVisible)
+        return;
 
-   Parent::onRightMouseDown( event );
+    Parent::onRightMouseDown(event);
 
-   Point2I pt = globalToLocalCoord( event.mousePoint );
-   pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
-   Point2I cell((pt.x < 0 ? -1 : pt.x / mCellSize.x), (pt.y < 0 ? -1 : pt.y / mCellSize.y));
-   if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
-   {
-      char buf[32];
-      dSprintf( buf, sizeof( buf ), "%d %d", event.mousePoint.x, event.mousePoint.y );
-      // Pass it to the console:
-  	   Con::executef(this, 4, "onRightMouseDown", Con::getIntArg(cell.x), Con::getIntArg(cell.y), buf);
-   }
+    Point2I pt = globalToLocalCoord(event.mousePoint);
+    pt.x -= mHeaderDim.x; pt.y -= mHeaderDim.y;
+    Point2I cell((pt.x < 0 ? -1 : pt.x / mCellSize.x), (pt.y < 0 ? -1 : pt.y / mCellSize.y));
+    if (cell.x >= 0 && cell.x < mSize.x && cell.y >= 0 && cell.y < mSize.y)
+    {
+        char buf[32];
+        dSprintf(buf, sizeof(buf), "%d %d", event.mousePoint.x, event.mousePoint.y);
+        // Pass it to the console:
+        Con::executef(this, 4, "onRightMouseDown", Con::getIntArg(cell.x), Con::getIntArg(cell.y), buf);
+    }
 }

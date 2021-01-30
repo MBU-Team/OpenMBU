@@ -16,8 +16,8 @@
 
 struct CameraQuery;
 
-const F32 MinCameraFov              = 1.f;      ///< min camera FOV
-const F32 MaxCameraFov              = 179.f;    ///< max camera FOV
+const F32 MinCameraFov = 1.f;      ///< min camera FOV
+const F32 MaxCameraFov = 179.f;    ///< max camera FOV
 
 extern bool gSPMode;
 extern bool gRenderPreview;
@@ -27,9 +27,9 @@ void GameRenderWorld();
 /// Renders overlays such as damage flashes, white outs, and water masks.  These are usually a color applied over the entire screen.
 void GameRenderFilters(const CameraQuery& camq);
 /// Does the same thing as GameGetCameraTransform, but fills in other data including information about the far and near clipping planes.
-bool GameProcessCameraQuery(CameraQuery *query);
+bool GameProcessCameraQuery(CameraQuery* query);
 /// Gets the position, rotation, and velocity of the camera.
-bool GameGetCameraTransform(MatrixF *mat, Point3F *velocity);
+bool GameGetCameraTransform(MatrixF* mat, Point3F* velocity);
 /// Gets the camera field of view angle.
 F32 GameGetCameraFov();
 /// Sets the field of view angle of the camera.

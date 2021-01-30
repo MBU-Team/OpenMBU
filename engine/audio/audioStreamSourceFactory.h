@@ -23,8 +23,8 @@
 
 class AudioStreamSourceFactory
 {
-	public:
-		static AudioStreamSource* getNewInstance(const char* filename);
-};  
+public:
+    static AudioStreamSource* getNewInstance(const char* filename);
+};
 
 #endif // _AUDIOSTREAMSOURCEFACTORY_H_

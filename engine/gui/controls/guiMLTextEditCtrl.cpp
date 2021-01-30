@@ -16,13 +16,13 @@ IMPLEMENT_CONOBJECT(GuiMLTextEditCtrl);
 //--------------------------------------------------------------------------
 GuiMLTextEditCtrl::GuiMLTextEditCtrl()
 {
-   mEscapeCommand = StringTable->insert( "" );
+    mEscapeCommand = StringTable->insert("");
 
-	mIsEditCtrl = true;
+    mIsEditCtrl = true;
 
-   mActive = true;
+    mActive = true;
 
-   mVertMoveAnchorValid = false;
+    mVertMoveAnchorValid = false;
 }
 
 
@@ -34,343 +34,343 @@ GuiMLTextEditCtrl::~GuiMLTextEditCtrl()
 
 
 //--------------------------------------------------------------------------
-void GuiMLTextEditCtrl::resize(const Point2I &newPosition, const Point2I &newExtent)
+void GuiMLTextEditCtrl::resize(const Point2I& newPosition, const Point2I& newExtent)
 {
-   // We don't want to get any smaller than our parent:
-   Point2I newExt = newExtent;
-   GuiControl* parent = getParent();
-   if ( parent )
-      newExt.y = getMax( parent->mBounds.extent.y, newExt.y );
+    // We don't want to get any smaller than our parent:
+    Point2I newExt = newExtent;
+    GuiControl* parent = getParent();
+    if (parent)
+        newExt.y = getMax(parent->mBounds.extent.y, newExt.y);
 
-   Parent::resize( newPosition, newExt );
+    Parent::resize(newPosition, newExt);
 }
 
 
 //--------------------------------------------------------------------------
 void GuiMLTextEditCtrl::initPersistFields()
 {
-   Parent::initPersistFields();
-   addField( "escapeCommand", TypeString, Offset( mEscapeCommand, GuiMLTextEditCtrl ) );
+    Parent::initPersistFields();
+    addField("escapeCommand", TypeString, Offset(mEscapeCommand, GuiMLTextEditCtrl));
 }
 
 //--------------------------------------------------------------------------
 // Key events...
 bool GuiMLTextEditCtrl::onKeyDown(const GuiEvent& event)
 {
-	setUpdate();
-	//handle modifiers first...
-   if (event.modifier & SI_CTRL)
-   {
-      switch(event.keyCode)
-      {
-			//copy/cut
-         case KEY_C:
-         case KEY_X:
-			{
-				//make sure we actually have something selected
-				if (mSelectionActive)
-				{
-		         copyToClipboard(mSelectionStart, mSelectionEnd);
-
-					//if we're cutting, also delete the selection
-					if (event.keyCode == KEY_X)
-					{
-			         mSelectionActive = false;
-			         deleteChars(mSelectionStart, mSelectionEnd);
-			         mCursorPosition = mSelectionStart;
-					}
-					else
-			         mCursorPosition = mSelectionEnd + 1;
-				}
-				return true;
-			}
-
-			//paste
-         case KEY_V:
-			{
-				const char *clipBuf = Platform::getClipboard();
-				if (dStrlen(clipBuf) > 0)
-				{
-			      // Normal ascii keypress.  Go ahead and add the chars...
-			      if (mSelectionActive == true)
-			      {
-			         mSelectionActive = false;
-			         deleteChars(mSelectionStart, mSelectionEnd);
-			         mCursorPosition = mSelectionStart;
-			      }
-
-			      insertChars(clipBuf, dStrlen(clipBuf), mCursorPosition);
-				}
-				return true;
-			}
-		}
-   }
-   else if ( event.modifier & SI_SHIFT )
-   {
-      switch ( event.keyCode )
-      {
-         case KEY_TAB:
-            return( Parent::onKeyDown( event ) );
-      }
-   }
-   else if ( event.modifier == 0 )
-   {
-      switch (event.keyCode)
-      {
-         // Escape:
-         case KEY_ESCAPE:
-            if ( mEscapeCommand[0] )
+    setUpdate();
+    //handle modifiers first...
+    if (event.modifier & SI_CTRL)
+    {
+        switch (event.keyCode)
+        {
+            //copy/cut
+        case KEY_C:
+        case KEY_X:
+        {
+            //make sure we actually have something selected
+            if (mSelectionActive)
             {
-               Con::evaluate( mEscapeCommand );
-               return( true );
-            }
-            return( Parent::onKeyDown( event ) );
+                copyToClipboard(mSelectionStart, mSelectionEnd);
 
-         // Deletion
-         case KEY_BACKSPACE:
-         case KEY_DELETE:
+                //if we're cutting, also delete the selection
+                if (event.keyCode == KEY_X)
+                {
+                    mSelectionActive = false;
+                    deleteChars(mSelectionStart, mSelectionEnd);
+                    mCursorPosition = mSelectionStart;
+                }
+                else
+                    mCursorPosition = mSelectionEnd + 1;
+            }
+            return true;
+        }
+
+        //paste
+        case KEY_V:
+        {
+            const char* clipBuf = Platform::getClipboard();
+            if (dStrlen(clipBuf) > 0)
+            {
+                // Normal ascii keypress.  Go ahead and add the chars...
+                if (mSelectionActive == true)
+                {
+                    mSelectionActive = false;
+                    deleteChars(mSelectionStart, mSelectionEnd);
+                    mCursorPosition = mSelectionStart;
+                }
+
+                insertChars(clipBuf, dStrlen(clipBuf), mCursorPosition);
+            }
+            return true;
+        }
+        }
+    }
+    else if (event.modifier & SI_SHIFT)
+    {
+        switch (event.keyCode)
+        {
+        case KEY_TAB:
+            return(Parent::onKeyDown(event));
+        }
+    }
+    else if (event.modifier == 0)
+    {
+        switch (event.keyCode)
+        {
+            // Escape:
+        case KEY_ESCAPE:
+            if (mEscapeCommand[0])
+            {
+                Con::evaluate(mEscapeCommand);
+                return(true);
+            }
+            return(Parent::onKeyDown(event));
+
+            // Deletion
+        case KEY_BACKSPACE:
+        case KEY_DELETE:
             handleDeleteKeys(event);
             return true;
 
-         // Cursor movement
-         case KEY_LEFT:
-         case KEY_RIGHT:
-         case KEY_UP:
-         case KEY_DOWN:
-         case KEY_HOME:
-         case KEY_END:
+            // Cursor movement
+        case KEY_LEFT:
+        case KEY_RIGHT:
+        case KEY_UP:
+        case KEY_DOWN:
+        case KEY_HOME:
+        case KEY_END:
             handleMoveKeys(event);
             return true;
 
-         // Special chars...
-         case KEY_TAB:
+            // Special chars...
+        case KEY_TAB:
             // insert 3 spaces
             if (mSelectionActive == true)
             {
-               mSelectionActive = false;
-               deleteChars(mSelectionStart, mSelectionEnd);
-               mCursorPosition = mSelectionStart;
+                mSelectionActive = false;
+                deleteChars(mSelectionStart, mSelectionEnd);
+                mCursorPosition = mSelectionStart;
             }
-            insertChars( "\t", 1, mCursorPosition );
+            insertChars("\t", 1, mCursorPosition);
             return true;
 
-         case KEY_RETURN:
+        case KEY_RETURN:
             // insert carriage return
             if (mSelectionActive == true)
             {
-               mSelectionActive = false;
-               deleteChars(mSelectionStart, mSelectionEnd);
-               mCursorPosition = mSelectionStart;
+                mSelectionActive = false;
+                deleteChars(mSelectionStart, mSelectionEnd);
+                mCursorPosition = mSelectionStart;
             }
-            insertChars( "\n", 1, mCursorPosition );
+            insertChars("\n", 1, mCursorPosition);
             return true;
-      }
-   }
+        }
+    }
 
-   if (event.ascii != 0)
-   {
-      // Normal ascii keypress.  Go ahead and add the chars...
-      if (mSelectionActive == true)
-      {
-         mSelectionActive = false;
-         deleteChars(mSelectionStart, mSelectionEnd);
-         mCursorPosition = mSelectionStart;
-      }
+    if (event.ascii != 0)
+    {
+        // Normal ascii keypress.  Go ahead and add the chars...
+        if (mSelectionActive == true)
+        {
+            mSelectionActive = false;
+            deleteChars(mSelectionStart, mSelectionEnd);
+            mCursorPosition = mSelectionStart;
+        }
 
-      UTF8 *outString = NULL;
-      U32 outStringLen = 0;
+        UTF8* outString = NULL;
+        U32 outStringLen = 0;
 
 #ifdef TORQUE_UNICODE
 
-      UTF16 inData[2] = { event.ascii, 0 };
-      StringBuffer inBuff(inData);
+        UTF16 inData[2] = { event.ascii, 0 };
+        StringBuffer inBuff(inData);
 
-      FrameTemp<UTF8> outBuff(4);
-      inBuff.get(outBuff, 4);
+        FrameTemp<UTF8> outBuff(4);
+        inBuff.get(outBuff, 4);
 
-      outString = outBuff;
-      outStringLen = dStrlen(outBuff);
+        outString = outBuff;
+        outStringLen = dStrlen(outBuff);
 #else
-      char ascii = char(event.ascii);
-      outString = &ascii;
-      outStringLen = 1;
+        char ascii = char(event.ascii);
+        outString = &ascii;
+        outStringLen = 1;
 #endif
 
-      insertChars(outString, outStringLen, mCursorPosition);
-      mVertMoveAnchorValid = false;
-      return true;
-   }
+        insertChars(outString, outStringLen, mCursorPosition);
+        mVertMoveAnchorValid = false;
+        return true;
+    }
 
-   // Otherwise, let the parent have the event...
-   return Parent::onKeyDown(event);
+    // Otherwise, let the parent have the event...
+    return Parent::onKeyDown(event);
 }
 
 
 //--------------------------------------
 void GuiMLTextEditCtrl::handleDeleteKeys(const GuiEvent& event)
 {
-   if ( isSelectionActive() )
-   {
-      mSelectionActive = false;
-      deleteChars(mSelectionStart, mSelectionEnd);
-      mCursorPosition = mSelectionStart;
-   }
-   else
-   {
-      switch ( event.keyCode )
-      {
-         case KEY_BACKSPACE:
+    if (isSelectionActive())
+    {
+        mSelectionActive = false;
+        deleteChars(mSelectionStart, mSelectionEnd);
+        mCursorPosition = mSelectionStart;
+    }
+    else
+    {
+        switch (event.keyCode)
+        {
+        case KEY_BACKSPACE:
             if (mCursorPosition != 0)
             {
-               // delete one character left
-               deleteChars(mCursorPosition-1, mCursorPosition-1);
-               setUpdate();
+                // delete one character left
+                deleteChars(mCursorPosition - 1, mCursorPosition - 1);
+                setUpdate();
             }
             break;
 
-         case KEY_DELETE:
+        case KEY_DELETE:
             if (mCursorPosition != mTextBuffer.length())
             {
-               // delete one character right
-               deleteChars(mCursorPosition, mCursorPosition);
-               setUpdate();
+                // delete one character right
+                deleteChars(mCursorPosition, mCursorPosition);
+                setUpdate();
             }
             break;
 
         default:
             AssertFatal(false, "Unknown key code received!");
-      }
-   }
+        }
+    }
 }
 
 
 //--------------------------------------
 void GuiMLTextEditCtrl::handleMoveKeys(const GuiEvent& event)
 {
-   if ( event.modifier & SI_SHIFT )
-      return;
+    if (event.modifier & SI_SHIFT)
+        return;
 
-   mSelectionActive = false;
+    mSelectionActive = false;
 
-   switch ( event.keyCode )
-   {
-      case KEY_LEFT:
-         mVertMoveAnchorValid = false;
-         // move one left
-         if ( mCursorPosition != 0 )
-         {
+    switch (event.keyCode)
+    {
+    case KEY_LEFT:
+        mVertMoveAnchorValid = false;
+        // move one left
+        if (mCursorPosition != 0)
+        {
             mCursorPosition--;
             setUpdate();
-         }
-         break;
+        }
+        break;
 
-      case KEY_RIGHT:
-         mVertMoveAnchorValid = false;
-         // move one right
-         if ( mCursorPosition != mTextBuffer.length() )
-         {
+    case KEY_RIGHT:
+        mVertMoveAnchorValid = false;
+        // move one right
+        if (mCursorPosition != mTextBuffer.length())
+        {
             mCursorPosition++;
             setUpdate();
-         }
-         break;
+        }
+        break;
 
-      case KEY_UP:
-      case KEY_DOWN:
-      {
-         Line* walk;
-         for ( walk = mLineList; walk->next; walk = walk->next )
-         {
-            if ( mCursorPosition <= ( walk->textStart + walk->len ) )
-               break;
-         }
+    case KEY_UP:
+    case KEY_DOWN:
+    {
+        Line* walk;
+        for (walk = mLineList; walk->next; walk = walk->next)
+        {
+            if (mCursorPosition <= (walk->textStart + walk->len))
+                break;
+        }
 
-         if ( !walk )
+        if (!walk)
             return;
 
-         if ( event.keyCode == KEY_UP )
-         {
-            if ( walk == mLineList )
-               return;
-         }
-         else if ( walk->next == NULL )
+        if (event.keyCode == KEY_UP)
+        {
+            if (walk == mLineList)
+                return;
+        }
+        else if (walk->next == NULL)
             return;
 
-         Point2I newPos;
-         newPos.set( 0, walk->y );
+        Point2I newPos;
+        newPos.set(0, walk->y);
 
-         // Find the x-position:
-         if ( !mVertMoveAnchorValid )
-         {
+        // Find the x-position:
+        if (!mVertMoveAnchorValid)
+        {
             Point2I cursorTopP, cursorBottomP;
             ColorI color;
             getCursorPositionAndColor(cursorTopP, cursorBottomP, color);
             mVertMoveAnchor = cursorTopP.x;
             mVertMoveAnchorValid = true;
-         }
+        }
 
-         newPos.x = mVertMoveAnchor;
+        newPos.x = mVertMoveAnchor;
 
-         // Set the new y-position:
-         if (event.keyCode == KEY_UP)
+        // Set the new y-position:
+        if (event.keyCode == KEY_UP)
             newPos.y--;
-         else
+        else
             newPos.y += (walk->height + 1);
 
-         if (setCursorPosition(getTextPosition(newPos)))
+        if (setCursorPosition(getTextPosition(newPos)))
             mVertMoveAnchorValid = false;
-         break;
-      }
+        break;
+    }
 
-      case KEY_HOME:
-      case KEY_END:
-      {
-         mVertMoveAnchorValid = false;
-         Line* walk;
-         for (walk = mLineList; walk->next; walk = walk->next)
-         {
+    case KEY_HOME:
+    case KEY_END:
+    {
+        mVertMoveAnchorValid = false;
+        Line* walk;
+        for (walk = mLineList; walk->next; walk = walk->next)
+        {
             if (mCursorPosition <= (walk->textStart + walk->len))
-               break;
-         }
+                break;
+        }
 
-         if (walk)
-         {
+        if (walk)
+        {
             if (event.keyCode == KEY_HOME)
             {
-               //place the cursor at the beginning of the first atom if there is one
-               if (walk->atomList)
-                  mCursorPosition = walk->atomList->textStart;
-               else
-                  mCursorPosition = walk->textStart;
+                //place the cursor at the beginning of the first atom if there is one
+                if (walk->atomList)
+                    mCursorPosition = walk->atomList->textStart;
+                else
+                    mCursorPosition = walk->textStart;
             }
             else
             {
-               mCursorPosition = walk->textStart;
-               mCursorPosition += walk->len;
+                mCursorPosition = walk->textStart;
+                mCursorPosition += walk->len;
             }
             setUpdate();
-         }
-         break;
-      }
+        }
+        break;
+    }
 
-      default:
-         AssertFatal(false, "Unknown move key code was received!");
-   }
+    default:
+        AssertFatal(false, "Unknown move key code was received!");
+    }
 
-   ensureCursorOnScreen();
+    ensureCursorOnScreen();
 }
 
 //--------------------------------------------------------------------------
 void GuiMLTextEditCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
-   Parent::onRender(offset, updateRect);
+    Parent::onRender(offset, updateRect);
 
-   // We are the first responder, draw our cursor in the appropriate position...
-   if (isFirstResponder()) 
-   {
-      Point2I top, bottom;
-      ColorI color;
-      getCursorPositionAndColor(top, bottom, color);
-      GFX->drawLine(top + offset, bottom + offset, mProfile->mCursorColor);
-   }
+    // We are the first responder, draw our cursor in the appropriate position...
+    if (isFirstResponder())
+    {
+        Point2I top, bottom;
+        ColorI color;
+        getCursorPositionAndColor(top, bottom, color);
+        GFX->drawLine(top + offset, bottom + offset, mProfile->mCursorColor);
+    }
 }
 

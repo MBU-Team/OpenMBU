@@ -47,130 +47,130 @@
 class GuiFrameSetCtrl : public GuiControl
 {
 private:
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 public:
-   enum
-   {
-      FRAME_STATE_ON,                                    // ON overrides OFF
-      FRAME_STATE_OFF,                                   // OFF overrides AUTO
-      FRAME_STATE_AUTO,                                  // AUTO == ON, unless overridden
+    enum
+    {
+        FRAME_STATE_ON,                                    // ON overrides OFF
+        FRAME_STATE_OFF,                                   // OFF overrides AUTO
+        FRAME_STATE_AUTO,                                  // AUTO == ON, unless overridden
 
-      NO_HIT = -1,
+        NO_HIT = -1,
 
-      DEFAULT_BORDER_WIDTH = 4,
-      DEFAULT_COLUMNS = 1,
-      DEFAULT_ROWS = 1,
-      DEFAULT_MIN_FRAME_EXTENT = 20
-   };
-   enum Region
-   {
-      VERTICAL_DIVIDER,
-      HORIZONTAL_DIVIDER,
-      DIVIDER_INTERSECTION,
-      NONE
-   };
-   struct FrameDetail
-   {
-      U32 mBorderWidth;
-      ColorI mBorderColor;
-      S32 mBorderEnable;
-      S32 mBorderMovable;
-      Point2I mMinExtent;
-      FrameDetail()                                      { mBorderWidth = DEFAULT_BORDER_WIDTH; mBorderEnable = FRAME_STATE_AUTO; mBorderMovable = FRAME_STATE_AUTO; mMinExtent.set(DEFAULT_MIN_FRAME_EXTENT, DEFAULT_MIN_FRAME_EXTENT); }
-   };
-   DECLARE_CONOBJECT(GuiFrameSetCtrl);
-   static void initPersistFields();
+        DEFAULT_BORDER_WIDTH = 4,
+        DEFAULT_COLUMNS = 1,
+        DEFAULT_ROWS = 1,
+        DEFAULT_MIN_FRAME_EXTENT = 20
+    };
+    enum Region
+    {
+        VERTICAL_DIVIDER,
+        HORIZONTAL_DIVIDER,
+        DIVIDER_INTERSECTION,
+        NONE
+    };
+    struct FrameDetail
+    {
+        U32 mBorderWidth;
+        ColorI mBorderColor;
+        S32 mBorderEnable;
+        S32 mBorderMovable;
+        Point2I mMinExtent;
+        FrameDetail() { mBorderWidth = DEFAULT_BORDER_WIDTH; mBorderEnable = FRAME_STATE_AUTO; mBorderMovable = FRAME_STATE_AUTO; mMinExtent.set(DEFAULT_MIN_FRAME_EXTENT, DEFAULT_MIN_FRAME_EXTENT); }
+    };
+    DECLARE_CONOBJECT(GuiFrameSetCtrl);
+    static void initPersistFields();
 
-   GuiFrameSetCtrl();
-   GuiFrameSetCtrl(U32 columns, U32 rows, const U32 columnOffsets[] = NULL, const U32 rowOffsets[] = NULL);
-   virtual ~GuiFrameSetCtrl();
+    GuiFrameSetCtrl();
+    GuiFrameSetCtrl(U32 columns, U32 rows, const U32 columnOffsets[] = NULL, const U32 rowOffsets[] = NULL);
+    virtual ~GuiFrameSetCtrl();
 
-   void addObject(SimObject *obj);
-   void removeObject(SimObject *obj);
+    void addObject(SimObject* obj);
+    void removeObject(SimObject* obj);
 
-   virtual void resize(const Point2I &newPosition, const Point2I &newExtent);
+    virtual void resize(const Point2I& newPosition, const Point2I& newExtent);
 
-   virtual void getCursor(GuiCursor *&cursor, bool &showCursor, const GuiEvent &lastGuiEvent);
+    virtual void getCursor(GuiCursor*& cursor, bool& showCursor, const GuiEvent& lastGuiEvent);
 
-   virtual void onMouseDown(const GuiEvent &event);
-   virtual void onMouseUp(const GuiEvent &event);
-   virtual void onMouseDragged(const GuiEvent &event);
-   virtual void onMouseEnter(const GuiEvent &event);
-   virtual void onMouseLeave(const GuiEvent &event);
+    virtual void onMouseDown(const GuiEvent& event);
+    virtual void onMouseUp(const GuiEvent& event);
+    virtual void onMouseDragged(const GuiEvent& event);
+    virtual void onMouseEnter(const GuiEvent& event);
+    virtual void onMouseLeave(const GuiEvent& event);
 
-   bool onAdd();
-   void onRender(Point2I offset, const RectI &updateRect );
+    bool onAdd();
+    void onRender(Point2I offset, const RectI& updateRect);
 protected:
-   /* member variables */
-   Vector<S32> mColumnOffsets;
-   Vector<S32> mRowOffsets;
-   GuiCursor *mMoveCursor;
-   GuiCursor *mUpDownCursor;
-   GuiCursor *mLeftRightCursor;
-   GuiCursor *mDefaultCursor;
-   FrameDetail mFramesetDetails;
-   VectorPtr<FrameDetail *> mFrameDetails;
-   bool mAutoBalance;
-   S32   mFudgeFactor;
+    /* member variables */
+    Vector<S32> mColumnOffsets;
+    Vector<S32> mRowOffsets;
+    GuiCursor* mMoveCursor;
+    GuiCursor* mUpDownCursor;
+    GuiCursor* mLeftRightCursor;
+    GuiCursor* mDefaultCursor;
+    FrameDetail mFramesetDetails;
+    VectorPtr<FrameDetail*> mFrameDetails;
+    bool mAutoBalance;
+    S32   mFudgeFactor;
 
-   /* divider activation member variables */
-   Region mCurHitRegion;
-   Point2I mLocOnDivider;
-   S32 mCurVerticalHit;
-   S32 mCurHorizontalHit;
+    /* divider activation member variables */
+    Region mCurHitRegion;
+    Point2I mLocOnDivider;
+    S32 mCurVerticalHit;
+    S32 mCurHorizontalHit;
 
-   bool init(U32 columns, U32 rows, const U32 columnOffsets[], const U32 rowOffsets[]);
-   bool initCursors();
+    bool init(U32 columns, U32 rows, const U32 columnOffsets[], const U32 rowOffsets[]);
+    bool initCursors();
 
-   Region findHitRegion(const Point2I &point);
-   Region pointInAnyRegion(const Point2I &point);
-   S32 findResizableFrames(S32 indexes[]);
-   bool hitVerticalDivider(S32 x, const Point2I &point);
-   bool hitHorizontalDivider(S32 y, const Point2I &point);
+    Region findHitRegion(const Point2I& point);
+    Region pointInAnyRegion(const Point2I& point);
+    S32 findResizableFrames(S32 indexes[]);
+    bool hitVerticalDivider(S32 x, const Point2I& point);
+    bool hitHorizontalDivider(S32 y, const Point2I& point);
 
-   void rebalance(const Point2I &newExtent);
+    void rebalance(const Point2I& newExtent);
 
-   void computeSizes(bool balanceFrames = false);
-   void computeMovableRange(Region hitRegion, S32 vertHit, S32 horzHit, S32 numIndexes, const S32 indexes[], S32 ranges[]);
+    void computeSizes(bool balanceFrames = false);
+    void computeMovableRange(Region hitRegion, S32 vertHit, S32 horzHit, S32 numIndexes, const S32 indexes[], S32 ranges[]);
 
-   void drawDividers(const Point2I &offset);
+    void drawDividers(const Point2I& offset);
 public:
-   U32 columns() const                                   { return(mColumnOffsets.size()); }
-   U32 rows() const                                      { return(mRowOffsets.size()); }
-   U32 borderWidth() const                               { return(mFramesetDetails.mBorderWidth); }
-   Vector<S32>* columnOffsets()                          { return(&mColumnOffsets); }
-   Vector<S32>* rowOffsets()                             { return(&mRowOffsets); }
-   FrameDetail* framesetDetails()                        { return(&mFramesetDetails); }
+    U32 columns() const { return(mColumnOffsets.size()); }
+    U32 rows() const { return(mRowOffsets.size()); }
+    U32 borderWidth() const { return(mFramesetDetails.mBorderWidth); }
+    Vector<S32>* columnOffsets() { return(&mColumnOffsets); }
+    Vector<S32>* rowOffsets() { return(&mRowOffsets); }
+    FrameDetail* framesetDetails() { return(&mFramesetDetails); }
 
-   bool findFrameContents(S32 index, GuiControl **gc, FrameDetail **fd);
+    bool findFrameContents(S32 index, GuiControl** gc, FrameDetail** fd);
 
-   void frameBorderEnable(S32 index, const char *state = NULL);
-   void frameBorderMovable(S32 index, const char *state = NULL);
-   void frameMinExtent(S32 index, const Point2I &extent);
+    void frameBorderEnable(S32 index, const char* state = NULL);
+    void frameBorderMovable(S32 index, const char* state = NULL);
+    void frameMinExtent(S32 index, const Point2I& extent);
 
-   void balanceFrames()    { computeSizes(true); }
-   void updateSizes()      { computeSizes();     }
+    void balanceFrames() { computeSizes(true); }
+    void updateSizes() { computeSizes(); }
 
-   bool onWake();
+    bool onWake();
 
 private:
-   DISABLE_COPY_CTOR(GuiFrameSetCtrl);
-   DISABLE_ASSIGNMENT(GuiFrameSetCtrl);
+    DISABLE_COPY_CTOR(GuiFrameSetCtrl);
+    DISABLE_ASSIGNMENT(GuiFrameSetCtrl);
 };
 
 //-----------------------------------------------------------------------------
 // x is the first value inside the next column, so the divider x-coords
 // precede x.
-inline bool GuiFrameSetCtrl::hitVerticalDivider(S32 x, const Point2I &point)
+inline bool GuiFrameSetCtrl::hitVerticalDivider(S32 x, const Point2I& point)
 {
-   return((point.x >= S32(x - mFramesetDetails.mBorderWidth)) && (point.x < x) && (point.y >= 0) && (point.y < S32(mBounds.extent.y)));
+    return((point.x >= S32(x - mFramesetDetails.mBorderWidth)) && (point.x < x) && (point.y >= 0) && (point.y < S32(mBounds.extent.y)));
 }
 
 //-----------------------------------------------------------------------------
 // y is the first value inside the next row, so the divider y-coords precede y.
-inline bool GuiFrameSetCtrl::hitHorizontalDivider(S32 y, const Point2I &point)
+inline bool GuiFrameSetCtrl::hitHorizontalDivider(S32 y, const Point2I& point)
 {
-   return((point.x >= 0) && (point.x < S32(mBounds.extent.x)) && (point.y >= S32(y - mFramesetDetails.mBorderWidth)) && (point.y < y));
+    return((point.x >= 0) && (point.x < S32(mBounds.extent.x)) && (point.y >= S32(y - mFramesetDetails.mBorderWidth)) && (point.y < y));
 }
 
 #endif // _GUI_FRAME_CTRL_H

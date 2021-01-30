@@ -13,34 +13,34 @@
 class FrustrumCuller
 {
 public:
-   enum
-   {
-      /// We need to store at least 4 clip planes (sides of view frustrum).
-      MaxClipPlanes = 5,
+    enum
+    {
+        /// We need to store at least 4 clip planes (sides of view frustrum).
+        MaxClipPlanes = 5,
 
-      // Clipping related flags...
-      ClipPlaneMask    = BIT(MaxClipPlanes) - 1,
-      FarSphereMask    = BIT(MaxClipPlanes + 1),
-      FogPlaneBoxMask  = BIT(MaxClipPlanes + 2),
+        // Clipping related flags...
+        ClipPlaneMask = BIT(MaxClipPlanes) - 1,
+        FarSphereMask = BIT(MaxClipPlanes + 1),
+        FogPlaneBoxMask = BIT(MaxClipPlanes + 2),
 
-      AllClipPlanes    = ClipPlaneMask | FarSphereMask,
+        AllClipPlanes = ClipPlaneMask | FarSphereMask,
 
-   };
+    };
 
-   SceneState *mSceneState;
-   Point3F     mCamPos;
-   F32         mFarDistance;
-   U32         mNumClipPlanes;
-   PlaneF      mClipPlane[MaxClipPlanes];
+    SceneState* mSceneState;
+    Point3F     mCamPos;
+    F32         mFarDistance;
+    U32         mNumClipPlanes;
+    PlaneF      mClipPlane[MaxClipPlanes];
 
-   FrustrumCuller()
-   {
-      mSceneState = NULL;
-   }
+    FrustrumCuller()
+    {
+        mSceneState = NULL;
+    }
 
-   void init(SceneState *state);
-   const S32  testBoxVisibility(const Box3F &bounds, const S32 mask, const F32 expand) const;
-   const F32  getBoxDistance(const Box3F &box) const;
+    void init(SceneState* state);
+    const S32  testBoxVisibility(const Box3F& bounds, const S32 mask, const F32 expand) const;
+    const F32  getBoxDistance(const Box3F& box) const;
 };
 
 #endif

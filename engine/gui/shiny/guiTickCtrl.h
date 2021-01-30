@@ -29,19 +29,19 @@
 /// @see ITickable
 class GuiTickCtrl : public GuiControl, public virtual ITickable
 {
-   typedef GuiControl Parent;
+    typedef GuiControl Parent;
 
 private:
 
 protected:
 
-   // So this can be instantiated and not be a pure virtual class
-   virtual void interpolateTick( F32 delta ) {};
-   virtual void processTick() {};
-   virtual void advanceTime( F32 timeDelta ) {};
+    // So this can be instantiated and not be a pure virtual class
+    virtual void interpolateTick(F32 delta) {};
+    virtual void processTick() {};
+    virtual void advanceTime(F32 timeDelta) {};
 
 public:
-   DECLARE_CONOBJECT( GuiTickCtrl );
+    DECLARE_CONOBJECT(GuiTickCtrl);
 };
 
 

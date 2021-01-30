@@ -51,83 +51,83 @@
 class DebugDrawer : public SimObject
 {
 private:
-	typedef SimObject Parent;
+    typedef SimObject Parent;
 
-	struct DebugPrim
-	{
-		/// Color used for this primitive.
-		ColorF color;
+    struct DebugPrim
+    {
+        /// Color used for this primitive.
+        ColorF color;
 
-		/// Points used to store positional data. Exact semantics determined by type.
-		Point3F a, b, c;
-		enum {
-			Tri,
-			Sphere,
-			Box,
-			Line
+        /// Points used to store positional data. Exact semantics determined by type.
+        Point3F a, b, c;
+        enum {
+            Tri,
+            Sphere,
+            Box,
+            Line
 
-		} type;	   ///< Type of the primitive. The meanings of a,b,c are determined by this.
+        } type;	   ///< Type of the primitive. The meanings of a,b,c are determined by this.
 
-		SimTime dieTime;   ///< Time at which we should remove this from the list.
-		bool useZ; ///< If true, do z-checks for this primitive.
+        SimTime dieTime;   ///< Time at which we should remove this from the list.
+        bool useZ; ///< If true, do z-checks for this primitive.
 
-      DebugPrim *next;
-	};
+        DebugPrim* next;
+    };
 
-   
-   FreeListChunker<DebugPrim> mPrimChunker;
-	DebugPrim *mHead;
 
-   bool isFrozen;
-   bool isDrawing;
+    FreeListChunker<DebugPrim> mPrimChunker;
+    DebugPrim* mHead;
+
+    bool isFrozen;
+    bool isDrawing;
 
 public:
 
-	DECLARE_CONOBJECT(DebugDrawer);
+    DECLARE_CONOBJECT(DebugDrawer);
 
-	DebugDrawer();
-	~DebugDrawer();
+    DebugDrawer();
+    ~DebugDrawer();
 
-	static void consoleInit();
-	static void initPersistFields();
+    static void consoleInit();
+    static void initPersistFields();
 
-	/// Called at engine init to set up the global debug draw object.
-	static void init();
+    /// Called at engine init to set up the global debug draw object.
+    static void init();
 
-   /// Called globally to render debug draw state. Also does state updates.
-   void render();
+    /// Called globally to render debug draw state. Also does state updates.
+    void render();
 
-   void toggleFreeze()  { isFrozen = !isFrozen;   };
-   void toggleDrawing() 
-   {
+    void toggleFreeze() { isFrozen = !isFrozen; };
+    void toggleDrawing()
+    {
 #ifdef ENABLE_DEBUGDRAW
-      isDrawing = !isDrawing;
+        isDrawing = !isDrawing;
 #endif
-   };
-   
+    };
 
-	/// @name ddrawmeth Debug Draw Methods
-	///
-	/// @{
 
-	void drawBox   (Point3F a, Point3F b,            ColorF color = ColorF(1,1,1));
-	void drawLine  (Point3F a, Point3F b,            ColorF color = ColorF(1,1,1));
-	void drawSphere(Point3F center, F32 radius,      ColorF color = ColorF(1,1,1));
-	void drawTri   (Point3F a, Point3F b, Point3F c, ColorF color = ColorF(1,1,1));
+    /// @name ddrawmeth Debug Draw Methods
+    ///
+    /// @{
 
-	/// Set the TTL for the last item we entered...
-	///
-	/// Primitives default to lasting one frame (ie, ttl=0)
-	void setLastTTL(U32 ms);
+    void drawBox(Point3F a, Point3F b, ColorF color = ColorF(1, 1, 1));
+    void drawLine(Point3F a, Point3F b, ColorF color = ColorF(1, 1, 1));
+    void drawSphere(Point3F center, F32 radius, ColorF color = ColorF(1, 1, 1));
+    void drawTri(Point3F a, Point3F b, Point3F c, ColorF color = ColorF(1, 1, 1));
 
-	/// Disable/enable z testing on the last primitive.
-	///
-	/// Primitives default to z testing on.
-	void setLastZTest(bool enabled);
+    /// Set the TTL for the last item we entered...
+    ///
+    /// Primitives default to lasting one frame (ie, ttl=0)
+    void setLastTTL(U32 ms);
 
-	/// @}
+    /// Disable/enable z testing on the last primitive.
+    ///
+    /// Primitives default to z testing on.
+    void setLastZTest(bool enabled);
+
+    /// @}
 };
 
-extern DebugDrawer *gDebugDraw;
+extern DebugDrawer* gDebugDraw;
 
 #endif

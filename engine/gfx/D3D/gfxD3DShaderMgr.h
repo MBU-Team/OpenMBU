@@ -14,24 +14,24 @@
 //**************************************************************************
 class GFXD3DShaderMgr : public GFXShaderMgr
 {
-   //--------------------------------------------------------------
-   // Data
-   //--------------------------------------------------------------
+    //--------------------------------------------------------------
+    // Data
+    //--------------------------------------------------------------
 
 
-   //--------------------------------------------------------------
-   // Procedures
-   //--------------------------------------------------------------
+    //--------------------------------------------------------------
+    // Procedures
+    //--------------------------------------------------------------
 public:
-   virtual ~GFXD3DShaderMgr(){};
+    virtual ~GFXD3DShaderMgr() {};
 
-   // For custom shader requests
-   virtual GFXShader * createShader( char *vertFile, char *pixFile, F32 pixVersion );
+    // For custom shader requests
+    virtual GFXShader* createShader(char* vertFile, char* pixFile, F32 pixVersion);
 
-   // For procedural shaders - these are created if they don't exist and found if they do.
-   virtual GFXShader * getShader( GFXShaderFeatureData &dat, 
-                                  GFXVertexFlags vertFlags );
-   
+    // For procedural shaders - these are created if they don't exist and found if they do.
+    virtual GFXShader* getShader(GFXShaderFeatureData& dat,
+        GFXVertexFlags vertFlags);
+
 
 };
 

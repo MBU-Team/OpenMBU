@@ -11,324 +11,324 @@
 
 typedef struct
 {
-	ALubyte		riff[4];		// 'RIFF'
-	ALsizei		riffSize;
-	ALubyte		wave[4];		// 'WAVE'
-	ALubyte		fmt[4];			// 'fmt '
-	ALuint		fmtSize;
-	ALushort	Format;                              
-	ALushort	Channels;
-	ALuint		SamplesPerSec;
-	ALuint		BytesPerSec;
-	ALushort	BlockAlign;
-	ALushort	BitsPerSample;
-	ALubyte		data[4];		// 'data'
-	ALuint		dataSize;
+    ALubyte		riff[4];		// 'RIFF'
+    ALsizei		riffSize;
+    ALubyte		wave[4];		// 'WAVE'
+    ALubyte		fmt[4];			// 'fmt '
+    ALuint		fmtSize;
+    ALushort	Format;
+    ALushort	Channels;
+    ALuint		SamplesPerSec;
+    ALuint		BytesPerSec;
+    ALushort	BlockAlign;
+    ALushort	BitsPerSample;
+    ALubyte		data[4];		// 'data'
+    ALuint		dataSize;
 } WAVE_Struct;
 
 /// WAV File-header
 struct WAVFileHdr
 {
-  ALubyte  id[4];
-  ALsizei  size;
-  ALubyte  type[4];
+    ALubyte  id[4];
+    ALsizei  size;
+    ALubyte  type[4];
 };
 
 //// WAV Fmt-header
 struct WAVFmtHdr
 {
-  ALushort format;                              
-  ALushort channels;
-  ALuint   samplesPerSec;
-  ALuint   bytesPerSec;
-  ALushort blockAlign;
-  ALushort bitsPerSample;
+    ALushort format;
+    ALushort channels;
+    ALuint   samplesPerSec;
+    ALuint   bytesPerSec;
+    ALushort blockAlign;
+    ALushort bitsPerSample;
 };
 
 /// WAV FmtEx-header
 struct WAVFmtExHdr
 {
-  ALushort size;
-  ALushort samplesPerBlock;
+    ALushort size;
+    ALushort samplesPerBlock;
 };
 
 /// WAV Smpl-header
 struct WAVSmplHdr
 {
-  ALuint   manufacturer;
-  ALuint   product;
-  ALuint   samplePeriod;                          
-  ALuint   note;                                  
-  ALuint   fineTune;                              
-  ALuint   SMPTEFormat;
-  ALuint   SMPTEOffest;
-  ALuint   loops;
-  ALuint   samplerData;
-  struct
-  {
-    ALuint identifier;
-    ALuint type;
-    ALuint start;
-    ALuint end;
-    ALuint fraction;
-    ALuint count;
-  }      loop[1];
+    ALuint   manufacturer;
+    ALuint   product;
+    ALuint   samplePeriod;
+    ALuint   note;
+    ALuint   fineTune;
+    ALuint   SMPTEFormat;
+    ALuint   SMPTEOffest;
+    ALuint   loops;
+    ALuint   samplerData;
+    struct
+    {
+        ALuint identifier;
+        ALuint type;
+        ALuint start;
+        ALuint end;
+        ALuint fraction;
+        ALuint count;
+    }      loop[1];
 };
 
 /// WAV Chunk-header
 struct WAVChunkHdr
 {
-  ALubyte  id[4];
-  ALuint   size;
+    ALubyte  id[4];
+    ALuint   size;
 };
 
 
 
-WavStreamSource::WavStreamSource(const char *filename)  { 
-   stream = NULL;
-   bIsValid = false;
-   bBuffersAllocated = false;
-   mBufferList[0] = 0;
-   clear(); 
+WavStreamSource::WavStreamSource(const char* filename) {
+    stream = NULL;
+    bIsValid = false;
+    bBuffersAllocated = false;
+    mBufferList[0] = 0;
+    clear();
 
-   mFilename = filename;
-   mPosition = Point3F(0.f,0.f,0.f);
+    mFilename = filename;
+    mPosition = Point3F(0.f, 0.f, 0.f);
 }
 
 WavStreamSource::~WavStreamSource() {
-	if(bReady && bIsValid)
-		freeStream();
+    if (bReady && bIsValid)
+        freeStream();
 }
 
 void WavStreamSource::clear()
 {
-	if(stream)
-		freeStream();
+    if (stream)
+        freeStream();
 
-	mHandle           = NULL_AUDIOHANDLE;
-	mSource			  = NULL;
+    mHandle = NULL_AUDIOHANDLE;
+    mSource = NULL;
 
-	if(mBufferList[0] != 0)
-		alDeleteBuffers(NUMBUFFERS, mBufferList);
-	for(int i = 0; i < NUMBUFFERS; i++)
-		mBufferList[i] = 0;
+    if (mBufferList[0] != 0)
+        alDeleteBuffers(NUMBUFFERS, mBufferList);
+    for (int i = 0; i < NUMBUFFERS; i++)
+        mBufferList[i] = 0;
 
-	dMemset(&mDescription, 0, sizeof(Audio::Description));
-	mEnvironment = 0;
-	mPosition.set(0.f,0.f,0.f);
-	mDirection.set(0.f,1.f,0.f);
-	mPitch = 1.f;
-	mScore = 0.f;
-	mCullTime = 0;
+    dMemset(&mDescription, 0, sizeof(Audio::Description));
+    mEnvironment = 0;
+    mPosition.set(0.f, 0.f, 0.f);
+    mDirection.set(0.f, 1.f, 0.f);
+    mPitch = 1.f;
+    mScore = 0.f;
+    mCullTime = 0;
 
-	bReady = false;
-	bFinishedPlaying = false;
-	bIsValid = false;
-	bBuffersAllocated = false;
+    bReady = false;
+    bFinishedPlaying = false;
+    bIsValid = false;
+    bBuffersAllocated = false;
 }
 
 bool WavStreamSource::initStream() {
-   WAVChunkHdr chunkHdr;   
-   WAVFmtExHdr fmtExHdr;
-   WAVFileHdr  fileHdr;
-   WAVSmplHdr  smplHdr;
-   WAVFmtHdr   fmtHdr;
+    WAVChunkHdr chunkHdr;
+    WAVFmtExHdr fmtExHdr;
+    WAVFileHdr  fileHdr;
+    WAVSmplHdr  smplHdr;
+    WAVFmtHdr   fmtHdr;
 
-   WAVE_Struct wave;
+    WAVE_Struct wave;
 
-   ALint			error;
+    ALint			error;
 
-   bFinished = false;
+    bFinished = false;
 
-   char   data[BUFFERSIZE];
+    char   data[BUFFERSIZE];
 
-   alSourceStop(mSource);
-   alSourcei(mSource, AL_BUFFER, 0);
+    alSourceStop(mSource);
+    alSourcei(mSource, AL_BUFFER, 0);
 
-	stream = ResourceManager->openStream(mFilename);
-	if(stream != NULL) {
-	   stream->read(4, &fileHdr.id[0]);
-	   stream->read(&fileHdr.size);
-	   stream->read(4, &fileHdr.type[0]);
+    stream = ResourceManager->openStream(mFilename);
+    if (stream != NULL) {
+        stream->read(4, &fileHdr.id[0]);
+        stream->read(&fileHdr.size);
+        stream->read(4, &fileHdr.type[0]);
 
-	   stream->read(4, &chunkHdr.id[0]);
-	   stream->read(&chunkHdr.size);
+        stream->read(4, &chunkHdr.id[0]);
+        stream->read(&chunkHdr.size);
 
-	   // WAV Format header
-		stream->read(&fmtHdr.format);
-		stream->read(&fmtHdr.channels);
-		stream->read(&fmtHdr.samplesPerSec);
-		stream->read(&fmtHdr.bytesPerSec);
-		stream->read(&fmtHdr.blockAlign);
-		stream->read(&fmtHdr.bitsPerSample);
-      
-		format=(fmtHdr.channels==1?
-		   (fmtHdr.bitsPerSample==8?AL_FORMAT_MONO8:AL_FORMAT_MONO16):
-		   (fmtHdr.bitsPerSample==8?AL_FORMAT_STEREO8:AL_FORMAT_STEREO16));
-		freq=fmtHdr.samplesPerSec;
+        // WAV Format header
+        stream->read(&fmtHdr.format);
+        stream->read(&fmtHdr.channels);
+        stream->read(&fmtHdr.samplesPerSec);
+        stream->read(&fmtHdr.bytesPerSec);
+        stream->read(&fmtHdr.blockAlign);
+        stream->read(&fmtHdr.bitsPerSample);
 
-		 stream->read(4, &chunkHdr.id[0]);
-		 stream->read(&chunkHdr.size);
+        format = (fmtHdr.channels == 1 ?
+            (fmtHdr.bitsPerSample == 8 ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16) :
+            (fmtHdr.bitsPerSample == 8 ? AL_FORMAT_STEREO8 : AL_FORMAT_STEREO16));
+        freq = fmtHdr.samplesPerSec;
 
-		DataSize = chunkHdr.size;
-		DataLeft = DataSize;
-		dataStart = stream->getPosition();
+        stream->read(4, &chunkHdr.id[0]);
+        stream->read(&chunkHdr.size);
 
-		// Clear Error Code
-		alGetError();
+        DataSize = chunkHdr.size;
+        DataLeft = DataSize;
+        dataStart = stream->getPosition();
 
-		alGenBuffers(NUMBUFFERS, mBufferList);
-		if ((error = alGetError()) != AL_NO_ERROR) {
-			return false;
-		}
+        // Clear Error Code
+        alGetError();
 
-		bBuffersAllocated = true;
+        alGenBuffers(NUMBUFFERS, mBufferList);
+        if ((error = alGetError()) != AL_NO_ERROR) {
+            return false;
+        }
 
-		int numBuffers = 0;
-		for(int loop = 0; loop < NUMBUFFERS; loop++)
-		{
-			ALuint DataToRead = (DataLeft > BUFFERSIZE) ? BUFFERSIZE : DataLeft;
+        bBuffersAllocated = true;
 
-			if (DataToRead == DataLeft)
-				bFinished = AL_TRUE;
-			stream->read(DataToRead, data);
-			DataLeft -= DataToRead;
-			alBufferData(mBufferList[loop], format, data, DataToRead, freq);	
-			if ((error = alGetError()) != AL_NO_ERROR) {
-				return false;
-			}
-			++numBuffers;
-			if(bFinished)
-				break;
-		}
+        int numBuffers = 0;
+        for (int loop = 0; loop < NUMBUFFERS; loop++)
+        {
+            ALuint DataToRead = (DataLeft > BUFFERSIZE) ? BUFFERSIZE : DataLeft;
 
-		// Queue the buffers on the source
-		alSourceQueueBuffers(mSource, numBuffers, mBufferList);
-		if ((error = alGetError()) != AL_NO_ERROR) {
-			return false;
-		}
+            if (DataToRead == DataLeft)
+                bFinished = AL_TRUE;
+            stream->read(DataToRead, data);
+            DataLeft -= DataToRead;
+            alBufferData(mBufferList[loop], format, data, DataToRead, freq);
+            if ((error = alGetError()) != AL_NO_ERROR) {
+                return false;
+            }
+            ++numBuffers;
+            if (bFinished)
+                break;
+        }
 
-		buffersinqueue = numBuffers;
-		alSourcei(mSource, AL_LOOPING, AL_FALSE);
-		bReady = true;
-	}
-	else {
-		return false;
-	}
+        // Queue the buffers on the source
+        alSourceQueueBuffers(mSource, numBuffers, mBufferList);
+        if ((error = alGetError()) != AL_NO_ERROR) {
+            return false;
+        }
 
-	bIsValid = true;
+        buffersinqueue = numBuffers;
+        alSourcei(mSource, AL_LOOPING, AL_FALSE);
+        bReady = true;
+    }
+    else {
+        return false;
+    }
 
-   return true;
+    bIsValid = true;
+
+    return true;
 }
 
 bool WavStreamSource::updateBuffers() {
 
-	ALint			processed;
-	ALuint			BufferID;
-	ALint			error;
-	char data[BUFFERSIZE];
+    ALint			processed;
+    ALuint			BufferID;
+    ALint			error;
+    char data[BUFFERSIZE];
 
-	// don't do anything if buffer isn't initialized
-	if(!bIsValid)
-		return false;
+    // don't do anything if buffer isn't initialized
+    if (!bIsValid)
+        return false;
 
-	if(bFinished && mDescription.mIsLooping) {
-		resetStream();
-	}
+    if (bFinished && mDescription.mIsLooping) {
+        resetStream();
+    }
 
-	// reset AL error code
-	alGetError();
+    // reset AL error code
+    alGetError();
 
-	// Get status
-	alGetSourcei(mSource, AL_BUFFERS_PROCESSED, &processed);
+    // Get status
+    alGetSourcei(mSource, AL_BUFFERS_PROCESSED, &processed);
 
-	// If some buffers have been played, unqueue them and load new audio into them, then add them to the queue
-	if (processed > 0)
-	{
+    // If some buffers have been played, unqueue them and load new audio into them, then add them to the queue
+    if (processed > 0)
+    {
 
-		while (processed)
-		{
-			alSourceUnqueueBuffers(mSource, 1, &BufferID);
-			if ((error = alGetError()) != AL_NO_ERROR)
-				return false;
+        while (processed)
+        {
+            alSourceUnqueueBuffers(mSource, 1, &BufferID);
+            if ((error = alGetError()) != AL_NO_ERROR)
+                return false;
 
-			if (!bFinished)
-			{
-				ALuint DataToRead = (DataLeft > BUFFERSIZE) ? BUFFERSIZE : DataLeft;
+            if (!bFinished)
+            {
+                ALuint DataToRead = (DataLeft > BUFFERSIZE) ? BUFFERSIZE : DataLeft;
 
-				if (DataToRead == DataLeft) {
-					bFinished = AL_TRUE;
-				}
-					
-				stream->read(DataToRead, data);
-				DataLeft -= DataToRead;
-					
-				alBufferData(BufferID, format, data, DataToRead, freq);
-				if ((error = alGetError()) != AL_NO_ERROR)
-					return false;
+                if (DataToRead == DataLeft) {
+                    bFinished = AL_TRUE;
+                }
 
-				// Queue buffer
-				alSourceQueueBuffers(mSource, 1, &BufferID);
-				if ((error = alGetError()) != AL_NO_ERROR)
-					return false;
+                stream->read(DataToRead, data);
+                DataLeft -= DataToRead;
 
-				processed--;
+                alBufferData(BufferID, format, data, DataToRead, freq);
+                if ((error = alGetError()) != AL_NO_ERROR)
+                    return false;
 
-				if(bFinished && mDescription.mIsLooping) {
-					resetStream();
-				}
-			}
-			else
-			{
-				buffersinqueue--;
-				processed--;
+                // Queue buffer
+                alSourceQueueBuffers(mSource, 1, &BufferID);
+                if ((error = alGetError()) != AL_NO_ERROR)
+                    return false;
 
-				if (buffersinqueue == 0)
-				{
-					bFinishedPlaying = AL_TRUE;
-					return AL_FALSE;
-				}
-			}
-		}
-	}
+                processed--;
 
-	return AL_TRUE;
+                if (bFinished && mDescription.mIsLooping) {
+                    resetStream();
+                }
+            }
+            else
+            {
+                buffersinqueue--;
+                processed--;
+
+                if (buffersinqueue == 0)
+                {
+                    bFinishedPlaying = AL_TRUE;
+                    return AL_FALSE;
+                }
+            }
+        }
+    }
+
+    return AL_TRUE;
 }
 
 void WavStreamSource::freeStream() {
-	bReady = false;
+    bReady = false;
 
-	
-	if(stream != NULL)
-		ResourceManager->closeStream(stream);
-	stream = NULL;
 
-	if(bBuffersAllocated) {
-		if(mBufferList[0] != 0)
-			alDeleteBuffers(NUMBUFFERS, mBufferList);
-		for(int i = 0; i < NUMBUFFERS; i++)
-			mBufferList[i] = 0;
+    if (stream != NULL)
+        ResourceManager->closeStream(stream);
+    stream = NULL;
 
-		bBuffersAllocated = false;
-	}
+    if (bBuffersAllocated) {
+        if (mBufferList[0] != 0)
+            alDeleteBuffers(NUMBUFFERS, mBufferList);
+        for (int i = 0; i < NUMBUFFERS; i++)
+            mBufferList[i] = 0;
+
+        bBuffersAllocated = false;
+    }
 }
 
 void WavStreamSource::resetStream() {
-	stream->setPosition(dataStart);
-	DataLeft = DataSize;
-	bFinished = AL_FALSE;
+    stream->setPosition(dataStart);
+    DataLeft = DataSize;
+    bFinished = AL_FALSE;
 }
 
 #include "console/console.h"
 
 F32 WavStreamSource::getElapsedTime()
 {
-   Con::warnf( "GetElapsedTime not implemented in WaveStreams yet" );
-   return -1.f;
+    Con::warnf("GetElapsedTime not implemented in WaveStreams yet");
+    return -1.f;
 }
 
 F32 WavStreamSource::getTotalTime()
 {
-   Con::warnf( "GetTotalTime not implemented in WaveStreams yet" );
-   return -1.f;
+    Con::warnf("GetTotalTime not implemented in WaveStreams yet");
+    return -1.f;
 }
