@@ -55,6 +55,13 @@ ConsoleFunction(setSinglePlayerMode, void, 2, 2, "( flag ) - Enable or disable s
 {
     argc;
 
+    for (NetConnection* walk = NetConnection::getConnectionList();
+       walk; walk = walk->getNext())
+    {
+       if (walk->isConnectionToServer())
+         walk->resetGhosting();
+    }
+
     bool oldSPMode = gSPMode;
     gSPMode = dAtob(argv[1]);
     if (gSPMode && !oldSPMode)
