@@ -333,6 +333,9 @@ void GFont::getFontCacheFilename(const char *faceName, U32 size, U32 buffLen, ch
 
 Resource<GFont> GFont::create(const char *faceName, U32 size, const char *cacheDirectory, U32 charset /* = TGE_ANSI_CHARSET */)
 {
+   if (faceName == NULL || dStrlen(faceName) == 0)
+      return NULL;
+
    char buf[256];
    dSprintf(buf, sizeof(buf), "%s/%s %d (%s).uft", cacheDirectory, faceName, size, getCharSetName(charset));
    
@@ -347,14 +350,18 @@ Resource<GFont> GFont::create(const char *faceName, U32 size, const char *cacheD
    
    if (platFont == NULL)
    {
-      char* fontName = "helvetica";
+      char* fontName;
       // Couldn't load the requested font.  This probably will be common
       // since many unix boxes don't have arial or lucida console installed.
       // Attempt to map the font name into a font we're pretty sure exist
-      if (dStrcmp(dStrlwr(const_cast<char*>(faceName)), "arial") != 0)
+      if (dStrcmp(dStrlwr(const_cast<char*>(faceName)), "arial") == 0)
          fontName = "helvetica";
-      else if (dStrcmp(dStrlwr(const_cast<char*>(faceName)), "lucida console") != 0)
-         fontName = "courier";
+      else if (dStrcmp(dStrlwr(const_cast<char*>(faceName)), "lucida console") == 0)
+         fontName = "Monaco";
+      else if (dStrcmp(dStrlwr(const_cast<char*>(faceName)), "monaco") == 0)
+         fontName = "Courier";
+      else
+         return ret;
 
       return create(fontName, size, cacheDirectory, charset);
    }
