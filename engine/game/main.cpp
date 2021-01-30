@@ -347,6 +347,7 @@ bool initGame(int argc, const char** argv)
     Con::addVariable("timeScale", TypeF32, &gTimeScale);
     Con::addVariable("timeAdvance", TypeS32, &gTimeAdvance);
     Con::addVariable("frameSkip", TypeS32, &gFrameSkip);
+    Con::addVariable("pref::Video::noRenderAstrolabe", TypeBool, &gNoRenderAstrolabe);
 
     // Stuff game types into the console
     Con::setIntVariable("$TypeMasks::StaticObjectType", StaticObjectType);

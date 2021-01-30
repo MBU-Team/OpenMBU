@@ -29,6 +29,8 @@
 #include "gfx/gfxCubemap.h"
 #include "renderInstance/renderInstMgr.h"
 
+bool gNoRenderAstrolabe = false;
+
 IMPLEMENT_CO_DATABLOCK_V1(ShapeBaseData);
 
 
@@ -99,6 +101,13 @@ ShapeBaseData::ShapeBaseData()
     firstPersonOnly = false;
     useEyePoint = false;
     dynamicReflection = false;
+
+    renderGemAura = false;
+    glass = false;
+    astrolabe = false;
+    astrolabePrime = false;
+    gemAuraTextureName = "";
+    gemAuraTexture = NULL;
 
     observeThroughObject = false;
     computeCRC = false;
@@ -394,6 +403,12 @@ void ShapeBaseData::initPersistFields()
     addField("dynamicReflection", TypeBool, Offset(dynamicReflection, ShapeBaseData));
     endGroup("Misc");
 
+    addField("renderGemAura", TypeBool, Offset(renderGemAura, ShapeBaseData));
+    addField("glass", TypeBool, Offset(glass, ShapeBaseData));
+    addField("astrolabe", TypeBool, Offset(astrolabe, ShapeBaseData));
+    addField("astrolabePrime", TypeBool, Offset(astrolabePrime, ShapeBaseData));
+    addField("gemAuraTextureName", TypeFilename, Offset(gemAuraTextureName, ShapeBaseData));
+
 }
 
 ConsoleMethod(ShapeBaseData, checkDeployPos, bool, 3, 3, "(Transform xform)")
@@ -542,6 +557,12 @@ void ShapeBaseData::packData(BitStream* stream)
     stream->writeFlag(firstPersonOnly);
     stream->writeFlag(useEyePoint);
     stream->writeFlag(dynamicReflection);
+
+    stream->writeFlag(renderGemAura);
+    stream->writeFlag(glass);
+    stream->writeFlag(astrolabe);
+    stream->writeFlag(astrolabePrime);
+    stream->writeString(gemAuraTextureName, 255);
 }
 
 void ShapeBaseData::unpackData(BitStream* stream)
@@ -639,6 +660,12 @@ void ShapeBaseData::unpackData(BitStream* stream)
     useEyePoint = stream->readFlag();
     dynamicReflection = stream->readFlag();
 
+    renderGemAura = stream->readFlag();
+    glass = stream->readFlag();
+    astrolabe = stream->readFlag();
+    astrolabePrime = stream->readFlag();
+    gemAuraTextureName = stream->readSTString(false);
+    gemAuraTexture.set(gemAuraTextureName, &GFXDefaultStaticDiffuseProfile);
 }
 
 
@@ -2237,9 +2264,9 @@ bool ShapeBase::prepRenderImage(SceneState* state, const U32 stateKey,
         return false;
     setLastState(state, stateKey);
 
-    if ((getDamageState() == Destroyed) && (!mDataBlock->renderWhenDestroyed))
+    if (gNoRenderAstrolabe && mDataBlock != NULL && (mDataBlock->astrolabe || mDataBlock->astrolabePrime) ||
+       (getDamageState() == Destroyed && !mDataBlock->renderWhenDestroyed))
         return false;
-
     // Select detail levels on mounted items
     // but... always draw the control object's mounted images
     // in high detail (I can't believe I'm commenting this hack :)

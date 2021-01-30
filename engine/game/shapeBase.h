@@ -53,6 +53,8 @@ class ShapeBase;
 
 typedef void* Light;
 
+extern bool gNoRenderAstrolabe;
+
 
 //--------------------------------------------------------------------------
 
@@ -398,6 +400,14 @@ public:
     StringTableEntry  cloakTexName;
 
     bool dynamicReflection;
+
+    // Marble Blast
+    bool renderGemAura;
+    bool glass;
+    bool astrolabe;
+    bool astrolabePrime;
+    StringTableEntry gemAuraTextureName;
+    GFXTexHandle gemAuraTexture;
 
     /// @name Destruction
     ///
