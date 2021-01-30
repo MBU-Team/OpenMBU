@@ -160,6 +160,7 @@ static bool initLibraries()
     ResourceManager->registerExtension(".gif", constructBitmapGIF);
     ResourceManager->registerExtension(".dbm", constructBitmapDBM);
     ResourceManager->registerExtension(".bmp", constructBitmapBMP);
+    ResourceManager->registerExtension(".jng", constructBitmapMNG);
     //   ResourceManager->registerExtension(".gft", constructFont);
     ResourceManager->registerExtension(".chu", constructAtlasChunkFile);
     ResourceManager->registerExtension(".gf2", constructFont);

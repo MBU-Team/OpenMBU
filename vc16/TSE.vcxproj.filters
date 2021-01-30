@@ -1491,6 +1491,9 @@
     <ClCompile Include="..\engine\console\extraFunctions.cpp">
       <Filter>Source Files\console</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\gfx\bitmapMng.cpp">
+      <Filter>Source Files\gfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">

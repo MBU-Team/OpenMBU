@@ -855,8 +855,8 @@ GBitmap* GBitmap::createPaddedBitmap()
 //-------------------------------------- Persistent I/O
 //
 
-#define EXT_ARRAY_SIZE 5
-static const char* extArray[EXT_ARRAY_SIZE] = { "", ".jpg", ".png", ".gif", ".bmp" };
+#define EXT_ARRAY_SIZE 6
+static const char* extArray[EXT_ARRAY_SIZE] = { "", ".jpg", ".png", ".gif", ".bmp", ".jng" };
 
 ResourceObject* GBitmap::findBmpResource(const char* path, char** hackFileName)
 {
@@ -1050,6 +1050,19 @@ ResourceInstance* constructBitmapGIF(Stream& stream)
         return NULL;
     }
 }
+
+ResourceInstance* constructBitmapMNG(Stream& stream)
+{
+    GBitmap* bmp = new GBitmap;
+    if (bmp->readMNG(stream))
+        return bmp;
+    else
+    {
+        delete bmp;
+        return NULL;
+    }
+}
+
 ResourceInstance* constructBitmapDBM(Stream& stream)
 {
     GBitmap* bmp = new GBitmap;

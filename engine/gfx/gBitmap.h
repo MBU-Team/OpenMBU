@@ -27,6 +27,7 @@ extern ResourceInstance* constructBitmapBMP(Stream& stream);
 extern ResourceInstance* constructBitmapPNG(Stream& stream);
 extern ResourceInstance* constructBitmapJPEG(Stream& stream);
 extern ResourceInstance* constructBitmapGIF(Stream& stream);
+extern ResourceInstance* constructBitmapMNG(Stream& stream);
 extern ResourceInstance* constructBitmapDBM(Stream& stream);
 
 
@@ -128,6 +129,9 @@ public:
     bool readPNG(Stream& io_rStream, bool useMemoryManager = false); // located in bitmapPng.cc
     bool writePNG(Stream& io_rStream, const bool compressHard = false) const;
     bool writePNGUncompressed(Stream& io_rStream) const;
+    
+    bool readMNG(Stream& io_rStream);               // located in bitmapMng.cc
+    bool writeMNG(Stream& io_rStream) const;
 
     bool readMSBmp(Stream& io_rStream);             // located in bitmapBmp.cc
     bool writeMSBmp(Stream& io_rStream) const;      // located in bitmapBmp.cc
