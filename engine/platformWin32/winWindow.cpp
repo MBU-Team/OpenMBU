@@ -930,13 +930,23 @@ void Platform::initWindow(const Point2I &initialSize, const char *name)
 
    bool fullscreen = Con::getBoolVariable("$pref::Video::fullScreen", 1);
 
-   U32 w, h, d;
+   U32 w = 0, h = 0, d = 0;
 
    if (fullscreen)
       dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
    else
    {
       dSscanf(Con::getVariable("$pref::Video::windowedRes"), "%d %d", &w, &h);
+      if (w == 0 || h == 0)
+         dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
+      else
+         d = 32;
+   }
+
+   if (w == 0 || h == 0 || d == 0)
+   {
+      w = 640;
+      h = 480;
       d = 32;
    }
 

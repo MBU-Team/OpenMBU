@@ -536,13 +536,23 @@ ConsoleFunction( toggleFullScreen, void, 1, 1, "toggles between windowed and ful
    GFXVideoMode vm = GFX->getVideoMode();
    vm.fullScreen = !vm.fullScreen;
 
-   U32 w, h, d;
+   U32 w = 0, h = 0, d = 0;
 
    if (vm.fullScreen)
       dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
    else
    {
       dSscanf(Con::getVariable("$pref::Video::windowedRes"), "%d %d", &w, &h);
+      if (w == 0 || h == 0)
+         dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
+      else
+         d = 32;
+   }
+
+   if (w == 0 || h == 0 || d == 0)
+   {
+      w = 640;
+      h = 480;
       d = 32;
    }
 
