@@ -16,6 +16,14 @@
             <InjectDebugger>true</InjectDebugger>
             <UseSetModPaths>false</UseSetModPaths>
         </Config>
+        <Config>            <Name>Release</Name>
+            <Executable>TSE.exe</Executable>
+            <Arguments></Arguments>
+            <HasExports>false</HasExports>
+            <Precompile>true</Precompile>
+            <InjectDebugger>true</InjectDebugger>
+            <UseSetModPaths>false</UseSetModPaths>
+        </Config>
     </Configs>
     <SearchURL></SearchURL>
     <SearchProduct>TGE</SearchProduct>
