@@ -1488,6 +1488,9 @@
     <ClCompile Include="..\engine\lightingSystem\volLight.cc">
       <Filter>Source Files\lightingSystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\console\extraFunctions.cpp">
+      <Filter>Source Files\console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">

@@ -4335,6 +4335,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>setTransform</name>
             <args>Transform T</args>
         </method>
+        <field>            <name>hidden</name>
+            <desc>bool hidden</desc>
+        </field>
         <field>            <name>Position</name>
             <desc>MatrixPosition Position</desc>
         </field>
@@ -5109,6 +5112,9 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <method>            <name>remove</name>
             <args>obj1,...</args>
+        </method>
+        <method>            <name>setHidden</name>
+            <args>bool show</args>
         </method>
     </class>
     <class>        <name>Sky</name>
@@ -7015,6 +7021,8 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>getJoystickAxes</name>
         <args> instance </args>
     </function>
+    <function>        <name>getLanguage</name>
+    </function>
     <function>        <name>getMaxFrameAllocation</name>
     </function>
     <function>        <name>getModPaths</name>
@@ -7120,6 +7128,8 @@ Sim time is time since the game started.</desc>
     <function>        <name>isDebugBuild</name>
         <desc>- Returns true if the script is running in a debug Torque executable</desc>
     </function>
+    <function>        <name>isDemoLaunch</name>
+    </function>
     <function>        <name>IsDirectory</name>
         <args> string: directory of form "foo/bar", do not include trailing /, case insensitive, directory must have files in it if you expect the directory to be in a zip </args>
     </function>
@@ -7144,6 +7154,8 @@ Sim time is time since the game started.</desc>
     <function>        <name>isPointInside</name>
         <args>Point3F pos</args>
         <desc>or (float x, float y, float z)</desc>
+    </function>
+    <function>        <name>isResourceBGLoaded</name>
     </function>
     <function>        <name>isShippingBuild</name>
         <desc>Returns true if this is a shipping build, false otherwise</desc>
@@ -7170,6 +7182,9 @@ If mode is "forceAlways", the lightmaps will be regenerated regardless of whethe
     <function>        <name>loadChunkFile</name>
         <args>Filename file</args>
         <desc>Read a chunk hierarchy from a file.</desc>
+    </function>
+    <function>        <name>loadZip</name>
+        <args>zipName</args>
     </function>
     <function>        <name>lockMouse</name>
         <args>bool isLocked</args>
@@ -7738,5 +7753,8 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     </function>
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
+    </function>
+    <function>        <name>XBLiveIsSignedIn</name>
+        <args>port</args>
     </function>
 </exports>

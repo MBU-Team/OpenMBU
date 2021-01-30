@@ -561,8 +561,7 @@ initVideo();
 
 // Set the mod path which dictates which directories will be visible
 // to the scripts and the resource engine.
-//loadZip("marble.bza");
-onZipLoaded("marble.bza", false);
+loadZip("marble.bza");
 SplashLoadingProfile.fillColor = "100 200 50";
 
 $updateProgressSchedule = schedule(100, 0, updateProgress);
