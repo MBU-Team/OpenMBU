@@ -2292,7 +2292,7 @@ void Player::onUnmount(ShapeBase* obj,S32 node)
 
 void Player::updateAnimation(F32 dt)
 {
-   if ((isGhost() || mActionAnimation.animateOnServer) && mActionAnimation.thread)
+   if (((isGhost() || gSPMode) || mActionAnimation.animateOnServer) && mActionAnimation.thread)
       mShapeInstance->advanceTime(dt,mActionAnimation.thread);
    if (mRecoilThread)
       mShapeInstance->advanceTime(dt,mRecoilThread);
@@ -2300,7 +2300,7 @@ void Player::updateAnimation(F32 dt)
    // If we are the client's player on this machine, then we need
    // to make sure the transforms are up to date as they are used
    // to setup the camera.
-   if (isGhost())
+   if (isGhost() || gSPMode)
    {
       if (getControllingClient())
       {

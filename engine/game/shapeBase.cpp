@@ -1474,7 +1474,7 @@ void ShapeBase::updateDamageState()
       if (mShapeInstance->getPos(mHulkThread) != pos) {
          mShapeInstance->setPos(mHulkThread,pos);
 
-         if (isClientObject())
+         if (isClientObject() || gSPMode)
             mShapeInstance->animate();
       }
    }

@@ -219,7 +219,7 @@ void Camera::processTick(const Move* move)
       }
 
       // If on the client, calc delta for backstepping
-      if (isClientObject()) {
+      if (isClientObject() || gSPMode) {
          delta.pos = pos;
          delta.rot = mRot;
          delta.posVec = delta.posVec - delta.pos;

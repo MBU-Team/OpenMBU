@@ -1719,7 +1719,7 @@ void WorldEditor::onEditorEnable()
          continue;
 
       // only work with a server obj...
-      if(obj->isClientObject())
+      if(obj->isClientObject() || gSPMode)
          continue;
 
       // grab the client object

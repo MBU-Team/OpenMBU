@@ -776,8 +776,10 @@ void GameConnection::readPacket(BitStream *bstream)
    bstream->clearCompressionPoint();
    if (isConnectionToServer())
    {
-        if (bstream->readFlag() != gSPMode)
+        bool spMode = bstream->readFlag();
+        if (spMode != gSPMode)
         {
+            gSPMode = spMode;
             Con::executef(this, 2, "switchedSinglePlayerMode", Con::getIntArg((S32)gSPMode));
         }
 
