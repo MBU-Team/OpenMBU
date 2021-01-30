@@ -132,6 +132,13 @@ ConsoleFunction(lightScene, bool, 1, 3, "(script_function completeCallback=NULL,
 }
 
 //--------------------------------------------------------------------------
+ConsoleFunction(registerLights, void, 1, 1, "()")
+{
+    //LightManager* lManager = getCurrentClientSceneGraph()->getLightManager();
+    //lManager->sgRegisterGlobalLights(false);
+}
+
+//--------------------------------------------------------------------------
 
 static const U32 MaxPlayerNameLength = 16;
 ConsoleFunction(strToPlayerName, const char*, 2, 2, "strToPlayerName( string )")

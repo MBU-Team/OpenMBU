@@ -1204,9 +1204,3 @@ bool SceneLighting::AtlasLightMapProxy::getPersistInfo(PersistInfo::PersistChunk
     return(true);
 }
 
-ConsoleFunction(registerLights, void, 1, 1, "()")
-{
-    //LightManager* lManager = getCurrentClientSceneGraph()->getLightManager();
-    //lManager->sgRegisterGlobalLights(false);
-}
-
