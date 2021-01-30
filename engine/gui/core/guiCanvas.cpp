@@ -1134,7 +1134,7 @@ ColorI gCanvasClearColor( 255, 0, 255 ); ///< For GFX->clear
 void GuiCanvas::renderFrame(bool preRenderOnly)
 {
    bool disableSPMode = false;
-   if (!gRenderPreview && !gSPMode)
+   if (gRenderPreview && !gSPMode)
       disableSPMode = true;
 
    if (gRenderPreview)

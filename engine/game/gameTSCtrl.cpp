@@ -36,7 +36,7 @@ void GameTSCtrl::consoleInit()
 bool GameTSCtrl::processCameraQuery(CameraQuery *camq)
 {
    GameUpdateCameraFov();
-   return GameProcessCameraQuery(camq);
+   return GameProcessCameraQuery(camq) || gRenderPreview; // Might be wrong - Matt
 }
 
 //---------------------------------------------------------------------------
@@ -72,7 +72,7 @@ void GameTSCtrl::onMouseMove(const GuiEvent &evt)
 void GameTSCtrl::onRender(Point2I offset, const RectI &updateRect)
 {
    bool disableSPMode = false;
-   if (!gRenderPreview && !gSPMode)
+   if (gRenderPreview && !gSPMode)
       disableSPMode = true;
 
    if (gRenderPreview)
