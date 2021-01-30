@@ -92,7 +92,8 @@ bool TSStatic::onAdd()
       return false;
    }
 
-   if(isClientObject() && !mShape->preloadMaterialList() && NetConnection::filesWereDownloaded())
+   // TODO: Verify this - Matt
+   if((isClientObject() || gSPMode) && !mShape->preloadMaterialList() && NetConnection::filesWereDownloaded())
       return false;
 
    mObjBox = mShape->bounds;

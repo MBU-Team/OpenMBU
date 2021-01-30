@@ -163,7 +163,7 @@ bool ParticleEmitterNode::onAdd()
 void ParticleEmitterNode::onRemove()
 {
    removeFromScene();
-   if( isClientObject() )
+   if( isClientObject() || gSPMode )
    {
       if( mEmitter )
       {

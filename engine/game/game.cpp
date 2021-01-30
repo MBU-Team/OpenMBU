@@ -46,6 +46,7 @@ CollisionTest collisionTest;
 F32 gMovementSpeed = 1;
 
 bool gSPMode = false;
+bool gRenderPreview = false;
 
 //--------------------------------------------------------------------------
 ConsoleFunctionGroupBegin( GameFunctions, "General game functionality.");

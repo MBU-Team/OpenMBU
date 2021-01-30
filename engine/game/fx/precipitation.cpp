@@ -336,7 +336,7 @@ bool Precipitation::onNewDataBlock(GameBaseData* dptr)
    if (!mDataBlock || !Parent::onNewDataBlock(dptr))
       return false;
 
-   if (isClientObject())
+   if (isClientObject() || gSPMode)
    {
       if (mDataBlock->soundProfile)
          mAudioHandle = alxPlay(mDataBlock->soundProfile, &getTransform() );
@@ -519,7 +519,7 @@ void Precipitation::unpackUpdate(NetConnection* con, BitStream* stream)
       modifyStorm(pct, time);
    }
 
-   AssertFatal(isClientObject(), "Precipitation::unpackUpdate() should only be called on the client!");
+   AssertFatal(isClientObject() || gSPMode, "Precipitation::unpackUpdate() should only be called on the client!");
 
    U32 newDrops = mNumDrops * mPercentage;
    if (oldDrops != newDrops)

@@ -978,7 +978,7 @@ bool Player::onNewDataBlock(GameBaseData* dptr)
 
    // Recoil thread. The server player does not play this animation.
    mRecoilThread = 0;
-   if (isGhost())
+   if (isGhost() || gSPMode)
       for (U32 s = 0; s < PlayerData::NumRecoilSequences; s++)
          if (mDataBlock->recoilSequence[s] != -1) {
             mRecoilThread = mShapeInstance->addThread();
@@ -2042,7 +2042,7 @@ void Player::setActionThread(U32 action,bool forward,bool hold,bool wait,bool fs
       mActionAnimation.delayTicks      = (S32)sNewAnimationTickTime;
       mActionAnimation.atEnd           = false;
 
-      if (sUseAnimationTransitions && (isGhost()/* || mActionAnimation.animateOnServer*/))
+      if (sUseAnimationTransitions && (isGhost() || gSPMode/* || mActionAnimation.animateOnServer*/))
       {
          // The transition code needs the timeScale to be set in the
          // right direction to know which way to go.
@@ -2074,7 +2074,7 @@ void Player::updateActionThread()
          mActionAnimation.atEnd = mShapeInstance->getPos(mActionAnimation.thread) == 0;
 
    // Only need to deal with triggers on the client
-   if (isGhost())  {
+   if (isGhost() || gSPMode)  {
       bool triggeredLeft = false;
       bool triggeredRight = false;
       F32 offset = 0.0f;
@@ -4014,7 +4014,7 @@ bool Player::pointInWater( Point3F &point )
 {
    SimpleQueryList sql;
    if (isServerObject())
-      gServerSceneGraph->getWaterObjectList(sql);
+      getCurrentServerSceneGraph()->getWaterObjectList(sql);
    else
        getCurrentClientSceneGraph()->getWaterObjectList(sql);
 

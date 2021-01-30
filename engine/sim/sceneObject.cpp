@@ -169,7 +169,7 @@ ConsoleFunction(containerBoxEmpty, bool, 4, 6, "(bitset mask, Point3F center, fl
    polyList.mPlaneList[4].set(B.min, VectorF(0,0,-1));
    polyList.mPlaneList[5].set(B.max, VectorF(0,0,1));
 
-   return ! gServerContainer.buildPolyList(B, mask, &polyList);
+   return ! getCurrentServerContainer()->buildPolyList(B, mask, &polyList);
 }
 
 ConsoleFunction( initContainerRadiusSearch, void, 4, 4, "(Point3F pos, float radius, bitset mask)"
@@ -223,7 +223,7 @@ ConsoleFunction( containerRayCast, const char*, 4, 5, "( Point3F start, Point3F 
 
    RayInfo rinfo;
    S32 ret = 0;
-   if (gServerContainer.castRay(start, end, mask, &rinfo) == true)
+   if (getCurrentServerContainer()->castRay(start, end, mask, &rinfo) == true)
       ret = rinfo.object->getId();
 
    if (pExempt)

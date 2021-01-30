@@ -135,7 +135,7 @@ bool Sky::onAdd()
    for(S32 i = 0; i < mNumFogVolumes; ++i)
       mFogVolumes[i].percentage = mStormFogData.volume[i].active? 0.0f: 1.0f;
 
-   if(isClientObject())
+   if(isClientObject() || gSPMode)
    {
       if(!loadDml())
          return false;

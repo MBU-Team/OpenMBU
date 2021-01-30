@@ -9,6 +9,7 @@
 #include "sim/netConnection.h"
 #include "sim/netObject.h"
 #include "console/consoleTypes.h"
+#include "game/game.h"
 
 IMPLEMENT_CONOBJECT(NetObject);
 
@@ -160,6 +161,9 @@ ConsoleMethod(NetObject,setScopeAlways,void,2,2,"Always scope this object on all
 
 void NetObject::setScopeAlways()
 {
+   if (gSPMode)
+      return;
+
    if(mNetFlags.test(Ghostable) && !mNetFlags.test(IsGhost))
    {
       mNetFlags.set(ScopeAlways);

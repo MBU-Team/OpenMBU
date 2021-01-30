@@ -20,6 +20,7 @@ const F32 MinCameraFov              = 1.f;      ///< min camera FOV
 const F32 MaxCameraFov              = 179.f;    ///< max camera FOV
 
 extern bool gSPMode;
+extern bool gRenderPreview;
 
 /// Actually renders the world.  This is the function that will render the scene ONLY - new guis, no damage flashes.
 void GameRenderWorld();

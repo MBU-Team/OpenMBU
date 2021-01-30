@@ -579,8 +579,9 @@ void SceneGraph::registerZones(SceneObject* obj, U32 numZones)
    // Since we now have new zones in this space, we need to rezone any intersecting
    //  objects.  Query the container database to find all intersecting/contained
    //  objects, and rezone them
-   Container* pQueryContainer = mIsClient ? getCurrentClientContainer():
-       getCurrentServerContainer();
+   Container* pQueryContainer = this == gClientSceneGraph ? &gClientContainer :
+                               (this == gServerSceneGraph ? &gServerContainer :
+                               (this == gSPModeSceneGraph ? &gSPModeContainer : nullptr));
    // query
    SimpleQueryList list;
    pQueryContainer->findObjects(obj->mWorldBox, 0xFFFFFFFF, SimpleQueryList::insertionCallback, &list);
@@ -663,7 +664,9 @@ void SceneGraph::unregisterZones(SceneObject* obj)
          if ((mIsClient == true  && obj != getCurrentClientSceneRoot()) ||
              (mIsClient == false && obj != getCurrentServerSceneRoot()))
          {
-            Container* pQueryContainer = mIsClient ? getCurrentClientContainer() : getCurrentServerContainer();
+            Container* pQueryContainer = this == gClientSceneGraph ? &gClientContainer :
+               (this == gServerSceneGraph ? &gServerContainer :
+                  (this == gSPModeSceneGraph ? &gSPModeContainer : nullptr));
             SimpleQueryList list;
             pQueryContainer->findObjects(obj->mWorldBox, 0xFFFFFFFF, SimpleQueryList::insertionCallback, &list);
             for (i = 0; i < list.mList.size(); i++) {
@@ -870,8 +873,9 @@ void SceneGraph::zoneInsert(SceneObject* obj)
    if (obj->isManagingZones()) {
       // Query the container database to find all intersecting/contained
       //  objects, and rezone them
-      Container* pQueryContainer = mIsClient ? getCurrentClientContainer() :
-          getCurrentServerContainer();
+      Container* pQueryContainer = this == gClientSceneGraph ? &gClientContainer :
+         (this == gServerSceneGraph ? &gServerContainer :
+            (this == gSPModeSceneGraph ? &gSPModeContainer : nullptr));
       // query
       SimpleQueryList list;
       pQueryContainer->findObjects(obj->mWorldBox, 0xFFFFFFFF, SimpleQueryList::insertionCallback, &list);

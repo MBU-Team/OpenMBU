@@ -377,8 +377,8 @@ void Item::processTick(const Move* move)
       if (!mStatic && !mAtRest && isHidden() == false)
       {
          updateVelocity(TickSec);
-         updateWorkingCollisionSet(isGhost() ? sClientCollisionMask : sServerCollisionMask, TickSec);
-         updatePos(isGhost() ? sClientCollisionMask : sServerCollisionMask, TickSec);
+         updateWorkingCollisionSet(isGhost() || gSPMode ? sClientCollisionMask : sServerCollisionMask, TickSec);
+         updatePos(isGhost() || gSPMode ? sClientCollisionMask : sServerCollisionMask, TickSec);
       }
       else {
          // Need to clear out last updatePos or warp interpolation

@@ -31,6 +31,8 @@ public:
    void onMouseMove(const GuiEvent &evt);
    void onRender(Point2I offset, const RectI &updateRect);
 
+   static void consoleInit();
+
    DECLARE_CONOBJECT(GameTSCtrl);
 };
 

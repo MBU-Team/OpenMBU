@@ -12,6 +12,7 @@
 #include "core/resManager.h"
 #include "console/console.h"
 #include "console/consoleTypes.h"
+#include "game/game.h"
 
 #define DebugChecksum 0xF00DBAAD
 
@@ -826,6 +827,13 @@ void NetConnection::activateGhosting()
 {
    if(!isGhostingFrom())
       return;
+
+   if (gSPMode)
+   {
+      Con::executef(this, 1, "onGhostAlwaysObjectsReceived");
+      Con::printf("Ghost Always objects received.");
+      return;
+   }
 
    mGhostingSequence++;
 

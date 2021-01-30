@@ -787,7 +787,7 @@ bool ShapeBase::onAdd()
          updateThread(st);
    }
 
-   if (isClientObject())
+   if (isClientObject() || gSPMode)
    {
       if( mDataBlock->dynamicReflection )
       {
@@ -1059,7 +1059,8 @@ void ShapeBase::advanceTime(F32 dt)
 {
    // On the client, the shape threads and images are
    // advanced at framerate.
-   advanceThreads(dt);
+   if (!gSPMode)
+      advanceThreads(dt);
    updateAudioPos();
    for (int i = 0; i < MaxMountedImages; i++)
       if (mMountedImageList[i].dataBlock)
@@ -1078,7 +1079,7 @@ void ShapeBase::advanceTime(F32 dt)
    if(mInvincibleOn)
       updateInvincibleEffect(dt);
 
-   if(mFading)
+   if(mFading && !gSPMode) // why disable this for spmode? - Matt
    {
       mFadeElapsedTime += dt;
       if(mFadeElapsedTime > mFadeTime)
@@ -2769,7 +2770,7 @@ bool ShapeBase::pointInWater( Point3F &point )
 {
    SimpleQueryList sql;
    if (isServerObject())
-      gServerSceneGraph->getWaterObjectList(sql);
+      getCurrentServerSceneGraph()->getWaterObjectList(sql);
    else
        getCurrentClientSceneGraph()->getWaterObjectList(sql);
 

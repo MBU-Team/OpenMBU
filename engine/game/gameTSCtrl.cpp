@@ -27,6 +27,10 @@ GameTSCtrl::GameTSCtrl()
 {
 }
 
+void GameTSCtrl::consoleInit()
+{
+   Con::addVariable("Game::renderPreview", TypeBool, &gRenderPreview);
+}
 
 //---------------------------------------------------------------------------
 bool GameTSCtrl::processCameraQuery(CameraQuery *camq)
@@ -67,9 +71,19 @@ void GameTSCtrl::onMouseMove(const GuiEvent &evt)
 
 void GameTSCtrl::onRender(Point2I offset, const RectI &updateRect)
 {
+   bool disableSPMode = false;
+   if (!gRenderPreview && !gSPMode)
+      disableSPMode = true;
+
+   if (gRenderPreview)
+      gSPMode = true;
+
    // check if should bother with a render
    GameConnection * con = GameConnection::getConnectionToServer();
    bool skipRender = !con || (con->getWhiteOut() >= 1.f) || (con->getDamageFlash() >= 1.f) || (con->getBlackOut() >= 1.f);
+
+   if (gRenderPreview)
+      skipRender = false;
 
    if(!skipRender)
       Parent::onRender(offset, updateRect);
@@ -78,6 +92,9 @@ void GameTSCtrl::onRender(Point2I offset, const RectI &updateRect)
    CameraQuery camq;
    if(GameProcessCameraQuery(&camq))
       GameRenderFilters(camq);
+
+   if (disableSPMode)
+      gSPMode = false;
 }
 
 //--------------------------------------------------------------------------

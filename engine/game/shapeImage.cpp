@@ -1327,7 +1327,7 @@ void ShapeBase::setImage(U32 imageSlot, ShapeBaseImageData* imageData, StringHan
    image.state = &image.dataBlock->state[0];
    image.skinNameHandle = skinNameHandle;
    image.shapeInstance = new TSShapeInstance(image.dataBlock->shape, isClientObject());
-   if (isClientObject()) {
+   if (isClientObject() || gSPMode) {
       if (image.shapeInstance) {
          image.shapeInstance->cloneMaterialList();
          image.shapeInstance->reSkin(skinNameHandle);
@@ -1344,7 +1344,7 @@ void ShapeBase::setImage(U32 imageSlot, ShapeBaseImageData* imageData, StringHan
    image.animThread = 0;
    image.flashThread = 0;
    image.spinThread = 0;
-   if (isGhost()) {
+   if (isGhost() || gSPMode) {
       if (image.dataBlock->isAnimated) {
          image.animThread = image.shapeInstance->addThread();
          image.shapeInstance->setTimeScale(image.animThread,0);
@@ -1483,7 +1483,7 @@ void ShapeBase::setImageState(U32 imageSlot, U32 newState,bool force)
 
    // Eject shell casing on every state change
    ShapeBaseImageData::StateData& nextStateData = image.dataBlock->state[newState];
-   if (isGhost() && nextStateData.ejectShell) {
+   if ((isGhost() || gSPMode) && nextStateData.ejectShell) {
       ejectShellCasing( imageSlot );
    }
 
@@ -1585,7 +1585,7 @@ void ShapeBase::setImageState(U32 imageSlot, U32 newState,bool force)
       onImageRecoil(imageSlot,stateData.recoil);
 
    // Play sound
-   if (stateData.sound && isGhost()) {
+   if (stateData.sound && (isGhost() || gSPMode)) {
       Point3F vel = getVelocity();
       image.animSound = alxPlay(stateData.sound, &getRenderTransform(), &vel);
       ALint value = 0;
@@ -1618,7 +1618,7 @@ void ShapeBase::setImageState(U32 imageSlot, U32 newState,bool force)
    }
 
    // Start particle emitter on the client
-   if (isGhost())
+   if (isGhost() || gSPMode)
       startImageEmitter(image,stateData);
 
    // Start spin thread

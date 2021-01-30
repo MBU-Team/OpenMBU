@@ -1133,8 +1133,15 @@ ColorI gCanvasClearColor( 255, 0, 255 ); ///< For GFX->clear
 
 void GuiCanvas::renderFrame(bool preRenderOnly)
 {
+   bool disableSPMode = false;
+   if (!gRenderPreview && !gSPMode)
+      disableSPMode = true;
+
+   if (gRenderPreview)
+      gSPMode = true;
 
    PROFILE_START(CanvasPreRender);
+
    //We always want to render to the back buffer now
    //if(mRenderFront)
    //   glDrawBuffer(GL_FRONT);
@@ -1170,7 +1177,11 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
    preRender();
    PROFILE_END();
    if(preRenderOnly)
+   {
+      if (disableSPMode)
+         gSPMode = false;
       return;
+   }
 
    // for now, just always reset the update regions - this is a
    // fix for FSAA on ATI cards
@@ -1289,6 +1300,9 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
    PROFILE_START(SwapBuffers);
    GFX->swapBuffers();
    PROFILE_END();
+
+   if (disableSPMode)
+      gSPMode = false;
 }
 
 void GuiCanvas::buildUpdateUnion(RectI *updateUnion)

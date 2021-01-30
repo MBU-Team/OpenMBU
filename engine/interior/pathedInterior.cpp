@@ -126,7 +126,7 @@ bool PathedInterior::onAdd()
    setScale(mBaseScale);
    setTransform(mBaseTransform);
 
-   if (isClientObject()) {
+   if (isClientObject() || gSPMode) {
       mNextClientPI = mClientPathedInteriors;
       mClientPathedInteriors = this;
       mInterior->prepForRendering(mInteriorRes.getFilePath());

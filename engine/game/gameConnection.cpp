@@ -338,7 +338,7 @@ void GameConnection::setControlObject(ShapeBase *obj)
          coo->setControlObject(0);
       if (GameConnection *con = obj->getControllingClient())
       {
-         if(this != con)
+         if(this != con && !gSPMode) // TODO: Matt: this might cause issues later down the line
          {
             // was it controlled via camera or control
             if(con->getControlObject() == obj)
@@ -825,7 +825,7 @@ void GameConnection::readPacket(BitStream *bstream)
             obj->getClassRep()->updateNetStatReadData(bstream->getCurPos() - beginSize);
 #endif
 
-            if(callScript && !gSPMode) // Might not work - Matt
+            if(callScript)// && !gSPMode) // Might not work - Matt
                Con::executef(this, 2, "initialControlSet");
          }
          else

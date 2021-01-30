@@ -503,7 +503,7 @@ void Trigger::processTick(const Move* move)
 {
    Parent::processTick(move);
 
-   if (isClientObject())
+   if (isClientObject() && !gSPMode)
       return;
 
    //

@@ -76,7 +76,7 @@ bool WaterBlock::onAdd()
    mPrevScale = mObjScale;
 
 
-   if( isClientObject() )
+   if( isClientObject() || gSPMode)
    {
       // Load in various Material definitions
       for( U32 i=0; i<NUM_MAT_TYPES; i++ )

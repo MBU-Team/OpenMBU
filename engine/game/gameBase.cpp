@@ -176,7 +176,7 @@ bool GameBase::onAdd()
    }
 
    if (gSPMode)
-       mTypeMask &= GameBaseObjectType;
+       mTypeMask &= ~GameBaseObjectType;
 
    return true;
 }
@@ -305,7 +305,7 @@ Point3F GameBase::getVelocity() const
 //----------------------------------------------------------------------------
 bool GameBase::setDataBlock(GameBaseData* dptr)
 {
-   if (isGhost() || isProperlyAdded()) {
+   if (gSPMode || isGhost() || isProperlyAdded()) {
       if (mDataBlock != dptr)
          return onNewDataBlock(dptr);
    }

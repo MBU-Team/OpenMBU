@@ -347,7 +347,7 @@ bool InteriorInstance::onAdd()
       NetConnection::setLastError("Unable to load interior: %s", mInteriorFileName);
       return false;
    }
-   if(isClientObject())
+   if(isClientObject() || gSPMode)
    {
       if(mCRC != mInteriorRes.getCRC())
       {
