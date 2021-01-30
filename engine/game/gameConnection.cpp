@@ -338,7 +338,7 @@ void GameConnection::setControlObject(ShapeBase *obj)
          coo->setControlObject(0);
       if (GameConnection *con = obj->getControllingClient())
       {
-         if(this != con && !(gSPMode && con->getConnectionToServer() == this)) // TODO: Might need to revisit later
+         if(this != con)
          {
             // was it controlled via camera or control
             if(con->getControlObject() == obj)
@@ -356,6 +356,9 @@ void GameConnection::setControlObject(ShapeBase *obj)
    mControlObject = obj;
    if(mCameraObject.isNull())
       setScopeObject(mControlObject);
+
+   if (gSPMode)
+      this->getConnectionToServer()->setControlObject(obj);
 }
 
 void GameConnection::setCameraObject(ShapeBase *obj)
