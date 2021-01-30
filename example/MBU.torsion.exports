@@ -7434,6 +7434,8 @@ Possible parameters are:
     <function>        <name>redbookStop</name>
         <desc>Stop playing.</desc>
     </function>
+    <function>        <name>registerLights</name>
+    </function>
     <function>        <name>reInitMaterials</name>
     </function>
     <function>        <name>reloadTextures</name>
