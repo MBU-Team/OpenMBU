@@ -10,6 +10,7 @@
 #include "material.h"
 #include "materials/sceneData.h"
 #include "materials/matInstance.h"
+#include "renderInstance/renderInstMgr.h"
 
 //--------------------------------------
 MaterialList::MaterialList()
@@ -119,6 +120,36 @@ void MaterialList::load(U32 index, const char* path)
                 }
                 else
                     handle.set(name, &GFXDefaultStaticDiffuseProfile);
+
+
+                if (!handle.isValid())
+                {
+                    bool displayMaterialErrors = Con::getBoolVariable("$pref::Material::DisplayMaterialErrors");
+
+                    MatInstance* warningMat = gRenderInstManager.getWarningMat();
+                    if (warningMat != NULL)
+                    {
+                        StringTableEntry* texName = warningMat->getMaterial()->baseTexFilename;
+                        if (texName != NULL)
+                        {
+                            if (displayMaterialErrors)
+                                Con::warnf("MaterialList::load: failed to load '%s', using Warning Material.", name);
+                            handle.set(*texName, &GFXDefaultStaticDiffuseProfile);
+                        }
+                        else {
+                            if (displayMaterialErrors)
+                                Con::warnf("MaterialList::load: failed to load '%s' and Warning Material was not found...using blank texture.", name);
+                            handle.set(new GBitmap(1, 1), &GFXDefaultStaticDiffuseProfile, false);
+                        }
+                    }
+                    else {
+                        if (displayMaterialErrors)
+                            Con::warnf("MaterialList::load: failed to load '%s' and Warning Material was not found...using blank texture.", name);
+                        handle.set(new GBitmap(1, 1), &GFXDefaultStaticDiffuseProfile, false);
+                        return;
+                    }
+
+                }
             }
         }
     }
