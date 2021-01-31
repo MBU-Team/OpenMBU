@@ -61,7 +61,7 @@ bool Sun::onAdd()
     if (!Parent::onAdd())
         return(false);
 
-    if (isClientObject())
+    if (isClientObject() || gSPMode)
         Sim::getLightSet()->addObject(this);
     else
         conformLight();

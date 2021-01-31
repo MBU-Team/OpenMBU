@@ -110,7 +110,7 @@ ConsoleMethod(InteriorInstance, setAlarmMode, void, 3, 3, "(string mode) Mode is
         alarm = false;
 
     InteriorInstance* interior = static_cast<InteriorInstance*>(object);
-    if (interior->isClientObject()) {
+    if (interior->isClientObject() || gSPMode) {
         Con::errorf(ConsoleLogEntry::General, "InteriorInstance: client objects may not receive console commands.  Ignored");
         return;
     }
@@ -125,7 +125,7 @@ ConsoleMethod(InteriorInstance, setSkinBase, void, 3, 3, "(string basename)")
         "Error, how did a non-interior get here?");
 
     InteriorInstance* interior = static_cast<InteriorInstance*>(object);
-    if (interior->isClientObject()) {
+    if (interior->isClientObject() || gSPMode) {
         Con::errorf(ConsoleLogEntry::General, "InteriorInstance: client objects may not receive console commands.  Ignored");
         return;
     }

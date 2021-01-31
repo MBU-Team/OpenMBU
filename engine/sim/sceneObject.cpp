@@ -180,7 +180,7 @@ ConsoleFunction(initContainerRadiusSearch, void, 4, 4, "(Point3F pos, float radi
     F32 r = dAtof(argv[2]);
     U32 mask = dAtoi(argv[3]);
 
-    gServerContainer.initRadiusSearch(Point3F(x, y, z), r, mask);
+    getCurrentServerContainer()->initRadiusSearch(Point3F(x, y, z), r, mask);
 }
 
 ConsoleFunction(containerSearchNext, S32, 1, 1, "Get next item from a search started with initContainerRadiusSearch.")
@@ -594,7 +594,7 @@ void SceneObject::setTransform(const MatrixF& mat)
             getContainer()->checkBins(this);
     }
 
-    if (isClientObject())
+    if (isClientObject() || gSPMode)
         mLightingInfo.mDirty = true;
 
     setRenderTransform(mat);

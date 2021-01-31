@@ -456,7 +456,7 @@ void MirrorSubObject::setupTransforms()
    mInitialized = true;
 
    // This is really bad, but it's just about the only good place for this...
-   if (getInstance()->isClientObject() && mWhite == NULL)
+   if ((getInstance()->isClientObject() || gSPMode) && mWhite == NULL)
       mWhite = new GFXTexHandle("special/whiteAlpha0", &GFXDefaultStaticDiffuseProfile);
 
    Interior* interior = getInstance()->getDetailLevel(mDetailLevel);
