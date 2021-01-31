@@ -82,6 +82,9 @@ function execServerScripts()
   // Tim Particles & Environment
   //exec("./particle_effects.cs");
   //exec("./environment.cs");
+  
+  
+   exec("common/server/lightingSystem.cs");
 }
 
 function onServerCreated()

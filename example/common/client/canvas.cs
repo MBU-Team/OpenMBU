@@ -41,6 +41,8 @@ function initCanvas(%windowName)
    exec("./help.cs");
    //exec("./recordings.cs"); // use the marble blast one
    
+   // Misc
+   exec( "./shaders.cs" );
    exec("./materials.cs");
 
    // Init the audio system

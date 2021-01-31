@@ -3499,6 +3499,9 @@ More of a helper function than anything.   If console access to the field list i
             <desc>Push a line onto the front of the vector.</desc>
         </method>
     </class>
+    <class>        <name>MirrorSubObject</name>
+        <base>SceneObject</base>
+    </class>
     <class>        <name>MissionArea</name>
         <base>NetObject</base>
         <method>            <name>getArea</name>
@@ -4725,6 +4728,12 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>aiAvoidThis</name>
             <desc>bool aiAvoidThis</desc>
         </field>
+        <field>            <name>astrolabe</name>
+            <desc>bool astrolabe</desc>
+        </field>
+        <field>            <name>astrolabePrime</name>
+            <desc>bool astrolabePrime</desc>
+        </field>
         <field>            <name>cameraDefaultFov</name>
             <desc>float cameraDefaultFov</desc>
         </field>
@@ -4773,6 +4782,12 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>firstPersonOnly</name>
             <desc>bool firstPersonOnly</desc>
         </field>
+        <field>            <name>gemAuraTextureName</name>
+            <desc>filename gemAuraTextureName</desc>
+        </field>
+        <field>            <name>glass</name>
+            <desc>bool glass</desc>
+        </field>
         <field>            <name>hudImageName</name>
             <desc>filename hudImageName</desc>
         </field>
@@ -4814,6 +4829,9 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>observeThroughObject</name>
             <desc>bool observeThroughObject</desc>
+        </field>
+        <field>            <name>renderGemAura</name>
+            <desc>bool renderGemAura</desc>
         </field>
         <field>            <name>renderWhenDestroyed</name>
             <desc>bool renderWhenDestroyed</desc>
@@ -7156,6 +7174,7 @@ Sim time is time since the game started.</desc>
         <desc>or (float x, float y, float z)</desc>
     </function>
     <function>        <name>isResourceBGLoaded</name>
+        <args>file</args>
     </function>
     <function>        <name>isShippingBuild</name>
         <desc>Returns true if this is a shipping build, false otherwise</desc>
@@ -7756,7 +7775,11 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
     </function>
+    <function>        <name>XBLiveGetUserId</name>
+    </function>
+    <function>        <name>XBLiveGetUserName</name>
+    </function>
     <function>        <name>XBLiveIsSignedIn</name>
-        <args>port</args>
+        <args>[port]</args>
     </function>
 </exports>
