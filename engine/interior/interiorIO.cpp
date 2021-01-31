@@ -169,10 +169,12 @@ bool Interior::read(Stream& stream)
         mEdges.setSize(vectorSize);
         for (i = 0; i < mEdges.size(); i++)
         {
-            stream.read(&mEdges[i].vertexes[0]);
-            stream.read(&mEdges[i].vertexes[1]);
-            stream.read(&mEdges[i].faces[0]);
-            stream.read(&mEdges[i].faces[1]);
+            stream.read(&mEdges[i].vertex1);
+            stream.read(&mEdges[i].vertex2);
+            stream.read(&mEdges[i].face1);
+            stream.read(&mEdges[i].face2);
+            mEdges[i].normal1 = 0;
+            mEdges[i].normal2 = 0;
         }
     }
 
@@ -302,16 +304,19 @@ bool Interior::read(Stream& stream)
         mEdges.setSize(vectorSize);
         for (i = 0; i < mEdges.size(); i++)
         {
-            stream.read(&mEdges[i].vertexes[0]);
-            stream.read(&mEdges[i].vertexes[1]);
-            U32 normals[2];
-            stream.read(&normals[0]);
-            stream.read(&normals[1]);
+            stream.read(&mEdges[i].vertex1);
+            stream.read(&mEdges[i].vertex2);
+            stream.read(&mEdges[i].normal1);
+            stream.read(&mEdges[i].normal2);
 
-            if (fileVersion > 2) // version 3 is where surface id's get added
+            if (fileVersion > 2) // surface id's were introduced in version 3
             {
-                stream.read(&mEdges[i].faces[0]);
-                stream.read(&mEdges[i].faces[1]);
+                stream.read(&mEdges[i].face1);
+                stream.read(&mEdges[i].face2);
+            }
+            else {
+                mEdges[i].face1 = 0;
+                mEdges[i].face2 = 0;
             }
         }
     }
@@ -427,10 +432,6 @@ bool Interior::read(Stream& stream)
     // mLightmaps
     if (fileVersion == 4)
     {
-        //mLightmaps.setSize(0);
-        //mLightDirMaps.setSize(0);
-        //mLightmapKeep.setSize(0);
-
         generateLightmaps();
     } else
     {

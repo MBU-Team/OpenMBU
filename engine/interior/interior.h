@@ -439,8 +439,14 @@ public:
 
     struct Edge
     {
-        S32 vertexes[2];
-        S32 faces[2];
+        U32 vertex1;
+        U32 vertex2;
+
+        U32 normal1;
+        U32 normal2;
+
+        U32 face1;
+        U32 face2;
     };
 
     struct TexGenPlanes {
@@ -463,16 +469,16 @@ public:
 
         U16 lightCount;            // 4
         U8  surfaceFlags;
-        U8  windingCount;
+        U32  windingCount;
 
         U32 fanMask;               // 5
 
         U32 lightStateInfoStart;   // 6
 
-        U8  mapOffsetX;            // 7
-        U8  mapOffsetY;
-        U8  mapSizeX;
-        U8  mapSizeY;
+        U32  mapOffsetX;            // 7
+        U32  mapOffsetY;
+        U32  mapSizeX;
+        U32  mapSizeY;
 
         Point3F T, B, N;
         Point3F normal;
@@ -489,7 +495,7 @@ public:
 
         U16 planeIndex;
         U8  surfaceFlags;
-        U8  windingCount;
+        U32  windingCount;
     };
 
     //-------------------------------------- Animated lighting structures
@@ -729,8 +735,8 @@ private:
 
     Vector<GBitmap*>        mLightmaps;
     Vector<bool>            mLightmapKeep;
-    Vector<U8>              mNormalLMapIndices;
-    Vector<U8>              mAlarmLMapIndices;
+    Vector<U32>             mNormalLMapIndices;
+    Vector<U32>             mAlarmLMapIndices;
 
     U32                     mNumTriggerableLights;        // Note: not persisted
 
