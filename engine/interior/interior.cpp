@@ -2480,7 +2480,7 @@ void Interior::initMatInstances()
                 tempTex.set(4, 4, GFXFormatR8G8B8A8, &GFXDefaultStaticDiffuseProfile);
                 sgData.lightmap = tempTex;
 
-                if( node.exterior )
+                if( node.exterior || node.lightMapIndex >= mLightDirMapsTex.size())
                 {
                    sgData.normLightmap = NULL;
                    sgData.useLightDir = true;
