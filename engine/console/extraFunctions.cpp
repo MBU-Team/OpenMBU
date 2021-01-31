@@ -10,7 +10,7 @@ ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
     Con::executef(3, "onZipLoaded", zipName, Con::getIntArg(0));
 }
 
-ConsoleFunction(isResourceBGLoaded, bool, 2, 2, "()")
+ConsoleFunction(isResourceBGLoaded, bool, 2, 2, "(file)")
 {
     argc;
     return true;
@@ -30,8 +30,23 @@ ConsoleFunction(getLanguage, const char*, 1, 1, "()")
     return ret;
 }
 
-ConsoleFunction(XBLiveIsSignedIn, bool, 2, 2, "(port)")
+ConsoleFunction(XBLiveIsSignedIn, bool, 1, 2, "([port])")
 {
     argc;
     return true;
+}
+
+ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
+{
+    argc;
+    char* ret = Con::getReturnBuffer(1024);
+    dSprintf(ret, 1024, "%s", "Alex");
+    return ret;
+}
+
+ConsoleFunction(XBLiveGetUserId, S32, 1, 1, "()")
+{
+    argc;
+
+    return 1;
 }
