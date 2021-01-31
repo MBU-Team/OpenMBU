@@ -2933,6 +2933,8 @@ function Editor::open(%this)
 
 function Editor::close(%this, %gui)
 {
+   if (%gui $= "")
+      %gui = RootGui;
    Canvas.setContent(%gui);
    MessageHud.close();
 }

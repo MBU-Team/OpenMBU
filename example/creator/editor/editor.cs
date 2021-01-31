@@ -112,6 +112,9 @@ function toggleEditor(%make)
             else 
             {
                Editor.close("PlayGui");
+               Canvas.setContent(RootGui);
+					RootGui.setContent(PlayGui);
+               moveMap.push();
             }
          else 
          {
