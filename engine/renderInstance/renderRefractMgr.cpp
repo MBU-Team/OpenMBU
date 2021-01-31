@@ -128,9 +128,9 @@ void RenderRefractMgr::render()
                 objTrans.mulP(eyePos);
                 GFX->setVertexShaderConstF(VC_EYE_POS, (float*)&eyePos, 1);
 
-                //Point3F lightDir = passRI->lightDir;
-                //objTrans.mulV( lightDir );
-                //GFX->setVertexShaderConstF( VC_LIGHT_DIR1, (float*)&lightDir, 1 );
+                Point3F lightDir = passRI->light.mDirection;
+                objTrans.mulV( lightDir );
+                GFX->setVertexShaderConstF( VC_LIGHT_DIR1, (float*)&lightDir, 1 );
 
 
                 // fill in cubemap data

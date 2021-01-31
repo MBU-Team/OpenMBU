@@ -102,9 +102,9 @@ void RenderInteriorMgr::render()
     }
 
     // turn on anisotropic only on base tex stage
-    //   GFX->setTextureStageMaxAnisotropy( 0, 2 );
-    //   GFX->setTextureStageMagFilter( 0, GFXTextureFilterAnisotropic );
-    //   GFX->setTextureStageMinFilter( 0, GFXTextureFilterAnisotropic );
+    GFX->setTextureStageMaxAnisotropy( 0, 2 );
+    GFX->setTextureStageMagFilter( 0, GFXTextureFilterAnisotropic );
+    GFX->setTextureStageMinFilter( 0, GFXTextureFilterAnisotropic );
 
 
     GFX->setZWriteEnable(true);

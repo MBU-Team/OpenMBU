@@ -158,7 +158,9 @@ void InteriorLMManager::addInterior(LM_HANDLE& interiorHandle, U32 numLightmaps,
     {
         AssertFatal(interior->mLightmaps[i], "InteriorLMManager::addInterior: interior missing lightmap");
         texHandles[i].set(interior->mLightmaps[i], &GFXDefaultPersistentProfile, true);
-        normalHandles[i].set(interior->mLightDirMaps[i], &GFXDefaultPersistentProfile, true);
+
+        if (interior->mLightDirMaps[i] != NULL)
+            normalHandles[i].set(interior->mLightDirMaps[i], &GFXDefaultPersistentProfile, true);
     }
 
     interior->mLightmaps.clear();

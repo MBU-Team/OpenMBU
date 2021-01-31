@@ -2471,11 +2471,14 @@ void Interior::initMatInstances()
         {
             RenderNode& node = mZoneRNList[i].renderNodeList[j];
 
+            GFXTexHandle tempTex;
+
             // setup lightmap
             if (node.lightMapIndex != U8(-1))
             {
                 // Stuff a dummy lightmap in so the shader will init properly
-                sgData.lightmap.set(4, 4, GFXFormatR8G8B8A8, &GFXDefaultStaticDiffuseProfile);
+                tempTex.set(4, 4, GFXFormatR8G8B8A8, &GFXDefaultStaticDiffuseProfile);
+                sgData.lightmap = tempTex;
 
                 if( node.exterior )
                 {

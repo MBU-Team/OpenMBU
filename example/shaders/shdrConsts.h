@@ -43,7 +43,7 @@
 #define PC_USERDEF2        C7
 #define PC_USERDEF3        C8
 
-
+#define PC_VISIBILITY      C9
 
 // Mirror of above.  Couldn't be cleaner because HLSL doesn't support function macros
 #else
@@ -91,6 +91,8 @@
 #define PC_USERDEF1        6
 #define PC_USERDEF2        7
 #define PC_USERDEF3        8
+
+#define PC_VISIBILITY      9
 
 #endif
 

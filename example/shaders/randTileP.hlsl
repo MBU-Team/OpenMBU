@@ -1,10 +1,13 @@
 //*****************************************************************************
 // TSE -- HLSL procedural shader                                               
 //*****************************************************************************
-
 //-----------------------------------------------------------------------------
 // Structures                                                                  
 //-----------------------------------------------------------------------------
+
+#define IN_HLSL
+#include "./shdrConsts.h"
+
 struct ConnectData
 {
    float4 shading         : COLOR;
@@ -25,12 +28,12 @@ struct Fragout
 // Main                                                                        
 //-----------------------------------------------------------------------------
 Fragout main( ConnectData IN,
-              uniform float4    ambient         : register(C2),
+              uniform float4    ambient         : register(PC_AMBIENT_COLOR),
               uniform sampler2D diffuseMap      : register(S0),
               uniform sampler2D bumpMap         : register(S1),
               uniform sampler2D noiseMap        : register(S2),
-              uniform float4    specularColor   : register(C0),
-              uniform float     specularPower   : register(C1)
+              uniform float4    specularColor   : register(PC_MAT_SPECCOLOR),
+              uniform float     specularPower   : register(PC_MAT_SPECPOWER)
 )
 {
    Fragout OUT;

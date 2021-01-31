@@ -3963,6 +3963,7 @@
     <ClInclude Include="..\engine\util\rectClipper.h" />
     <ClInclude Include="..\engine\util\safeDelete.h" />
     <ClInclude Include="..\engine\util\triBoxCheck.h" />
+    <ClInclude Include="..\example\shaders\shdrConsts.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\engine\.editorconfig" />

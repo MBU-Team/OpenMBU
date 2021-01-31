@@ -4,6 +4,10 @@
 //-----------------------------------------------------------------------------
 // Structures                                                                  
 //-----------------------------------------------------------------------------
+
+#define IN_HLSL
+#include "../shdrConsts.h"
+
 struct VertData
 {
    float2 texCoord        : TEXCOORD0;
@@ -33,11 +37,11 @@ struct ConnectData
 // Main                                                                        
 //-----------------------------------------------------------------------------
 ConnectData main( VertData IN,
-                  uniform float4x4 modelview       : register(C0),
-                  uniform float3   inLightVec      : register(C24),
-                  uniform float3x3 cubeTrans       : register(C16),
-                  uniform float3   cubeEyePos      : register(C19),
-                  uniform float3   eyePos          : register(C20)
+                  uniform float4x4 modelview       : register(VC_WORLD_PROJ),
+                  uniform float3   inLightVec      : register(VC_LIGHT_DIR1),
+                  uniform float3x3 cubeTrans       : register(VC_CUBE_TRANS),
+                  uniform float3   cubeEyePos      : register(VC_CUBE_EYE_POS),
+                  uniform float3   eyePos          : register(VC_EYE_POS)
 )
 {
    ConnectData OUT;

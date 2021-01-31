@@ -4,6 +4,10 @@
 //-----------------------------------------------------------------------------
 // Structures                                                                  
 //-----------------------------------------------------------------------------
+
+#define IN_HLSL
+#include "./shdrConsts.h"
+
 struct VertData
 {
    float4 position        : POSITION;
@@ -20,7 +24,7 @@ struct ConnectData
 // Main                                                                        
 //-----------------------------------------------------------------------------
 ConnectData main( VertData IN,
-                  uniform float4x4 modelview       : register(C0)
+                  uniform float4x4 modelview       : register(VC_WORLD_PROJ)
 )
 {
    ConnectData OUT;
