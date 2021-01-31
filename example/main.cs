@@ -10,6 +10,8 @@ $displayHelp = false;
 
 $vidAlreadySet = false;
 
+$pref::Console::alwaysUseDebugOutput = true;
+
 //-----------------------------------------------------------------------------
 // Support functions used to manage the mod string
 
