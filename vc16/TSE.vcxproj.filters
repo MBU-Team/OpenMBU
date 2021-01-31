@@ -1494,6 +1494,15 @@
     <ClCompile Include="..\engine\gfx\bitmapMng.cpp">
       <Filter>Source Files\gfx</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\interior\interiorSubObject.cpp">
+      <Filter>Source Files\interior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\interior\mirrorSubObject.cpp">
+      <Filter>Source Files\interior</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\interior\interiorSimpleMesh.cpp">
+      <Filter>Source Files\interior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2749,6 +2758,15 @@
     </ClInclude>
     <ClInclude Include="..\engine\platform\types.win32.h">
       <Filter>Source Files\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\interior\interiorSubObject.h">
+      <Filter>Source Files\interior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\interior\mirrorSubObject.h">
+      <Filter>Source Files\interior</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\interior\interiorSimpleMesh.h">
+      <Filter>Source Files\interior</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

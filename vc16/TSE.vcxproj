@@ -2171,6 +2171,9 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\interior\interiorSimpleMesh.cpp" />
+    <ClCompile Include="..\engine\interior\interiorSubObject.cpp" />
+    <ClCompile Include="..\engine\interior\mirrorSubObject.cpp" />
     <ClCompile Include="..\engine\interior\pathedInterior.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3826,6 +3829,9 @@
     <ClInclude Include="..\engine\interior\interiorMapRes.h" />
     <ClInclude Include="..\engine\interior\interiorRes.h" />
     <ClInclude Include="..\engine\interior\interiorResObjects.h" />
+    <ClInclude Include="..\engine\interior\interiorSimpleMesh.h" />
+    <ClInclude Include="..\engine\interior\interiorSubObject.h" />
+    <ClInclude Include="..\engine\interior\mirrorSubObject.h" />
     <ClInclude Include="..\engine\interior\pathedInterior.h" />
     <ClInclude Include="..\engine\lightingSystem\sgDecalProjector.h" />
     <ClInclude Include="..\engine\lightingSystem\sgDynamicRangeLighting.h" />

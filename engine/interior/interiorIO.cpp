@@ -8,6 +8,7 @@
 #include "core/stream.h"
 #include "math/mathIO.h"
 #include "gfx/gBitmap.h"
+#include "interior/interiorSubObject.h"
 #include "console/console.h"
 #include "core/frameAllocator.h"
 #include "materials/materialList.h"
@@ -20,10 +21,14 @@ int QSORT_CALLBACK cmpU32(const void* p1, const void* p2)
 //------------------------------------------------------------------------------
 //-------------------------------------- PERSISTENCE IMPLEMENTATION
 //
-const U32 Interior::smFileVersion = 0;
+const U32 Interior::smFileVersion = 14;
 
 bool Interior::read(Stream& stream)
 {
+    // TODO: Interiors cause issues with preview atm, fix later... - Matt
+    if (gSPMode)
+        return false;
+
     AssertFatal(stream.hasCapability(Stream::StreamRead), "Interior::read: non-read capable stream passed");
     AssertFatal(stream.getStatus() == Stream::Ok, "Interior::read: Error, stream in inconsistent state");
 
@@ -32,7 +37,12 @@ bool Interior::read(Stream& stream)
     // Version this stream.  We only load stream of the current version
     U32 fileVersion;
     stream.read(&fileVersion);
-    if (fileVersion != smFileVersion)
+
+    // We need to store the version in case there is any post processing that
+    // needs to take place that is dependent on the file version
+    mFileVersion = fileVersion;
+
+    if (fileVersion > smFileVersion)
     {
         Con::errorf(ConsoleLogEntry::General, "Interior::read: incompatible file version found.");
         return false;
@@ -60,9 +70,14 @@ bool Interior::read(Stream& stream)
         mathRead(stream, &mPoints[i].point);
 
     // mPointVisibility
-    stream.read(&vectorSize);
-    mPointVisibility.setSize(vectorSize);
-    stream.read(vectorSize, mPointVisibility.address());
+    if (fileVersion == 4)
+        mPointVisibility.setSize(0);
+    else
+    {
+        stream.read(&vectorSize);
+        mPointVisibility.setSize(vectorSize);
+        stream.read(vectorSize, mPointVisibility.address());
+    }
 
     // mTexGenEQs
     stream.read(&vectorSize);
@@ -79,8 +94,21 @@ bool Interior::read(Stream& stream)
     for (i = 0; i < mBSPNodes.size(); i++)
     {
         stream.read(&mBSPNodes[i].planeIndex);
-        stream.read(&mBSPNodes[i].frontIndex);
-        stream.read(&mBSPNodes[i].backIndex);
+
+        if (fileVersion >= 14)
+        {
+            stream.read(&mBSPNodes[i].frontIndex);
+            stream.read(&mBSPNodes[i].backIndex);
+        }
+        else
+        {
+            U16 frontIndex, backIndex;
+            stream.read(&frontIndex);
+            stream.read(&backIndex);
+
+            mBSPNodes[i].frontIndex = U32(frontIndex);
+            mBSPNodes[i].backIndex = U32(backIndex);
+        }
     }
 
     // mBSPSolidLeaves
@@ -100,11 +128,28 @@ bool Interior::read(Stream& stream)
 
 
     // mWindings
+    bool readWindingsAlt = false;
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+        readWindingsAlt = true;
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mWindings.setSize(vectorSize);
     for (i = 0; i < mWindings.size(); i++)
     {
-        stream.read(&mWindings[i]);
+        if (readWindingsAlt)
+        {
+            U16 winding;
+            stream.read(&winding);
+            mWindings[i] = winding;
+        }
+        else
+        {
+            stream.read(&mWindings[i]);
+        }
     }
 
     // mWindingIndices
@@ -116,6 +161,21 @@ bool Interior::read(Stream& stream)
         stream.read(&mWindingIndices[i].windingCount);
     }
 
+    // mEdges
+    if (fileVersion >= 12)
+    {
+        stream.read(&vectorSize);
+
+        mEdges.setSize(vectorSize);
+        for (i = 0; i < mEdges.size(); i++)
+        {
+            stream.read(&mEdges[i].vertexes[0]);
+            stream.read(&mEdges[i].vertexes[1]);
+            stream.read(&mEdges[i].faces[0]);
+            stream.read(&mEdges[i].faces[1]);
+        }
+    }
+
     // mZones
     stream.read(&vectorSize);
     mZones.setSize(vectorSize);
@@ -125,18 +185,52 @@ bool Interior::read(Stream& stream)
         stream.read(&mZones[i].portalCount);
         stream.read(&mZones[i].surfaceStart);
         stream.read(&mZones[i].surfaceCount);
+
+        if (fileVersion >= 12)
+        {
+            stream.read(&mZones[i].staticMeshStart);
+            stream.read(&mZones[i].staticMeshCount);
+        }
+        else
+        {
+            mZones[i].staticMeshStart = 0;
+            mZones[i].staticMeshCount = 0;
+        }
+
         stream.read(&mZones[i].flags);
         mZones[i].zoneId = 0;
     }
 
     // Zone surfaces
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mZoneSurfaces.setSize(vectorSize);
     for (i = 0; i < mZoneSurfaces.size(); i++)
         stream.read(&mZoneSurfaces[i]);
 
+    // Zone static meshes
+    if (fileVersion >= 12)
+    {
+        stream.read(&vectorSize);
+
+        mZoneStaticMeshes.setSize(vectorSize);
+        for (i = 0; i < mZoneStaticMeshes.size(); i++)
+            stream.read(&mZoneStaticMeshes[i]);
+    }
+
     //  mZonePortalList;
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mZonePortalList.setSize(vectorSize);
     for (i = 0; i < mZonePortalList.size(); i++)
         stream.read(&mZonePortalList[i]);
@@ -157,35 +251,159 @@ bool Interior::read(Stream& stream)
     stream.read(&vectorSize);
     mSurfaces.setSize(vectorSize);
     mLMTexGenEQs.setSize(vectorSize);
+
+    // Couple of hoops to *attempt* to detect that we are loading
+    // a TGE version 0 Interior and not a TGEA verison 0
+    U32 surfacePos = stream.getPosition();
+    bool tgeInterior = false;
+
+    // First attempt to read this as though it isn't a TGE version 0 Interior
     for (i = 0; i < mSurfaces.size(); i++)
     {
-        stream.read(&mSurfaces[i].windingStart);
-        stream.read(&mSurfaces[i].windingCount);
-        stream.read(&mSurfaces[i].planeIndex);
-        stream.read(&mSurfaces[i].textureIndex);
-        stream.read(&mSurfaces[i].texGenIndex);
-        stream.read(&mSurfaces[i].surfaceFlags);
-        stream.read(&mSurfaces[i].fanMask);
-        readLMapTexGen(stream, mLMTexGenEQs[i].planeX, mLMTexGenEQs[i].planeY);
+        // If we end up reading any invalid data in this loop then odds
+        // are that we are no longer correctly reading from the stream
+        // and have gotten off because this is a TGE version 0 Interior
 
-        stream.read(&mSurfaces[i].lightCount);
-        stream.read(&mSurfaces[i].lightStateInfoStart);
-        stream.read(&mSurfaces[i].mapOffsetX);
-        stream.read(&mSurfaces[i].mapOffsetY);
-        stream.read(&mSurfaces[i].mapSizeX);
-        stream.read(&mSurfaces[i].mapSizeY);
-        stream.read(&mSurfaces[i].unused);
+        Surface& surface = mSurfaces[i];
+
+        if (readSurface(stream, surface, mLMTexGenEQs[i], false) == false)
+        {
+            tgeInterior = true;
+            break;
+        }
+    }
+
+    // If this is a version 0 Interior and we failed to read it as a
+    // TGEA version 0 Interior then attempt to read it as a TGE version 0
+    if (fileVersion == 0 && tgeInterior)
+    {
+        // Set our stream position back to the start of the surfaces
+        stream.setPosition(surfacePos);
+
+        // Try reading in the surfaces again
+        for (i = 0; i < mSurfaces.size(); i++)
+        {
+            Surface& surface = mSurfaces[i];
+
+            // If we fail on any of the surfaces then bail
+            if (readSurface(stream, surface, mLMTexGenEQs[i], true) == false)
+                return false;
+        }
+    }
+    // If we failed to read but this isn't a version 0 Interior
+    // then something has gone horribly wrong
+    else if (fileVersion != 0 && tgeInterior)
+        return false;
+
+    // Edges
+    if (fileVersion > 1 && fileVersion <= 5)
+    {
+        stream.read(&vectorSize);
+        mEdges.setSize(vectorSize);
+        for (i = 0; i < mEdges.size(); i++)
+        {
+            stream.read(&mEdges[i].vertexes[0]);
+            stream.read(&mEdges[i].vertexes[1]);
+            U32 normals[2];
+            stream.read(&normals[0]);
+            stream.read(&normals[1]);
+
+            if (fileVersion > 2) // version 3 is where surface id's get added
+            {
+                stream.read(&mEdges[i].faces[0]);
+                stream.read(&mEdges[i].faces[1]);
+            }
+        }
+    }
+
+    // mNormals
+    if (fileVersion == 4 || fileVersion == 5)
+    {
+        stream.read(&vectorSize);
+        if (vectorSize & 0x80000000)
+        {
+            vectorSize ^= 0x80000000;
+
+            U8 dummy;
+            stream.read(&dummy);
+        }
+
+        Vector<Point3F> normals;
+        normals.setSize(vectorSize);
+        for (i = 0; i < normals.size(); i++)
+            mathRead(stream, &normals[i]);
+
+        // mNormalIndices
+        bool normalIndicesAlt = false;
+        U8 normalIndicesParam = 0;
+        stream.read(&vectorSize);
+        if (vectorSize & 0x80000000)
+        {
+            vectorSize ^= 0x80000000;
+            normalIndicesAlt = true;
+            stream.read(&normalIndicesParam);
+        }
+        Vector<U16> normalIndices;
+        normalIndices.setSize(vectorSize);
+        for (i = 0; i < normalIndices.size(); i++)
+        {
+            if (normalIndicesAlt && normalIndicesParam == 0)
+            {
+                U8 index;
+                stream.read(&index);
+                normalIndices[i] = index;
+            }
+            else {
+                stream.read(&normalIndices[i]);
+            }
+        }
     }
 
     // NormalLMapIndices
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mNormalLMapIndices.setSize(vectorSize);
-    stream.read(mNormalLMapIndices.size(), mNormalLMapIndices.address());
+    for (U32 i = 0; i < mNormalLMapIndices.size(); i++)
+    {
+        if (fileVersion >= 13)
+            stream.read(&mNormalLMapIndices[i]);
+        else
+        {
+            U8 index = 0;
+            stream.read(&index);
+
+            mNormalLMapIndices[i] = (U32)index;
+        }
+    }
 
     // AlarmLMapIndices
-    stream.read(&vectorSize);
-    mAlarmLMapIndices.setSize(vectorSize);
-    stream.read(mAlarmLMapIndices.size(), mAlarmLMapIndices.address());
+    if (fileVersion == 4)
+    {
+        mAlarmLMapIndices.setSize(0);
+    }
+    else
+    {
+        stream.read(&vectorSize);
+        mAlarmLMapIndices.setSize(vectorSize);
+        for (U32 i = 0; i < mAlarmLMapIndices.size(); i++)
+        {
+            if (fileVersion >= 13)
+                stream.read(&mAlarmLMapIndices[i]);
+            else
+            {
+                U8 index = 0;
+                stream.read(&index);
+
+                mAlarmLMapIndices[i] = (U32)index;
+            }
+        }
+    }
 
     // mNullSurfaces
     stream.read(&vectorSize);
@@ -195,40 +413,96 @@ bool Interior::read(Stream& stream)
         stream.read(&mNullSurfaces[i].windingStart);
         stream.read(&mNullSurfaces[i].planeIndex);
         stream.read(&mNullSurfaces[i].surfaceFlags);
-        stream.read(&mNullSurfaces[i].windingCount);
+
+        if (fileVersion >= 13)
+            stream.read(&mNullSurfaces[i].windingCount);
+        else
+        {
+            U8 count;
+            stream.read(&count);
+            mNullSurfaces[i].windingCount = (U32)count;
+        }
     }
 
     // mLightmaps
-    stream.read(&vectorSize);
-    mLightmaps.setSize(vectorSize);
-    mLightDirMaps.setSize(vectorSize);
-    mLightmapKeep.setSize(vectorSize);
-    for (i = 0; i < mLightmaps.size(); i++)
+    if (fileVersion == 4)
     {
-        mLightmaps[i] = new GBitmap;
-        mLightmaps[i]->readPNG(stream);
+        //mLightmaps.setSize(0);
+        //mLightDirMaps.setSize(0);
+        //mLightmapKeep.setSize(0);
 
-        mLightDirMaps[i] = new GBitmap;
-        mLightDirMaps[i]->readPNG(stream);
-
-        stream.read(&mLightmapKeep[i]);
-    }
-
-    if (GFXDevice::devicePresent())
+        generateLightmaps();
+    } else
     {
-        for (i = 0; i < mLightDirMaps.size(); i++)
+        stream.read(&vectorSize);
+        mLightmaps.setSize(vectorSize);
+        mLightDirMaps.setSize(vectorSize);
+        mLightmapKeep.setSize(vectorSize);
+        for (i = 0; i < mLightmaps.size(); i++)
         {
-            mLightDirMapsTex.push_back(GFXTexHandle(mLightDirMaps[i], &GFXDefaultPersistentProfile, false));
+            mLightmaps[i] = new GBitmap;
+            mLightmaps[i]->readPNG(stream);
+
+            // Won't the fileVersion check here always be true??? - Matt
+            if (!tgeInterior && (fileVersion >= 0 || fileVersion <= 5 || fileVersion >= 12))
+            {
+                mLightDirMaps[i] = new GBitmap;
+                mLightDirMaps[i]->readPNG(stream);
+            }
+            else
+            {
+                // Generate Light Direction Map
+                mLightDirMaps[i] = new GBitmap(*mLightmaps[i]);
+
+                VectorF normal(0.0f, 0.0f, 1.0f);
+                for (U32 j = 0; j < mLightDirMaps[i]->getHeight(); j++)
+                {
+                    for (U32 k = 0; k < mLightDirMaps[i]->getWidth(); k++)
+                    {
+                        U8* data = mLightDirMaps[i]->getAddress(k, j);
+                        data[0] = 127 + normal.x * 128;
+                        data[1] = 127 + normal.y * 128;
+                        data[2] = 127 + normal.z * 128;
+                    }
+                }
+            }
+
+            stream.read(&mLightmapKeep[i]);
+        }
+
+        if (GFXDevice::devicePresent())
+        {
+            for (i = 0; i < mLightDirMaps.size(); i++)
+            {
+                mLightDirMapsTex.push_back(GFXTexHandle(mLightDirMaps[i], &GFXDefaultPersistentProfile, false));
+            }
         }
     }
 
 
     // mSolidLeafSurfaces
+    bool readSolidLeafSurfacesAlt = false;
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+        readSolidLeafSurfacesAlt = true;
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mSolidLeafSurfaces.setSize(vectorSize);
     for (i = 0; i < mSolidLeafSurfaces.size(); i++)
     {
-        stream.read(&mSolidLeafSurfaces[i]);
+        if (readSolidLeafSurfacesAlt)
+        {
+            U16 solidLeafSurface;
+            stream.read(&solidLeafSurface);
+            mSolidLeafSurfaces[i] = solidLeafSurface;
+        }
+        else
+        {
+            stream.read(&mSolidLeafSurfaces[i]);
+        }
     }
 
     // mAnimatedLights
@@ -260,30 +534,47 @@ bool Interior::read(Stream& stream)
         stream.read(&mLightStates[i].dataCount);
     }
 
-    // mStateData
-    stream.read(&vectorSize);
-    mStateData.setSize(vectorSize);
-    for (i = 0; i < mStateData.size(); i++)
+    if (fileVersion == 4)
     {
-        stream.read(&mStateData[i].surfaceIndex);
-        stream.read(&mStateData[i].mapIndex);
-        stream.read(&mStateData[i].lightStateIndex);
+        mStateData.setSize(0);
+        mStateDataBuffer.setSize(0);
+        mNameBuffer.setSize(0);
+        mSubObjects.setSize(0);
     }
+    else
+    {
+        // mStateData
+        stream.read(&vectorSize);
+        mStateData.setSize(vectorSize);
+        for (i = 0; i < mStateData.size(); i++)
+        {
+            stream.read(&mStateData[i].surfaceIndex);
+            stream.read(&mStateData[i].mapIndex);
+            stream.read(&mStateData[i].lightStateIndex);
+        }
 
-    // mStateDataBuffer
-    stream.read(&vectorSize);
-    mStateDataBuffer.setSize(vectorSize);
-    U32 flags;
-    stream.read(&flags);
-    stream.read(mStateDataBuffer.size(), mStateDataBuffer.address());
+        // mStateDataBuffer
+        stream.read(&vectorSize);
+        mStateDataBuffer.setSize(vectorSize);
+        U32 flags;
+        stream.read(&flags);
+        stream.read(mStateDataBuffer.size(), mStateDataBuffer.address());
 
-    // mNameBuffer
-    stream.read(&vectorSize);
-    mNameBuffer.setSize(vectorSize);
-    stream.read(mNameBuffer.size(), mNameBuffer.address());
+        // mNameBuffer
+        stream.read(&vectorSize);
+        mNameBuffer.setSize(vectorSize);
+        stream.read(mNameBuffer.size(), mNameBuffer.address());
 
-    // mSubObjects - removed!
-    stream.read(&vectorSize);
+        // mSubObjects
+        stream.read(&vectorSize);
+        mSubObjects.setSize(vectorSize);
+        for (i = 0; i < mSubObjects.size(); i++)
+        {
+            InteriorSubObject* iso = InteriorSubObject::readISO(stream);
+            AssertFatal(iso != NULL, "Error, bad sub object in stream!");
+            mSubObjects[i] = iso;
+        }
+    }
 
     // Convex hulls
     stream.read(&vectorSize);
@@ -304,42 +595,152 @@ bool Interior::read(Stream& stream)
         stream.read(&mConvexHulls[i].polyListPlaneStart);
         stream.read(&mConvexHulls[i].polyListPointStart);
         stream.read(&mConvexHulls[i].polyListStringStart);
+
+        if (fileVersion >= 12)
+            stream.read(&mConvexHulls[i].staticMesh);
+        else
+            mConvexHulls[i].staticMesh = false;
     }
 
+    // Convex hull emit strings
     stream.read(&vectorSize);
     mConvexHullEmitStrings.setSize(vectorSize);
     stream.read(mConvexHullEmitStrings.size(), mConvexHullEmitStrings.address());
 
+    // Hull indices
+    bool readHullIndicesAlt = false;
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+        readHullIndicesAlt = true;
+
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mHullIndices.setSize(vectorSize);
     for (i = 0; i < mHullIndices.size(); i++)
-        stream.read(&mHullIndices[i]);
+    {
+        if (readHullIndicesAlt)
+        {
+            U16 hullIndex;
+            stream.read(&hullIndex);
+            mHullIndices[i] = hullIndex;
+        }
+        else {
+            stream.read(&mHullIndices[i]);
+        }
+    }
 
+    // Hull plane indices
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mHullPlaneIndices.setSize(vectorSize);
     for (i = 0; i < mHullPlaneIndices.size(); i++)
         stream.read(&mHullPlaneIndices[i]);
 
+    // Hull emit string indices
+    bool readHullEmitStringIndicesAlt = false;
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+        readHullEmitStringIndicesAlt = true;
+
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mHullEmitStringIndices.setSize(vectorSize);
     for (i = 0; i < mHullEmitStringIndices.size(); i++)
-        stream.read(&mHullEmitStringIndices[i]);
+    {
+        if (readHullEmitStringIndicesAlt)
+        {
+            U16 hullEmitStringIndex;
+            stream.read(&hullEmitStringIndex);
+            mHullEmitStringIndices[i] = hullEmitStringIndex;
+        }
+        else {
+            stream.read(&mHullEmitStringIndices[i]);
+        }
+    }
 
+    // Hull surface indices
+    bool readHullSurfaceIndicesAlt = false;
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+        readHullSurfaceIndicesAlt = true;
+
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mHullSurfaceIndices.setSize(vectorSize);
     for (i = 0; i < mHullSurfaceIndices.size(); i++)
-        stream.read(&mHullSurfaceIndices[i]);
+    {
+        if (readHullSurfaceIndicesAlt)
+        {
+            U16 hullSurfaceIndex;
+            stream.read(&hullSurfaceIndex);
+            mHullSurfaceIndices[i] = hullSurfaceIndex;
+            // This might need to be done on the U16 rather
+            // than the vector of U32
+            if (mHullSurfaceIndices[i] & 0x8000)
+                mHullSurfaceIndices[i] ^= 0x8000;
+        }
+        else {
+            stream.read(&mHullSurfaceIndices[i]);
+            if (mHullSurfaceIndices[i] & 0x80000000)
+                mHullSurfaceIndices[i] ^= 0x80000000;
+        }
+    }
 
+    // PolyList planes
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mPolyListPlanes.setSize(vectorSize);
     for (i = 0; i < mPolyListPlanes.size(); i++)
         stream.read(&mPolyListPlanes[i]);
 
+    // PolyList points
+    bool readPolyListPointsAlt = false;
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+
+        U8 dummy;
+        stream.read(&dummy);
+
+        readPolyListPointsAlt = true;
+    }
     mPolyListPoints.setSize(vectorSize);
     for (i = 0; i < mPolyListPoints.size(); i++)
-        stream.read(&mPolyListPoints[i]);
+    {
+        if (readPolyListPointsAlt)
+        {
+            U16 polyListPoint;
+            stream.read(&polyListPoint);
+            mPolyListPoints[i] = polyListPoint;
+        }
+        else {
+            stream.read(&mPolyListPoints[i]);
+        }
+    }
 
+    // PolyList strings
     stream.read(&vectorSize);
     mPolyListStrings.setSize(vectorSize);
     for (i = 0; i < mPolyListStrings.size(); i++)
@@ -351,34 +752,104 @@ bool Interior::read(Stream& stream)
         stream.read(&mCoordBins[i].binStart);
         stream.read(&mCoordBins[i].binCount);
     }
+
+    // Coord bin indices
     stream.read(&vectorSize);
+    if (vectorSize & 0x80000000)
+    {
+        vectorSize ^= 0x80000000;
+
+        U8 dummy;
+        stream.read(&dummy);
+    }
     mCoordBinIndices.setSize(vectorSize);
     for (i = 0; i < mCoordBinIndices.size(); i++)
         stream.read(&mCoordBinIndices[i]);
+
+    // Coord bin mode
     stream.read(&mCoordBinMode);
 
-    // Ambient colors
-    stream.read(&mBaseAmbient);
-    stream.read(&mAlarmAmbient);
-
-    // For future expandability
-    U32 dummy;
-    stream.read(&dummy); if (dummy != 0) return false;
-    stream.read(&dummy); if (dummy != 0) return false;
-    stream.read(&dummy); if (dummy != 0) return false;
-    //
-    // Support for interior light map border sizes.
-    //
-    U32 extendedlightmapdata;
-    stream.read(&extendedlightmapdata);
-    if (extendedlightmapdata == 1)
+    if (fileVersion == 4)
     {
-        stream.read(&mLightMapBorderSize);
+        mBaseAmbient = ColorF(0.0f, 0.0f, 0.0f, 1.0f);
+        mAlarmAmbient = ColorF(0.0f, 0.0f, 0.0f, 1.0f);
+        mStaticMeshes.setSize(0);
+        mTexMatrices.setSize(0);
+        mTexMatIndices.setSize(0);
+    }
+    else
+    {
+        // Ambient colors
+        stream.read(&mBaseAmbient);
+        stream.read(&mAlarmAmbient);
 
-        //future expansion under current block (avoid using too
-        //many of the above expansion slots by allowing nested
-        //blocks)...
-        stream.read(&dummy); if (dummy != 0) return false;
+        if (fileVersion >= 10)
+        {
+            // Static meshes
+            stream.read(&vectorSize);
+
+            mStaticMeshes.setSize(vectorSize);
+            for (i = 0; i < mStaticMeshes.size(); i++)
+            {
+                mStaticMeshes[i] = new InteriorSimpleMesh;
+                mStaticMeshes[i]->read(stream);
+            }
+        }
+
+        if (fileVersion >= 11)
+        {
+            // Normals
+            stream.read(&vectorSize);
+
+            mNormals.setSize(vectorSize);
+            for (i = 0; i < mNormals.size(); i++)
+                mathRead(stream, &mNormals[i]);
+
+            // TexMatrices
+            stream.read(&vectorSize);
+
+            mTexMatrices.setSize(vectorSize);
+            for (i = 0; i < mTexMatrices.size(); i++)
+            {
+                stream.read(&mTexMatrices[i].T);
+                stream.read(&mTexMatrices[i].N);
+                stream.read(&mTexMatrices[i].B);
+            }
+
+            // TexMatIndices
+            stream.read(&vectorSize);
+
+            mTexMatIndices.setSize(vectorSize);
+            for (i = 0; i < mTexMatIndices.size(); i++)
+                stream.read(&mTexMatIndices[i]);
+        }
+
+        // For future expandability
+        U32 dummy;
+        if (fileVersion < 10)
+        {
+            stream.read(&dummy); if (dummy != 0) return false;
+        }
+        if (fileVersion < 11)
+        {
+            stream.read(&dummy); if (dummy != 0) return false;
+            stream.read(&dummy); if (dummy != 0) return false;
+        }
+
+        //
+        // Support for interior light map border sizes.
+        //
+        U32 extendedlightmapdata;
+        stream.read(&extendedlightmapdata);
+        if (extendedlightmapdata == 1)
+        {
+            stream.read(&mLightMapBorderSize);
+
+            //future expansion under current block (avoid using too
+            //many of the above expansion slots by allowing nested
+            //blocks)...
+            stream.read(&dummy); if (dummy != 0) return false;
+        }
     }
 
     // Setup the zone planes
@@ -702,7 +1173,7 @@ bool Interior::readVehicleCollision(Stream& stream)
     // Version this stream.  We only load stream of the current version
     U32 fileVersion;
     stream.read(&fileVersion);
-    if (fileVersion != smFileVersion)
+    if (fileVersion > smFileVersion)
     {
         Con::errorf(ConsoleLogEntry::General, "Interior::read: incompatible file version found.");
         return false;
@@ -900,6 +1371,87 @@ bool Interior::writeVehicleCollision(Stream& stream) const
     return true;
 }
 
+bool Interior::readSurface(Stream& stream, Surface& surface, TexGenPlanes& texgens, const bool tgeInterior)
+{
+    // If we end up reading any invalid data then odds are that we
+    // are no longer correctly reading from the stream and have gotten
+    // off because this is a TGE version 0 Interior so we bail.
+    // That is why you will see checks all the way through
+    stream.read(&surface.windingStart);
+
+    if (surface.windingStart >= mWindings.size())
+        return false;
+
+    if (mFileVersion >= 13)
+        stream.read(&surface.windingCount);
+    else
+    {
+        U8 count;
+        stream.read(&count);
+        surface.windingCount = (U32)count;
+    }
+
+    if (surface.windingStart + surface.windingCount > mWindings.size())
+        return false;
+
+    stream.read(&surface.planeIndex);
+
+    if (U32(surface.planeIndex & ~0x8000) >= mPlanes.size())
+        return false;
+
+    stream.read(&surface.textureIndex);
+
+    if (surface.textureIndex >= mMaterialList->size())
+        return false;
+
+    stream.read(&surface.texGenIndex);
+
+    if (surface.texGenIndex >= mTexGenEQs.size())
+        return false;
+
+    stream.read(&surface.surfaceFlags);
+    stream.read(&surface.fanMask);
+
+    // If reading the lightmap texgen fails then most likely this is a
+    // TGE version 0 Interior (it gets offset by the "unused" read below
+    if (readLMapTexGen(stream, texgens.planeX, texgens.planeY) == false)
+        return false;
+
+    stream.read(&surface.lightCount);
+    stream.read(&surface.lightStateInfoStart);
+
+    if (mFileVersion >= 13)
+    {
+        stream.read(&surface.mapOffsetX);
+        stream.read(&surface.mapOffsetY);
+        stream.read(&surface.mapSizeX);
+        stream.read(&surface.mapSizeY);
+    }
+    else
+    {
+        U8 offX, offY, sizeX, sizeY;
+        stream.read(&offX);
+        stream.read(&offY);
+        stream.read(&sizeX);
+        stream.read(&sizeY);
+
+        surface.mapOffsetX = (U32)offX;
+        surface.mapOffsetY = (U32)offY;
+        surface.mapSizeX = (U32)sizeX;
+        surface.mapSizeY = (U32)sizeY;
+    }
+
+    if (!tgeInterior && (mFileVersion >= 0 || mFileVersion <= 5 || mFileVersion >= 12))
+        stream.read(&surface.unused);
+
+    if (mFileVersion > 1 && mFileVersion <= 5)
+    {
+        U32 brushId;
+        stream.read(&brushId);
+    }
+
+    return true;
+}
 
 bool Interior::readLMapTexGen(Stream& stream, PlaneF& planeX, PlaneF& planeY)
 {

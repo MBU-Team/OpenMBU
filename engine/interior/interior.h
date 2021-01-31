@@ -40,6 +40,9 @@
 #ifndef _INTERIORLMMANAGER_H_
 #include "interior/interiorLMManager.h"
 #endif
+#ifndef _INTERIORSIMPLEMESH_H_
+#include "interior/interiorSimpleMesh.h"
+#endif
 #ifndef _REFLECTPLANE_H_
 #include "gfx/reflectPlane.h"
 #endif
@@ -331,8 +334,8 @@ public:
 private:
     struct IBSPNode {
         U16 planeIndex;
-        U16 frontIndex;
-        U16 backIndex;
+        U32 frontIndex;
+        U32 backIndex;
 
         U16 terminalZone;   // if high bit set, then the lower 15 bits are the zone
                             //  of any of the subsidiary nodes.  Note that this is
@@ -383,6 +386,9 @@ private:
         U16 surfaceCount;
         U16 planeCount;
 
+        U32 staticMeshStart;
+        U32 staticMeshCount;
+
         U16 flags;
         U16 zoneId;       // This is ephemeral, not persisted out.
     };
@@ -418,14 +424,35 @@ public:
     const bool isSurfaceOutsideVisible(U32 surface) const;
 
 public:
+    struct TexMatrix
+    {
+        S32 T;
+        S32 N;
+        S32 B;
+
+        TexMatrix()
+            : T(-1),
+            N(-1),
+            B(-1)
+        {};
+    };
+
+    struct Edge
+    {
+        S32 vertexes[2];
+        S32 faces[2];
+    };
+
     struct TexGenPlanes {
         PlaneF planeX;
         PlaneF planeY;
     };
+
     struct TriFan {
         U32 windingStart;
         U32 windingCount;
     };
+
     struct Surface {
         U32 windingStart;          // 1
 
@@ -456,6 +483,7 @@ public:
 
         bool unused;
     };
+
     struct NullSurface {
         U32 windingStart;
 
@@ -481,6 +509,9 @@ public:
         TriggerableFlicker = AnimationFlicker,
         TriggerableRamp = 0
     };
+
+private:
+    bool readSurface(Stream&, Surface&, TexGenPlanes&, const bool);
 
 public:
     // this is public because tools/Morian needs this defination
@@ -535,6 +566,7 @@ protected:
         U32   polyListPointStart;
         U32   polyListStringStart;
         U16   searchTag;
+        bool  staticMesh;
     };
 
     struct CoordBin {
@@ -631,6 +663,7 @@ public:
 
     //-------------------------------------- Instance Data Members
 private:
+    U32                     mFileVersion;
     U32                     mDetailLevel;
     U32                     mMinPixels;
     F32                     mAveTexGenLength;     // Set in Interior::read after loading the texgen planes.
@@ -640,6 +673,10 @@ private:
     Vector<PlaneF>          mPlanes;
     Vector<ItrPaddedPoint>  mPoints;
     Vector<U8>              mPointVisibility;
+
+    Vector<Point3F>         mNormals;
+    Vector<TexMatrix>       mTexMatrices;
+    Vector<U32>             mTexMatIndices;
 
     ColorF                  mBaseAmbient;
     ColorF                  mAlarmAmbient;
@@ -670,14 +707,18 @@ private:
     Vector<NullSurface>     mNullSurfaces;
     Vector<U32>             mSolidLeafSurfaces;
 
+    Vector<Edge>            mEdges;
+
     // Portals and zones
     Vector<Zone>            mZones;
     Vector<U16>             mZonePlanes;
     Vector<U16>             mZoneSurfaces;
     Vector<U16>             mZonePortalList;
     Vector<Portal>          mPortals;
+    Vector<U32>             mZoneStaticMeshes;
 
     // Subobjects: Doors, translucencies, mirrors, etc.
+    Vector<InteriorSubObject*> mSubObjects;
 
     // Lighting info
     bool                    mHasAlarmState;
@@ -728,6 +769,8 @@ private:
     Vector<PlaneF>          mVehiclePlanes;
     Vector<U32>             mVehicleWindings;
     Vector<TriFan>          mVehicleWindingIndices;
+
+    VectorPtr<InteriorSimpleMesh*> mStaticMeshes;
 
     U16                     mSearchTag;
     Vector<MatInstance*>    mMatInstCleanupList;
@@ -820,6 +863,8 @@ private:
 
 public:
     void purgeLODData();
+
+    void generateLightmaps();
 };
 
 //------------------------------------------------------------------------------

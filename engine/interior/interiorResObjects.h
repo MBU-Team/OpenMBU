@@ -29,8 +29,8 @@ class Stream;
 
 struct InteriorDictEntry
 {
-    char name[32];
-    char value[32];
+    char name[256];
+    char value[256];
 };
 
 class InteriorDict : public Vector<InteriorDictEntry>

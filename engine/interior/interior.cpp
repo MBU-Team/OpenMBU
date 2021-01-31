@@ -2477,16 +2477,16 @@ void Interior::initMatInstances()
                 // Stuff a dummy lightmap in so the shader will init properly
                 sgData.lightmap.set(4, 4, GFXFormatR8G8B8A8, &GFXDefaultStaticDiffuseProfile);
 
-                /*if( node.exterior )
+                if( node.exterior /*|| node.lightMapIndex < mLightDirMaps.size()*/)
                 {
                    sgData.normLightmap = NULL;
                    sgData.useLightDir = true;
                 }
                 else
-                {*/
-                sgData.normLightmap = mLightDirMapsTex[node.lightMapIndex];
-                sgData.useLightDir = false;
-                //}
+                {
+                    sgData.normLightmap = mLightDirMapsTex[node.lightMapIndex];
+                    sgData.useLightDir = false;
+                }
             }
 
             MatInstance* mat = node.matInst;
@@ -2685,6 +2685,49 @@ void Interior::buildSurfaceZones()
         {
             surfaceZones[mZoneSurfaces[s]] = zone.zoneId - 1;
         }
+    }
+}
+
+void Interior::generateLightmaps()
+{
+    mLightmaps.setSize(mMaterialList->size());
+    mLightDirMaps.setSize(mMaterialList->size());
+    mLightmapKeep.setSize(mMaterialList->size());
+
+    for (U32 i = 0; i < mLightmaps.size(); i++)
+    {
+        GFXTextureObject* texture = mMaterialList->getMaterial(i);
+        U32 width = 0;
+        U32 height = 0;
+        if (texture != NULL)
+        {
+            width = texture->getWidth();
+            height = texture->getHeight();
+        }
+        if (width == 0 || height == 0)
+        {
+            width = 256;
+            height = 256;
+        }
+
+        // This is temporary to generate light map
+        mLightmaps[i] = new GBitmap(width, height);
+
+        // Generate Light Direction Map
+        mLightDirMaps[i] = new GBitmap(*mLightmaps[i]);
+
+        VectorF normal(0.0f, 0.0f, 1.0f);
+        for (U32 j = 0; j < mLightDirMaps[i]->getHeight(); j++)
+        {
+            for (U32 k = 0; k < mLightDirMaps[i]->getWidth(); k++)
+            {
+                U8 * data = mLightDirMaps[i]->getAddress(k, j);
+                data[0] = 127 + normal.x * 128;
+                data[1] = 127 + normal.y * 128;
+                data[2] = 127 + normal.z * 128;
+            }
+        }
+        mLightmapKeep[i] = false;
     }
 }
 
