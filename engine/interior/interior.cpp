@@ -2477,7 +2477,7 @@ void Interior::initMatInstances()
                 // Stuff a dummy lightmap in so the shader will init properly
                 sgData.lightmap.set(4, 4, GFXFormatR8G8B8A8, &GFXDefaultStaticDiffuseProfile);
 
-                if( node.exterior /*|| node.lightMapIndex < mLightDirMaps.size()*/)
+                if( node.exterior )
                 {
                    sgData.normLightmap = NULL;
                    sgData.useLightDir = true;
