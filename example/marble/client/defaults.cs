@@ -60,7 +60,7 @@ $pref::Audio::channelVolume6 = 0.8;
 $pref::Audio::channelVolume7 = 0.8;
 $pref::Audio::channelVolume8 = 0.8;
 $pref::Client::AutoStart = true;
-$pref::Client::AutoStartMission = "marble/data/missions/beginner/Urban Jungle/urban.mis";
+$pref::Client::AutoStartMission = "marble/data/missions/intermediate/Urban Jungle/urban.mis";
 $pref::Client::AutoStartMissionIndex = 21;
 
 $Client::MatchMode = 0; // standard, 1 = ranked
