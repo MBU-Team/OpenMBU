@@ -83,6 +83,12 @@ void Sun::registerLights(LightManager* lightManager, bool relight)
     mRegisteredLight = mLight;
     LightManager::sgGetFilteredLightColor(mRegisteredLight.mColor, mRegisteredLight.mAmbient, 0);
 
+    // Matt: Try to make lighting color like MBU
+    // Likely to do this properly we'd have to revert the render system to TSE 0.1 or something.
+    mRegisteredLight.mColor.red *= 0.77;
+    mRegisteredLight.mColor.green *= 0.86;
+    mRegisteredLight.mColor.blue *= 2.25;
+
     if (relight)
     {
         // static lighting not affected by this option when using the sun...
