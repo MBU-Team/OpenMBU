@@ -61,11 +61,6 @@ new SimGroup(MissionGroup) {
       dataBlock = "astrolabeShape";
    };
    new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsIntermediateShape";   };   new Sun() {
-      //direction = "0.573201 0.275357 -0.771764";
-      //color = "1.080000 1.030000 0.900000 1.000000";
-      //ambient = "0.400000 0.400000 0.500000 1.000000";
-      //shadowColor = "0.000000 0.000000 0.150000 0.350000";
-      
       direction = "0.545417 -0.358918 -0.757428";
       color = "1.400000 1.200000 0.400000 1.000000";
       ambient = "0.440000 0.440000 0.440000 1.000000";
