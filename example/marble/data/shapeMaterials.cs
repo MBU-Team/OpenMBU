@@ -574,7 +574,7 @@ new CustomMaterial(Material_Marble_BB)
 
 %mat = new Material(Material_astrolabe_solid)
 {
-   mapTo = "astrolabe_solid";
+   mapTo = "astrolabe_solid_glow";
 
    baseTex[0] = "~/data/shapes/astrolabe/astrolabe_solid_glow";
 
