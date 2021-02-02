@@ -304,6 +304,8 @@ public:
     /// @param   firstResponder    Control to designate as first responder
     void setFirstResponder(GuiControl* firstResponder);
     /// @}
+
+    void setDefaultFirstResponder();
 };
 
 extern GuiCanvas* Canvas;

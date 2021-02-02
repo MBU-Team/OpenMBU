@@ -61,6 +61,8 @@ class GuiControl : public SimGroup
 private:
     typedef SimGroup Parent;
 
+    friend class GuiCanvas;
+
 public:
 
     /// @name Control State
@@ -131,6 +133,8 @@ protected:
     StringTableEntry mAltConsoleCommand;
 
     StringTableEntry mAcceleratorKey;
+
+    SimObject* mEventCtrl;
 
     StringTableEntry mTooltip;
 

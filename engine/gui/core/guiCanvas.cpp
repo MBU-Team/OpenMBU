@@ -16,6 +16,8 @@
 #include "gfx/screenshot.h"
 #include "sim/sceneObject.h"
 
+extern bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl);
+
 // We formerly kept all the GUI related IMPLEMENT_CONOBJECT macros here.
 // Now they belong with their implementations. -- BJG
 
@@ -186,6 +188,11 @@ ConsoleMethod(GuiCanvas, setCursorPos, void, 3, 4, "(Point2I pos)")
     Canvas->setCursorPos(pos);
 }
 
+ConsoleMethod(GuiCanvas, setDefaultFirstResponder, void, 2, 2, "()")
+{
+    Canvas->setDefaultFirstResponder();
+}
+
 void GuiCanvas::initPersistFields()
 {
     Con::addVariable("LastInputEventTime", TypeS32, &gLastEventTime);
@@ -317,6 +324,19 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             return(true);
     }
 
+    GuiControl* responder = mFirstResponder;
+    if (!responder)
+    {
+        if (objectList.size() <= 0)
+            return false;
+        responder = (GuiControl*)objectList[objectList.size() - 1];
+        if (!responder)
+            return false;
+    }
+
+    if (responder->mEventCtrl)
+        responder = (GuiControl*)responder->mEventCtrl;
+
     if (event->deviceType == KeyboardDeviceType || event->deviceType == MouseDeviceType)
         gLastEventTime = Sim::getCurrentTime();
 
@@ -339,9 +359,9 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             //see if we should tab next/prev
 
             //see if we should now pass the event to the first responder
-            if (mFirstResponder)
+            if (responder)
             {
-                if (mFirstResponder->onKeyDown(mLastEvent))
+                if (FakeXboxButtonEvent(event, responder) || responder->onKeyDown(mLastEvent))
                     return true;
             }
 
@@ -374,8 +394,8 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
         }
         else if (event->action == SI_BREAK)
         {
-            if (mFirstResponder)
-                if (mFirstResponder->onKeyUp(mLastEvent))
+            if (responder)
+                if (FakeXboxButtonEvent(event, responder) || responder->onKeyUp(mLastEvent))
                     return true;
 
             //see if there's an accelerator
@@ -390,8 +410,8 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
         }
         else if (event->action == SI_REPEAT)
         {
-            if (mFirstResponder)
-                mFirstResponder->onKeyRepeat(mLastEvent);
+            if (responder)
+                responder->onKeyRepeat(mLastEvent);
             return true;
         }
     }
@@ -692,6 +712,63 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
     }
 
     return false;
+}
+
+bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl)
+{
+    const char* retval = "";
+
+    if (event->action == SI_MAKE)
+    {
+        U16 key = event->objInst;
+        U8 mod = event->modifier;
+
+        if (key == KEY_A || key == KEY_RETURN)
+            retval = Con::executef(ctrl, 1, "onA");
+        else if ((key == KEY_B || key == KEY_BACKSPACE) && !mod)
+            retval = Con::executef(ctrl, 1, "onB");
+        else if (key == KEY_X)
+            retval = Con::executef(ctrl, 1, "onX");
+        else if (key == KEY_Y)
+            retval = Con::executef(ctrl, 1, "onY");
+        else if (key == KEY_S && (mod & SI_SHIFT) != 0)
+            retval = Con::executef(ctrl, 1, "onStart");
+        else if (key == KEY_B && (mod & SI_SHIFT) != 0)
+            retval = Con::executef(ctrl, 1, "onBack");
+        else if (key == KEY_L && (mod & SI_SHIFT) != 0)
+        {
+            retval = Con::executef(ctrl, 1, "onBlack");
+            if (dStrcmp(retval, "") == 0)
+                retval = Con::executef(ctrl, 1, "onLShoulder");
+        }
+        else if (key == KEY_R && (mod & SI_SHIFT) != 0)
+        {
+            retval = Con::executef(ctrl, 1, "onWhite");
+            if (dStrcmp(retval, "") == 0)
+                retval = Con::executef(ctrl, 1, "onRShoulder");
+        }
+        else if (key == KEY_L && (mod & SI_CTRL) != 0)
+            retval = Con::executef(ctrl, 1, "onLStick");
+        else if (key == KEY_R && (mod & SI_CTRL) != 0)
+            retval = Con::executef(ctrl, 1, "onRStick");
+        else if (key == KEY_L)
+            retval = Con::executef(ctrl, 1, "onLTrigger");
+        else if (key == KEY_R)
+            retval = Con::executef(ctrl, 1, "onRTrigger");
+        else if (key == KEY_UP)
+            retval = Con::executef(ctrl, 1, "onUp");
+        else if (key == KEY_LEFT)
+            retval = Con::executef(ctrl, 1, "onLeft");
+        else if (key == KEY_DOWN)
+            retval = Con::executef(ctrl, 1, "onDown");
+        else if (key == KEY_RIGHT)
+            retval = Con::executef(ctrl, 1, "onRight");
+        else
+            return false;
+    }
+
+    if (dStrcmp(retval, ""))
+        return true;
 }
 
 void GuiCanvas::rootMouseDown(const GuiEvent& event)
@@ -1371,6 +1448,24 @@ void GuiCanvas::setFirstResponder(GuiControl* newResponder)
 
     if (oldResponder && (oldResponder != mFirstResponder))
         oldResponder->onLoseFirstResponder();
+}
+
+void GuiCanvas::setDefaultFirstResponder()
+{
+    GuiControl** oldResponder = &mFirstResponder;
+    if (objectList.size())
+    {
+        GuiControl* lastControl = (GuiControl*)objectList[objectList.size() - 1];
+        GuiControl* old = *oldResponder;
+        GuiControl* firstTabable = lastControl->findFirstTabable();
+        *oldResponder = firstTabable;
+        if (old && old != firstTabable)
+            old->onLoseFirstResponder();
+    }
+    else if(*oldResponder) {
+        (*oldResponder)->onLoseFirstResponder();
+        *oldResponder = NULL;
+    }
 }
 
 void GuiCanvas::updateReflections()

@@ -48,6 +48,9 @@ GuiControl::GuiControl()
 
     mHorizSizing = horizResizeRight;
     mVertSizing = vertResizeBottom;
+
+    mEventCtrl = NULL;
+
     mTooltipProfile = NULL;
     mTooltip = StringTable->insert("");
 }
@@ -124,6 +127,7 @@ void GuiControl::initPersistFields()
     addField("Command", TypeString, Offset(mConsoleCommand, GuiControl));
     addField("AltCommand", TypeString, Offset(mAltConsoleCommand, GuiControl));
     addField("Accelerator", TypeString, Offset(mAcceleratorKey, GuiControl));
+    addField("eventControl", TypeSimObjectPtr, Offset(mEventCtrl, GuiControl));
     addField("tooltipprofile", TypeGuiProfile, Offset(mTooltipProfile, GuiControl));
     addField("tooltip", TypeString, Offset(mTooltip, GuiControl));
 
