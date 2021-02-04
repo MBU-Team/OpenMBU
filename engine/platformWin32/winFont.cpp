@@ -222,7 +222,7 @@ bool WinFont::create(const char* name, U32 size, U32 charset /* = TGE_ANSI_CHARS
 #else
     mFont = CreateFont(size, 0, 0, 0, 0, 0, 0, 0, charsetMap[charset], OUT_TT_PRECIS, 0, PROOF_QUALITY, 0, name);
 #endif
-    if (GetLastError() != S_OK)
+    if (mFont == NULL)
         return false;
 
     SelectObject(fontHDC, fontBMP);
