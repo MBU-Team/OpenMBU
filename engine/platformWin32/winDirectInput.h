@@ -72,10 +72,10 @@ private:
     void unacquire(U8 deviceType, U8 deviceID);
 
     // XInput worker functions
-    void buildXInputEvent(U32 deviceInst, U16 objType, U8 action, float fValue);
+    void buildXInputEvent(U32 deviceInst, U16 objType, U16 objInst, U8 action, float fValue);
     void fireXInputConnectEvent(int controllerID, bool condition, bool connected);
-    void fireXInputMoveEvent(int controllerID, bool condition, int objType, float fValue);
-    void fireXInputButtonEvent(int controllerID, bool forceFire, int button, int objType);
+    void fireXInputMoveEvent(int controllerID, bool condition, int objType, int objInst, float fValue);
+    void fireXInputButtonEvent(int controllerID, bool forceFire, int button, int objType, int objInst);
     void processXInput();
 
 public:

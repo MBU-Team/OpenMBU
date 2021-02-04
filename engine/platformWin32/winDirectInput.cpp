@@ -707,6 +707,12 @@ ConsoleFunction(enableXInput, bool, 1, 1, "enableXInput()")
     return(DInputManager::enableXInput());
 }
 
+ConsoleFunction(enableGamepad, bool, 1, 1, "enableGamepad()")
+{
+    argc; argv;
+    return(DInputManager::enableXInput());
+}
+
 //------------------------------------------------------------------------------
 ConsoleFunction(disableXInput, void, 1, 1, "disableXInput()")
 {
@@ -855,7 +861,7 @@ bool DInputManager::rumble(const char* pDeviceName, float x, float y)
 }
 
 // A workhorse to build an XInput event and post it -- jason_cahill
-inline void DInputManager::buildXInputEvent(U32 deviceInst, U16 objType, U8 action, float fValue)
+inline void DInputManager::buildXInputEvent(U32 deviceInst, U16 objType, U16 objInst, U8 action, float fValue)
 {
     InputEvent newEvent;
 
@@ -864,7 +870,7 @@ inline void DInputManager::buildXInputEvent(U32 deviceInst, U16 objType, U8 acti
     newEvent.objType = objType;
     newEvent.action = action;
     newEvent.fValue = fValue;
-    newEvent.objInst = objType;
+    newEvent.objInst = objInst;
     Game->postEvent(newEvent);
 }
 
@@ -881,11 +887,11 @@ inline void DInputManager::fireXInputConnectEvent(int controllerID, bool conditi
 #ifdef LOG_INPUT
         Input::log("EVENT (XInput): xinput%d CONNECT %s\n", controllerID, connected ? "make" : "break");
 #endif
-        buildXInputEvent(controllerID, XI_CONNECT, connected ? SI_MAKE : SI_BREAK, 0);
+        buildXInputEvent(controllerID, XI_CONNECT, XI_CONNECT, connected ? SI_MAKE : SI_BREAK, 0);
     }
 }
 
-inline void DInputManager::fireXInputMoveEvent(int controllerID, bool condition, int objType, float fValue)
+inline void DInputManager::fireXInputMoveEvent(int controllerID, bool condition, int objType, int objInst, float fValue)
 {
     if (mXInputStateReset || condition)
     {
@@ -904,11 +910,11 @@ inline void DInputManager::fireXInputMoveEvent(int controllerID, bool condition,
 
         Input::log("EVENT (XInput): xinput%d %s MOVE %.1f.\n", controllerID, objName, fValue);
 #endif
-        buildXInputEvent(controllerID, objType, SI_MOVE, fValue);
+        buildXInputEvent(controllerID, objInst, objInst, SI_MOVE, fValue);
     }
 }
 
-inline void DInputManager::fireXInputButtonEvent(int controllerID, bool forceFire, int button, int objType)
+inline void DInputManager::fireXInputButtonEvent(int controllerID, bool forceFire, int button, int objType, int objInst)
 {
     if (mXInputStateReset || forceFire || ((mXInputStateNew[controllerID].state.Gamepad.wButtons & button) != (mXInputStateOld[controllerID].state.Gamepad.wButtons & button)))
     {
@@ -935,7 +941,8 @@ inline void DInputManager::fireXInputButtonEvent(int controllerID, bool forceFir
 
         Input::log("EVENT (XInput): xinput%d %s %s\n", controllerID, objName, ((mXInputStateNew[controllerID].state.Gamepad.wButtons & button) != 0) ? "make" : "break");
 #endif
-        buildXInputEvent(controllerID, objType, ((mXInputStateNew[controllerID].state.Gamepad.wButtons & button) != 0) ? SI_MAKE : SI_BREAK, 0);
+        int action = ((mXInputStateNew[controllerID].state.Gamepad.wButtons & button) != 0) ? SI_MAKE : SI_BREAK;
+        buildXInputEvent(controllerID, objType, objInst, action, action == 1);
     }
 }
 
@@ -977,40 +984,40 @@ void DInputManager::processXInput(void)
                 continue;
 
             // == LEFT THUMBSTICK ==
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLX != mXInputStateOld[i].state.Gamepad.sThumbLX), XI_THUMBLX, (mXInputStateNew[i].state.Gamepad.sThumbLX / 32768.0f));
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLY != mXInputStateOld[i].state.Gamepad.sThumbLY), XI_THUMBLY, (mXInputStateNew[i].state.Gamepad.sThumbLY / 32768.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLX != mXInputStateOld[i].state.Gamepad.sThumbLX), SI_MOVE, XI_THUMBLX, (mXInputStateNew[i].state.Gamepad.sThumbLX / 32768.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLY != mXInputStateOld[i].state.Gamepad.sThumbLY), SI_MOVE, XI_THUMBLY, (mXInputStateNew[i].state.Gamepad.sThumbLY / 32768.0f));
 
             // == RIGHT THUMBSTICK ==
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRX != mXInputStateOld[i].state.Gamepad.sThumbRX), XI_THUMBRX, (mXInputStateNew[i].state.Gamepad.sThumbRX / 32768.0f));
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRY != mXInputStateOld[i].state.Gamepad.sThumbRY), XI_THUMBRY, (mXInputStateNew[i].state.Gamepad.sThumbRY / 32768.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRX != mXInputStateOld[i].state.Gamepad.sThumbRX), SI_MOVE, XI_THUMBRX, (mXInputStateNew[i].state.Gamepad.sThumbRX / 32768.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRY != mXInputStateOld[i].state.Gamepad.sThumbRY), SI_MOVE, XI_THUMBRY, (mXInputStateNew[i].state.Gamepad.sThumbRY / 32768.0f));
 
             // == LEFT & RIGHT REAR TRIGGERS ==
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.bLeftTrigger != mXInputStateOld[i].state.Gamepad.bLeftTrigger), XI_LEFT_TRIGGER, (mXInputStateNew[i].state.Gamepad.bLeftTrigger / 255.0f));
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.bRightTrigger != mXInputStateOld[i].state.Gamepad.bRightTrigger), XI_RIGHT_TRIGGER, (mXInputStateNew[i].state.Gamepad.bRightTrigger / 255.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.bLeftTrigger != mXInputStateOld[i].state.Gamepad.bLeftTrigger), SI_MOVE, XI_LEFT_TRIGGER, (mXInputStateNew[i].state.Gamepad.bLeftTrigger / 255.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.bRightTrigger != mXInputStateOld[i].state.Gamepad.bRightTrigger), SI_MOVE, XI_RIGHT_TRIGGER, (mXInputStateNew[i].state.Gamepad.bRightTrigger / 255.0f));
 
             // == BUTTONS: DPAD ==
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_UP, XI_DPAD_UP);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_DOWN, XI_DPAD_DOWN);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_LEFT, XI_DPAD_LEFT);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_RIGHT, XI_DPAD_RIGHT);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_UP, SI_BUTTON, XI_DPAD_UP);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_DOWN, SI_BUTTON, XI_DPAD_DOWN);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_LEFT, SI_BUTTON, XI_DPAD_LEFT);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_DPAD_RIGHT, SI_BUTTON, XI_DPAD_RIGHT);
 
             // == BUTTONS: START & BACK ==
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_START, XI_START);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_BACK, XI_BACK);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_START, SI_BUTTON, XI_START);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_BACK, SI_BUTTON, XI_BACK);
 
             // == BUTTONS: LEFT AND RIGHT THUMBSTICK ==
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_LEFT_THUMB, XI_LEFT_THUMB);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_RIGHT_THUMB, XI_RIGHT_THUMB);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_LEFT_THUMB, SI_BUTTON, XI_LEFT_THUMB);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_RIGHT_THUMB, SI_BUTTON, XI_RIGHT_THUMB);
 
             // == BUTTONS: LEFT AND RIGHT SHOULDERS (formerly WHITE and BLACK on Xbox 1) ==
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_LEFT_SHOULDER, XI_LEFT_SHOULDER);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_RIGHT_SHOULDER, XI_RIGHT_SHOULDER);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_LEFT_SHOULDER, SI_BUTTON, XI_LEFT_SHOULDER);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_RIGHT_SHOULDER, SI_BUTTON, XI_RIGHT_SHOULDER);
 
             // == BUTTONS: A, B, X, and Y ==
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_A, XI_A);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_B, XI_B);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_X, XI_X);
-            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_Y, XI_Y);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_A, SI_BUTTON, XI_A);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_B, SI_BUTTON, XI_B);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_X, SI_BUTTON, XI_X);
+            fireXInputButtonEvent(i, bJustConnected, XINPUT_GAMEPAD_Y, SI_BUTTON, XI_Y);
         }
 
         if (mXInputStateReset) mXInputStateReset = false;

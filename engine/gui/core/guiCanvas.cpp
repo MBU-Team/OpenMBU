@@ -544,7 +544,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
 
         //copy the modifier into the new event
         mLastEvent.modifier = event->modifier;
-        GuiControl* ctrl = static_cast<GuiControl*>(last()); // Send events to the top level GUI
+        
         bool retval = false;
 
         if (event->objType == SI_BUTTON || event->objType == SI_POV)
@@ -558,11 +558,11 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             
             return retval;
         }
-        else if ((event->objType == SI_YAXIS || event->objType == SI_XAXIS) &&
+        else if ((event->objType == XI_THUMBLY || event->objType == XI_THUMBLX) &&
             event->action == SI_MOVE && event->deviceInst < 4)
         {
             F32 incomingValue = mFabs(event->fValue);
-            F32 deadZone = 0.5f;
+            F32 deadZone = 0.05f;
             F32 minClickTime = 500.f;
             F32 maxClickTime = 1000.f;
             static F32 xDecay[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -573,7 +573,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             F32* decay;
             U32* lastClickTime;
 
-            if (event->objType == SI_XAXIS)
+            if (event->objType == XI_THUMBLX)
             {
                 decay = &xDecay[event->deviceInst];
                 lastClickTime = &xLastClickTime[event->deviceInst];
@@ -584,8 +584,8 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                 lastClickTime = &yLastClickTime[event->deviceInst];
             }
 
-            //bool down = event->fValue < 0.f;
-            bool down = event->fValue > 0.f; // This is totally counter-intuitive, and it doesn't make sense
+            bool down = event->fValue < 0.f;
+            //bool down = event->fValue > 0.f; // This is totally counter-intuitive, and it doesn't make sense
                                              // However, it was done to line up with the PC directX
 
             if (incomingValue < deadZone)
@@ -609,7 +609,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
 
                 *lastClickTime = curTime;
 
-                if (event->objType == SI_YAXIS)
+                if (event->objType == XI_THUMBLY)
                 {
                     if (down)
                         retval = responder->onGamepadButtonPressed(XI_DPAD_DOWN);
