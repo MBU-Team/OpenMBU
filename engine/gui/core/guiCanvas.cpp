@@ -545,98 +545,18 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
         //copy the modifier into the new event
         mLastEvent.modifier = event->modifier;
         GuiControl* ctrl = static_cast<GuiControl*>(last()); // Send events to the top level GUI
-        const char* retval = "";
+        bool retval = false;
 
-        if (event->objType == SI_BUTTON)
+        if (event->objType == SI_BUTTON || event->objType == SI_POV)
         {
             if (event->action == SI_MAKE)
-            {
-                switch (event->objInst)
-                {
-                case KEY_BUTTON0:
-                    retval = Con::executef(ctrl, 1, "onA");
-                    break;
-                case KEY_BUTTON1:
-                    retval = Con::executef(ctrl, 1, "onB");
-                    break;
-                case KEY_BUTTON2:
-                    retval = Con::executef(ctrl, 1, "onX");
-                    break;
-                case KEY_BUTTON3:
-                    retval = Con::executef(ctrl, 1, "onY");
-                    break;
-                case KEY_BUTTON4:
-                    retval = Con::executef(ctrl, 1, "onStart");
-                    break;
-                case KEY_BUTTON5:
-                    retval = Con::executef(ctrl, 1, "onBack");
-                    break;
-                case KEY_BUTTON6:
-                    retval = Con::executef(ctrl, 1, "onBlack");
-                    if (dStrcmp(retval, "") == 0)
-                        retval = Con::executef(ctrl, 1, "onLShoulder");
-                    break;
-                case KEY_BUTTON7:
-                    retval = Con::executef(ctrl, 1, "onWhite");
-                    if (dStrcmp(retval, "") == 0)
-                        retval = Con::executef(ctrl, 1, "onRShoulder");
-                    break;
-                case KEY_BUTTON8:
-                    retval = Con::executef(ctrl, 1, "onLTrigger");
-                    break;
-                case KEY_BUTTON9:
-                    retval = Con::executef(ctrl, 1, "onRTrigger");
-                    break;
-                case KEY_BUTTON10:
-                    retval = Con::executef(ctrl, 1, "onLStick");
-                    break;
-                case KEY_BUTTON11:
-                    retval = Con::executef(ctrl, 1, "onRStick");
-                    break;
-
-                default:
-                    return false;
-                }
-            }
-            // This block is duplicated because we don't want 
-            // this being called if there wasn't a valid action (IE analog noise)
-            gLastEventTime = Sim::getCurrentTime();
-            if (dStrcmp(retval, "") == 0)
-                retval = Con::executef(ctrl, 1, "onAction");
-
-            if (dStrcmp(retval, ""))
-                return true;
-        }
-        else if (event->objType == SI_POV)
-        {
-            if (event->action == SI_MAKE)
-            {
-                switch (event->objInst)
-                {
-                case SI_UPOV:
-                    retval = Con::executef(ctrl, 1, "onUp");
-                    break;
-                case SI_LPOV:
-                    retval = Con::executef(ctrl, 1, "onLeft");
-                    break;
-                case SI_DPOV:
-                    retval = Con::executef(ctrl, 1, "onDown");
-                    break;
-                case SI_RPOV:
-                    retval = Con::executef(ctrl, 1, "onRight");
-                    break;
-
-                default:
-                    return false;
-                }
-            }
+                responder->onGamepadButtonPressed(event->objInst);
+            else if (event->action == SI_BREAK)
+                responder->onGamepadButtonReleased(event->objInst);
 
             gLastEventTime = Sim::getCurrentTime();
-            if (dStrcmp(retval, "") == 0)
-                retval = Con::executef(ctrl, 1, "onAction");
-
-            if (dStrcmp(retval, ""))
-                return true;
+            
+            return retval;
         }
         else if ((event->objType == SI_YAXIS || event->objType == SI_XAXIS) &&
             event->action == SI_MOVE && event->deviceInst < 4)
@@ -692,22 +612,21 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                 if (event->objType == SI_YAXIS)
                 {
                     if (down)
-                        retval = Con::executef(ctrl, 1, "onDown");
+                        retval = responder->onGamepadButtonPressed(XI_DPAD_DOWN);
                     else
-                        retval = Con::executef(ctrl, 1, "onUp");
+                        retval = responder->onGamepadButtonPressed(XI_DPAD_UP);
                 }
                 else
                 {
                     if (down)
-                        retval = Con::executef(ctrl, 1, "onLeft");
+                        retval = responder->onGamepadButtonPressed(XI_DPAD_LEFT);
                     else
-                        retval = Con::executef(ctrl, 1, "onRight");
+                        retval = responder->onGamepadButtonPressed(XI_DPAD_RIGHT);
                 }
                 gLastEventTime = curTime;
             }
 
-            if (dStrcmp(retval, ""))
-                return true;
+            return retval;
         }
     }
 
@@ -716,59 +635,88 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
 
 bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl)
 {
+    if (!event || !ctrl)
+        return false;
+
     const char* retval = "";
+
+    U16 key = event->objInst;
+    U8 mod = event->modifier;
 
     if (event->action == SI_MAKE)
     {
-        U16 key = event->objInst;
-        U8 mod = event->modifier;
-
         if (key == KEY_A || key == KEY_RETURN)
-            retval = Con::executef(ctrl, 1, "onA");
+            return ctrl->onGamepadButtonPressed(XI_A);
         else if ((key == KEY_B || key == KEY_BACKSPACE) && !mod)
-            retval = Con::executef(ctrl, 1, "onB");
+            return ctrl->onGamepadButtonPressed(XI_B);
         else if (key == KEY_X)
-            retval = Con::executef(ctrl, 1, "onX");
+            return ctrl->onGamepadButtonPressed(XI_X);
         else if (key == KEY_Y)
-            retval = Con::executef(ctrl, 1, "onY");
+            return ctrl->onGamepadButtonPressed(XI_Y);
         else if (key == KEY_S && (mod & SI_SHIFT) != 0)
-            retval = Con::executef(ctrl, 1, "onStart");
+            return ctrl->onGamepadButtonPressed(XI_START);
         else if (key == KEY_B && (mod & SI_SHIFT) != 0)
-            retval = Con::executef(ctrl, 1, "onBack");
+            return ctrl->onGamepadButtonPressed(XI_BACK);
         else if (key == KEY_L && (mod & SI_SHIFT) != 0)
-        {
-            retval = Con::executef(ctrl, 1, "onBlack");
-            if (dStrcmp(retval, "") == 0)
-                retval = Con::executef(ctrl, 1, "onLShoulder");
-        }
+            return ctrl->onGamepadButtonPressed(XI_LEFT_SHOULDER);
         else if (key == KEY_R && (mod & SI_SHIFT) != 0)
-        {
-            retval = Con::executef(ctrl, 1, "onWhite");
-            if (dStrcmp(retval, "") == 0)
-                retval = Con::executef(ctrl, 1, "onRShoulder");
-        }
+            return ctrl->onGamepadButtonPressed(XI_RIGHT_SHOULDER);
         else if (key == KEY_L && (mod & SI_CTRL) != 0)
-            retval = Con::executef(ctrl, 1, "onLStick");
+            return ctrl->onGamepadButtonPressed(XI_LEFT_THUMB);
         else if (key == KEY_R && (mod & SI_CTRL) != 0)
-            retval = Con::executef(ctrl, 1, "onRStick");
+            return ctrl->onGamepadButtonPressed(XI_RIGHT_THUMB);
         else if (key == KEY_L)
-            retval = Con::executef(ctrl, 1, "onLTrigger");
+            return ctrl->onGamepadButtonPressed(XI_LEFT_TRIGGER);
         else if (key == KEY_R)
-            retval = Con::executef(ctrl, 1, "onRTrigger");
+            return ctrl->onGamepadButtonPressed(XI_RIGHT_TRIGGER);
         else if (key == KEY_UP)
-            retval = Con::executef(ctrl, 1, "onUp");
+            return ctrl->onGamepadButtonPressed(XI_DPAD_UP);
         else if (key == KEY_LEFT)
-            retval = Con::executef(ctrl, 1, "onLeft");
+            return ctrl->onGamepadButtonPressed(XI_DPAD_LEFT);
         else if (key == KEY_DOWN)
-            retval = Con::executef(ctrl, 1, "onDown");
+            return ctrl->onGamepadButtonPressed(XI_DPAD_DOWN);
         else if (key == KEY_RIGHT)
-            retval = Con::executef(ctrl, 1, "onRight");
+            return ctrl->onGamepadButtonPressed(XI_DPAD_RIGHT);
         else
             return false;
     }
-
-    if (dStrcmp(retval, ""))
-        return true;
+    else
+    {
+        if (key == KEY_A || key == KEY_RETURN)
+            return ctrl->onGamepadButtonReleased(XI_A);
+        else if ((key == KEY_B || key == KEY_BACKSPACE) && !mod)
+            return ctrl->onGamepadButtonReleased(XI_B);
+        else if (key == KEY_X)
+            return ctrl->onGamepadButtonReleased(XI_X);
+        else if (key == KEY_Y)
+            return ctrl->onGamepadButtonReleased(XI_Y);
+        else if (key == KEY_S && (mod & SI_SHIFT) != 0)
+            return ctrl->onGamepadButtonReleased(XI_START);
+        else if (key == KEY_B && (mod & SI_SHIFT) != 0)
+            return ctrl->onGamepadButtonReleased(XI_BACK);
+        else if (key == KEY_L && (mod & SI_SHIFT) != 0)
+            return ctrl->onGamepadButtonReleased(XI_LEFT_SHOULDER);
+        else if (key == KEY_R && (mod & SI_SHIFT) != 0)
+            return ctrl->onGamepadButtonReleased(XI_RIGHT_SHOULDER);
+        else if (key == KEY_L && (mod & SI_CTRL) != 0)
+            return ctrl->onGamepadButtonReleased(XI_LEFT_THUMB);
+        else if (key == KEY_R && (mod & SI_CTRL) != 0)
+            return ctrl->onGamepadButtonReleased(XI_RIGHT_THUMB);
+        else if (key == KEY_L)
+            return ctrl->onGamepadButtonReleased(XI_LEFT_TRIGGER);
+        else if (key == KEY_R)
+            return ctrl->onGamepadButtonReleased(XI_RIGHT_TRIGGER);
+        else if (key == KEY_UP)
+            return ctrl->onGamepadButtonReleased(XI_DPAD_UP);
+        else if (key == KEY_LEFT)
+            return ctrl->onGamepadButtonReleased(XI_DPAD_LEFT);
+        else if (key == KEY_DOWN)
+            return ctrl->onGamepadButtonReleased(XI_DPAD_DOWN);
+        else if (key == KEY_RIGHT)
+            return ctrl->onGamepadButtonReleased(XI_DPAD_RIGHT);
+        else
+            return false;
+    }
 
     return false;
 }

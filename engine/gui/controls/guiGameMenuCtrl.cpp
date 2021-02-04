@@ -166,8 +166,7 @@ void GuiXboxListCtrl::onMouseDragged(const GuiEvent& event)
     onMouseDown(event);
 }
 
-// TODO: Missing this function in guiControl to override
-/*bool GuiXboxListCtrl::onGamepadButtonPressed(int button)
+bool GuiXboxListCtrl::onGamepadButtonPressed(U32 button)
 {
     if (button == XI_DPAD_UP)
         moveUp();
@@ -177,7 +176,7 @@ void GuiXboxListCtrl::onMouseDragged(const GuiEvent& event)
         return Parent::onGamepadButtonPressed(button);
 
     return true;
-}*/
+}
 
 U32 GuiXboxListCtrl::getRowCount()
 {
@@ -369,13 +368,13 @@ const char* GuiXboxListCtrl::getSelectedData()
     return mRowData[mSelected];
 }
 
-void GuiXboxListCtrl::setRowEnabled(int idx, bool enabled)
+void GuiXboxListCtrl::setRowEnabled(S32 idx, bool enabled)
 {
     if (idx >= 0 && idx < mRowText.size())
         mRowEnabled[idx] = enabled;
 }
 
-bool GuiXboxListCtrl::getRowEnabled(int idx)
+bool GuiXboxListCtrl::getRowEnabled(S32 idx)
 {
     if (idx < 0 || idx >= mRowText.size())
         return false;
@@ -400,12 +399,10 @@ void GuiXboxListCtrl::onMouseMove(const GuiEvent& event)
 
 void GuiXboxListCtrl::onMouseDown(const GuiEvent& event)
 {
-    /*Point2I localPoint = globalToLocalCoord(event.mousePoint);
+    Point2I localPoint = globalToLocalCoord(event.mousePoint);
     S32 row = getRowIndex(localPoint);
-    if (row >= 0 && row != mSelected)
-        move(row - mSelected);*/
-
-    mMouseDown  = true;
+    if (row >= 0)
+        mMouseDown = true;
 }
 
 void GuiXboxListCtrl::onMouseUp(const GuiEvent& event)
@@ -413,8 +410,13 @@ void GuiXboxListCtrl::onMouseUp(const GuiEvent& event)
     mMouseDown = false;
 
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
+
     if (mSelected == getRowIndex(localPoint))
-        Con::executef(this, 1, "onClick");
+    {
+        const char* retval = Con::executef(this, 1, "onClick");
+        if (!dStrcmp(retval, ""))
+            onGamepadButtonPressed(XI_A);
+    }
 }
 
 void GuiXboxListCtrl::addRow(const char* text, const char* data, U32 addedHeight, S32 bitmapIndex)

@@ -1321,6 +1321,118 @@ bool GuiControl::onKeyUp(const GuiEvent& event)
         return false;
 }
 
+bool GuiControl::onGamepadButtonPressed(U32 button)
+{
+    if (scriptOnGamepadButtonEvent(button, true))
+        return true;
+
+    if (button == XI_START)
+        return scriptOnGamepadButtonEvent(XI_A, true);
+
+    if (button == XI_BACK)
+        return scriptOnGamepadButtonEvent(XI_B, true);
+
+    GuiControl* parent = getParent();
+    if (parent)
+        return parent->onGamepadButtonPressed(button);
+
+    return false;
+}
+
+bool GuiControl::onGamepadButtonReleased(U32 button)
+{
+    if (scriptOnGamepadButtonEvent(button, false))
+        return true;
+
+    if (button == XI_START)
+        return scriptOnGamepadButtonEvent(XI_A, false);
+
+    if (button == XI_BACK)
+        return scriptOnGamepadButtonEvent(XI_B, false);
+
+    GuiControl* parent = getParent();
+    if (parent)
+        return parent->onGamepadButtonReleased(button);
+
+    return false;
+}
+
+bool GuiControl::scriptOnGamepadButtonEvent(U32 button, bool pressed)
+{
+    if (!mNameSpace)
+        return false;
+
+    const char* buttonCmd;
+
+    switch (button)
+    {
+        case XI_LEFT_TRIGGER:
+            buttonCmd = "onLTrigger";
+            break;
+        case XI_RIGHT_TRIGGER:
+            buttonCmd = "onRTrigger";
+            break;
+        case XI_DPAD_UP:
+            buttonCmd = "onUp";
+            break;
+        case XI_DPAD_DOWN:
+            buttonCmd = "onDown";
+            break;
+        case XI_DPAD_LEFT:
+            buttonCmd = "onLeft";
+            break;
+        case XI_DPAD_RIGHT:
+            buttonCmd = "onRight";
+            break;
+        case XI_START:
+            buttonCmd = "onStart";
+            break;
+        case XI_BACK:
+            buttonCmd = "onBack";
+            break;
+        case XI_LEFT_THUMB:
+            buttonCmd = "onLThumb";
+            break;
+        case XI_RIGHT_THUMB:
+            buttonCmd = "onRThumb";
+            break;
+        case XI_LEFT_SHOULDER:
+            buttonCmd = "onLShoulder";
+            break;
+        case XI_RIGHT_SHOULDER:
+            buttonCmd = "onRShoulder";
+            break;
+        case XI_A:
+            buttonCmd = "onA";
+            break;
+        case XI_B:
+            buttonCmd = "onB";
+            break;
+        case XI_X:
+            buttonCmd = "onX";
+            break;
+        case XI_Y:
+            buttonCmd = "onY";
+            break;
+        default:
+            return false;
+    }
+
+    const char* action = "";
+    if (!pressed)
+        action = "Released";
+
+    char fullname[1024];
+    dSprintf(fullname, 1024, "%s%s", buttonCmd, action);
+    StringTableEntry entry = StringTable->insert(fullname);
+    if (!mNameSpace->lookup(entry))
+        return false;
+
+    Con::executef(this, 1, entry);
+
+    return true;
+}
+
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
 void GuiControl::onAction()

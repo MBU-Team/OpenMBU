@@ -538,6 +538,10 @@ public:
     virtual bool onKeyRepeat(const GuiEvent& event);
     /// @}
 
+    virtual bool onGamepadButtonPressed(U32 button);
+    virtual bool onGamepadButtonReleased(U32 button);
+    virtual bool scriptOnGamepadButtonEvent(U32 button, bool pressed);
+
     /// Sets the control profile for this control.
     ///
     /// @see GuiControlProfile

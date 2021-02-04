@@ -33,14 +33,14 @@ public:
     S32 getTopRow();
     S32 getBottomRow();
     void onMouseDragged(const GuiEvent& event);
-    //bool onGamepadButtonPressed(int button); // TODO: Missing this function in guiControl to override
+    bool onGamepadButtonPressed(U32 button);
     U32 getRowCount();
     S32 getRowIndex(Point2I localPoint);
     void onRender(Point2I offset, const RectI& updateRect);
     const char* getSelectedText();
     const char* getSelectedData();
-    void setRowEnabled(int idx, bool enabled);
-    bool getRowEnabled(int idx);
+    void setRowEnabled(S32 idx, bool enabled);
+    bool getRowEnabled(S32 idx);
     void onMouseLeave(const GuiEvent& event);
     void onMouseMove(const GuiEvent& event);
     void onMouseDown(const GuiEvent& event);
