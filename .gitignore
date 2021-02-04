@@ -14,3 +14,4 @@ shaderP*.hlsl
 shaderV*.hlsl
 *.ml
 *.torsion.opt
+*.uft
