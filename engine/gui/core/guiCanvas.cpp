@@ -769,6 +769,8 @@ bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl)
 
     if (dStrcmp(retval, ""))
         return true;
+
+    return false;
 }
 
 void GuiCanvas::rootMouseDown(const GuiEvent& event)

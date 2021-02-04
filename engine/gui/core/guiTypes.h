@@ -147,6 +147,11 @@ public:
     GFXTexHandle mTextureObject;
     Vector<RectI> mBitmapArrayRects;                ///< Used for controls which use an array of bitmaps such as checkboxes
 
+    // game menu members
+    U32 mRowHeight;
+    Vector<int> mHitArea;
+    Point2I mIconPosition;
+
     // sound members
     AudioProfile* mSoundButtonDown;
     AudioProfile* mSoundButtonOver;

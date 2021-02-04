@@ -1503,6 +1503,18 @@
     <ClCompile Include="..\engine\interior\interiorSimpleMesh.cpp">
       <Filter>Source Files\interior</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\gui\controls\guiGameListMenuCtrl.cpp">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\gui\controls\guiGameMenuCtrl.cpp">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\gui\controls\guiGameOptionMenuCtrl.cpp">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\units.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2770,6 +2782,18 @@
     </ClInclude>
     <ClInclude Include="..\example\shaders\shdrConsts.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\controls\guiGameListMenuCtrl.h">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\controls\guiGameMenuCtrl.h">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\controls\guiGameOptionMenuCtrl.h">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\units.h">
+      <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

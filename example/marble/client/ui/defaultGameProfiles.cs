@@ -178,6 +178,8 @@ new GuiControlProfile(TextMenuListProfile)
    soundButtonOver = "AudioButtonOver";
    iconPosition = "42 30";
    rowHeight = 62;
+   
+   hitArea = "20 76";
 };
 
 new GuiControlProfile(TextMenuListSmallProfile : TextMenuListProfile)

@@ -889,6 +889,7 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="..\engine\core\unicode.cpp" />
+    <ClCompile Include="..\engine\core\units.cpp" />
     <ClCompile Include="..\engine\core\zipAggregate.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -1996,6 +1997,9 @@
     <ClCompile Include="..\engine\gui\controls\guiConsole.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiConsoleEditCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiConsoleTextCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\controls\guiGameListMenuCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\controls\guiGameMenuCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\controls\guiGameOptionMenuCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiMLTextCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiMLTextEditCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiPopUpCtrl.cpp" />
@@ -3662,6 +3666,7 @@
     <ClInclude Include="..\engine\core\tSparseArray.h" />
     <ClInclude Include="..\engine\core\tVector.h" />
     <ClInclude Include="..\engine\core\unicode.h" />
+    <ClInclude Include="..\engine\core\units.h" />
     <ClInclude Include="..\engine\core\zipAggregate.h" />
     <ClInclude Include="..\engine\core\zipHeaders.h" />
     <ClInclude Include="..\engine\core\zipSubStream.h" />
@@ -3786,6 +3791,9 @@
     <ClInclude Include="..\engine\gui\controls\guiConsole.h" />
     <ClInclude Include="..\engine\gui\controls\guiConsoleEditCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiConsoleTextCtrl.h" />
+    <ClInclude Include="..\engine\gui\controls\guiGameListMenuCtrl.h" />
+    <ClInclude Include="..\engine\gui\controls\guiGameMenuCtrl.h" />
+    <ClInclude Include="..\engine\gui\controls\guiGameOptionMenuCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiMLTextCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiMLTextEditCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiPopUpCtrl.h" />

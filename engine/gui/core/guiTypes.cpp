@@ -145,6 +145,8 @@ GuiControlProfile::GuiControlProfile(void) :
     mBitmapName = NULL;
     mFontCharset = TGE_ANSI_CHARSET;
 
+    mRowHeight = 0;
+
     GuiControlProfile* def = dynamic_cast<GuiControlProfile*>(Sim::findObject("GuiDefaultProfile"));
     if (def)
     {
@@ -189,6 +191,10 @@ GuiControlProfile::GuiControlProfile(void) :
         mReturnTab = def->mReturnTab;
         mNumbersOnly = def->mNumbersOnly;
         mCursorColor = def->mCursorColor;
+
+        mRowHeight = def->mRowHeight;
+        mHitArea = def->mHitArea;
+        mIconPosition = def->mIconPosition;
     }
 }
 
@@ -232,6 +238,7 @@ void GuiControlProfile::initPersistFields()
 
     addField("justify", TypeEnum, Offset(mAlignment, GuiControlProfile), 1, &gAlignTable);
     addField("textOffset", TypePoint2I, Offset(mTextOffset, GuiControlProfile));
+    addField("hitArea", TypeS32Vector, Offset(mHitArea, GuiControlProfile));
     addField("autoSizeWidth", TypeBool, Offset(mAutoSizeWidth, GuiControlProfile));
     addField("autoSizeHeight", TypeBool, Offset(mAutoSizeHeight, GuiControlProfile));
     addField("returnTab", TypeBool, Offset(mReturnTab, GuiControlProfile));
@@ -242,6 +249,9 @@ void GuiControlProfile::initPersistFields()
 
     addField("soundButtonDown", TypeAudioProfilePtr, Offset(mSoundButtonDown, GuiControlProfile));
     addField("soundButtonOver", TypeAudioProfilePtr, Offset(mSoundButtonOver, GuiControlProfile));
+
+    addField("rowHeight", TypeS32, Offset(mRowHeight, GuiControlProfile));
+    addField("iconPosition", TypePoint2I, Offset(mIconPosition, GuiControlProfile));
 }
 
 bool GuiControlProfile::onAdd()
