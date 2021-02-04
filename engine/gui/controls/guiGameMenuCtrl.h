@@ -41,6 +41,7 @@ public:
     const char* getSelectedData();
     void setRowEnabled(int idx, bool enabled);
     bool getRowEnabled(int idx);
+    void onMouseLeave(const GuiEvent& event);
     void onMouseMove(const GuiEvent& event);
     void onMouseDown(const GuiEvent& event);
     void onMouseUp(const GuiEvent& event);

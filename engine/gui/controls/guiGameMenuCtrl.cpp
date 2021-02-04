@@ -383,6 +383,11 @@ bool GuiXboxListCtrl::getRowEnabled(int idx)
     return mRowEnabled[idx];
 }
 
+void GuiXboxListCtrl::onMouseLeave(const GuiEvent& event)
+{
+    mMouseDown = false;
+}
+
 void GuiXboxListCtrl::onMouseMove(const GuiEvent& event)
 {
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
