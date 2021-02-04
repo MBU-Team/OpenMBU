@@ -720,6 +720,12 @@ ConsoleFunction(disableXInput, void, 1, 1, "disableXInput()")
     DInputManager::disableXInput();
 }
 
+ConsoleFunction(getGamepadName, const char*, 1, 1, "getGamepadName()")
+{
+    argc; argv;
+    return "XInput";
+}
+
 //------------------------------------------------------------------------------
 // This function requests a full "refresh" of events for all controllers the
 // next time we go through the input processing loop. This is useful to call
