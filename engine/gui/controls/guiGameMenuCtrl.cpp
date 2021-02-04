@@ -296,7 +296,15 @@ void GuiXboxListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
             GFX->clearBitmapModulation();
 
-            GFX->setBitmapModulation(ColorI(255, 255, 255, 255));
+            Point2I clickOffset(0, 0);
+
+            if (mMouseDown && i == mSelected)
+            {
+                GFX->setBitmapModulation(ColorI(128, 128, 128, 255));
+                clickOffset.set(1, 1);
+            } else {
+                GFX->setBitmapModulation(ColorI(255, 255, 255, 255));
+            }
 
             if (hasBitmap)
             {
@@ -304,7 +312,7 @@ void GuiXboxListCtrl::onRender(Point2I offset, const RectI& updateRect)
                 if (((bIndex = selectedBitmapIndex) != -1 && i == mSelected) ||
                     ((bIndex = unselectedBitmapIndex) != -1) && i != mSelected)
                 {
-                    GFX->drawBitmapSR(mProfile->mTextureObject, point, mProfile->mBitmapArrayRects[bIndex]);
+                    GFX->drawBitmapSR(mProfile->mTextureObject, point + clickOffset, mProfile->mBitmapArrayRects[bIndex]);
                 }
             }
 
@@ -314,7 +322,7 @@ void GuiXboxListCtrl::onRender(Point2I offset, const RectI& updateRect)
                 if (i == mSelected)
                     ++bitmapIndex;
                 if (bitmapIndex < numBitmaps)
-                    GFX->drawBitmapSR(mProfile->mTextureObject, point + mProfile->mIconPosition, mProfile->mBitmapArrayRects[bitmapIndex]);
+                    GFX->drawBitmapSR(mProfile->mTextureObject, point + clickOffset + mProfile->mIconPosition, mProfile->mBitmapArrayRects[bitmapIndex]);
             }
 
             GFX->clearBitmapModulation();
@@ -334,10 +342,13 @@ void GuiXboxListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
             fontColor.alpha = 255;
 
-            GFX->setBitmapModulation(fontColor);
+            if (mMouseDown && i == mSelected)
+                GFX->setBitmapModulation(fontColor * 0.5f);
+            else
+                GFX->setBitmapModulation(fontColor);
 
             point += mProfile->mTextOffset;
-            renderJustifiedText(point, Point2I(extentX, bitmapHeight), mRowText[i]);
+            renderJustifiedText(point + clickOffset, Point2I(extentX, bitmapHeight), mRowText[i]);
         }
         ++i;
     }
@@ -372,16 +383,30 @@ bool GuiXboxListCtrl::getRowEnabled(int idx)
     return mRowEnabled[idx];
 }
 
-void GuiXboxListCtrl::onMouseDown(const GuiEvent& event)
+void GuiXboxListCtrl::onMouseMove(const GuiEvent& event)
 {
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
     S32 row = getRowIndex(localPoint);
     if (row >= 0 && row != mSelected)
         move(row - mSelected);
+
+    //Parent::onMouseMove(event);
+}
+
+void GuiXboxListCtrl::onMouseDown(const GuiEvent& event)
+{
+    /*Point2I localPoint = globalToLocalCoord(event.mousePoint);
+    S32 row = getRowIndex(localPoint);
+    if (row >= 0 && row != mSelected)
+        move(row - mSelected);*/
+
+    mMouseDown  = true;
 }
 
 void GuiXboxListCtrl::onMouseUp(const GuiEvent& event)
 {
+    mMouseDown = false;
+
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
     if (mSelected == getRowIndex(localPoint))
         Con::executef(this, 1, "onClick");
