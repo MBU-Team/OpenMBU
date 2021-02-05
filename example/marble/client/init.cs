@@ -305,6 +305,8 @@ function makeFonts()
    populateFontCacheRange("Arial Bold", 32, 1, 255);
    populateFontCacheRange("Arial Bold", 36, 1, 255);
    populateFontCacheRange("Lucida Console", 12, 1, 255);
+   //populateFontCacheRange("Convection Symbol", 18, 1, 255); // unused
+   //populateFontCacheRange("Convection Symbol", 24, 1, 255); // unused
    populateFontCacheRange("ColiseumRR Medium", 48, 1, 255);
    writeFontCache();
 }
