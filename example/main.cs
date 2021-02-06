@@ -572,6 +572,5 @@ SplashLoadingProfile.fillColor = "50 100 200";
 // Temp for testing
 function a()
 {
-   RootGui.setContent(levelPreviewGui);
-   levelPreviewGui.onA();
+   return GameMissionInfo.getCurrentMissionGroup().getObject(GameMissionInfo.getCurrentIndex()).missionGroup;
 }

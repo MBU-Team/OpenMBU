@@ -25,10 +25,6 @@ const U32 Interior::smFileVersion = 14;
 
 bool Interior::read(Stream& stream)
 {
-    // TODO: Interiors cause issues with preview atm, fix later... - Matt
-    if (gSPMode)
-        return false;
-
     AssertFatal(stream.hasCapability(Stream::StreamRead), "Interior::read: non-read capable stream passed");
     AssertFatal(stream.getStatus() == Stream::Ok, "Interior::read: Error, stream in inconsistent state");
 
