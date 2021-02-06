@@ -924,7 +924,7 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
     {
         bstream->writeFlag(mCameraPos == 0);
         U32 sum = 0;
-        if (mControlObject)
+        if (mControlObject && !gSPMode) // TODO: Might not be a good place to do this!
         {
             mControlObject->interpolateTick(0);
             sum = mControlObject->getPacketDataChecksum(this);
