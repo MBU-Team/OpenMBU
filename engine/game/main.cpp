@@ -408,7 +408,7 @@ bool initGame(int argc, const char** argv)
     gServerSceneGraph = new SceneGraph(false);
     gServerSceneRoot = new SceneRoot;
     gServerSceneGraph->addObjectToScene(gServerSceneRoot);
-    gSPModeSceneGraph = new SceneGraph(true);
+    gSPModeSceneGraph = new SceneGraph(false);
     gSPModeSceneRoot = new SceneRoot;
     gSPModeSceneGraph->addObjectToScene(gSPModeSceneRoot);
     gDecalManager = new DecalManager;

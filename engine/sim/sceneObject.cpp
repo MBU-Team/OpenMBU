@@ -546,7 +546,7 @@ bool SceneObject::onAdd()
 
 void SceneObject::addToScene()
 {
-    if (isClientObject())
+    if (isClientObject() || gSPMode)
     {
         getCurrentClientContainer()->addObject(this);
         getCurrentClientSceneGraph()->addObjectToScene(this);

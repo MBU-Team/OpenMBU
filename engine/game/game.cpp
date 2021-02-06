@@ -59,7 +59,7 @@ ConsoleFunction(setSinglePlayerMode, void, 2, 2, "( flag ) - Enable or disable s
     for (NetConnection* walk = NetConnection::getConnectionList();
         walk; walk = walk->getNext())
     {
-        if (walk->isConnectionToServer())
+        if (!walk->isConnectionToServer())
             walk->resetGhosting();
     }
 
