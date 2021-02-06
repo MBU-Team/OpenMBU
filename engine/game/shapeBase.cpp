@@ -919,7 +919,7 @@ bool ShapeBase::onNewDataBlock(GameBaseData* dptr)
         }
     }
 
-    if (isGhost() && mSkinNameHandle.isValidString() && mShapeInstance) {
+    if ((gSPMode || isGhost()) && mSkinNameHandle.isValidString() && mShapeInstance) {
 
         mShapeInstance->reSkin(mSkinNameHandle);
 

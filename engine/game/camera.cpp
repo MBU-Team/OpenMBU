@@ -81,7 +81,7 @@ bool Camera::onAdd()
     mObjBox.min.neg();
     resetWorldBox();
 
-    if (isClientObject())
+    if (isClientObject() || gSPMode)
         getCurrentClientContainer()->addObject(this);
     else
         getCurrentServerContainer()->addObject(this);

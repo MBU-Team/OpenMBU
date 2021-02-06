@@ -164,16 +164,17 @@ bool GameBase::onAdd()
     if (!Parent::onAdd() || !mDataBlock)
         return false;
 
-    if (isClientObject()) {
+    if (isClientObject() || gSPMode) {
         // Client datablock are initialized by the initial update
         getCurrentClientProcessList()->addObject(this);
     }
     else {
-        // Datablock must be initialized on the server
-        if (!onNewDataBlock(mDataBlock))
-            return false;
         getCurrentServerProcessList()->addObject(this);
     }
+
+    // Datablock must be initialized on the server
+    if (!isClientObject() && !onNewDataBlock(mDataBlock))
+        return false;
 
     if (gSPMode)
         mTypeMask &= ~GameBaseObjectType;
