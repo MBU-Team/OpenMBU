@@ -924,7 +924,8 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
     {
         bstream->writeFlag(mCameraPos == 0);
         U32 sum = 0;
-        if (mControlObject && !gSPMode) // TODO: Might not be a good place to do this!
+        // TODO: Implement Torque Hifi instead of the following.
+        if (mControlObject && !gSPMode && !gRenderPreview)
         {
             mControlObject->interpolateTick(0);
             sum = mControlObject->getPacketDataChecksum(this);
