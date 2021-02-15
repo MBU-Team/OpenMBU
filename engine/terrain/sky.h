@@ -227,7 +227,8 @@ public:
         WindMask = BIT(5),
         StormCloudsOnMask = BIT(6),
         StormFogOnMask = BIT(7),
-        SkyGlowMask = BIT(8)
+        SkyGlowMask = BIT(8),
+        MaterialMask = BIT(9)
     };
     enum Constants {
         EnvMapMaterialOffset = 6,
@@ -270,6 +271,8 @@ public:
     void unpackUpdate(NetConnection* conn, BitStream* stream);
 
     void updateVisibility();
+
+    void setSkyMaterial(const char* skyMaterial);
 };
 
 

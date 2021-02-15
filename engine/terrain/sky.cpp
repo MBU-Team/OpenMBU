@@ -156,6 +156,16 @@ bool Sky::onAdd()
 }
 
 //---------------------------------------------------------------------------
+
+void Sky::setSkyMaterial(const char* skyMaterial)
+{
+    mMaterialListName = StringTable->insert(skyMaterial);
+    loadDml();
+
+    setMaskBits(MaterialMask);
+}
+
+//---------------------------------------------------------------------------
 void Sky::initSkyData()
 {
     calcPoints();
@@ -265,6 +275,14 @@ ConsoleMethod(Sky, stormFogShow, void, 3, 3, "(bool show)")
 {
     Sky* ctrl = static_cast<Sky*>(object);
     ctrl->stormFogShow(dAtob(argv[2]));
+}
+
+//---------------------------------------------------------------------------
+
+ConsoleMethod(Sky, setSkyMaterial, void, 3, 3, "(material)")
+{
+    Sky* sky = static_cast<Sky*>(object);
+    sky->setSkyMaterial(argv[2]);
 }
 
 //---------------------------------------------------------------------------
@@ -407,6 +425,12 @@ void Sky::unpackUpdate(NetConnection*, BitStream* stream)
     }
 
     if (stream->readFlag())
+    {
+        mMaterialListName = stream->readSTString();
+        loadDml();
+    }
+
+    if (stream->readFlag())
         stream->read(&mStormCloudsOn);
 
     if (stream->readFlag())
@@ -545,6 +569,9 @@ U32 Sky::packUpdate(NetConnection*, U32 mask, BitStream* stream)
             Con::printf("WRITE OFFSET: %f", F32(stormTimeDiff) / 32.0f);
         }
     }
+
+    if (stream->writeFlag(mask & MaterialMask))
+        stream->writeString(mMaterialListName);
 
     if (stream->writeFlag(mask & StormCloudsOnMask))
         stream->write(mStormCloudsOn);
