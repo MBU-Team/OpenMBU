@@ -121,6 +121,9 @@
     <Filter Include="Source Files\lightingSystem">
       <UniqueIdentifier>{bd879adc-70ce-4984-9011-ddf854256ff1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\game\marble">
+      <UniqueIdentifier>{20390ce6-5708-4e77-8190-0c11d36837b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\audio\audio.cpp">
@@ -1515,6 +1518,9 @@
     <ClCompile Include="..\engine\core\units.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\game\marble\marble.cpp">
+      <Filter>Source Files\game\marble</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2794,6 +2800,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\core\units.h">
       <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\game\marble\marble.h">
+      <Filter>Source Files\game\marble</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

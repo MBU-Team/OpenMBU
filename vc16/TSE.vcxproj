@@ -1381,6 +1381,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\game\marble\marble.cpp" />
     <ClCompile Include="..\engine\game\missionArea.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3711,6 +3712,7 @@
     <ClInclude Include="..\engine\game\gameTSCtrl.h" />
     <ClInclude Include="..\engine\game\guiPlayerView.h" />
     <ClInclude Include="..\engine\game\item.h" />
+    <ClInclude Include="..\engine\game\marble\marble.h" />
     <ClInclude Include="..\engine\game\missionArea.h" />
     <ClInclude Include="..\engine\game\missionMarker.h" />
     <ClInclude Include="..\engine\game\moveManager.h" />
