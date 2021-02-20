@@ -33,6 +33,400 @@ void Marble::initPersistFields()
 
 //----------------------------------------------------------------------------
 
+Marble::Contact::Contact()
+{
+    // TODO: Implement
+}
+
+Marble::SinglePrecision::SinglePrecision()
+{
+    // TODO: Implement
+}
+
+Marble::StateDelta::StateDelta()
+{
+    // TODO: Implement
+}
+
+Marble::EndPadEffect::EndPadEffect()
+{
+    // TODO: Implement
+}
+
+Marble::PowerUpState::PowerUpState()
+{
+    // TODO: Implement
+}
+
+Marble::PowerUpState::~PowerUpState()
+{
+    // TODO: Implement
+}
+
+//----------------------------------------------------------------------------
+
+SceneObject* Marble::getPad()
+{
+    // TODO: Implement
+    return nullptr;
+}
+
+S32 Marble::getPowerUpId()
+{
+    // TODO: Implement
+    return 0;
+}
+
+const QuatF& Marble::getGravityFrame()
+{
+    // TODO: Implement
+    return QuatF();
+}
+
+U32 Marble::getMaxNaturalBlastEnergy()
+{
+    // TODO: Implement
+    return 0;
+}
+
+U32 Marble::getMaxBlastEnergy()
+{
+    // TODO: Implement
+    return 0;
+}
+
+F32 Marble::getBlastPercent()
+{
+    // TODO: Implement
+    return 0;
+}
+
+F32 Marble::getBlastEnergy() const
+{
+    // TODO: Implement
+    return 0;
+}
+
+void Marble::setBlastEnergy(F32)
+{
+    
+}
+
+void Marble::setUseFullMarbleTime(bool)
+{
+    
+}
+
+void Marble::setMarbleTime(U32)
+{
+    
+}
+
+U32 Marble::getMarbleTime()
+{
+    // TODO: Implement
+    return 0;
+}
+
+void Marble::setMarbleBonusTime(U32)
+{
+    
+}
+
+U32 Marble::getMarbleBonusTime()
+{
+    // TODO: Implement
+    return 0;
+}
+
+U32 Marble::getFullMarbleTime()
+{
+    // TODO: Implement
+    return 0;
+}
+
+Marble::Contact& Marble::getLastContact()
+{
+    // TODO: Implement
+    return Marble::Contact();
+}
+
+void Marble::setGravityFrame(const QuatF&, bool)
+{
+    
+}
+
+void Marble::onSceneRemove()
+{
+    Parent::onSceneRemove();
+}
+
+void Marble::setPosition(const Point3D&, bool)
+{
+    
+}
+
+void Marble::setPosition(const Point3D&, const AngAxisF&, float)
+{
+    
+}
+
+void Marble::setTransform(const MatrixF& mat)
+{
+    Parent::setTransform(mat);
+}
+
+Point3F& Marble::getPosition()
+{
+    // TODO: Implement
+    return Point3F();
+}
+
+void Marble::victorySequence()
+{
+    
+}
+
+void Marble::setMode(U32)
+{
+    
+}
+
+void Marble::setOOB(bool)
+{
+    
+}
+
+void Marble::interpolateTick(F32 delta)
+{
+    Parent::interpolateTick(delta);
+}
+
+S32 Marble::mountPowerupImage(ShapeBaseImageData*)
+{
+    // TODO: Implement
+    return 0;
+}
+
+void Marble::updatePowerUpParams()
+{
+    
+}
+
+bool Marble::getForce(Point3F& p1, Point3F* p2)
+{
+    // TODO: Missing in parent?
+    //return Parent::getForce(p1, p2);
+
+    // TODO: Implement
+    return false;
+}
+
+U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
+{
+    return Parent::packUpdate(conn, mask, stream);
+}
+
+void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
+{
+    Parent::unpackUpdate(conn, stream);
+}
+
+U32 Marble::filterMaskBits(U32 i, NetConnection* conn)
+{
+    // TODO: Missing in parent?
+    //return Parent::filterMaskBits(i, conn);
+
+    // TODO: Implement
+    return 0;
+}
+
+void Marble::writePacketData(GameConnection* conn, BitStream* stream)
+{
+    Parent::writePacketData(conn, stream);
+}
+
+void Marble::readPacketData(GameConnection* conn, BitStream* stream)
+{
+    Parent::readPacketData(conn, stream);
+}
+
+void Marble::renderShadowVolumes(SceneState*)
+{
+
+}
+
+void Marble::renderShadow(F32, F32)
+{
+    
+}
+
+void Marble::renderImage(SceneState* state)
+{
+    Parent::renderImage(state);
+}
+
+void Marble::bounceEmitter(F32, const Point3F&)
+{
+    
+}
+
+MatrixF Marble::getShadowTransform() const
+{
+    // TODO: Missing in parent?
+    //return Parent::getShadowTransform();
+
+    // TODO: Implement
+    return MatrixF();
+}
+
+void Marble::setVelocity(const Point3F& vel)
+{
+    Parent::setVelocity(vel);
+}
+
+Point3F Marble::getVelocity() const
+{
+    return Parent::getVelocity();
+}
+
+Point3F Marble::getShadowScale() const
+{
+    // TODO: Missing in parent?
+    //return Parent::getShadowScale();
+
+    // TODO: Implement
+    return Point3F();
+}
+
+Point3F Marble::getGravityRenderDir()
+{
+
+    // TODO: Implement
+    return Point3F();
+}
+
+void Marble::getShadowLightVectorHack(Point3F& p)
+{
+    // TODO: Missing in parent?
+    //Parent::getShadowLightVectorHack(p);
+}
+
+bool Marble::onSceneAdd(SceneGraph* graph)
+{
+    return Parent::onSceneAdd(graph);
+}
+
+bool Marble::onNewDataBlock(GameBaseData* dptr)
+{
+    return Parent::onNewDataBlock(dptr);
+}
+
+void Marble::onRemove()
+{
+    Parent::onRemove();
+}
+
+bool Marble::updatePadState()
+{
+    // TODO: Implement
+    return false;
+}
+
+void Marble::doPowerUpBoost(S32)
+{
+    
+}
+
+void Marble::doPowerUpPower(S32)
+{
+    
+}
+
+void Marble::updatePowerups()
+{
+    
+}
+
+void Marble::updateMass()
+{
+    Parent::updateMass();
+}
+
+void Marble::trailEmitter(U32)
+{
+    
+}
+
+void Marble::updateRollSound(F32, F32)
+{
+    
+}
+
+void Marble::playBounceSound(Marble::Contact&, F64)
+{
+    
+}
+
+void Marble::setPad(SceneObject*)
+{
+    
+}
+
+void Marble::findRenderPos(F32)
+{
+    
+}
+
+void Marble::advanceTime(F32 dt)
+{
+    Parent::advanceTime(dt);
+}
+
+void Marble::computeNetSmooth(F32 f)
+{
+    // TODO: Missing in parent?
+    //Parent::computeNetSmooth(f)
+}
+
+void Marble::doPowerUp(S32)
+{
+    
+}
+
+void Marble::prepShadows()
+{
+    
+}
+
+bool Marble::onAdd()
+{
+    return Parent::onAdd();
+}
+
+void Marble::processMoveTriggers(const Move *)
+{
+    
+}
+
+void Marble::processItemsAndTriggers(const Point3F&, const Point3F&)
+{
+    
+}
+
+void Marble::setPowerUpId(U32, bool)
+{
+    
+}
+
+void Marble::processTick(const Move* move)
+{
+    Parent::processTick(move);
+}
+
+
+//----------------------------------------------------------------------------
+
 IMPLEMENT_CO_DATABLOCK_V1(MarbleData);
 
 MarbleData::MarbleData()
@@ -123,6 +517,23 @@ void MarbleData::initPersistFields()
     Con::addVariable("Game::endPad", TypeS32, &Marble::smEndPadId);
 
     Parent::initPersistFields();
+}
+
+//----------------------------------------------------------------------------
+
+bool MarbleData::preload(bool server, char errorBuffer[256])
+{
+    return Parent::preload(server, errorBuffer);
+}
+
+void MarbleData::packData(BitStream* stream)
+{
+    Parent::packData(stream);
+}
+
+void MarbleData::unpackData(BitStream* stream)
+{
+    Parent::unpackData(stream);
 }
 
 //----------------------------------------------------------------------------

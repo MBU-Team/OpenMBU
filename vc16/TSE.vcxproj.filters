@@ -1524,6 +1524,15 @@
     <ClCompile Include="..\engine\game\marble\powerup.cpp">
       <Filter>Source Files\game\marble</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\game\marble\marblephysics.cpp">
+      <Filter>Source Files\game\marble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\game\marble\marblecamera.cpp">
+      <Filter>Source Files\game\marble</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\game\marble\marblecollision.cpp">
+      <Filter>Source Files\game\marble</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">

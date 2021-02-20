@@ -1382,6 +1382,9 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="..\engine\game\marble\marble.cpp" />
+    <ClCompile Include="..\engine\game\marble\marblecamera.cpp" />
+    <ClCompile Include="..\engine\game\marble\marblecollision.cpp" />
+    <ClCompile Include="..\engine\game\marble\marblephysics.cpp" />
     <ClCompile Include="..\engine\game\marble\powerup.cpp" />
     <ClCompile Include="..\engine\game\missionArea.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
