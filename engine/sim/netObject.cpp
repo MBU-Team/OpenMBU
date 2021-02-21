@@ -97,16 +97,17 @@ void NetObject::collapseDirtyList()
     for (NetObject* obj = mDirtyList; obj; )
     {
         NetObject* next = obj->mNextDirtyList;
-        U32 orMask = obj->mDirtyMaskBits;
+        U32 dirtyMask = obj->mDirtyMaskBits;
 
         obj->mNextDirtyList = NULL;
         obj->mPrevDirtyList = NULL;
         obj->mDirtyMaskBits = 0;
 
-        if (!obj->isDeleted() && orMask)
+        if (!obj->isDeleted() && dirtyMask)
         {
             for (GhostInfo* walk = obj->mFirstObjectRef; walk; walk = walk->nextObjectRef)
             {
+                U32 orMask = obj->filterMaskBits(dirtyMask, walk->connection);
                 if (!walk->updateMask)
                 {
                     walk->updateMask = orMask;

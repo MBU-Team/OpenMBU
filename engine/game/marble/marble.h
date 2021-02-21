@@ -221,7 +221,7 @@ public:
     virtual bool getForce(Point3F&, Point3F*);
     virtual U32 packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
     virtual void unpackUpdate(NetConnection* conn, BitStream* stream);
-    virtual U32 filterMaskBits(U32, NetConnection*);
+    virtual U32 filterMaskBits(U32 mask, NetConnection* connection);
     virtual void writePacketData(GameConnection* conn, BitStream* stream);
     virtual void readPacketData(GameConnection* conn, BitStream* stream);
     void renderShadow(F32, F32);

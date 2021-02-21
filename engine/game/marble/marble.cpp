@@ -237,13 +237,10 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
     Parent::unpackUpdate(conn, stream);
 }
 
-U32 Marble::filterMaskBits(U32 i, NetConnection* conn)
+U32 Marble::filterMaskBits(U32 mask, NetConnection* connection)
 {
-    // TODO: Missing filterMaskBits in parent?
-    //return Parent::filterMaskBits(i, conn);
-
     // TODO: Implement filterMaskBits
-    return 0;
+    return Parent::filterMaskBits(mask, connection);
 }
 
 void Marble::writePacketData(GameConnection* conn, BitStream* stream)

@@ -290,6 +290,7 @@ public:
     ///
     /// @param   orMask   Bits to clear
     void clearMaskBits(U32 orMask);
+    virtual U32 filterMaskBits(U32 mask, NetConnection* connection) { return mask; }
 
     ///  Scope the object to all connections.
     ///
