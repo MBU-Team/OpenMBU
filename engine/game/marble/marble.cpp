@@ -15,13 +15,13 @@ U32 Marble::smEndPadId = 0;
 
 Marble::Marble()
 {
-    // TODO: Finish Implementation
+    // TODO: Finish Implementation of Marble
     mControllable = true;
 }
 
 Marble::~Marble()
 {
-    // TODO: Implement
+    // TODO: Implement ~Marble
 }
 
 void Marble::initPersistFields()
@@ -35,392 +35,412 @@ void Marble::initPersistFields()
 
 Marble::Contact::Contact()
 {
-    // TODO: Implement
+    // TODO: Implement Contact
 }
 
 Marble::SinglePrecision::SinglePrecision()
 {
-    // TODO: Implement
+    // TODO: Implement SinglePrecision
 }
 
 Marble::StateDelta::StateDelta()
 {
-    // TODO: Implement
+    // TODO: Implement StateDelta
 }
 
 Marble::EndPadEffect::EndPadEffect()
 {
-    // TODO: Implement
+    // TODO: Implement EndPadEffect
 }
 
 Marble::PowerUpState::PowerUpState()
 {
-    // TODO: Implement
+    // TODO: Implement PowerUpState
 }
 
 Marble::PowerUpState::~PowerUpState()
 {
-    // TODO: Implement
+    // TODO: Implement ~PowerUpState
 }
 
 //----------------------------------------------------------------------------
 
 SceneObject* Marble::getPad()
 {
-    // TODO: Implement
+    // TODO: Implement getPad
     return nullptr;
 }
 
 S32 Marble::getPowerUpId()
 {
-    // TODO: Implement
+    // TODO: Implement getPowerUpId
     return 0;
 }
 
 const QuatF& Marble::getGravityFrame()
 {
-    // TODO: Implement
+    // TODO: Implement getGravityFrame
     return QuatF();
 }
 
 U32 Marble::getMaxNaturalBlastEnergy()
 {
-    // TODO: Implement
+    // TODO: Implement getMaxNaturalBlastEnergy
     return 0;
 }
 
 U32 Marble::getMaxBlastEnergy()
 {
-    // TODO: Implement
+    // TODO: Implement getMaxBlastEnergy
     return 0;
 }
 
 F32 Marble::getBlastPercent()
 {
-    // TODO: Implement
+    // TODO: Implement getBlastPercent
     return 0;
 }
 
 F32 Marble::getBlastEnergy() const
 {
-    // TODO: Implement
+    // TODO: Implement getBlastEnergy
     return 0;
 }
 
 void Marble::setBlastEnergy(F32)
 {
-    
+    // TODO: Implement setBlastEnergy
 }
 
 void Marble::setUseFullMarbleTime(bool)
 {
-    
+    // TODO: Implement setUseFullMarbleTime
 }
 
 void Marble::setMarbleTime(U32)
 {
-    
+    // TODO: Implement setMarbleTime
 }
 
 U32 Marble::getMarbleTime()
 {
-    // TODO: Implement
+    // TODO: Implement getMarbleTime
     return 0;
 }
 
 void Marble::setMarbleBonusTime(U32)
 {
-    
+    // TODO: Implement setMarbleBonusTime
 }
 
 U32 Marble::getMarbleBonusTime()
 {
-    // TODO: Implement
+    // TODO: Implement getMarbleBonusTime
     return 0;
 }
 
 U32 Marble::getFullMarbleTime()
 {
-    // TODO: Implement
+    // TODO: Implement getFullMarbleTime
     return 0;
 }
 
 Marble::Contact& Marble::getLastContact()
 {
-    // TODO: Implement
+    // TODO: Implement getLastContact
     return Marble::Contact();
 }
 
 void Marble::setGravityFrame(const QuatF&, bool)
 {
-    
+    // TODO: Implement setGravityFrame
 }
 
 void Marble::onSceneRemove()
 {
+    // TODO: Implement onSceneRemove
     Parent::onSceneRemove();
 }
 
 void Marble::setPosition(const Point3D&, bool)
 {
-    
+    // TODO: Implement setPosition
 }
 
 void Marble::setPosition(const Point3D&, const AngAxisF&, float)
 {
-    
+    // TODO: Implement setPosition
 }
 
 void Marble::setTransform(const MatrixF& mat)
 {
+    // TODO: Implement setTransform
     Parent::setTransform(mat);
 }
 
 Point3F& Marble::getPosition()
 {
-    // TODO: Implement
+    // TODO: Implement getPosition
     return Point3F();
 }
 
 void Marble::victorySequence()
 {
-    
+    // TODO: Implement victorySequence
 }
 
 void Marble::setMode(U32)
 {
-    
+    // TODO: Implement setMode
 }
 
 void Marble::setOOB(bool)
 {
-    
+    // TODO: Implement setOOB
 }
 
 void Marble::interpolateTick(F32 delta)
 {
+    // TODO: Implement interpolateTick
     Parent::interpolateTick(delta);
 }
 
 S32 Marble::mountPowerupImage(ShapeBaseImageData*)
 {
-    // TODO: Implement
+    // TODO: Implement mountPowerupImage
     return 0;
 }
 
 void Marble::updatePowerUpParams()
 {
-    
+    // TODO: Implement updatePowerUpParams
 }
 
 bool Marble::getForce(Point3F& p1, Point3F* p2)
 {
-    // TODO: Missing in parent?
+    // TODO: Missing getForce in parent?
     //return Parent::getForce(p1, p2);
 
-    // TODO: Implement
+    // TODO: Implement getForce
     return false;
 }
 
 U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 {
+    // TODO: Implement packUpdate
     return Parent::packUpdate(conn, mask, stream);
 }
 
 void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
 {
+    // TODO: Implement unpackUpdate
     Parent::unpackUpdate(conn, stream);
 }
 
 U32 Marble::filterMaskBits(U32 i, NetConnection* conn)
 {
-    // TODO: Missing in parent?
+    // TODO: Missing filterMaskBits in parent?
     //return Parent::filterMaskBits(i, conn);
 
-    // TODO: Implement
+    // TODO: Implement filterMaskBits
     return 0;
 }
 
 void Marble::writePacketData(GameConnection* conn, BitStream* stream)
 {
+    // TODO: Implement writePacketData
     Parent::writePacketData(conn, stream);
 }
 
 void Marble::readPacketData(GameConnection* conn, BitStream* stream)
 {
+    // TODO: Implement readPacketData
     Parent::readPacketData(conn, stream);
 }
 
 void Marble::renderShadowVolumes(SceneState*)
 {
-
+    // TODO: Implement renderShadowVolumes
 }
 
 void Marble::renderShadow(F32, F32)
 {
-    
+    // TODO: Implement renderShadow
 }
 
 void Marble::renderImage(SceneState* state)
 {
+    // TODO: Implement renderImage
     Parent::renderImage(state);
 }
 
 void Marble::bounceEmitter(F32, const Point3F&)
 {
-    
+    // TODO: Implement bounceEmitter
 }
 
 MatrixF Marble::getShadowTransform() const
 {
-    // TODO: Missing in parent?
+    // TODO: Missing getShadowTransform in parent?
     //return Parent::getShadowTransform();
 
-    // TODO: Implement
+    // TODO: Implement getShadowTransform
     return MatrixF();
 }
 
 void Marble::setVelocity(const Point3F& vel)
 {
+    // TODO: Implement setVelocity
     Parent::setVelocity(vel);
 }
 
 Point3F Marble::getVelocity() const
 {
+    // TODO: Implement getVelocity
     return Parent::getVelocity();
 }
 
 Point3F Marble::getShadowScale() const
 {
-    // TODO: Missing in parent?
+    // TODO: Missing getShadowScale in parent?
     //return Parent::getShadowScale();
 
-    // TODO: Implement
+    // TODO: Implement getShadowScale
     return Point3F();
 }
 
 Point3F Marble::getGravityRenderDir()
 {
-
-    // TODO: Implement
+    // TODO: Implement getGravityRenderDir
     return Point3F();
 }
 
 void Marble::getShadowLightVectorHack(Point3F& p)
 {
-    // TODO: Missing in parent?
+    // TODO: Missing getShadowLightVectorHack in parent?
     //Parent::getShadowLightVectorHack(p);
+
+    // TODO: Implement getShadowLightVectorHack
 }
 
 bool Marble::onSceneAdd(SceneGraph* graph)
 {
+    // TODO: Implement onSceneAdd
     return Parent::onSceneAdd(graph);
 }
 
 bool Marble::onNewDataBlock(GameBaseData* dptr)
 {
+    // TODO: Implement onNewDataBlock
     return Parent::onNewDataBlock(dptr);
 }
 
 void Marble::onRemove()
 {
+    // TODO: Implement onRemove
     Parent::onRemove();
 }
 
 bool Marble::updatePadState()
 {
-    // TODO: Implement
+    // TODO: Implement updatePadState
     return false;
 }
 
 void Marble::doPowerUpBoost(S32)
 {
-    
+    // TODO: Implement doPowerUpBoost
 }
 
 void Marble::doPowerUpPower(S32)
 {
-    
+    // TODO: Implement doPowerUpPower
 }
 
 void Marble::updatePowerups()
 {
-    
+    // TODO: Implement updatePowerups
 }
 
 void Marble::updateMass()
 {
+    // TODO: Implement updateMass
     Parent::updateMass();
 }
 
 void Marble::trailEmitter(U32)
 {
-    
+    // TODO: Implement trailEmitter
 }
 
 void Marble::updateRollSound(F32, F32)
 {
-    
+    // TODO: Implement updateRollSound
 }
 
 void Marble::playBounceSound(Marble::Contact&, F64)
 {
-    
+    // TODO: Implement playBounceSound
 }
 
 void Marble::setPad(SceneObject*)
 {
-    
+    // TODO: Implement setPad
 }
 
 void Marble::findRenderPos(F32)
 {
-    
+    // TODO: Implement findRenderPos
 }
 
 void Marble::advanceTime(F32 dt)
 {
+    // TODO: Implement advanceTime
     Parent::advanceTime(dt);
 }
 
 void Marble::computeNetSmooth(F32 f)
 {
-    // TODO: Missing in parent?
-    //Parent::computeNetSmooth(f)
+    // TODO: Missing computeNetSmooth in parent?
+    //Parent::computeNetSmooth(f);
+
+    // TODO: Implement computeNetSmooth
 }
 
 void Marble::doPowerUp(S32)
 {
-    
+    // TODO: Implement doPowerUp
 }
 
 void Marble::prepShadows()
 {
-    
+    // TODO: Implement prepShadows
 }
 
 bool Marble::onAdd()
 {
+    // TODO: Implement onAdd
     return Parent::onAdd();
 }
 
 void Marble::processMoveTriggers(const Move *)
 {
-    
+    // TODO: Implement processMoveTriggers
 }
 
 void Marble::processItemsAndTriggers(const Point3F&, const Point3F&)
 {
-    
+    // TODO: Implement processItemsAndTriggers
 }
 
 void Marble::setPowerUpId(U32, bool)
 {
-    
+    // TODO: Implement setPowerUpId
 }
 
 void Marble::processTick(const Move* move)
 {
+    // TODO: Implement processTick
     Parent::processTick(move);
 }
 
@@ -523,16 +543,19 @@ void MarbleData::initPersistFields()
 
 bool MarbleData::preload(bool server, char errorBuffer[256])
 {
+    // TODO: Implement preload
     return Parent::preload(server, errorBuffer);
 }
 
 void MarbleData::packData(BitStream* stream)
 {
+    // TODO: Implement packData
     Parent::packData(stream);
 }
 
 void MarbleData::unpackData(BitStream* stream)
 {
+    // TODO: Implement unpackData
     Parent::unpackData(stream);
 }
 
