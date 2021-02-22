@@ -218,7 +218,10 @@ function levelPreviewGui::onA()
          loadMission(GameMissionInfo.getCurrentMission().file, true);
       }
       else
+      {
+         RootGui.setContent(PlayGui);
          commandToServer('JoinGame');
+      }
 
       $disconnectGui = levelPreviewGui;
    }

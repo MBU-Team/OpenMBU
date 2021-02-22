@@ -36,7 +36,7 @@ function GameConnection::initialControlSet(%this)
       $LoadingDone = true;
       
    // we're loaded now, so render the real server
-   if (RootGui.isAwake())
+   if (RootGui.isAwake() && ServerConnection.gameState !$= "wait")
       RootGui.setContent(PlayGui);
 }
 
