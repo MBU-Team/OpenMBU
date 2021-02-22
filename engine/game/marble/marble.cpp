@@ -161,7 +161,6 @@ void Marble::setGravityFrame(const QuatF&, bool)
 
 void Marble::onSceneRemove()
 {
-    // TODO: Implement onSceneRemove
     Parent::onSceneRemove();
 }
 
