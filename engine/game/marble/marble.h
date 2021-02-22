@@ -218,7 +218,7 @@ public:
     virtual void interpolateTick(F32 delta);
     S32 mountPowerupImage(ShapeBaseImageData*);
     void updatePowerUpParams();
-    virtual bool getForce(Point3F&, Point3F*);
+    virtual bool getForce(Point3F& pos, Point3F* force);
     virtual U32 packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
     virtual void unpackUpdate(NetConnection* conn, BitStream* stream);
     virtual U32 filterMaskBits(U32 mask, NetConnection* connection);
@@ -232,7 +232,7 @@ public:
     virtual Point3F getVelocity() const;
     virtual Point3F getShadowScale() const;
     Point3F getGravityRenderDir();
-    virtual void getShadowLightVectorHack(Point3F&);
+    virtual void getShadowLightVectorHack(Point3F& lightVec);
     virtual bool onSceneAdd(SceneGraph* graph);
     virtual bool onNewDataBlock(GameBaseData* dptr);
     virtual void onRemove();
@@ -247,7 +247,7 @@ public:
     void setPad(SceneObject*);
     void findRenderPos(F32);
     virtual void advanceTime(F32 dt);
-    virtual void computeNetSmooth(F32);
+    virtual void computeNetSmooth(F32 backDelta);
     void doPowerUp(S32);
     void prepShadows();
     virtual bool onAdd();

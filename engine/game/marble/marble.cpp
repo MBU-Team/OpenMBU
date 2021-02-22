@@ -216,10 +216,9 @@ void Marble::updatePowerUpParams()
     // TODO: Implement updatePowerUpParams
 }
 
-bool Marble::getForce(Point3F& p1, Point3F* p2)
+bool Marble::getForce(Point3F& pos, Point3F* force)
 {
-    // TODO: Missing getForce in parent?
-    //return Parent::getForce(p1, p2);
+    // TODO: Implement getForce in GameBase and StaticShape
 
     // TODO: Implement getForce
     return false;
@@ -278,7 +277,7 @@ void Marble::bounceEmitter(F32, const Point3F&)
 
 MatrixF Marble::getShadowTransform() const
 {
-    // TODO: Missing getShadowTransform in parent?
+    // TODO: Missing ShapeBase::getShadowTransform. Appears to be an unused function?
     //return Parent::getShadowTransform();
 
     // TODO: Implement getShadowTransform
@@ -299,8 +298,7 @@ Point3F Marble::getVelocity() const
 
 Point3F Marble::getShadowScale() const
 {
-    // TODO: Missing getShadowScale in parent?
-    //return Parent::getShadowScale();
+    // TODO: Missing SceneObject::getShadowScale and ShapeBase::getShadowScale. Appears to be an unused function?
 
     // TODO: Implement getShadowScale
     return Point3F();
@@ -312,10 +310,9 @@ Point3F Marble::getGravityRenderDir()
     return Point3F();
 }
 
-void Marble::getShadowLightVectorHack(Point3F& p)
+void Marble::getShadowLightVectorHack(Point3F& lightVec)
 {
-    // TODO: Missing getShadowLightVectorHack in parent?
-    //Parent::getShadowLightVectorHack(p);
+    // TODO: Missing SceneObject::getShadowLightVectorHack in parent. BlobShadow needs to be implemented.
 
     // TODO: Implement getShadowLightVectorHack
 }
@@ -396,10 +393,9 @@ void Marble::advanceTime(F32 dt)
     Parent::advanceTime(dt);
 }
 
-void Marble::computeNetSmooth(F32 f)
+void Marble::computeNetSmooth(F32 backDelta)
 {
-    // TODO: Missing computeNetSmooth in parent?
-    //Parent::computeNetSmooth(f);
+    // TODO: GameBase::computeNetSmooth is missing. Need to implement hifi for this.
 
     // TODO: Implement computeNetSmooth
 }
