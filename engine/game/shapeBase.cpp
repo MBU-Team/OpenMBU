@@ -29,6 +29,8 @@
 #include "gfx/gfxCubemap.h"
 #include "renderInstance/renderInstMgr.h"
 
+#include "game/marble/marble.h"
+
 bool gNoRenderAstrolabe = false;
 
 IMPLEMENT_CO_DATABLOCK_V1(ShapeBaseData);
@@ -764,6 +766,10 @@ ShapeBase::ShapeBase()
     mLightTime = 0;
     damageDir.set(0, 0, 1);
 
+#ifdef MB_ULTRA
+    mRenderScale = Point3F(1.0f, 1.0f, 1.0f);
+#endif
+
     mDynamicCubemap = NULL;
 }
 
@@ -1122,6 +1128,23 @@ void ShapeBase::advanceTime(F32 dt)
                 mFadeVal = 1 - mFadeVal;
         }
     }
+
+#ifdef MB_ULTRA
+    if (mAnimateScale)
+    {
+        float scale = mDot(mRenderScale, mRenderScale);
+        if (scale <= mDot(mObjScale, mObjScale))
+            scale = 0.1f;
+        else
+            scale = 0.4f;
+
+        scale = dt / scale * 2.302585124969482;
+        scale = 1.0 / (scale * (scale * 0.2349999994039536 * scale) + scale + 1.0 + 0.4799999892711639 * scale * scale);
+        mRenderScale *= scale;
+        scale = 1.0 - scale;
+        mRenderScale += scale * mObjScale;
+    }
+#endif
 }
 
 
@@ -2390,6 +2413,20 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex)
         {
             MatrixF mat;
             getRenderImageTransform(mountedImageIndex, &mat);
+
+#ifdef MB_ULTRA
+            // Does this even happen? Marble is normally PlayerObjectType | GameBaseHiFiObjectType
+            if (mTypeMask != PlayerObjectType) // TODO: Maybe improve this for our remake?
+            {
+                Point3F pos(mat[3], mat[7], mat[11]);
+                // Matt: why in the heck did they do it like this...
+                ((Marble*)this)->mGravityRenderFrame.setMatrix(&mat);
+                mat[3] = pos.x;
+                mat[7] = pos.y;
+                mat[11] = pos.z;
+                mat.scale(mRenderScale);
+            }
+#endif
             GFX->setWorldMatrix(mat);
 
             image.shapeInstance->animate();
@@ -2400,7 +2437,13 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex)
     else
     {
         MatrixF mat = getRenderTransform();
+#ifdef MB_ULTRA
+        if (!mAnimateScale)
+            mRenderScale = mObjScale;
+        mat.scale(mRenderScale);
+#else
         mat.scale(mObjScale);
+#endif
         GFX->setWorldMatrix(mat);
 
         bool serverobj = this->isServerObject();

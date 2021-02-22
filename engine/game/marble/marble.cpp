@@ -15,6 +15,9 @@ U32 Marble::smEndPadId = 0;
 
 Marble::Marble()
 {
+    // TODO: HiFi
+    mTypeMask |= PlayerObjectType; // | GameBaseHiFiObjectType;
+
     // TODO: Finish Implementation of Marble
     mControllable = true;
 }
@@ -162,31 +165,63 @@ void Marble::onSceneRemove()
     Parent::onSceneRemove();
 }
 
-void Marble::setPosition(const Point3D&, bool)
+void Marble::setPosition(const Point3D& pos, bool doWarp)
 {
-    // TODO: Implement setPosition
+    MatrixF mat = mObjToWorld;
+    mat[3] = pos.x;
+    mat[7] = pos.y;
+    mat[11] = pos.z;
+    mPosition = pos;
+    mSinglePrecision.mPosition = pos;
+
+    Parent::setTransform(mat);
+
+    setMaskBits(MoveMask);
+
+    if (doWarp)
+    {
+        mLastRenderPos = pos;
+        mLastRenderVel = mVelocity;
+        mRenderScale = mObjScale;
+        setMaskBits(WarpMask);
+    }
 }
 
-void Marble::setPosition(const Point3D&, const AngAxisF&, float)
+void Marble::setPosition(const Point3D& pos, const AngAxisF& angAxis, float mouseY)
 {
-    // TODO: Implement setPosition
+    MatrixF mat = mObjToWorld;
+    mat[3] = pos.x;
+    mat[7] = pos.y;
+    mat[11] = pos.z;
+    mPosition = pos;
+    mSinglePrecision.mPosition = pos;
+
+    Parent::setTransform(mat);
+
+    angAxis.setMatrix(&mat);
+
+    mMouseX = mAtan(mat[1], mat[5]);
+    mMouseY = mouseY;
+    mLastRenderPos = pos;
+    mLastRenderVel = mVelocity;
+    mRenderScale = mObjScale;
+
+    setMaskBits(MoveMask | WarpMask);
 }
 
 void Marble::setTransform(const MatrixF& mat)
 {
-    // TODO: Implement setTransform
-    Parent::setTransform(mat);
+    setPosition(Point3F(mat[3], mat[7], mat[11]), true);
 }
 
 Point3F& Marble::getPosition()
 {
-    // TODO: Implement getPosition
-    return Point3F();
+    return Point3F(mObjToWorld[3], mObjToWorld[7], mObjToWorld[11]);
 }
 
 void Marble::victorySequence()
 {
-    // TODO: Implement victorySequence
+    setVelocity(Point3F(0.0f, 0.0f, 0.1f));
 }
 
 void Marble::setMode(U32)
@@ -194,9 +229,10 @@ void Marble::setMode(U32)
     // TODO: Implement setMode
 }
 
-void Marble::setOOB(bool)
+void Marble::setOOB(bool isOOB)
 {
-    // TODO: Implement setOOB
+    mOOB = isOOB;
+    setMaskBits(OOBMask);
 }
 
 void Marble::interpolateTick(F32 delta)
@@ -448,7 +484,7 @@ bool Marble::onAdd()
     if (!Parent::onAdd())
         return false;
 
-    if (mNetFlags.test(RenderModeMask))
+    if (mNetFlags.test(RestrictXYZMode))
     {
         mRollHandle = alxPlay(this->mDataBlock->sound[0], &getTransform(), &Point3F(0, 0, 0));
         mSlipHandle = alxPlay(this->mDataBlock->sound[3], &getTransform(), &Point3F(0, 0, 0));
@@ -485,6 +521,16 @@ void Marble::processTick(const Move* move)
     Parent::processTick(move);
 }
 
+//----------------------------------------------------------------------------
+
+ConsoleMethod(Marble, setPosition, void, 4, 4, "(transform, mouseY)")
+{
+    Point3F posf;
+    AngAxisF angAxis;
+    dSscanf(argv[2], "%f %f %f %f %f %f %f", &posf.x, &posf.y, &posf.z, &angAxis.axis.x, &angAxis.axis.y, &angAxis.axis.z, &angAxis.angle);
+
+    object->setPosition(Point3D(posf.x, posf.y, posf.z), angAxis, dAtof(argv[3]));
+}
 
 //----------------------------------------------------------------------------
 

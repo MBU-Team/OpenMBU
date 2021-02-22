@@ -33,6 +33,8 @@ class Marble : public ShapeBase
 private:
     typedef ShapeBase Parent;
 
+    friend class ShapeBase;
+
     enum MarbleModeFlags
     {
         MoveMode = 0x1,
@@ -50,8 +52,13 @@ private:
 
     enum MaskBits
     {
-        MoveMask = 0x1,
-        RenderModeMask = 0x2,
+        MoveMask = Parent::NextFreeMask,
+        WarpMask = Parent::NextFreeMask << 1,
+        PowerUpMask = Parent::NextFreeMask << 2,
+        GravityMask = Parent::NextFreeMask << 3,
+        GravitySnapMask = Parent::NextFreeMask << 4,
+        OOBMask = Parent::NextFreeMask << 5,
+        NextFreeMask = Parent::NextFreeMask << 6
     };
 
     struct Contact
@@ -209,12 +216,12 @@ public:
     Marble::Contact& getLastContact();
     void setGravityFrame(const QuatF&, bool);
     virtual void onSceneRemove();
-    void setPosition(const Point3D&, bool);
-    void setPosition(const Point3D&, const AngAxisF&, F32);
+    void setPosition(const Point3D& pos, bool doWarp);
+    void setPosition(const Point3D& pos, const AngAxisF& angAxis, float mouseY);
     Point3F& getPosition();
     void victorySequence();
     void setMode(U32);
-    void setOOB(bool);
+    void setOOB(bool isOOB);
     virtual void interpolateTick(F32 delta);
     S32 mountPowerupImage(ShapeBaseImageData*);
     void updatePowerUpParams();

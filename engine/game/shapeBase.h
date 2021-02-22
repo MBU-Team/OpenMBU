@@ -747,6 +747,11 @@ protected:
     F32 mOneOverMass;                ///< Inverse of mass.
                                      /// @note This is used to optimize certain physics calculations.
 
+#ifdef MB_ULTRA
+    bool mAnimateScale;
+    Point3F mRenderScale;
+#endif
+
     /// @}
 
     /// @name Physical Properties

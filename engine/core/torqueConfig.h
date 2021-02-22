@@ -42,6 +42,9 @@
 /// Define me to enable unicode support.
 #define TORQUE_UNICODE
 
+#define MARBLE_BLAST
+#define MB_ULTRA
+
 //-----------------------------------------------------------------------------
 // Here we specify the build configuration defines.  These are usually 
 // defined by the build system (makefiles, visual studio, etc) and not 
