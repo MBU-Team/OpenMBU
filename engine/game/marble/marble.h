@@ -148,9 +148,9 @@ private:
     bool mUseFullMarbleTime;
     U32 mMode;
     U32 mModeTimer;
-    SimObjectPtr<AudioStreamSource> mRollHandle;
-    SimObjectPtr<AudioStreamSource> mSlipHandle;
-    SimObjectPtr<AudioStreamSource> mMegaHandle;
+    AUDIOHANDLE mRollHandle;
+    AUDIOHANDLE mSlipHandle;
+    AUDIOHANDLE mMegaHandle;
     F32 mRadius;
     QuatF mGravityFrame;
     QuatF mGravityRenderFrame;
@@ -307,6 +307,8 @@ class MarbleData : public ShapeBaseData
 {
 private:
     typedef ShapeBaseData Parent;
+
+    friend class Marble;
 
     enum Sounds {
         SoftImpactSound,

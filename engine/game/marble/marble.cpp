@@ -325,13 +325,46 @@ bool Marble::onSceneAdd(SceneGraph* graph)
 
 bool Marble::onNewDataBlock(GameBaseData* dptr)
 {
-    // TODO: Implement onNewDataBlock
-    return Parent::onNewDataBlock(dptr);
+    if (!Parent::onNewDataBlock(dptr))
+        return false;
+
+    this->mDataBlock = dynamic_cast<MarbleData*>(dptr);
+    if (this->mDataBlock)
+    {
+        Marble::updatePowerUpParams();
+
+        if (this->mDataBlock->shape)
+        {
+            updateMass();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void Marble::onRemove()
 {
-    // TODO: Implement onRemove
+    removeFromScene();
+
+    if (mRollHandle)
+    {
+        alxStop(mRollHandle);
+        mRollHandle = NULL;
+    }
+
+    if (mSlipHandle)
+    {
+        alxStop(mSlipHandle);
+        mSlipHandle = NULL;
+    }
+
+    if (mMegaHandle)
+    {
+        alxStop(mMegaHandle);
+        mMegaHandle = NULL;
+    }
+
     Parent::onRemove();
 }
 
@@ -412,8 +445,23 @@ void Marble::prepShadows()
 
 bool Marble::onAdd()
 {
-    // TODO: Implement onAdd
-    return Parent::onAdd();
+    if (!Parent::onAdd())
+        return false;
+
+    if (mNetFlags.test(RenderModeMask))
+    {
+        mRollHandle = alxPlay(this->mDataBlock->sound[0], &getTransform(), &Point3F(0, 0, 0));
+        mSlipHandle = alxPlay(this->mDataBlock->sound[3], &getTransform(), &Point3F(0, 0, 0));
+        mMegaHandle = alxPlay(this->mDataBlock->sound[1], &getTransform(), &Point3F(0, 0, 0));
+
+        this->mVertBuff.set(GFX, 33, GFXBufferTypeStatic);
+        this->mPrimBuff.set(GFX, 33, 2, GFXBufferTypeStatic);
+        prepShadows();
+    }
+
+    addToScene();
+
+    return true;
 }
 
 void Marble::processMoveTriggers(const Move *)
