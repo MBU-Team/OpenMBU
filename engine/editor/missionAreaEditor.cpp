@@ -270,7 +270,9 @@ bool MissionAreaEditor::onWake()
     if (!bool(mMissionArea))
     {
         Con::errorf(ConsoleLogEntry::General, "MissionAreaEditor::onWake: no MissionArea object.");
-        return(false);
+        return true;
+        
+        //return(false);
     }
 
     mTerrainBlock = getTerrainObj();
