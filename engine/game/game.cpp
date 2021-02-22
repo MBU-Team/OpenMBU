@@ -52,6 +52,8 @@ bool gRenderPreview = false;
 ConsoleFunctionGroupBegin(GameFunctions, "General game functionality.");
 
 //--------------------------------------------------------------------------
+
+#ifdef MB_ULTRA_PREVIEWS
 ConsoleFunction(setSinglePlayerMode, void, 2, 2, "( flag ) - Enable or disable singleplayer only mode.")
 {
     argc;
@@ -77,7 +79,7 @@ ConsoleFunction(isSinglePlayerMode, bool, 1, 1, "() - Checks if singleplayer onl
 
     return gSPMode;
 }
-
+#endif
 
 //--------------------------------------------------------------------------
 ConsoleFunction(gotoWebPage, void, 2, 2, "( address ) - Open a web page in the user's favorite web browser.")

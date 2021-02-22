@@ -42,8 +42,26 @@
 /// Define me to enable unicode support.
 #define TORQUE_UNICODE
 
+
+//-----------------------------------------------------------------------------
+// Marble Blast related configuration defines
+
+// Define me to enable MarbleBlast features
 #define MARBLE_BLAST
+
+// Define me to enable MarbleBlastUltra specific features
+//#define MB_ULTRA
+
+// Define me to enable MarbleBlastGold specific features
+//#define MB_GOLD
+
+// If Ultra is not defined, define Gold
+#if defined(MARBLE_BLAST) && !defined(MB_ULTRA) && !defined(MB_GOLD)
 #define MB_ULTRA
+#endif
+
+// Define me to enable MarbleBlastUltra Preview System
+#define MB_ULTRA_PREVIEWS
 
 //-----------------------------------------------------------------------------
 // Here we specify the build configuration defines.  These are usually 
