@@ -318,8 +318,19 @@ private:
     friend class Marble;
 
     enum Sounds {
-        SoftImpactSound,
-        HardImpactSound,
+        RollHard,
+        RollMega,
+        RollIce,
+        Slip,
+        Bounce1,
+        Bounce2,
+        Bounce3,
+        Bounce4,
+        MegaBounce1,
+        MegaBounce2,
+        MegaBounce3,
+        MegaBounce4,
+        Jump,
         MaxSounds,
     };
 

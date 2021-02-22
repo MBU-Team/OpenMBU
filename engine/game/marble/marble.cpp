@@ -6,6 +6,7 @@
 #include "game/marble/marble.h"
 
 #include "audio/audioDataBlock.h"
+#include "game/fx/particleEmitter.h"
 
 //----------------------------------------------------------------------------
 
@@ -629,19 +630,111 @@ void MarbleData::initPersistFields()
 
 bool MarbleData::preload(bool server, char errorBuffer[256])
 {
-    // TODO: Implement preload
-    return Parent::preload(server, errorBuffer);
+    if (!Parent::preload(server, errorBuffer))
+        return false;
+
+    if (!server)
+    {
+        if (!mDecalData && mDecalID != 0)
+            if (!Sim::findObject(mDecalID, mDecalData))
+                Con::errorf(ConsoleLogEntry::General, "MarbleData::preload Invalid packet, bad datablockId(decalData): 0x%x", mDecalID);
+    }
+
+    return true;
 }
 
 void MarbleData::packData(BitStream* stream)
 {
-    // TODO: Implement packData
+    stream->write(maxRollVelocity);
+    stream->write(angularAcceleration);
+    stream->write(brakingAcceleration);
+    stream->write(gravity);
+    stream->write(size);
+    stream->write(staticFriction);
+    stream->write(kineticFriction);
+    stream->write(bounceKineticFriction);
+    stream->write(maxDotSlide);
+    stream->write(bounceRestitution);
+    stream->write(airAcceleration);
+    stream->write(energyRechargeRate);
+    stream->write(jumpImpulse);
+    stream->write(maxForceRadius);
+    stream->write(cameraDistance);
+    stream->write(minBounceVel);
+    stream->write(minTrailSpeed);
+    stream->write(minBounceSpeed);
+    stream->write(blastRechargeTime);
+    stream->write(maxNaturalBlastRecharge);
+
+    if (stream->writeFlag(bounceEmitter != NULL))
+        stream->writeRangedU32(bounceEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+    if (stream->writeFlag(trailEmitter != NULL))
+        stream->writeRangedU32(trailEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+    if (stream->writeFlag(mudEmitter != NULL))
+        stream->writeRangedU32(mudEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+    if (stream->writeFlag(grassEmitter != NULL))
+        stream->writeRangedU32(grassEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+    if (stream->writeFlag(powerUps != NULL))
+        stream->writeRangedU32(powerUps->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+
+
+    S32 i;
+    for (i = 0; i < MaxSounds; i++)
+        if (stream->writeFlag(sound[i]))
+            stream->writeRangedU32(packed ? SimObjectId(sound[i]) :
+                sound[i]->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+
+    if (stream->writeFlag(mDecalData != NULL))
+        stream->writeRangedU32(mDecalData->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+
     Parent::packData(stream);
 }
 
 void MarbleData::unpackData(BitStream* stream)
 {
-    // TODO: Implement unpackData
+    stream->read(&maxRollVelocity);
+    stream->read(&angularAcceleration);
+    stream->read(&brakingAcceleration);
+    stream->read(&gravity);
+    stream->read(&size);
+    stream->read(&staticFriction);
+    stream->read(&kineticFriction);
+    stream->read(&bounceKineticFriction);
+    stream->read(&maxDotSlide);
+    stream->read(&bounceRestitution);
+    stream->read(&airAcceleration);
+    stream->read(&energyRechargeRate);
+    stream->read(&jumpImpulse);
+    stream->read(&maxForceRadius);
+    stream->read(&cameraDistance);
+    stream->read(&minBounceVel);
+    stream->read(&minTrailSpeed);
+    stream->read(&minBounceSpeed);
+    stream->read(&blastRechargeTime);
+    stream->read(&maxNaturalBlastRecharge);
+
+    if (stream->readFlag())
+        Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), bounceEmitter);
+    if (stream->readFlag())
+        Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), trailEmitter);
+    if (stream->readFlag())
+        Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), mudEmitter);
+    if (stream->readFlag())
+        Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), grassEmitter);
+    if (stream->readFlag())
+        Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), powerUps);
+
+    S32 i;
+    for (i = 0; i < MaxSounds; i++) {
+        sound[i] = NULL;
+        if (stream->readFlag())
+            sound[i] = (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+                DataBlockObjectIdLast);
+    }
+
+    if (stream->readFlag())
+        mDecalID = stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast);
+
     Parent::unpackData(stream);
 }
 
