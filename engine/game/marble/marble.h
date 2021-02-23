@@ -26,6 +26,10 @@
 #include "game/marble/powerup.h"
 #endif
 
+#ifndef _STATICSHAPE_H_
+#include <game/staticShape.h>
+#endif
+
 class MarbleData;
 
 class Marble : public ShapeBase
@@ -182,7 +186,7 @@ private:
     bool mCameraInit;
     SceneObject* mPadPtr;
     bool mOnPad;
-    Marble::PowerUpState mPowerUpState[10];
+    Marble::PowerUpState mPowerUpState[PowerUpData::MaxPowerUps];
     PowerUpData::ActiveParams mPowerUpParams;
     SimObjectPtr<ParticleEmitter> mTrailEmitter;
     SimObjectPtr<ParticleEmitter> mMudEmitter;
@@ -289,17 +293,16 @@ public:
     bool moveCamera(Point3F, Point3F, Point3F&, U32, F32);
     void processCameraMove(const Move*);
     void startCenterCamera();
-    bool isCameraClear(Point3F, Point3F);
-    void getLookMatrix(MatrixF*);
+    bool isCameraClear(Point3F start, Point3F end);
+    void getLookMatrix(MatrixF* camMat);
     void cameraLookAtPt(const Point3F&);
     void resetPlatformsForCamera();
-    void getOOBCamera(MatrixF*);
+    void getOOBCamera(MatrixF* mat);
     void setPlatformsForCamera(const Point3F&, const Point3F&, const Point3F&);
     virtual void getCameraTransform(F32* pos, MatrixF* mat);
 
-
-
     static U32 smEndPadId;
+    static SimObjectPtr<StaticShape> smEndPad;
 
 private:
     virtual void setTransform(const MatrixF& mat);

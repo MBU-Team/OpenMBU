@@ -17,15 +17,112 @@ const float gMarbleCompressDists[7] = {5.0f, 11.0f, 23.0f, 47.0f, 96.0f, 195.0f,
 IMPLEMENT_CO_NETOBJECT_V1(Marble);
 
 U32 Marble::smEndPadId = 0;
+SimObjectPtr<StaticShape> Marble::smEndPad = NULL;
 
 Marble::Marble()
 {
+    mVertBuff = NULL;
+    mPrimBuff = NULL;
+    mRollHandle = NULL;
+    mSlipHandle = NULL;
+    mMegaHandle = NULL;
+
+    // TODO: Finish Implementation of Marble (Powerups)
+
+    mTrailEmitter = NULL;
+    mMudEmitter = NULL;
+    mGrassEmitter = NULL;
+    mNetFlags |= 0x10100; // TODO: Figure out mask
+
     // TODO: HiFi
     mTypeMask |= PlayerObjectType; // | GameBaseHiFiObjectType;
 
-    // TODO: Finish Implementation of Marble
+    mDataBlock = NULL;
+    mAnimateScale = true;
+
+    delta.pos = Point3D(0, 0, 100);
+    delta.posVec = Point3D(0, 0, 0);
+
+    dMemcpy(&delta.move, &NullMove, sizeof(delta.move));
+
+    mLastRenderPos = Point3F(0, 0, 0);
+    mLastRenderVel = Point3F(0, 0, 0);
+
+    mLastYaw = 0.0f;
+    mBounceEmitDelay = 0;
+    mRenderBlastPercent = 0.0f;
+    
+    mMarbleTime = 0;
+    mMarbleBonusTime = 0;
+    mFullMarbleTime = 0;
+    mUseFullMarbleTime = false;
+
+    mMovePathSize = 0;
+    mBlastEnergy = 0;
+
+    mObjToWorld.setColumn(3, Point3F(delta.pos.x, delta.pos.y, delta.pos.z));
+
+    MatrixF mat(true);
+    mat[0] = 1.0f;
+    mat[4] = 0.0f;
+    mat[8] = 0.0f;
+    mat[1] = 0.0f;
+    mat[5] = -1.0f;
+    mat[10] = -1.0f;
+    mat[9] = 0.0f;
+    mat[2] = 0.0f;
+    mat[6] = 0.0f;
+    mGravityFrame.set(mat);
+    mGravityRenderFrame = mGravityFrame;
+
+    mVelocity = Point3D(0, 0, 0);
+    delta.prevMouseX = 0.0f;
+    delta.prevMouseY = 0.0f;
+    mOmega = Point3D(0, 0, 0);
+    mPosition = Point3D(0, 0, 0);
+
     mControllable = true;
+
+    mLastContact.position = Point3D(1.0e10, 1.0e10, 1.0e10);
+    mLastContact.normal = Point3D(0, 0, 1);
+    mLastContact.actualNormal = Point3F(0, 0, 1);
+    
+    mBestContact.position = Point3D(1.0e10, 1.0e10, 1.0e10);
+    mBestContact.surfaceVelocity = Point3D(0, 0, 0);
+    mBestContact.normal = Point3D(0, 0, 1);
+    mBestContact.actualNormal = Point3F(0, 0, 1);
+
+    mCheckPointNumber = 0;
+    mPadPtr = NULL;
+
+    mMouseY = 0.0f;
+    mMouseX = 0.0f;
+    mOnPad = false;
+
+    mShadowGenerated = false;
+    mStencilMaterial = NULL;
+
+    // TODO: Finish Implementation of Marble (Powerups)
+
     mPowerUpId = 0;
+    mPowerUpTimer = 0;
+    mBlastTimer = 0;
+    mMode = 9;
+    mModeTimer = 0;
+    mOOB = false;
+
+    mEffect.lastCamFocus = Point3F(0, 0, 0);
+    mEffect.effectTime = 0.0f;
+
+    mCameraInit = false;
+    mNetSmoothPos = Point3F(0, 0, 0);
+
+    mRadsLeftToCenter = 0.0f;
+    mCenteringCamera = false;
+
+    mSinglePrecision.mPosition = mPosition;
+    mSinglePrecision.mVelocity = mVelocity;
+    mSinglePrecision.mOmega = mOmega;
 }
 
 Marble::~Marble()
@@ -527,8 +624,9 @@ Point3F Marble::getShadowScale() const
 
 Point3F Marble::getGravityRenderDir()
 {
-    // TODO: Implement getGravityRenderDir
-    return Point3F();
+    Point3F ret;
+    mGravityRenderFrame.mulP(Point3F(0.0f, 0.0f, -1.0f), &ret);
+    return ret;
 }
 
 void Marble::getShadowLightVectorHack(Point3F& lightVec)
@@ -612,8 +710,32 @@ void Marble::updatePowerups()
 
 void Marble::updateMass()
 {
-    // TODO: Implement updateMass
     Parent::updateMass();
+
+    if (!mDataBlock)
+        return;
+
+    mMass = mPowerUpParams.massScale * mMass;
+    mOneOverMass = 1.0f / mMass;
+
+    setScale(Point3F(mPowerUpParams.sizeScale, mPowerUpParams.sizeScale, mPowerUpParams.sizeScale));
+
+    TSShape* shape = mDataBlock->shape;
+
+    Box3F bounds = shape->bounds;
+    Point3F extents(bounds.max.x + bounds.min.x, bounds.max.y + bounds.min.y, bounds.max.z + bounds.min.z);
+    Point3F center = extents * 0.5f;
+    Point3F scale(bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y, bounds.max.z - bounds.min.z);
+    extents = scale * 0.5f;
+
+    extents *= mPowerUpParams.sizeScale;
+
+    mObjBox.min = center - extents;
+    mObjBox.max = extents + center;
+
+    mRadius = getMax(getMax(mObjBox.max.x, mObjBox.max.y), mObjBox.max.z);
+
+    resetWorldBox();
 }
 
 void Marble::trailEmitter(U32)
