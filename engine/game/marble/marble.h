@@ -290,7 +290,7 @@ public:
     void resetObjectsAndPolys(U32, const Box3F&);
 
     // Marble Camera
-    bool moveCamera(Point3F, Point3F, Point3F&, U32, F32);
+    bool moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep);
     void processCameraMove(const Move*);
     void startCenterCamera();
     bool isCameraClear(Point3F start, Point3F end);

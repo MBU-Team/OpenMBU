@@ -824,6 +824,9 @@ void Marble::setPowerUpId(U32, bool)
 
 void Marble::processTick(const Move* move)
 {
+    delta.prevMouseX = mMouseX; // TEMP
+    delta.prevMouseY = mMouseY; // TEMP
+
     // TODO: Implement processTick
     Parent::processTick(move);
 }
