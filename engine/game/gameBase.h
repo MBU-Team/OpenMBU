@@ -376,6 +376,8 @@ public:
     void addObject(GameBase* obj) {
         obj->plLinkBefore(&head);
     }
+
+    F32 getLastDelta() { return mLastDelta; }
     F32 getLastInterpDelta() { return mLastDelta / F32(TickMs); }
 
     void dumpToConsole();

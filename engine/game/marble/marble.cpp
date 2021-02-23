@@ -10,6 +10,10 @@
 
 //----------------------------------------------------------------------------
 
+const float gMarbleCompressDists[7] = {5.0f, 11.0f, 23.0f, 47.0f, 96.0f, 195.0f, 500.0f};
+
+//----------------------------------------------------------------------------
+
 IMPLEMENT_CO_NETOBJECT_V1(Marble);
 
 U32 Marble::smEndPadId = 0;
@@ -21,6 +25,7 @@ Marble::Marble()
 
     // TODO: Finish Implementation of Marble
     mControllable = true;
+    mPowerUpId = 0;
 }
 
 Marble::~Marble()
@@ -262,14 +267,194 @@ bool Marble::getForce(Point3F& pos, Point3F* force)
 
 U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 {
-    // TODO: Implement packUpdate
-    return Parent::packUpdate(conn, mask, stream);
+    Parent::packUpdate(conn, mask, stream);
+
+    bool isControl = false;
+    if (getControllingClient() == (GameConnection*)conn && !(mask & WarpMask))
+        isControl = true;
+
+    bool gravityChange = false;
+    if (isControl || !(mask & GravityMask))
+    {
+        gravityChange = false;
+        if (mask & (GravitySnapMask | WarpMask))
+            gravityChange = true;
+    }
+
+    stream->writeFlag(isControl);
+    stream->writeFlag(gravityChange);
+
+    if (stream->writeFlag(mask & PowerUpMask))
+    {
+        stream->writeRangedU32(mPowerUpId, 0, 9);
+        // TODO: Finish Implementing PackUpdate
+    }
+
+    if (isControl || gravityChange)
+    {
+        stream->writeFlag(mUseFullMarbleTime);
+        stream->writeFlag(mOOB);
+
+        if (gravityChange)
+        {
+            stream->write(mGravityFrame.x);
+            stream->write(mGravityFrame.y);
+            stream->write(mGravityFrame.z);
+
+            // TODO: There might be more here but it could just be a decompile error
+
+            stream->writeFlag(mGravityFrame.w < 0.0f);
+            stream->writeFlag((mask & (GravitySnapMask | WarpMask)) != 0);
+        }
+    }
+
+    if (!isControl)
+    {
+        if (getControllingClient() == (GameConnection*)conn && !(mask & WarpMask))
+            mask |= MoveMask;
+
+        if (stream->writeFlag(mask != 0))
+        {
+            stream->writeFlag(mask & WarpMask);
+            stream->writeFloat((mMouseY - -0.35f) / 1.85f, 12);
+            stream->writeFloat(mMouseX / 6.283185307179586f, 12);
+            stream->writeSignedFloat(mLastYaw, 12);
+
+            Point3D vel = mVelocity;
+            Point3D omega = mOmega;
+            Point3F pos(mObjToWorld[3], mObjToWorld[7], mObjToWorld[11]);
+
+            double scale;
+            if (gravityChange)
+                scale = 0.0002499999981373548;
+            else
+                scale = 0.004999999888241291;
+
+            // TODO: Implement BitStream::writeCompressedPointRP
+            //stream->writeCompressedPointRP(pos, 7, gMarbleCompressDists, g);
+            stream->writeCompressedPoint(pos, scale);
+
+            float maxRollVelocity = mDataBlock->maxRollVelocity;
+            stream->writeVector(Point3F(vel.x, vel.y, vel.z), 0.0099999998f, maxRollVelocity + maxRollVelocity, 16, 16, 10);
+            stream->writeVector(Point3F(omega.x, omega.y, omega.z), 0.0099999998f, 10.0f, 16, 16, 10);
+
+            delta.move.pack(stream);
+        }
+    }
+
+    return 0;
 }
 
 void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
 {
-    // TODO: Implement unpackUpdate
     Parent::unpackUpdate(conn, stream);
+
+    bool warp = stream->readFlag();
+    bool isGravWarp = stream->readFlag();
+
+    if (stream->readFlag())
+    {
+        mPowerUpId = stream->readRangedU32(0, 9);
+        // TODO: Finish Implementing UnpackUpdate
+    }
+
+    if (warp || isGravWarp)
+    {
+        mUseFullMarbleTime = stream->readFlag();
+        mOOB = stream->readFlag();
+    }
+
+    bool doWarp = false;
+    if (isGravWarp)
+    {
+        stream->read(&mGravityFrame.x);
+        stream->read(&mGravityFrame.y);
+        stream->read(&mGravityFrame.z);
+
+        float wSq = 1.0f
+                  - mGravityFrame.x * mGravityFrame.x
+                  - mGravityFrame.y * mGravityFrame.y
+                  - mGravityFrame.z * mGravityFrame.z;
+
+        double w = 0.0f;
+        if (wSq > 0.0f)
+            w = sqrtf(wSq);
+        mGravityFrame.w = w;
+
+        if (stream->readFlag())
+            mGravityFrame.w *= -1.0f;
+
+        doWarp = stream->readFlag();
+
+        if (doWarp)
+        {
+            mGravityRenderFrame.x = mGravityFrame.x;
+            mGravityRenderFrame.y = mGravityFrame.y;
+            mGravityRenderFrame.z = mGravityFrame.z;
+            mGravityRenderFrame.w = mGravityFrame.w;
+        }
+    }
+
+    if (!warp && stream->readFlag())
+    {
+        warp = stream->readFlag();
+
+        mMouseY = stream->readFloat(12) * 1.85f - 0.35f;
+        mMouseX = stream->readFloat(12) * 6.283185307179586;
+        mLastYaw = stream->readSignedFloat(12);
+        mCameraInit = false;
+
+        float scale;
+        if (isGravWarp)
+            scale = 0.0002499999981373548;
+        else
+            scale = 0.004999999888241291;
+
+        Point3F pos;
+
+        // TODO: Implement BitStream::readCompressedPointRP
+        //stream->readCompressedPointRP(&pos, 7, gMarbleCompressDists, scale);
+        stream->readCompressedPoint(&pos, scale);
+
+        Point3F vel;
+        Point3F omega;
+        double maxRollVelocity = mDataBlock->maxRollVelocity;
+        stream->readVector(&vel, 0.0099999998, maxRollVelocity + maxRollVelocity, 16, 16, 10);
+        stream->readVector(&omega, 0.0099999998, 10.0f, 16, 16, 10);
+
+        mSinglePrecision.mVelocity = vel;
+        mSinglePrecision.mOmega = omega;
+
+        delta.move.unpack(stream);
+
+        mOmega = mSinglePrecision.mOmega;
+        mVelocity = mSinglePrecision.mVelocity;
+
+        float nX = mPosition.x - pos.x;
+        float nY = mPosition.y - pos.y;
+        float nZ = mPosition.z - pos.z;
+
+        if (gClientProcessList.getLastDelta() <= 0.001 || warp)
+        {
+            delta.posVec = Point3D(0, 0, 0);
+        }
+        else
+        {
+            float invBD = 1.0f / gClientProcessList.getLastDelta();
+            float posX = nX * invBD;
+            float posY = nY * invBD;
+            float posZ = nZ * invBD;
+
+            delta.posVec.x = posX + delta.posVec.x;
+            delta.posVec.y = posY + delta.posVec.y;
+            delta.posVec.z = posY + delta.posVec.z;
+        }
+
+        mMovePathSize = 0;
+        delta.pos = pos;
+
+        setPosition(pos, doWarp);
+    }
 }
 
 U32 Marble::filterMaskBits(U32 mask, NetConnection* connection)
