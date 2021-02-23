@@ -9,7 +9,7 @@
 
 static U32 sCameraCollisionMask = 0x4008; // TODO: Figure out ObjectType mask
 
-bool Marble::moveCamera(Point3F, Point3F, Point3F&, U32, F32)
+bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep)
 {
     // TODO: Implement moveCamera
     return false;
@@ -57,11 +57,11 @@ void Marble::getLookMatrix(MatrixF* camMat)
 LABEL_10:
     double dt = gClientProcessList.getLastDelta();
     double oneMinusDelta = 1.0f - dt;
-    prevMouseX = dt * prevMouseX + mMouseX * oneMinusDelta;
+
     MatrixF xRot;
-    m_matF_set_euler(Point3F(oneMinusDelta * mMouseY + delta.prevMouseY + dt, 0.0f, 0.0f), xRot);
+    m_matF_set_euler(Point3F(oneMinusDelta * mMouseY + delta.prevMouseY * dt, 0.0f, 0.0f), xRot);
     MatrixF zRot;
-    m_matF_set_euler(Point3F(0.0f, 0.0f, prevMouseX), zRot);
+    m_matF_set_euler(Point3F(0.0f, 0.0f, oneMinusDelta * mMouseX + prevMouseX * dt), zRot);
 
     mGravityRenderFrame.setMatrix(camMat);
     camMat->mul(zRot);
@@ -118,11 +118,8 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     MatrixF camMat;
     getLookMatrix(&camMat);
 
-    Point3F camForwardDir(camMat[1], camMat[5], camMat[9]);
-    Point3F gravityRenderDir = getGravityRenderDir();
-    Point3F invGravityRenderDir(-gravityRenderDir.z, -gravityRenderDir.y, -gravityRenderDir.x);
-    Point3F preStartPos(invGravityRenderDir.z, invGravityRenderDir.y, invGravityRenderDir.x);
-    Point3F camUpDir(invGravityRenderDir.z, invGravityRenderDir.y, invGravityRenderDir.x);
+    Point3F forwardDir(camMat[1], camMat[5], camMat[9]);
+    Point3F camUpDir = -getGravityRenderDir();
     Point3F position(mRenderObjToWorld[3], mRenderObjToWorld[7], mRenderObjToWorld[11]);
 
     Point3F startCam;
@@ -140,24 +137,17 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
         position += startCam;
         position *= 0.02500000037252903;
 
-        invGravityRenderDir.z = mEffect.lastCamFocus.x * 0.9750000238418579;
-        invGravityRenderDir.y = mEffect.lastCamFocus.y * 0.9750000238418579;
-        invGravityRenderDir.x = mEffect.lastCamFocus.z * 0.9750000238418579;
-
-        position.x += invGravityRenderDir.z;
-        position.y += invGravityRenderDir.y;
-        position.z += invGravityRenderDir.x;
+        position += mEffect.lastCamFocus * 0.9750000238418579;
     }
 
     double radius = mRadius + 0.25;
     mEffect.lastCamFocus = position;
-    invGravityRenderDir.z = camUpDir.x * radius;
-    invGravityRenderDir.y = camUpDir.y * radius;
-    invGravityRenderDir.x = camUpDir.z * radius;
-    startCam - Point3F(invGravityRenderDir.z + position.x, invGravityRenderDir.y + position.y, invGravityRenderDir.x + position.z);
+
+    startCam = camUpDir * radius + position;
+
     float camDist = mDataBlock->cameraDistance;
 
-    Point3F endPos(startCam.x - camForwardDir.x * camDist, startCam.y - camForwardDir.y * camDist, startCam.z - camForwardDir.z * camDist);
+    Point3F endPos(startCam.x - forwardDir.x * camDist, startCam.y - forwardDir.y * camDist, startCam.z - forwardDir.z * camDist);
     if (!Marble::smEndPad.isNull() && mMode & StoppingMode)
     {
         float effectTime;
@@ -168,9 +158,9 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
 
         effectTime *= 0.5f * mDataBlock->cameraDistance;
 
-        endPos.x -= effectTime * camForwardDir.x;
-        endPos.y -= effectTime * camForwardDir.y;
-        endPos.z -= effectTime * camForwardDir.z;
+        endPos.x -= effectTime * forwardDir.x;
+        endPos.y -= effectTime * forwardDir.y;
+        endPos.z -= effectTime * forwardDir.z;
     }
 
     setPlatformsForCamera(position, startCam, endPos);
@@ -187,13 +177,14 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     testBox.max.setMax(position);
     resetObjectsAndPolys(sCameraCollisionMask, testBox);
     RayInfo coll;
+    position = endPos;
     if (mCameraInit && isCameraClear(mLastCamPos, endPos) && !mContainer->castRay(mLastCamPos, endPos, sCameraCollisionMask, &coll))
     {
         position = endPos;
     }
     else
     {
-        preStartPos = startCam;
+        Point3F preStartPos = startCam;
         if (!isCameraClear(position, startCam))
             preStartPos = position;
 
@@ -206,14 +197,14 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     mOOBCamPos = position;
     mCameraInit = true;
 
-    camForwardDir = preStartPos;
+    Point3F camForwardDir = startCam - position;
     m_point3F_normalize(camForwardDir);
 
     Point3F camSideDir;
-    mCross(camForwardDir, camUpDir, camSideDir);
+    mCross(camForwardDir, camUpDir, &camSideDir);
     m_point3F_normalize(camSideDir);
 
-    mCross(camSideDir, camForwardDir, camUpDir);
+    mCross(camSideDir, camForwardDir, &camUpDir);
     m_point3F_normalize(camUpDir);
 
     mat->identity();
