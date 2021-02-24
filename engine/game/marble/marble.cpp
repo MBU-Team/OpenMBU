@@ -27,8 +27,6 @@ Marble::Marble()
     mSlipHandle = NULL;
     mMegaHandle = NULL;
 
-    // TODO: Finish Implementation of Marble (Powerups)
-
     mTrailEmitter = NULL;
     mMudEmitter = NULL;
     mGrassEmitter = NULL;
@@ -102,7 +100,15 @@ Marble::Marble()
     mShadowGenerated = false;
     mStencilMaterial = NULL;
 
-    // TODO: Finish Implementation of Marble (Powerups)
+    S32 i;
+    for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+    {
+        // TODO: ticksLeft and imageSlot might be flipped here
+        mPowerUpState[i].active = false;
+        mPowerUpState[i].ticksLeft = 0;
+        mPowerUpState[i].emitter = NULL;
+        mPowerUpState[i].imageSlot = -1;
+    }
 
     mPowerUpId = 0;
     mPowerUpTimer = 0;
@@ -127,7 +133,23 @@ Marble::Marble()
 
 Marble::~Marble()
 {
-    // TODO: Implement ~Marble
+    S32 i;
+    for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+    {
+        if (!mPowerUpState[i].emitter.isNull())
+            mPowerUpState[i].emitter->deleteWhenEmpty();
+    }
+
+    if (mTrailEmitter)
+        mTrailEmitter->deleteWhenEmpty();
+
+    if (mMudEmitter)
+        mTrailEmitter->deleteWhenEmpty();
+
+    if (mGrassEmitter)
+        mTrailEmitter->deleteWhenEmpty();
+
+    delete mStencilMaterial;
 }
 
 void Marble::initPersistFields()
@@ -141,46 +163,44 @@ void Marble::initPersistFields()
 
 Marble::Contact::Contact()
 {
-    // TODO: Implement Contact
+    // Empty
 }
 
 Marble::SinglePrecision::SinglePrecision()
 {
-    // TODO: Implement SinglePrecision
+    // Empty
 }
 
 Marble::StateDelta::StateDelta()
 {
-    // TODO: Implement StateDelta
+    // Empty
 }
 
 Marble::EndPadEffect::EndPadEffect()
 {
-    // TODO: Implement EndPadEffect
+    // Empty
 }
 
 Marble::PowerUpState::PowerUpState()
 {
-    // TODO: Implement PowerUpState
+    emitter = NULL;
 }
 
 Marble::PowerUpState::~PowerUpState()
 {
-    // TODO: Implement ~PowerUpState
+    // Empty
 }
 
 //----------------------------------------------------------------------------
 
 SceneObject* Marble::getPad()
 {
-    // TODO: Implement getPad
-    return nullptr;
+    return mPadPtr;
 }
 
 S32 Marble::getPowerUpId()
 {
-    // TODO: Implement getPowerUpId
-    return 0;
+    return mPowerUpId;
 }
 
 const QuatF& Marble::getGravityFrame()
@@ -190,70 +210,67 @@ const QuatF& Marble::getGravityFrame()
 
 U32 Marble::getMaxNaturalBlastEnergy()
 {
-    // TODO: Implement getMaxNaturalBlastEnergy
-    return 0;
+    return mDataBlock->maxNaturalBlastRecharge >> 5;
 }
 
 U32 Marble::getMaxBlastEnergy()
 {
-    // TODO: Implement getMaxBlastEnergy
-    return 0;
+    return mDataBlock->blastRechargeTime >> 5;
 }
 
 F32 Marble::getBlastPercent()
 {
-    // TODO: Implement getBlastPercent
-    return 0;
+    return (F32)((F64)mBlastEnergy / (F64)(mDataBlock->maxNaturalBlastRecharge >> 5));
 }
 
 F32 Marble::getBlastEnergy() const
 {
-    // TODO: Implement getBlastEnergy
-    return 0;
+    return mBlastEnergy;
 }
 
-void Marble::setBlastEnergy(F32)
+void Marble::setBlastEnergy(F32 energy)
 {
-    // TODO: Implement setBlastEnergy
+    mBlastEnergy = (U32)energy;
 }
 
-void Marble::setUseFullMarbleTime(bool)
+void Marble::setUseFullMarbleTime(bool useFull)
 {
-    // TODO: Implement setUseFullMarbleTime
+    mUseFullMarbleTime = useFull;
+    setMaskBits(OOBMask);
 }
 
-void Marble::setMarbleTime(U32)
+void Marble::setMarbleTime(U32 time)
 {
-    // TODO: Implement setMarbleTime
+    mFullMarbleTime = time;
+    mMarbleTime = time;
 }
 
 U32 Marble::getMarbleTime()
 {
-    // TODO: Implement getMarbleTime
-    return 0;
+    if (mUseFullMarbleTime)
+        return mFullMarbleTime;
+    else
+        return mMarbleTime;
 }
 
-void Marble::setMarbleBonusTime(U32)
+void Marble::setMarbleBonusTime(U32 time)
 {
-    // TODO: Implement setMarbleBonusTime
+    mMarbleBonusTime = time;
 }
 
 U32 Marble::getMarbleBonusTime()
 {
-    // TODO: Implement getMarbleBonusTime
-    return 0;
+    return mMarbleBonusTime;
 }
 
 U32 Marble::getFullMarbleTime()
 {
-    // TODO: Implement getFullMarbleTime
-    return 0;
+    return mFullMarbleTime;
 }
 
 Marble::Contact& Marble::getLastContact()
 {
-    // TODO: Implement getLastContact
-    return Marble::Contact();
+    return mLastContact;
 }
 
 void Marble::setGravityFrame(const QuatF& q, bool snap)
@@ -332,9 +349,24 @@ void Marble::victorySequence()
     setVelocity(Point3F(0.0f, 0.0f, 0.1f));
 }
 
-void Marble::setMode(U32)
+void Marble::setMode(U32 mode)
 {
-    // TODO: Implement setMode
+    U32 newMode = mode & (mode ^ mMode);
+
+    mMode = mode;
+
+    if (newMode & StartingMode)
+    {
+        mModeTimer = mDataBlock->startModeTime >> 5;
+    }
+    else if (newMode & 0x60) // TODO: Figure out Mode Enum
+    {
+        if (newMode & StoppingMode)
+            mMode = mode | 2; // TODO: Avoid using bitwise or here
+        mModeTimer = mDataBlock->startModeTime >> 5;
+    }
+
+    setMaskBits(PowerUpMask);
 }
 
 void Marble::setOOB(bool isOOB)
@@ -345,14 +377,25 @@ void Marble::setOOB(bool isOOB)
 
 void Marble::interpolateTick(F32 delta)
 {
-    // TODO: Implement interpolateTick
     Parent::interpolateTick(delta);
+
+    if (getControllingClient() && mMode & TimerMode)
+    {
+        U32 marbleTime = getMarbleTime();
+        S32 newMarbleTime = marbleTime > 32 ? marbleTime - 32 : 0;
+        U32 marbleBonusTime = mMarbleBonusTime;
+        U32 finalMarbleTime = newMarbleTime + (U64)(((F64)marbleTime - newMarbleTime) * (1.0 - delta));
+        if (marbleBonusTime && !mUseFullMarbleTime)
+            finalMarbleTime = marbleTime;
+
+        Con::evaluatef("PlayGui.updateTimer(%i,%i);", finalMarbleTime, marbleBonusTime != 0);
+    }
 }
 
 S32 Marble::mountPowerupImage(ShapeBaseImageData*)
 {
     // TODO: Implement mountPowerupImage
-    return 0;
+    return -1;
 }
 
 void Marble::updatePowerUpParams()
@@ -395,7 +438,32 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
     if (stream->writeFlag(mask & PowerUpMask))
     {
         stream->writeRangedU32(mPowerUpId, 0, 9);
-        // TODO: Finish Implementing PackUpdate
+
+        S32 i;
+        for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+        {
+            if (stream->writeFlag(mPowerUpState[i].active))
+            {
+                stream->writeRangedU32(mPowerUpState[i].ticksLeft, 0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+            }
+        }
+
+        if (stream->writeFlag((mMode & ActiveModeMask) != mMode))
+            stream->writeInt(mMode, 7);
+        else
+            stream->writeInt(mMode, 4);
+
+        if (stream->writeFlag(mModeTimer != 0))
+            stream->writeRangedU32(mModeTimer, 1, 31);
+
+        if (stream->writeFlag(mPowerUpTimer != 0))
+            stream->writeRangedU32(mPowerUpTimer >> 5, 1, 16);
+
+        if (stream->writeFlag(mBlastTimer != 0))
+            stream->writeRangedU32(mBlastTimer >> 5, 1, 16);
+
+        if (mPowerUpState[0].active || mBlastTimer)
+            stream->writeRangedU32(mBlastEnergy, 0, mDataBlock->blastRechargeTime >> 5);
     }
 
     if (isControl || gravityChange)
@@ -463,7 +531,41 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
     if (stream->readFlag())
     {
         mPowerUpId = stream->readRangedU32(0, 9);
-        // TODO: Finish Implementing UnpackUpdate
+
+        S32 i;
+        for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+        {
+            mPowerUpState[i].active = stream->readFlag();
+            if (mPowerUpState[i].active)
+            {
+                mPowerUpState[i].ticksLeft = stream->readRangedU32(0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+            }
+        }
+
+        if (stream->readFlag())
+            setMode(stream->readInt(7));
+        else
+            setMode(stream->readInt(4));
+
+        if (stream->readFlag())
+            mModeTimer = stream->readRangedU32(1, 31);
+        else
+            mModeTimer = 0;
+
+        if (stream->readFlag())
+            mPowerUpTimer = 32 * stream->readRangedU32(1, 16);
+        else
+            mPowerUpTimer = 0;
+
+        if (stream->readFlag())
+            mBlastTimer = 32 * stream->readRangedU32(1, 16);
+        else
+            mBlastTimer = 0;
+
+        if (mPowerUpState[0].active || mBlastTimer)
+            mBlastEnergy = stream->readRangedU32(0, mDataBlock->blastRechargeTime >> 5);
+
+        updatePowerUpParams();
     }
 
     if (warp || isGravWarp)
@@ -915,6 +1017,40 @@ ConsoleMethod(Marble, setGravityDir, void, 3, 4, "(gravity, snap)")
     grav.normalize();
 
     object->setGravityFrame(grav, snap);
+}
+
+ConsoleMethod(Marble, setMode, void, 3, 3, "(mode)")
+{
+    U32 modeFlags[5];
+    const char* modesStrings[5];
+    S32 newMode = object->getMode() & 3;
+
+    modesStrings[0] = "Normal";
+    modeFlags[0] = Marble::StartingMode;
+
+    modesStrings[1] = "Victory";
+    modeFlags[1] = Marble::StoppingMode;
+
+    modesStrings[2] = "Lost";
+    modeFlags[2] = Marble::StoppingMode;
+
+    modesStrings[3] = "Freeze";
+    modeFlags[3] = Marble::TimerMode | Marble::StoppingMode;
+
+    modesStrings[4] = "Start";
+    modeFlags[4] = Marble::MoveMode | Marble::RestrictXYZMode;
+
+    S32 i = 0;
+    while (dStricmp(modesStrings[i], argv[2]))
+    {
+        if (++i >= 5)
+        {
+            Con::errorf("Marble:: Unknown marble mode: %s", argv[2]);
+            return;
+        }
+    }
+
+    object->setMode(newMode | modeFlags[i]);
 }
 
 //----------------------------------------------------------------------------

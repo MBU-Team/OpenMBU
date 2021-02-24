@@ -39,6 +39,7 @@ private:
 
     friend class ShapeBase;
 
+public:
     enum MarbleModeFlags
     {
         MoveMode = 0x1,
@@ -53,6 +54,7 @@ private:
         ModeBits = 0x7,
         MaxModeTicks = 0x1F,
     };
+private:
 
     enum MaskBits
     {
@@ -210,11 +212,11 @@ public:
     U32 getMaxBlastEnergy();
     F32 getBlastPercent();
     F32 getBlastEnergy() const;
-    void setBlastEnergy(F32);
-    void setUseFullMarbleTime(bool);
-    void setMarbleTime(U32);
+    void setBlastEnergy(F32 energy);
+    void setUseFullMarbleTime(bool useFull);
+    void setMarbleTime(U32 time);
     U32 getMarbleTime();
-    void setMarbleBonusTime(U32);
+    void setMarbleBonusTime(U32 time);
     U32 getMarbleBonusTime();
     U32 getFullMarbleTime();
     Marble::Contact& getLastContact();
@@ -224,7 +226,8 @@ public:
     void setPosition(const Point3D& pos, const AngAxisF& angAxis, float mouseY);
     Point3F& getPosition();
     void victorySequence();
-    void setMode(U32);
+    void setMode(U32 mode);
+    U32 getMode() { return mMode; }
     void setOOB(bool isOOB);
     virtual void interpolateTick(F32 delta);
     S32 mountPowerupImage(ShapeBaseImageData*);
