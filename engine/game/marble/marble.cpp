@@ -185,8 +185,7 @@ S32 Marble::getPowerUpId()
 
 const QuatF& Marble::getGravityFrame()
 {
-    // TODO: Implement getGravityFrame
-    return QuatF();
+    return mGravityFrame;
 }
 
 U32 Marble::getMaxNaturalBlastEnergy()
@@ -257,9 +256,16 @@ Marble::Contact& Marble::getLastContact()
     return Marble::Contact();
 }
 
-void Marble::setGravityFrame(const QuatF&, bool)
+void Marble::setGravityFrame(const QuatF& q, bool snap)
 {
-    // TODO: Implement setGravityFrame
+    mGravityFrame = q;
+    setMaskBits(GravityMask);
+
+    if (snap)
+    {
+        mGravityRenderFrame = q;
+        setMaskBits(GravitySnapMask);
+    }
 }
 
 void Marble::onSceneRemove()
@@ -372,11 +378,9 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 
     bool gravityChange = false;
     if (isControl || !(mask & GravityMask))
-    {
-        gravityChange = false;
-        if (mask & (GravitySnapMask | WarpMask))
-            gravityChange = true;
-    }
+        gravityChange = mask & (GravitySnapMask | WarpMask);
+    else
+        gravityChange = true;
 
     stream->writeFlag(isControl);
     stream->writeFlag(gravityChange);
@@ -840,6 +844,70 @@ ConsoleMethod(Marble, setPosition, void, 4, 4, "(transform, mouseY)")
     dSscanf(argv[2], "%f %f %f %f %f %f %f", &posf.x, &posf.y, &posf.z, &angAxis.axis.x, &angAxis.axis.y, &angAxis.axis.z, &angAxis.angle);
 
     object->setPosition(Point3D(posf.x, posf.y, posf.z), angAxis, dAtof(argv[3]));
+}
+
+ConsoleMethod(Marble, setGravityDir, void, 3, 4, "(gravity, snap)")
+{
+    Point3F xvec;
+    Point3F yvec;
+    Point3F zvec;
+    dSscanf(argv[2], "%g %g %g %g %g %g %g %g %g", &xvec.x, &xvec.y, &xvec.z, &yvec.x, &yvec.y, &yvec.z, &zvec.x, &zvec.y, &zvec.z);
+
+    MatrixF mat1(true);
+    MatrixF mat2(true);
+    object->getGravityFrame().setMatrix(&mat1);
+
+    bool snap = false;
+    if (argc == 4 && dAtob(argv[3]))
+    {
+        snap = true;
+        mat1.identity();
+    }
+
+    mat2.setColumn(0, xvec);
+    mat2.setColumn(1, -yvec);
+    mat2.setColumn(2, -zvec);
+
+    Point3F sideDir(mat1[2], mat1[6], mat1[10]);
+    Point3F upDir = -zvec;
+    Point3F rot;
+    mCross(sideDir, upDir, &rot);
+    
+    float len = rot.len();
+    if (len <= 0.1000000014901161f)
+    {
+        sideDir.x = mat1[0];
+        sideDir.y = mat1[4];
+        sideDir.z = mat1[8];
+        mat2[0] = mat1[0];
+        mat2[4] = mat1[4];
+        mat2[8] = mat1[8];
+        upDir.x = mat2[2];
+        upDir.y = mat2[6];
+        upDir.z = mat2[10];
+
+        Point3F res;
+        mCross(upDir, sideDir, &res);
+        mat2.setColumn(1, res);
+    }
+    else
+    {
+        if (len > 1.0f)
+            len = 1.0f;
+        if (len < -1.0f)
+            len = -1.0f;
+        m_point3F_normalize_f(rot, asinf(len));
+
+        dMemcpy(&mat2, &mat1, sizeof(mat2));
+
+        rotateMatrix(mat2, rot);
+        mat2.setColumn(2, -zvec);
+    }
+
+    QuatF grav(mat2);
+    grav.normalize();
+
+    object->setGravityFrame(grav, snap);
 }
 
 //----------------------------------------------------------------------------

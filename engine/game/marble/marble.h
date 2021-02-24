@@ -218,7 +218,7 @@ public:
     U32 getMarbleBonusTime();
     U32 getFullMarbleTime();
     Marble::Contact& getLastContact();
-    void setGravityFrame(const QuatF&, bool);
+    void setGravityFrame(const QuatF& q, bool snap);
     virtual void onSceneRemove();
     void setPosition(const Point3D& pos, bool doWarp);
     void setPosition(const Point3D& pos, const AngAxisF& angAxis, float mouseY);

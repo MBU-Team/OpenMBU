@@ -440,6 +440,51 @@ inline Point3F MatrixF::getPosition() const
     return pos;
 }
 
+// Matrix Rotation
+inline void rotateMatrix(MatrixF& mat, Point3F w)
+{
+    float deltaTheta = w.len();
+    if (deltaTheta == 0.0f)
+        return;
+
+    float cosDeltaTheta = 1.0f / deltaTheta;
+    w *= cosDeltaTheta;
+
+    float sinDeltaTheta;
+    mSinCos(deltaTheta, sinDeltaTheta, cosDeltaTheta);
+
+    float *mat8 = &mat[8];
+
+    Point3F r;
+    Point3F rpw;
+    Point3F rorw;
+    Point3F rporw;
+    int it = 3;
+    do
+    {
+        r.x = *(mat8 - 8);
+        r.y = *(mat8 - 4);
+        r.z = *mat8;
+        rpw = w;
+        deltaTheta = mDot(w, r);
+        rpw *= deltaTheta;
+        rorw = r - rpw;
+        mCross(w, rorw, &rporw);
+        rorw *= cosDeltaTheta;
+        rporw *= sinDeltaTheta;
+        rpw += rorw;
+        rpw += rporw;
+
+        *(mat8 - 8) = rpw.x;
+        *(mat8 - 4) = rpw.y;
+        *mat8++ = rpw.z;
+
+        --it;
+    } while (it);
+
+    m_matF_normalize(mat);
+}
+
 //------------------------------------
 // Math operator overloads
 //------------------------------------
