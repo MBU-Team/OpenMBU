@@ -357,7 +357,14 @@ S32 Marble::mountPowerupImage(ShapeBaseImageData*)
 
 void Marble::updatePowerUpParams()
 {
+    mPowerUpParams.init();
+    mPowerUpParams.sizeScale *= mDataBlock->size;
+    mPowerUpParams.bounce = mDataBlock->bounceRestitution;
+    mPowerUpParams.airAccel = mDataBlock->airAcceleration;
+
     // TODO: Implement updatePowerUpParams
+
+    updateMass();
 }
 
 bool Marble::getForce(Point3F& pos, Point3F* force)
@@ -654,7 +661,7 @@ bool Marble::onNewDataBlock(GameBaseData* dptr)
     this->mDataBlock = dynamic_cast<MarbleData*>(dptr);
     if (this->mDataBlock)
     {
-        Marble::updatePowerUpParams();
+        updatePowerUpParams();
 
         if (this->mDataBlock->shape)
         {
