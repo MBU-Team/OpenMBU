@@ -5,6 +5,7 @@
 
 #include "game/marble/marble.h"
 
+#include "math/mathIO.h"
 #include "audio/audioDataBlock.h"
 #include "game/fx/particleEmitter.h"
 
@@ -444,7 +445,7 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 
     if (stream->writeFlag(mask & PowerUpMask))
     {
-        stream->writeRangedU32(mPowerUpId, 0, 9);
+        stream->writeRangedU32(mPowerUpId, 0, PowerUpData::MaxPowerUps - 1);
 
         S32 i;
         for (i = 0; i < PowerUpData::MaxPowerUps; i++)
@@ -537,7 +538,7 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
 
     if (stream->readFlag())
     {
-        mPowerUpId = stream->readRangedU32(0, 9);
+        mPowerUpId = stream->readRangedU32(0, PowerUpData::MaxPowerUps - 1);
 
         S32 i;
         for (i = 0; i < PowerUpData::MaxPowerUps; i++)
@@ -682,14 +683,138 @@ U32 Marble::filterMaskBits(U32 mask, NetConnection* connection)
 
 void Marble::writePacketData(GameConnection* conn, BitStream* stream)
 {
-    // TODO: Implement writePacketData
-    Parent::writePacketData(conn, stream);
+    mathWrite(*stream, mSinglePrecision.mPosition);
+    
+    Point3F p(mPosition.x, mPosition.y, mPosition.z);
+    stream->setCompressionPoint(p);
+
+    mathWrite(*stream, mSinglePrecision.mVelocity);
+    mathWrite(*stream, mSinglePrecision.mOmega);
+    mathWrite(*stream, mGravityFrame);
+    stream->write(mMouseX);
+    stream->write(mMouseY);
+    stream->write(mLastYaw);
+
+    stream->write(mMarbleTime);
+
+    if (stream->writeFlag(mMarbleTime != mFullMarbleTime))
+        stream->write(mFullMarbleTime);
+    
+    if (stream->writeFlag(mMarbleBonusTime != 0))
+        stream->writeRangedU32(mMarbleBonusTime, 0, 130000);
+    
+    stream->writeRangedU32(mBlastEnergy, 0, mDataBlock->blastRechargeTime >> 5);
+
+    if (stream->writeFlag(mCenteringCamera))
+    {
+        stream->write(mRadsLeftToCenter);
+        stream->write(mRadsStartingToCenter);
+    }
+
+    stream->writeRangedU32(mPowerUpId, 0, PowerUpData::MaxPowerUps - 1);
+
+    S32 i;
+    for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+    {
+        if (stream->writeFlag(mPowerUpState[i].active))
+        {
+            stream->writeRangedU32(mPowerUpState[i].ticksLeft, 0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+        }
+    }
+
+    if (stream->writeFlag((mMode & ActiveModeMask) != mMode))
+        stream->writeInt(mMode, 7);
+    else
+        stream->writeInt(mMode, 4);
+
+    if (stream->writeFlag(mModeTimer != 0))
+        stream->writeRangedU32(mModeTimer, 1, 31);
+    
+    if (stream->writeFlag(mPowerUpTimer != 0))
+        stream->writeRangedU32(mPowerUpTimer >> 5, 1, 16);
+
+    if (stream->writeFlag(mBlastTimer != 0))
+        stream->writeRangedU32(mBlastTimer >> 5, 1, 16);
 }
 
 void Marble::readPacketData(GameConnection* conn, BitStream* stream)
 {
-    // TODO: Implement readPacketData
-    Parent::readPacketData(conn, stream);
+    mathRead(*stream, &mSinglePrecision.mPosition);
+    stream->setCompressionPoint(mSinglePrecision.mPosition);
+    mathRead(*stream, &mSinglePrecision.mVelocity);
+    mathRead(*stream, &mSinglePrecision.mOmega);
+    mathRead(*stream, &mGravityFrame);
+
+    stream->read(&mMouseX);
+    stream->read(&mMouseY);
+    stream->read(&mLastYaw);
+
+    stream->read(&mMarbleTime);
+    if (stream->readFlag())
+        stream->read(&mFullMarbleTime);
+    else
+        mFullMarbleTime = mMarbleTime;
+
+    if (stream->readFlag())
+        mMarbleBonusTime = stream->readRangedU32(0, 130000);
+    else
+        mMarbleBonusTime = 0;
+
+    mBlastEnergy = stream->readRangedU32(0, mDataBlock->blastRechargeTime >> 5);
+    
+    mCenteringCamera = stream->readFlag();
+    if (mCenteringCamera)
+    {
+        stream->read(&mRadsLeftToCenter);
+        stream->read(&mRadsStartingToCenter);
+    }
+
+    mPowerUpId = stream->readRangedU32(0, PowerUpData::MaxPowerUps - 1);
+
+    S32 i;
+    for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+    {
+        mPowerUpState[i].active = stream->readFlag();
+        if (mPowerUpState[i].active)
+        {
+            mPowerUpState[i].ticksLeft = stream->readRangedU32(0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+        }
+    }
+
+    if (stream->readFlag())
+        setMode(stream->readInt(7));
+    else
+        setMode(stream->readInt(4));
+
+    if (stream->readFlag())
+        mModeTimer = stream->readRangedU32(1, 31);
+    else
+        mModeTimer = 0;
+
+    if (stream->readFlag())
+        mPowerUpTimer = stream->readRangedU32(1, 16) * 32;
+    else
+        mPowerUpTimer = 0;
+
+    if (stream->readFlag())
+        mBlastTimer = stream->readRangedU32(1, 16) * 32;
+    else
+        mBlastTimer = 0;
+
+    mPosition = mSinglePrecision.mPosition;
+    mVelocity = mSinglePrecision.mVelocity;
+    mOmega = mSinglePrecision.mOmega;
+
+    updatePowerUpParams();
+
+    mMovePathSize = 0;
+
+    delta.prevMouseX = mMouseX;
+    delta.prevMouseY = mMouseY;
+
+    mObjToWorld.setColumn(3, mSinglePrecision.mPosition);
+
+    Parent::setTransform(mObjToWorld);
 }
 
 void Marble::renderShadowVolumes(SceneState*)
