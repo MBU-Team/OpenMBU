@@ -361,14 +361,14 @@ void Marble::setMode(U32 mode)
 
     mMode = mode;
 
-    if (newMode & StartingMode)
+    if ((newMode & StartingMode) != 0)
     {
         mModeTimer = mDataBlock->startModeTime >> 5;
     }
-    else if (newMode & 0x60) // TODO: Figure out Mode Enum
+    else if ((newMode & (StoppingMode | FinishMode)) != 0)
     {
-        if (newMode & StoppingMode)
-            mMode = mode | 2; // TODO: Avoid using bitwise or here
+        if ((newMode & StoppingMode) != 0)
+            mMode |= RestrictXYZMode;
         mModeTimer = mDataBlock->startModeTime >> 5;
     }
 
@@ -440,19 +440,19 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
     bool isControl = false;
 
     // if it's the control object and the WarpMask is not set
-    if (getControllingClient() == (GameConnection*)conn && !(mask & WarpMask))
+    if (getControllingClient() == (GameConnection*)conn && (mask & WarpMask) == 0)
         isControl = true;
 
     bool gravityChange = false;
-    if (isControl || !(mask & GravityMask))
-        gravityChange = mask & (GravitySnapMask | WarpMask);
+    if (isControl || (mask & GravityMask) == 0)
+        gravityChange = (mask & (GravitySnapMask | WarpMask)) != 0;
     else
         gravityChange = true;
 
     stream->writeFlag(isControl);
     stream->writeFlag(gravityChange);
 
-    if (stream->writeFlag(mask & PowerUpMask))
+    if (stream->writeFlag((mask & PowerUpMask) != 0))
     {
         stream->writeRangedU32(mPowerUpId, 0, PowerUpData::MaxPowerUps - 1);
 
@@ -503,12 +503,12 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 
     if (!isControl)
     {
-        if (getControllingClient() == (GameConnection*)conn && (mask & WarpMask))
+        if (getControllingClient() == (GameConnection*)conn && (mask & WarpMask) != 0)
             mask |= MoveMask;
 
         if (stream->writeFlag(mask != 0))
         {
-            stream->writeFlag(mask & WarpMask);
+            stream->writeFlag((mask & WarpMask) != 0);
             stream->writeFloat((mMouseY - -0.35f) / 1.85f, 12);
             stream->writeFloat(mMouseX / 6.283185307179586f, 12);
             stream->writeSignedFloat(mLastYaw, 12);
@@ -1084,14 +1084,14 @@ void Marble::processTick(const Move* move)
     Parent::processTick(move);
 
     clearMarbleAxis();
-    if (mMode & TimerMode)
+    if ((mMode & TimerMode) != 0)
     {
         U32 bonusTime = mMarbleBonusTime;
         if (bonusTime <= 32)
         {
             mMarbleBonusTime = 0;
             mMarbleTime += 32 - bonusTime;
-            if (!(mMode & (MoveMode | StoppingMode)))
+            if ((mMode & (MoveMode | StoppingMode)) == 0)
                 setMode(StartingMode);
         }
         else
@@ -1105,12 +1105,13 @@ void Marble::processTick(const Move* move)
         mModeTimer--;
         if (!mModeTimer)
         {
-            if (mMode & StartingMode)
-                mMode &= ~(RestrictXYZMode | CameraHoverMode) | (MoveMode | TimerMode);
-            if (mMode & StoppingMode)
+            if ((mMode & StartingMode) != 0)
+                mMode = mMode & ~(RestrictXYZMode | CameraHoverMode) | (MoveMode | TimerMode);
+            if ((mMode & StoppingMode) != 0)
                 mMode &= ~MoveMode;
-            if (mMode & FinishMode)
+            if ((mMode & FinishMode) != 0)
                 mMode |= CameraHoverMode;
+            mMode &= ~(StartingMode | FinishMode);
         }
     }
 

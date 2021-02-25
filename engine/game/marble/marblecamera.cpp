@@ -88,7 +88,7 @@ void Marble::processCameraMove(const Move* move)
     // TODO: Implement processCameraMove
 
     float finalYaw;
-    if (!move->deviceIsKeyboardMouse || (mMode & CameraHoverMode))
+    if (!move->deviceIsKeyboardMouse || (mMode & CameraHoverMode) != 0)
         finalYaw = delta;
     else
         finalYaw = value.x;
@@ -204,7 +204,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     Point3F position(mRenderObjToWorld[3], mRenderObjToWorld[7], mRenderObjToWorld[11]);
 
     Point3F startCam;
-    if (!Marble::smEndPad.isNull() && mMode & StoppingMode)
+    if (!Marble::smEndPad.isNull() && (mMode & StoppingMode) != 0)
     {
         MatrixF padMat = Marble::smEndPad->getTransform();
         position.x = padMat[3];
@@ -229,7 +229,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     float camDist = mDataBlock->cameraDistance;
 
     Point3F endPos(startCam.x - forwardDir.x * camDist, startCam.y - forwardDir.y * camDist, startCam.z - forwardDir.z * camDist);
-    if (!Marble::smEndPad.isNull() && mMode & StoppingMode)
+    if (!Marble::smEndPad.isNull() && (mMode & StoppingMode) != 0)
     {
         float effectTime;
         if (mEffect.effectTime >= 2.0f)
