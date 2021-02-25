@@ -428,6 +428,8 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
     Parent::packUpdate(conn, mask, stream);
 
     bool isControl = false;
+
+    // if it's the control object and the WarpMask is not set
     if (getControllingClient() == (GameConnection*)conn && !(mask & WarpMask))
         isControl = true;
 
@@ -491,7 +493,7 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 
     if (!isControl)
     {
-        if (getControllingClient() == (GameConnection*)conn && !(mask & WarpMask))
+        if (getControllingClient() == (GameConnection*)conn && (mask & WarpMask))
             mask |= MoveMask;
 
         if (stream->writeFlag(mask != 0))
