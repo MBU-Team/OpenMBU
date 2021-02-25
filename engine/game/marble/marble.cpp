@@ -385,7 +385,7 @@ void Marble::interpolateTick(F32 delta)
 {
     Parent::interpolateTick(delta);
 
-    if (getControllingClient() && mMode & TimerMode)
+    if (getControllingClient() && (mMode & TimerMode) != 0)
     {
         U32 marbleTime = getMarbleTime();
         S32 newMarbleTime = marbleTime > 32 ? marbleTime - 32 : 0;
@@ -677,8 +677,10 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
 
 U32 Marble::filterMaskBits(U32 mask, NetConnection* connection)
 {
-    // TODO: Implement filterMaskBits
-    return Parent::filterMaskBits(mask, connection);
+    if (getControllingClient() == (GameConnection*)connection)
+        return mask & ~(MoveMask | PowerUpMask | CloakMask | NoWarpMask | ScaleMask);
+    else
+        return mask & ~(OOBMask | CloakMask | NoWarpMask | ScaleMask);
 }
 
 void Marble::writePacketData(GameConnection* conn, BitStream* stream)
