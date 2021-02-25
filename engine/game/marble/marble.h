@@ -293,7 +293,7 @@ public:
     // Marble Collision
     void clearObjectsAndPolys();
     void findObjectsAndPolys(U32, const Box3F&, bool);
-    bool testMove(Point3D, Point3D&, F64&, F64, U32, bool);
+    bool testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs);
     void findContacts(U32, const Point3D*, const F32*);
     void computeFirstPlatformIntersect(F64&, Vector<PathedInterior*>&);
     void resetObjectsAndPolys(U32, const Box3F&);

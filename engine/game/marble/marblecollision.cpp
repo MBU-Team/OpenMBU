@@ -29,7 +29,7 @@ void Marble::findObjectsAndPolys(U32, const Box3F&, bool)
     // TODO: Implement findObjectsAndPolys
 }
 
-bool Marble::testMove(Point3D, Point3D&, F64&, F64, U32, bool)
+bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs)
 {
     // TODO: Implement testMove
     return false;

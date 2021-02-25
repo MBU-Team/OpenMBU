@@ -11,8 +11,44 @@ static U32 sCameraCollisionMask = 0x4008; // TODO: Figure out ObjectType mask
 
 bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep)
 {
-    // TODO: Implement moveCamera
-    return false;
+    disableCollision();
+
+    Point3D position = start;
+    Point3D velocity = end - start;
+
+    F64 time = timeStep;
+    F64 totalTime = timeStep;
+
+    bool someBool = false;
+    U32 i = 0;
+    for (bool flag = timeStep > 0.0f; flag && i < maxIterations; flag = totalTime > 0.0f)
+    {
+        if (testMove(velocity, position, time, 0.25, sCameraCollisionMask, true))
+        {
+            someBool = true;
+
+            F64 normals = mLastContact.normal.x * velocity.x
+                      + mLastContact.normal.y * velocity.y
+                      + mLastContact.normal.z * velocity.z;
+            
+            velocity -= mLastContact.normal * normals;
+        }
+        ++i;
+
+        totalTime -= time;
+        time = totalTime;
+        if (velocity.len() < 0.001)
+            break;
+    }
+
+    enableCollision();
+
+    result = position;
+
+    if (totalTime >= 0.000001 || (maxIterations <= 1 && someBool))
+        return false;
+
+    return true;
 }
 
 void pushToSquare(Point2F& dir)
