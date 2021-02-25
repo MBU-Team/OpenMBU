@@ -300,7 +300,7 @@ public:
 
     // Marble Camera
     bool moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep);
-    void processCameraMove(const Move*);
+    void processCameraMove(const Move* move);
     void startCenterCamera();
     bool isCameraClear(Point3F start, Point3F end);
     void getLookMatrix(MatrixF* camMat);

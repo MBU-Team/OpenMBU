@@ -15,12 +15,54 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
     return false;
 }
 
-void Marble::processCameraMove(const Move*)
+void pushToSquare(Point2F& dir)
+{
+    F32 x = fabsf(dir.x);
+    F32 y = fabsf(dir.y);
+
+    F32 len = dir.len() * 1.25f;
+    if (len > 1.0f)
+        len = 1.0f;
+
+    F64 max;
+    if (y >= x)
+        max = y;
+    else
+        max = x;
+
+    if (max < 0.0099999998)
+        max = 0.0099999998;
+
+    dir *= len / max;
+}
+
+void Marble::processCameraMove(const Move* move)
 {
     delta.prevMouseX = mMouseX;
     delta.prevMouseY = mMouseY;
 
+    Point2F value(move->yaw / M_PI_F, move->pitch / M_PI_F);
+
+    pushToSquare(value);
+
     // TODO: Implement processCameraMove
+    
+    float delta = 0; // Temp
+
+    // TODO: Implement processCameraMove
+
+    float finalYaw;
+    if (!move->deviceIsKeyboardMouse || (mMode & CameraHoverMode))
+        finalYaw = delta;
+    else
+        finalYaw = value.x;
+
+    this->mMouseX += finalYaw;
+    this->mMouseY = mClampF(mMouseY, -0.34999999, 1.5);
+    if (mMouseX > 6.283185307179586f)
+        mMouseX -= 6.283185307179586f;
+    if (mMouseX < 0.0f)
+        mMouseX += 6.283185307179586f;
 }
 
 void Marble::startCenterCamera()
