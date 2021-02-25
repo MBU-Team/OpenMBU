@@ -244,7 +244,7 @@ public:
     virtual U32 filterMaskBits(U32 mask, NetConnection* connection);
     virtual void writePacketData(GameConnection* conn, BitStream* stream);
     virtual void readPacketData(GameConnection* conn, BitStream* stream);
-    void renderShadow(F32, F32);
+    void renderShadow(F32 dist, F32 fogAmount);
     virtual void renderImage(SceneState* state);
     void bounceEmitter(F32, const Point3F&);
     virtual MatrixF getShadowTransform() const;
@@ -257,8 +257,8 @@ public:
     virtual bool onNewDataBlock(GameBaseData* dptr);
     virtual void onRemove();
     bool updatePadState();
-    void doPowerUpBoost(S32);
-    void doPowerUpPower(S32);
+    void doPowerUpBoost(S32 powerUpId);
+    void doPowerUpPower(S32 powerUpId);
     void updatePowerups();
     virtual void updateMass();
     void trailEmitter(U32);
@@ -268,7 +268,7 @@ public:
     void findRenderPos(F32);
     virtual void advanceTime(F32 dt);
     virtual void computeNetSmooth(F32 backDelta);
-    void doPowerUp(S32);
+    void doPowerUp(S32 powerUpId);
     void prepShadows();
     virtual bool onAdd();
     void processMoveTriggers(const Move*);
@@ -315,7 +315,7 @@ public:
 
 private:
     virtual void setTransform(const MatrixF& mat);
-    void renderShadowVolumes(SceneState*);
+    void renderShadowVolumes(SceneState* state);
 
     // Marble Collision
     bool pointWithinPoly(const ConcretePolyList::Poly&, const Point3F&);

@@ -411,7 +411,16 @@ void Marble::updatePowerUpParams()
     mPowerUpParams.bounce = mDataBlock->bounceRestitution;
     mPowerUpParams.airAccel = mDataBlock->airAcceleration;
 
-    // TODO: Implement updatePowerUpParams
+    if (mDataBlock->powerUps)
+    {
+        // TODO: Implement updatePowerUpParams
+    }
+
+    // TODO: Missing ForceObjectType for this
+    /*if (mPowerUpParams.repulseDist <= 0.0f)
+        mTypeMask &= ~ForceObjectType;
+    else
+        mTypeMask |= ForceObjectType;*/
 
     updateMass();
 }
@@ -819,20 +828,19 @@ void Marble::readPacketData(GameConnection* conn, BitStream* stream)
     Parent::setTransform(mObjToWorld);
 }
 
-void Marble::renderShadowVolumes(SceneState*)
+void Marble::renderShadowVolumes(SceneState* state)
 {
-    // TODO: Implement renderShadowVolumes
+    // Empty
 }
 
-void Marble::renderShadow(F32, F32)
+void Marble::renderShadow(F32 dist, F32 fogAmount)
 {
-    // TODO: Implement renderShadow
+    // Empty
 }
 
 void Marble::renderImage(SceneState* state)
 {
-    // TODO: Implement renderImage
-    Parent::renderImage(state);
+    // Empty
 }
 
 void Marble::bounceEmitter(F32, const Point3F&)
@@ -851,22 +859,19 @@ MatrixF Marble::getShadowTransform() const
 
 void Marble::setVelocity(const Point3F& vel)
 {
-    // TODO: Implement setVelocity
-    Parent::setVelocity(vel);
+    setVelocityD(vel);
 }
 
 Point3F Marble::getVelocity() const
 {
-    // TODO: Implement getVelocity
-    return Parent::getVelocity();
+    return mSinglePrecision.mVelocity;
 }
 
 Point3F Marble::getShadowScale() const
 {
     // TODO: Missing SceneObject::getShadowScale and ShapeBase::getShadowScale. Appears to be an unused function?
 
-    // TODO: Implement getShadowScale
-    return Point3F();
+    return mRenderScale;
 }
 
 Point3F Marble::getGravityRenderDir()
@@ -880,7 +885,7 @@ void Marble::getShadowLightVectorHack(Point3F& lightVec)
 {
     // TODO: Missing SceneObject::getShadowLightVectorHack in parent. BlobShadow needs to be implemented.
 
-    // TODO: Implement getShadowLightVectorHack
+    *lightVec = *getGravityRenderDir();
 }
 
 bool Marble::onSceneAdd(SceneGraph* graph)
@@ -940,12 +945,12 @@ bool Marble::updatePadState()
     return false;
 }
 
-void Marble::doPowerUpBoost(S32)
+void Marble::doPowerUpBoost(S32 powerUpId)
 {
     // TODO: Implement doPowerUpBoost
 }
 
-void Marble::doPowerUpPower(S32)
+void Marble::doPowerUpPower(S32 powerUpId)
 {
     // TODO: Implement doPowerUpPower
 }
@@ -1027,9 +1032,10 @@ void Marble::computeNetSmooth(F32 backDelta)
     // TODO: Implement computeNetSmooth
 }
 
-void Marble::doPowerUp(S32)
+void Marble::doPowerUp(S32 powerUpId)
 {
-    // TODO: Implement doPowerUp
+    doPowerUpBoost(powerUpId);
+    doPowerUpPower(powerUpId);
 }
 
 void Marble::prepShadows()
