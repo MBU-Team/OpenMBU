@@ -30,7 +30,8 @@ Marble::Marble()
     mTrailEmitter = NULL;
     mMudEmitter = NULL;
     mGrassEmitter = NULL;
-    mNetFlags |= 0x10100; // TODO: Figure out mask
+
+    mNetFlags.set(Ghostable); // TODO: original value was 0x10100, which shouldn't be valid?
 
     // TODO: HiFi
     mTypeMask |= PlayerObjectType; // | GameBaseHiFiObjectType;
@@ -904,7 +905,7 @@ bool Marble::onAdd()
     if (!Parent::onAdd())
         return false;
 
-    if (mNetFlags.test(RestrictXYZMode))
+    if (isGhost())
     {
         mRollHandle = alxPlay(this->mDataBlock->sound[0], &getTransform(), &Point3F(0, 0, 0));
         mSlipHandle = alxPlay(this->mDataBlock->sound[3], &getTransform(), &Point3F(0, 0, 0));
@@ -937,11 +938,111 @@ void Marble::setPowerUpId(U32, bool)
 
 void Marble::processTick(const Move* move)
 {
-    delta.prevMouseX = mMouseX; // TEMP
-    delta.prevMouseY = mMouseY; // TEMP
-
-    // TODO: Implement processTick
     Parent::processTick(move);
+
+    clearMarbleAxis();
+    if (mMode & TimerMode)
+    {
+        U32 bonusTime = mMarbleBonusTime;
+        if (bonusTime <= 32)
+        {
+            mMarbleBonusTime = 0;
+            mMarbleTime += 32 - bonusTime;
+            if (!(mMode & (MoveMode | StoppingMode)))
+                setMode(StartingMode);
+        }
+        else
+            mMarbleBonusTime = bonusTime - 32;
+
+        mFullMarbleTime += 32;
+    }
+
+    if (mModeTimer)
+    {
+        mModeTimer--;
+        if (!mModeTimer)
+        {
+            if (mMode & StartingMode)
+                mMode &= ~(RestrictXYZMode | CameraHoverMode) | (MoveMode | TimerMode);
+            if (mMode & StoppingMode)
+                mMode &= ~MoveMode;
+            if (mMode & FinishMode)
+                mMode |= CameraHoverMode;
+        }
+    }
+
+    if (mBlastEnergy < mDataBlock->maxNaturalBlastRecharge >> 5)
+        mBlastEnergy++;
+
+    const Move* newMove;
+    if (mControllable)
+    {
+        if (move)
+        {
+            dMemcpy(&delta.move, move, sizeof(delta.move));
+            newMove = move;  
+        }
+        else
+            newMove = &delta.move;
+    }
+    else
+        newMove = &NullMove;
+
+    processMoveTriggers(newMove);
+    processCameraMove(newMove);
+
+    Point3F startPos(mPosition.x, mPosition.y, mPosition.z);
+
+    advancePhysics(newMove, TickMs);
+
+    Point3F endPos(mPosition.x, mPosition.y, mPosition.z);
+
+    processItemsAndTriggers(startPos, endPos);
+    updatePowerups();
+
+    if (mPadPtr)
+    {
+        bool oldOnPad = mOnPad;
+        updatePadState();
+        if (oldOnPad != mOnPad && !isGhost())
+        {
+            const char* funcName = "onLeavePad";
+            if (!oldOnPad)
+                funcName = "onEnterPad";
+            Con::executef(mDataBlock, 2, funcName, scriptThis());
+        }
+    }
+
+    if (isGhost())
+    {
+        if (getControllingClient())
+        {
+            if (Marble::smEndPad.isNull() || Marble::smEndPad->getId() != Marble::smEndPadId)
+            {
+                if (Marble::smEndPadId && Marble::smEndPadId != -1)
+                    Marble::smEndPad = dynamic_cast<StaticShape*>(Sim::findObject(Marble::smEndPadId));
+                
+                if (Marble::smEndPad.isNull())
+                    Marble::smEndPadId = 0;
+            }
+        }
+    }
+
+    if (mOmega.len() < 0.000001)
+        mOmega.set(0, 0, 0);
+
+    if (!isGhost() && mOOB && newMove->trigger[2])
+        Con::executef(this, 1, "onOOBClick");
+
+    notifyCollision();
+
+    mSinglePrecision.mPosition = mPosition;
+    mSinglePrecision.mVelocity = mVelocity;
+    mSinglePrecision.mOmega = mOmega;
+
+    mPosition = mSinglePrecision.mPosition;
+    mVelocity = mSinglePrecision.mVelocity;
+    mOmega = mSinglePrecision.mOmega;
 }
 
 //----------------------------------------------------------------------------

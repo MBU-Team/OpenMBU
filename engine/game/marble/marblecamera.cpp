@@ -17,6 +17,9 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
 
 void Marble::processCameraMove(const Move*)
 {
+    delta.prevMouseX = mMouseX;
+    delta.prevMouseY = mMouseY;
+
     // TODO: Implement processCameraMove
 }
 

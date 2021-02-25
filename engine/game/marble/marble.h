@@ -48,11 +48,15 @@ public:
         TimerMode = 0x8,
         StartingMode = 0x10,
         StoppingMode = 0x20,
-        FinishMode = 0x40,
+        FinishMode = 0x40
+    };
+
+    enum UpdateMaskBits
+    {
         ActiveModeBits = 0x4,
         ActiveModeMask = 0xF,
         ModeBits = 0x7,
-        MaxModeTicks = 0x1F,
+        MaxModeTicks = 0x1F
     };
 private:
 
