@@ -9,8 +9,7 @@
 
 Point3D Marble::getVelocityD() const
 {
-    // TODO: Implement getVelocityD
-    return Point3D();
+    return mVelocity;
 }
 
 void Marble::setVelocityD(const Point3D&)
@@ -46,8 +45,12 @@ void Marble::getMarbleAxis(Point3D&, Point3D&, Point3D&)
 
 const Point3F& Marble::getMotionDir()
 {
-    // TODO: Implement getMotionDir
-    return Point3F();
+    Point3D side;
+    Point3D motion;
+    Point3D up;
+    Marble::getMarbleAxis(side, motion, up);
+
+    return gMarbleMotionDir;
 }
 
 bool Marble::computeMoveForces(Point3D&, Point3D&, const Move*)

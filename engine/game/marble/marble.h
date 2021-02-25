@@ -30,6 +30,8 @@
 #include <game/staticShape.h>
 #endif
 
+extern Point3F gMarbleMotionDir;
+
 class MarbleData;
 
 class Marble : public ShapeBase
@@ -262,7 +264,7 @@ public:
     void trailEmitter(U32);
     void updateRollSound(F32, F32);
     void playBounceSound(Marble::Contact&, F64);
-    void setPad(SceneObject*);
+    void setPad(SceneObject* obj);
     void findRenderPos(F32);
     virtual void advanceTime(F32 dt);
     virtual void computeNetSmooth(F32 backDelta);

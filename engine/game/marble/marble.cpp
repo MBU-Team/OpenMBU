@@ -12,6 +12,8 @@
 
 const float gMarbleCompressDists[7] = {5.0f, 11.0f, 23.0f, 47.0f, 96.0f, 195.0f, 500.0f};
 
+Point3F gMarbleMotionDir = Point3F(0, 0, 0);
+
 //----------------------------------------------------------------------------
 
 IMPLEMENT_CO_NETOBJECT_V1(Marble);
@@ -342,7 +344,9 @@ void Marble::setTransform(const MatrixF& mat)
 
 Point3F& Marble::getPosition()
 {
-    return Point3F(mObjToWorld[3], mObjToWorld[7], mObjToWorld[11]);
+    static Point3F position;
+    position = Point3F(mObjToWorld[3], mObjToWorld[7], mObjToWorld[11]);
+    return position;
 }
 
 void Marble::victorySequence()
@@ -867,9 +871,13 @@ void Marble::playBounceSound(Marble::Contact&, F64)
     // TODO: Implement playBounceSound
 }
 
-void Marble::setPad(SceneObject*)
+void Marble::setPad(SceneObject* obj)
 {
-    // TODO: Implement setPad
+    mPadPtr = obj;
+    if (obj)
+        mOnPad = updatePadState();
+    else
+        mOnPad = false;
 }
 
 void Marble::findRenderPos(F32)
@@ -1152,6 +1160,47 @@ ConsoleMethod(Marble, setMode, void, 3, 3, "(mode)")
     }
 
     object->setMode(newMode | modeFlags[i]);
+}
+
+ConsoleMethod(Marble, setPad, void, 3, 3, "(pad)")
+{
+    U32 padId = dAtoi(argv[2]);
+    if (!padId)
+    {
+        object->setPad(0);
+        return;
+    }
+
+    SceneObject* pad;
+    if (Sim::findObject(padId, pad))
+        object->setPad(pad);
+    else
+        Con::errorf("Marble::setPad: Not a SceneObject");
+}
+
+ConsoleMethod(Marble, setMarbleTime, void, 3, 3, "(time)")
+{
+    object->setMarbleTime(dAtoi(argv[2]));
+}
+
+ConsoleMethod(Marble, setMarbleBonusTime, void, 3, 3, "(time)")
+{
+    object->setMarbleBonusTime(dAtoi(argv[2]));
+}
+
+ConsoleMethod(Marble, setUseFullMarbleTime, void, 3, 3, "(flag)")
+{
+    object->setUseFullMarbleTime(dAtob(argv[2]));
+}
+
+ConsoleMethod(Marble, getMarbleTime, S32, 2, 2, "()")
+{
+    return object->getMarbleTime();
+}
+
+ConsoleMethod(Marble, getMarbleBonusTime, S32, 2, 2, "()")
+{
+    return object->getMarbleBonusTime();
 }
 
 //----------------------------------------------------------------------------
