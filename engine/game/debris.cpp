@@ -16,6 +16,7 @@
 #include "ts/tsPartInstance.h"
 #include "game/fx/particleEmitter.h"
 #include "game/fx/explosion.h"
+#include "game/gameProcess.h"
 
 const U32 csmStaticCollisionMask = AtlasObjectType |
 TerrainObjectType |

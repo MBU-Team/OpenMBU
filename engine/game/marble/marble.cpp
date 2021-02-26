@@ -8,6 +8,7 @@
 #include "math/mathIO.h"
 #include "audio/audioDataBlock.h"
 #include "game/fx/particleEmitter.h"
+#include "game/gameProcess.h"
 
 //----------------------------------------------------------------------------
 

@@ -441,9 +441,6 @@
     <ClCompile Include="..\engine\game\gameConnectionEvents.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\game\gameConnectionMoves.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\game\gameFunctions.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
@@ -1534,6 +1531,12 @@
       <Filter>Source Files\sim</Filter>
     </ClCompile>
     <ClCompile Include="..\engine\game\gameProcess.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\game\moveList.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\game\moveManager.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2826,6 +2829,9 @@
       <Filter>Source Files\sim</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\game\gameProcess.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\game\moveList.h">
       <Filter>Source Files\game</Filter>
     </ClInclude>
   </ItemGroup>

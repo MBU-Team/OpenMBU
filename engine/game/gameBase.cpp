@@ -142,9 +142,8 @@ GameBase::GameBase()
     mNetFlags.set(Ghostable);
     mTypeMask |= GameBaseObjectType;
 
-    mProcessLink.next = mProcessLink.prev = this;
-    mAfterObject = 0;
     mProcessTag = 0;
+    mAfterObject = 0;
     mLastDelta = 0;
     mDataBlock = 0;
     mProcessTick = true;
@@ -340,43 +339,6 @@ void GameBase::scriptOnRemove()
     // the object state is still valid.
     if (!isGhost() && mDataBlock)
         Con::executef(mDataBlock, 2, "onRemove", scriptThis());
-}
-
-
-//--------------------------------------------------------------------------
-void GameBase::plUnlink()
-{
-    mProcessLink.next->mProcessLink.prev = mProcessLink.prev;
-    mProcessLink.prev->mProcessLink.next = mProcessLink.next;
-    mProcessLink.next = mProcessLink.prev = this;
-}
-
-void GameBase::plLinkAfter(GameBase* obj)
-{
-    // Link this after obj
-    mProcessLink.next = obj->mProcessLink.next;
-    mProcessLink.prev = obj;
-    obj->mProcessLink.next = this;
-    mProcessLink.next->mProcessLink.prev = this;
-}
-
-void GameBase::plLinkBefore(GameBase* obj)
-{
-    // Link this before obj
-    mProcessLink.next = obj;
-    mProcessLink.prev = obj->mProcessLink.prev;
-    obj->mProcessLink.prev = this;
-    mProcessLink.prev->mProcessLink.next = this;
-}
-
-void GameBase::plJoin(GameBase* head)
-{
-    GameBase* tail1 = head->mProcessLink.prev;
-    GameBase* tail2 = mProcessLink.prev;
-    tail1->mProcessLink.next = this;
-    mProcessLink.prev = tail1;
-    tail2->mProcessLink.next = head;
-    head->mProcessLink.prev = tail2;
 }
 
 

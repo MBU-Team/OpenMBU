@@ -20,6 +20,7 @@
 #include "math/mathUtils.h"
 #include "game/debris.h"
 #include "game/gameConnection.h"
+#include "game/gameProcess.h"
 #include "game/fx/particleEmitter.h"
 #include "game/fx/cameraFXMgr.h"
 #include "game/debris.h"

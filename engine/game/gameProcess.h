@@ -9,22 +9,89 @@
 #include "platform/platform.h"
 #include "sim/processList.h"
 
+#include "game/game.h"
+
 class GameBase;
 class GameConnection;
 struct Move;
 
-extern ProcessList gClientProcessList;
-extern ProcessList gServerProcessList;
-extern ProcessList gSPModeProcessList;
+//----------------------------------------------------------------------------
+
+/// List to keep track of GameBases to process.
+class ClientProcessList : public ProcessList
+{
+    typedef ProcessList Parent;
+
+protected:
+
+    void onTickObject(ProcessObject*);
+    void advanceObjects();
+    void onAdvanceObjects();
+    bool doBacklogged(SimTime timeDelta);
+    GameBase* getGameBase(ProcessObject* obj);
+
+
+public:
+    ClientProcessList();
+
+    void addObject(ProcessObject* obj);
+
+    bool advanceTime(SimTime timeDelta);
+
+    /// @}
+    // after update from server, catch back up to where we were
+    void clientCatchup(GameConnection*);
+};
+
+class ServerProcessList : public ProcessList
+{
+    typedef ProcessList Parent;
+
+protected:
+
+    void onTickObject(ProcessObject*);
+    void advanceObjects();
+    GameBase* getGameBase(ProcessObject* obj);
+
+public:
+    ServerProcessList();
+
+    void addObject(ProcessObject* obj);
+};
+
+class SPModeProcessList : public ProcessList
+{
+    typedef ProcessList Parent;
+
+protected:
+
+    void onTickObject(ProcessObject*);
+    GameBase* getGameBase(ProcessObject* obj);
+
+public:
+    SPModeProcessList();
+
+    bool advanceTime(SimTime timeDelta);
+};
+
+extern ClientProcessList gClientProcessList;
+extern ServerProcessList gServerProcessList;
+extern SPModeProcessList gSPModeProcessList;
 
 inline ProcessList* getCurrentServerProcessList()
 {
-    return gSPMode ? &gSPModeProcessList : &gServerProcessList;
+    if (gSPMode)
+        return &gSPModeProcessList;
+
+    return &gServerProcessList;
 }
 
 inline ProcessList* getCurrentClientProcessList()
 {
-    return gSPMode ? &gSPModeProcessList : &gClientProcessList;
+    if (gSPMode)
+        return &gSPModeProcessList;
+
+    return &gClientProcessList;
 }
 
 #endif

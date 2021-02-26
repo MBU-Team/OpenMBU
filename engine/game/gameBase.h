@@ -12,8 +12,9 @@
 #ifndef _RESMANAGER_H_
 #include "core/resManager.h"
 #endif
-
-#include "game/game.h"
+#ifndef _PROCESSLIST_H_
+#include "sim/processList.h"
+#endif
 
 class NetConnection;
 class ProcessList;
@@ -139,11 +140,13 @@ class GameConnection;
 /// writePacketData()/readPacketData() are called <i>in addition</i> to packUpdate/unpackUpdate().
 ///
 /// @nosubgrouping
-class GameBase : public SceneObject
+class GameBase : public SceneObject, public ProcessObject
 {
 private:
     typedef SceneObject Parent;
-    friend class ProcessList;
+    friend class ClientProcessList;
+    friend class ServerProcessList;
+    friend class SPModeProcessList;
 
     /// @name Datablock
     /// @{
@@ -156,16 +159,6 @@ private:
     /// @name Tick Processing Internals
     /// @{
 private:
-    void plUnlink();
-    void plLinkAfter(GameBase*);
-    void plLinkBefore(GameBase*);
-    void plJoin(GameBase*);
-    struct Link {
-        GameBase* next;
-        GameBase* prev;
-    };
-    U32  mProcessTag;                      ///< Tag used to sort objects for processing.
-    Link mProcessLink;                     ///< Ordered process queue link.
     SimObjectPtr<GameBase> mAfterObject;
     /// @}
 

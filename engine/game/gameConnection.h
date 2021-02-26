@@ -21,6 +21,9 @@
 #ifndef _BITVECTOR_H_
 #include "core/bitVector.h"
 #endif
+#ifndef _MOVELIST_H_
+#include "game/moveList.h"
+#endif
 
 enum GameConnectionConstants
 {
@@ -49,7 +52,6 @@ private:
         /// own maximum (MaxMoveQueueSize)
         MaxMoveCount = 30,
     };
-    typedef Vector<Move> MoveList;
 
     SimObjectPtr<ShapeBase> mControlObject;
     SimObjectPtr<ShapeBase> mCameraObject;
@@ -75,14 +77,6 @@ private:
     F32   mCameraSpeed;     ///< Camera in/out speed.
     /// @}
 
-    /// @name Move Packets
-    /// Write/read move data to the packet.
-    /// @{
-
-    ///
-    void moveWritePacket(BitStream* bstream);
-    void moveReadPacket(BitStream* bstream);
-    /// @}
 public:
 
     /// @name Protocol Versions
@@ -158,15 +152,13 @@ protected:
     };
     PacketNotify* allocNotify();
 
-    U32 mLastMoveAck;
-    U32 mLastClientMove;
-    U32 mFirstMoveIndex;
-    U32 mMoveCredit;
-    U32 mLastControlObjectChecksum;
+    bool mControlForceMismatch;
 
     Vector<SimDataBlock*> mDataBlockLoadList;
 
+public:
     MoveList    mMoveList;
+protected:
     bool        mAIControlled;
     AuthInfo* mAuthInfo;
 
@@ -262,19 +254,6 @@ public:
 
     void setBlackOut(bool fadeToBlack, S32 timeMS);
     F32  getBlackOut();
-    /// @}
-
-    /// @name Move Management
-    /// @{
-
-    void           pushMove(const Move& mv);
-    bool           getNextMove(Move& curMove);
-    bool           isBacklogged();
-    virtual void   getMoveList(Move**, U32* numMoves);
-    virtual void   clearMoves(U32 count);
-    void           collectMove(U32 simTime);
-    virtual bool   areMovesPending();
-    void           incMoveCredit(U32 count);
     /// @}
 
     /// @name Authentication

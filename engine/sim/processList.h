@@ -4,41 +4,64 @@
 #include "platform/platform.h"
 #include "console/simBase.h"
 
-#include "game/gameBase.h"
+//----------------------------------------------------------------------------
 
 #define TickShift   5
 #define TickMs      (1 << TickShift)
 #define TickSec     (F32(TickMs) / 1000.0f)
 #define TickMask    (TickMs - 1)
 
+//----------------------------------------------------------------------------
+
+class ProcessObject
+{
+    friend class ProcessList;
+    friend class ProcessList;
+    friend class ClientProcessList;
+    friend class ServerProcessList;
+    friend class SPModeProcessList;
+
+public:
+
+    ProcessObject() { mProcessTag = 0; mProcessLink.next = mProcessLink.prev = this; mOrderGUID = 0; }
+    virtual ProcessObject* getAfterObject() { return NULL; }
+
+protected:
+
+    struct Link
+    {
+        ProcessObject* next;
+        ProcessObject* prev;
+    };
+
+    // Processing interface
+    void plUnlink();
+    void plLinkAfter(ProcessObject*);
+    void plLinkBefore(ProcessObject*);
+    void plJoin(ProcessObject*);
+
+    U32 mProcessTag;                       // Tag used during sort
+    U32 mOrderGUID;                        // UID for keeping order synced (e.g., across network or runs of sim)
+    Link mProcessLink;                     // Ordered process queue
+};
+
 /// List to keep track of GameBases to process.
 class ProcessList
 {
-    GameBase head;
-    U32 mCurrentTag;
-    SimTime mLastTick;
-    SimTime mLastTime;
-    SimTime mLastDelta;
-    bool mIsServer;
-    bool mDirty;
-    static bool mDebugControlSync;
-
-    void orderList();
-    void advanceObjects();
 
 public:
-    SimTime getLastTime() { return mLastTime; }
-    ProcessList(bool isServer);
+    ProcessList();
+
     void markDirty() { mDirty = true; }
     bool isDirty() { return mDirty; }
     void setDirty(bool dirty) { mDirty = dirty; }
-    void addObject(GameBase* obj) {
-        obj->plLinkBefore(&head);
-    }
 
+    virtual void addObject(ProcessObject* obj);
+
+    SimTime getLastTime() { return mLastTime; }
     F32 getLastDelta() { return mLastDelta; }
     F32 getLastInterpDelta() { return mLastDelta / F32(TickMs); }
-
+    U32 getTotalTicks() { return mTotalTicks; }
     void dumpToConsole();
 
     /// @name Advancing Time
@@ -48,11 +71,29 @@ public:
     /// call each GameBase's processTick().
     /// @{
 
-    bool advanceServerTime(SimTime timeDelta);
-    bool advanceClientTime(SimTime timeDelta);
-    bool advanceSPModeTime(SimTime timeDelta);
+    bool advanceTime(SimTime timeDelta);
+    //bool advanceServerTime(SimTime timeDelta);
+    //bool advanceClientTime(SimTime timeDelta);
+    //bool advanceSPModeTime(SimTime timeDelta);
 
     /// @}
+
+protected:
+
+    ProcessObject mHead;
+
+    U32 mCurrentTag;
+    bool mDirty;
+
+    U32 mTotalTicks;
+    SimTime mLastTick;
+    SimTime mLastTime;
+    F32 mLastDelta;
+
+    void orderList();
+    virtual void advanceObjects();
+    virtual void onAdvanceObjects() { advanceObjects(); }
+    virtual void onTickObject(ProcessObject*) {}
 };
 
 #endif // _PROCESSLIST_H_

@@ -633,7 +633,7 @@ bool clientProcess(U32 timeDelta)
     ShowTSShape::advanceTime(timeDelta);
     ITickable::advanceTime(timeDelta);
 
-    bool ret = gClientProcessList.advanceClientTime(timeDelta);
+    bool ret = gClientProcessList.advanceTime(timeDelta);
 
     // Run the collision test and update the Audio system
     // by checking the controlObject
@@ -669,7 +669,7 @@ bool serverProcess(U32 timeDelta)
 {
     if (gSPMode)
         return true;
-    return gServerProcessList.advanceServerTime(timeDelta);
+    return gServerProcessList.advanceTime(timeDelta);
 }
 
 bool spmodeProcess(U32 timeDelta)
@@ -678,7 +678,7 @@ bool spmodeProcess(U32 timeDelta)
         return false;
 
     ITickable::advanceTime(timeDelta);
-    bool ret = getCurrentServerProcessList()->advanceSPModeTime(timeDelta);
+    bool ret = getCurrentServerProcessList()->advanceTime(timeDelta);
 
     // Run the collision test and update the Audio system
     // by checking the controlObject
