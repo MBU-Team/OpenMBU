@@ -120,24 +120,14 @@ bool Marble::isCameraClear(Point3F start, Point3F end)
 void Marble::getLookMatrix(MatrixF* camMat)
 {
     float prevMouseX = delta.prevMouseX;
-    double _prevMouseX = prevMouseX;
-    double newMouseX;
-    if (prevMouseX > M_PI_F && mMouseX < M_PI_F && _prevMouseX - mMouseX > M_PI_F)
-    {
-        newMouseX = _prevMouseX - (M_PI * 2);
-    LABEL_5:
-        prevMouseX = newMouseX;
-        goto LABEL_10;
-    }
 
-    if (mMouseX > M_PI_F && _prevMouseX < M_PI_F && mMouseX - _prevMouseX > M_PI_F)
-    {
-        newMouseX = _prevMouseX + (M_PI * 2);
-        goto LABEL_5;
-    }
-LABEL_10:
+    if (prevMouseX > M_PI_F && mMouseX < M_PI_F && prevMouseX - mMouseX > M_PI_F)
+        prevMouseX -= M_2PI;
+    else if (mMouseX > M_PI_F && prevMouseX < M_PI_F && mMouseX - prevMouseX > M_PI_F)
+        prevMouseX += M_2PI;
+
     double dt = gClientProcessList.getLastDelta();
-    double oneMinusDelta = 1.0f - dt;
+    double oneMinusDelta = 1.0 - dt;
 
     MatrixF xRot;
     m_matF_set_euler(Point3F(oneMinusDelta * mMouseY + delta.prevMouseY * dt, 0.0f, 0.0f), xRot);
