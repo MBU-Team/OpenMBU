@@ -22,6 +22,12 @@ class ClientProcessList : public ProcessList
 {
     typedef ProcessList Parent;
 
+#ifdef TORQUE_HIFI
+    U32 mSkipAdvanceObjectsMs;
+    bool mForceHifiReset;
+    U32 mCatchup;
+#endif
+
 protected:
 
     void onTickObject(ProcessObject*);
@@ -41,6 +47,17 @@ public:
     /// @}
     // after update from server, catch back up to where we were
     void clientCatchup(GameConnection*);
+
+#ifdef TORQUE_HIFI
+    void setCatchup(U32 catchup) { mCatchup = catchup; }
+
+    // tick cache functions -- client only
+    void ageTickCache(S32 numToAge, S32 len);
+    void forceHifiReset(bool reset) { mForceHifiReset = reset; }
+    U32 getTotalTicks() { return mTotalTicks; }
+    void updateMoveSync(S32 moveDiff);
+    void skipAdvanceObjects(U32 ms) { mSkipAdvanceObjectsMs += ms; }
+#endif
 };
 
 class ServerProcessList : public ProcessList

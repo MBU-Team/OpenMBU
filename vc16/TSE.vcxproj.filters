@@ -1539,6 +1539,9 @@
     <ClCompile Include="..\engine\game\moveManager.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\game\tickCache.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2832,6 +2835,9 @@
       <Filter>Source Files\game</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\game\moveList.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\game\tickCache.h">
       <Filter>Source Files\game</Filter>
     </ClInclude>
   </ItemGroup>

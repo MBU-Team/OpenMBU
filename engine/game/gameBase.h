@@ -15,6 +15,9 @@
 #ifndef _PROCESSLIST_H_
 #include "sim/processList.h"
 #endif
+#ifndef _TICKCACHE_H_
+#include "game/tickCache.h"
+#endif
 
 class NetConnection;
 class ProcessList;
@@ -155,6 +158,7 @@ private:
     StringTableEntry  mNameTag;
 
     /// @}
+    TickCache mTickCache;
 
     /// @name Tick Processing Internals
     /// @{
@@ -298,6 +302,16 @@ public:
     /// This is a component system thing, gotta ask Clark about it
     virtual void preprocessMove(Move* move) {}
     /// @}
+
+#ifdef TORQUE_HIFI
+    // tick cache methods for hifi networking...
+    TickCache& getTickCache() { return mTickCache; }
+    void setGhostUpdated(bool b) { if (b) mNetFlags.set(GhostUpdated); else mNetFlags.clear(GhostUpdated); }
+    bool isGhostUpdated() const { return mNetFlags.test(GhostUpdated); }
+    void setNewGhost(bool n) { if (n) mNetFlags.set(NewGhost); else mNetFlags.clear(NewGhost); }
+    bool isNewGhost() { return mNetFlags.test(NewGhost); }
+    virtual void computeNetSmooth(F32 backDelta) {}
+#endif
 
     /// Returns the velocity of this object.
     virtual Point3F getVelocity() const;
