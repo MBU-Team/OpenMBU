@@ -10,6 +10,7 @@
 #include "core/bitStream.h"
 #include "game/fx/explosion.h"
 #include "game/shapeBase.h"
+#include "game/gameProcess.h"
 #include "ts/tsShapeInstance.h"
 #include "game/projectile.h"
 #include "audio/audio.h"

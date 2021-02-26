@@ -16,6 +16,7 @@
 #include "game/shapeBase.h"
 #include "game/gameConnection.h"
 #include "game/gameConnectionEvents.h"
+#include "game/gameProcess.h"
 #include "game/auth.h"
 #include "util/safeDelete.h"
 

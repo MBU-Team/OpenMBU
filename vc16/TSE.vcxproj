@@ -1309,18 +1309,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\engine\game\gameProcess.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
+    <ClCompile Include="..\engine\game\gameProcess.cpp" />
     <ClCompile Include="..\engine\game\gameTSCtrl.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3149,6 +3138,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\sim\processList.cpp" />
     <ClCompile Include="..\engine\sim\sceneObject.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3713,6 +3703,7 @@
     <ClInclude Include="..\engine\game\gameConnection.h" />
     <ClInclude Include="..\engine\game\gameConnectionEvents.h" />
     <ClInclude Include="..\engine\game\gameFunctions.h" />
+    <ClInclude Include="..\engine\game\gameProcess.h" />
     <ClInclude Include="..\engine\game\gameTSCtrl.h" />
     <ClInclude Include="..\engine\game\guiPlayerView.h" />
     <ClInclude Include="..\engine\game\item.h" />
@@ -3949,6 +3940,7 @@
     <ClInclude Include="..\engine\sim\netObject.h" />
     <ClInclude Include="..\engine\sim\netStringTable.h" />
     <ClInclude Include="..\engine\sim\pathManager.h" />
+    <ClInclude Include="..\engine\sim\processList.h" />
     <ClInclude Include="..\engine\sim\sceneObject.h" />
     <ClInclude Include="..\engine\sim\simPath.h" />
     <ClInclude Include="..\engine\terrain\blender.h" />

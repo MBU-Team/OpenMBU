@@ -25,6 +25,7 @@
 #include "game/shapeBase.h"
 #include "core/dnet.h"
 #include "game/gameConnection.h"
+#include "game/gameProcess.h"
 #include "core/fileStream.h"
 #include "gui/core/guiCanvas.h"
 #include "sceneGraph/sceneLighting.h"

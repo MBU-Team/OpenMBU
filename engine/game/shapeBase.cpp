@@ -28,10 +28,12 @@
 #include "platform/profiler.h"
 #include "gfx/gfxCubemap.h"
 #include "renderInstance/renderInstMgr.h"
+#include "game/gameProcess.h"
 
 #include "game/marble/marble.h"
 
 bool gNoRenderAstrolabe = false;
+bool gForceNotHidden = false;
 
 IMPLEMENT_CO_DATABLOCK_V1(ShapeBaseData);
 

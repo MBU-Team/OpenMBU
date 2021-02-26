@@ -42,6 +42,8 @@
 /// Define me to enable unicode support.
 #define TORQUE_UNICODE
 
+/// Define me to enable Torque HiFi support
+#define TORQUE_HIFI
 
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines

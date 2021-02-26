@@ -11,6 +11,7 @@
 #include "sim/netConnection.h"
 #include "game/gameConnection.h"
 #include "math/mathIO.h"
+#include "game/gameProcess.h"
 
 //----------------------------------------------------------------------------
 // Ghost update relative priority values

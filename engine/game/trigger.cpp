@@ -10,6 +10,8 @@
 #include "core/bitStream.h"
 #include "math/mathIO.h"
 
+#include "game/gameProcess.h"
+
 #include "game/trigger.h"
 
 //-----------------------------------------------------------------------------

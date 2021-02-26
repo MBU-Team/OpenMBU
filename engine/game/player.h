@@ -13,6 +13,8 @@
 #include "collision/boxConvex.h"
 #endif
 
+#include "game/gameProcess.h"
+
 class ParticleEmitter;
 class ParticleEmitterData;
 class DecalData;

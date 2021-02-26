@@ -192,6 +192,18 @@ public:
         NextFreeMask = ControlMask << 1
     };
 
+    // net flags added by game base
+    enum
+    {
+        NetOrdered = BIT(Parent::MaxNetFlagBit + 1), // if set, process in same order on client and server
+        NetNearbyAdded = BIT(Parent::MaxNetFlagBit + 2), // work flag -- set during client catchup when neighbors have been checked
+        GhostUpdated = BIT(Parent::MaxNetFlagBit + 3), // set whenever ghost updated (and reset) on client -- for hifi objects
+        TickLast = BIT(Parent::MaxNetFlagBit + 4), // if set, tick this object after all others (except other tick last objects)
+        NewGhost = BIT(Parent::MaxNetFlagBit + 5), // if set, this ghost was just added during the last update
+        HiFiPassive = BIT(Parent::MaxNetFlagBit + 6), // hifi passive objects don't interact with other hifi passive objects
+        MaxNetFlagBit = Parent::MaxNetFlagBit + 6
+    };
+
     /// @name Inherited Functionality.
     /// @{
 
@@ -343,71 +355,5 @@ public:
     /// @}
     DECLARE_CONOBJECT(GameBase);
 };
-
-
-//-----------------------------------------------------------------------------
-
-#define TickShift   5
-#define TickMs      (1 << TickShift)
-#define TickSec     (F32(TickMs) / 1000.0f)
-#define TickMask    (TickMs - 1)
-
-/// List to keep track of GameBases to process.
-class ProcessList
-{
-    GameBase head;
-    U32 mCurrentTag;
-    SimTime mLastTick;
-    SimTime mLastTime;
-    SimTime mLastDelta;
-    bool mIsServer;
-    bool mDirty;
-    static bool mDebugControlSync;
-
-    void orderList();
-    void advanceObjects();
-
-public:
-    SimTime getLastTime() { return mLastTime; }
-    ProcessList(bool isServer);
-    void markDirty() { mDirty = true; }
-    bool isDirty() { return mDirty; }
-    void setDirty(bool dirty) { mDirty = dirty; }
-    void addObject(GameBase* obj) {
-        obj->plLinkBefore(&head);
-    }
-
-    F32 getLastDelta() { return mLastDelta; }
-    F32 getLastInterpDelta() { return mLastDelta / F32(TickMs); }
-
-    void dumpToConsole();
-
-    /// @name Advancing Time
-    /// The advance time functions return true if a tick was processed.
-    ///
-    /// These functions go through either gServerProcessList or gClientProcessList and
-    /// call each GameBase's processTick().
-    /// @{
-
-    bool advanceServerTime(SimTime timeDelta);
-    bool advanceClientTime(SimTime timeDelta);
-    bool advanceSPModeTime(SimTime timeDelta);
-
-    /// @}
-};
-
-extern ProcessList gClientProcessList;
-extern ProcessList gServerProcessList;
-extern ProcessList gSPModeProcessList;
-
-inline ProcessList* getCurrentServerProcessList()
-{
-    return gSPMode ? &gSPModeProcessList : &gServerProcessList;
-}
-
-inline ProcessList* getCurrentClientProcessList()
-{
-    return gSPMode ? &gSPModeProcessList : &gClientProcessList;
-}
 
 #endif

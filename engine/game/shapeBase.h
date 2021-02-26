@@ -54,7 +54,7 @@ class ShapeBase;
 typedef void* Light;
 
 extern bool gNoRenderAstrolabe;
-
+extern bool gForceNotHidden;
 
 //--------------------------------------------------------------------------
 
@@ -1607,7 +1607,7 @@ public:
 
     /// Returns true if this object is hidden
     /// @see setHidden
-    bool isHidden() { return mHidden; }
+    bool isHidden() { return mHidden && !gForceNotHidden; }
 
     /// Returns true if this object can be damaged
     bool isInvincible();

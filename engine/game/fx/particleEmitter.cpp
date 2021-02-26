@@ -12,6 +12,7 @@
 #include "gfx/gfxDevice.h"
 #include "gfx/primBuilder.h"
 #include "renderInstance/renderInstMgr.h"
+#include "game/gameProcess.h"
 
 static ParticleEmitterData gDefaultEmitterData;
 Point3F ParticleEmitter::mWindVelocity(0.0, 0.0, 0.0);
