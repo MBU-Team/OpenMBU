@@ -420,7 +420,9 @@ void NetConnection::ghostWritePacket(BitStream* bstream, PacketNotify* notify)
         else
         {
             bstream->writeFlag(false);
+#ifdef TORQUE_DEBUG_NET
             U32 startPos = bstream->getCurPos();
+#endif
             if (walk->flags & GhostInfo::NotYetGhosted)
             {
                 S32 classId = walk->obj->getClassId(getNetClassGroup());
@@ -448,9 +450,13 @@ void NetConnection::ghostWritePacket(BitStream* bstream, PacketNotify* notify)
 #ifdef TORQUE_NET_STATS
             walk->obj->getClassRep()->updateNetStatPack(updateMask, bstream->getCurPos() - beginSize);
 #endif
+#ifdef TORQUE_DEBUG_NET
             DEBUG_LOG(("PKLOG %d GHOST %d: %s", getId(), bstream->getCurPos() - 16 - startPos, walk->obj->getClassName()));
+#endif
 
             AssertFatal((retMask & (~updateMask)) == 0, "Cannot set new bits in packUpdate return");
+
+            ghostWriteExtra(walk->obj, bstream);
 
             walk->updateMask = retMask;
             if (!retMask)
@@ -523,7 +529,11 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     setLastError("Invalid packet.");
                     return;
                 }
-                obj->mNetFlags = NetObject::IsGhost;
+
+                // remove all flags associated with netobject
+                obj->mNetFlags &= ~(BIT(NetObject::MaxNetFlagBit + 1) - 1);
+                // we're a ghost...
+                obj->mNetFlags |= NetObject::IsGhost;
 
                 // object gets initial update before adding to the manager
 
@@ -537,6 +547,9 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     avar("class id mismatch for dest class %s.",
                         mLocalGhosts[index]->getClassName()));
 #endif
+                // give derived classes a chance to prepare ghost for reading
+                ghostPreRead(mLocalGhosts[index], true);
+
 #ifdef TORQUE_NET_STATS
                 U32 beginSize = bstream->getCurPos();
 #endif
@@ -555,6 +568,7 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     obj->mServerObject = mRemoteConnection->resolveObjectFromGhostIndex(index);
 
                 addObject(obj);
+                ghostReadExtra(mLocalGhosts[index], bstream, true);
             }
             else
             {
@@ -567,6 +581,9 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     avar("class id mismatch for dest class %s.",
                         mLocalGhosts[index]->getClassName()));
 #endif
+                // give derived classes a chance to prepare ghost for reading
+                ghostPreRead(mLocalGhosts[index], false);
+
 #ifdef TORQUE_NET_STATS
                 U32 beginSize = bstream->getCurPos();
 #endif
@@ -574,6 +591,7 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
 #ifdef TORQUE_NET_STATS
                 mLocalGhosts[index]->getClassRep()->updateNetStatUnpack(bstream->getCurPos() - beginSize);
 #endif
+                ghostReadExtra(mLocalGhosts[index], bstream, false);
             }
             //PacketStream::getStats()->addBits(PacketStats::Receive, bstream->getCurPos() - startPos, ghostRefs[index].localGhost->getPersistTag());
 #ifdef TORQUE_DEBUG_NET

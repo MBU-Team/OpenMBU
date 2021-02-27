@@ -91,12 +91,15 @@ void MoveList::updateClientServerTickDiff(S32& tickDiff)
     }
 
     // drop moves that are not made yet (because we rolled them back) and not yet sent   
-    AssertFatal(mLastSentMove < mFirstMoveIndex || mLastClientMove < mFirstMoveIndex, "MoveList::updateClientServerTickDiff: Negative MoveList length!");
-    U32 len;
+    //AssertFatal(mLastSentMove < mFirstMoveIndex && mLastClientMove < mFirstMoveIndex, "MoveList::updateClientServerTickDiff: Negative MoveList length.");
+
+    /*U32 len;
     if (mLastSentMove < mFirstMoveIndex || mLastClientMove < mFirstMoveIndex)
         len = getMax((S32)(mLastClientMove - mFirstMoveIndex), (S32)(mLastSentMove - mFirstMoveIndex));
     else
-        len = getMax(mLastClientMove - mFirstMoveIndex, mLastSentMove - mFirstMoveIndex);
+        len = getMax(mLastClientMove - mFirstMoveIndex, mLastSentMove - mFirstMoveIndex);*/
+
+    U32 len = getMax(mLastClientMove - mFirstMoveIndex, mLastSentMove - mFirstMoveIndex);
     mMoveList.setSize(len);
 
 #ifdef TORQUE_DEBUG_NET_MOVES
@@ -429,7 +432,6 @@ void MoveList::serverReadMovePacket(BitStream* bstream)
     mLastMoveAck += count;
 
 #ifdef TORQUE_HIFI
-    mLastMoveAck += count;
 
     if (mMoveList.size() > mMaxMoveListSize)
     {

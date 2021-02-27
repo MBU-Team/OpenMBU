@@ -749,6 +749,27 @@ void GameConnection::demoPlaybackComplete()
     Parent::demoPlaybackComplete();
 }
 
+void GameConnection::ghostPreRead(NetObject* nobj, bool newGhost)
+{
+    Parent::ghostPreRead(nobj, newGhost);
+
+    mMoveList.ghostPreRead(nobj, newGhost);
+}
+
+void GameConnection::ghostReadExtra(NetObject* nobj, BitStream* bstream, bool newGhost)
+{
+    Parent::ghostReadExtra(nobj, bstream, newGhost);
+
+    mMoveList.ghostReadExtra(nobj, bstream, newGhost);
+}
+
+void GameConnection::ghostWriteExtra(NetObject* nobj, BitStream* bstream)
+{
+    Parent::ghostWriteExtra(nobj, bstream);
+
+    mMoveList.ghostWriteExtra(nobj, bstream);
+}
+
 //----------------------------------------------------------------------------
 
 void GameConnection::readPacket(BitStream* bstream)
@@ -760,6 +781,8 @@ void GameConnection::readPacket(BitStream* bstream)
     bstream->clearCompressionPoint();
     if (isConnectionToServer())
     {
+        mMoveList.clientReadMovePacket(bstream);
+
         bool spMode = bstream->readFlag();
         if (spMode != gSPMode)
         {
@@ -767,7 +790,6 @@ void GameConnection::readPacket(BitStream* bstream)
             Con::executef(this, 2, "switchedSinglePlayerMode", Con::getIntArg((S32)gSPMode));
         }
 
-        mMoveList.clientReadMovePacket(bstream);
 
         //int processListDirty = bstream->readInt(10);
 
@@ -885,6 +907,13 @@ void GameConnection::readPacket(BitStream* bstream)
     Parent::readPacket(bstream);
     bstream->clearCompressionPoint();
     bstream->setStringBuffer(NULL);
+
+    if (isConnectionToServer())
+    {
+        PROFILE_START(ClientCatchup);
+        gClientProcessList.clientCatchup(this);
+        PROFILE_END();
+    }
 }
 
 void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
@@ -936,9 +965,9 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
     }
     else
     {
-        bstream->writeFlag(gSPMode);
-
         mMoveList.serverWriteMovePacket(bstream);
+
+        bstream->writeFlag(gSPMode);
 
         //bstream->writeInt(getCurrentServerProcessList()->isDirty() & 0x3FF, 10);
 

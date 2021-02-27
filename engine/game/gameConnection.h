@@ -194,6 +194,10 @@ protected:
     void handleRecordedBlock(U32 type, U32 size, void* data);
     /// @}
 
+    void ghostWriteExtra(NetObject*, BitStream*);
+    void ghostReadExtra(NetObject*, BitStream*, bool newGhost);
+    void ghostPreRead(NetObject*, bool newGhost);
+
 public:
 
     DECLARE_CONOBJECT(GameConnection);
