@@ -23,7 +23,9 @@ class ClientProcessList : public ProcessList
     typedef ProcessList Parent;
 
 #ifdef TORQUE_HIFI
+protected:
     U32 mSkipAdvanceObjectsMs;
+private:
     bool mForceHifiReset;
     U32 mCatchup;
 #endif
@@ -76,9 +78,9 @@ public:
     void addObject(ProcessObject* obj);
 };
 
-class SPModeProcessList : public ProcessList
+class SPModeProcessList : public ClientProcessList
 {
-    typedef ProcessList Parent;
+    typedef ClientProcessList Parent;
 
 protected:
 
@@ -103,7 +105,7 @@ inline ProcessList* getCurrentServerProcessList()
     return &gServerProcessList;
 }
 
-inline ProcessList* getCurrentClientProcessList()
+inline ClientProcessList* getCurrentClientProcessList()
 {
     if (gSPMode)
         return &gSPModeProcessList;

@@ -792,28 +792,53 @@ void SPModeProcessList::onTickObject(ProcessObject* pobj)
 
     // Each object is either advanced a single tick, or if it's
     // being controlled by a client, ticked once for each pending move.
+    Move* movePtr;
+    U32 numMoves;
     GameConnection* con = obj->getControllingClient();
-
-    if (con && con->getControlObject() == obj)
+    if (con && con->getControlObject() == obj && con->mMoveList.getMoveList(&movePtr, &numMoves))
     {
-        Move* movePtr;
-        U32 m, numMoves;
-        con->mMoveList.getMoveList(&movePtr, &numMoves);
+#ifdef TORQUE_DEBUG_NET_MOVES
+        U32 sum = Move::ChecksumMask & obj->getPacketDataChecksum(obj->getControllingClient());
+#endif
 
+#ifndef TORQUE_HIFI
+        U32 m;
         for (m = 0; m < numMoves && con && con->getControlObject() == obj; m++, movePtr++)
         {
+#endif
             obj->processTick(movePtr);
 
+#ifdef TORQUE_HIFI
+            if (bool(obj) && obj->getControllingClient())
+#else
             if (con && con->getControlObject() == obj)
+#endif
             {
                 U32 newsum = Move::ChecksumMask & obj->getPacketDataChecksum(obj->getControllingClient());
 
                 // check move checksum
                 if (movePtr->checksum != newsum)
+                {
+#ifdef TORQUE_DEBUG_NET_MOVES
+                    if (!obj->mIsAiControlled)
+                        Con::printf("move %i checksum disagree: %i != %i, (start %i), (move %f %f %f)",
+                            movePtr->id, movePtr->checksum, newsum, sum, movePtr->yaw, movePtr->y, movePtr->z);
+#endif
+
                     movePtr->checksum = Move::ChecksumMismatch;
+                }
+                else
+                {
+#ifdef TORQUE_DEBUG_NET_MOVES
+                    Con::printf("move %i checksum agree: %i == %i, (start %i), (move %f %f %f)",
+                        movePtr->id, movePtr->checksum, newsum, sum, movePtr->yaw, movePtr->y, movePtr->z);
+#endif
+                }
             }
+#ifndef TORQUE_HIFI
         }
         con->mMoveList.clearMoves(m);
+#endif
     }
     else if (obj->mProcessTick)
         obj->processTick(0);
@@ -823,23 +848,49 @@ bool SPModeProcessList::advanceTime(SimTime timeDelta)
 {
     //PROFILE_SCOPE(AdvanceSPModeTime);
 
-    bool ret = Parent::advanceTime(timeDelta);
-    ProcessObject* obj = NULL;
-
-    AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
-
-    // Inform objects of total elapsed delta so they can advance
-    // client side animations.
-    F32 dt = F32(timeDelta) / 1000;
-
-    obj = mHead.mProcessLink.next;
-    while (obj != &mHead)
+#ifdef TORQUE_HIFI
+    if (mSkipAdvanceObjectsMs && timeDelta > mSkipAdvanceObjectsMs)
     {
-        GameBase* gb = getGameBase(obj);
-        gb->advanceTime(dt);
-
-        obj = obj->mProcessLink.next;
+        timeDelta -= mSkipAdvanceObjectsMs;
+        advanceTime(mSkipAdvanceObjectsMs);
+        AssertFatal(!mSkipAdvanceObjectsMs, "Doh!");
     }
+#endif
+
+    if (doBacklogged(timeDelta))
+        return false;
+
+#ifdef TORQUE_HIFI
+    // remember interpolation value because we might need to set it back
+    F32 oldLastDelta = mLastDelta;
+#endif
+
+    bool ret = Parent::advanceTime(timeDelta);
+
+#ifdef TORQUE_HIFI
+    if (!mSkipAdvanceObjectsMs)
+    {
+#endif
+
+        AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
+
+        // Inform objects of total elapsed delta so they can advance
+        // client side animations.
+        F32 dt = F32(timeDelta) / 1000;
+        for (ProcessObject* obj = mHead.mProcessLink.next; obj != &mHead; obj = obj->mProcessLink.next)
+        {
+            GameBase* gb = getGameBase(obj);
+            gb->advanceTime(dt);
+        }
+
+#ifdef TORQUE_HIFI
+    }
+    else
+    {
+        mSkipAdvanceObjectsMs -= timeDelta;
+        mLastDelta = oldLastDelta;
+    }
+#endif
 
     return ret;
 }

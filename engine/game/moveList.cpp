@@ -90,15 +90,6 @@ void MoveList::updateClientServerTickDiff(S32& tickDiff)
         }
     }
 
-    // drop moves that are not made yet (because we rolled them back) and not yet sent   
-    //AssertFatal(mLastSentMove < mFirstMoveIndex && mLastClientMove < mFirstMoveIndex, "MoveList::updateClientServerTickDiff: Negative MoveList length.");
-
-    /*U32 len;
-    if (mLastSentMove < mFirstMoveIndex || mLastClientMove < mFirstMoveIndex)
-        len = getMax((S32)(mLastClientMove - mFirstMoveIndex), (S32)(mLastSentMove - mFirstMoveIndex));
-    else
-        len = getMax(mLastClientMove - mFirstMoveIndex, mLastSentMove - mFirstMoveIndex);*/
-
     U32 len = getMax(mLastClientMove - mFirstMoveIndex, mLastSentMove - mFirstMoveIndex);
     mMoveList.setSize(len);
 
@@ -559,14 +550,14 @@ void MoveList::clientReadMovePacket(BitStream* bstream)
     // mechanism tracks us over time to make sure we eventually return to be in sync, and makes adjustments
     // if we don't after a certain time period (number of updates).  Unlike the tickDiff mechanism, when
     // the updateMoveSync acts time is not preserved on the client.
-    gClientProcessList.updateMoveSync(mLastSentMove - mLastClientMove);
+    getCurrentClientProcessList()->updateMoveSync(mLastSentMove - mLastClientMove);
 
     // set catchup parameters...
     U32 totalCatchup = mLastClientMove - mFirstMoveIndex;
 
-    gClientProcessList.ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
-    gClientProcessList.forceHifiReset(tickDiff != 0);
-    gClientProcessList.setCatchup(totalCatchup);
+    getCurrentClientProcessList()->ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
+    getCurrentClientProcessList()->forceHifiReset(tickDiff != 0);
+    getCurrentClientProcessList()->setCatchup(totalCatchup);
 #endif
 }
 
