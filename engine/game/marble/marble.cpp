@@ -35,10 +35,9 @@ Marble::Marble()
     mMudEmitter = NULL;
     mGrassEmitter = NULL;
 
-    mNetFlags.set(Ghostable); // TODO: original value was 0x10100, which shouldn't be valid?
+    mNetFlags.set(Ghostable | NetOrdered);
 
-    // TODO: HiFi
-    mTypeMask |= PlayerObjectType; // | GameBaseHiFiObjectType;
+    mTypeMask |= PlayerObjectType | GameBaseHiFiObjectType;
 
     mDataBlock = NULL;
     mAnimateScale = true;
@@ -1028,8 +1027,6 @@ void Marble::advanceTime(F32 dt)
 
 void Marble::computeNetSmooth(F32 backDelta)
 {
-    // TODO: GameBase::computeNetSmooth is missing. Need to implement hifi for this.
-
     // TODO: Implement computeNetSmooth
 }
 
