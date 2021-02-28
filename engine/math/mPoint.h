@@ -318,17 +318,20 @@ public:
     // Arithmetic w/ other points
     Point3F  operator+(const Point3F&) const;
     Point3F  operator-(const Point3F&) const;
+    Point3F  operator*(const Point3F&) const;
     Point3F& operator+=(const Point3F&);
     Point3F& operator-=(const Point3F&);
+    Point3F& operator*=(const Point3F&);
 
     // Arithmetic w/ scalars
+    Point3F  operator+(const F32) const;
+    Point3F  operator-(const F32) const;
     Point3F  operator*(const F32) const;
     Point3F  operator/(const F32) const;
+    Point3F& operator+=(const F32);
+    Point3F& operator-=(const F32);
     Point3F& operator*=(const F32);
     Point3F& operator/=(const F32);
-
-    Point3F  operator*(const Point3F&) const;
-    Point3F& operator*=(const Point3F&);
 
     // Unary operators
     Point3F operator-() const;
@@ -1307,18 +1310,34 @@ inline bool Point3F::operator!=(const Point3F& _test) const
     return operator==(_test) == false;
 }
 
+inline Point3F Point3F::operator+(const F32 _add) const
+{
+    return Point3F(x * _add, y * _add, z * _add);
+}
 
 inline Point3F Point3F::operator+(const Point3F& _add) const
 {
     return Point3F(x + _add.x, y + _add.y, z + _add.z);
 }
 
+inline Point3F Point3F::operator-(const F32 _rSub) const
+{
+    return Point3F(x * _rSub, y * _rSub, z * _rSub);
+}
 
 inline Point3F Point3F::operator-(const Point3F& _rSub) const
 {
     return Point3F(x - _rSub.x, y - _rSub.y, z - _rSub.z);
 }
 
+inline Point3F& Point3F::operator+=(const F32 _add)
+{
+    x += _add;
+    y += _add;
+    z += _add;
+
+    return *this;
+}
 
 inline Point3F& Point3F::operator+=(const Point3F& _add)
 {
@@ -1329,6 +1348,14 @@ inline Point3F& Point3F::operator+=(const Point3F& _add)
     return *this;
 }
 
+inline Point3F& Point3F::operator-=(const F32 _rSub)
+{
+    x -= _rSub;
+    y -= _rSub;
+    z -= _rSub;
+
+    return *this;
+}
 
 inline Point3F& Point3F::operator-=(const Point3F& _rSub)
 {

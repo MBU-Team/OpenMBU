@@ -304,14 +304,15 @@ public:
     void startCenterCamera();
     bool isCameraClear(Point3F start, Point3F end);
     void getLookMatrix(MatrixF* camMat);
-    void cameraLookAtPt(const Point3F&);
+    void cameraLookAtPt(const Point3F& pt);
     void resetPlatformsForCamera();
     void getOOBCamera(MatrixF* mat);
-    void setPlatformsForCamera(const Point3F&, const Point3F&, const Point3F&);
+    void setPlatformsForCamera(const Point3F& marblePos, const Point3F& startCam, const Point3F& endCam);
     virtual void getCameraTransform(F32* pos, MatrixF* mat);
 
     static U32 smEndPadId;
     static SimObjectPtr<StaticShape> smEndPad;
+    static Vector<PathedInterior*> smPathItrVec;
 
 private:
     virtual void setTransform(const MatrixF& mat);

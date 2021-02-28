@@ -22,6 +22,7 @@ IMPLEMENT_CO_NETOBJECT_V1(Marble);
 
 U32 Marble::smEndPadId = 0;
 SimObjectPtr<StaticShape> Marble::smEndPad = NULL;
+Vector<PathedInterior*> Marble::smPathItrVec;
 
 Marble::Marble()
 {

@@ -73,6 +73,73 @@ void pushToSquare(Point2F& dir)
     dir *= len / max;
 }
 
+F32 applyNonlinearScale2(F32 value)
+{
+    // TODO: Cleanup this mess of decompiled code
+    double v1;
+    float v3;
+    float valuea;
+
+    if (value >= 0.0)
+        v1 = 1.0;
+    else
+        v1 = -1.0;
+    v3 = v1;
+    valuea = fabsf(value);
+    return (F32)(mPow(valuea, 3.2f) * v3);
+}
+
+F32 rescaleDeadZone(F32 value, F32 deadZone)
+{
+    // TODO: Cleanup this mess of decompiled code
+    double v2;
+    double v3;
+    double result;
+    float valuea;
+    float valueb;
+
+    v2 = value;
+    v3 = deadZone;
+    if (deadZone >= (double)value)
+    {
+        if (-v3 <= v2)
+        {
+            result = 0.0;
+        }
+        else
+        {
+            valueb = (v2 + v3) / (1.0 - v3);
+            result = valueb;
+        }
+    }
+    else
+    {
+        valuea = (v2 - v3) / (1.0 - v3);
+        result = valuea;
+    }
+    return result;
+}
+
+F32 computePitchSpeedFromDelta(F32 delta)
+{
+    // TODO: Cleanup this mess of decompiled code
+    double v1;
+
+    if (delta < 0.3141592700403172)
+    {
+        v1 = 0.31415927;
+    LABEL_5:
+        delta = v1;
+        return (float)(delta * 4.0);
+    }
+    if (delta > 1.570796326794897)
+    {
+        v1 = 1.5707964;
+        goto LABEL_5;
+    }
+    return (float)(delta * 4.0);
+}
+
 void Marble::processCameraMove(const Move* move)
 {
     delta.prevMouseX = mMouseX;
@@ -82,29 +149,209 @@ void Marble::processCameraMove(const Move* move)
 
     pushToSquare(value);
 
-    // TODO: Implement processCameraMove
-    
-    float delta = 0; // Temp
+    // ----------------------------------------------------------------------------
+    // TODO: Cleanup this mess of decompiled code
+    // ----------------------------------------------------------------------------
 
-    // TODO: Implement processCameraMove
+    double v4;
+    double v5;
+    double v6;
+    bool v7;
+    double v8;
+    double v9;
+    double v10;
+    double v11;
+    double v12;
+    double v13;
+    double v14;
+    double v16;
+    float deadZone;
+    double v20;
+    float delta_new;
+    float movePitchc;
+    float movePitch;
+    float movePitchd;
+    float movePitche;
+    float movePitcha;
+    float movePitchf;
+    float movePitchg;
+    float movePitchh;
+    float movePitchi;
+    float movePitchj;
+    float movePitchk;
+    float movePitchb;
+
+    deadZone = rescaleDeadZone(value.x, 0.25);
+    movePitch = applyNonlinearScale2(deadZone);
+    *((float*)&v20 + 1) = fabsf(movePitch);
+    delta_new = this->mLastYaw;
+    v20 = *((float*)&v20 + 1);
+    v4 = fabsf(delta_new);
+    if (v4 > v20)
+        goto LABEL_2;
+    if (this->mLastYaw < 0.0 && movePitch > 0.0 || this->mLastYaw > 0.0 && movePitch < 0.0)
+        this->mLastYaw = 0.0;
+    if (fabsf(movePitch) > 0.2)
+    {
+        *((float*)&v20 + 1) = this->mLastYaw;
+        if (fabsf(*((float*)&v20 + 1)) < 0.2)
+        {
+            if (movePitch >= 0.0)
+                v6 = 0.2;
+            else
+                v6 = -0.2;
+            this->mLastYaw = v6;
+        }
+    }
+    delta_new = movePitch - this->mLastYaw;
+    if (fabsf(delta_new) <= 0.0544000044465065)
+    {
+    LABEL_2:
+        v5 = movePitch;
+    }
+    else if (delta_new >= 0.0)
+    {
+        v5 = this->mLastYaw + 0.0544000044465065;
+    }
+    else
+    {
+        v5 = this->mLastYaw - 0.0544000044465065;
+    }
+    v7 = (this->mMode & CameraHoverMode) == 0;
+    this->mLastYaw = v5;
+    delta_new = this->mLastYaw * 0.7 * 6.283185307179586 * 0.03200000151991844;
+    if (!v7)
+    {
+        delta_new = 0.02;
+        goto LABEL_31;
+    }
+    if (this->mCenteringCamera)
+    {
+        *((float*)&v20 + 1) = fabsf(delta_new);
+        movePitchd = fabsf(this->mRadsLeftToCenter);
+        movePitche = *((float*)&v20 + 1) - movePitchd;
+        movePitcha = fabsf(movePitche);
+        if (movePitcha >= 0.15)
+        {
+            movePitchf = this->mRadsLeftToCenter / this->mRadsStartingToCenter;
+            v8 = sinf(movePitchf) * 0.15;
+        }
+        else
+        {
+            if (movePitcha < 0.05)
+            {
+                this->mCenteringCamera = 0;
+            LABEL_27:
+                if (this->mRadsLeftToCenter <= (double)delta_new)
+                {
+                    delta_new = delta_new - movePitcha;
+                    v9 = this->mRadsLeftToCenter + movePitcha;
+                }
+                else
+                {
+                    delta_new = movePitcha + delta_new;
+                    v9 = this->mRadsLeftToCenter - movePitcha;
+                }
+                this->mRadsLeftToCenter = v9;
+                goto LABEL_31;
+            }
+            v8 = 0.050000001;
+        }
+        movePitcha = v8;
+        goto LABEL_27;
+    }
+LABEL_31:
+    if ((this->mMode & CameraHoverMode) == 0)
+    {
+        if (move->deviceIsKeyboardMouse)
+        {
+            v10 = this->mMouseY + value.y;
+            goto LABEL_48;
+        }
+        movePitchi = rescaleDeadZone(value.y, 0.69999999);
+        v12 = movePitchi;
+        if (movePitchi <= 0.0)
+            v13 = 0.4 - v12 * -0.75;
+        else
+            v13 = v12 * 1.1 + 0.4;
+        movePitchj = v13;
+        *((float*)&v20 + 1) = movePitchj - this->mMouseY;
+        movePitchk = fabsf(*((float*)&v20 + 1));
+        movePitchb = computePitchSpeedFromDelta(movePitchk) * 0.03200000151991844 * 0.8;
+        v14 = *((float*)&v20 + 1);
+        if (*((float*)&v20 + 1) <= 0.0)
+        {
+            *((float*)&v20 + 1) = -v14;
+            if (*((float*)&v20 + 1) < (double)movePitchb)
+                movePitchb = *((float*)&v20 + 1);
+            v14 = -movePitchb;
+        }
+        else if (movePitchb <= v14)
+        {
+        LABEL_46:
+            v10 = this->mMouseY + movePitchb;
+            goto LABEL_48;
+        }
+        movePitchb = v14;
+        goto LABEL_46;
+    }
+    if (this->mMouseY < 0.69999999)
+    {
+        movePitchg = 0.699999988079071 - this->mMouseY;
+        v10 = getMin(0.050000001f, movePitchg) + this->mMouseY;
+    LABEL_48:
+        this->mMouseY = v10;
+        goto LABEL_49;
+    }
+    if (this->mMouseY > 0.69999999)
+    {
+        v20 = this->mMouseY;
+        movePitchh = v20 - 0.699999988079071;
+        v11 = getMin(0.050000001f, movePitchh);
+        v10 = v20 - v11;
+        goto LABEL_48;
+    }
+LABEL_49:
+
+    // ----------------------------------------------------------------------------
+    // End of Uncleaned Decompiled Code
+    // ----------------------------------------------------------------------------
 
     float finalYaw;
     if (!move->deviceIsKeyboardMouse || (mMode & CameraHoverMode) != 0)
-        finalYaw = delta;
+        finalYaw = delta_new;
     else
         finalYaw = value.x;
 
     this->mMouseX += finalYaw;
     this->mMouseY = mClampF(mMouseY, -0.34999999, 1.5);
-    if (mMouseX > 6.283185307179586f)
-        mMouseX -= 6.283185307179586f;
+    if (mMouseX > M_2PI_F)
+        mMouseX -= M_2PI_F;
     if (mMouseX < 0.0f)
-        mMouseX += 6.283185307179586f;
+        mMouseX += M_2PI_F;
 }
 
 void Marble::startCenterCamera()
 {
-    // TODO: Implement startCenterCamera
+    if (mVelocity.y * mVelocity.y + mVelocity.x * mVelocity.x + mVelocity.z * mVelocity.z >= 9.0)
+    {
+        Point3F motionDir = getMotionDir();
+
+        mRadsLeftToCenter = mAtan(mVelocity.x, mVelocity.y) - mAtan(motionDir.x, motionDir.y);
+
+        if (fabsf(mRadsLeftToCenter) >= 0.5235987755982988f)
+        {
+            if (mRadsLeftToCenter <= M_PI_F)
+            {
+                if (mRadsLeftToCenter < 0.0f && mRadsLeftToCenter < -M_PI_F)
+                    mRadsLeftToCenter = mRadsLeftToCenter + M_2PI_F;
+            }
+            else
+                mRadsLeftToCenter = mRadsLeftToCenter - M_2PI_F;
+            mCenteringCamera = 1;
+            mRadsStartingToCenter = mRadsLeftToCenter;
+        }
+    }
 }
 
 bool Marble::isCameraClear(Point3F start, Point3F end)
@@ -140,14 +387,42 @@ void Marble::getLookMatrix(MatrixF* camMat)
     camMat->mul(xRot);
 }
 
-void Marble::cameraLookAtPt(const Point3F&)
+void Marble::cameraLookAtPt(const Point3F& pt)
 {
-    // TODO: Implement cameraLookAtPt
+    Point3F forward;
+    Point3F vec;
+
+    Point3F rPos = getRenderPosition();
+    Point3F delta = pt - rPos;
+
+    MatrixF grav;
+    mGravityFrame.setMatrix(&grav);
+    vec.x = grav[0];
+    vec.y = grav[4];
+    vec.z = grav[8];
+
+    forward.x = grav[1];
+    forward.y = grav[5];
+    forward.z = grav[9];
+
+    Point2F deltaRot(mDot(delta, vec), mDot(delta, forward));
+
+    if (deltaRot.len() >= 0.0001)
+        this->mMouseX = mAtan(deltaRot.x, deltaRot.y);
 }
 
 void Marble::resetPlatformsForCamera()
 {
-    // TODO: Implement resetPlatformsForCamera
+    float backDelta = gClientProcessList.getLastDelta();
+
+    for (S32 i = 0; i < smPathItrVec.size(); i++)
+    {
+        PathedInterior* pathedInterior = smPathItrVec[i];
+
+        // TODO: Implement PathedInteriors
+        //pathedInterior->popTickState();
+        pathedInterior->interpolateTick(backDelta);
+    }
 }
 
 void Marble::getOOBCamera(MatrixF* mat)
@@ -174,9 +449,38 @@ void Marble::getOOBCamera(MatrixF* mat)
     mat->setColumn(3, mOOBCamPos);
 }
 
-void Marble::setPlatformsForCamera(const Point3F&, const Point3F&, const Point3F&)
+void Marble::setPlatformsForCamera(const Point3F& marblePos, const Point3F& startCam, const Point3F& endCam)
 {
-    // TODO: Implement setPlatformsForCamera
+    smPathItrVec.clear();
+
+    Box3F camBox = mObjBox;
+    camBox.min = marblePos + camBox.min;
+    camBox.max = marblePos + camBox.max;
+
+    camBox.min.setMin(startCam - 0.25f);
+    camBox.max.setMax(startCam + 0.25f);
+    camBox.min.setMin(endCam - 0.25f);
+    camBox.max.setMax(endCam + 0.25f);
+    
+    camBox.min -= 0.25f;
+    camBox.max += 0.25f;
+
+    F32 delta = gClientProcessList.getLastDelta();
+
+    // TODO: Implement PathedInteriors
+    /*for (PathedInterior* i = PathedInterior::getPathedInteriors(this); ; i = i->mNextPathedInterior)
+    {
+        if (!i)
+            break;
+        Box3F in_rOverlap = i->getExtrudedBox();
+        if (camBox.isOverlapped(in_rOverlap))
+        {
+            i->pushTickState();
+            i->interpolateTick(delta);
+            i->setTransform(i->getRenderTransform());
+            smPathItrVec.push_back(i);
+        }
+    }*/
 }
 
 void Marble::getCameraTransform(F32* pos, MatrixF* mat)
