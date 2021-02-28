@@ -7,7 +7,7 @@
 #include "console/consoleTypes.h"
 #include "core/units.h"
 
-#include "gui/controls/guiGameMenuCtrl.h"
+#include "gui/controls/guiXboxListCtrl.h"
 
 IMPLEMENT_CONOBJECT(GuiXboxListCtrl);
 

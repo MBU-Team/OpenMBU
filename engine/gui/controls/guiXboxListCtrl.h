@@ -3,8 +3,8 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#ifndef _GUIGAMEMENUCTRL_H_
-#define _GUIGAMEMENUCTRL_H_
+#ifndef _GUIXBOXLISTCTRL_H_
+#define _GUIXBOXLISTCTRL_H_
 
 #ifndef _GUIGAMELISTMENUCTRL_H_
 #include "gui/controls/guiGameListMenuCtrl.h"
@@ -49,4 +49,4 @@ public:
     void clear();
 };
 
-#endif // _GUIGAMEMENUCTRL_H_
+#endif // _GUIXBOXLISTCTRL_H_

@@ -1994,8 +1994,8 @@
     <ClCompile Include="..\engine\gui\controls\guiConsoleEditCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiConsoleTextCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiGameListMenuCtrl.cpp" />
-    <ClCompile Include="..\engine\gui\controls\guiGameMenuCtrl.cpp" />
-    <ClCompile Include="..\engine\gui\controls\guiGameOptionMenuCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\controls\guiXboxListCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\controls\guiXboxOptionListCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiMLTextCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiMLTextEditCtrl.cpp" />
     <ClCompile Include="..\engine\gui\controls\guiPopUpCtrl.cpp" />
@@ -3794,8 +3794,8 @@
     <ClInclude Include="..\engine\gui\controls\guiConsoleEditCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiConsoleTextCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiGameListMenuCtrl.h" />
-    <ClInclude Include="..\engine\gui\controls\guiGameMenuCtrl.h" />
-    <ClInclude Include="..\engine\gui\controls\guiGameOptionMenuCtrl.h" />
+    <ClInclude Include="..\engine\gui\controls\guiXboxListCtrl.h" />
+    <ClInclude Include="..\engine\gui\controls\guiXboxOptionListCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiMLTextCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiMLTextEditCtrl.h" />
     <ClInclude Include="..\engine\gui\controls\guiPopUpCtrl.h" />

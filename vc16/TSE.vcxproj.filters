@@ -1503,12 +1503,6 @@
     <ClCompile Include="..\engine\gui\controls\guiGameListMenuCtrl.cpp">
       <Filter>Source Files\gui\controls</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\gui\controls\guiGameMenuCtrl.cpp">
-      <Filter>Source Files\gui\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\gui\controls\guiGameOptionMenuCtrl.cpp">
-      <Filter>Source Files\gui\controls</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\core\units.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
@@ -1541,6 +1535,12 @@
     </ClCompile>
     <ClCompile Include="..\engine\game\tickCache.cpp">
       <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\gui\controls\guiXboxListCtrl.cpp">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\gui\controls\guiXboxOptionListCtrl.cpp">
+      <Filter>Source Files\gui\controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2813,12 +2813,6 @@
     <ClInclude Include="..\engine\gui\controls\guiGameListMenuCtrl.h">
       <Filter>Source Files\gui\controls</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\gui\controls\guiGameMenuCtrl.h">
-      <Filter>Source Files\gui\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\gui\controls\guiGameOptionMenuCtrl.h">
-      <Filter>Source Files\gui\controls</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\core\units.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
@@ -2839,6 +2833,12 @@
     </ClInclude>
     <ClInclude Include="..\engine\game\tickCache.h">
       <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\controls\guiXboxListCtrl.h">
+      <Filter>Source Files\gui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\controls\guiXboxOptionListCtrl.h">
+      <Filter>Source Files\gui\controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
