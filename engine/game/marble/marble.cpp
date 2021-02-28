@@ -1332,9 +1332,113 @@ ConsoleMethod(Marble, getMarbleTime, S32, 2, 2, "()")
     return object->getMarbleTime();
 }
 
+ConsoleMethod(Marble, getFullMarbleTime, S32, 2, 2, "()")
+{
+    return object->getFullMarbleTime();
+}
+
 ConsoleMethod(Marble, getMarbleBonusTime, S32, 2, 2, "()")
 {
     return object->getMarbleBonusTime();
+}
+
+ConsoleMethod(Marble, getBlastEnergy, F32, 2, 2, "()")
+{
+    return object->getBlastEnergy();
+}
+
+ConsoleMethod(Marble, setBlastEnergy, void, 3, 3, "(energy)")
+{
+    object->setBlastEnergy(dAtof(argv[2]));
+}
+
+ConsoleMethod(Marble, getPad, S32, 2, 2, "()")
+{
+    SceneObject* pad = object->getPad();
+    if (pad)
+        return pad->getId();
+
+    return 0;
+}
+
+ConsoleMethod(Marble, isFrozen, bool, 2, 2, "()")
+{
+    return (object->getMode() & Marble::MoveMode) == 0;
+}
+
+ConsoleMethod(Marble, getPowerUpId, S32, 2, 2, "()")
+{
+    return object->getPowerUpId();
+}
+
+ConsoleMethod(Marble, getLastContactPosition, const char*, 2, 2, "()")
+{
+    if (object->getLastContact().position.x < 1.0e10)
+    {
+        char* buf = Con::getReturnBuffer(100);
+        dSprintf(buf, 100, "%f %f %f",
+                 object->getLastContact().position.x,
+                 object->getLastContact().position.y,
+                 object->getLastContact().position.z);
+        return buf;
+    }
+
+    return "";
+}
+
+ConsoleMethod(Marble, clearLastContactPosition, void, 2, 2, "()")
+{
+    object->getLastContact().position.set(1.0e10, 1.0e10, 1.0e10);
+    object->getLastContact().normal.set(0.0, 0.0, 1.0);
+    object->getLastContact().actualNormal.set(0.0, 0.0, 1.0);
+}
+
+ConsoleMethod(Marble, startCameraCenter, void, 2, 2, "()")
+{
+    object->startCenterCamera();
+}
+
+ConsoleMethod(Marble, getGravityDir, const char*, 2, 2, "()")
+{
+    MatrixF mat(true);
+    object->getGravityFrame().setMatrix(&mat);
+
+    Point3F grav(mat[2], mat[6], mat[10]);
+
+    char* retBuf = Con::getReturnBuffer(256);
+    dSprintf(retBuf, 256, "%g %g %g", -grav.x, -grav.y, -grav.z);
+
+    return retBuf;
+}
+
+ConsoleMethod(Marble, setOOB, void, 3, 3, "(oob)")
+{
+    object->setOOB(dAtob(argv[2]));
+}
+
+ConsoleMethod(Marble, getPosition, const char*, 2, 2, "()")
+{
+    static char buffer[100];
+    Point3F pos = object->getPosition();
+    dSprintf(buffer, 100, "%f %f %f", pos.x, pos.y, pos.z);
+
+    return buffer;
+}
+
+ConsoleMethod(Marble, doPowerUp, void, 3, 3, "(powerup)")
+{
+    F32 id = dAtof(argv[2]);
+    Con::printf("Did powerup! - %g", id);
+    object->doPowerUp(id);
+}
+
+ConsoleMethod(Marble, setPowerUpId, void, 3, 4, "(id)")
+{
+    bool reset = false;
+    if (argc > 3)
+        reset = dAtob(argv[3]);
+
+    object->setPowerUpId(dAtoi(argv[2]), reset);
 }
 
 //----------------------------------------------------------------------------

@@ -285,3 +285,10 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     mat->setColumn(2, camUpDir);
     mat->setColumn(3, position);
 }
+
+ConsoleMethod(Marble, cameraLookAtPt, void, 3, 3, "(point)")
+{
+    Point3F pt;
+    dSscanf(argv[2], "%f %f %f", &pt.x, &pt.y, &pt.z);
+    object->cameraLookAtPt(pt);
+}

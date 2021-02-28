@@ -74,3 +74,12 @@ void Marble::advancePhysics(const Move*, U32)
 {
     // TODO: Implement advancePhysics
 }
+
+ConsoleMethod(Marble, setVelocityRot, bool, 3, 3, "(vel)")
+{
+    Point3F rot;
+    dSscanf(argv[2], "%f %f %f", &rot.x, &rot.y, &rot.z);
+    object->setVelocityRotD(rot);
+
+    return 1;
+}
