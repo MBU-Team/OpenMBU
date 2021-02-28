@@ -8,7 +8,7 @@
 
 //----------------------------------------------------------------------------
 
-static U32 sCameraCollisionMask = 0x4008; // TODO: Figure out ObjectType mask
+static U32 sCameraCollisionMask = InteriorObjectType | StaticShapeObjectType;
 
 bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep)
 {
