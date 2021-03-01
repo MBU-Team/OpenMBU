@@ -43,6 +43,7 @@ class Point3F;
 class LightManager;
 class Convex;
 class RenderInst;
+class Material;
 
 //----------------------------------------------------------------------------
 /// Extension of the collision structore to allow use with raycasting.
@@ -786,6 +787,9 @@ public:
         if (mContainer)
             mContainer->insertIntoBins(this);
     }
+
+public:
+    virtual Material* getMaterial(U32 material) { return NULL; }
 
 
     /// @name Rendering Members
