@@ -108,7 +108,7 @@ void NetObject::collapseDirtyList()
             for (GhostInfo* walk = obj->mFirstObjectRef; walk; walk = walk->nextObjectRef)
             {
                 U32 orMask = obj->filterMaskBits(dirtyMask, walk->connection);
-                if (!walk->updateMask)
+                if (!walk->updateMask && orMask)
                 {
                     walk->updateMask = orMask;
                     walk->connection->ghostPushNonZero(walk);
