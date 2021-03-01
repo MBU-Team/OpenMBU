@@ -278,8 +278,8 @@ public:
 
     // Marble Physics
     Point3D getVelocityD() const;
-    void setVelocityD(const Point3D&);
-    void setVelocityRotD(const Point3D&);
+    void setVelocityD(const Point3D& vel);
+    void setVelocityRotD(const Point3D& rot);
     virtual void applyImpulse(const Point3F& pos, const Point3F& vec);
     void clearMarbleAxis();
     void applyContactForces(const Move*, bool, Point3D&, const Point3D&, F64, Point3D&, Point3D&, F32&);
@@ -288,7 +288,7 @@ public:
     bool computeMoveForces(Point3D&, Point3D&, const Move*);
     void velocityCancel(bool, bool, bool&, bool&, Vector<PathedInterior*>&);
     Point3D getExternalForces(const Move*, F64);
-    void advancePhysics(const Move*, U32);
+    void advancePhysics(const Move* move, U32 timeDelta);
 
     // Marble Collision
     void clearObjectsAndPolys();

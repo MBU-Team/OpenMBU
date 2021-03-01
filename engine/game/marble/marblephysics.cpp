@@ -7,19 +7,41 @@
 
 //----------------------------------------------------------------------------
 
+static U32 sCollisionMask = StaticObjectType |
+                            AtlasObjectType |
+                            InteriorMapObjectType |
+                            ShapeBaseObjectType |
+                            PlayerObjectType |
+                            VehicleBlockerObjectType;
+
+static U32 sContactMask = StaticObjectType |
+                          AtlasObjectType |
+                          InteriorMapObjectType |
+                          ShapeBaseObjectType |
+                          PlayerObjectType |
+                          VehicleBlockerObjectType;
+
+static bool gMarbleAxisSet = false;
+static Point3F gWorkGravityDir;
+
 Point3D Marble::getVelocityD() const
 {
     return mVelocity;
 }
 
-void Marble::setVelocityD(const Point3D&)
+void Marble::setVelocityD(const Point3D& vel)
 {
-    // TODO: Implement setVelocityD
+    dMemcpy(mVelocity, vel, sizeof(mVelocity));
+    mSinglePrecision.mVelocity = vel;
+
+    setMaskBits(MoveMask);
 }
 
-void Marble::setVelocityRotD(const Point3D&)
+void Marble::setVelocityRotD(const Point3D& rot)
 {
-    // TODO: Implement setVelocityRotD
+    dMemcpy(mOmega, rot, sizeof(mOmega));
+
+    setMaskBits(MoveMask);
 }
 
 void Marble::applyImpulse(const Point3F& pos, const Point3F& vec)
@@ -30,7 +52,8 @@ void Marble::applyImpulse(const Point3F& pos, const Point3F& vec)
 
 void Marble::clearMarbleAxis()
 {
-    // TODO: Implement clearMarbleAxis
+    gMarbleAxisSet = false;
+    mGravityFrame.mulP(Point3F(0.0f, 0.0f, -1.0f), &gWorkGravityDir);
 }
 
 void Marble::applyContactForces(const Move*, bool, Point3D&, const Point3D&, double, Point3D&, Point3D&, float&)
