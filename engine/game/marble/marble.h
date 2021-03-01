@@ -295,7 +295,7 @@ public:
 
     // Marble Collision
     void clearObjectsAndPolys();
-    void findObjectsAndPolys(U32, const Box3F&, bool);
+    void findObjectsAndPolys(U32 collisionMask, const Box3F& testBox, bool testPIs);
     bool testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs);
     void findContacts(U32, const Point3D*, const F32*);
     void computeFirstPlatformIntersect(F64&, Vector<PathedInterior*>&);
@@ -316,6 +316,8 @@ public:
     static U32 smEndPadId;
     static SimObjectPtr<StaticShape> smEndPad;
     static Vector<PathedInterior*> smPathItrVec;
+    static Vector<Marble*> marbles;
+    static ConcretePolyList polyList;
 
 private:
     virtual void setTransform(const MatrixF& mat);
