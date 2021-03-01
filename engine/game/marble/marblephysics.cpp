@@ -21,8 +21,9 @@ static U32 sContactMask = StaticObjectType |
                           PlayerObjectType |
                           VehicleBlockerObjectType;
 
-static bool gMarbleAxisSet = false;
-static Point3F gWorkGravityDir;
+bool gMarbleAxisSet = false;
+Point3F gWorkGravityDir;
+Point3F gMarbleSideDir;
 
 Point3D Marble::getVelocityD() const
 {

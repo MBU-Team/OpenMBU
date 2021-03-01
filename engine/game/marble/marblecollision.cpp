@@ -7,6 +7,10 @@
 
 //----------------------------------------------------------------------------
 
+static Box3F sgLastCollisionBox;
+static bool sgResetFindObjects;
+static U32 sgCountCalls;
+
 void Marble::clearObjectsAndPolys()
 {
     // TODO: Implement clearObjectsAndPolys

@@ -31,6 +31,9 @@
 #endif
 
 extern Point3F gMarbleMotionDir;
+extern bool gMarbleAxisSet;
+extern Point3F gWorkGravityDir;
+extern Point3F gMarbleSideDir;
 
 class MarbleData;
 
@@ -282,13 +285,13 @@ public:
     void setVelocityRotD(const Point3D& rot);
     virtual void applyImpulse(const Point3F& pos, const Point3F& vec);
     void clearMarbleAxis();
-    void applyContactForces(const Move*, bool, Point3D&, const Point3D&, F64, Point3D&, Point3D&, F32&);
-    void getMarbleAxis(Point3D&, Point3D&, Point3D&);
+    void applyContactForces(const Move* move, bool isCentered, Point3D& aControl, const Point3D& desiredOmega, F64 timeStep, Point3D& A, Point3D& a, F32& slipAmount);
+    void getMarbleAxis(Point3D& sideDir, Point3D& motionDir, Point3D& upDir);
     const Point3F& getMotionDir();
-    bool computeMoveForces(Point3D&, Point3D&, const Move*);
-    void velocityCancel(bool, bool, bool&, bool&, Vector<PathedInterior*>&);
-    Point3D getExternalForces(const Move*, F64);
-    void advancePhysics(const Move* move, U32 timeDelta);
+    bool computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const Move* move);
+    void velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec);
+    Point3D getExternalForces(const Move* move, F64 timeStep);
+    void advancePhysics(const Move*, U32);
 
     // Marble Collision
     void clearObjectsAndPolys();
@@ -296,7 +299,7 @@ public:
     bool testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs);
     void findContacts(U32, const Point3D*, const F32*);
     void computeFirstPlatformIntersect(F64&, Vector<PathedInterior*>&);
-    void resetObjectsAndPolys(U32, const Box3F&);
+    void resetObjectsAndPolys(U32 collisionMask, const Box3F& testBox);
 
     // Marble Camera
     bool moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep);
