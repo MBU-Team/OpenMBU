@@ -134,11 +134,11 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
     Box3F extrudedMarble = this->mWorldBox;
 
-    Point3F thing = (mVelocity * dt) * 1.100000023841858;
-    Point3F absThing = thing.abs();
+    Point3F velocityExpansion = (mVelocity * dt) * 1.100000023841858;
+    Point3F absVelocityExpansion = velocityExpansion.abs();
 
-    extrudedMarble.min += (thing - absThing) * 0.5f;
-    extrudedMarble.max += (thing + absThing) * 0.5f;
+    extrudedMarble.min += (velocityExpansion - absVelocityExpansion) * 0.5f;
+    extrudedMarble.max += (velocityExpansion + absVelocityExpansion) * 0.5f;
 
     extrudedMarble.min -= dt * 25.0;
     extrudedMarble.max += dt * 25.0;
