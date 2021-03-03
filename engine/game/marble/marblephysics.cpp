@@ -57,14 +57,43 @@ void Marble::clearMarbleAxis()
     mGravityFrame.mulP(Point3F(0.0f, 0.0f, -1.0f), &gWorkGravityDir);
 }
 
-void Marble::applyContactForces(const Move*, bool, Point3D&, const Point3D&, double, Point3D&, Point3D&, float&)
+void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aControl, const Point3D& desiredOmega, F64 timeStep, Point3D& A, Point3D& a, F32& slipAmount)
 {
     // TODO: Implement applyContactForces
 }
 
-void Marble::getMarbleAxis(Point3D&, Point3D&, Point3D&)
+void Marble::getMarbleAxis(Point3D& sideDir, Point3D& motionDir, Point3D& upDir)
 {
-    // TODO: Implement getMarbleAxis
+    if (!gMarbleAxisSet)
+    {
+        MatrixF camMat;
+        mGravityFrame.setMatrix(&camMat);
+
+
+        MatrixF xRot;
+        m_matF_set_euler(Point3F(mMouseY, 0, 0), xRot);
+
+        MatrixF zRot;
+        m_matF_set_euler(Point3F(0, 0, mMouseX), zRot);
+
+        camMat.mul(zRot);
+        camMat.mul(xRot);
+
+        gMarbleMotionDir.x = camMat[1];
+        gMarbleMotionDir.y = camMat[5];
+        gMarbleMotionDir.z = camMat[9];
+
+        mCross(gMarbleMotionDir, -gWorkGravityDir, gMarbleSideDir);
+        m_point3F_normalize(&gMarbleSideDir.x);
+        
+        mCross(-gWorkGravityDir, gMarbleSideDir, gMarbleMotionDir);
+        
+        gMarbleAxisSet = 1;
+    }
+
+    sideDir = gMarbleSideDir;
+    motionDir = gMarbleMotionDir;
+    upDir = -gWorkGravityDir;
 }
 
 const Point3F& Marble::getMotionDir()
@@ -77,18 +106,19 @@ const Point3F& Marble::getMotionDir()
     return gMarbleMotionDir;
 }
 
-bool Marble::computeMoveForces(Point3D&, Point3D&, const Move*)
+bool Marble::computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const Move* move)
 {
     // TODO: Implement computeMoveForces
+
     return false;
 }
 
-void Marble::velocityCancel(bool, bool, bool&, bool&, Vector<PathedInterior*>&)
+void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec)
 {
     // TODO: Implement velocityCancel
 }
 
-Point3D Marble::getExternalForces(const Move*, double)
+Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
 {
     // TODO: Implement getExternalForces
     return Point3D();
