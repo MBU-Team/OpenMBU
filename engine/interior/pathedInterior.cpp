@@ -75,14 +75,25 @@ bool PathedInteriorData::preload(bool server, char errorBuffer[256])
 
 PathedInterior::PathedInterior()
 {
+    // TODO: These are different in MB
     mNetFlags.set(Ghostable);
     mTypeMask = InteriorObjectType;
 
     mCurrentPosition = 0;
     mTargetPosition = 0;
     mPathKey = 0xFFFFFFFF;
-    mStopped = false;
+    mAdvanceTime = 0.0;
+    mStopTime = 1000.0;
     mSustainHandle = 0;
+    mLMHandle = 0xFFFFFFFF;
+
+    mNextPathedInterior = NULL;
+
+    static U32 sNextNetUpdateInit = 0;
+    sNextNetUpdateInit += 5;
+    mNextNetUpdate = sNextNetUpdateInit & 31;
+
+    mBaseTransform = MatrixF(true);
 }
 
 PathedInterior::~PathedInterior()
@@ -91,6 +102,7 @@ PathedInterior::~PathedInterior()
 }
 
 PathedInterior* PathedInterior::mClientPathedInteriors = NULL;
+PathedInterior* PathedInterior::mServerPathedInteriors = NULL;
 //--------------------------------------------------------------------------
 void PathedInterior::initPersistFields()
 {
@@ -127,7 +139,7 @@ bool PathedInterior::onAdd()
     setTransform(mBaseTransform);
 
     if (isClientObject() || gSPMode) {
-        mNextClientPI = mClientPathedInteriors;
+        mNextPathedInterior = mClientPathedInteriors;
         mClientPathedInteriors = this;
         mInterior->prepForRendering(mInteriorRes.getFilePath());
         //      gInteriorLMManager.addInstance(mInterior->getLMHandle(), mLMHandle, NULL, this);
@@ -183,16 +195,16 @@ void PathedInterior::onRemove()
         {
             if (*walk == this)
             {
-                *walk = mNextClientPI;
+                *walk = mNextPathedInterior;
                 break;
             }
-            walk = &((*walk)->mNextClientPI);
+            walk = &((*walk)->mNextPathedInterior);
         }
-        /*      if(bool(mInteriorRes) && mLMHandle != 0xFFFFFFFF)
-              {
-                 if (mInterior->getLMHandle() != 0xFFFFFFFF)
-                    gInteriorLMManager.removeInstance(mInterior->getLMHandle(), mLMHandle);
-              }*/
+        if(bool(mInteriorRes) && mLMHandle != 0xFFFFFFFF)
+        {
+            if (mInterior->getLMHandle() != 0xFFFFFFFF)
+            gInteriorLMManager.removeInstance(mInterior->getLMHandle(), mLMHandle);
+        }
     }
     removeFromScene();
     Parent::onRemove();
@@ -409,10 +421,15 @@ void PathedInterior::processTick(const Move* move)
     }
 }
 
+void PathedInterior::setStopped()
+{
+    mStopTime = getMin(mAdvanceTime, mStopTime);
+}
+
 void PathedInterior::computeNextPathStep(U32 timeDelta)
 {
     S32 timeMs = timeDelta;
-    mStopped = false;
+    //mStopped = false;
 
     if (mCurrentPosition == mTargetPosition)
     {
@@ -496,10 +513,33 @@ Point3F PathedInterior::getVelocity()
     return mCurrentVelocity;
 }
 
+PathedInterior* PathedInterior::getPathedInteriors(NetObject* obj)
+{
+    if (obj->isGhost())
+        return mClientPathedInteriors;
+
+    return mServerPathedInteriors;
+}
+
+void PathedInterior::pushTickState()
+{
+    // TODO: Implement pushTickState
+}
+
+void PathedInterior::popTickState()
+{
+    // TODO: Implement popTickState
+}
+
+void PathedInterior::resetTickState(bool setT)
+{
+    // TODO: Implement resetTickState
+}
+
 void PathedInterior::advance(F64 timeDelta)
 {
-    if (mStopped)
-        return;
+    //if (mStopped)
+    //    return;
 
     F64 timeMs = timeDelta;
     if (mCurrentVelocity.len() == 0)

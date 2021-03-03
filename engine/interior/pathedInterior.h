@@ -52,22 +52,37 @@ public:
         NewPositionMask = Parent::NextFreeMask << 1,
         NextFreeMask = Parent::NextFreeMask << 2,
     };
+
+    struct TickState
+    {
+        F64 pathPosition;
+        Box3F extrudedBox;
+        Point3F velocity;
+        Point3F worldPosition;
+        S32 targetPos;
+        F64 stopTime;
+    };
+
 private:
 
     U32 getPathKey();                            // only used on the server
 
     // Persist fields
 protected:
+    PathedInterior::TickState mSavedState;
     StringTableEntry         mName;
     S32                      mPathIndex;
     Vector<StringTableEntry> mTriggers;
     Point3F                  mOffset;
     Box3F mExtrudedBox;
-    bool mStopped;
+    F64 mAdvanceTime;
+    F64 mStopTime;
+    U32 mNextNetUpdate;
 
     // Loaded resources and fields
 protected:
     static PathedInterior* mClientPathedInteriors;
+    static PathedInterior* mServerPathedInteriors;
 
     AUDIOHANDLE mSustainHandle;
 
@@ -78,6 +93,8 @@ protected:
     Vector<ColorI>             mVertexColorsNormal;
     Vector<ColorI>             mVertexColorsAlarm;
 
+    U32 mLMHandle;
+
     MatrixF                    mBaseTransform;
     Point3F                    mBaseScale;
 
@@ -86,7 +103,8 @@ protected:
     S32                        mTargetPosition;
     Point3F                    mCurrentVelocity;
 
-    PathedInterior* mNextClientPI;
+    PathedInterior* mNextPathedInterior;
+    InteriorInstance* mDummyInst;
 
     // Rendering
 protected:
@@ -104,12 +122,18 @@ public:
     PathedInterior();
     ~PathedInterior();
 
-    PathedInterior* getNext() { return mNextClientPI; }
+    static PathedInterior* getPathedInteriors(NetObject* obj);
+
+    PathedInterior* getNext() { return mNextPathedInterior; }
 
     static PathedInterior* getClientPathedInteriors() { return mClientPathedInteriors; }
 
+    void pushTickState();
+    void popTickState();
+    void resetTickState(bool setT);
+
     void processTick(const Move* move);
-    void setStopped() { mStopped = true; }
+    void setStopped();
     void resolvePathKey();
 
     bool onNewDataBlock(GameBaseData* dptr);
