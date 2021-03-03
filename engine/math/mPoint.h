@@ -275,6 +275,7 @@ public:
 public:
     Point3F();
     Point3F(const Point3F&);
+    Point3F(const Point3D&);
     Point3F(const F32 _x, const F32 _y, const F32 _z);
 
     //-------------------------------------- Non-math mutators and misc functions
@@ -308,6 +309,7 @@ public:
     void normalize(F32 val);
     void convolve(const Point3F&);
     void convolveInverse(const Point3F&);
+    Point3F abs();
 
     //-------------------------------------- Overloaded operators
 public:
@@ -1172,6 +1174,12 @@ inline Point3F::Point3F(const Point3F& _copy)
     //
 }
 
+inline Point3F::Point3F(const Point3D& _copy)
+    : x(_copy.x), y(_copy.y), z(_copy.z)
+{
+    //
+}
+
 
 inline Point3F::Point3F(const F32 _x, const F32 _y, const F32 _z)
     : x(_x), y(_y), z(_z)
@@ -1252,6 +1260,11 @@ inline void Point3F::convolveInverse(const Point3F& c)
     x /= c.x;
     y /= c.y;
     z /= c.z;
+}
+
+inline Point3F Point3F::abs()
+{
+    return Point3F(mFabs(x), mFabs(y), mFabs(z));
 }
 
 inline F32 Point3F::lenSquared() const
