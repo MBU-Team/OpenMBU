@@ -419,8 +419,7 @@ void Marble::resetPlatformsForCamera()
     {
         PathedInterior* pathedInterior = smPathItrVec[i];
 
-        // TODO: Implement PathedInteriors
-        //pathedInterior->popTickState();
+        pathedInterior->popTickState();
         pathedInterior->interpolateTick(backDelta);
     }
 }
@@ -467,8 +466,7 @@ void Marble::setPlatformsForCamera(const Point3F& marblePos, const Point3F& star
 
     F32 delta = gClientProcessList.getLastDelta();
 
-    // TODO: Implement PathedInteriors
-    /*for (PathedInterior* i = PathedInterior::getPathedInteriors(this); ; i = i->mNextPathedInterior)
+    for (PathedInterior* i = PathedInterior::getPathedInteriors(this); ; i = i->getNext())
     {
         if (!i)
             break;
@@ -480,7 +478,7 @@ void Marble::setPlatformsForCamera(const Point3F& marblePos, const Point3F& star
             i->setTransform(i->getRenderTransform());
             smPathItrVec.push_back(i);
         }
-    }*/
+    }
 }
 
 void Marble::getCameraTransform(F32* pos, MatrixF* mat)
