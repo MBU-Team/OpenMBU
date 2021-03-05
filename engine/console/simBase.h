@@ -784,6 +784,8 @@ public:
     void setExpanded(bool exp) { if (exp) mFlags.set(Expanded); else mFlags.clear(Expanded); }
     void setModDynamicFields(bool dyn) { if (dyn) mFlags.set(ModDynamicFields); else mFlags.clear(ModDynamicFields); }
     void setModStaticFields(bool sta) { if (sta) mFlags.set(ModStaticFields); else mFlags.clear(ModStaticFields); }
+    bool canModDynamicFields() { return mFlags.test(ModDynamicFields); }
+    bool canModStaticFields() { return mFlags.test(ModStaticFields); }
 
     /// @}
 

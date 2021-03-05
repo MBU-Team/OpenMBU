@@ -1021,6 +1021,127 @@ ConsoleFunction(eval, const char*, 2, 2, "eval(consoleString)")
     return Con::evaluate(argv[1], false, NULL);
 }
 
+ConsoleFunction(isDefined, bool, 2, 2, "isDefined(variable name [, value if not defined])")
+{
+    if (dStrlen(argv[1]) == 0)
+    {
+        Con::errorf("isDefined() - did you forget to put quotes around the variable name?");
+        return false;
+    }
+
+    StringTableEntry name = StringTable->insert(argv[1]);
+
+    // Deal with <var>.<value>
+    if (dStrchr(name, '.'))
+    {
+        static char scratchBuffer[4096];
+
+        S32 len = dStrlen(name);
+        AssertFatal(len < sizeof(scratchBuffer) - 1, "isDefined() - name too long");
+        dMemcpy(scratchBuffer, name, len + 1);
+
+        char* token = dStrtok(scratchBuffer, ".");
+
+        if (!token || token[0] == '\0')
+            return false;
+
+        StringTableEntry objName = StringTable->insert(token);
+
+        // Attempt to find the object
+        SimObject* obj = Sim::findObject(objName);
+
+        // If we didn't find the object then we can safely
+        // assume that the field variable doesn't exist
+        if (!obj)
+            return false;
+
+        // Get the name of the field
+        token = dStrtok(0, ".\0");
+        if (!token)
+            return false;
+
+        while (token != NULL)
+        {
+            StringTableEntry valName = StringTable->insert(token);
+
+            // Store these so we can restore them after we search for the variable
+            bool saveModStatic = obj->canModStaticFields();
+            bool saveModDyn = obj->canModDynamicFields();
+
+            // Set this so that we can search both static and dynamic fields
+            obj->setModStaticFields(true);
+            obj->setModDynamicFields(true);
+
+            const char* value = obj->getDataField(valName, 0);
+
+            // Restore our mod flags to be safe
+            obj->setModStaticFields(saveModStatic);
+            obj->setModDynamicFields(saveModDyn);
+
+            if (!value)
+            {
+                obj->setDataField(valName, 0, argv[2]);
+
+                return false;
+            }
+            else
+            {
+                // See if we are field on a field
+                token = dStrtok(0, ".\0");
+                if (token)
+                {
+                    // The previous field must be an object
+                    obj = Sim::findObject(value);
+                    if (!obj)
+                        return false;
+                }
+                else
+                {
+                    if (dStrlen(value) > 0)
+                        return true;
+                    else if (argc > 2)
+                        obj->setDataField(valName, 0, argv[2]);
+                }
+            }
+        }
+    }
+    else if (name[0] == '%')
+    {
+        // Look up a local variable
+        if (gEvalState.stack.size())
+        {
+            Dictionary::Entry* ent = gEvalState.stack.last()->lookup(name);
+
+            if (ent)
+                return true;
+            else if (argc > 2)
+                gEvalState.stack.last()->setVariable(name, argv[2]);
+        }
+        else
+            Con::errorf("%s() - no local variable frame.", __FUNCTION__);
+    }
+    else if (name[0] == '$')
+    {
+        // Look up a global value
+        Dictionary::Entry* ent = gEvalState.globalVars.lookup(name);
+
+        if (ent)
+            return true;
+        else if (argc > 2)
+            gEvalState.globalVars.setVariable(name, argv[2]);
+    }
+    else
+    {
+        // Is it an object?
+        if (dStrcmp(argv[1], "0") && dStrcmp(argv[1], "") && (Sim::findObject(argv[1]) != NULL))
+            return true;
+        else if (argc > 2)
+            Con::errorf("%s() - can't assign a value to a variable of the form \"%s\"", __FUNCTION__, argv[1]);
+    }
+
+    return false;
+}
+
 //----------------------------------------------------------------
 
 ConsoleFunction(export, void, 2, 4, "export(searchString [, fileName [,append]])")

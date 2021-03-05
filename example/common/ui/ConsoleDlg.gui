@@ -132,8 +132,13 @@ function ConsoleDlg::onSleep()
 function ConsoleEntry::eval()
 {
    %text = trim(ConsoleEntry.getValue());
+   if( %text $= "" )
+      return;
 
-   if(strpos(%text, "(") == -1)
+   // If it's missing a trailing () and it's not a variable,
+   // append the parentheses.
+
+   if(strpos(%text, "(") == -1 && !isDefined( %text ))
    {
       if(strpos(%text, "=") == -1 && strpos(%text, " ") == -1)
       {
@@ -143,16 +148,45 @@ function ConsoleEntry::eval()
          }
       }
    }
+   
+   // Append a semicolon if need be.
 
    %pos = strlen(%text) - 1;
    if(strpos(%text, ";", %pos) == -1 && strpos(%text, "}") == -1)
    {
       %text = %text @ ";";
    }
-
+   
+   // Turn off warnings for assigning from void
+   // and evaluate the snippet.
+   
+   if( !isDefined( "$Con::warnVoidAssignment" ) )
+      %oldWarnVoidAssignment = true;
+   else
+      %oldWarnVoidAssignment = $Con::warnVoidAssignment;
+   $Con::warnVoidAssignment = false;
+   
    echo("==>" @ %text);
-   eval(%text);
+   if(    !startsWith( %text, "function " )
+       && !startsWith( %text, "datablock " )
+       && !startsWith( %text, "foreach(" )
+       && !startsWith( %text, "foreach$(" )
+       && !startsWith( %text, "if(" )
+       && !startsWith( %text, "while(" )
+       && !startsWith( %text, "for(" )
+       && !startsWith( %text, "switch(" )
+       && !startsWith( %text, "switch$(" ) )
+      eval( "%result = " @ %text );
+   else
+      eval( %text );
+   $Con::warnVoidAssignment = %oldWarnVoidAssignment;
+   
    ConsoleEntry.setValue("");
+   
+   // Echo result.
+   
+   if( %result !$= "" )
+      echo( %result );
 
    // Check for any pending errors to display
    updateConsoleErrorWindow();

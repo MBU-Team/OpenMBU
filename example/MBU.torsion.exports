@@ -1867,6 +1867,8 @@
         <method>            <name>setCursorPos</name>
             <args>Point2I pos</args>
         </method>
+        <method>            <name>setDefaultFirstResponder</name>
+        </method>
         <method>            <name>showCursor</name>
         </method>
     </class>
@@ -1973,6 +1975,9 @@
         </field>
         <field>            <name>Command</name>
             <desc>string Command</desc>
+        </field>
+        <field>            <name>eventControl</name>
+            <desc>SimObjectPtr eventControl</desc>
         </field>
         <field>            <name>Extent</name>
             <desc>Point2I Extent</desc>
@@ -2112,6 +2117,12 @@
         <field>            <name>fontType</name>
             <desc>string fontType</desc>
         </field>
+        <field>            <name>hitArea</name>
+            <desc>intList hitArea</desc>
+        </field>
+        <field>            <name>iconPosition</name>
+            <desc>Point2I iconPosition</desc>
+        </field>
         <field>            <name>justify</name>
             <desc>enumval justify</desc>
         </field>
@@ -2129,6 +2140,9 @@
         </field>
         <field>            <name>returnTab</name>
             <desc>bool returnTab</desc>
+        </field>
+        <field>            <name>rowHeight</name>
+            <desc>int rowHeight</desc>
         </field>
         <field>            <name>soundButtonDown</name>
             <desc>AudioProfile soundButtonDown</desc>
@@ -3110,6 +3124,38 @@ More of a helper function than anything.   If console access to the field list i
             <desc>bool resizeWidth</desc>
         </field>
     </class>
+    <class>        <name>GuiXboxListCtrl</name>
+        <base>GuiControl</base>
+        <method>            <name>addRow</name>
+            <args>text, [data], [addedHeight], [bitmapIndex]</args>
+        </method>
+        <method>            <name>clear</name>
+        </method>
+        <method>            <name>getBottomRow</name>
+        </method>
+        <method>            <name>getRowCount</name>
+        </method>
+        <method>            <name>getRowEnabled</name>
+            <args>idx</args>
+        </method>
+        <method>            <name>getSelectedData</name>
+        </method>
+        <method>            <name>getSelectedIndex</name>
+        </method>
+        <method>            <name>getSelectedText</name>
+        </method>
+        <method>            <name>getTopRow</name>
+        </method>
+        <method>            <name>setRowEnabled</name>
+            <args>idx, enabled</args>
+        </method>
+        <method>            <name>setSelectedIndex</name>
+            <args>selected</args>
+        </method>
+        <field>            <name>rows</name>
+            <desc>string rows</desc>
+        </field>
+    </class>
     <class>        <name>HoverVehicle</name>
         <base>Vehicle</base>
     </class>
@@ -3333,6 +3379,195 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>setDefaultLanguage</name>
             <args>int language</args>
         </method>
+    </class>
+    <class>        <name>Marble</name>
+        <base>ShapeBase</base>
+        <method>            <name>cameraLookAtPt</name>
+            <args>point</args>
+        </method>
+        <method>            <name>clearLastContactPosition</name>
+        </method>
+        <method>            <name>doPowerUp</name>
+            <args>powerup</args>
+        </method>
+        <method>            <name>getBlastEnergy</name>
+        </method>
+        <method>            <name>getFullMarbleTime</name>
+        </method>
+        <method>            <name>getGravityDir</name>
+        </method>
+        <method>            <name>getLastContactPosition</name>
+        </method>
+        <method>            <name>getMarbleBonusTime</name>
+        </method>
+        <method>            <name>getMarbleTime</name>
+        </method>
+        <method>            <name>getPad</name>
+        </method>
+        <method>            <name>getPosition</name>
+        </method>
+        <method>            <name>getPowerUpId</name>
+        </method>
+        <method>            <name>isFrozen</name>
+        </method>
+        <method>            <name>setBlastEnergy</name>
+            <args>energy</args>
+        </method>
+        <method>            <name>setGravityDir</name>
+            <args>gravity, snap</args>
+        </method>
+        <method>            <name>setMarbleBonusTime</name>
+            <args>time</args>
+        </method>
+        <method>            <name>setMarbleTime</name>
+            <args>time</args>
+        </method>
+        <method>            <name>setMode</name>
+            <args>mode</args>
+        </method>
+        <method>            <name>setOOB</name>
+            <args>oob</args>
+        </method>
+        <method>            <name>setPad</name>
+            <args>pad</args>
+        </method>
+        <method>            <name>setPosition</name>
+            <args>transform, mouseY</args>
+        </method>
+        <method>            <name>setPowerUpId</name>
+            <args>id</args>
+        </method>
+        <method>            <name>setUseFullMarbleTime</name>
+            <args>flag</args>
+        </method>
+        <method>            <name>setVelocityRot</name>
+            <args>vel</args>
+        </method>
+        <method>            <name>startCameraCenter</name>
+        </method>
+        <field>            <name>Controllable</name>
+            <desc>bool Controllable</desc>
+        </field>
+    </class>
+    <class>        <name>MarbleData</name>
+        <base>ShapeBaseData</base>
+        <field>            <name>airAcceleration</name>
+            <desc>float airAcceleration</desc>
+        </field>
+        <field>            <name>angularAcceleration</name>
+            <desc>float angularAcceleration</desc>
+        </field>
+        <field>            <name>blastRechargeTime</name>
+            <desc>int blastRechargeTime</desc>
+        </field>
+        <field>            <name>Bounce1</name>
+            <desc>AudioProfile Bounce1</desc>
+        </field>
+        <field>            <name>Bounce2</name>
+            <desc>AudioProfile Bounce2</desc>
+        </field>
+        <field>            <name>Bounce3</name>
+            <desc>AudioProfile Bounce3</desc>
+        </field>
+        <field>            <name>Bounce4</name>
+            <desc>AudioProfile Bounce4</desc>
+        </field>
+        <field>            <name>bounceEmitter</name>
+            <desc>ParticleEmitterData bounceEmitter</desc>
+        </field>
+        <field>            <name>bounceKineticFriction</name>
+            <desc>float bounceKineticFriction</desc>
+        </field>
+        <field>            <name>bounceRestitution</name>
+            <desc>float bounceRestitution</desc>
+        </field>
+        <field>            <name>brakingAcceleration</name>
+            <desc>float brakingAcceleration</desc>
+        </field>
+        <field>            <name>cameraDistance</name>
+            <desc>float cameraDistance</desc>
+        </field>
+        <field>            <name>energyRechargeRate</name>
+            <desc>float energyRechargeRate</desc>
+        </field>
+        <field>            <name>grassEmitter</name>
+            <desc>ParticleEmitterData grassEmitter</desc>
+        </field>
+        <field>            <name>gravity</name>
+            <desc>float gravity</desc>
+        </field>
+        <field>            <name>jumpImpulse</name>
+            <desc>float jumpImpulse</desc>
+        </field>
+        <field>            <name>JumpSound</name>
+            <desc>AudioProfile JumpSound</desc>
+        </field>
+        <field>            <name>kineticFriction</name>
+            <desc>float kineticFriction</desc>
+        </field>
+        <field>            <name>maxDotSlide</name>
+            <desc>float maxDotSlide</desc>
+        </field>
+        <field>            <name>maxForceRadius</name>
+            <desc>float maxForceRadius</desc>
+        </field>
+        <field>            <name>maxNaturalBlastRecharge</name>
+            <desc>int maxNaturalBlastRecharge</desc>
+        </field>
+        <field>            <name>maxRollVelocity</name>
+            <desc>float maxRollVelocity</desc>
+        </field>
+        <field>            <name>MegaBounce1</name>
+            <desc>AudioProfile MegaBounce1</desc>
+        </field>
+        <field>            <name>MegaBounce2</name>
+            <desc>AudioProfile MegaBounce2</desc>
+        </field>
+        <field>            <name>MegaBounce3</name>
+            <desc>AudioProfile MegaBounce3</desc>
+        </field>
+        <field>            <name>MegaBounce4</name>
+            <desc>AudioProfile MegaBounce4</desc>
+        </field>
+        <field>            <name>megaSize</name>
+            <desc>float megaSize</desc>
+        </field>
+        <field>            <name>minBounceSpeed</name>
+            <desc>float minBounceSpeed</desc>
+        </field>
+        <field>            <name>minBounceVel</name>
+            <desc>float minBounceVel</desc>
+        </field>
+        <field>            <name>minTrailSpeed</name>
+            <desc>float minTrailSpeed</desc>
+        </field>
+        <field>            <name>mudEmitter</name>
+            <desc>ParticleEmitterData mudEmitter</desc>
+        </field>
+        <field>            <name>powerUps</name>
+            <desc>GameBaseData powerUps</desc>
+        </field>
+        <field>            <name>RollHardSound</name>
+            <desc>AudioProfile RollHardSound</desc>
+        </field>
+        <field>            <name>RollIceSound</name>
+            <desc>AudioProfile RollIceSound</desc>
+        </field>
+        <field>            <name>RollMegaSound</name>
+            <desc>AudioProfile RollMegaSound</desc>
+        </field>
+        <field>            <name>size</name>
+            <desc>float size</desc>
+        </field>
+        <field>            <name>SlipSound</name>
+            <desc>AudioProfile SlipSound</desc>
+        </field>
+        <field>            <name>staticFriction</name>
+            <desc>float staticFriction</desc>
+        </field>
+        <field>            <name>trailEmitter</name>
+            <desc>ParticleEmitterData trailEmitter</desc>
+        </field>
     </class>
     <class>        <name>Marker</name>
         <base>SceneObject</base>
@@ -4119,6 +4354,57 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>waterBreathSound</name>
             <desc>AudioProfile waterBreathSound</desc>
+        </field>
+    </class>
+    <class>        <name>PowerUpData</name>
+        <base>GameBaseData</base>
+        <field>            <name>activateTime</name>
+            <desc>int activateTime</desc>
+        </field>
+        <field>            <name>airAccel</name>
+            <desc>float airAccel</desc>
+        </field>
+        <field>            <name>blastRecharge</name>
+            <desc>bool blastRecharge</desc>
+        </field>
+        <field>            <name>boostAmount</name>
+            <desc>float boostAmount</desc>
+        </field>
+        <field>            <name>boostDir</name>
+            <desc>Point3F boostDir</desc>
+        </field>
+        <field>            <name>boostMassless</name>
+            <desc>float boostMassless</desc>
+        </field>
+        <field>            <name>bounce</name>
+            <desc>float bounce</desc>
+        </field>
+        <field>            <name>duration</name>
+            <desc>int duration</desc>
+        </field>
+        <field>            <name>emitter</name>
+            <desc>ParticleEmitterData emitter</desc>
+        </field>
+        <field>            <name>gravityMod</name>
+            <desc>float gravityMod</desc>
+        </field>
+        <field>            <name>image</name>
+            <desc>GameBaseData image</desc>
+        </field>
+        <field>            <name>massScale</name>
+            <desc>float massScale</desc>
+        </field>
+        <field>            <name>repulseDist</name>
+            <desc>float repulseDist</desc>
+        </field>
+        <field>            <name>repulseMax</name>
+            <desc>float repulseMax</desc>
+        </field>
+        <field>            <name>sizeScale</name>
+            <desc>float sizeScale</desc>
+        </field>
+        <field>            <name>timeFreeze</name>
+            <desc>int timeFreeze</desc>
         </field>
     </class>
     <class>        <name>Precipitation</name>
@@ -5141,6 +5427,9 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <method>            <name>realFog</name>
             <args> bool show, float max, float min, float speed </args>
+        </method>
+        <method>            <name>setSkyMaterial</name>
+            <args>material</args>
         </method>
         <method>            <name>setWindVelocity</name>
             <args>float x, float y, float z</args>
@@ -6906,6 +7195,8 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     </function>
     <function>        <name>echoInputState</name>
     </function>
+    <function>        <name>enableGamepad</name>
+    </function>
     <function>        <name>enableJoystick</name>
     </function>
     <function>        <name>enableMouse</name>
@@ -7036,6 +7327,8 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>getFileCRC</name>
         <args>filename</args>
     </function>
+    <function>        <name>getGamepadName</name>
+    </function>
     <function>        <name>getJoystickAxes</name>
         <args> instance </args>
     </function>
@@ -7145,6 +7438,9 @@ Sim time is time since the game started.</desc>
     </function>
     <function>        <name>isDebugBuild</name>
         <desc>- Returns true if the script is running in a debug Torque executable</desc>
+    </function>
+    <function>        <name>isDefined</name>
+        <args>variable name [, value if not defined]</args>
     </function>
     <function>        <name>isDemoLaunch</name>
     </function>
