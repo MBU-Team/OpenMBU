@@ -212,7 +212,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
 {
     // TODO: Implement getExternalForces
-    return Point3D();
+    return Point3D(0, 0, 0);
 }
 
 void Marble::advancePhysics(const Move* move, U32 timeDelta)
@@ -277,10 +277,9 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
         bool stoppedPaths;
         velocityCancel(isCentered, 0, bouncedYet, stoppedPaths, smPathItrVec);
-        getExternalForces(move, timeStep);
+        Point3D A = getExternalForces(move, timeStep);
 
         Point3D a(0, 0, 0);
-        Point3D A(0, 0, 0);
         applyContactForces(move, isCentered, aControl, desiredOmega, timeStep, A, a, slipAmount);
 
         mVelocity += A * timeStep;
