@@ -40,6 +40,9 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 {
     // TODO: Implement testMove
 
+    // TEMP: Until properly implemented
+    position += velocity * deltaT;
+
     return false;
 }
 

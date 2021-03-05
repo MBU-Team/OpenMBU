@@ -211,8 +211,26 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 
 Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
 {
-    // TODO: Implement getExternalForces
-    return Point3D(0, 0, 0);
+    if ((mMode & MoveMode) == 0)
+        return mVelocity * -16.0;
+
+    Point3D ret = gWorkGravityDir * mDataBlock->gravity * mPowerUpParams.gravityMod;
+    //Point3D ret(0, 0, 0); // <- to disable gravity when testing
+
+    // TODO: Finish Implementing getExternalForces
+
+    if (mContacts.size() == 0 && (mMode & RestrictXYZMode) == 0)
+    {
+        Point3D sideDir;
+        Point3D motionDir;
+        Point3D upDir;
+        getMarbleAxis(sideDir, motionDir, upDir);
+
+        Point3F movement = sideDir * move->x + motionDir * move->y;
+        ret += movement * mPowerUpParams.airAccel;
+    }
+
+    return ret;
 }
 
 void Marble::advancePhysics(const Move* move, U32 timeDelta)
