@@ -1024,8 +1024,24 @@ void Marble::findRenderPos(F32)
 
 void Marble::advanceTime(F32 dt)
 {
-    // TODO: Implement advanceTime
     Parent::advanceTime(dt);
+
+    // TODO: Finish Implementing advanceTime
+
+    if (mOmega.len() > 0.000001)
+    {
+        Point3D omegaDelta = mOmega * dt;
+
+        if (mEffect.effectTime > 1.0f)
+            omegaDelta *= 1.0f / mEffect.effectTime;
+
+        rotateMatrix(mObjToWorld, omegaDelta);
+
+        Point3F renderPos(mRenderObjToWorld[3], mRenderObjToWorld[7], mRenderObjToWorld[11]);
+
+        dMemcpy(mRenderObjToWorld, mObjToWorld, sizeof(MatrixF));
+        mRenderObjToWorld.setColumn(3, renderPos);
+    }
 }
 
 void Marble::computeNetSmooth(F32 backDelta)
