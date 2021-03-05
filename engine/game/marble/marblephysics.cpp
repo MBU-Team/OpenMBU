@@ -59,7 +59,9 @@ void Marble::clearMarbleAxis()
 
 void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aControl, const Point3D& desiredOmega, F64 timeStep, Point3D& A, Point3D& a, F32& slipAmount)
 {
-    // TODO: Implement applyContactForces
+    // TODO: Finish Implementing applyContactForces
+
+    a += aControl;
 }
 
 void Marble::getMarbleAxis(Point3D& sideDir, Point3D& motionDir, Point3D& upDir)
@@ -108,7 +110,96 @@ const Point3F& Marble::getMotionDir()
 
 bool Marble::computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const Move* move)
 {
-    // TODO: Implement computeMoveForces
+    aControl.set(0, 0, 0);
+    desiredOmega.set(0, 0, 0);
+
+    Point3F invGrav = -gWorkGravityDir;
+
+    Point3D r = invGrav * mRadius;
+
+    Point3D rollVelocity;
+    mCross(mOmega, r, rollVelocity);
+
+    Point3D sideDir;
+    Point3D motionDir;
+    Point3D upDir;
+    getMarbleAxis(sideDir, motionDir, upDir);
+
+    Point2F currentVelocity(mDot(sideDir, rollVelocity), mDot(motionDir, rollVelocity));
+
+    Point2F mv(move->x, move->y);
+    mv *= 1.538461565971375;
+
+    if (mv.len() > 1.0f)
+        m_point2F_normalize_f(mv, 1.0f);
+
+    Point2F desiredVelocity = mv * mDataBlock->maxRollVelocity;
+
+    if (desiredVelocity.x == 0.0f && desiredVelocity.y == 0.0f)
+        return 1;
+
+    // TODO: Clean up gotos
+
+    float cY;
+
+    float desiredYVel = desiredVelocity.y;
+    float currentYVel = currentVelocity.y;
+    float desiredVelX;
+    if (currentVelocity.y > desiredVelocity.y)
+    {
+        cY = currentVelocity.y;
+        if (desiredVelocity.y > 0.0f)
+        {
+LABEL_11:
+            desiredVelX = desiredVelocity.x;
+            desiredVelocity.y = cY;
+            goto LABEL_13;
+        }
+        currentYVel = currentVelocity.y;
+        desiredYVel = desiredVelocity.y;
+    }
+
+    if (currentYVel < desiredYVel)
+    {
+        cY = currentYVel;
+        if (desiredYVel < 0.0f)
+            goto LABEL_11;
+    }
+    desiredVelX = desiredVelocity.x;
+LABEL_13:
+    float cX = currentVelocity.x;
+    float v17;
+    if (currentVelocity.x > desiredVelX)
+    {
+        if (desiredVelX > 0.0f)
+        {
+            v17 = currentVelocity.x;
+LABEL_16:
+            desiredVelocity.x = v17;
+            goto LABEL_20;
+        }
+        cX = currentVelocity.x;
+    }
+
+    if (cX < desiredVelX)
+    {
+        v17 = cX;
+        if (desiredVelX < 0.0f)
+            goto LABEL_16;
+    }
+
+LABEL_20:
+    Point3D newMotionDir = sideDir * desiredVelocity.x + motionDir * desiredVelocity.y;
+
+    Point3D newSideDir;
+    mCross(r, newMotionDir, newSideDir);
+
+    desiredOmega = newSideDir * (1.0f / r.lenSquared());
+    aControl = desiredOmega - mOmega;
+
+    // Prevent increasing marble speed with diagonal movement
+    if (mDataBlock->angularAcceleration < aControl.len())
+        aControl *= mDataBlock->angularAcceleration / aControl.len();
 
     return false;
 }
