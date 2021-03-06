@@ -268,7 +268,7 @@ public:
     void updateRollSound(F32, F32);
     void playBounceSound(Marble::Contact&, F64);
     void setPad(SceneObject* obj);
-    void findRenderPos(F32);
+    void findRenderPos(F32 dt);
     virtual void advanceTime(F32 dt);
     virtual void computeNetSmooth(F32 backDelta);
     void doPowerUp(S32 powerUpId);

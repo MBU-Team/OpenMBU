@@ -1017,7 +1017,7 @@ void Marble::setPad(SceneObject* obj)
         mOnPad = false;
 }
 
-void Marble::findRenderPos(F32)
+void Marble::findRenderPos(F32 dt)
 {
     // TODO: Implement findRenderPos
 }
@@ -1046,7 +1046,13 @@ void Marble::advanceTime(F32 dt)
 
 void Marble::computeNetSmooth(F32 backDelta)
 {
-    // TODO: Implement computeNetSmooth
+    mNetSmoothPos.set(0, 0, 0);
+
+    Point3F oldPos = mLastRenderPos;
+
+    findRenderPos(0.0f);
+
+    mNetSmoothPos = oldPos - mLastRenderPos;
 }
 
 void Marble::doPowerUp(S32 powerUpId)
