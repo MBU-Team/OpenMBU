@@ -1027,6 +1027,24 @@ void Marble::advanceTime(F32 dt)
     Parent::advanceTime(dt);
 
     // TODO: Finish Implementing advanceTime
+    F32 newDt = dt / 0.4f * 2.302585124969482f;
+    F32 smooth = 1.0f / (newDt * (newDt * 0.235f * newDt) + newDt + 1.0f + 0.48f * newDt * newDt);
+    QuatF interp;
+    interp.interpolate(mGravityFrame, mGravityRenderFrame, smooth);
+    interp.normalize();
+    mGravityRenderFrame = interp;
+
+    mNetSmoothPos *= smooth;
+    findRenderPos(dt);
+    mRenderObjToWorld.setColumn(3, mLastRenderPos);
+    setRenderTransform(mRenderObjToWorld);
+
+    if (mDataBlock->powerUps)
+    {
+        // TODO: Finish Implementing advanceTime
+    }
+
+    // TODO: Finish Implementing advanceTime
 
     if (mOmega.len() > 0.000001)
     {
