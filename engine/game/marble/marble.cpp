@@ -1019,7 +1019,78 @@ void Marble::setPad(SceneObject* obj)
 
 void Marble::findRenderPos(F32 dt)
 {
-    // TODO: Implement findRenderPos
+    F32 startTime = 0.0f;
+    F32 dist = 1.0f;
+
+    Point3F posVec = delta.posVec;
+    Point3F dPos = delta.pos;
+    Point3F around = posVec + dPos;
+
+    float outforce = 1.0f - gClientProcessList.getLastDelta();
+
+    if (mMovePathSize != 0)
+    {
+        Point3F* movePath = mMovePath;
+        F32* movePathTime = mMovePathTime;
+
+        // TODO: Cleanup decompile
+        U32 iter = 0;
+        while (*movePathTime <= outforce)
+        {
+            Point3F* mP = movePath;
+            ++movePath;
+            startTime = *movePathTime;
+            around = *mP;
+            ++iter;
+            ++movePathTime;
+            if (iter >= mMovePathSize)
+                goto LABEL_7;
+        }
+
+        dist = mMovePathTime[iter];
+        dPos = mMovePath[iter];
+    }
+LABEL_7:
+
+    F32 diff = (outforce - startTime) / (dist - startTime);
+
+    Point3F f = dPos * diff;
+    diff = 1.0f - diff;
+
+    Point3F pos = diff * around + f;
+
+    if (getControllingClient())
+    {
+        pos += mNetSmoothPos;
+    }
+    else
+    {
+        static bool init = false;
+        static F32 smooth1 = 0.0f;
+        static F32 smooth2 = 0.0f;
+        if (!init)
+        {
+            Con::addVariable("Marble::smooth1", TypeF32, &smooth1);
+            Con::addVariable("Marble::smooth2", TypeF32, &smooth2);
+            init = true;
+        }
+
+        // TODO: Finish Implementing findRenderPos
+    }
+
+    if ((mMode & StoppingMode) != 0 && !Marble::smEndPad.isNull())
+    {
+        // TODO: Finish Implementing findRenderPos
+    }
+    else
+    {
+        if ((mMode & StoppingMode) == 0)
+        {
+            mLastRenderPos = pos;
+            mLastRenderVel = mVelocity;
+        }
+        mEffect.effectTime = 0.0f;
+    }
 }
 
 void Marble::advanceTime(F32 dt)
