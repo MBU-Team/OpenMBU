@@ -291,14 +291,14 @@ public:
     bool computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const Move* move);
     void velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec);
     Point3D getExternalForces(const Move* move, F64 timeStep);
-    void advancePhysics(const Move*, U32);
+    void advancePhysics(const Move* move, U32 timeDelta);
 
     // Marble Collision
     void clearObjectsAndPolys();
     void findObjectsAndPolys(U32 collisionMask, const Box3F& testBox, bool testPIs);
     bool testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs);
-    void findContacts(U32, const Point3D*, const F32*);
-    void computeFirstPlatformIntersect(F64&, Vector<PathedInterior*>&);
+    void findContacts(U32 contactMask, const Point3D* inPos, const F32* inRad);
+    void computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pitrVec);
     void resetObjectsAndPolys(U32 collisionMask, const Box3F& testBox);
 
     // Marble Camera
@@ -324,8 +324,8 @@ private:
     void renderShadowVolumes(SceneState* state);
 
     // Marble Collision
-    bool pointWithinPoly(const ConcretePolyList::Poly&, const Point3F&);
-    bool pointWithinPolyZ(const ConcretePolyList::Poly&, const Point3F&, const Point3F&);
+    bool pointWithinPoly(const ConcretePolyList::Poly& poly, const Point3F& point);
+    bool pointWithinPolyZ(const ConcretePolyList::Poly& poly, const Point3F& point, const Point3F& upDir);
 };
 
 class MarbleData : public ShapeBaseData

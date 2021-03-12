@@ -19,13 +19,13 @@ void Marble::clearObjectsAndPolys()
     // TODO: Implement clearObjectsAndPolys
 }
 
-bool Marble::pointWithinPoly(const ConcretePolyList::Poly&, const Point3F&)
+bool Marble::pointWithinPoly(const ConcretePolyList::Poly& poly, const Point3F& point)
 {
     // TODO: Implement pointWithinPoly
     return false;
 }
 
-bool Marble::pointWithinPolyZ(const ConcretePolyList::Poly&, const Point3F&, const Point3F&)
+bool Marble::pointWithinPolyZ(const ConcretePolyList::Poly& poly, const Point3F& point, const Point3F& upDir)
 {
     // TODO: Implement pointWithinPolyZ
     return false;
@@ -46,12 +46,69 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
     return false;
 }
 
-void Marble::findContacts(U32, const Point3D*, const F32*)
+void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRad)
 {
-    // TODO: Implement findContacts
+    static Vector<Marble::MaterialCollision> materialCollisions;
+    materialCollisions.clear();
+
+    F32 rad;
+    Box3F objBox;
+    if (inRad != NULL && inPos != NULL)
+    {
+        rad = *inRad;
+
+        objBox.min = Point3F(-rad, -rad, -rad);
+        objBox.max = Point3F(rad, rad, rad);
+    } else
+    {
+        // If either is null, both should be null
+        inRad = NULL;
+        inPos = NULL;
+    }
+
+    const Point3D* pos = inPos;
+    if (inPos == NULL)
+        pos = &mPosition;
+
+    if (inRad == NULL)
+    {
+        rad = mRadius;
+        objBox = mObjBox;
+    } else
+    {
+      rad = *inRad;  
+    }
+    
+    if (contactMask != 0)
+    {
+        Box3F extrudedMarble;
+        extrudedMarble.min = objBox.min + *pos - 0.00009999999747378752f;
+        extrudedMarble.max = objBox.max + *pos + 0.00009999999747378752f;
+
+        findObjectsAndPolys(contactMask, extrudedMarble, true);
+    }
+
+    if ((contactMask & PlayerObjectType) != 0)
+    {
+        for (S32 i = 0; i < marbles.size(); i++)
+        {
+            Marble* otherMarble = marbles[i];
+
+            // TODO: Finish Implementing findContacts
+        }
+    }
+    
+    F32 incRad = rad + 0.00009999999747378752f;
+
+    for (S32 i = 0; i < polyList.mPolyList.size(); i++)
+    {
+        ConcretePolyList::Poly poly = polyList.mPolyList[i];
+
+        // TODO: Finish Implementing findContacts
+    }
 }
 
-void Marble::computeFirstPlatformIntersect(F64&, Vector<PathedInterior*>&)
+void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pitrVec)
 {
     // TODO: Implement computeFirstPlatformIntersect
 }
