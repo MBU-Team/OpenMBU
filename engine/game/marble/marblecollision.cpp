@@ -37,6 +37,15 @@ bool Marble::pointWithinPolyZ(const ConcretePolyList::Poly& poly, const Point3F&
 void Marble::findObjectsAndPolys(U32 collisionMask, const Box3F& testBox, bool testPIs)
 {
     // TODO: Implement findObjectsAndPolys
+
+	// TEMP: Temporary implementation - start
+	SimpleQueryList queryList;
+	mContainer->findObjects(testBox, collisionMask, SimpleQueryList::insertionCallback, &queryList);
+	SphereF sphere(mPosition, mRadius);
+	polyList.clear();
+	for (S32 i = 0; i < queryList.mList.size(); i++)
+	    queryList.mList[i]->buildPolyList(&polyList, testBox, sphere);
+	// TEMP: Temporary implementation - end
 }
 
 bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs)
@@ -231,6 +240,6 @@ void Marble::resetObjectsAndPolys(U32 collisionMask, const Box3F& testBox)
     sgResetFindObjects = 1;
     sgCountCalls = 0;
 
-    if (smPathItrVec.empty()))
+    if (smPathItrVec.empty())
         findObjectsAndPolys(collisionMask, testBox, false);
 }
