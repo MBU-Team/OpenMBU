@@ -20,13 +20,13 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
     F64 time = timeStep;
     F64 totalTime = timeStep;
 
-    bool someBool = false;
+    bool moveSuccess = false;
     U32 i = 0;
     for (bool flag = timeStep > 0.0f; flag && i < maxIterations; flag = totalTime > 0.0f)
     {
         if (testMove(velocity, position, time, 0.25, sCameraCollisionMask, true))
         {
-            someBool = true;
+            moveSuccess = true;
 
             F64 normals = mLastContact.normal.x * velocity.x
                       + mLastContact.normal.y * velocity.y
@@ -46,7 +46,7 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
 
     result = position;
 
-    if (totalTime >= 0.000001 || (maxIterations <= 1 && someBool))
+    if (totalTime >= 0.000001 || (maxIterations <= 1 && moveSuccess))
         return false;
 
     return true;

@@ -17,7 +17,9 @@ static U32 sgCountCalls;
 
 void Marble::clearObjectsAndPolys()
 {
-    // TODO: Implement clearObjectsAndPolys
+    sgResetFindObjects = true;
+	sgLastCollisionBox.min.set(0, 0, 0);
+	sgLastCollisionBox.max.set(0, 0, 0);
 }
 
 bool Marble::pointWithinPoly(const ConcretePolyList::Poly& poly, const Point3F& point)
@@ -229,6 +231,6 @@ void Marble::resetObjectsAndPolys(U32 collisionMask, const Box3F& testBox)
     sgResetFindObjects = 1;
     sgCountCalls = 0;
 
-    if (!smPathItrVec.size())
-        findObjectsAndPolys(collisionMask, testBox, 0);
+    if (smPathItrVec.empty()))
+        findObjectsAndPolys(collisionMask, testBox, false);
 }
