@@ -36,16 +36,43 @@ bool Marble::pointWithinPolyZ(const ConcretePolyList::Poly& poly, const Point3F&
 
 void Marble::findObjectsAndPolys(U32 collisionMask, const Box3F& testBox, bool testPIs)
 {
-    // TODO: Implement findObjectsAndPolys
+    if (collisionMask != sgLastCollisionMask || !sgLastCollisionBox.isContained(testBox) || sgResetFindObjects || !smPathItrVec.empty())
+    {
+        ++sgCountCalls;
+		if (sgResetFindObjects || !smPathItrVec.empty())
+		{
+			sgLastCollisionBox.min = testBox.min - 0.5f;
+			sgLastCollisionBox.max = testBox.max + 0.5f;
+		} else
+		{
+			sgLastCollisionBox.min.setMin(testBox.min - 0.5f);
+		    sgLastCollisionBox.max.setMax(testBox.max + 0.5f);
+		}
 
-	// TEMP: Temporary implementation - start
-	SimpleQueryList queryList;
-	mContainer->findObjects(testBox, collisionMask, SimpleQueryList::insertionCallback, &queryList);
-	SphereF sphere(mPosition, mRadius);
-	polyList.clear();
-	for (S32 i = 0; i < queryList.mList.size(); i++)
-	    queryList.mList[i]->buildPolyList(&polyList, testBox, sphere);
-	// TEMP: Temporary implementation - end
+		Point3D pos = (sgLastCollisionBox.max + sgLastCollisionBox.min) * 0.5f;
+		Point3F test = sgLastCollisionBox.max - sgLastCollisionBox.min;
+		SphereF sphere(pos, test.len() * 0.5f);
+		
+		static SimpleQueryList sql;
+		sql.mList.clear();
+		mContainer->findObjects(sgLastCollisionBox, collisionMask, SimpleQueryList::insertionCallback, &sql);
+		polyList.clear();
+		marbles.clear();
+
+		for (S32 i = 0; i < sql.mList.size(); i++)
+		{
+		    SceneObject* obj = sql.mList[i];
+
+		    if ((sql.mList[i]->getTypeMask() & PlayerObjectType) == 0)
+		    {
+				if (testPIs || !dynamic_cast<PathedInterior*>(obj))
+				    obj->buildPolyList(&polyList, sgLastCollisionBox, sphere);
+		    } else if (obj != this)
+		    {
+		        marbles.push_back(reinterpret_cast<Marble*>(obj));
+		    }
+		}
+    }
 }
 
 bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs)
@@ -60,6 +87,8 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 
 void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRad)
 {
+    mContacts.clear();
+
     static Vector<Marble::MaterialCollision> materialCollisions;
     materialCollisions.clear();
 
@@ -81,7 +110,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
     const Point3D* pos = inPos;
     if (inPos == NULL)
         pos = &mPosition;
-
+		
     if (inRad == NULL)
     {
         rad = mRadius;
@@ -94,8 +123,8 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
     if (contactMask != 0)
     {
         Box3F extrudedMarble;
-        extrudedMarble.min = objBox.min + *pos - 0.00009999999747378752f;
-        extrudedMarble.max = objBox.max + *pos + 0.00009999999747378752f;
+        extrudedMarble.min = objBox.min + *pos - 0.0001f;
+        extrudedMarble.max = objBox.max + *pos + 0.0001f;
 
         findObjectsAndPolys(contactMask, extrudedMarble, true);
     }
@@ -114,12 +143,12 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 	{
 		ConcretePolyList::Poly* poly = &polyList.mPolyList[i];
 		PlaneD plane(poly->plane);
-		F64 distance = plane.distToPlane(mPosition);
-		if (mFabs(distance) <= mRadius + 0.00009999999747378752f) {
+		F64 distance = plane.distToPlane(*pos);
+		if (mFabsD(distance) <= (F64)rad + 0.0001) {
 			Point3D lastVertex(polyList.mVertexList[polyList.mIndexList[poly->vertexStart + poly->vertexCount - 1]]);
 
-			Point3D contactVert = plane.project(mPosition);
-			F64 separation = mSqrt(mRadius * mRadius - distance * distance);
+			Point3D contactVert = plane.project(*pos);
+			F64 separation = mSqrtD(rad * rad - distance * distance);
 
 			for (int j = 0; j < poly->vertexCount; j++) {
 				Point3D vertex = polyList.mVertexList[polyList.mIndexList[poly->vertexStart + j]];
@@ -127,7 +156,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 					PlaneD vertPlane(vertex + plane, vertex, lastVertex);
 					F64 vertDistance = vertPlane.distToPlane(contactVert);
 					if (vertDistance < 0.0) {
-						if (vertDistance < -(separation + 0.00009999999747378752))
+						if (vertDistance < -(separation + 0.0001))
 							goto superbreak;
 
 						if (PlaneD(vertPlane + vertex, vertex, vertex + plane).distToPlane(contactVert) >= 0.0) {
@@ -159,9 +188,9 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 			}
 
 			U32 materialId = poly->material;
-			Point3D delta = mPosition - contactVert;
+			Point3D delta = *pos - contactVert;
 			F64 contactDistance = delta.len();
-			if ((double)(mRadius + 0.00009999999747378752) < contactDistance) {
+			if ((F64)rad + 0.0001 < contactDistance) {
 				continue;
 			}
 
