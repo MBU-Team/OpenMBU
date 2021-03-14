@@ -804,6 +804,9 @@ public:
         U32 objectNumber;
         SimTime expireTime;
         VectorF vector;
+#ifdef MARBLE_BLAST
+        const Material *material;
+#endif
     };
     CollisionTimeout* mTimeoutList;
     static CollisionTimeout* sFreeTimeoutList;
@@ -817,11 +820,18 @@ public:
     /// @param   vec   Vector along which collision occured
     virtual void onCollision(ShapeBase* object, VectorF vec);
 
+#ifdef MARBLE_BLAST
+    /// Add a collision to the queue of collisions waiting to be handled @see onCollision
+    /// @param   object    Object collision occurs with
+    /// @param   vec       Vector along which collision occurs
+    /// @param   surfaceId Id of the collided surface
+    void queueCollision(ShapeBase* object, const VectorF& vec, const U32 surfaceId = 0);
+#else
     /// Add a collision to the queue of collisions waiting to be handled @see onCollision
     /// @param   object   Object collision occurs with
     /// @param   vec      Vector along which collision occurs
     void queueCollision(ShapeBase* object, const VectorF& vec);
-
+#endif
     /// @}
 protected:
 

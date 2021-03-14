@@ -291,10 +291,10 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
         bool isCentered = computeMoveForces(aControl, desiredOmega, move);
 
-        findContacts(sContactMask, 0, 0);
+        findContacts(sContactMask, NULL, NULL);
 
         bool stoppedPaths;
-        velocityCancel(isCentered, 0, bouncedYet, stoppedPaths, smPathItrVec);
+        velocityCancel(isCentered, false, bouncedYet, stoppedPaths, smPathItrVec);
         Point3D A = getExternalForces(move, timeStep);
 
         Point3D a(0, 0, 0);
@@ -306,11 +306,11 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
         if ((mMode & RestrictXYZMode) != 0)
             mVelocity.set(0, 0, 0);
 
-        velocityCancel(isCentered, 1, bouncedYet, stoppedPaths, smPathItrVec);
+        velocityCancel(isCentered, true, bouncedYet, stoppedPaths, smPathItrVec);
 
         F64 moveTime = timeStep;
         computeFirstPlatformIntersect(moveTime, smPathItrVec);
-        testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, 0);
+        testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false);
 
         if (!mMovePathSize && timeStep * 0.99 > moveTime && moveTime > 0.001000000047497451)
         {
@@ -333,7 +333,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
             currentTimeStep = moveTime;
         }
 
-        if (this->mContacts.size())
+        if (!mContacts.empty())
             contactTime += currentTimeStep;
 
         timeRemaining -= currentTimeStep;

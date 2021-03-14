@@ -94,6 +94,19 @@ Material::Material()
     dMemset(bumpFilename, 0, sizeof(bumpFilename));
     dMemset(envFilename, 0, sizeof(envFilename));
 
+#ifdef MARBLE_BLAST
+    friction = 1.0f;
+    sound = -1;
+    restitution = 1.0f;
+    force = 0.0f;
+#endif
+
+#ifdef MB_ULTRA
+    softwareMipOffset = 0.0f;
+    noiseTexFileName = NULL;
+    fallback = NULL;
+#endif
+
     hasSetStageData = false;
     mapTo = NULL;
 }
@@ -150,6 +163,18 @@ void Material::initPersistFields()
 
     addField("planarReflection", TypeBool, Offset(planarReflection, Material));
     addField("mapTo", TypeString, Offset(mapTo, Material));
+
+#ifdef MARBLE_BLAST
+    addField("friction", TypeF32, Offset(friction, Material));
+    addField("restitution", TypeF32, Offset(restitution, Material));
+    addField("force", TypeF32, Offset(force, Material));
+    addField("sound", TypeS32, Offset(sound, Material));
+#endif
+
+#ifdef MB_ULTRA
+    addField("softwareMipOffset", TypeF32, Offset(softwareMipOffset, Material));
+    addField("noiseTexFileName", TypeFilename, Offset(noiseTexFileName, Material));
+#endif
 
 }
 

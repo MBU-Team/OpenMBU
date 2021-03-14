@@ -115,6 +115,11 @@ public:
     bool              pixelSpecular[MAX_STAGES];
     bool              vertexSpecular[MAX_STAGES];
 
+#ifdef MB_ULTRA
+    // Fall back in case this material is unsupported on the current GPU
+    Material*         fallback;
+#endif
+
     // yes this should be U32 - we test for 2 or 4...
     U32               exposure[MAX_STAGES];
 
@@ -154,6 +159,17 @@ public:
 
     bool              planarReflection;
 
+#ifdef MARBLE_BLAST
+    float friction;
+    float restitution;
+    float force;
+    int sound;
+#endif
+
+#ifdef MB_ULTRA
+    float softwareMipOffset;
+    const char* noiseTexFileName;
+#endif
 
     const char* mapTo; // map Material to this texture name
 

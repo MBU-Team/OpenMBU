@@ -2752,7 +2752,11 @@ void ShapeBase::buildConvex(const Box3F& box, Convex* convex)
 
 //----------------------------------------------------------------------------
 
+#ifdef MARBLE_BLAST
+void ShapeBase::queueCollision(ShapeBase* obj, const VectorF& vec, const U32 surfaceId)
+#else
 void ShapeBase::queueCollision(ShapeBase* obj, const VectorF& vec)
+#endif
 {
     // Add object to list of collisions.
     SimTime time = Sim::getCurrentTime();
@@ -2760,6 +2764,11 @@ void ShapeBase::queueCollision(ShapeBase* obj, const VectorF& vec)
 
     CollisionTimeout** adr = &mTimeoutList;
     CollisionTimeout* ptr = mTimeoutList;
+
+#ifdef MARBLE_BLAST
+    const Material* mat = obj->getMaterial(surfaceId);
+#endif
+
     while (ptr) {
         if (ptr->objectNumber == num) {
             if (ptr->expireTime < time) {
@@ -2798,6 +2807,9 @@ void ShapeBase::queueCollision(ShapeBase* obj, const VectorF& vec)
     ptr->object = obj;
     ptr->objectNumber = obj->getId();
     ptr->vector = vec;
+#ifdef MARBLE_BLAST
+    ptr->material = mat;
+#endif
     ptr->expireTime = time + CollisionTimeoutValue;
     ptr->next = mTimeoutList;
 

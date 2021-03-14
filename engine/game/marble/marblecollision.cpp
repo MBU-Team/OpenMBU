@@ -5,6 +5,7 @@
 
 #include "marble.h"
 
+#include "materials/material.h"
 #include "math/mathUtils.h"
 
 //----------------------------------------------------------------------------
@@ -98,14 +99,121 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
         }
     }
     
-    F32 incRad = rad + 0.00009999999747378752f;
+	for (int i = 0; i < polyList.mPolyList.size(); i++)
+	{
+		ConcretePolyList::Poly* poly = &polyList.mPolyList[i];
+		PlaneD plane(poly->plane);
+		F64 distance = plane.distToPlane(mPosition);
+		if (mFabs(distance) <= mRadius + 0.00009999999747378752f) {
+			Point3D lastVertex(polyList.mVertexList[polyList.mIndexList[poly->vertexStart + poly->vertexCount - 1]]);
 
-    for (S32 i = 0; i < polyList.mPolyList.size(); i++)
-    {
-        ConcretePolyList::Poly poly = polyList.mPolyList[i];
+			Point3D contactVert = plane.project(mPosition);
+			F64 separation = mSqrt(mRadius * mRadius - distance * distance);
 
-        // TODO: Finish Implementing findContacts
-    }
+			for (int j = 0; j < poly->vertexCount; j++) {
+				Point3D vertex = polyList.mVertexList[polyList.mIndexList[poly->vertexStart + j]];
+				if (vertex != lastVertex) {
+					PlaneD vertPlane(vertex + plane, vertex, lastVertex);
+					F64 vertDistance = vertPlane.distToPlane(contactVert);
+					if (vertDistance < 0.0) {
+						if (vertDistance < -(separation + 0.00009999999747378752))
+							goto superbreak;
+
+						if (PlaneD(vertPlane + vertex, vertex, vertex + plane).distToPlane(contactVert) >= 0.0) {
+							if (PlaneD(lastVertex - vertPlane, lastVertex, lastVertex + plane).distToPlane(contactVert) >= 0.0) {
+								contactVert = vertPlane.project(contactVert);
+								break;
+							}
+							contactVert = lastVertex;
+						}
+						else {
+							contactVert = vertex;
+						}
+					}
+					lastVertex = vertex;
+				}
+			}
+
+			// Todo: Implement getMaterial in ShapeBase, TerrainBlock, and InteriorInstance
+			Material* matProp = poly->object->getMaterial(poly->material);
+
+			PathedInterior* hitPI = dynamic_cast<PathedInterior*>(poly->object);
+
+			Point3D surfaceVelocity;
+			if (hitPI != nullptr) {
+				surfaceVelocity = hitPI->getVelocity();
+			}
+			else {
+				surfaceVelocity = Point3D(0, 0,  0);
+			}
+
+			U32 materialId = poly->material;
+			Point3D delta = mPosition - contactVert;
+			F64 contactDistance = delta.len();
+			if ((double)(mRadius + 0.00009999999747378752) < contactDistance) {
+				continue;
+			}
+
+			Point3D normal(plane.x, plane.y, plane.z);
+			if (contactDistance != 0.0) {
+				normal = delta * (1.0 / contactDistance);
+			}
+			F32 force = 0.0;
+			F32 friction = 1.0;
+			F32 restitution = 1.0;
+			if (matProp != nullptr) {
+				friction = matProp->friction;
+				restitution = matProp->restitution;
+				force = matProp->force;
+			}
+
+			Marble::Contact contact{};
+
+			contact.restitution = restitution;
+			contact.normal = normal;
+			contact.position = contactVert;
+			contact.surfaceVelocity = surfaceVelocity;
+			contact.object = poly->object;
+			contact.contactDistance = contactDistance;
+			contact.friction = friction;
+			contact.force = force;
+			contact.material = materialId;
+
+			mContacts.push_back(contact);
+
+			GameBase* gb = dynamic_cast<GameBase*>(poly->object);
+			U32 objTypeMask = 0;
+			if (gb != nullptr) {
+				objTypeMask = gb->getTypeMask();
+			}
+
+			// 0x800 is the constant used in code
+			if ((objTypeMask & ShapeBaseObjectType) != 0) {
+				U32 netIndex = gb->getNetIndex();
+
+				bool found = false;
+				for (int j = 0; j < materialCollisions.size(); j++) {
+					if (materialCollisions[j].ghostIndex == netIndex && materialCollisions[j].materialId == materialId) {
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
+
+					Marble::MaterialCollision coll{};
+					coll.ghostIndex = netIndex;
+					coll.materialId = materialId;
+					coll.object = NULL;
+					materialCollisions.push_back(coll);
+					Point3F offset(0, 0, 0);
+					queueCollision(reinterpret_cast<ShapeBase*>(gb), offset, materialId);
+				}
+			}
+		}
+	superbreak:
+		(void)0;
+	}
 }
 
 void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pitrVec)
