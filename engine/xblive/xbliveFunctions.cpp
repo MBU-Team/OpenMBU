@@ -2,8 +2,6 @@
 #include "console/console.h"
 #include "console/consoleInternal.h"
 
-#include <Windows.h> // TODO: Move to platform specific code
-
 ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 {
     argc;
@@ -29,47 +27,37 @@ ConsoleFunction(getLanguage, const char*, 1, 1, "()")
     argc;
     char* ret = Con::getReturnBuffer(1024);
 
-    // TODO: Move to platform specific code
-    //LCID id = GetUserDefaultLCID();
-    LANGID id = GetUserDefaultUILanguage();
-
-    U8 lang = (U8)id;
+    LangType lang = Platform::getSystemLanguage();
 
     const char* language;
 
-    // Information obtained from:
-    // https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/70feba9f-294e-491e-b6eb-56532684c37f
-    //
-    // PDF Used (14.0)
-    // https://winprotocoldoc.blob.core.windows.net/productionwindowsarchives/MS-LCID/%5bMS-LCID%5d.pdf
-
     switch (lang)
     {
-        case 0x04: // zh
+        case LANGTYPE_CHINESE:
             language = "chinese";
             break;
-        case 0x07: // de
+        case LANGTYPE_GERMAN:
             language = "german";
             break;
-        case 0x09: // en
+        case LANGTYPE_ENGLISH:
             language = "english";
             break;
-        case 0x0A: // es
+        case LANGTYPE_SPANISH:
             language = "spanish";
             break;
-        case 0x0C: // fr
+        case LANGTYPE_FRENCH:
             language = "french";
             break;
-        case 0x10: // it
+        case LANGTYPE_ITALIAN:
             language = "italian";
             break;
-        case 0x11: // ja
+        case LANGTYPE_JAPANESE:
             language = "japanese";
             break;
-        case 0x12: // ko
+        case LANGTYPE_KOREAN:
             language = "korean";
             break;
-        case 0x16: // pt
+        case LANGTYPE_PORTUGUESE:
             language = "portuguese";
             break;
         default:

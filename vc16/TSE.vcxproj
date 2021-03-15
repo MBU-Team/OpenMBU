@@ -568,7 +568,6 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="..\engine\console\dynamicTypes.cpp" />
-    <ClCompile Include="..\engine\console\extraFunctions.cpp" />
     <ClCompile Include="..\engine\console\scriptObject.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -2552,6 +2551,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\platformWin32\winLanguage.cpp" />
     <ClCompile Include="..\engine\platformWin32\winMath.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3541,6 +3541,7 @@
     <ClCompile Include="..\engine\util\quadTreeTracer.cpp" />
     <ClCompile Include="..\engine\util\rectClipper.cpp" />
     <ClCompile Include="..\engine\util\triBoxCheck.cpp" />
+    <ClCompile Include="..\engine\xblive\xbliveFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\atlas\atlasCollision.h" />

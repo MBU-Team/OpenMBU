@@ -124,6 +124,9 @@
     <Filter Include="Source Files\game\marble">
       <UniqueIdentifier>{20390ce6-5708-4e77-8190-0c11d36837b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\xblive">
+      <UniqueIdentifier>{3c3f4611-be98-451c-a103-e727d56a5b03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\audio\audio.cpp">
@@ -1485,9 +1488,6 @@
     <ClCompile Include="..\engine\lightingSystem\volLight.cc">
       <Filter>Source Files\lightingSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\console\extraFunctions.cpp">
-      <Filter>Source Files\console</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\gfx\bitmapMng.cpp">
       <Filter>Source Files\gfx</Filter>
     </ClCompile>
@@ -1541,6 +1541,12 @@
     </ClCompile>
     <ClCompile Include="..\engine\gui\controls\guiXboxOptionListCtrl.cpp">
       <Filter>Source Files\gui\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\xblive\xbliveFunctions.cpp">
+      <Filter>Source Files\xblive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\platformWin32\winLanguage.cpp">
+      <Filter>Source Files\platformWin32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -287,6 +287,22 @@ enum DriveType
     DRIVETYPE_UNKNOWN = 5
 };
 
+#ifdef XB_LIVE
+enum LangType
+{
+    LANGTYPE_ENGLISH,
+    LANGTYPE_FRENCH,
+    LANGTYPE_SPANISH,
+    LANGTYPE_GERMAN,
+    LANGTYPE_ITALIAN,
+    LANGTYPE_PORTUGUESE,
+    LANGTYPE_JAPANESE,
+    LANGTYPE_CHINESE,
+    LANGTYPE_KOREAN,
+    LANGTYPE_UNSUPPORTED
+};
+#endif
+
 struct Platform
 {
     static void sleep(U32 ms);
@@ -401,6 +417,10 @@ public:
 
     static bool stringToFileTime(const char* string, FileTime* time);
     static bool fileTimeToString(FileTime* time, char* string, U32 strLen);
+
+#ifdef XB_LIVE
+    static LangType getSystemLanguage();
+#endif
 };
 
 
