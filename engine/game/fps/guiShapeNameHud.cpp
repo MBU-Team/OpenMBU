@@ -10,6 +10,11 @@
 #include "game/shapeBase.h"
 #include "game/gameConnection.h"
 
+#ifdef MB_ULTRA
+#include "game/item.h"
+#include "game/marble/marble.h"
+#endif
+
 //----------------------------------------------------------------------------
 /// Displays name & damage above shape objects.
 ///
@@ -36,6 +41,9 @@ class GuiShapeNameHud : public GuiControl {
 
 protected:
     void drawName(Point2I offset, const char* buf, F32 opacity);
+#ifdef MB_ULTRA
+    void renderArrow(ShapeBase* theObject, Point3F shapePos);
+#endif
 
 public:
     GuiShapeNameHud();
@@ -132,12 +140,27 @@ void GuiShapeNameHud::onRender(Point2I, const RectI& updateRect)
     static U32 losMask = AtlasObjectType | TerrainObjectType | InteriorObjectType | ShapeBaseObjectType;
     control->disableCollision();
 
+#ifdef MB_ULTRA
+    S32 hudItemCount = 0;
+#endif
+
     // All ghosted objects are added to the server connection group,
     // so we can find all the shape base objects by iterating through
     // our current connection.
     for (SimSetIterator itr(conn); *itr; ++itr) {
         if ((*itr)->getType() & ShapeBaseObjectType) {
             ShapeBase* shape = static_cast<ShapeBase*>(*itr);
+#ifdef MB_ULTRA
+            Item* item = dynamic_cast<Item*>(shape);
+            if (item && ((ItemData*)(item->getDataBlock()))->addToHUDRadar)
+            {
+                Box3F itemBox = item->getRenderWorldBox();
+                Point3F itemPos = (itemBox.min + itemBox.max) * 0.5f;
+                
+                renderArrow(item, itemPos);
+                hudItemCount++;
+            }
+#endif
             if (shape != control && shape->getShapeName()) {
 
                 // Target pos to test, if it's a player run the LOS to his eye
@@ -202,6 +225,20 @@ void GuiShapeNameHud::onRender(Point2I, const RectI& updateRect)
         }
     }
 
+#ifdef MB_ULTRA
+    if (hudItemCount == 0 && !Marble::smEndPad.isNull())
+    {
+        Marble* marble = dynamic_cast<Marble*>(control);
+        if (marble && (marble->getMode() & Marble::StoppingMode) == 0)
+        {
+            Box3F padBox = Marble::smEndPad->getRenderWorldBox();
+            Point3F padPos = (padBox.min + padBox.max) * 0.5f;
+
+            renderArrow(Marble::smEndPad, padPos);
+        }
+    }
+#endif
+
     // Restore control object collision
     control->enableCollision();
 
@@ -234,3 +271,9 @@ void GuiShapeNameHud::drawName(Point2I offset, const char* name, F32 opacity)
     GFX->clearBitmapModulation();
 }
 
+#ifdef MB_ULTRA
+void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
+{
+    // TODO: Implement GuiShapeNameHud::renderArrow
+}
+#endif
