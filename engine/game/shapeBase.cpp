@@ -2417,8 +2417,7 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex)
             getRenderImageTransform(mountedImageIndex, &mat);
 
 #ifdef MB_ULTRA
-            // Does this even happen? Marble is normally PlayerObjectType | GameBaseHiFiObjectType
-            if (mTypeMask != PlayerObjectType) // TODO: Maybe improve this for our remake?
+            if ((mTypeMask & PlayerObjectType) != 0)
             {
                 Point3F pos(mat[3], mat[7], mat[11]);
                 // Matt: why in the heck did they do it like this...
