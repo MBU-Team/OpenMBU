@@ -249,8 +249,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 			if (gb != nullptr) {
 				objTypeMask = gb->getTypeMask();
 			}
-
-			// 0x800 is the constant used in code
+			
 			if ((objTypeMask & ShapeBaseObjectType) != 0) {
 				U32 netIndex = gb->getNetIndex();
 
