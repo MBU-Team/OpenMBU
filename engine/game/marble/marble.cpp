@@ -456,7 +456,7 @@ void Marble::updatePowerUpParams()
 
 bool Marble::getForce(Point3F& pos, Point3F* force)
 {
-    // TODO: Implement getForce in GameBase and StaticShape
+    // TODO: Implement getForce in StaticShape
 
     // TODO: Implement getForce
     return false;

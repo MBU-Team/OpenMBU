@@ -316,6 +316,15 @@ public:
     /// Returns the velocity of this object.
     virtual Point3F getVelocity() const;
 
+#ifdef MARBLE_BLAST
+    /// Gets the force of this object.
+    /// Returns whether or not a force was applied
+    ///
+    ///  @param   pos   Position of the object to check against
+    ///  @param   force The resulting force
+    virtual bool getForce(Point3F& pos, Point3F* force) { return false; }
+#endif
+
     /// @name Network
     /// @see NetObject, NetConnection
     /// @{

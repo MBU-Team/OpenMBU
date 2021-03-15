@@ -70,6 +70,10 @@ public:
     void setPowered(bool power) { mPowered = power; }
     bool isPowered() { return(mPowered); }
 
+#ifdef MARBLE_BLAST
+    virtual bool getForce(Point3F& pos, Point3F* force);
+#endif
+
     static void initPersistFields();
     void inspectPostApply();
 };

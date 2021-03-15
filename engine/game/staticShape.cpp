@@ -266,6 +266,17 @@ void StaticShape::unpackUpdate(NetConnection* connection, BitStream* bstream)
     }
 }
 
+#ifdef MARBLE_BLAST
+bool StaticShape::getForce(Point3F& pos, Point3F* force)
+{
+    if (mDataBlock != NULL && (mTypeMask & ForceObjectType) != 0 && mPowered)
+    {
+        // TODO: Implement StaticShape::getForce
+    }
+    return false;
+}
+#endif
+
 
 //----------------------------------------------------------------------------
 ConsoleMethod(StaticShape, setPoweredState, void, 3, 3, "(bool isPowered)")
