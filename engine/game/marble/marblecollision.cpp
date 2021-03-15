@@ -135,7 +135,30 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
         {
             Marble* otherMarble = marbles[i];
 
-            // TODO: Finish Implementing findContacts
+			Point3F otherDist = otherMarble->getPosition() - *pos;
+
+			F32 otherRadius = otherMarble->mRadius + rad;
+			if (otherRadius * otherRadius * 1.01f > mDot(otherDist, otherDist))
+			{
+			    Point3F normDist = otherDist;
+				m_point3F_normalize(normDist);
+
+				mContacts.increment();
+				Contact* marbleContact = &mContacts[mContacts.size() - 1];
+
+				memcpy(marbleContact->surfaceVelocity, otherMarble->getVelocityD(), sizeof(marbleContact->surfaceVelocity));
+
+				marbleContact->material = 0;
+				marbleContact->object = otherMarble;
+				marbleContact->position = *pos + normDist;
+				marbleContact->normal = -*pos;
+				marbleContact->contactDistance = rad;
+				marbleContact->friction = 1.0f;
+				marbleContact->restitution = 1.0f;
+				marbleContact->force = 0.0f;
+
+				queueCollision(otherMarble, mVelocity - otherMarble->getVelocity(), 0);
+			}
         }
     }
     
