@@ -95,13 +95,11 @@ ConsoleMethod(GuiXboxListCtrl, getRowCount, S32, 2, 2, "()")
 
 ConsoleMethod(GuiXboxListCtrl, getSelectedText, const char*, 2, 2, "()")
 {
-    // TODO: Might need to do Con::getReturnBuffer
     return object->getSelectedText();
 }
 
 ConsoleMethod(GuiXboxListCtrl, getSelectedData, const char*, 2, 2, "()")
 {
-    // TODO: Might need to do Con::getReturnBuffer
     return object->getSelectedData();
 }
 
