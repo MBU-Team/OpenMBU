@@ -60,6 +60,9 @@ class TSStatic : public SceneObject
 {
     typedef SceneObject Parent;
     friend class TSStaticConvex;
+#ifdef MB_ULTRA
+    friend class Item;
+#endif
 
     static U32 smUniqueIdentifier;
 

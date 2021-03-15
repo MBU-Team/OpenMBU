@@ -12,6 +12,8 @@
 #include "console/consoleTypes.h"
 #include "sim/netConnection.h"
 #include "game/item.h"
+
+#include "tsStatic.h"
 #include "collision/boxConvex.h"
 #include "game/shadow.h"
 #include "collision/earlyOutPolyList.h"
@@ -73,6 +75,17 @@ ItemData::ItemData()
     lightColor.set(1.f, 1.f, 1.f, 1.f);
     lightTime = 1000;
     lightRadius = 10.f;
+
+#ifdef MARBLE_BLAST
+    powerupId = 0;
+#endif
+
+#ifdef MB_ULTRA
+    buddyShapeName = NULL;
+    buddySequence = NULL;
+    addToHUDRadar = false;
+    scaleFactor = 1.0f;
+#endif
 }
 
 static EnumTable::Enums itemLightEnum[] =
@@ -96,11 +109,28 @@ void ItemData::initPersistFields()
     addField("maxVelocity", TypeF32, Offset(maxVelocity, ItemData));
     addField("dynamicType", TypeS32, Offset(dynamicTypeField, ItemData));
 
+#ifdef MB_ULTRA
+    addField("addToHUDRadar", TypeBool, Offset(addToHUDRadar, ItemData));
+#endif
+
     addField("lightType", TypeEnum, Offset(lightType, ItemData), 1, &gItemLightTypeTable);
     addField("lightColor", TypeColorF, Offset(lightColor, ItemData));
     addField("lightTime", TypeS32, Offset(lightTime, ItemData));
     addField("lightRadius", TypeF32, Offset(lightRadius, ItemData));
     addField("lightOnlyStatic", TypeBool, Offset(lightOnlyStatic, ItemData));
+
+#ifdef MB_ULTRA
+    addField("scaleFactor", TypeF32, Offset(scaleFactor, ItemData));
+#endif
+
+#ifdef MARBLE_BLAST
+    addField("powerupId", TypeS32, Offset(powerupId, ItemData));
+#endif
+
+#ifdef MB_ULTRA
+    addField("buddyShapeName", TypeString, Offset(buddyShapeName, ItemData));
+    addField("buddySequence", TypeString, Offset(buddySequence, ItemData));
+#endif
 }
 
 void ItemData::packData(BitStream* stream)
@@ -181,6 +211,16 @@ Item::Item()
     mCollisionObject = 0;
     mCollisionTimeout = 0;
     //   mGenerateShadow = true;
+
+#ifdef MARBLE_BLAST
+    mPermanent = false;
+    mHiddenTimer = 0;
+#endif
+
+#ifdef MB_ULTRA
+    mBuddy = NULL;
+    mBuddyOn = false;
+#endif
 
     mConvex.init(this);
     mWorkingQueryBox.min.set(-1e9, -1e9, -1e9);
@@ -827,6 +867,9 @@ U32 Item::packUpdate(NetConnection* connection, U32 mask, BitStream* stream)
         stream->writeFlag(mCollideable);
         if (stream->writeFlag(getScale() != Point3F(1, 1, 1)))
             mathWrite(*stream, getScale());
+
+        stream->writeFlag(mPermanent);
+        stream->writeFlag(mBuddyOn);
     }
     if (mask & ThrowSrcMask && mCollisionObject) {
         S32 gIndex = connection->getGhostIndex(mCollisionObject);
@@ -865,6 +908,9 @@ void Item::unpackUpdate(NetConnection* connection, BitStream* stream)
             mathRead(*stream, &mObjScale);
         else
             mObjScale.set(1, 1, 1);
+
+        mPermanent = stream->readFlag();
+        mBuddyOn = stream->readFlag();
     }
     if (stream->readFlag()) {
         S32 gIndex = stream->readInt(10);
@@ -930,6 +976,34 @@ void Item::unpackUpdate(NetConnection* connection, BitStream* stream)
         }
     }
     Parent::setTransform(mat);
+
+    if (!mBuddy.isNull())
+        mBuddy->setTransform(mat);
+}
+
+
+void Item::writePacketData(GameConnection* conn, BitStream* stream)
+{
+    Parent::writePacketData(conn, stream);
+    stream->writeFlag(mHidden);
+    stream->writeRangedU32(mHiddenTimer, 0, 62);
+}
+
+void Item::readPacketData(GameConnection* conn, BitStream* stream)
+{
+    Parent::readPacketData(conn, stream);
+    setHidden(stream->readFlag());
+    mHiddenTimer = stream->readRangedU32(0, 62);
+}
+
+void Item::setHidden(bool hidden)
+{
+    if (hidden && mHidden)
+        mHiddenTimer = 0;
+    if (!mBuddy.isNull())
+        mBuddy->setHidden(hidden);
+
+    Parent::setHidden(hidden);
 }
 
 ConsoleMethod(Item, isStatic, bool, 2, 2, "()"
@@ -996,6 +1070,10 @@ void Item::initPersistFields()
     addField("static", TypeBool, Offset(mStatic, Item));
     addField("rotate", TypeBool, Offset(mRotate, Item));
     addField("rotate2", TypeBool, Offset(mRotate2, Item));
+
+#ifdef MARBLE_BLAST
+    addField("permanent", TypeBool, Offset(mPermanent, Item));
+#endif
     endGroup("Misc");
 }
 

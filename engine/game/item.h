@@ -15,6 +15,8 @@
 
 //----------------------------------------------------------------------------
 
+class TSStatic;
+
 struct ItemData : public ShapeBaseData {
     typedef ShapeBaseData Parent;
 
@@ -25,15 +27,31 @@ struct ItemData : public ShapeBaseData {
     F32  gravityMod;
     F32  maxVelocity;
 
+#ifdef MB_ULTRA
+    bool addToHUDRadar;
+#endif
+
     S32 dynamicTypeField;
 
     StringTableEntry pickUpName;
+
+#ifdef MARBLE_BLAST
+    S32 powerupId;
+#endif
+#ifdef MB_ULTRA
+    StringTableEntry buddyShapeName;
+    StringTableEntry buddySequence;
+#endif
 
     bool        lightOnlyStatic;
     S32         lightType;
     ColorF      lightColor;
     S32         lightTime;
     F32         lightRadius;
+
+#ifdef MB_ULTRA
+    F32 scaleFactor;
+#endif
 
     ItemData();
     DECLARE_CONOBJECT(ItemData);
@@ -75,6 +93,11 @@ class Item : public ShapeBase
     bool mRotate;
     bool mRotate2;
 
+#ifdef MARBLE_BLAST
+    bool mPermanent;
+    unsigned int mHiddenTimer;
+#endif
+
     //
     VectorF mVelocity;
     bool mAtRest;
@@ -86,6 +109,11 @@ class Item : public ShapeBase
 
     ShapeBase* mCollisionObject;
     U32 mCollisionTimeout;
+
+#ifdef MB_ULTRA
+    SimObjectPtr<TSStatic> mBuddy;
+    bool mBuddyOn;
+#endif
 
 public:
 
@@ -151,6 +179,11 @@ public:
 
     U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
     void unpackUpdate(NetConnection* conn, BitStream* stream);
+    
+    virtual void writePacketData(GameConnection* conn, BitStream* stream);
+    virtual void readPacketData(GameConnection* conn, BitStream* stream);
+
+    virtual void setHidden(bool hidden);
 };
 
 #endif
