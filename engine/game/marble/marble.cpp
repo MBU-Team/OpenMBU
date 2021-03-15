@@ -422,14 +422,34 @@ void Marble::updatePowerUpParams()
 
     if (mDataBlock->powerUps)
     {
-        // TODO: Implement updatePowerUpParams
-    }
+        for (S32 i = 0; i < PowerUpData::MaxPowerUps; i++)
+        {
+            if (mPowerUpState[i].active)
+            {
+                mPowerUpParams.airAccel *= mDataBlock->powerUps->airAccel[i];
+                mPowerUpParams.gravityMod *= mDataBlock->powerUps->gravityMod[i];
+                if (mDataBlock->powerUps->bounce[i] > 0.0f)
+                    mPowerUpParams.bounce = mDataBlock->powerUps->bounce[i];
 
-    // TODO: Missing ForceObjectType for this
-    /*if (mPowerUpParams.repulseDist <= 0.0f)
+                F32 modRepulse;
+                if (i == 0)
+                    modRepulse = getBlastPercent(); // PowerUp 0 is always blast
+                else
+                    modRepulse = 1.0f;
+                    
+                mPowerUpParams.repulseDist = getMax(mPowerUpParams.repulseDist,
+                                                    mDataBlock->powerUps->repulseDist[i] * modRepulse);
+                mPowerUpParams.repulseMax += mDataBlock->powerUps->repulseMax[i] * modRepulse;
+                mPowerUpParams.massScale *= mDataBlock->powerUps->massScale[i];
+                mPowerUpParams.sizeScale *= mDataBlock->powerUps->sizeScale[i];
+            }
+        }
+    }
+    
+    if (mPowerUpParams.repulseDist <= 0.0f)
         mTypeMask &= ~ForceObjectType;
     else
-        mTypeMask |= ForceObjectType;*/
+        mTypeMask |= ForceObjectType;
 
     updateMass();
 }
@@ -464,9 +484,8 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
     if (stream->writeFlag((mask & PowerUpMask) != 0))
     {
         stream->writeRangedU32(mPowerUpId, 0, PowerUpData::MaxPowerUps - 1);
-
-        S32 i;
-        for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+        
+        for (S32 i = 0; i < PowerUpData::MaxPowerUps; i++)
         {
             if (stream->writeFlag(mPowerUpState[i].active))
             {
@@ -557,9 +576,8 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
     if (stream->readFlag())
     {
         mPowerUpId = stream->readRangedU32(0, PowerUpData::MaxPowerUps - 1);
-
-        S32 i;
-        for (i = 0; i < PowerUpData::MaxPowerUps; i++)
+        
+        for (S32 i = 0; i < PowerUpData::MaxPowerUps; i++)
         {
             mPowerUpState[i].active = stream->readFlag();
             if (mPowerUpState[i].active)

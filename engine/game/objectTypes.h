@@ -69,7 +69,12 @@ enum SimObjectTypes
     DamagableItemObjectType = BIT(27),
     /// @}
 
-    ShadowCasterObjectType = BIT(28)
+    ShadowCasterObjectType = BIT(28),
+
+#ifdef MARBLE_BLAST
+    ForceObjectType = BIT(29),
+    CastShadowOnShape = BIT(30),
+#endif
 };
 
 #define STATIC_COLLISION_MASK   (   AtlasObjectType    | TerrainObjectType |  \
