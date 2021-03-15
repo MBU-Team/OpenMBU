@@ -28,6 +28,9 @@ struct TriggerData : public GameBaseData {
 
 public:
     S32  tickPeriodMS;
+#ifdef MB_ULTRA
+    bool marbleGravityCheck;
+#endif
 
     TriggerData();
     DECLARE_CONOBJECT(TriggerData);

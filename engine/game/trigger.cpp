@@ -14,6 +14,10 @@
 
 #include "game/trigger.h"
 
+#ifdef MB_ULTRA
+#include "game/marble/marble.h"
+#endif
+
 //-----------------------------------------------------------------------------
 
 ConsoleMethod(TriggerData, onEnterTrigger, void, 4, 4, "( Trigger t, SimObject intruder)")
@@ -75,6 +79,9 @@ IMPLEMENT_CO_DATABLOCK_V1(TriggerData);
 TriggerData::TriggerData()
 {
     tickPeriodMS = 100;
+#ifdef MB_ULTRA
+    marbleGravityCheck = false;
+#endif
 }
 
 bool TriggerData::onAdd()
@@ -90,6 +97,9 @@ void TriggerData::initPersistFields()
     Parent::initPersistFields();
 
     addField("tickPeriodMS", TypeS32, Offset(tickPeriodMS, TriggerData));
+#ifdef MB_ULTRA
+    addField("marbleGravityCheck", TypeBool, Offset(marbleGravityCheck, TriggerData));
+#endif
 }
 
 
@@ -98,12 +108,18 @@ void TriggerData::packData(BitStream* stream)
 {
     Parent::packData(stream);
     stream->write(tickPeriodMS);
+#ifdef MB_ULTRA
+    stream->writeFlag(marbleGravityCheck);
+#endif
 }
 
 void TriggerData::unpackData(BitStream* stream)
 {
     Parent::unpackData(stream);
     stream->read(&tickPeriodMS);
+#ifdef MB_ULTRA
+    marbleGravityCheck = stream->readFlag();
+#endif
 }
 
 
@@ -469,9 +485,35 @@ void Trigger::setTriggerPolyhedron(const Polyhedron& rPolyhedron)
 
 bool Trigger::testObject(GameBase* enter)
 {
-    if (mTriggerPolyhedron.pointList.size() == 0)
+    if (mTriggerPolyhedron.pointList.empty())
         return false;
 
+#ifdef MARBLE_BLAST
+    Box3F wbox = enter->getWorldBox();
+#ifdef MB_ULTRA
+    if (mDataBlock->marbleGravityCheck && (enter->getTypeMask() & PlayerObjectType) != 0)
+    {
+        Marble* marble = (Marble*)enter;
+        Point3F result;
+
+        Point3F gravityDir = marble->getGravityDir(&result);
+
+        Point3F up = -gravityDir;
+        Point3F extents = mWorldBox.max + mWorldBox.min * 0.5f;
+        Point3F enterExtents = wbox.max + wbox.min * 0.5f;
+        Point3F diffExtents = enterExtents - extents;
+
+        F32 upAmount = mDot(up, diffExtents);
+        if (upAmount > 0.0f)
+        {
+            Point3F upVal = up * upAmount;
+            wbox.min -= upVal;
+            wbox.max -= upVal;
+        }
+    }
+#endif
+    return mWorldBox.isOverlapped(wbox);
+#else
     mClippedList.clear();
 
     SphereF sphere;
@@ -481,6 +523,7 @@ bool Trigger::testObject(GameBase* enter)
 
     enter->buildPolyList(&mClippedList, mWorldBox, sphere);
     return mClippedList.isEmpty() == false;
+#endif
 }
 
 

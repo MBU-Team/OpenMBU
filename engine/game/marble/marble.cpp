@@ -9,6 +9,7 @@
 #include "audio/audioDataBlock.h"
 #include "game/fx/particleEmitter.h"
 #include "game/gameProcess.h"
+#include "materials/matInstance.h"
 
 //----------------------------------------------------------------------------
 
@@ -213,6 +214,11 @@ S32 Marble::getPowerUpId()
 const QuatF& Marble::getGravityFrame()
 {
     return mGravityFrame;
+}
+
+const Point3F& Marble::getGravityDir(Point3F* result)
+{
+    return mGravityFrame.mulP(Point3F(0.0f, 0.0f, -1.0f), result);
 }
 
 U32 Marble::getMaxNaturalBlastEnergy()
