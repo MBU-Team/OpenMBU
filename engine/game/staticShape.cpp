@@ -35,7 +35,30 @@ StaticShapeData::StaticShapeData()
     genericShadowLevel = StaticShape_GenericShadowLevel;
     noShadowLevel = StaticShape_NoShadowLevel;
     noIndividualDamage = false;
+
+#ifdef MARBLE_BLAST
+    scopeAlways = false;
+
+    for (S32 i = 0; i < MAX_FORCE_TYPES; i++)
+    {
+        forceType[i] = NoForce;
+        forceRadius[i] = 1.0f;
+        forceStrength[i] = 1.0f;
+        forceArc[i] = 0.7f;
+        forceNode[i] = 0;
+        forceVector[i].set(0.0f, 0.0f, 0.0f);
+    }
+#endif
 }
+
+static EnumTable::Enums enumForceStates[] =
+{
+   { StaticShapeData::ForceType::NoForce,        "NoForce"   },
+   { StaticShapeData::ForceType::ForceSpherical, "Spherical" },
+   { StaticShapeData::ForceType::ForceField,     "Field"     },
+   { StaticShapeData::ForceType::ForceCone,      "Cone"      }
+};
+static EnumTable EnumForceState(4, &enumForceStates[0]);
 
 void StaticShapeData::initPersistFields()
 {
@@ -43,6 +66,17 @@ void StaticShapeData::initPersistFields()
 
     addField("noIndividualDamage", TypeBool, Offset(noIndividualDamage, StaticShapeData));
     addField("dynamicType", TypeS32, Offset(dynamicTypeField, StaticShapeData));
+
+#ifdef MARBLE_BLAST
+    addField("scopeAlways", TypeBool, Offset(scopeAlways, StaticShapeData));
+
+    addField("forceType", TypeEnum, Offset(forceType, StaticShapeData), MAX_FORCE_TYPES, &EnumForceState);
+    addField("forceNode", TypeS32, Offset(forceNode, StaticShapeData), MAX_FORCE_TYPES);
+    addField("forceVector", TypePoint3F, Offset(forceVector, StaticShapeData), MAX_FORCE_TYPES);
+    addField("forceRadius", TypeF32, Offset(forceRadius, StaticShapeData), MAX_FORCE_TYPES);
+    addField("forceStrength", TypeF32, Offset(forceStrength, StaticShapeData), MAX_FORCE_TYPES);
+    addField("forceArc", TypeF32, Offset(forceArc, StaticShapeData), MAX_FORCE_TYPES);
+#endif
 }
 
 void StaticShapeData::packData(BitStream* stream)
@@ -50,6 +84,19 @@ void StaticShapeData::packData(BitStream* stream)
     Parent::packData(stream);
     stream->writeFlag(noIndividualDamage);
     stream->write(dynamicTypeField);
+
+    for (S32 i = 0; i < MAX_FORCE_TYPES; i++)
+    {
+        if (!stream->writeFlag(forceType[i] != NoForce))
+            continue;
+
+        stream->writeInt(forceType[i], 3);
+        stream->writeInt(forceNode[i], 8);
+        mathWrite(*stream, forceVector[i]);
+        stream->write(forceRadius[i]);
+        stream->write(forceStrength[i]);
+        stream->write(forceArc[i]);
+    }
 }
 
 void StaticShapeData::unpackData(BitStream* stream)
@@ -57,6 +104,19 @@ void StaticShapeData::unpackData(BitStream* stream)
     Parent::unpackData(stream);
     noIndividualDamage = stream->readFlag();
     stream->read(&dynamicTypeField);
+
+    for (S32 i = 0; i < MAX_FORCE_TYPES; i++)
+    {
+        if (!stream->readFlag())
+            continue;
+
+        forceType[i] = (ForceType)stream->readInt(3);
+        forceNode[i] = stream->readInt(8);
+        mathRead(*stream, &forceVector[i]);
+        stream->read(&forceRadius[i]);
+        stream->read(&forceStrength[i]);
+        stream->read(&forceArc[i]);
+    }
 }
 
 
@@ -112,7 +172,13 @@ bool StaticShape::onAdd()
     addToScene();
 
     if (isServerObject())
+    {
+#ifdef MARBLE_BLAST
+        if (mDataBlock->scopeAlways)
+            setScopeAlways();
+#endif
         scriptOnAdd();
+    }
     return true;
 }
 
@@ -121,6 +187,17 @@ bool StaticShape::onNewDataBlock(GameBaseData* dptr)
     mDataBlock = dynamic_cast<StaticShapeData*>(dptr);
     if (!mDataBlock || !Parent::onNewDataBlock(dptr))
         return false;
+
+#ifdef MARBLE_BLAST
+    for (S32 i = 0; i < StaticShapeData::MAX_FORCE_TYPES; i++)
+    {
+        if (mDataBlock->forceType[i] != StaticShapeData::NoForce)
+        {
+            mTypeMask |= ForceObjectType;
+            break;
+        }
+    }
+#endif
 
     scriptOnNewDataBlock();
     return true;

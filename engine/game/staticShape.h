@@ -23,6 +23,27 @@ public:
     bool  isShielded;
     F32   energyPerDamagePoint;
 
+#ifdef MARBLE_BLAST
+    bool scopeAlways;
+
+    enum ForceType
+    {
+        NoForce = 0,
+        ForceSpherical = 1,
+        ForceField = 2,
+        ForceCone = 3,
+        MAX_FORCE_TYPES
+    };
+
+    ForceType forceType[4];
+    S32 forceNode[4];
+    Point3F forceVector[4];
+    F32 forceRadius[4];
+    F32 forceStrength[4];
+    F32 forceArc[4];
+
+#endif
+
     //
     DECLARE_CONOBJECT(StaticShapeData);
     static void initPersistFields();
