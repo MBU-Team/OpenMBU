@@ -77,10 +77,71 @@ void Marble::findObjectsAndPolys(U32 collisionMask, const Box3F& testBox, bool t
 
 bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radius, U32 collisionMask, bool testPIs)
 {
-    // TODO: Implement testMove
+	F64 velLen = velocity.len();
+    if (velocity.len() < 0.001)
+	    return false;
 
-    // TEMP: Until properly implemented
-    position += velocity * deltaT;
+	Point3D velocityDir = velocity * (1.0 / velLen);
+
+	Point3D deltaVelocity = velocity * deltaT;
+	Point3D finalPosition = position + deltaVelocity;
+
+	// If there is a collision mask
+	if (collisionMask != 0)
+	{
+		// TODO: Finish Implementing testMove
+
+		if (deltaVelocity.x >= 0.0)
+		{
+			// TODO: Finish Implementing testMove
+		} else
+		{
+			// TODO: Finish Implementing testMove
+		}
+
+		if (deltaVelocity.y >= 0.0)
+		{
+			// TODO: Finish Implementing testMove
+		}
+		else
+		{
+			// TODO: Finish Implementing testMove
+		}
+
+		if (deltaVelocity.z >= 0.0)
+		{
+			// TODO: Finish Implementing testMove
+		}
+		else
+		{
+			// TODO: Finish Implementing testMove
+		}
+
+		// TODO: Finish Implementing testMove
+	}
+	
+	F64 finalT = deltaT;
+	F64 marbleCollisionTime = finalT;
+	Point3F marbleCollisionNormal(0.0f, 0.0f, 1.0f);
+
+	// Marble on Marble collision
+	if ((collisionMask & PlayerObjectType) != 0)
+	{
+		// TODO: Finish Implementing testMove
+	}
+
+	S32 iter = 0;
+	// Marble on Platform collision
+	if (!polyList.mPolyList.empty())
+	{
+		// TODO: Finish Implementing testMove
+	}
+
+	// TODO: Finish Implementing testMove
+	
+    position = finalPosition;
+
+	// TODO: Finish Implementing testMove
 
     return false;
 }
