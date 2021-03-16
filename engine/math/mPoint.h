@@ -399,12 +399,18 @@ public:
     // Arithmetic w/ other points
     Point3D  operator+(const Point3D&) const;
     Point3D  operator-(const Point3D&) const;
+    Point3D  operator*(const Point3D&) const;
     Point3D& operator+=(const Point3D&);
     Point3D& operator-=(const Point3D&);
+    Point3D& operator*=(const Point3D&);
 
     // Arithmetic w/ scalars
+    Point3D  operator+(const F32) const;
+    Point3D  operator-(const F32) const;
     Point3D  operator*(const F64) const;
     Point3D  operator/(const F64) const;
+    Point3D& operator+=(const F32);
+    Point3D& operator-=(const F32);
     Point3D& operator*=(const F64);
     Point3D& operator/=(const F64);
 
@@ -1325,7 +1331,7 @@ inline bool Point3F::operator!=(const Point3F& _test) const
 
 inline Point3F Point3F::operator+(const F32 _add) const
 {
-    return Point3F(x * _add, y * _add, z * _add);
+    return Point3F(x + _add, y + _add, z + _add);
 }
 
 inline Point3F Point3F::operator+(const Point3F& _add) const
@@ -1335,7 +1341,7 @@ inline Point3F Point3F::operator+(const Point3F& _add) const
 
 inline Point3F Point3F::operator-(const F32 _rSub) const
 {
-    return Point3F(x * _rSub, y * _rSub, z * _rSub);
+    return Point3F(x - _rSub, y - _rSub, z - _rSub);
 }
 
 inline Point3F Point3F::operator-(const Point3F& _rSub) const
@@ -1585,12 +1591,29 @@ inline Point3D Point3D::operator-(const Point3D& _rSub) const
     return Point3D(x - _rSub.x, y - _rSub.y, z - _rSub.z);
 }
 
+inline Point3D& Point3D::operator+=(const F32 _add)
+{
+    x += _add;
+    y += _add;
+    z += _add;
+
+    return *this;
+}
 
 inline Point3D& Point3D::operator+=(const Point3D& _add)
 {
     x += _add.x;
     y += _add.y;
     z += _add.z;
+
+    return *this;
+}
+
+inline Point3D& Point3D::operator-=(const F32 _rSub)
+{
+    x -= _rSub;
+    y -= _rSub;
+    z -= _rSub;
 
     return *this;
 }
@@ -1605,10 +1628,32 @@ inline Point3D& Point3D::operator-=(const Point3D& _rSub)
     return *this;
 }
 
+inline Point3D& Point3D::operator*=(const Point3D& _vec)
+{
+    x *= _vec.x;
+    y *= _vec.y;
+    z *= _vec.z;
+    return *this;
+}
+
+inline Point3D Point3D::operator+(const F32 _add) const
+{
+    return Point3D(x + _add, y + _add, z + _add);
+}
+
+inline Point3D Point3D::operator-(const F32 _add) const
+{
+    return Point3D(x - _add, y - _add, z - _add);
+}
 
 inline Point3D Point3D::operator*(const F64 _mul) const
 {
     return Point3D(x * _mul, y * _mul, z * _mul);
+}
+
+inline Point3D Point3D::operator*(const Point3D& _vec) const
+{
+    return Point3D(x * _vec.x, y * _vec.y, z * _vec.z);
 }
 
 
