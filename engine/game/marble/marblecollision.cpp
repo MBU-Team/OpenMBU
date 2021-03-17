@@ -89,61 +89,350 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 	// If there is a collision mask
 	if (collisionMask != 0)
 	{
-		// TODO: Finish Implementing testMove
+        Box3F box(mObjBox.min + position - 0.5f, mObjBox.max + position + 0.5f);
 
 		if (deltaVelocity.x >= 0.0)
-		{
-			// TODO: Finish Implementing testMove
-		} else
-		{
-			// TODO: Finish Implementing testMove
-		}
+            box.max.x += deltaVelocity.x;
+		else
+            box.min.x += deltaVelocity.x;
 
 		if (deltaVelocity.y >= 0.0)
-		{
-			// TODO: Finish Implementing testMove
-		}
+            box.max.y += deltaVelocity.y;
 		else
-		{
-			// TODO: Finish Implementing testMove
-		}
+            box.min.y += deltaVelocity.y;
 
 		if (deltaVelocity.z >= 0.0)
-		{
-			// TODO: Finish Implementing testMove
-		}
+			box.max.z += deltaVelocity.z;
 		else
-		{
-			// TODO: Finish Implementing testMove
-		}
+            box.min.z += deltaVelocity.z;
 
-		// TODO: Finish Implementing testMove
+        findObjectsAndPolys(collisionMask, box, testPIs);
 	}
 	
 	F64 finalT = deltaT;
 	F64 marbleCollisionTime = finalT;
 	Point3F marbleCollisionNormal(0.0f, 0.0f, 1.0f);
 
+    Point3D lastContactPos;
+
+    ConcretePolyList::Poly* contactPoly;
+
 	// Marble on Marble collision
 	if ((collisionMask & PlayerObjectType) != 0)
 	{
-		// TODO: Finish Implementing testMove
+        Point3F nextPos = position + deltaVelocity;
+        
+        for (S32 i = 0; i < marbles.size(); i++)
+        {
+            Marble* other = marbles[i];
+
+            Point3F otherPos = other->getPosition();
+
+            F32 time;
+            if (MathUtils::capsuleSphereNearestOverlap(position, nextPos, mRadius, otherPos, other->mRadius, time));
+            {
+                time *= deltaT;
+
+                if (time >= finalT)
+                {
+                    Point3D vel = finalPosition - otherPos;
+                    m_point3D_normalize(vel);
+
+                    Point3D velD = other->getVelocityD();
+                    F64 newVelLen = (mVelocity.x - velD.x) * vel.x
+                                  + (mVelocity.y - velD.y) * vel.y
+                                  + (mVelocity.z - velD.z) * vel.z;
+
+                    if (newVelLen < 0.0)
+                    {
+                        finalT = time;
+                        marbleCollisionTime = time;
+
+                        Point3F posDiff = (nextPos - position) * time;
+                        Point3F p = posDiff + position;
+                        finalPosition = p;
+                        marbleCollisionNormal = p - otherPos;
+                        m_point3F_normalize(marbleCollisionNormal);
+
+                        contactPoly = NULL;
+
+                        lastContactPos = p - marbleCollisionNormal * mRadius;
+                    }
+                } 
+            }  
+        }
 	}
 
 	S32 iter = 0;
 	// Marble on Platform collision
 	if (!polyList.mPolyList.empty())
 	{
-		// TODO: Finish Implementing testMove
-	}
+        ConcretePolyList::Poly* poly;
+        S32 index = 0;
+        while(true)
+        {
+            poly = &polyList.mPolyList[index];
 
-	// TODO: Finish Implementing testMove
-	
+            PlaneD plane = poly->plane;
+
+            if (plane.y * velocityDir.y + plane.x * velocityDir.x + plane.z * velocityDir.z > -0.001 ||
+                plane.y * finalPosition.y + plane.x * finalPosition.x + plane.z * finalPosition.z + plane.d > radius)
+            {
+                goto CONTINUE_FIRST_LOOP;
+            }
+
+            F64 timeVar = (radius - (plane.x * position.x + plane.y * position.y + plane.z * position.z + plane.d))
+                                / (plane.y * velocity.y + plane.x * velocity.x + plane.z * velocity.z);
+
+            if (timeVar < 0.0 || finalT < timeVar)
+                break;
+
+            U32 vertIndex = polyList.mIndexList[poly->vertexCount - 1 + poly->vertexStart];
+            Point3F vert = polyList.mVertexList[vertIndex];
+
+            Point3D velAddition = velocity * timeVar + position;
+
+            bool hasVertices = poly->vertexCount != 0;
+
+            if (hasVertices)
+            {
+                U32 i = 0;
+                do
+                {
+                    Point3F newVert = polyList.mVertexList[polyList.mIndexList[i + poly->vertexStart]];
+                    if (newVert != vert)
+                    {
+                        PlaneD pl(Point3D(newVert + plane), newVert, vert);
+                        vert = newVert;
+                        if (pl.x * velAddition.x + pl.y * velAddition.y + pl.z * velAddition.z + pl.d < 0.0)
+                            break;
+                    }
+
+                    i++;
+                } while(i < poly->vertexCount);
+
+                hasVertices = i != poly->vertexCount;
+            }
+
+            if (hasVertices)
+                break;
+
+            finalT = timeVar;
+            finalPosition = velAddition;
+            lastContactPos = plane.project(velAddition);
+            contactPoly = poly;
+
+CONTINUE_FIRST_LOOP:
+            index++;
+            if (index >= polyList.mPolyList.size())
+                goto superbreak;
+        }
+
+        Point3F nextVert = polyList.mVertexList[polyList.mIndexList[poly->vertexCount - 1 + poly->vertexStart]];
+
+        if (poly->vertexCount == 0)
+            goto CONTINUE_FIRST_LOOP;
+
+        F64 unknownThing;
+        F64 unknownThing2;
+        F64 lastZ;
+
+        Point3D theVert;
+
+        F64 radSq = radius * radius;
+        S32 iter = 0;
+        while (true)
+        {
+            theVert = polyList.mVertexList[polyList.mIndexList[iter + poly->vertexStart]];
+
+            Point3D vertDiff = nextVert - theVert;
+
+            Point3D posDiff = position - theVert;
+
+            Point3D theVelocity;
+            mCross(vertDiff, velocity, &theVelocity);
+
+            Point3D thePosThing;
+            mCross(vertDiff, posDiff, &thePosThing);
+
+            F64 theVelLen = theVelocity.lenSquared();
+            F64 dotVel = mDot(thePosThing, theVelocity);
+            F64 dotVelSq = dotVel + dotVel;
+
+            F64 someNum = dotVelSq * dotVelSq - (thePosThing.lenSquared() - vertDiff.lenSquared() * radSq)
+                        * (theVelLen * 4.0);
+
+            if (theVelLen == 0.0 || someNum < 0.0)
+                goto noedgeint;
+
+            F64 what = 0.5 / theVelLen;
+            F64 someNumSqrt = mSqrtD(someNum);
+
+            F64 t1 = (someNumSqrt - dotVelSq) * what;
+            F64 t2 = (-dotVelSq - someNumSqrt) * what;
+            if (t2 < t1)
+            {
+                F64 temp = t2;
+                t2 = t1;
+                t1 = temp;
+            }
+
+            if (t2 <= 0.0001 || finalT <= t1)
+                goto noedgeint;
+
+            unknownThing = 0.0;
+            if (t1 < 0.0)
+                goto LABEL_52;
+
+            F64 vertDiffLen = vertDiff.len();
+            
+            Point3D velTimePosVert = velocity * t1 + position - theVert;
+
+            F64 theVar = mDot(velTimePosVert, vertDiff) / vertDiffLen;
+
+            if (-radius > theVar || vertDiffLen + radius < theVar)
+                goto noedgeint;
+
+            if (theVar < 0.0)
+                break;
+            if (theVar > vertDiffLen)
+            {
+                unknownThing2 = 0.0;
+                goto LABEL_51;
+            }
+
+            finalT = t1;
+            finalPosition = velocity * t1 + position;
+
+            lastContactPos = vertDiff * (theVar / vertDiffLen) + theVert;
+            contactPoly = poly;
+
+noedgeint:
+            bool notGoBack = ++iter < poly->vertexCount;
+
+            nextVert = theVert;
+
+            if (!notGoBack)
+                goto CONTINUE_FIRST_LOOP;
+        }
+        unknownThing2 = 0.0;
+LABEL_51:
+        unknownThing = unknownThing2;
+LABEL_52:
+        // Warning, this is the point where anyone attempting to write a marble class will go insane...
+        F64 wow = velocity.y * velocity.y + velocity.x * velocity.x + velocity.z * velocity.z;
+
+	    Point3D posVertDiff = position - theVert;
+        F64 posVertDiffDot = mDot(posVertDiff, velocity);
+        F64 posVertDiffDotSq = posVertDiffDot + posVertDiffDot;
+
+        F64 tx = wow * 4.0;
+
+        F64 blabla = posVertDiffDotSq * posVertDiffDotSq - (posVertDiff.lenSquared() - radSq) * tx;
+
+        if (unknownThing != wow && blabla >= unknownThing)
+        {
+            F64 boink = 0.5 / wow;
+            F64 blablaSqrt = mSqrtD(blabla);
+            F64 wink = -posVertDiffDotSq - blablaSqrt;
+            F64 glowingSharkInTheDark = (blablaSqrt - posVertDiffDotSq) * boink;
+            F64 owoUwuIlikeWaifus = wink * boink;
+            if (owoUwuIlikeWaifus < glowingSharkInTheDark)
+            {
+                F64 shutUpWeeb = owoUwuIlikeWaifus;
+                owoUwuIlikeWaifus = glowingSharkInTheDark;
+                glowingSharkInTheDark = shutUpWeeb;
+            }
+            if (owoUwuIlikeWaifus > 0.0001 && finalT > glowingSharkInTheDark)
+            {
+                if (glowingSharkInTheDark <= 0.0 && glowingSharkInTheDark > -0.0001)
+                    glowingSharkInTheDark = 0.0;
+
+                if (glowingSharkInTheDark >= 0.0)
+                {
+                    finalT = glowingSharkInTheDark;
+                    contactPoly = poly;
+                    finalPosition = velocity * glowingSharkInTheDark + position;
+                    lastContactPos = theVert;
+                }
+            }
+        }
+
+        Point3D weebCount = position - nextVert;
+        F64 weebCountLenVelDot = mDot(weebCount, velocity);
+        F64 feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone = weebCountLenVelDot + weebCountLenVelDot;
+        F64 VosaiAndFacading_CrossedTheLine_Feat_LinnSandin_NCSRelease_MP3 = feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone * feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone - (weebCount.lenSquared() - radSq) * tx;
+        if (wow == 0.0 || VosaiAndFacading_CrossedTheLine_Feat_LinnSandin_NCSRelease_MP3 < 0.0)
+            goto noedgeint;
+
+        F64 oopsIPooped = 0.5 / wow;
+        F64 buttcheeks = mSqrtD(VosaiAndFacading_CrossedTheLine_Feat_LinnSandin_NCSRelease_MP3);
+        F64 iThinkINeedABreakNoNotABreakPointButARealBreakImStartingToLoseMyMarbles = -feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone - buttcheeks;
+        F64 ohNoesNotAnotherVariable = (buttcheeks - feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone) * oopsIPooped;
+        F64 variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO = iThinkINeedABreakNoNotABreakPointButARealBreakImStartingToLoseMyMarbles * oopsIPooped;
+        if (variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO < ohNoesNotAnotherVariable)
+        {
+            F64 freeGarbageForMonkeys = variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO;
+            variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO = ohNoesNotAnotherVariable;
+            ohNoesNotAnotherVariable = freeGarbageForMonkeys;
+        }
+
+        if (variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO <= 0.0001 || finalT <= ohNoesNotAnotherVariable)
+            goto noedgeint;
+        if (ohNoesNotAnotherVariable <= 0.0 && ohNoesNotAnotherVariable > -0.0001)
+            ohNoesNotAnotherVariable = 0.0;
+        if (ohNoesNotAnotherVariable < 0.0)
+            goto noedgeint;
+
+        finalT = ohNoesNotAnotherVariable;
+        finalPosition = velocity * ohNoesNotAnotherVariable + position;
+        lastContactPos = nextVert;
+        contactPoly = poly;
+
+        goto noedgeint;
+	}
+superbreak:
+
     position = finalPosition;
 
-	// TODO: Finish Implementing testMove
+    bool contacted = false;
+    if (deltaT > finalT)
+    {
+        Material* material;
 
-    return false;
+        if (marbleCollisionTime > finalT && contactPoly != NULL && contactPoly->material != -1)
+        {
+            material = contactPoly->object->getMaterial(contactPoly->material);
+            if ((contactPoly->object->getTypeMask() & ShapeBaseObjectType) != 0)
+            {
+                Point3F objVelocity = contactPoly->object->getVelocity();
+                queueCollision((ShapeBase*)contactPoly->object, mVelocity - objVelocity, contactPoly->material);
+            }
+        }
+
+        mLastContact.position = lastContactPos;
+        if (marbleCollisionTime <= finalT)
+            mLastContact.normal = marbleCollisionNormal;
+        else
+            mLastContact.normal = finalPosition - lastContactPos;
+
+        if (material == NULL)
+        {
+            mLastContact.friction = 1.0f;
+            mLastContact.restitution = 1.0f;
+            mLastContact.force = 0.0f;
+        } else
+        {
+            mLastContact.friction = material->friction;
+            mLastContact.restitution = material->restitution;
+            mLastContact.force = material->force;
+        }
+        
+        contacted = true;
+    }
+
+    deltaT = finalT;
+    return contacted;
 }
 
 void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRad)
