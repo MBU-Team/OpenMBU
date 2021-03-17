@@ -499,63 +499,63 @@ moveMap.bind( mouse, xaxis, mouseYaw );
 moveMap.bind( mouse, yaxis, mousePitch );
 
 // gamepad
-if (isPCBuild())
-{
-   // set up some defaults
-   moveMap.bind( xinput, btn_x, altTrigger );
-   moveMap.bind( xinput, btn_a, jumpOrStart );
-   moveMap.bind( xinput, btn_b, mouseFire );
-   moveMap.bind( xinput, triggerr, mouseFire );
-   moveMap.bind( xinput, triggerl, jumpOrStart );
-   moveMap.bind( xinput, zaxis, jumpOrPowerup );
-   moveMap.bind( xinput, btn_r, altTrigger );
-   moveMap.bind( xinput, btn_l, altTrigger );
-
-   moveMap.bindCmd( xinput, btn_back, "pauseToggle(1);", "" );
-   moveMap.bindCmd( xinput, btn_start, "pauseToggle(0);", "" );
-   moveMap.bindCmd( xinput, btn_y, "togglePlayerListLength();", "" );
-
-   moveMap.bind( xinput, thumblx, "DN", "-0.23 0.23", moveXAxisL );
-   moveMap.bind( xinput, thumbly, "DN", "-0.23 0.23", moveYAxisL );
-   moveMap.bind( xinput, thumbrx, "D", "-0.23 0.23", gamepadYaw );
-   moveMap.bind( xinput, thumbry, "D", "-0.23 0.23", gamepadPitch );
-
-//   moveMap.bind(keyboard, m, spawnStupidMarble);
-//   moveMap.bind( gamepad, btn_y, spawnStupidMarble );
-
-   if (strstr(getGamepadName(), "Logitech") != -1)
-   {
-      error("Binding for" SPC getGamepadName() SPC "controller");
-      moveMap.bind( gamepad, zaxis, "D", "-0.23 0.23", gamepadYaw );
-      moveMap.bind( gamepad, rzaxis,  "D", "-0.23 0.23", gamepadPitch );
-   }
-}
-else // xbox
-{
-   // gamepad
-   //GlobalActionMap.bindCmd( gamepad, lshoulder, "cycleDebugPredTiles();", "" );
-
-   moveMap.bind( gamepad, btn_x, altTrigger );
-   moveMap.bind( gamepad, btn_a, jumpOrStart );
-   moveMap.bind( gamepad, btn_b, mouseFire );
-   moveMap.bind( gamepad, rtrigger, mouseFire );
-   moveMap.bind( gamepad, ltrigger, jumpOrStart );
-   moveMap.bind( gamepad, rshoulder, altTrigger );
-   moveMap.bind( gamepad, lshoulder, altTrigger );
-
-   moveMap.bindCmd( gamepad, back, "pauseToggle(1);", "" );
-   moveMap.bindCmd( gamepad, start, "pauseToggle(0);", "" );
-   moveMap.bindCmd( gamepad, btn_y, "togglePlayerListLength();", "" );
-
-   moveMap.bind( gamepad, xaxis, "DN", "-0.23 0.23", moveXAxisL );
-   moveMap.bind( gamepad, yaxis, "DN", "-0.23 0.23", moveYAxisL );
-   moveMap.bind( gamepad, rxaxis, "D", "-0.23 0.23", gamepadYaw );
-   moveMap.bind( gamepad, ryaxis, "D", "-0.23 0.23", gamepadPitch );
-   //moveMap.bind( gamepad, zaxis, "D", "-0.23 0.23", gamepadYaw );
-   //moveMap.bind( gamepad, rzaxis,  "D", "-0.23 0.23", gamepadPitch );
-
-   //moveMap.bind( gamepad, btn_y, spawnStupidMarble );
-}
+//if (isPCBuild())
+//{
+   //// set up some defaults
+   //moveMap.bind( xinput, btn_x, altTrigger );
+   //moveMap.bind( xinput, btn_a, jumpOrStart );
+   //moveMap.bind( xinput, btn_b, mouseFire );
+   //moveMap.bind( xinput, triggerr, mouseFire );
+   //moveMap.bind( xinput, triggerl, jumpOrStart );
+   //moveMap.bind( xinput, zaxis, jumpOrPowerup );
+   //moveMap.bind( xinput, btn_r, altTrigger );
+   //moveMap.bind( xinput, btn_l, altTrigger );
+//
+   //moveMap.bindCmd( xinput, btn_back, "pauseToggle(1);", "" );
+   //moveMap.bindCmd( xinput, btn_start, "pauseToggle(0);", "" );
+   //moveMap.bindCmd( xinput, btn_y, "togglePlayerListLength();", "" );
+//
+   //moveMap.bind( xinput, thumblx, "DN", "-0.23 0.23", moveXAxisL );
+   //moveMap.bind( xinput, thumbly, "DN", "-0.23 0.23", moveYAxisL );
+   //moveMap.bind( xinput, thumbrx, "D", "-0.23 0.23", gamepadYaw );
+   //moveMap.bind( xinput, thumbry, "D", "-0.23 0.23", gamepadPitch );
+//
+////   moveMap.bind(keyboard, m, spawnStupidMarble);
+////   moveMap.bind( gamepad, btn_y, spawnStupidMarble );
+//
+   //if (strstr(getGamepadName(), "Logitech") != -1)
+   //{
+      //error("Binding for" SPC getGamepadName() SPC "controller");
+      //moveMap.bind( gamepad, zaxis, "D", "-0.23 0.23", gamepadYaw );
+      //moveMap.bind( gamepad, rzaxis,  "D", "-0.23 0.23", gamepadPitch );
+   //}
+//}
+//else // xbox
+//{
+   //// gamepad
+   ////GlobalActionMap.bindCmd( gamepad, lshoulder, "cycleDebugPredTiles();", "" );
+//
+   //moveMap.bind( gamepad, btn_x, altTrigger );
+   //moveMap.bind( gamepad, btn_a, jumpOrStart );
+   //moveMap.bind( gamepad, btn_b, mouseFire );
+   //moveMap.bind( gamepad, rtrigger, mouseFire );
+   //moveMap.bind( gamepad, ltrigger, jumpOrStart );
+   //moveMap.bind( gamepad, rshoulder, altTrigger );
+   //moveMap.bind( gamepad, lshoulder, altTrigger );
+//
+   //moveMap.bindCmd( gamepad, back, "pauseToggle(1);", "" );
+   //moveMap.bindCmd( gamepad, start, "pauseToggle(0);", "" );
+   //moveMap.bindCmd( gamepad, btn_y, "togglePlayerListLength();", "" );
+//
+   //moveMap.bind( gamepad, xaxis, "DN", "-0.23 0.23", moveXAxisL );
+   //moveMap.bind( gamepad, yaxis, "DN", "-0.23 0.23", moveYAxisL );
+   //moveMap.bind( gamepad, rxaxis, "D", "-0.23 0.23", gamepadYaw );
+   //moveMap.bind( gamepad, ryaxis, "D", "-0.23 0.23", gamepadPitch );
+   ////moveMap.bind( gamepad, zaxis, "D", "-0.23 0.23", gamepadYaw );
+   ////moveMap.bind( gamepad, rzaxis,  "D", "-0.23 0.23", gamepadPitch );
+//
+   ////moveMap.bind( gamepad, btn_y, spawnStupidMarble );
+//}
 
 //-------------------------------------------------
 // Script code for doing profiling while holding
