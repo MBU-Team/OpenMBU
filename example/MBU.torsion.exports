@@ -3309,6 +3309,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>collideable</name>
             <desc>bool collideable</desc>
         </field>
+        <field>            <name>permanent</name>
+            <desc>bool permanent</desc>
+        </field>
         <field>            <name>rotate</name>
             <desc>bool rotate</desc>
         </field>
@@ -3321,6 +3324,15 @@ More of a helper function than anything.   If console access to the field list i
     </class>
     <class>        <name>ItemData</name>
         <base>ShapeBaseData</base>
+        <field>            <name>addToHUDRadar</name>
+            <desc>bool addToHUDRadar</desc>
+        </field>
+        <field>            <name>buddySequence</name>
+            <desc>string buddySequence</desc>
+        </field>
+        <field>            <name>buddyShapeName</name>
+            <desc>string buddyShapeName</desc>
+        </field>
         <field>            <name>dynamicType</name>
             <desc>int dynamicType</desc>
         </field>
@@ -3353,6 +3365,12 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>pickUpName</name>
             <desc>string pickUpName</desc>
+        </field>
+        <field>            <name>powerupId</name>
+            <desc>int powerupId</desc>
+        </field>
+        <field>            <name>scaleFactor</name>
+            <desc>float scaleFactor</desc>
         </field>
         <field>            <name>sticky</name>
             <desc>bool sticky</desc>
@@ -3625,17 +3643,29 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>exposure</name>
             <desc>int exposure</desc>
         </field>
+        <field>            <name>force</name>
+            <desc>float force</desc>
+        </field>
+        <field>            <name>friction</name>
+            <desc>float friction</desc>
+        </field>
         <field>            <name>glow</name>
             <desc>bool glow</desc>
         </field>
         <field>            <name>mapTo</name>
             <desc>string mapTo</desc>
         </field>
+        <field>            <name>noiseTexFileName</name>
+            <desc>filename noiseTexFileName</desc>
+        </field>
         <field>            <name>pixelSpecular</name>
             <desc>bool pixelSpecular</desc>
         </field>
         <field>            <name>planarReflection</name>
             <desc>bool planarReflection</desc>
+        </field>
+        <field>            <name>restitution</name>
+            <desc>float restitution</desc>
         </field>
         <field>            <name>rotPivotOffset</name>
             <desc>Point2F rotPivotOffset</desc>
@@ -3654,6 +3684,12 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>sequenceSegmentSize</name>
             <desc>float sequenceSegmentSize</desc>
+        </field>
+        <field>            <name>softwareMipOffset</name>
+            <desc>float softwareMipOffset</desc>
+        </field>
+        <field>            <name>sound</name>
+            <desc>int sound</desc>
         </field>
         <field>            <name>specular</name>
             <desc>ColorF specular</desc>
@@ -5559,8 +5595,29 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>dynamicType</name>
             <desc>int dynamicType</desc>
         </field>
+        <field>            <name>forceArc</name>
+            <desc>float forceArc</desc>
+        </field>
+        <field>            <name>forceNode</name>
+            <desc>int forceNode</desc>
+        </field>
+        <field>            <name>forceRadius</name>
+            <desc>float forceRadius</desc>
+        </field>
+        <field>            <name>forceStrength</name>
+            <desc>float forceStrength</desc>
+        </field>
+        <field>            <name>forceType</name>
+            <desc>enumval forceType</desc>
+        </field>
+        <field>            <name>forceVector</name>
+            <desc>Point3F forceVector</desc>
+        </field>
         <field>            <name>noIndividualDamage</name>
             <desc>bool noIndividualDamage</desc>
+        </field>
+        <field>            <name>scopeAlways</name>
+            <desc>bool scopeAlways</desc>
         </field>
     </class>
     <class>        <name>Sun</name>
@@ -5955,6 +6012,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>onTickTrigger</name>
             <args>Trigger t</args>
         </method>
+        <field>            <name>marbleGravityCheck</name>
+            <desc>bool marbleGravityCheck</desc>
+        </field>
         <field>            <name>tickPeriodMS</name>
             <desc>int tickPeriodMS</desc>
         </field>
@@ -6967,17 +7027,12 @@ More of a helper function than anything.   If console access to the field list i
     <function>        <name>alxIsPlaying</name>
         <args>handle</args>
     </function>
-    <function>        <name>alxListenerf</name>
-        <desc>alxListener(ALenum, value)</desc>
-    </function>
     <function>        <name>alxPlay</name>
         <args>handle</args>
         <desc>or alxPlay(profile) or alxPlay(profile, x,y,z)</desc>
     </function>
-    <function>        <name>alxSetChannelVolume</name>
-        <args>int channel_id, float volume</args>
-        <desc>@param channel_id  ID of channel to set volume on.
-@param volume      New volume of channel, from 0.0f-1.0f</desc>
+    <function>        <name>alxSetMasterVolume</name>
+        <args>float volume</args>
     </function>
     <function>        <name>alxSource3f</name>
         <args>handle, ALenum, x, y, z</args>

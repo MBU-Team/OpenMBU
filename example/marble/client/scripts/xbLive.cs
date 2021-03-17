@@ -778,7 +778,10 @@ function saveUserProfile()
 function loadUserProfile()
 {
    if (isPCBuild())
+   {
+      loadPCUserProfile();
       return;
+   }
       
    if (!XBLiveIsSignedIn())
       return;
@@ -807,6 +810,12 @@ function loadUserProfile()
       $loadUserProfileSchedule = schedule( 1000, 0, "loadUserProfile" );
    else
       cancel( $loadUserProfileSchedule );
+}
+
+function loadPCUserProfile()
+{
+   xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
+   alxSetMasterVolume($pref::Option::FXVolume * 0.01);
 }
 
 function XBGamerProfile::onProfileLoaded(%this, %string)

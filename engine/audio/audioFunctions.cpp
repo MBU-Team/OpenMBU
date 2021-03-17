@@ -392,10 +392,17 @@ ConsoleFunction(alxIsPlaying, bool, 2, 5, "alxIsPlaying(handle)")
     return alxIsPlaying(handle);
 }
 
+//-----------------------------------------------
+ConsoleFunction(alxSetMasterVolume, void, 2, 2, "(float volume)")
+{
+    alxSetMasterVolume(dAtof(argv[1]));
+}
+
 
 //--------------------------------------------------------------------------
 // Listener
 //--------------------------------------------------------------------------
+#ifndef MB_ULTRA
 ConsoleFunction(alxListenerf, void, 3, 3, "alxListener(ALenum, value)")
 {
     ALenum e = getEnum(argv[1], (Listener | Set | Float));
@@ -407,6 +414,7 @@ ConsoleFunction(alxListenerf, void, 3, 3, "alxListener(ALenum, value)")
 
     alxListenerf(e, dAtof(argv[2]));
 }
+#endif
 
 
 //-----------------------------------------------
@@ -509,6 +517,8 @@ ConsoleFunction(alxGetChannelVolume, F32, 2, 2, "(int channel_id)\n\n"
 }
 
 //-----------------------------------------------
+
+#ifndef MB_ULTRA
 ConsoleFunction(alxSetChannelVolume, bool, 3, 3, "(int channel_id, float volume)\n\n"
     "@param channel_id  ID of channel to set volume on.\n"
     "@param volume      New volume of channel, from 0.0f-1.0f"
@@ -527,6 +537,7 @@ ConsoleFunction(alxSetChannelVolume, bool, 3, 3, "(int channel_id, float volume)
     alxUpdateTypeGain(type);
     return true;
 }
+#endif
 
 //-----------------------------------------------
 ConsoleFunction(alxGetStreamPosition, F32, 2, 2, "alxGetStreamPosition(handle)")

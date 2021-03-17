@@ -144,6 +144,7 @@ const AudioEnvironment* alxGetEnvironment();
 void alxUpdateTypeGain(U32 type);
 bool alxIsValidHandle(AUDIOHANDLE handle);
 bool alxIsPlaying(AUDIOHANDLE handle);
+void alxSetMasterVolume(F32 volume);
 void alxUpdate();
 F32 alxGetStreamPosition(AUDIOHANDLE handle);
 F32 alxGetStreamDuration(AUDIOHANDLE handle);

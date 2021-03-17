@@ -404,6 +404,11 @@ bool alxIsPlaying(AUDIOHANDLE handle)
     return(state == AL_PLAYING);
 }
 
+void alxSetMasterVolume(F32 volume)
+{
+    mMasterVolume = volume;
+}
+
 //--------------------------------------------------------------------------
 void alxEnvironmentDestroy()
 {
