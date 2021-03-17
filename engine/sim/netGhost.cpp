@@ -892,19 +892,81 @@ void NetConnection::activateGhosting()
             objectInScope(obj);
     }
     sendConnectionMessage(GhostAlwaysStarting, mGhostingSequence, ghostAlwaysSet->size());
-    for (j = mGhostZeroUpdateIndex - 1; j >= 0; j--)
+
+    // If this is the connection to the local client...
+    if (getLocalClientConnection() == this)
     {
-        AssertFatal((mGhostArray[j]->flags & GhostInfo::ScopeAlways) != 0, "Non-scope always in the scope always list.")
+        // Get a pointer to the local client.
+        NetConnection* pClient = NetConnection::getConnectionToServer();
 
-            // we may end up resending state here, but at least initial state
-            // will not be resent.
-            mGhostArray[j]->updateMask = 0;
-        ghostPushToZero(mGhostArray[j]);
-        mGhostArray[j]->flags &= ~GhostInfo::NotYetGhosted;
-        mGhostArray[j]->flags |= GhostInfo::ScopedEvent;
+        // Iterate through the scope always objects...
+        for (j = mGhostZeroUpdateIndex - 1; j >= 0; j--)
+        {
+            AssertFatal((mGhostArray[j]->flags & GhostInfo::ScopeAlways) != 0, "NetConnection::activateGhosting:  Non-scope always in the scope always list.")
 
-        postNetEvent(new GhostAlwaysObjectEvent(mGhostArray[j]->obj, mGhostArray[j]->index));
+                // Clear the ghost update mask and flags appropriately.
+                mGhostArray[j]->updateMask = 0;
+            ghostPushToZero(mGhostArray[j]);
+            mGhostArray[j]->flags &= ~GhostInfo::NotYetGhosted;
+            mGhostArray[j]->flags |= GhostInfo::ScopedEvent;
+
+            // Set up a pointer to the new object.
+            NetObject* pObject = 0;
+
+            // If there's a valid ghost object...
+            if (mGhostArray[j]->obj)
+            {
+                // Set up a buffer for the object send.
+                U8 iBuffer[4096];
+                BitStream mStream(iBuffer, 4096);
+
+                // Pack the server object's update.
+                mGhostArray[j]->obj->packUpdate(this, 0xFFFFFFFF, &mStream);
+
+                // Set the stream position back to zero.
+                mStream.setPosition(0);
+
+                // Create a new object instance for the client.
+                pObject = (NetObject*)ConsoleObject::create(pClient->getNetClassGroup(), NetClassTypeObject, mGhostArray[j]->obj->getClassId(getNetClassGroup()));
+
+                // Set the client object networking flags.
+                pObject->mNetFlags = NetObject::IsGhost;
+                pObject->mNetIndex = mGhostArray[j]->index;
+
+                // Unpack the client object's update.
+                pObject->unpackUpdate(pClient, &mStream);
+            }
+            else
+            {
+                // Otherwise, create a new dummy netobject.
+                pObject = new NetObject;
+            }
+
+            // Execute the appropriate console callback.
+            Con::executef(1, "onGhostAlwaysObjectReceived");
+
+            // Set the ghost always object for the client.
+            pClient->setGhostAlwaysObject(pObject, mGhostArray[j]->index);
+        }
     }
+    else
+    {
+        // Iterate through the scope always objects...
+        for (j = mGhostZeroUpdateIndex - 1; j >= 0; j--)
+        {
+            AssertFatal((mGhostArray[j]->flags & GhostInfo::ScopeAlways) != 0, "NetConnection::activateGhosting:  Non-scope always in the scope always list.")
+
+                // Clear the ghost update mask and flags appropriately.
+                mGhostArray[j]->updateMask = 0;
+            ghostPushToZero(mGhostArray[j]);
+            mGhostArray[j]->flags &= ~GhostInfo::NotYetGhosted;
+            mGhostArray[j]->flags |= GhostInfo::ScopedEvent;
+
+            // Post a network event to ghost the scope always object.
+            postNetEvent(new GhostAlwaysObjectEvent(mGhostArray[j]->obj, mGhostArray[j]->index));
+        }
+    }
+
     sendConnectionMessage(GhostAlwaysDone, mGhostingSequence);
     //AssertFatal(validateGhostArray(), "Invalid ghost array!");
 }
