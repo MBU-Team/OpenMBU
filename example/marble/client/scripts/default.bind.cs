@@ -290,7 +290,12 @@ function mousePitch(%val)
 
 function jumpOrStart(%val)
 {
-   $mvTriggerCount2++;
+   //$mvTriggerCount2++;
+   
+   if (%val)
+	   $mvTriggerCount2 = 1;
+	else
+	   $mvTriggerCount2 = 0;
 }
 
 function jumpOrPowerup( %val )

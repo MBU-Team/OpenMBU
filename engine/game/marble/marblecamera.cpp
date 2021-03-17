@@ -359,10 +359,12 @@ bool Marble::isCameraClear(Point3F start, Point3F end)
     if (!moveCamera(start, end, start, 1, 1.0f))
         return false;
 
+    start.z = 0.25f;
+
     Point3D ep = end;
     findContacts(sCameraCollisionMask, &ep, &start.z);
 
-    return mContacts.size() == 0;
+    return mContacts.empty();
 }
 
 void Marble::getLookMatrix(MatrixF* camMat)
