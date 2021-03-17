@@ -545,15 +545,13 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
             Point3D omega = mOmega;
             Point3F pos(mObjToWorld[3], mObjToWorld[7], mObjToWorld[11]);
 
-            double scale;
+            double err;
             if (gravityChange)
-                scale = 0.0002499999981373548;
+                err = 0.0002499999981373548;
             else
-                scale = 0.004999999888241291;
+                err = 0.004999999888241291;
 
-            // TODO: Implement BitStream::writeCompressedPointRP
-            //stream->writeCompressedPointRP(pos, 7, gMarbleCompressDists, g);
-            stream->writeCompressedPoint(pos, scale);
+            stream->writeCompressedPointRP(pos, 7, gMarbleCompressDists, err);
 
             float maxRollVelocity = mDataBlock->maxRollVelocity;
             stream->writeVector(Point3F(vel.x, vel.y, vel.z), 0.0099999998f, maxRollVelocity + maxRollVelocity, 16, 16, 10);
@@ -658,17 +656,15 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
         mLastYaw = stream->readSignedFloat(12);
         mCameraInit = false;
 
-        float scale;
+        float err;
         if (isGravWarp)
-            scale = 0.0002499999981373548;
+            err = 0.0002499999981373548;
         else
-            scale = 0.004999999888241291;
+            err = 0.004999999888241291;
 
         Point3F pos;
-
-        // TODO: Implement BitStream::readCompressedPointRP
-        //stream->readCompressedPointRP(&pos, 7, gMarbleCompressDists, scale);
-        stream->readCompressedPoint(&pos, scale);
+        
+        stream->readCompressedPointRP(&pos, 7, gMarbleCompressDists, err);
 
         Point3F vel;
         Point3F omega;

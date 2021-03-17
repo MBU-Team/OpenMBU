@@ -555,6 +555,24 @@ void BitStream::readCompressedPoint(Point3F* p, F32 scale)
     }
 }
 
+#ifdef MB_ULTRA
+void BitStream::writeCompressedPointRP(const Point3F& p, U32 numDists, const F32* dists, F32 err)
+{
+    // TODO: Implement writeCompressedPointRP
+
+    // TEMP: For now do this
+    writeCompressedPoint(p);
+}
+
+void BitStream::readCompressedPointRP(Point3F* p, U32 numDists, const F32* dists, F32 err)
+{
+    // TODO: Implement readCompressedPointRP
+
+    // TEMP: For now do this
+    readCompressedPoint(p);
+}
+#endif
+
 //------------------------------------------------------------------------------
 
 InfiniteBitStream::InfiniteBitStream()
