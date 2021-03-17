@@ -59,7 +59,161 @@ void Marble::clearMarbleAxis()
 
 void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aControl, const Point3D& desiredOmega, F64 timeStep, Point3D& A, Point3D& a, F32& slipAmount)
 {
-    // TODO: Finish Implementing applyContactForces
+    F32 force = 0.0f;
+    S32 bestContactIndex = mContacts.size();
+    for (S32 i = 0; i < mContacts.size(); i++)
+    {
+        Contact* contact = &mContacts[i];
+
+        SimObject* obj = contact->object;
+        if (!obj || (obj->getType() & PlayerObjectType) == 0)
+        {
+            contact->normalForce = -mDot(contact->normal, A);
+
+            if (contact->normalForce > force)
+            {
+                force = contact->normalForce;
+                bestContactIndex = i;
+            }
+        }
+
+    }
+
+    if (bestContactIndex != mContacts.size() && (mMode & MoveMode) != 0)
+        dMemcpy(&mBestContact, &mContacts[bestContactIndex], sizeof(mBestContact));
+
+    if (move->trigger[2] && bestContactIndex != mContacts.size())
+    {
+        F64 friction = (mVelocity.z - mBestContact.surfaceVelocity.z) * mBestContact.normal.z
+                     + (mVelocity.y - mBestContact.surfaceVelocity.y) * mBestContact.normal.y
+                     + (mVelocity.x - mBestContact.surfaceVelocity.x) * mBestContact.normal.x;
+
+        if (mDataBlock->jumpImpulse > friction)
+        {
+            mVelocity += (mDataBlock->jumpImpulse - friction) * mBestContact.normal;
+
+            if (mDataBlock->sound[MarbleData::Jump])
+            {
+                if (isGhost())
+                {
+                    MatrixF mat(true);
+                    mat.setColumn(3, getPosition());
+                    alxPlay(mDataBlock->sound[MarbleData::Jump], &mat);
+                }
+            }
+        }
+    }
+
+    for (S32 i = 0; i < mContacts.size(); i++)
+    {
+        Contact* contact = &mContacts[i];
+
+        F64 normalForce = -mDot(contact->normal, A);
+
+        if (normalForce > 0.0 &&
+              (mVelocity.x - contact->surfaceVelocity.x) * contact->normal.x
+            + (mVelocity.y - contact->surfaceVelocity.y) * contact->normal.y
+            + (mVelocity.z - contact->surfaceVelocity.z) * contact->normal.z <= 0.0001)
+        {
+            A += contact->normal * normalForce;
+        }
+    }
+
+    if (bestContactIndex != mContacts.size() && (mMode & MoveMode) != 0)
+    {
+        Point3D aadd = -mBestContact.normal * mRadius;
+
+        Point3D aFriction;
+        mCross(mOmega, aadd, &aFriction);
+
+        Point3D vAtC = aFriction + mVelocity - mBestContact.surfaceVelocity;
+        mBestContact.vAtCMag = vAtC.len();
+
+        Point3D aNewFriction(0, 0, 0);
+        Point3D ANewFriction(0, 0, 0);
+
+        if (mBestContact.vAtCMag == 0.0)
+            goto LABEL_34;
+
+        bool slipping = true;
+
+        F32 frictiona = 0.0f;
+        if ((mMode & RestrictXYZMode) == 0)
+            frictiona = mDataBlock->kineticFriction * mBestContact.friction;
+
+        F64 somevar = frictiona * 5.0 * mBestContact.normalForce / (mRadius + mRadius);
+        F64 AMagnitude = mBestContact.normalForce * frictiona;
+        F64 totalDeltaV = (mRadius * somevar + AMagnitude) * timeStep;
+        if (mBestContact.vAtCMag < totalDeltaV)
+        {
+            slipping = false;
+            somevar *= mBestContact.vAtCMag / totalDeltaV;
+            AMagnitude *= mBestContact.vAtCMag / totalDeltaV;
+        }
+
+        Point3D vAtCDir = vAtC * (1.0 / mBestContact.vAtCMag);
+        Point3D invVAtCDir = -vAtCDir;
+
+        Point3D aAtC;
+        mCross(-mBestContact.normal, invVAtCDir, &aAtC);
+
+        aNewFriction = aAtC * somevar;
+        ANewFriction = vAtCDir * -AMagnitude;
+
+        slipAmount = mBestContact.vAtCMag - totalDeltaV;
+
+        if (!slipping)
+        {
+LABEL_34:
+            Point3D invGrav = -gWorkGravityDir;
+
+            Point3D wow = invGrav * mRadius;
+
+            Point3D poptart;
+            mCross(wow, A, &poptart);
+
+            Point3D newThing = poptart * (1.0 / wow.lenSquared());
+
+            if (isCentered)
+            {
+                aControl = desiredOmega - (a * timeStep + mOmega);
+
+                if (mDataBlock->brakingAcceleration < aControl.len())
+                    aControl *= mDataBlock->brakingAcceleration / aControl.len();
+            }
+
+            Point3D invNormRad = -mBestContact.normal * mRadius;
+
+            Point3D res;
+            mCross(aControl, invNormRad, &res);
+            res = -res;
+
+            Point3D res2;
+            mCross(newThing, invNormRad, &res2);
+            res2 += res;
+
+            F64 mag = res2.len();
+
+            F64 theFriction = 0.0;
+            if ((mMode & RestrictXYZMode) == 0)
+                theFriction = mDataBlock->staticFriction * mBestContact.friction;
+
+            if (theFriction * mBestContact.normalForce < mag)
+            {
+                theFriction = 0.0;
+                if ((mMode & RestrictXYZMode) == 0)
+                    theFriction = mDataBlock->kineticFriction * mBestContact.friction;
+
+                res *= theFriction * mBestContact.normalForce / mag;
+            }
+
+            A += res;
+            a += newThing;
+        }
+
+        A += ANewFriction;
+        a += aNewFriction;
+    }
 
     a += aControl;
 }
