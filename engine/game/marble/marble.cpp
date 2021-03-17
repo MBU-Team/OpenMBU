@@ -1182,9 +1182,10 @@ bool Marble::onAdd()
 
     if (isGhost())
     {
-        mRollHandle = alxPlay(this->mDataBlock->sound[0], &getTransform(), &Point3F(0, 0, 0));
-        mSlipHandle = alxPlay(this->mDataBlock->sound[3], &getTransform(), &Point3F(0, 0, 0));
-        mMegaHandle = alxPlay(this->mDataBlock->sound[1], &getTransform(), &Point3F(0, 0, 0));
+        // TODO: Deal with audio!
+        //mRollHandle = alxPlay(this->mDataBlock->sound[0], &getTransform(), &Point3F(0, 0, 0));
+        //mSlipHandle = alxPlay(this->mDataBlock->sound[3], &getTransform(), &Point3F(0, 0, 0));
+        //mMegaHandle = alxPlay(this->mDataBlock->sound[1], &getTransform(), &Point3F(0, 0, 0));
 
         this->mVertBuff.set(GFX, 33, GFXBufferTypeStatic);
         this->mPrimBuff.set(GFX, 33, 2, GFXBufferTypeStatic);
