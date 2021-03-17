@@ -233,8 +233,6 @@ CONTINUE_FIRST_LOOP:
         if (poly->vertexCount == 0)
             goto CONTINUE_FIRST_LOOP;
 
-        F64 unknownThing;
-        F64 unknownThing2;
         F64 lastZ;
 
         Point3D theVert;
@@ -279,8 +277,7 @@ CONTINUE_FIRST_LOOP:
 
             if (t2 <= 0.0001 || finalT <= t1)
                 goto noedgeint;
-
-            unknownThing = 0.0;
+                
             if (t1 < 0.0)
                 goto LABEL_52;
 
@@ -296,10 +293,7 @@ CONTINUE_FIRST_LOOP:
             if (theVar < 0.0)
                 break;
             if (theVar > vertDiffLen)
-            {
-                unknownThing2 = 0.0;
-                goto LABEL_51;
-            }
+                goto LABEL_52;
 
             finalT = t1;
             finalPosition = velocity * t1 + position;
@@ -315,9 +309,6 @@ noedgeint:
             if (!notGoBack)
                 goto CONTINUE_FIRST_LOOP;
         }
-        unknownThing2 = 0.0;
-LABEL_51:
-        unknownThing = unknownThing2;
 LABEL_52:
         // Warning, this is the point where anyone attempting to write a marble class will go insane...
         F64 wow = velocity.y * velocity.y + velocity.x * velocity.x + velocity.z * velocity.z;
@@ -330,7 +321,7 @@ LABEL_52:
 
         F64 blabla = posVertDiffDotSq * posVertDiffDotSq - (posVertDiff.lenSquared() - radSq) * tx;
 
-        if (unknownThing != wow && blabla >= unknownThing)
+        if (wow != 0.0 && blabla >= 0.0)
         {
             F64 boink = 0.5 / wow;
             F64 blablaSqrt = mSqrtD(blabla);
