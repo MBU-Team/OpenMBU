@@ -443,10 +443,10 @@ LABEL_11:
 
                                 mCross(invNormal, marbleBox2, &rotation);
 
-                                mOmega += vAtC * frictionContactVelocity;
+                                mOmega += rotation * frictionContactVelocity;
 
                                 Point3D marbleBox3 = -contactNormal * mRadius;
-                                Point3D negFrictionContactVelocity = -(vAtC * frictionContactVelocity);
+                                Point3D negFrictionContactVelocity = -(rotation * frictionContactVelocity);
 
                                 Point3D point3D1;
                                 mCross(negFrictionContactVelocity, marbleBox3, &point3D1);
