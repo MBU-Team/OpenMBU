@@ -522,7 +522,7 @@ Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
 
     // TODO: Finish Implementing getExternalForces
 
-    if (mContacts.size() == 0 && (mMode & RestrictXYZMode) == 0)
+    if (mContacts.empty() && (mMode & RestrictXYZMode) == 0)
     {
         Point3D sideDir;
         Point3D motionDir;
@@ -647,7 +647,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
         for (S32 i = 0; i < smPathItrVec.size(); i++)
         {
             PathedInterior* pint = smPathItrVec[i];
-            pint->resetTickState(0);
+            pint->resetTickState(false);
             pint->advance(timeStep);
         }
 
@@ -668,7 +668,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
     delta.posVec -= delta.pos;
 
-    setPosition(mPosition, 0);
+    setPosition(mPosition, false);
 }
 
 ConsoleMethod(Marble, setVelocityRot, bool, 3, 3, "(vel)")
