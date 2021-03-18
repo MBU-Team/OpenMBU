@@ -360,7 +360,101 @@ LABEL_20:
 
 void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec)
 {
-    // TODO: Implement velocityCancel
+    U32 itersIn = 0;
+    bool looped = false;
+    bool done;
+
+    do
+    {
+        ++itersIn;
+        done = true;
+
+        if (!mContacts.empty())
+        {
+            S32 i = 0;
+            do
+            {
+                Contact* contact =  &mContacts[i];
+
+                Point3D velDiff = mVelocity - contact->surfaceVelocity;
+                F64 velDiffDot = mDot(contact->normal, velDiff);
+                if ((looped || velDiffDot >= 0.0) && velDiffDot >= -0.0001)
+                    goto LABEL_27;
+
+                F64 velLen = mVelocity.len();
+
+                Point3D normVel = contact->normal * velDiffDot;
+                if (isGhost() && !bouncedYet)
+                {
+                    playBounceSound(*contact, -velDiffDot);
+                    bouncedYet = true;
+                }
+
+                if (noBounce)
+                    goto LABEL_11;
+
+                if (contact->object == NULL || (contact->object->getType() & PlayerObjectType) == 0)
+                {
+                    if (contact->surfaceVelocity.len() != 0.0 || surfaceSlide || -mDataBlock->maxDotSlide * velLen >= velDiffDot)
+                    {
+                        if (-mDataBlock->minBounceVel < velDiffDot)
+                        {
+LABEL_11:
+                            mVelocity -= normVel;
+                        } else
+                        {
+                            // TODO: Implement velocityCancel
+                        }
+
+                        // TODO: Implement velocityCancel
+
+                        goto LABEL_26;
+                    }
+
+                    // TODO: Implement velocityCancel
+
+                    surfaceSlide = true;
+
+                } else
+                {
+                    // TODO: Implement velocityCancel
+                }
+LABEL_26:
+                done = false;
+LABEL_27:
+                ++i;
+            } while(i < mContacts.size());
+        }
+
+        looped = true;
+
+        if (itersIn > 6 && !stoppedPaths)
+        {
+            stoppedPaths = true;
+            if (noBounce)
+                done = true;
+
+            for (S32 j = 0; j < mContacts.size(); j++)
+            {
+                mContacts[j].surfaceVelocity.set(0, 0, 0);
+            }
+
+            for (S32 k = 0; k < pitrVec.size(); k++)
+            {
+                PathedInterior* pitr = pitrVec[k];
+
+                if (pitr->getExtrudedBox().isOverlapped(mWorldBox))
+                    pitr->setStopped();
+            }
+        }
+
+
+    } while(!done && itersIn < 20);
+
+    if (mVelocity.lenSquared() < 625.0)
+    {
+        // TODO: Implement velocityCancel
+    }
 }
 
 Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
