@@ -403,20 +403,68 @@ LABEL_11:
                             mVelocity -= normVel;
                         } else
                         {
-                            // TODO: Implement velocityCancel
+                            F32 bounceFactor = contact->restitution * mPowerUpParams.bounce;
+                            F32 invertedBounceFactor = -(bounceFactor + 1.0f);
+
+                            Point3D velocityAdd = normVel * invertedBounceFactor;
+
+                            Point3D mul = -contact->normal * mRadius;
+
+                            Point3D marbleBox;
+
+                            mCross(mOmega, mul, &marbleBox);
+
+                            Point3D contactNormal = contact->normal;
+
+                            Point3D vAtC = marbleBox + velDiff;
+
+                            F64 normalContactVelocity = -mDot(contactNormal, velDiff);
+
+                            F64 velDiffLength = velDiff.len();
+
+                            F64 velDiffBounceFactor = velDiffLength * bounceFactor;
+                            bounceEmitter(velDiffBounceFactor, contactNormal);
+
+                            F64 normalYVelDiff = mDot(contactNormal, velDiff);
+
+                            vAtC -= contactNormal * normalYVelDiff;
+
+                            F64 vAtCLen = vAtC.len();
+                            if (vAtCLen != 0.0) {
+                                F64 friction = mDataBlock->bounceKineticFriction * contact->friction;
+
+                                F64 frictionContactVelocity = friction * 5.0 * normalContactVelocity / (mRadius + mRadius);
+                                if (vAtCLen / mRadius < frictionContactVelocity) {
+                                    frictionContactVelocity = vAtCLen / mRadius;
+                                }
+                                Point3D marbleBox2 = -(vAtC * (1.0 / vAtCLen));
+                                Point3D invNormal = -contact->normal;
+                                Point3D rotation;
+
+                                mCross(invNormal, marbleBox2, &rotation);
+
+                                mOmega += vAtC * frictionContactVelocity;
+
+                                Point3D marbleBox3 = -contactNormal * mRadius;
+                                Point3D negFrictionContactVelocity = -(vAtC * frictionContactVelocity);
+
+                                Point3D point3D1;
+                                mCross(negFrictionContactVelocity, marbleBox3, &point3D1);
+                                mVelocity -= point3D1;
+                            }
+                           
+                            mVelocity += velocityAdd;
                         }
-
-                        // TODO: Implement velocityCancel
-
                         goto LABEL_26;
                     }
-
-                    // TODO: Implement velocityCancel
-
+                    mVelocity -= normVel;
+                    m_point3D_normalize(mVelocity);
+                    mVelocity *= velLen;
                     surfaceSlide = true;
 
                 } else
                 {
+                    F64 mass = ((SceneObject*)contact->object)->getMass();
                     // TODO: Implement velocityCancel
                 }
 LABEL_26:
@@ -454,7 +502,9 @@ LABEL_27:
     if (mVelocity.lenSquared() < 625.0)
     {
         // TODO: Implement velocityCancel
+        
     }
+    
 }
 
 Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
@@ -559,6 +609,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
         F64 moveTime = timeStep;
         computeFirstPlatformIntersect(moveTime, smPathItrVec);
         testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false);
+        //mPosition += mVelocity * moveTime;
 
         if (!mMovePathSize && timeStep * 0.99 > moveTime && moveTime > 0.001000000047497451)
         {
