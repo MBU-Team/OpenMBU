@@ -475,18 +475,18 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             {
                 Contact* contact = &mContacts[j];
 
-                if (contact->contactDistance < this->mRadius)
+                /*if (contact->contactDistance < this->mRadius)
                 {
                     float timeToSeparate = 0.1f;
                     float dist = contact->contactDistance;
                     float outVel = mDot(mVelocity + soFar * dir, contact->normal);
                     if (timeToSeparate * outVel < dist)
                         soFar += (dist - outVel * timeToSeparate) / timeToSeparate / mDot((Point3F)contact->normal, dir);
-                }
+                }*/
 
 
-                /*if (mRadius > contact->kineticFriction)
-                if (contact->contactDistance < mRadius)
+                if (mRadius > contact->kineticFriction)
+                //if (contact->contactDistance < mRadius)
                 {
                     F32 timeToSeparate = 0.1000000014901161;
                     F32 dist = mRadius - contact->contactDistance;
@@ -502,7 +502,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
                         F64 bFac = (dist - cancan) / timeToSeparate;
                         soFar += bFac / mDot(bla, dir);
                     }
-                }*/
+                }
             }
 
             soFar = mClampF(soFar, -25.0f, 25.0f);
