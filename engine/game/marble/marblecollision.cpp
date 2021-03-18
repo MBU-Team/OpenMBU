@@ -49,6 +49,9 @@ void Marble::findObjectsAndPolys(U32 collisionMask, const Box3F& testBox, bool t
 		    sgLastCollisionBox.max.setMax(testBox.max + 0.5f);
 		}
 
+        sgLastCollisionMask = collisionMask;
+        sgResetFindObjects = false;
+
 		Point3D pos = (sgLastCollisionBox.max + sgLastCollisionBox.min) * 0.5f;
 		Point3F test = sgLastCollisionBox.max - sgLastCollisionBox.min;
 		SphereF sphere(pos, test.len() * 0.5f);
@@ -629,7 +632,7 @@ void Marble::resetObjectsAndPolys(U32 collisionMask, const Box3F& testBox)
     sgLastCollisionBox.min.set(0, 0, 0);
     sgLastCollisionBox.max.set(0, 0, 0);
 
-    sgResetFindObjects = 1;
+    sgResetFindObjects = true;
     sgCountCalls = 0;
 
     if (smPathItrVec.empty())
