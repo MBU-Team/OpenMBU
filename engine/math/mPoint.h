@@ -405,12 +405,12 @@ public:
     Point3D& operator*=(const Point3D&);
 
     // Arithmetic w/ scalars
-    Point3D  operator+(const F32) const;
-    Point3D  operator-(const F32) const;
+    Point3D  operator+(const F64) const;
+    Point3D  operator-(const F64) const;
     Point3D  operator*(const F64) const;
     Point3D  operator/(const F64) const;
-    Point3D& operator+=(const F32);
-    Point3D& operator-=(const F32);
+    Point3D& operator+=(const F64);
+    Point3D& operator-=(const F64);
     Point3D& operator*=(const F64);
     Point3D& operator/=(const F64);
 
@@ -1591,7 +1591,7 @@ inline Point3D Point3D::operator-(const Point3D& _rSub) const
     return Point3D(x - _rSub.x, y - _rSub.y, z - _rSub.z);
 }
 
-inline Point3D& Point3D::operator+=(const F32 _add)
+inline Point3D& Point3D::operator+=(const F64 _add)
 {
     x += _add;
     y += _add;
@@ -1609,7 +1609,7 @@ inline Point3D& Point3D::operator+=(const Point3D& _add)
     return *this;
 }
 
-inline Point3D& Point3D::operator-=(const F32 _rSub)
+inline Point3D& Point3D::operator-=(const F64 _rSub)
 {
     x -= _rSub;
     y -= _rSub;
@@ -1636,14 +1636,14 @@ inline Point3D& Point3D::operator*=(const Point3D& _vec)
     return *this;
 }
 
-inline Point3D Point3D::operator+(const F32 _add) const
+inline Point3D Point3D::operator+(const F64 _add) const
 {
     return Point3D(x + _add, y + _add, z + _add);
 }
 
-inline Point3D Point3D::operator-(const F32 _add) const
+inline Point3D Point3D::operator-(const F64 _rSub) const
 {
-    return Point3D(x - _add, y - _add, z - _add);
+    return Point3D(x - _rSub, y - _rSub, z - _rSub);
 }
 
 inline Point3D Point3D::operator*(const F64 _mul) const
@@ -1679,9 +1679,9 @@ inline Point3D& Point3D::operator*=(const F64 _mul)
 
 inline Point3D& Point3D::operator/=(const F64 _div)
 {
-    AssertFatal(_div != 0.0f, "Error, div by zero attempted");
+    AssertFatal(_div != 0.0, "Error, div by zero attempted");
 
-    F64 inv = 1.0f / _div;
+    F64 inv = 1.0 / _div;
     x *= inv;
     y *= inv;
     z *= inv;
