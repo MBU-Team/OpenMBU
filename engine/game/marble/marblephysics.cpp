@@ -25,6 +25,8 @@ bool gMarbleAxisSet = false;
 Point3F gWorkGravityDir;
 Point3F gMarbleSideDir;
 
+#define SurfaceDotThreshold 0.0001
+
 Point3D Marble::getVelocityD() const
 {
     return mVelocity;
@@ -360,14 +362,14 @@ LABEL_20:
 
 void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec)
 {
-    U32 itersIn = 0;
     bool looped = false;
+    U32 itersIn = 0;
     bool done;
 
     do
     {
-        ++itersIn;
         done = true;
+        itersIn++;
 
         if (!mContacts.empty())
         {
@@ -376,102 +378,73 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             {
                 Contact* contact =  &mContacts[i];
 
-                Point3D velDiff = mVelocity - contact->surfaceVelocity;
-                F64 velDiffDot = mDot(contact->normal, velDiff);
+                Point3D sVel = mVelocity - contact->surfaceVelocity;
+                F64 surfaceDot = mDot(contact->normal, sVel);
 
-                if ((looped || velDiffDot >= 0.0) && velDiffDot >= -0.0001)
-                    goto LABEL_27;
-
-                F64 velLen = mVelocity.len();
-
-                Point3D normVel = contact->normal * velDiffDot;
-
-                if (isGhost() && !bouncedYet)
+                if ((!looped && surfaceDot < 0.0) || surfaceDot < -SurfaceDotThreshold)
                 {
-                    playBounceSound(*contact, -velDiffDot);
-                    bouncedYet = true;
-                }
+                    F64 velLen = mVelocity.len();
+                    Point3D surfaceVel = contact->normal * surfaceDot;
 
-                if (noBounce)
-                    goto LABEL_11;
-
-                if (contact->object == NULL || (contact->object->getType() & PlayerObjectType) == 0)
-                {
-                    if (contact->surfaceVelocity.len() != 0.0 || surfaceSlide || -mDataBlock->maxDotSlide * velLen >= velDiffDot)
+                    if (isGhost() && !bouncedYet)
                     {
-                        if (-mDataBlock->minBounceVel < velDiffDot)
+                        playBounceSound(*contact, -surfaceDot);
+                        bouncedYet = true;
+                    }
+
+                    if (noBounce)
+                    {
+                        mVelocity -= surfaceVel;
+                    } else if (contact->object != NULL && (contact->object->getType() & PlayerObjectType) != 0)
+                    {
+                        F64 mass = ((SceneObject*)contact->object)->getMass();
+                        // TODO: Finish Implementing velocityCancel
+                    } else
+                    {
+                        if (contact->surfaceVelocity.len() == 0.0 && !surfaceSlide && surfaceDot > -mDataBlock->maxDotSlide * velLen)
                         {
-LABEL_11:
-                            mVelocity -= normVel;
+
+                            mVelocity -= surfaceVel;
+                            m_point3D_normalize(mVelocity);
+                            mVelocity *= velLen;
+                            surfaceSlide = true;
+                        } else if (surfaceDot >= -mDataBlock->minBounceVel)
+                        {
+                            mVelocity -= surfaceVel;
                         } else
                         {
-                            F32 bounceFactor = contact->restitution * mPowerUpParams.bounce;
-                            F32 invertedBounceFactor = -(bounceFactor + 1.0f);
+                            F64 restitution = contact->restitution * mPowerUpParams.bounce;
+                            Point3D velocityAdd = -(1.0 + restitution) * surfaceVel;
+                            Point3D vAtC = sVel + mCross(mOmega, -contact->normal * mRadius);
+                            F64 normalVel = -mDot(contact->normal, sVel);
 
-                            Point3D velocityAdd = normVel * invertedBounceFactor;
+                            bounceEmitter(sVel.len() * restitution, contact->normal);
 
-                            Point3D mul = -contact->normal * mRadius;
+                            vAtC -= contact->normal * mDot(contact->normal, sVel);
 
-                            Point3D marbleBox;
-
-                            mCross(mOmega, mul, &marbleBox);
-
-                            Point3D contactNormal = contact->normal;
-
-                            Point3D vAtC = marbleBox + velDiff;
-
-                            F64 normalContactVelocity = -mDot(contactNormal, velDiff);
-
-                            F64 velDiffLength = velDiff.len();
-
-                            F64 velDiffBounceFactor = velDiffLength * bounceFactor;
-                            bounceEmitter(velDiffBounceFactor, contactNormal);
-
-                            F64 normalYVelDiff = mDot(contactNormal, velDiff);
-
-                            vAtC -= contactNormal * normalYVelDiff;
-
-                            F64 vAtCLen = vAtC.len();
-                            if (vAtCLen != 0.0) {
+                            F64 vAtCMag = vAtC.len();
+                            if (vAtCMag != 0.0) {
                                 F64 friction = mDataBlock->bounceKineticFriction * contact->friction;
 
-                                F64 frictionContactVelocity = friction * 5.0 * normalContactVelocity / (mRadius + mRadius);
-                                if (vAtCLen / mRadius < frictionContactVelocity)
-                                    frictionContactVelocity = vAtCLen / mRadius;
+                                F64 angVMagnitude = friction * 5.0 * normalVel / (mRadius + mRadius);
+                                if (vAtCMag / mRadius < angVMagnitude)
+                                    angVMagnitude = vAtCMag / mRadius;
 
-                                Point3D marbleBox2 = -(vAtC * (1.0 / vAtCLen));
-                                Point3D invNormal = -contact->normal;
-                                Point3D rotation;
+                                Point3D vAtCDir = vAtC / vAtCMag;
 
-                                mCross(invNormal, marbleBox2, &rotation);
-
-                                mOmega += rotation * frictionContactVelocity;
-
-                                Point3D marbleBox3 = -contactNormal * mRadius;
-                                Point3D negFrictionContactVelocity = -(rotation * frictionContactVelocity);
-
-                                Point3D point3D1;
-                                mCross(negFrictionContactVelocity, marbleBox3, &point3D1);
-                                mVelocity -= point3D1;
+                                Point3D deltaOmega = angVMagnitude * mCross(-contact->normal, -vAtCDir);
+                                mOmega += deltaOmega;
+                                
+                                mVelocity -= mCross(-deltaOmega, -contact->normal * mRadius);
                             }
-                           
                             mVelocity += velocityAdd;
                         }
-                        goto LABEL_26;
-                    }
-                    mVelocity -= normVel;
-                    m_point3D_normalize(mVelocity);
-                    mVelocity *= velLen;
-                    surfaceSlide = true;
 
-                } else
-                {
-                    F64 mass = ((SceneObject*)contact->object)->getMass();
-                    // TODO: Finish Implementing velocityCancel
+                    }
+
+                    done = false;
                 }
-LABEL_26:
-                done = false;
-LABEL_27:
+
                 ++i;
             } while(i < mContacts.size());
         }
@@ -503,58 +476,59 @@ LABEL_27:
     
     if (mVelocity.lenSquared() < 625.0)
     {
-        Point3F mulThing(0, 0, 0);
-        if (!mContacts.empty())
+        bool gotOne = false;
+        Point3F dir(0, 0, 0);
+        for (S32 j = 0; j < mContacts.size(); j++)
         {
-            S32 i = mContacts.size();
-            while(true)
+            Point3F dir2 = dir + mContacts[j].normal;
+            if (dir2.lenSquared() < 0.0099999998)
+                dir2 += mContacts[j].normal;
+
+            dir = dir2;
+            gotOne = true;
+        }
+
+        if (gotOne)
+        {
+            m_point3F_normalize(dir);
+
+            F32 soFar = 0.0;
+            for (S32 j = 0; j < mContacts.size(); j++)
             {
-                i--;
-                Point3F normal = mContacts[i].normal;
+                Contact* contact = &mContacts[j];
 
-                Point3F blorb = normal + mulThing;
-                if (mDot(blorb, blorb) < 0.0099999998)
-                    blorb += normal;
-
-                if (i == 0)
-                    break;
-
-                mulThing = blorb;
-            }
-
-            m_point3F_normalize(mulThing);
-
-            F32 soFara = 0.0;
-            if (!mContacts.empty())
-            {
-                S32 i = mContacts.size();
-                S32 j = 0;
-                do
+                if (contact->contactDistance < this->mRadius)
                 {
-                    Contact* contact = &mContacts[j];
-                    if (mRadius > contact->kineticFriction)
+                    float timeToSeparate = 0.1f;
+                    float dist = contact->contactDistance;
+                    float outVel = mDot(mVelocity + soFar * dir, contact->normal);
+                    if (timeToSeparate * outVel < dist)
+                        soFar += (dist - outVel * timeToSeparate) / timeToSeparate / mDot((Point3F)contact->normal, dir);
+                }
+
+
+                /*if (mRadius > contact->kineticFriction)
+                if (contact->contactDistance < mRadius)
+                {
+                    F32 timeToSeparate = 0.1000000014901161;
+                    F32 dist = mRadius - contact->contactDistance;
+                    Point3F normal = contact->normal;
+                    Point3F unk = normal * soFar;
+                    Point3F tickle = mVelocity - contact->surfaceVelocity;
+                    Point3F plop = unk + normal;
+                    F32 outVel = mDot(plop, normal);
+                    F64 cancan = timeToSeparate * outVel;
+                    if (dist > cancan)
                     {
-                        F32 dista = mRadius - contact->contactDistance;
-                        Point3F normal = contact->normal;
-                        Point3F unk = normal * soFara;
-                        Point3F tickle = mVelocity - contact->surfaceVelocity;
-                        Point3F plop = unk + normal;
-                        F32 outVela = mDot(plop, normal);
-                        F64 cancan = outVela * 0.1000000014901161;
-                        if (dista > cancan)
-                        {
-                            Point3F bla = contact->normal; // Is this right?
-                            F64 bFac = (dista - cancan) / 0.1000000014901161;
-                            soFara += bFac / mDot(bla, mulThing);
-                        }
+                        Point3F bla = contact->normal; // Is this right?
+                        F64 bFac = (dist - cancan) / timeToSeparate;
+                        soFar += bFac / mDot(bla, dir);
                     }
-                    j++;
-                    i--;
-                } while (i);
+                }*/
             }
 
-            soFara = mClampF(soFara, -25.0f, 25.0f);
-            mVelocity += mulThing * soFara;
+            soFar = mClampF(soFar, -25.0f, 25.0f);
+            mVelocity += soFar * dir;
         }
     }
     
