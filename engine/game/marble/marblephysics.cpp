@@ -378,12 +378,14 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 
                 Point3D velDiff = mVelocity - contact->surfaceVelocity;
                 F64 velDiffDot = mDot(contact->normal, velDiff);
+
                 if ((looped || velDiffDot >= 0.0) && velDiffDot >= -0.0001)
                     goto LABEL_27;
 
                 F64 velLen = mVelocity.len();
 
                 Point3D normVel = contact->normal * velDiffDot;
+
                 if (isGhost() && !bouncedYet)
                 {
                     playBounceSound(*contact, -velDiffDot);
@@ -434,9 +436,9 @@ LABEL_11:
                                 F64 friction = mDataBlock->bounceKineticFriction * contact->friction;
 
                                 F64 frictionContactVelocity = friction * 5.0 * normalContactVelocity / (mRadius + mRadius);
-                                if (vAtCLen / mRadius < frictionContactVelocity) {
+                                if (vAtCLen / mRadius < frictionContactVelocity)
                                     frictionContactVelocity = vAtCLen / mRadius;
-                                }
+
                                 Point3D marbleBox2 = -(vAtC * (1.0 / vAtCLen));
                                 Point3D invNormal = -contact->normal;
                                 Point3D rotation;
@@ -465,7 +467,7 @@ LABEL_11:
                 } else
                 {
                     F64 mass = ((SceneObject*)contact->object)->getMass();
-                    // TODO: Implement velocityCancel
+                    // TODO: Finish Implementing velocityCancel
                 }
 LABEL_26:
                 done = false;
@@ -498,11 +500,62 @@ LABEL_27:
 
 
     } while(!done && itersIn < 20);
-
+    
     if (mVelocity.lenSquared() < 625.0)
     {
-        // TODO: Implement velocityCancel
-        
+        Point3F mulThing(0, 0, 0);
+        if (!mContacts.empty())
+        {
+            S32 i = mContacts.size();
+            while(true)
+            {
+                i--;
+                Point3F normal = mContacts[i].normal;
+
+                Point3F blorb = normal + mulThing;
+                if (mDot(blorb, blorb) < 0.0099999998)
+                    blorb += normal;
+
+                if (i == 0)
+                    break;
+
+                mulThing = blorb;
+            }
+
+            m_point3F_normalize(mulThing);
+
+            F32 soFara = 0.0;
+            if (!mContacts.empty())
+            {
+                S32 i = mContacts.size();
+                S32 j = 0;
+                do
+                {
+                    Contact* contact = &mContacts[j];
+                    if (mRadius > contact->kineticFriction)
+                    {
+                        F32 dista = mRadius - contact->contactDistance;
+                        Point3F normal = contact->normal;
+                        Point3F unk = normal * soFara;
+                        Point3F tickle = mVelocity - contact->surfaceVelocity;
+                        Point3F plop = unk + normal;
+                        F32 outVela = mDot(plop, normal);
+                        F64 cancan = outVela * 0.1000000014901161;
+                        if (dista > cancan)
+                        {
+                            Point3F bla = contact->normal; // Is this right?
+                            F64 bFac = (dista - cancan) / 0.1000000014901161;
+                            soFara += bFac / mDot(bla, mulThing);
+                        }
+                    }
+                    j++;
+                    i--;
+                } while (i);
+            }
+
+            soFara = mClampF(soFara, -25.0f, 25.0f);
+            mVelocity += mulThing * soFara;
+        }
     }
     
 }
