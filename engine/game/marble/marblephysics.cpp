@@ -123,98 +123,76 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
 
     if (bestContactIndex != mContacts.size() && (mMode & MoveMode) != 0)
     {
-        Point3D aadd = -mBestContact.normal * mRadius;
-
-        Point3D aFriction;
-        mCross(mOmega, aadd, &aFriction);
-
-        Point3D vAtC = aFriction + mVelocity - mBestContact.surfaceVelocity;
+        Point3D vAtC = mVelocity + mCross(mOmega, -mBestContact.normal * mRadius) - mBestContact.surfaceVelocity;
         mBestContact.vAtCMag = vAtC.len();
 
-        Point3D aNewFriction(0, 0, 0);
-        Point3D ANewFriction(0, 0, 0);
+        bool slipping = false;
+        Point3D aFriction(0, 0, 0);
+        Point3D AFriction(0, 0, 0);
 
-        if (mBestContact.vAtCMag == 0.0)
-            goto LABEL_34;
-
-        bool slipping = true;
-
-        F32 frictiona = 0.0f;
-        if ((mMode & RestrictXYZMode) == 0)
-            frictiona = mDataBlock->kineticFriction * mBestContact.friction;
-
-        F64 somevar = frictiona * 5.0 * mBestContact.normalForce / (mRadius + mRadius);
-        F64 AMagnitude = mBestContact.normalForce * frictiona;
-        F64 totalDeltaV = (mRadius * somevar + AMagnitude) * timeStep;
-        if (mBestContact.vAtCMag < totalDeltaV)
+        if (mBestContact.vAtCMag != 0.0)
         {
-            slipping = false;
-            somevar *= mBestContact.vAtCMag / totalDeltaV;
-            AMagnitude *= mBestContact.vAtCMag / totalDeltaV;
+            slipping = true;
+
+            F32 friction = 0.0f;
+            if ((mMode & RestrictXYZMode) == 0)
+                friction = mDataBlock->kineticFriction * mBestContact.friction;
+
+            F64 angAMagnitude = friction * 5.0 * mBestContact.normalForce / (mRadius + mRadius);
+            F64 AMagnitude = mBestContact.normalForce * friction;
+            F64 totalDeltaV = (mRadius * angAMagnitude + AMagnitude) * timeStep;
+            if (mBestContact.vAtCMag < totalDeltaV)
+            {
+                slipping = false;
+                angAMagnitude *= mBestContact.vAtCMag / totalDeltaV;
+                AMagnitude *= mBestContact.vAtCMag / totalDeltaV;
+            }
+
+            Point3D vAtCDir = vAtC / mBestContact.vAtCMag;
+
+            aFriction = angAMagnitude * mCross(-mBestContact.normal, -vAtCDir);
+            AFriction = -AMagnitude * vAtCDir;
+
+            slipAmount = mBestContact.vAtCMag - totalDeltaV;
         }
-
-        Point3D vAtCDir = vAtC * (1.0 / mBestContact.vAtCMag);
-        Point3D invVAtCDir = -vAtCDir;
-
-        Point3D aAtC;
-        mCross(-mBestContact.normal, invVAtCDir, &aAtC);
-
-        aNewFriction = aAtC * somevar;
-        ANewFriction = vAtCDir * -AMagnitude;
-
-        slipAmount = mBestContact.vAtCMag - totalDeltaV;
 
         if (!slipping)
         {
-LABEL_34:
-            Point3D invGrav = -gWorkGravityDir;
-
-            Point3D wow = invGrav * mRadius;
-
-            Point3D poptart;
-            mCross(wow, A, &poptart);
-
-            Point3D newThing = poptart * (1.0 / wow.lenSquared());
+            Point3D R = -gWorkGravityDir * mRadius;
+            Point3D aadd = mCross(R, A) / R.lenSquared();
 
             if (isCentered)
             {
-                aControl = desiredOmega - (a * timeStep + mOmega);
+                Point3D nextOmega = mOmega + a * timeStep;
+                aControl = desiredOmega - nextOmega;
 
-                if (mDataBlock->brakingAcceleration < aControl.len())
-                    aControl *= mDataBlock->brakingAcceleration / aControl.len();
+                F64 aScalar = aControl.len();
+                if (mDataBlock->brakingAcceleration < aScalar)
+                    aControl *= mDataBlock->brakingAcceleration / aScalar;
             }
+            
+            Point3D Aadd = -mCross(aControl, -mBestContact.normal * mRadius);
+            F64 aAtCMag = (mCross(aadd, -mBestContact.normal * mRadius) + Aadd).len();
 
-            Point3D invNormRad = -mBestContact.normal * mRadius;
-
-            Point3D res;
-            mCross(aControl, invNormRad, &res);
-            res = -res;
-
-            Point3D res2;
-            mCross(newThing, invNormRad, &res2);
-            res2 += res;
-
-            F64 mag = res2.len();
-
-            F64 theFriction = 0.0;
+            F64 friction2 = 0.0;
             if ((mMode & RestrictXYZMode) == 0)
-                theFriction = mDataBlock->staticFriction * mBestContact.friction;
+                friction2 = mDataBlock->staticFriction * mBestContact.friction;
 
-            if (theFriction * mBestContact.normalForce < mag)
+            if (friction2 * mBestContact.normalForce < aAtCMag)
             {
-                theFriction = 0.0;
+                friction2 = 0.0;
                 if ((mMode & RestrictXYZMode) == 0)
-                    theFriction = mDataBlock->kineticFriction * mBestContact.friction;
+                    friction2 = mDataBlock->kineticFriction * mBestContact.friction;
 
-                res *= theFriction * mBestContact.normalForce / mag;
+                Aadd *= friction2 * mBestContact.normalForce / aAtCMag;
             }
 
-            A += res;
-            a += newThing;
+            A += Aadd;
+            a += aadd;
         }
 
-        A += ANewFriction;
-        a += aNewFriction;
+        A += AFriction;
+        a += aFriction;
     }
 
     a += aControl;
@@ -246,7 +224,7 @@ void Marble::getMarbleAxis(Point3D& sideDir, Point3D& motionDir, Point3D& upDir)
         
         mCross(-gWorkGravityDir, gMarbleSideDir, gMarbleMotionDir);
         
-        gMarbleAxisSet = 1;
+        gMarbleAxisSet = true;
     }
 
     sideDir = gMarbleSideDir;
