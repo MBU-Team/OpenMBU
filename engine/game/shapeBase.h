@@ -866,6 +866,9 @@ protected:
     F32   mFadeTime;
     F32   mFadeDelay;
     /// @}
+    ///
+
+    U32 mCreateTime;
 
 
     /// @name Control info
@@ -1615,9 +1618,9 @@ public:
     /// @param   hidden   True if object is to be hidden
     virtual void setHidden(bool hidden);
 
-    /// Returns true if this object is hidden
-    /// @see setHidden
-    bool isHidden() { return mHidden && !gForceNotHidden; }
+    virtual void onUnhide();
+
+    U32 getCreateTime() { return mCreateTime; }
 
     /// Returns true if this object can be damaged
     bool isInvincible();

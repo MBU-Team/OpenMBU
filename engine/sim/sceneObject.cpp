@@ -1843,6 +1843,14 @@ void SceneObject::setPosition(const Point3F& pos)
     setTransform(xform);
 }
 
+void SceneObject::setHidden(bool hidden)
+{
+    if (hidden != mHidden) {
+        mHidden = hidden;
+        setMaskBits(HiddenMask);
+    }
+}
+
 //--------------------------------------------------------------------------
 SceneObject::LightingInfo::LightingInfo()
 {
@@ -2146,5 +2154,15 @@ void SceneObject::findLightGroup(NetConnection* con)
 
         delete[] lightname;
     }
+}
+
+ConsoleMethod(SceneObject, setHidden, void, 3, 3, "(bool show)")
+{
+    object->setHidden(dAtob(argv[2]));
+}
+
+ConsoleMethod(SceneObject, isHidden, bool, 2, 2, "")
+{
+    return object->isHidden();
 }
 

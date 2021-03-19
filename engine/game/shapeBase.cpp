@@ -810,6 +810,8 @@ bool ShapeBase::onAdd()
     if (!Parent::onAdd())
         return false;
 
+    mCreateTime = Platform::getVirtualMilliseconds();
+
     // Resolve sounds that arrived in the initial update
     S32 i;
     for (i = 0; i < MaxSoundThreads; i++)
@@ -3291,6 +3293,7 @@ void ShapeBase::setCloakedState(bool cloaked)
 void ShapeBase::setHidden(bool hidden)
 {
     if (hidden != mHidden) {
+        Parent::setHidden(hidden);
         // need to set a mask bit to make the ghost manager delete copies of this object
         // hacky, but oh well.
         setMaskBits(CloakMask);
@@ -3299,8 +3302,13 @@ void ShapeBase::setHidden(bool hidden)
         else
            removeFromScene();*/
 
-        mHidden = hidden;
+        //mHidden = hidden;
     }
+}
+
+void ShapeBase::onUnhide()
+{
+    mCreateTime = Platform::getVirtualMilliseconds();
 }
 
 //--------------------------------------------------------------------------
@@ -3509,18 +3517,6 @@ void ShapeBase::setSkinName(const char* name)
         }
         setMaskBits(SkinMask);
     }
-}
-
-//--------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-ConsoleMethod(ShapeBase, setHidden, void, 3, 3, "(bool show)")
-{
-    object->setHidden(dAtob(argv[2]));
-}
-
-ConsoleMethod(ShapeBase, isHidden, bool, 2, 2, "")
-{
-    return object->isHidden();
 }
 
 //----------------------------------------------------------------------------

@@ -412,6 +412,7 @@ U32 GameBase::packUpdate(NetConnection*, U32 mask, BitStream* stream)
         if (stream->writeFlag(mNetFlags.test(NetOrdered)))
             stream->writeInt(mOrderGUID, 16);
     }
+    stream->writeFlag(mHidden);
 
     return 0;
 }
@@ -434,6 +435,11 @@ void GameBase::unpackUpdate(NetConnection* con, BitStream* stream)
         if (!Sim::findObject(id, dptr) || !setDataBlock(dptr))
             con->setLastError("Invalid packet GameBase::unpackUpdate()");
     }
+
+    bool wasHidden = isHidden();
+    setHidden(stream->readFlag());
+    if (wasHidden && !isHidden())
+        onUnhide();
 }
 
 //----------------------------------------------------------------------------

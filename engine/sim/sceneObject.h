@@ -31,7 +31,11 @@
 #include "sceneGraph/lightManager.h"
 #endif
 
+#ifndef _GAME_H_
 #include "game/game.h"
+#endif
+
+extern bool gForceNotHidden;
 
 //-------------------------------------- Forward declarations...
 class SceneObject;
@@ -266,7 +270,8 @@ public:
     enum SceneObjectMasks
     {
         ScaleMask = BIT(0),
-        NextFreeMask = BIT(1)
+        HiddenMask = BIT(1),
+        NextFreeMask = BIT(2)
     };
 
     //-------------------------------------- Public interfaces
@@ -790,6 +795,16 @@ public:
 
 public:
     virtual Material* getMaterial(U32 material) { return NULL; }
+    
+    /// Sets the state of this object as hidden or not. If an object is hidden
+    /// it is removed entirely from collisions, it is not ghosted and is
+    /// essentially "non existant" as far as simulation is concerned.
+    /// @param   hidden   True if object is to be hidden
+    virtual void setHidden(bool hidden);
+
+    /// Returns true if this object is hidden
+    /// @see setHidden
+    bool isHidden() { return mHidden && !gForceNotHidden; }
 
 
     /// @name Rendering Members

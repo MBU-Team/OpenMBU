@@ -210,6 +210,8 @@ public:
     static void consoleInit();
     /// @}
 
+    virtual void onUnhide() {}
+
     ///@name Datablock
     ///@{
 
