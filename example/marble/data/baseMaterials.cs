@@ -59,7 +59,7 @@ new ShaderData( XBlur )
 //-----------------------------------------------------------------------------
 new GlowBuffer(GlowBufferData)
 {
-   shader = Blur;
+   shader = XBlur; //Blur;
    xenonShader = XBlur;
 };
 
