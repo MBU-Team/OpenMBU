@@ -111,7 +111,7 @@ void ClientProcessList::addObject(ProcessObject* pobj)
         // don't add
         return;
 
-    AssertFatal(obj->isClientObject(), "Adding non-client object to client list");
+    AssertFatal(obj->isClientObject() || gSPMode, "Adding non-client object to client list");
 
     if (obj->mNetFlags.test(GameBase::NetOrdered))
     {
