@@ -144,7 +144,6 @@ GameBase::GameBase()
 
     mProcessTag = 0;
     mAfterObject = 0;
-    mLastDelta = 0;
     mDataBlock = 0;
     mProcessTick = true;
     mNameTag = "";
@@ -169,12 +168,11 @@ bool GameBase::onAdd()
         getCurrentClientProcessList()->addObject(this);
     }
     else {
+        // Datablock must be initialized on the server
+        if (!onNewDataBlock(mDataBlock))
+            return false;
         getCurrentServerProcessList()->addObject(this);
     }
-
-    // Datablock must be initialized on the server
-    if (!isClientObject() && !onNewDataBlock(mDataBlock))
-        return false;
 
     if (gSPMode)
         mTypeMask &= ~GameBaseObjectType;
@@ -208,12 +206,10 @@ void GameBase::inspectPostApply()
 //----------------------------------------------------------------------------
 void GameBase::processTick(const Move*)
 {
-    mLastDelta = 0;
 }
 
 void GameBase::interpolateTick(F32 delta)
 {
-    mLastDelta = delta;
 }
 
 void GameBase::advanceTime(F32)
@@ -376,9 +372,20 @@ void GameBase::setControllingClient(GameConnection* client)
     setMaskBits(ControlMask);
 }
 
-U32 GameBase::getPacketDataChecksum(GameConnection*)
+U32 GameBase::getPacketDataChecksum(GameConnection* connection)
 {
-    return 0;
+   // just write the packet data into a buffer
+   // then we can CRC the buffer.  This should always let us
+   // know when there is a checksum problem.
+
+    static U8 buffer[1500] = { 0, };
+    BitStream stream(buffer, sizeof(buffer));
+
+    writePacketData(connection, &stream);
+    U32 byteCount = stream.getPosition();
+    U32 ret = calculateCRC(buffer, byteCount, 0xFFFFFFFF);
+    dMemset(buffer, 0, byteCount);
+    return ret;
 }
 
 void GameBase::writePacketData(GameConnection*, BitStream*)
@@ -402,6 +409,8 @@ U32 GameBase::packUpdate(NetConnection*, U32 mask, BitStream* stream)
         stream->writeRangedU32(mDataBlock->getId(),
             DataBlockObjectIdFirst,
             DataBlockObjectIdLast);
+        if (stream->writeFlag(mNetFlags.test(NetOrdered)))
+            stream->writeInt(mOrderGUID, 16);
     }
 
     return 0;
@@ -418,6 +427,9 @@ void GameBase::unpackUpdate(NetConnection* con, BitStream* stream)
         GameBaseData* dptr = 0;
         SimObjectId id = stream->readRangedU32(DataBlockObjectIdFirst,
             DataBlockObjectIdLast);
+
+        if (stream->readFlag())
+            mOrderGUID = stream->readInt(16);
 
         if (!Sim::findObject(id, dptr) || !setDataBlock(dptr))
             con->setLastError("Invalid packet GameBase::unpackUpdate()");

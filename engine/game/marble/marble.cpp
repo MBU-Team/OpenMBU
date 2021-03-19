@@ -1079,7 +1079,7 @@ LABEL_7:
 
     Point3F pos = diff * around + f;
 
-    if (getControllingClient())
+    if (getControllingClient() != NULL)
     {
         pos += mNetSmoothPos;
     }

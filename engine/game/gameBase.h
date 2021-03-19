@@ -174,7 +174,6 @@ public:
     static bool gShowBoundingBox;    ///< Should we render bounding boxes?
 protected:
     bool mProcessTick;
-    F32  mLastDelta;
     F32 mCameraFov;
 
 public:
@@ -277,6 +276,7 @@ public:
     ///
     /// @see processAfter
     GameBase* getProcessAfter() { return mAfterObject; }
+    ProcessObject* getAfterObject() { return mAfterObject; }
 
     /// Removes this object from the tick-processing list
     void removeFromProcessList() { plUnlink(); }
@@ -299,7 +299,7 @@ public:
     /// @param   dt   Time since last advance call
     virtual void advanceTime(F32 dt);
 
-    /// This is a component system thing, gotta ask Clark about it
+    /// Allow object a chance to tweak move before it is sent to client and server.
     virtual void preprocessMove(Move* move) {}
     /// @}
 
