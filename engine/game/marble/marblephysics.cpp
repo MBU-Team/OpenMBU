@@ -8,18 +8,18 @@
 //----------------------------------------------------------------------------
 
 static U32 sCollisionMask = StaticObjectType |
-                            AtlasObjectType |
-                            InteriorMapObjectType |
-                            ShapeBaseObjectType |
-                            PlayerObjectType |
-                            VehicleBlockerObjectType;
+                            TerrainObjectType |
+                            InteriorObjectType |
+                            WaterObjectType |
+                            StaticShapeObjectType |
+                            PlayerObjectType;
 
 static U32 sContactMask = StaticObjectType |
-                          AtlasObjectType |
-                          InteriorMapObjectType |
-                          ShapeBaseObjectType |
-                          PlayerObjectType |
-                          VehicleBlockerObjectType;
+                          TerrainObjectType |
+                          InteriorObjectType |
+                          WaterObjectType |
+                          StaticShapeObjectType |
+                          PlayerObjectType;
 
 bool gMarbleAxisSet = false;
 Point3F gWorkGravityDir;
