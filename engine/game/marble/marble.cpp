@@ -1056,20 +1056,14 @@ void Marble::findRenderPos(F32 dt)
 
     if (mMovePathSize != 0)
     {
-        Point3F* movePath = mMovePath;
-        F32* movePathTime = mMovePathTime;
-
         // TODO: Cleanup decompile
         U32 iter = 0;
-        while (*movePathTime <= outforce)
+        while (outforce > mMovePathTime[iter])
         {
-            Point3F* mP = movePath;
-            ++movePath;
-            startTime = *movePathTime;
-            around = *mP;
-            ++iter;
-            ++movePathTime;
-            if (iter >= mMovePathSize)
+            startTime = mMovePathTime[iter];
+            around = mMovePath[iter];
+            
+            if (++iter >= mMovePathSize)
                 goto LABEL_7;
         }
 
