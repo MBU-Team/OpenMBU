@@ -1030,7 +1030,61 @@ void Marble::trailEmitter(U32 timeDelta)
 
 void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
 {
-    // TODO: Implement updateRollSound
+    if (mRollHandle && mSlipHandle && mMegaHandle)
+    {
+        Point3F marblePos = mPosition;
+
+        alxSource3f(mRollHandle, AL_POSITION, marblePos.x, marblePos.y, marblePos.z);
+        alxSource3f(mRollHandle, AL_VELOCITY, 0, 0, 0);
+
+        alxSource3f(mSlipHandle, AL_POSITION, marblePos.x, marblePos.y, marblePos.z);
+        alxSource3f(mSlipHandle, AL_VELOCITY, 0, 0, 0);
+
+        alxSource3f(mMegaHandle, AL_POSITION, marblePos.x, marblePos.y, marblePos.z);
+        alxSource3f(mMegaHandle, AL_VELOCITY, 0, 0, 0);
+
+        float scale = mDataBlock->size;
+        float megaAmt = (this->mRenderScale.x - scale) / (mDataBlock->megaSize - scale);
+        float regAmt = 1.0 - megaAmt;
+
+        Point3D rollVel = mVelocity - mBestContact.surfaceVelocity;
+
+        scale = rollVel.len();
+        scale = scale / mDataBlock->maxRollVelocity;
+
+        float rollVolume = scale + scale;
+        if (rollVolume > 1.0)
+            rollVolume = 1.0;
+
+        if (contactPct < 0.05)
+            rollVolume = 0.0;
+
+        float slipVolume = 0.0;
+        if (slipAmount > 0.0)
+        {
+            slipVolume = slipAmount / 5.0;
+            if (slipVolume > 1.0)
+                slipVolume = 1.0;
+            rollVolume = (1.0 - slipVolume) * rollVolume;
+        }
+        alxSourcef(mRollHandle, AL_GAIN_LINEAR, rollVolume * regAmt);
+        alxSourcef(mMegaHandle, AL_GAIN_LINEAR, rollVolume * megaAmt);
+        alxSourcef(mSlipHandle, AL_GAIN_LINEAR, slipVolume);
+        
+        /*if (!mRollHandle)
+            SFXSource::play(mRollHandle);
+
+        if (!mMegaHandle)
+            SFXSource::play(mMegaHandle);
+
+        if (!mSlipHandle)
+            SFXSource::play(mSlipHandle);*/
+
+        float pitch = scale;
+        if (scale > 1.0)
+            pitch = 1.0;
+        alxSourcef(mRollHandle, AL_PITCH, pitch * 0.75 + 0.75);
+    }
 }
 
 void Marble::playBounceSound(Marble::Contact& contactSurface, F64 contactVel)
@@ -1226,10 +1280,10 @@ bool Marble::onAdd()
 
     if (isGhost())
     {
-        // TODO: Deal with audio!
-        //mRollHandle = alxPlay(this->mDataBlock->sound[0], &getTransform(), &Point3F(0, 0, 0));
-        //mSlipHandle = alxPlay(this->mDataBlock->sound[3], &getTransform(), &Point3F(0, 0, 0));
-        //mMegaHandle = alxPlay(this->mDataBlock->sound[1], &getTransform(), &Point3F(0, 0, 0));
+        Point3F pos = Point3F(0, 0, 0);
+        mRollHandle = alxPlay(mDataBlock->sound[0], &getTransform(), &pos);
+        mSlipHandle = alxPlay(mDataBlock->sound[3], &getTransform(), &pos);
+        mMegaHandle = alxPlay(mDataBlock->sound[1], &getTransform(), &pos);
 
         this->mVertBuff.set(GFX, 33, GFXBufferTypeStatic);
         this->mPrimBuff.set(GFX, 33, 2, GFXBufferTypeStatic);
