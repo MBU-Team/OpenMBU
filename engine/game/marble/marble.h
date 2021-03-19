@@ -250,7 +250,7 @@ public:
     virtual void readPacketData(GameConnection* conn, BitStream* stream);
     void renderShadow(F32 dist, F32 fogAmount);
     virtual void renderImage(SceneState* state);
-    void bounceEmitter(F32, const Point3F&);
+    void bounceEmitter(F32 speed, const Point3F& normal);
     virtual MatrixF getShadowTransform() const;
     virtual void setVelocity(const Point3F& vel);
     virtual Point3F getVelocity() const;
@@ -265,9 +265,9 @@ public:
     void doPowerUpPower(S32 powerUpId);
     void updatePowerups();
     virtual void updateMass();
-    void trailEmitter(U32);
-    void updateRollSound(F32, F32);
-    void playBounceSound(Marble::Contact&, F64);
+    void trailEmitter(U32 timeDelta);
+    void updateRollSound(F32 contactPct, F32 slipAmount);
+    void playBounceSound(Marble::Contact& contactSurface, F64 contactVel);
     void setPad(SceneObject* obj);
     void findRenderPos(F32 dt);
     virtual void advanceTime(F32 dt);

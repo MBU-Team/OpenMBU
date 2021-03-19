@@ -876,7 +876,7 @@ void Marble::renderImage(SceneState* state)
     // Empty
 }
 
-void Marble::bounceEmitter(F32, const Point3F&)
+void Marble::bounceEmitter(F32 speed, const Point3F& normal)
 {
     // TODO: Implement bounceEmitter
 }
@@ -1023,19 +1023,59 @@ void Marble::updateMass()
     resetWorldBox();
 }
 
-void Marble::trailEmitter(U32)
+void Marble::trailEmitter(U32 timeDelta)
 {
     // TODO: Implement trailEmitter
 }
 
-void Marble::updateRollSound(F32, F32)
+void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
 {
     // TODO: Implement updateRollSound
 }
 
-void Marble::playBounceSound(Marble::Contact&, F64)
+void Marble::playBounceSound(Marble::Contact& contactSurface, F64 contactVel)
 {
-    // TODO: Implement playBounceSound
+    bool mega;
+    F32 softBounceSpeed;
+
+    F32 minSize = mDataBlock->size;
+    if ((mRenderScale.x - minSize) / (mDataBlock->megaSize - minSize) <= 0.5f)
+    {
+        softBounceSpeed = mDataBlock->minVelocityBounceSoft;
+        mega = false;
+    } else
+    {
+        softBounceSpeed = mDataBlock->minVelocityMegaBounceSoft;
+        mega = true;
+    }
+
+    if (softBounceSpeed <= contactVel)
+    {
+        F32 hardBounceSpeed = mega ? mDataBlock->minVelocityMegaBounceHard : mDataBlock->minVelocityBounceHard;
+        F32 bounceSoundNum = mFloor(Platform::getRandom() * 4);
+        if (4 * (mega != 0) + bounceSoundNum <= 7)
+        {
+            S32 soundIndex = 4 * (mega != 0) + bounceSoundNum + MarbleData::Bounce1;
+            if (mDataBlock->sound[soundIndex])
+            {
+                F32 gain;
+                if (mega)
+                    gain = mDataBlock->bounceMegaMinGain;
+                else
+                    gain = mDataBlock->bounceMinGain;
+
+                if (hardBounceSpeed <= contactVel)
+                    gain = 1.0f;
+                else
+                    gain = (contactVel - softBounceSpeed) / (hardBounceSpeed - softBounceSpeed) * (1.0f - gain) + gain;
+
+                MatrixF mat(true);
+                mat.setColumn(3, getPosition());
+                AUDIOHANDLE handle = alxPlay(mDataBlock->sound[soundIndex], &mat);
+                alxSourcef(handle, AL_GAIN_LINEAR, gain);
+            }
+        }
+    }
 }
 
 void Marble::setPad(SceneObject* obj)
