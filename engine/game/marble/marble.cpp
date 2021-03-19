@@ -9,6 +9,8 @@
 #include "audio/audioDataBlock.h"
 #include "game/fx/particleEmitter.h"
 #include "game/gameProcess.h"
+#include "game/item.h"
+#include "game/trigger.h"
 #include "materials/matInstance.h"
 
 //----------------------------------------------------------------------------
@@ -16,6 +18,8 @@
 const float gMarbleCompressDists[7] = {5.0f, 11.0f, 23.0f, 47.0f, 96.0f, 195.0f, 500.0f};
 
 Point3F gMarbleMotionDir = Point3F(0, 0, 0);
+
+static U32 sTriggerItemMask = ItemObjectType | TriggerObjectType;
 
 //----------------------------------------------------------------------------
 
@@ -1202,9 +1206,102 @@ void Marble::processMoveTriggers(const Move *)
     // TODO: Implement processMoveTriggers
 }
 
-void Marble::processItemsAndTriggers(const Point3F&, const Point3F&)
+void Marble::processItemsAndTriggers(const Point3F& startPos, const Point3F& endPos)
 {
-    // TODO: Implement processItemsAndTriggers
+    // TODO: Cleanup decompile
+    double v5; // st7
+    double v6; // st7
+    double v7; // st7
+    double v8; // st7
+    double v9; // st7
+    double v10; // st7
+    double v11; // st7
+    Container* v12; // ecx
+    unsigned int i; // ebx
+    SceneObject* v14; // ecx
+    unsigned int v15; // eax
+    Box3F box; // [esp+10h] [ebp-5Ch] BYREF
+    Point3F in_rMin; // [esp+28h] [ebp-44h] BYREF
+    Point3F in_rMax; // [esp+34h] [ebp-38h] BYREF
+    SimpleQueryList sql; // [esp+40h] [ebp-2Ch] BYREF
+    float expansion; // [esp+4Ch] [ebp-20h]
+    float v21; // [esp+50h] [ebp-1Ch]
+    float v22; // [esp+54h] [ebp-18h]
+    float v23; // [esp+58h] [ebp-14h]
+    float v24; // [esp+5Ch] [ebp-10h]
+    int v25; // [esp+68h] [ebp-4h]
+    float startPosa; // [esp+74h] [ebp+8h]
+    float startPosb; // [esp+74h] [ebp+8h]
+    float startPosc; // [esp+74h] [ebp+8h]
+    float endPosa; // [esp+78h] [ebp+Ch]
+    float endPosb; // [esp+78h] [ebp+Ch]
+    float endPosc; // [esp+78h] [ebp+Ch]
+
+    if (endPos.z <= (double)startPos.z)
+        v5 = endPos.z;
+    else
+        v5 = startPos.z;
+    v21 = v5;
+    if (endPos.y <= (double)startPos.y)
+        v6 = endPos.y;
+    else
+        v6 = startPos.y;
+    v22 = v6;
+    if (endPos.x <= (double)startPos.x)
+        v7 = endPos.x;
+    else
+        v7 = startPos.x;
+    v23 = v7;
+    if (endPos.z >= (double)startPos.z)
+        v8 = endPos.z;
+    else
+        v8 = startPos.z;
+    v24 = v8;
+    if (endPos.y >= (double)startPos.y)
+        v9 = endPos.y;
+    else
+        v9 = startPos.y;
+    endPosa = v9;
+    if (endPos.x >= (double)startPos.x)
+        v10 = endPos.x;
+    else
+        v10 = startPos.x;
+    startPosa = v10;
+    expansion = this->mRadius + 0.2000000029802322;
+    v11 = expansion;
+    startPosb = startPosa + expansion;
+    endPosb = endPosa + expansion;
+    expansion = v24 + expansion;
+    in_rMax.x = startPosb;
+    in_rMax.y = endPosb;
+    in_rMax.z = expansion;
+    startPosc = v23 - v11;
+    endPosc = v22 - v11;
+    expansion = v21 - v11;
+    in_rMin.x = startPosc;
+    in_rMin.y = endPosc;
+    in_rMin.z = expansion;
+    box = Box3F(in_rMin, in_rMax, 0);
+    
+    v25 = 0;
+    mContainer->findObjects(box, sTriggerItemMask, SimpleQueryList::insertionCallback, &sql);
+    for (i = 0; i < sql.mList.size(); ++i)
+    {
+        v14 = sql.mList[i];
+        if ((v14->getTypeMask() & TriggerObjectType) != 0)
+        {
+            if (isServerObject())
+                ((Trigger*)v14)->potentialEnterObject(this);
+        }
+        else if ((v14->getTypeMask() & ItemObjectType) != 0 && this != ((Item*)v14)->getCollisionObject())
+        {
+            in_rMin.x = 0.0;
+            in_rMin.y = 0.0;
+            in_rMin.z = 0.0;
+            queueCollision((Item*)v14, in_rMin, 0);
+        }
+    }
+    v25 = -1;
 }
 
 void Marble::setPowerUpId(U32, bool)

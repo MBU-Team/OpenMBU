@@ -196,7 +196,8 @@ IMPLEMENT_CO_NETOBJECT_V1(Item);
 
 Item::Item()
 {
-    mTypeMask |= ItemObjectType;
+    mTypeMask |= ItemObjectType | GameBaseHiFiObjectType;
+    mNetFlags.set(HiFiPassive);
     mDataBlock = 0;
     mCollideable = false;
     mStatic = false;

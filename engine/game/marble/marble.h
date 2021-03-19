@@ -276,7 +276,7 @@ public:
     void prepShadows();
     virtual bool onAdd();
     void processMoveTriggers(const Move*);
-    void processItemsAndTriggers(const Point3F&, const Point3F&);
+    void processItemsAndTriggers(const Point3F& startPos, const Point3F& endPos);
     void setPowerUpId(U32, bool);
     virtual void processTick(const Move* move);
 
