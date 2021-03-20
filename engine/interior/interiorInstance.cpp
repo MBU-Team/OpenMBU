@@ -185,6 +185,8 @@ InteriorInstance::InteriorInstance()
 
     mShowTerrainInside = false;
 
+    mLMHandle = LM_HANDLE(-1);
+
     mSkinBase = StringTable->insert("base");
     mAudioProfile = 0;
     mAudioEnvironment = 0;

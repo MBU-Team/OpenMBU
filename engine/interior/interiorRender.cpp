@@ -221,21 +221,21 @@ void Interior::renderZoneNode(RenderNode& node,
 
 
     // setup lightmap
-    if (node.lightMapIndex != U8(-1))
-    {
-        ri->lightmap = &gInteriorLMManager.getHandle(mLMHandle, intInst->getLMHandle(), node.lightMapIndex);
+    //if (node.lightMapIndex != U8(-1))
+    //{
+    //    ri->lightmap = &gInteriorLMManager.getHandle(mLMHandle, intInst->getLMHandle(), node.lightMapIndex);
 
-        /*if( node.exterior )
-        {
-           sgData.normLightmap = NULL;
-           sgData.useLightDir = true;
-        }
-        else
-        {*/
-        ri->normLightmap = &gInteriorLMManager.getNormalHandle(mLMHandle, intInst->getLMHandle(), node.lightMapIndex);
-        //ri->useLightDir = false;
-     //}
-    }
+    //    /*if( node.exterior )
+    //    {
+    //       sgData.normLightmap = NULL;
+    //       sgData.useLightDir = true;
+    //    }
+    //    else
+    //    {*/
+    //    ri->normLightmap = &gInteriorLMManager.getNormalHandle(mLMHandle, intInst->getLMHandle(), node.lightMapIndex);
+    //    //ri->useLightDir = false;
+    // //}
+    //}
 
     // setup base map
     //if( node.baseTexIndex )

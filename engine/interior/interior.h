@@ -730,6 +730,9 @@ private:
     bool                    mHasAlarmState;
     U32                     mNumLightStateEntries;
 
+    
+    Vector<U16> mNormalIndices;
+
     Vector<GFXTexHandle>    mLightDirMapsTex;
     Vector<GBitmap*>        mLightDirMaps;
 
@@ -854,6 +857,7 @@ private:
 
     bool renderLights(InteriorInstance* intInst, SceneGraphData& sgData, RenderInst* coreRi, const ZoneVisDeterminer& zonevis);
 
+    void getTexMat(U32 surfaceIndex, U32 pointOffset, Point3F& T, Point3F& N, Point3F& B);
 
     void storeSurfVerts(Vector<U16>& masterIndexList,
         Vector<U16>& tempIndexList,

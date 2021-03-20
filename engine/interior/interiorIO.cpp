@@ -329,10 +329,9 @@ bool Interior::read(Stream& stream)
             stream.read(&dummy);
         }
 
-        Vector<Point3F> normals;
-        normals.setSize(vectorSize);
-        for (i = 0; i < normals.size(); i++)
-            mathRead(stream, &normals[i]);
+        mNormals.setSize(vectorSize);
+        for (i = 0; i < mNormals.size(); i++)
+            mathRead(stream, &mNormals[i]);
 
         // mNormalIndices
         bool normalIndicesAlt = false;
@@ -344,18 +343,18 @@ bool Interior::read(Stream& stream)
             normalIndicesAlt = true;
             stream.read(&normalIndicesParam);
         }
-        Vector<U16> normalIndices;
-        normalIndices.setSize(vectorSize);
-        for (i = 0; i < normalIndices.size(); i++)
+
+        mNormalIndices.setSize(vectorSize);
+        for (i = 0; i < mNormalIndices.size(); i++)
         {
             if (normalIndicesAlt && normalIndicesParam == 0)
             {
                 U8 index;
                 stream.read(&index);
-                normalIndices[i] = index;
+                mNormalIndices[i] = index;
             }
             else {
-                stream.read(&normalIndices[i]);
+                stream.read(&mNormalIndices[i]);
             }
         }
     }
@@ -384,11 +383,7 @@ bool Interior::read(Stream& stream)
     }
 
     // AlarmLMapIndices
-    if (fileVersion == 4)
-    {
-        mAlarmLMapIndices.setSize(0);
-    }
-    else
+    if (fileVersion != 4)
     {
         stream.read(&vectorSize);
         mAlarmLMapIndices.setSize(vectorSize);
@@ -426,10 +421,7 @@ bool Interior::read(Stream& stream)
     }
 
     // mLightmaps
-    if (fileVersion == 4)
-    {
-        generateLightmaps();
-    } else
+    if (fileVersion != 4)
     {
         stream.read(&vectorSize);
         mLightmaps.setSize(vectorSize);

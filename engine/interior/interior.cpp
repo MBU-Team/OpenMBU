@@ -1953,7 +1953,15 @@ bool ZoneVisDeterminer::isZoneVisible(const U32 zone) const
     }
 }
 
+void Interior::getTexMat(U32 surfaceIndex, U32 pointOffset, Point3F& T, Point3F& N, Point3F& B)
+{
+    Surface& surface = mSurfaces[surfaceIndex];
 
+    U16* indices = &mNormalIndices[3 * pointOffset + 3 * surface.windingStart];
+    T.set(mNormals[indices[0]]);
+    N.set(mNormals[indices[1]]);
+    B.set(mNormals[indices[2]]);
+}
 
 //--------------------------------------------------------------------------
 // storeSurfaceVerts -
@@ -2005,6 +2013,25 @@ void Interior::storeSurfVerts(Vector<U16>& masterIndexList,
             GFXVertexPNTTBN vert;
             vert.point = mPoints[tempIndexList[startIndex + i]].point;
             fillVertex(vert, surface, surfaceIndex);
+
+            if (mFileVersion == 4)
+            {
+                U32 it = 0;
+                U32 theIndex = 0;
+                if (surface.windingCount)
+                {
+                    while (mWindings[surface.windingStart + it] != tempIndexList[startIndex + i])
+                    {
+                        ++it;
+                        if (it >= surface.windingCount)
+                            goto LABEL_19;
+                    }
+                    theIndex = it;
+                }
+LABEL_19:
+                getTexMat(surfaceIndex, theIndex, vert.T, vert.N, vert.B);
+            }
+
             verts.push_back(vert);
 
             // store the index

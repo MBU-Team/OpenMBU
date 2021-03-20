@@ -1993,19 +1993,22 @@ bool SceneObject::getLightingAmbientColor(ColorF* col)
                     const Interior::Surface& surface = detail->getSurface(collision.face);
                     const Interior::TexGenPlanes& texgen = detail->getLMTexGenEQ(collision.face);
 
-                    lightmap = gInteriorLMManager.getHandle(detail->getLMHandle(),
-                        interior->getLMHandle(), detail->getNormalLMapIndex(collision.face)).getBitmap();
+                    if (detail->getLMHandle() != LM_HANDLE(-1))
+                    {
+                        lightmap = gInteriorLMManager.getHandle(detail->getLMHandle(),
+                            interior->getLMHandle(), detail->getNormalLMapIndex(collision.face)).getBitmap();
 
-                    uv.x = mDot(texgen.planeX, collision.point) + texgen.planeX.d;
-                    uv.y = mDot(texgen.planeY, collision.point) + texgen.planeY.d;
+                        uv.x = mDot(texgen.planeX, collision.point) + texgen.planeX.d;
+                        uv.y = mDot(texgen.planeY, collision.point) + texgen.planeY.d;
 
-                    U32 size = (uv.x * F32(lightmap->getWidth()));
-                    size = mClamp(size, surface.mapOffsetX, (surface.mapOffsetX + surface.mapSizeX));
-                    uv.x = F32(size) / F32(lightmap->getWidth());
+                        U32 size = (uv.x * F32(lightmap->getWidth()));
+                        size = mClamp(size, surface.mapOffsetX, (surface.mapOffsetX + surface.mapSizeX));
+                        uv.x = F32(size) / F32(lightmap->getWidth());
 
-                    size = (uv.y * F32(lightmap->getHeight()));
-                    size = mClamp(size, surface.mapOffsetY, (surface.mapOffsetY + surface.mapSizeY));
-                    uv.y = F32(size) / F32(lightmap->getHeight());
+                        size = (uv.y * F32(lightmap->getHeight()));
+                        size = mClamp(size, surface.mapOffsetY, (surface.mapOffsetY + surface.mapSizeY));
+                        uv.y = F32(size) / F32(lightmap->getHeight());
+                    }
                 }
                 else
                 {
