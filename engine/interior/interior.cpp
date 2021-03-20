@@ -2501,23 +2501,26 @@ void Interior::initMatInstances()
             GFXTexHandle tempTex;
 
             // setup lightmap
-            if (node.lightMapIndex != U8(-1))
-            {
-                // Stuff a dummy lightmap in so the shader will init properly
-                tempTex.set(4, 4, GFXFormatR8G8B8A8, &GFXDefaultStaticDiffuseProfile);
-                sgData.lightmap = tempTex;
+            //if (node.lightMapIndex != U8(-1))
+            //{
+            //    // Stuff a dummy lightmap in so the shader will init properly
+            //    tempTex.set(4, 4, GFXFormatR8G8B8A8, &GFXDefaultStaticDiffuseProfile);
+            //    sgData.lightmap = tempTex;
 
-                if( node.exterior || node.lightMapIndex >= mLightDirMapsTex.size())
-                {
-                   sgData.normLightmap = NULL;
-                   sgData.useLightDir = true;
-                }
-                else
-                {
-                    sgData.normLightmap = mLightDirMapsTex[node.lightMapIndex];
-                    sgData.useLightDir = false;
-                }
-            }
+            //    if( node.exterior || node.lightMapIndex >= mLightDirMapsTex.size())
+            //    {
+            //       sgData.normLightmap = NULL;
+            //       sgData.useLightDir = true;
+            //    }
+            //    else
+            //    {
+            //        sgData.normLightmap = mLightDirMapsTex[node.lightMapIndex];
+            //        sgData.useLightDir = false;
+            //    }
+            //}
+
+            sgData.normLightmap = NULL;
+            sgData.useLightDir = true;
 
             MatInstance* mat = node.matInst;
             if (mat)
