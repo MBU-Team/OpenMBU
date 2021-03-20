@@ -990,8 +990,107 @@ void Marble::onRemove()
 
 bool Marble::updatePadState()
 {
-    // TODO: Implement updatePadState
-    return false;
+    // TODO: Cleanup Decompile
+    
+    bool result; // al
+    int v4; // edi
+    ConcretePolyList::Poly* v5; // esi
+    float in_rRadius; // [esp+0h] [ebp-88h]
+    Box3F box; // [esp+10h] [ebp-78h] BYREF
+    float v10; // [esp+50h] [ebp-38h]
+    float v11; // [esp+54h] [ebp-34h]
+    float v12; // [esp+58h] [ebp-30h]
+    Point3F boxCenter; // [esp+5Ch] [ebp-2Ch] BYREF
+    Point3F v14; // [esp+68h] [ebp-20h]
+    Point3F upDir; // [esp+74h] [ebp-14h] BYREF
+    float dist; // [esp+80h] [ebp-8h]
+    unsigned int i; // [esp+84h] [ebp-4h]
+
+    Box3F pad(mPadPtr->getWorldBox());
+    MatrixF v2 = mPadPtr->getTransform();
+    upDir.x = v2[2];
+    upDir.y = v2[6];
+    upDir.z = v2[10];
+    upDir.x = upDir.x * 10.0;
+    upDir.y = upDir.y * 10.0;
+    upDir.z = 10.0 * upDir.z;
+    if (upDir.x <= 0.0)
+        pad.min.x = pad.min.x + upDir.x;
+    else
+        pad.max.x = pad.max.x + upDir.x;
+    if (upDir.y <= 0.0)
+        pad.min.y = pad.min.y + upDir.y;
+    else
+        pad.max.y = pad.max.y + upDir.y;
+    if (upDir.z <= 0.0)
+        pad.min.z = pad.min.z + upDir.z;
+    else
+        pad.max.z = pad.max.z + upDir.z;
+    result = mWorldBox.isOverlapped(pad);
+    if (result)
+    {
+        v14.x = this->mPosition.x;
+        v14.y = this->mPosition.y;
+        v14.z = this->mPosition.z;
+        v10 = this->mObjBox.min.x + v14.x;
+        v11 = this->mObjBox.min.y + v14.y;
+        v12 = this->mObjBox.min.z + v14.z;
+        pad.max.x = v10 - 0.0;
+        pad.max.y = v11 - 0.0;
+        pad.max.z = v12 - 10.0;
+        box.min.x = pad.max.x;
+        v10 = this->mPosition.x;
+        box.min.y = pad.max.y;
+        v11 = this->mPosition.y;
+        v12 = this->mPosition.z;
+        box.min.z = pad.max.z;
+        pad.max.x = this->mObjBox.max.x + v10;
+        pad.max.y = this->mObjBox.max.y + v11;
+        pad.max.z = this->mObjBox.max.z + v12;
+        v14.x = pad.max.x + 0.0;
+        v14.y = pad.max.y + 0.0;
+        v14.z = pad.max.z + 10.0;
+        box.max = v14;
+        box.getCenter(&boxCenter);
+        pad.max.x = v14.x - boxCenter.x;
+        pad.max.y = v14.y - boxCenter.y;
+        pad.max.z = v14.z - boxCenter.z;
+        in_rRadius = pad.max.len();
+        SphereF sphere(boxCenter, in_rRadius);
+        polyList.clear();
+        mPadPtr->buildPolyList(&Marble::polyList, box, sphere);
+        v4 = 0;
+        i = 0;
+        if (!polyList.mPolyList.empty())
+        {
+            while (true)
+            {
+                v5 = &Marble::polyList.mPolyList[v4];
+                pad.max.x = upDir.x * -10.0;
+                pad.max.y = upDir.y * -10.0;
+                pad.max.z = -10.0 * upDir.z;
+                if (mDot(polyList.mPolyList[v4].plane, pad.max) < 0.0)
+                {
+                    dist = v5->plane.distToPlane(boxCenter);
+                    if (dist >= 0.0 && dist < 5.0 && pointWithinPolyZ(*v5, boxCenter, upDir))
+                        break;
+                }
+                ++i;
+                ++v4;
+                if (i >= Marble::polyList.mPolyList.size())
+                    goto LABEL_17;
+            }
+            this->mOnPad = true;
+            result = true;
+        }
+        else
+        {
+        LABEL_17:
+            this->mOnPad = false;
+            result = false;
+        }
+    }
+    return result;
 }
 
 void Marble::doPowerUpBoost(S32 powerUpId)
