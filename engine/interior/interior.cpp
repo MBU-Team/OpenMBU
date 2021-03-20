@@ -2127,9 +2127,12 @@ void Interior::fillVertex(GFXVertexPNTTBN& vert, Surface& surface, U32 surfaceIn
         texPlanes.planeY.d;
 
     vert.normal = surface.normal;
-    vert.T = surface.T;
-    vert.B = surface.B;
-    vert.N = surface.N;
+    if (mFileVersion != 4)
+    {
+        vert.T = surface.T;
+        vert.B = surface.B;
+        vert.N = surface.N;
+    }
 }
 
 //--------------------------------------------------------------------------
