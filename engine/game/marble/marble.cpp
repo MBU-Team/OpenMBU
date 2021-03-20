@@ -1095,12 +1095,85 @@ bool Marble::updatePadState()
 
 void Marble::doPowerUpBoost(S32 powerUpId)
 {
-    // TODO: Implement doPowerUpBoost
+    if (mDataBlock->powerUps)
+    {
+        PowerUpData* powerUps = mDataBlock->powerUps;
+        Point3F boostDir = powerUps->boostDir[powerUpId];
+        if (mDot(boostDir, boostDir) > 0.0099999998f)
+        {
+            F32 xboost = mDot(boostDir, Point3F(1.0f, 0.0f, 0.0f));
+            F32 yboost = mDot(boostDir, Point3F(0.0f, 1.0f, 0.0f));
+            F32 zboost = mDot(boostDir, Point3F(0.0f, 0.0f, 1.0f));
+
+            MatrixF zRot;
+            m_matF_set_euler(Point3F(0.0f, 0.0f, mMouseX), zRot);
+
+            MatrixF gravMat;
+            mGravityFrame.setMatrix(&gravMat);
+            gravMat.mul(zRot);
+
+            Point3F xThing(gravMat[0], gravMat[4], gravMat[8]);
+            Point3F yThing(gravMat[1], gravMat[5], gravMat[9]);
+
+            Point3F gravDir;
+            Point3F invGravDir = -getGravityDir(&gravDir);
+
+            F32 masslessa = mDot((Point3F)mBestContact.normal, yThing);
+
+            yThing -= mBestContact.normal * masslessa;
+
+            if (mDot(yThing, yThing) >= 0.0099999998)
+                m_point3F_normalize(yThing);
+            else
+                yThing.set(gravMat[1], gravMat[5], gravMat[9]);
+
+            Point3F zBoostThing = invGravDir * zboost;
+            Point3F yBoostThing = yThing * yboost;
+            Point3F xBoostThing = xThing * xboost;
+            
+            Point3F boostDir = xBoostThing + yBoostThing + zBoostThing;
+
+            m_point3F_normalize(boostDir);
+
+            F32 masslessb = powerUps->boostMassless[powerUpId];
+
+            F32 massless = getMass() * masslessb + 1.0f - masslessb;
+
+            if (powerUpId == 0) // Blast
+                massless = getMin(1.0f, getBlastPercent()) * massless;
+
+            F32 amount = powerUps->boostAmount[powerUpId];
+
+            applyImpulse(Point3F(0, 0, 0), boostDir * amount * massless);
+        }
+    }
 }
 
 void Marble::doPowerUpPower(S32 powerUpId)
 {
-    // TODO: Implement doPowerUpPower
+    // TODO: Cleanup Decompile
+
+    char* v3; // eax
+    int v4; // edi
+    char* v5; // eax
+
+    if (this->mDataBlock->powerUps)
+    {
+        mPowerUpState[powerUpId].active = true;
+        mPowerUpState[powerUpId].ticksLeft = mDataBlock->powerUps->duration[powerUpId] >> 5;
+
+        updatePowerUpParams();
+        if (isServerObject())
+        {
+            v4 = this->mDataBlock->powerUps->timeFreeze[powerUpId];
+            if (v4)
+            {
+                v5 = Con::getIntArg(v4);
+                Con::executef(this, 2, "onTimeFreeze", v5);
+            }
+        }
+        setMaskBits(PowerUpMask);
+    }
 }
 
 void Marble::updatePowerups()

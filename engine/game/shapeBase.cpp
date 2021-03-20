@@ -2057,6 +2057,11 @@ void ShapeBase::applyImpulse(const Point3F&, const VectorF&)
 {
 }
 
+F32 ShapeBase::getMass() const
+{
+    return mMass;
+}
+
 
 //----------------------------------------------------------------------------
 

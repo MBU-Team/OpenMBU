@@ -49,8 +49,7 @@ void Marble::setVelocityRotD(const Point3D& rot)
 
 void Marble::applyImpulse(const Point3F& pos, const Point3F& vec)
 {
-    // TODO: Implement applyImpulse
-    Parent::applyImpulse(pos, vec);
+    setVelocityD(vec / getMass() + mVelocity);
 }
 
 void Marble::clearMarbleAxis()

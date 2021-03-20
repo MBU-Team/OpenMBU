@@ -1486,6 +1486,8 @@ public:
     /// @param   vec   Velocity vector (Impulse force F = m * v)
     virtual void applyImpulse(const Point3F& pos, const VectorF& vec);
 
+    virtual F32 getMass() const;
+
     /// @}
 
     /// @name Cameras and Control
