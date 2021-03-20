@@ -134,6 +134,7 @@ SceneGraphData Interior::setupSceneGraphInfo(InteriorInstance* intInst,
     sgData.light.mDirection.set(sunVector);
     sgData.light.mPos.set(sunVector * -10000.0);
     sgData.light.mAmbient = sunlight->mAmbient;
+    //sgData.light.mColor = sunlight->mColor;
 
     LightInfoList lightlist;
     getCurrentClientSceneGraph()->getLightManager()->sgGetAllUnsortedLights(lightlist);
