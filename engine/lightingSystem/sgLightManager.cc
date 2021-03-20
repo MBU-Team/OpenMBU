@@ -335,8 +335,8 @@ void LightManager::sgSetupLights(SceneObject* obj)
             }
             //else
             //{
-            light.mColor = ambientColor * directionalFactor;
-            light.mAmbient = ambientColor * ambientFactor;
+            //light.mColor = ambientColor * directionalFactor;
+            //light.mAmbient = ambientColor * ambientFactor;
             //}
         }// beyond here are the static dts options...
         else if (sgAllowDiffuseCustomAmbient())
