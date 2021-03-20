@@ -219,6 +219,8 @@ void Interior::renderZoneNode(RenderNode& node,
     RenderInst* ri = gRenderInstManager.allocInst();
     *ri = *coreRi;
 
+    ri->lightmap = NULL;
+
 
     // setup lightmap
     //if (node.lightMapIndex != U8(-1))
