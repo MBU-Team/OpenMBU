@@ -1995,7 +1995,7 @@ bool SceneObject::getLightingAmbientColor(ColorF* col)
 
                     if (detail->getLMHandle() != LM_HANDLE(-1))
                     {
-                        lightmap = gInteriorLMManager.getHandle(detail->getLMHandle(),
+                        /*lightmap = gInteriorLMManager.getHandle(detail->getLMHandle(),
                             interior->getLMHandle(), detail->getNormalLMapIndex(collision.face)).getBitmap();
 
                         uv.x = mDot(texgen.planeX, collision.point) + texgen.planeX.d;
@@ -2007,7 +2007,7 @@ bool SceneObject::getLightingAmbientColor(ColorF* col)
 
                         size = (uv.y * F32(lightmap->getHeight()));
                         size = mClamp(size, surface.mapOffsetY, (surface.mapOffsetY + surface.mapSizeY));
-                        uv.y = F32(size) / F32(lightmap->getHeight());
+                        uv.y = F32(size) / F32(lightmap->getHeight());*/
                     }
                 }
                 else
