@@ -1178,7 +1178,26 @@ void Marble::doPowerUpPower(S32 powerUpId)
 
 void Marble::updatePowerups()
 {
-    // TODO: Implement updatePowerups
+    bool expired = false;
+
+    for (S32 i = 0; i < PowerUpData::MaxPowerUps; i++)
+    {
+        if (mPowerUpState[i].active)
+        {
+            mPowerUpState[i].ticksLeft--;
+            if (mPowerUpState[i].ticksLeft == 0)
+            {
+                if (isServerObject())
+                    Con::executef(this, 2, "onPowerUpExpired", Con::getIntArg(i));
+
+                mPowerUpState[i].active = false;
+                expired = true;
+            }
+        }
+    }
+
+    if(expired)
+        updatePowerUpParams();
 }
 
 void Marble::updateMass()
