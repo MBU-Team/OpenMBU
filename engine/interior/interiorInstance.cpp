@@ -203,13 +203,12 @@ InteriorInstance::~InteriorInstance()
     delete mConvexList;
     mConvexList = NULL;
 
-    /*
-       for (i = 0; i < mMaterialMaps.size(); i++)
-       {
-          delete mMaterialMaps[i];
-          mMaterialMaps[i] = NULL;
-       }
-    */
+    
+   for (i = 0; i < mMaterialMaps.size(); i++)
+   {
+      delete mMaterialMaps[i];
+      mMaterialMaps[i] = NULL;
+   }
 }
 
 
@@ -410,14 +409,14 @@ bool InteriorInstance::onAdd()
             // Force the lightmap manager to download textures if we're
             // running the mission editor.  Normally they are only
             // downloaded after the whole scene is lit.
-            gInteriorLMManager.addInstance(pInterior->getLMHandle(), mLMHandle, this);
+            /*gInteriorLMManager.addInstance(pInterior->getLMHandle(), mLMHandle, this);
             if (gEditingMission) {
                 gInteriorLMManager.useBaseTextures(pInterior->getLMHandle(), mLMHandle);
                 gInteriorLMManager.downloadGLTextures(pInterior->getLMHandle());
-            }
+            }*/
 
             // Install material list
-   //         mMaterialMaps.push_back(new MaterialList(pInterior->mMaterialList));
+            mMaterialMaps.push_back(new MaterialList(pInterior->mMaterialList));
         }
 
         renewOverlays();

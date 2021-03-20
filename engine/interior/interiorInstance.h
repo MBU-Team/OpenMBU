@@ -176,7 +176,7 @@ private:
     StringTableEntry                     mInteriorFileName;     ///< File name of the interior this instance encapuslates
     U32                                  mInteriorFileHash;     ///< Hash for interior file name, used for sorting
     Resource<InteriorResource>           mInteriorRes;          ///< Interior managed by resource manager
- //   Vector<MaterialList*>                mMaterialMaps;         ///< Materials for this interior
+    Vector<MaterialList*>                mMaterialMaps;         ///< Materials for this interior
     StringTableEntry                     mSkinBase;             ///< Skin for this interior
 
     bool                                 mShowTerrainInside;    ///< Enables or disables terrain showing through the interior

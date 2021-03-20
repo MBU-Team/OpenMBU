@@ -276,11 +276,11 @@ void Interior::renderReflectNode(ReflectRenderNode& node,
     ri->reflective = true;
 
     // setup lightmap
-    if (node.lightMapIndex != U8(-1))
+    /*if (node.lightMapIndex != U8(-1))
     {
         ri->lightmap = &gInteriorLMManager.getHandle(mLMHandle, intInst->getLMHandle(), node.lightMapIndex);
         ri->normLightmap = &gInteriorLMManager.getNormalHandle(mLMHandle, intInst->getLMHandle(), node.lightMapIndex);
-    }
+    }*/
 
     MatInstance* mat = node.matInst;
     if (mat && GFX->getPixelShaderVersion() > 0.0)
