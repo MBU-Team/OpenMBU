@@ -878,7 +878,23 @@ void Marble::renderImage(SceneState* state)
 
 void Marble::bounceEmitter(F32 speed, const Point3F& normal)
 {
-    // TODO: Implement bounceEmitter
+    if (isGhost() && !mBounceEmitDelay)
+    {
+        if (mDataBlock->bounceEmitter)
+        {
+            if (mDataBlock->minBounceSpeed <= speed)
+            {
+                ParticleEmitter* emitter = new ParticleEmitter;
+                emitter->setDataBlock(mDataBlock->bounceEmitter);
+                emitter->registerObject();
+                
+                emitter->emitParticles(mPosition - mRadius * normal, false, normal, mVelocity, getMin(speed * 100.0f, 2500.0f));
+
+                emitter->deleteWhenEmpty();
+                mBounceEmitDelay = 300;
+            }
+        }
+    }
 }
 
 MatrixF Marble::getShadowTransform() const
@@ -1215,7 +1231,16 @@ void Marble::advanceTime(F32 dt)
 {
     Parent::advanceTime(dt);
 
-    // TODO: Finish Implementing advanceTime
+    F32 deltaTime = dt * 1000.0f;
+
+    if (mBlastEnergy >= mDataBlock->maxNaturalBlastRecharge >> 5)
+    {
+        mRenderBlastPercent = getMin(F32(mBlastEnergy / mDataBlock->blastRechargeTime >> 5), dt * 0.75f + mRenderBlastPercent);
+    } else
+    {
+        mRenderBlastPercent = mBlastEnergy / mDataBlock->blastRechargeTime >> 5;
+    }
+
     F32 newDt = dt / 0.4f * 2.302585124969482f;
     F32 smooth = 1.0f / (newDt * (newDt * 0.235f * newDt) + newDt + 1.0f + 0.48f * newDt * newDt);
     QuatF interp;
@@ -1233,7 +1258,11 @@ void Marble::advanceTime(F32 dt)
         // TODO: Finish Implementing advanceTime
     }
 
-    // TODO: Finish Implementing advanceTime
+    trailEmitter(deltaTime);
+    bool resetBounceEmitDelay = mBounceEmitDelay - deltaTime < 0;
+    mBounceEmitDelay--;
+    if (resetBounceEmitDelay)
+        mBounceEmitDelay = 0;
 
     if (mOmega.len() > 0.000001)
     {

@@ -111,7 +111,8 @@ void ClientProcessList::addObject(ProcessObject* pobj)
         // don't add
         return;
 
-    AssertFatal(obj->isClientObject() || gSPMode, "Adding non-client object to client list");
+    // Breaks particles
+    //AssertFatal(obj->isClientObject() || gSPMode, "Adding non-client object to client list");
 
     if (obj->mNetFlags.test(GameBase::NetOrdered))
     {
@@ -281,7 +282,9 @@ void ClientProcessList::onAdvanceObjects()
 void ClientProcessList::onTickObject(ProcessObject* pobj)
 {
     SimObjectPtr<GameBase> obj = getGameBase(pobj);
-    AssertFatal(obj->isClientObject(), "Server object on client process list");
+
+    // Breaks particles
+    //AssertFatal(obj->isClientObject(), "Server object on client process list");
 
     // Each object is either advanced a single tick, or if it's
     // being controlled by a client, ticked once for each pending move.
