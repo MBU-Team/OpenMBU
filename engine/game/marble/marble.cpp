@@ -1423,14 +1423,60 @@ bool Marble::onAdd()
     return true;
 }
 
-void Marble::processMoveTriggers(const Move *)
+void Marble::processMoveTriggers(const Move * move)
 {
-    // TODO: Implement processMoveTriggers
+    // TODO: Cleanup Decompile
+
+    unsigned int v3; // ecx
+    char v4; // al
+    unsigned int v5; // eax
+
+    if (move->trigger[0] && mPowerUpId || mPowerUpTimer)
+    {
+        mPowerUpTimer += 32;
+        if (mPowerUpTimer > 0x200)
+            mPowerUpTimer = 512;
+        v3 = mDataBlock->powerUps->activateTime[mPowerUpId];
+        if (v3 > 0x200)
+            v3 = 512;
+        if (mPowerUpTimer >= v3)
+        {
+            doPowerUp(mPowerUpId);
+            mPowerUpId = 0;
+            if (isServerObject())
+                Con::executef(this, 1, "onPowerUpUsed");
+            mPowerUpTimer = 0;
+        }
+        setMaskBits(0x4000000u);
+    }
+    if (move->trigger[1] && getBlastPercent() > 0.25f || mBlastTimer)
+    {
+        if (!mBlastTimer)
+            doPowerUpBoost(0);
+        mBlastTimer += 32;
+        if (mBlastTimer > 0x200)
+            mBlastTimer = 512;
+        v5 = mDataBlock->powerUps->activateTime[0];
+        if (v5 > 0x200)
+            v5 = 512;
+        if (mBlastTimer >= v5)
+        {
+            doPowerUpPower(0);
+            if (isServerObject())
+                Con::executef(this, 1, "onBlastUsed");
+            mBlastEnergy = 0;
+            mBlastTimer = 0;
+        }
+        setMaskBits(0x4000000u);
+    }
+    if (move->trigger[3])
+        startCenterCamera();
 }
 
 void Marble::processItemsAndTriggers(const Point3F& startPos, const Point3F& endPos)
 {
     // TODO: Cleanup decompile
+
     double v5; // st7
     double v6; // st7
     double v7; // st7
@@ -1526,9 +1572,35 @@ void Marble::processItemsAndTriggers(const Point3F& startPos, const Point3F& end
     v25 = -1;
 }
 
-void Marble::setPowerUpId(U32, bool)
+void Marble::setPowerUpId(U32 id, bool reset)
 {
-    // TODO: Implement setPowerUpId
+    // TODO: Cleanup Decompile
+    
+    Marble::PowerUpState* v7; // eax
+    int v8; // ecx
+    
+    if (mDataBlock && mDataBlock->powerUps != NULL && mDataBlock->powerUps->blastRecharge[id])
+    {
+        this->mBlastEnergy = mDataBlock->blastRechargeTime >> 5;
+        doPowerUp(id);
+    }
+    else
+    {
+        this->mPowerUpId = id;
+    }
+    if (reset)
+    {
+        v7 = this->mPowerUpState;
+        v8 = 10;
+        do
+        {
+            v7->active = 0;
+            ++v7;
+            --v8;
+        }     while (v8);
+        updatePowerUpParams();
+    }
+    setMaskBits(PowerUpMask);
 }
 
 void Marble::processTick(const Move* move)

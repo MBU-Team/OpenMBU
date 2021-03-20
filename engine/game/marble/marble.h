@@ -275,9 +275,9 @@ public:
     void doPowerUp(S32 powerUpId);
     void prepShadows();
     virtual bool onAdd();
-    void processMoveTriggers(const Move*);
+    void processMoveTriggers(const Move* move);
     void processItemsAndTriggers(const Point3F& startPos, const Point3F& endPos);
-    void setPowerUpId(U32, bool);
+    void setPowerUpId(U32 id, bool reset);
     virtual void processTick(const Move* move);
 
     // Marble Physics
