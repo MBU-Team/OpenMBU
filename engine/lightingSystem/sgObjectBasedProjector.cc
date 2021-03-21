@@ -543,17 +543,17 @@ void sgShadowProjector::sgRenderShadowBuffer()
     GFX->setViewport(originalview);
 }
 
-void sgShadowProjector::sgRender(F32 camdist)
+bool sgShadowProjector::shouldRender(F32 camDist)
 {
     sgGetVariables();
 
-    if (camdist > sgMaxVisibleDistance)
-        return;
+    if (camDist > sgMaxVisibleDistance)
+        return false;
 
     if (!sgEnable || !LightManager::sgAllowDynamicShadows())
     {
         sgClear();
-        return;
+        return false;
     }
 
     sgSetupShadowType();
@@ -561,8 +561,36 @@ void sgShadowProjector::sgRender(F32 camdist)
 
     if (!sgShadowBuilderShader || !sgShadowBuilderShader->shader ||
         !sgShadowShader || !sgShadowShader->shader)
-        return;
+        return false;
 
+    F32 attn = 2.0;
+    if (sgLight->mType != LightInfo::Vector)
+    {
+        sgLightingModel& model = sgLightingModelManager::sgGetLightingModel(sgLight->sgLightingModelName);
+        model.sgSetState(sgLight);
+        F32 maxrad = model.sgGetMaxRadius(true);
+        model.sgResetState();
+
+        if (maxrad <= 0.0f)
+            return false;
+
+        Point3F distvect = sgParentObject->getRenderPosition() - sgLight->mPos;
+        attn = distvect.len();
+        attn = 1.0 - (attn / maxrad);
+        attn *= 2.0;
+        if (attn <= SG_MIN_LEXEL_INTENSITY)
+            return false;
+    }
+    return true;
+}
+
+void sgShadowProjector::render(F32 camDist)
+{
+    sgRender(camDist);
+}
+
+void sgShadowProjector::sgRender(F32 camdist)
+{
     F32 attn = 2.0;
     if (sgLight->mType != LightInfo::Vector)
     {

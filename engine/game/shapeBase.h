@@ -865,6 +865,8 @@ protected:
     F32   mFadeElapsedTime;
     F32   mFadeTime;
     F32   mFadeDelay;
+public:
+    F32   getFadeVal() { return mFadeVal; }
     /// @}
     ///
 
@@ -1554,6 +1556,11 @@ public:
     void prepBatchRender(SceneState* state, S32 mountedImageIndex);
     void renderObject(SceneState* state, RenderInst*);
     void renderShadow(SceneState* state, RenderInst* ri);
+
+#ifdef MB_ULTRA
+    virtual MatrixF getShadowTransform() const { return mRenderObjToWorld; }
+    virtual Point3F getShadowScale() const { return mRenderScale; }
+#endif
 
     /// Renders a mounted object
     /// @param   state   State of scene

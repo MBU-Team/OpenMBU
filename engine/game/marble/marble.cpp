@@ -899,11 +899,12 @@ void Marble::bounceEmitter(F32 speed, const Point3F& normal)
 
 MatrixF Marble::getShadowTransform() const
 {
-    // TODO: Missing ShapeBase::getShadowTransform. Appears to be an unused function?
-    //return Parent::getShadowTransform();
+    MatrixF result(true);
+    mGravityRenderFrame.setMatrix(&result);
 
-    // TODO: Implement getShadowTransform
-    return MatrixF();
+    result.setPosition(mRenderObjToWorld.getPosition());
+
+    return result;
 }
 
 void Marble::setVelocity(const Point3F& vel)
@@ -918,8 +919,6 @@ Point3F Marble::getVelocity() const
 
 Point3F Marble::getShadowScale() const
 {
-    // TODO: Missing SceneObject::getShadowScale and ShapeBase::getShadowScale. Appears to be an unused function?
-
     return mRenderScale;
 }
 
@@ -932,8 +931,6 @@ Point3F Marble::getGravityRenderDir()
 
 void Marble::getShadowLightVectorHack(Point3F& lightVec)
 {
-    // TODO: Missing SceneObject::getShadowLightVectorHack in parent. BlobShadow needs to be implemented.
-
     *lightVec = *getGravityRenderDir();
 }
 
@@ -2105,6 +2102,9 @@ MarbleData::MarbleData()
     mDecalID = 0;
     startModeTime = 320;
     stopModeTime = 32;
+
+    // Enable Shadows
+    shadowEnable = true;
 }
 
 void MarbleData::initPersistFields()

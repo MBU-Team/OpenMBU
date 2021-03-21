@@ -12,7 +12,7 @@
 #include "ts/tsShapeInstance.h"
 
 
-class sgObjectBasedProjector
+class sgObjectBasedProjector : public ShadowBase
 {
 protected:
     Box3F sgBoundingBox;
@@ -168,6 +168,9 @@ public:
     ~sgShadowProjector() { sgClear(); }
     virtual void sgRender(F32 camdist);
     static void collisionCallback(SceneObject* obj, void* shadow);
+    bool shouldRender(F32 camDist);
+    void render(F32 camDist);
+    U32 getLastRenderTime() { return sgLastRenderTime; }
     /*void sgSetEnable(bool enable) {sgEnable = enable;}
     void sgSetCanMove(bool enable) {sgCanMove = enable;}
     void sgSetCanRTT(bool enable) {sgCanRTT = enable;}

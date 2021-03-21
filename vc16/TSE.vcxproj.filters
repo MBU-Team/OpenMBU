@@ -1548,6 +1548,9 @@
     <ClCompile Include="..\engine\platformWin32\winLanguage.cpp">
       <Filter>Source Files\platformWin32</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\lightingSystem\blobShadow.cpp">
+      <Filter>Source Files\lightingSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2845,6 +2848,12 @@
     </ClInclude>
     <ClInclude Include="..\engine\gui\controls\guiXboxOptionListCtrl.h">
       <Filter>Source Files\gui\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\lightingSystem\shadowBase.h">
+      <Filter>Source Files\lightingSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\lightingSystem\blobShadow.h">
+      <Filter>Source Files\lightingSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

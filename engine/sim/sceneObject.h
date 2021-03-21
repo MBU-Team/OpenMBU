@@ -522,6 +522,11 @@ public:
     /// the "reflectiveSet" SimSet.
     virtual void updateReflection() {}
 
+#ifdef MB_ULTRA
+    virtual Point3F getShadowScale() const { return mObjScale; }
+    virtual void getShadowLightVectorHack(Point3F& lightVec) {}
+#endif
+
     //-------------------------------------- Derived class interface
     // Overrides
 protected:

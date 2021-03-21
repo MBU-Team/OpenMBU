@@ -11,6 +11,8 @@
 #include "lightingSystem/sgLighting.h"
 #include "lightingSystem/sgLightingModel.h"
 #include "lightingSystem/sgObjectShadows.h"
+
+#include "blobShadow.h"
 #include "lightingSystem/sgFormatManager.h"
 
 #define SG_UNUSED_TIMEOUT	2000
@@ -302,12 +304,14 @@ void sgObjectShadows::sgRender(SceneObject* parentobject, TSShapeInstance* shape
 
     if (!LightManager::sgMultipleDynamicShadows)
     {
-        sgShadowProjector* shadow = sgFindShadow(parentobject, &sgSingleShadowSource, shapeinstance);
+        ShadowBase* shadow = sgFindShadow(parentobject, &sgSingleShadowSource, shapeinstance);
         AssertFatal((shadow), "Shadow not found?");
-        shadow->sgRender(camdist);
+        if (shadow->shouldRender(camdist))
+            shadow->render(camdist);
         return;
     }
 
+    bool gotOne = false;
     LightInfoList lights;
     getCurrentClientSceneGraph()->getLightManager()->sgGetBestLights(lights);
     for (U32 i = 0; i < lights.size(); i++)
@@ -323,10 +327,27 @@ void sgObjectShadows::sgRender(SceneObject* parentobject, TSShapeInstance* shape
         //if(light->mType == LightInfo::Vector)
         //	continue;
 
-        sgShadowProjector* shadow = sgFindShadow(parentobject, light, shapeinstance);
+        ShadowBase* shadow = sgFindShadow(parentobject, light, shapeinstance);
         AssertFatal((shadow), "Shadow not found?");
-        shadow->sgRender(camdist);
+
+        if (shadow->shouldRender(camdist))
+        {
+            shadow->render(camdist);
+            gotOne = true;
+        }
     }
+
+#ifdef MB_ULTRA
+    if (!gotOne)
+    {
+        LightInfo* light = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+        ShadowBase* shadow = sgFindShadow(parentobject, light, shapeinstance);
+        AssertFatal((shadow), "Shadow not found?");
+
+        if (shadow->shouldRender(camdist))
+            shadow->render(camdist);
+    }
+#endif
 
     // remove dirty flag...
     shapeinstance->shadowDirty = false;
@@ -356,7 +377,8 @@ void sgObjectShadows::sgCleanupUnused(U32 time)
     {
         if (entry->info)
         {
-            if (sgTimeElapsed(time, entry->info->sgLastRenderTime, SG_SHADOW_TIMEOUT))
+            U32 renderTime = entry->info->getLastRenderTime();
+            if (sgTimeElapsed(time, renderTime, SG_SHADOW_TIMEOUT))
             {
                 //Con::warnf("Found one...");
 
@@ -386,7 +408,29 @@ void sgObjectShadows::sgSetValues(bool enable, bool canmove,
     sgUpdateShadows();
 }
 */
-sgShadowProjector* sgObjectShadows::sgFindShadow(SceneObject* parentobject,
+
+ShadowBase* sgObjectShadows::createNewShadow(SceneObject* parentObject, LightInfo* light, TSShapeInstance* shapeInstance)
+{
+#ifdef MB_ULTRA
+    return new BlobShadow(parentObject, light, shapeInstance);
+#else
+    // Create a shadow
+    ShadowBase* shadow = NULL;
+    if (GFX->getPixelShaderVersion() < 0.001)
+    {
+        // No shaders, use a blob shadow
+        shadow = new BlobShadow(parentObject, light, shapeInstance);
+    }
+    else
+    {
+        // Shaders, use a real shadow
+        shadow = new sgShadowProjector(parentObject, light, shapeInstance);
+    }
+    return shadow;
+#endif
+}
+
+ShadowBase* sgObjectShadows::sgFindShadow(SceneObject* parentobject,
     LightInfo* light, TSShapeInstance* shapeinstance)
 {
     sgShadowMultimap* entry = sgShadows.find(sgLightToHash(light));
@@ -394,7 +438,10 @@ sgShadowProjector* sgObjectShadows::sgFindShadow(SceneObject* parentobject,
     if (entry->info)
         return entry->info;
 
-    sgShadowProjector* shadow = new sgShadowProjector(parentobject, light, shapeinstance);
+    // Ack, no shadow! Create one
+    ShadowBase* shadow = createNewShadow(parentobject, light, shapeinstance);
+    AssertFatal(shadow, "We didn't create a shadow?");
+    
     entry->info = shadow;
 
     //sgUpdateShadow(entry->info);

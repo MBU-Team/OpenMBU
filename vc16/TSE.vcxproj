@@ -2185,6 +2185,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\lightingSystem\blobShadow.cpp" />
     <ClCompile Include="..\engine\lightingSystem\sgDecalProjector.cc" />
     <ClCompile Include="..\engine\lightingSystem\sgDynamicRangeLighting.cc" />
     <ClCompile Include="..\engine\lightingSystem\sgFormatManager.cc" />
@@ -3844,6 +3845,7 @@
     <ClInclude Include="..\engine\interior\interiorSubObject.h" />
     <ClInclude Include="..\engine\interior\mirrorSubObject.h" />
     <ClInclude Include="..\engine\interior\pathedInterior.h" />
+    <ClInclude Include="..\engine\lightingSystem\blobShadow.h" />
     <ClInclude Include="..\engine\lightingSystem\sgDecalProjector.h" />
     <ClInclude Include="..\engine\lightingSystem\sgDynamicRangeLighting.h" />
     <ClInclude Include="..\engine\lightingSystem\sgFormatManager.h" />
@@ -3860,6 +3862,7 @@
     <ClInclude Include="..\engine\lightingSystem\sgSceneLighting.h" />
     <ClInclude Include="..\engine\lightingSystem\sgSceneLightingGlobals.h" />
     <ClInclude Include="..\engine\lightingSystem\sgScenePersist.h" />
+    <ClInclude Include="..\engine\lightingSystem\shadowBase.h" />
     <ClInclude Include="..\engine\lightingSystem\volLight.h" />
     <ClInclude Include="..\engine\materials\customMaterial.h" />
     <ClInclude Include="..\engine\materials\material.h" />

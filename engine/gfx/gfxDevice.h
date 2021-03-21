@@ -495,6 +495,11 @@ public:
     void reloadTextureResource(const char* filename) { mTextureManager->reloadTextureResource(filename); }
     virtual GFXCubemap* createCubemap() = 0;
 
+    inline GFXTextureManager* getTextureManager()
+    {
+        return mTextureManager;
+    }
+
     ///@}
 
     /// @name Render Target functions

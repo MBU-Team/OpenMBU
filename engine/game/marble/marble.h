@@ -251,11 +251,11 @@ public:
     void renderShadow(F32 dist, F32 fogAmount);
     virtual void renderImage(SceneState* state);
     void bounceEmitter(F32 speed, const Point3F& normal);
-    virtual MatrixF getShadowTransform() const;
     virtual void setVelocity(const Point3F& vel);
     virtual Point3F getVelocity() const;
-    virtual Point3F getShadowScale() const;
     Point3F getGravityRenderDir();
+    virtual MatrixF getShadowTransform() const;
+    virtual Point3F getShadowScale() const;
     virtual void getShadowLightVectorHack(Point3F& lightVec);
     virtual bool onSceneAdd(SceneGraph* graph);
     virtual bool onNewDataBlock(GameBaseData* dptr);

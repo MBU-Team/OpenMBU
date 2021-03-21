@@ -6,6 +6,7 @@
 #ifndef _SGOBJECTSHADOWS_H_
 #define _SGOBJECTSHADOWS_H_
 
+#include "shadowBase.h"
 #include "lightingSystem/sgObjectBasedProjector.h"
 #include "lightingSystem/sgHashMap.h"
 
@@ -18,7 +19,7 @@ struct sgShadowTextureEntryInfo
 };
 
 
-typedef hash_multimap<U32, sgShadowProjector*> sgShadowMultimap;
+typedef hash_multimap<U32, ShadowBase*> sgShadowMultimap;
 typedef hash_multimap<GFXTexHandle, sgShadowTextureEntryInfo> sgShadowTextureMultimap;
 
 
@@ -50,7 +51,8 @@ private:
     // returns an empty entry (use linkHigh to traverse the list)...
     // generally it's a good idea to expect some entries to be empty...
     sgShadowMultimap* sgGetFirstShadowEntry();
-    sgShadowProjector* sgFindShadow(SceneObject* parentobject,
+    ShadowBase* createNewShadow(SceneObject* parentObject, LightInfo* light, TSShapeInstance* shapeInstance);
+    ShadowBase* sgFindShadow(SceneObject* parentobject,
         LightInfo* light, TSShapeInstance* shapeinstance);
     //void sgUpdateShadow(sgShadowProjector *shadow);
     //void sgUpdateShadows();
