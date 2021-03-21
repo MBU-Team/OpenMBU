@@ -567,7 +567,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 				marbleContact->material = 0;
 				marbleContact->object = otherMarble;
 				marbleContact->position = *pos + normDist;
-				marbleContact->normal = -*pos;
+				marbleContact->normal = -normDist;
 				marbleContact->contactDistance = rad;
 				marbleContact->friction = 1.0f;
 				marbleContact->restitution = 1.0f;
