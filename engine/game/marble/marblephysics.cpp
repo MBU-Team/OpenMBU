@@ -473,26 +473,15 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             for (S32 j = 0; j < mContacts.size(); j++)
             {
                 Contact* contact = &mContacts[j];
-
-                /*if (contact->contactDistance < this->mRadius)
-                {
-                    float timeToSeparate = 0.1f;
-                    float dist = contact->contactDistance;
-                    float outVel = mDot(mVelocity + soFar * dir, contact->normal);
-                    if (timeToSeparate * outVel < dist)
-                        soFar += (dist - outVel * timeToSeparate) / timeToSeparate / mDot((Point3F)contact->normal, dir);
-                }*/
-
-
+                
                 if (mRadius > contact->kineticFriction)
-                //if (contact->contactDistance < mRadius)
                 {
                     F32 timeToSeparate = 0.1000000014901161;
                     F32 dist = mRadius - contact->contactDistance;
                     Point3F normal = contact->normal;
                     Point3F unk = normal * soFar;
                     Point3F tickle = mVelocity - contact->surfaceVelocity;
-                    Point3F plop = unk + normal;
+                    Point3F plop = unk + tickle;
                     F32 outVel = mDot(plop, normal);
                     F64 cancan = timeToSeparate * outVel;
                     if (dist > cancan)
