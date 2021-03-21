@@ -411,10 +411,25 @@ void Marble::interpolateTick(F32 delta)
     }
 }
 
-S32 Marble::mountPowerupImage(ShapeBaseImageData*)
+S32 Marble::mountPowerupImage(ShapeBaseImageData* imageData)
 {
-    // TODO: Implement mountPowerupImage
-    return -1;
+    if (isServerObject() || !imageData)
+        return -1;
+
+    U32 i = 0;
+    while (getMountedImage(i))
+    {
+        if (++i >= 4)
+            return -1;
+    }
+
+    StringHandle temp;
+    mountImage(imageData, i, true, temp);
+
+    if (temp.getIndex())
+        gNetStringTable->removeString(temp.getIndex());
+
+    return i;
 }
 
 void Marble::updatePowerUpParams()

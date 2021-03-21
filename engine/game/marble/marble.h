@@ -240,7 +240,7 @@ public:
     U32 getMode() { return mMode; }
     void setOOB(bool isOOB);
     virtual void interpolateTick(F32 delta);
-    S32 mountPowerupImage(ShapeBaseImageData*);
+    S32 mountPowerupImage(ShapeBaseImageData* imageData);
     void updatePowerUpParams();
     virtual bool getForce(Point3F& pos, Point3F* force);
     virtual U32 packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
