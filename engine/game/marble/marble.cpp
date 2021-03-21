@@ -12,6 +12,7 @@
 #include "game/item.h"
 #include "game/trigger.h"
 #include "materials/matInstance.h"
+#include "sceneGraph/sceneGraph.h"
 
 //----------------------------------------------------------------------------
 
@@ -952,8 +953,20 @@ void Marble::getShadowLightVectorHack(Point3F& lightVec)
 
 bool Marble::onSceneAdd(SceneGraph* graph)
 {
-    // TODO: Implement onSceneAdd
-    return Parent::onSceneAdd(graph);
+    if (!Parent::onSceneAdd(graph))
+        return false;
+
+    if (isGhost())
+    {
+        SceneGraphData sgData;
+        sgData.useLightDir = true;
+        sgData.useFog = SceneGraph::renderFog;
+        if (mStencilMaterial)
+            delete mStencilMaterial;
+
+        mStencilMaterial = new MatInstance("Material_Stencil");
+        mStencilMaterial->init(sgData, GFXVertexFlagXYZ);
+    }
 }
 
 bool Marble::onNewDataBlock(GameBaseData* dptr)
