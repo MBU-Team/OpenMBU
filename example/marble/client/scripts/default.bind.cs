@@ -498,6 +498,9 @@ moveMap.bind( mouse, button1, altTrigger );
 moveMap.bind( mouse, xaxis, mouseYaw );
 moveMap.bind( mouse, yaxis, mousePitch );
 
+// Test
+moveMap.bind(keyboard, m, spawnStupidMarble);
+
 // gamepad
 //if (isPCBuild())
 //{
