@@ -1276,7 +1276,41 @@ void Marble::updateMass()
 
 void Marble::trailEmitter(U32 timeDelta)
 {
-    // TODO: Implement trailEmitter
+    if (!isGhost() || !mDataBlock->trailEmitter)
+        return;
+
+    F32 speed = mVelocity.len();
+
+    if (mDataBlock->minTrailSpeed > speed)
+    {
+        if (!mTrailEmitter)
+            return;
+        mTrailEmitter->deleteWhenEmpty();
+        mTrailEmitter = NULL;
+        
+        return;
+    }
+
+    if (!mTrailEmitter)
+    {
+        mTrailEmitter = new ParticleEmitter;
+        mTrailEmitter->setDataBlock(mDataBlock->trailEmitter);
+        mTrailEmitter->registerObject();
+
+        if (!mTrailEmitter)
+            return;
+    }
+
+    if (mDataBlock->minTrailSpeed * 2 > speed)
+        timeDelta = (U32)((speed - mDataBlock->minTrailSpeed) / mDataBlock->minTrailSpeed * (F32)timeDelta);
+
+    Point3F normal = mVelocity;
+    m_point3F_normalize(normal);
+
+    Point3F pos = mLastRenderPos;
+    pos += mRadius * gRandGen.randF() * 2 - 1.0f;
+
+    mTrailEmitter->emitParticles(pos, true, normal, mVelocity, timeDelta);
 }
 
 void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
