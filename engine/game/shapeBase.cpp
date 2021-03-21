@@ -3524,6 +3524,17 @@ void ShapeBase::setSkinName(const char* name)
     }
 }
 
+Material* ShapeBase::getMaterial(U32 material)
+{
+    MaterialList* list;
+    if (mShapeInstance && ((list = mShapeInstance->getMaterialList()) != NULL || (list = mShapeInstance->getShape()->materialList) != NULL))
+    {
+        return list->getMappedMaterial(material);
+    }
+
+    return NULL;
+}
+
 //----------------------------------------------------------------------------
 ConsoleMethod(ShapeBase, playAudio, bool, 4, 4, "(int slot, AudioProfile ap)")
 {

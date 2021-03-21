@@ -1377,3 +1377,13 @@ S32 InteriorInstance::getSurfaceZone(U32 surfaceindex, Interior* detail)
     return getCurrZone(0);
 }
 
+Material* InteriorInstance::getMaterial(U32 material)
+{
+    if (mMaterialMaps.size() && mMaterialMaps[0] != NULL)
+    {
+        return mMaterialMaps[0]->getMappedMaterial(material);
+    }
+
+    return NULL;
+}
+

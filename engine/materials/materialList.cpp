@@ -62,6 +62,19 @@ MaterialList::MaterialList(const MaterialList* pCopy)
         }
     }
 
+    clearMappedMaterials();
+    mMappedMaterials.setSize(pCopy->mMaterials.size());
+    for (i = 0; i < mMappedMaterials.size(); i++)
+    {
+        if (i < pCopy->mMappedMaterials.size() && pCopy->mMappedMaterials[i])
+        {
+            mMappedMaterials[i] = SimObjectPtr<Material>(pCopy->mMappedMaterials[i]);
+        }
+        else
+        {
+            mMappedMaterials[i] = NULL;
+        }
+    }
 }
 
 
@@ -197,6 +210,7 @@ void MaterialList::free()
     }
     clearMatInstList();
     mMatInstList.setSize(0);
+    mMappedMaterials.setSize(0);
     mMaterialNames.setSize(0);
     mMaterials.setSize(0);
 }
@@ -207,9 +221,11 @@ U32 MaterialList::push_back(GFXTexHandle textureHandle, const char* filename)
 {
     mMaterials.increment();
     mMaterialNames.increment();
+    mMappedMaterials.increment();
 
     // vectors DO NOT initialize classes so manually call the constructor
     constructInPlace(&mMaterials.last());
+    constructInPlace(&mMappedMaterials.last());
     mMaterials.last() = textureHandle;
     mMaterialNames.last() = new char[dStrlen(filename) + 1];
     dStrcpy(mMaterialNames.last(), filename);
@@ -223,9 +239,11 @@ U32 MaterialList::push_back(const char* filename)
 {
     mMaterials.increment();
     mMaterialNames.increment();
+    mMappedMaterials.increment();
 
     // vectors DO NOT initialize classes so manually call the constructor
     constructInPlace(&mMaterials.last());
+    constructInPlace(&mMappedMaterials.last());
     mMaterialNames.last() = new char[dStrlen(filename) + 1];
     dStrcpy(mMaterialNames.last(), filename);
 
@@ -251,6 +269,7 @@ bool MaterialList::read(Stream& stream)
     // pre-size the vectors for efficiency
     mMaterials.reserve(count);
     mMaterialNames.reserve(count);
+    mMappedMaterials.reserve(count);
 
     // read in the materials
     for (U32 i = 0; i < count; i++)
@@ -273,8 +292,10 @@ bool MaterialList::read(Stream& stream)
         // Add it to the list
         mMaterials.increment();
         mMaterialNames.increment();
+        mMappedMaterials.increment();
         // vectors DO NOT initialize classes so manually call the constructor
         constructInPlace(&mMaterials.last());
+        constructInPlace(&mMappedMaterials.last());
         mMaterialNames.last() = new char[dStrlen(name) + 1];
         dStrcpy(mMaterialNames.last(), name);
     }
@@ -326,8 +347,10 @@ bool MaterialList::readText(Stream& stream, U8 firstByte)
         // Add it to the list
         mMaterials.increment();
         mMaterialNames.increment();
+        mMappedMaterials.increment();
         // vectors DO NOT initialize classes so manually call the constructor
         constructInPlace(&mMaterials.last());
+        constructInPlace(&mMappedMaterials.last());
         mMaterialNames.last() = new char[dStrlen(name) + 1];
         dStrcpy(mMaterialNames.last(), name);
     }
@@ -393,6 +416,29 @@ void MaterialList::clearMatInstList()
     }
 }
 
+void MaterialList::clearMappedMaterials()
+{
+    // clear out old materials.  any non null element of the list should be pointing at deletable memory,
+    // although multiple indexes may be pointing at the same memory so we have to be careful (see
+    // comment in loop body)
+    for (U32 i = 0; i < mMappedMaterials.size(); i++)
+    {
+        if (mMappedMaterials[i])
+        {
+            SimObjectPtr<Material> current = mMappedMaterials[i];
+            delete current;
+            mMappedMaterials[i] = NULL;
+
+            // ok, since ts material lists can remap difference indexes to the same object (e.g. for ifls),
+            // we need to make sure that we don't delete the same memory twice.  walk the rest of the list
+            // and null out any pointers that match the one we deleted.
+            for (U32 j = 0; j < mMappedMaterials.size(); j++)
+                if (mMappedMaterials[j] == current)
+                    mMappedMaterials[j] = NULL;
+        }
+    }
+}
+
 //--------------------------------------------------------------------------
 // Map materials - map materials to the textures in the list
 //--------------------------------------------------------------------------
@@ -434,6 +480,24 @@ void MaterialList::mapMaterials()
         else
             mMatInstList[i] = NULL;
     }
+}
+
+Material* MaterialList::getMappedMaterial(U32 index)
+{
+    Material* mat = mMappedMaterials[index];
+    if (!mat)
+    {
+        MaterialPropertyMap* map = MaterialPropertyMap::get();
+        if (!map)
+            return NULL;
+
+        const MaterialPropertyMap::MapEntry* entry = map->getMapEntry(getMaterialName(index));
+        if (entry)
+            mat = (Material*)Sim::findObject(entry->materialName);
+
+        mMappedMaterials[index] = mat;
+    }
+    return mat;
 }
 
 //--------------------------------------------------------------------------

@@ -1562,6 +1562,8 @@ public:
     virtual Point3F getShadowScale() const { return mRenderScale; }
 #endif
 
+    virtual Material* getMaterial(U32 material);
+
     /// Renders a mounted object
     /// @param   state   State of scene
     /// @param   ri      RenderInst data

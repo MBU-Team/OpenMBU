@@ -13,8 +13,11 @@
 #include "console/console.h"
 #endif
 
+#include "console/simBase.h"
 #include "gfx/gfxTextureHandle.h"
 
+class Material;
+class MaterialPropertyMap;
 class MatInstance;
 
 enum TextureHandleType
@@ -47,6 +50,7 @@ private:
 
 
 public:
+    Vector<SimObjectPtr<Material> > mMappedMaterials;
     VectorPtr<char*> mMaterialNames;
     Vector<GFXTexHandle> mMaterials;
 protected:
@@ -86,6 +90,7 @@ public:
     void unload();
     virtual void free();
     void clearMatInstList();
+    void clearMappedMaterials();
 
     typedef Vector<GFXTexHandle>::iterator iterator;
     typedef Vector<GFXTexHandle>::value_type value;
@@ -106,6 +111,7 @@ public:
     bool writeText(Stream& stream);
 
     void mapMaterials();
+    Material* MaterialList::getMappedMaterial(U32 index);
     MatInstance* getMaterialInst(U32 texIndex);
     void setMaterialInst(MatInstance* matInst, U32 texIndex);
 

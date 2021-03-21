@@ -233,6 +233,8 @@ public:
     Vector< ReflectPlane >  mReflectPlanes;
     virtual void updateReflection();
 
+
+    virtual Material* getMaterial(U32 material);
 };
 
 
