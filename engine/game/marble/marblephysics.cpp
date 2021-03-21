@@ -376,22 +376,19 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
                     {
                         Marble* otherMarble = (Marble*)contact->object;
                         
-                        Point3D massVel = otherMarble->getVelocityD() * otherMarble->getMass();
+                        F64 ourMass = getMass();
+                        F64 theirMass = otherMarble->getMass();
 
-                        F64 mass = getMass();
+                        F64 bounce = getMax(mDataBlock->bounceRestitution, otherMarble->mDataBlock->bounceRestitution);
 
-                        Point3D oceanMan = ((mass * mVelocity.z - massVel.z) * contact->normal.z
-                                         + (mass * mVelocity.x - massVel.x) * contact->normal.x
-                                         + (mass * mVelocity.y - massVel.y) * contact->normal.y)
-                                         * contact->normal;
+                        Point3D dp = mVelocity * ourMass - otherMarble->getVelocityD() * theirMass;
+                        Point3D normP = mDot(dp, contact->normal) * contact->normal;
 
-                        F64 force = getMax(mDataBlock->bounceRestitution, otherMarble->mDataBlock->bounceRestitution) + 1.0;
+                        normP *= bounce + 1.0;
 
-                        oceanMan *= force;
+                        mVelocity -= normP / ourMass;
 
-                        mVelocity -= oceanMan * (1.0 / mass);
-
-                        otherMarble->setVelocityD(otherMarble->getVelocityD() + oceanMan * (1.0 / otherMarble->getMass()));
+                        otherMarble->setVelocityD(otherMarble->getVelocityD() + normP / theirMass);
                         contact->surfaceVelocity = otherMarble->getVelocityD();
                     } else
                     {
