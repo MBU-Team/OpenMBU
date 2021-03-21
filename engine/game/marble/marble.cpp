@@ -477,10 +477,28 @@ void Marble::updatePowerUpParams()
 
 bool Marble::getForce(Point3F& pos, Point3F* force)
 {
-    // TODO: Implement getForce in StaticShape
+    Point3F delta = pos - mPosition;
+    F32 deltaLen = delta.len();
 
-    // TODO: Implement getForce
-    return false;
+    if (mPowerUpParams.repulseDist < deltaLen)
+        return false;
+
+    if (deltaLen >= 0.05000000074505806)
+    {
+        F32 dist;
+        if (deltaLen >= 1.0)
+            dist = (1.0f / deltaLen - 1.0f / mPowerUpParams.repulseDist) * mPowerUpParams.repulseMax;
+        else
+            dist = mPowerUpParams.repulseMax / deltaLen;
+
+        *force += delta * dist;
+    } else
+    {
+        Point3F result;
+        *force += mPowerUpParams.repulseMax * -getGravityDir(&result);
+    }
+
+    return true;
 }
 
 U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
