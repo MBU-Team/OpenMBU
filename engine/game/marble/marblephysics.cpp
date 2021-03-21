@@ -520,9 +520,57 @@ Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
         return mVelocity * -16.0;
 
     Point3D ret = gWorkGravityDir * mDataBlock->gravity * mPowerUpParams.gravityMod;
-    //Point3D ret(0, 0, 0); // <- to disable gravity when testing
 
-    // TODO: Finish Implementing getExternalForces
+    Box3F marbleBox(mPosition - mDataBlock->maxForceRadius, mPosition + mDataBlock->maxForceRadius);
+
+    SimpleQueryList sql;
+    mContainer->findObjects(marbleBox, ForceObjectType, SimpleQueryList::insertionCallback, &sql);
+
+    Point3F force(0.0f, 0.0f, 0.0f);
+    Point3F position = mPosition;
+
+    for (S32 i = 0; i < sql.mList.size(); i++)
+    {
+        GameBase* obj = (GameBase*)sql.mList[i];
+        if (obj != this)
+            obj->getForce(position, &force);
+    }
+    
+    ret += force / getMass();
+
+    S32 forceObjectCount = 0;
+
+    if (!mContacts.empty())
+    {
+        Point3F contactNormal(0.0f, 0.0f, 0.0f);
+        F32 contactForce = 0.0f;
+
+        for (S32 i = 0; i < mContacts.size(); i++)
+        {
+            if (mContacts[i].force != 0.0f)
+            {
+                forceObjectCount++;
+                contactNormal += mContacts[i].normal;
+                contactForce = mContacts[i].force;
+            }
+        }
+
+        if (forceObjectCount != 0)
+        {
+            m_point3F_normalize(contactNormal);
+
+            F32 contactForceOverMass = contactForce / getMass();
+
+            F32 thing = mDot((Point3F)mVelocity, contactNormal);
+            if(contactForceOverMass > thing)
+            {
+                if (thing > 0.0f)
+                    contactForceOverMass -= thing;
+
+                ret += contactNormal * (contactForceOverMass / timeStep);
+            }
+        }
+    }
 
     if (mContacts.empty() && (mMode & RestrictXYZMode) == 0)
     {
