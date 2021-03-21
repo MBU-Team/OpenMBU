@@ -20,6 +20,7 @@ const float gMarbleCompressDists[7] = {5.0f, 11.0f, 23.0f, 47.0f, 96.0f, 195.0f,
 Point3F gMarbleMotionDir = Point3F(0, 0, 0);
 
 static U32 sTriggerItemMask = ItemObjectType | TriggerObjectType;
+static U32 sCameraCollisionMask = InteriorObjectType | StaticShapeObjectType;
 
 //----------------------------------------------------------------------------
 
@@ -1419,7 +1420,93 @@ LABEL_7:
     {
         MatrixF trans = Marble::smEndPad->getTransform();
 
-        // TODO: Finish Implementing findRenderPos
+        Point3F around(trans[3], trans[7], trans[11]);
+        Point3F forceEffect(trans[2], trans[6], trans[10]);
+        around += forceEffect;
+        
+        Point3F* pLastRenderVel = &mLastRenderVel;
+
+        Point3F offset = mLastRenderPos - around;
+
+        *pLastRenderVel *= 0.949999988079071f;
+
+        Point3F thing2 = forceEffect * 0.2000000029802322f;
+
+        *pLastRenderVel += thing2;
+
+        F32 dist = offset.len();
+
+        *pLastRenderVel -= offset * 0.3499999940395355f;
+
+        if (dist > 1.5f)
+        {
+            Point3F unk = offset * (1.0f / dist);
+            Point3F outward = unk;
+            F32 outforce = mDot(outward, *pLastRenderVel);
+            if (outforce > 0.0f)
+            {
+                *pLastRenderVel -= unk * outforce * 0.75f;
+
+                Point3F noodles = offset * outforce * 0.5f;
+                noodles = *pLastRenderVel - noodles;
+                
+                if (mDot(noodles, noodles) <= 0.1000000014901161f &&
+                    (mCross(outward, forceEffect, &noodles), mDot(noodles, noodles) <= 0.1000000014901161f))
+                {
+                    noodles.set(trans[0], trans[4], trans[8]);
+                } else
+                {
+                    m_point3F_normalize(noodles);
+                }
+
+                *pLastRenderVel += noodles * outforce * 0.25f;
+            }
+        }
+
+        Point3F addVel(mSin(mEffect.effectTime * 3.0f),
+                     mSin(mEffect.effectTime * 3.0f + 2.450442179918352f),
+                     mSin(mEffect.effectTime * 1.5f + 1.19380519338384f));
+
+        *pLastRenderVel += addVel * 2.5f * dt;
+        
+        pos = mLastRenderPos;
+        pos += *pLastRenderVel * dt;
+
+        disableCollision();
+
+        Point3D position = mLastRenderPos;
+        Point3F velocity = pos - mLastRenderPos;
+
+        F64 time = 1.0;
+        F64 totalTime = time;
+
+        S32 i = 0;
+        do
+        {
+            if (totalTime <= 0.0)
+                break;
+            if (!testMove(velocity, position, time, mRadius, sCameraCollisionMask, true))
+                break;
+
+            ++i;
+            totalTime -= time;
+            time = totalTime;
+
+            pos = position;
+
+            Point3F normal = mLastContact.normal;
+
+            Point3F newAround = normal * 1.5f;
+            newAround *= mDot(*pLastRenderVel, normal);
+
+            *pLastRenderVel -= newAround;
+
+        } while (i < 4);
+
+        enableCollision();
+
+        mLastRenderPos = pos;
+        mEffect.effectTime += dt;
     }
     else
     {
