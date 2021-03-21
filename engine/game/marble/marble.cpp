@@ -1417,6 +1417,8 @@ LABEL_7:
 
     if ((mMode & StoppingMode) != 0 && !Marble::smEndPad.isNull())
     {
+        MatrixF trans = Marble::smEndPad->getTransform();
+
         // TODO: Finish Implementing findRenderPos
     }
     else
