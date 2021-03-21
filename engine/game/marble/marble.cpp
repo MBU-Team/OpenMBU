@@ -1413,7 +1413,18 @@ LABEL_7:
             init = true;
         }
 
-        // TODO: Finish Implementing findRenderPos
+        Point3F posDiff = pos - mLastRenderPos;
+
+        if (mDot(posDiff, posDiff) < 10.0f)
+        {
+            Point3F velocity = mLastRenderVel;
+            velocity *= smooth2;
+
+            Point3F nPos = mLastRenderPos + velocity;
+            nPos *= smooth1;
+
+            pos = (pos * 1.0 - smooth1) + nPos;
+        }
     }
 
     if ((mMode & StoppingMode) != 0 && !Marble::smEndPad.isNull())
