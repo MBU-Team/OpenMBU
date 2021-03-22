@@ -1602,12 +1602,9 @@ void Marble::advanceTime(F32 dt)
     F32 deltaTime = dt * 1000.0f;
 
     if (mBlastEnergy >= mDataBlock->maxNaturalBlastRecharge >> 5)
-    {
         mRenderBlastPercent = getMin(F32(mBlastEnergy / mDataBlock->blastRechargeTime >> 5), dt * 0.75f + mRenderBlastPercent);
-    } else
-    {
+    else
         mRenderBlastPercent = mBlastEnergy / mDataBlock->blastRechargeTime >> 5;
-    }
 
     F32 newDt = dt / 0.4f * 2.302585124969482f;
     F32 smooth = 1.0f / (newDt * (newDt * 0.235f * newDt) + newDt + 1.0f + 0.48f * newDt * newDt);
@@ -1623,7 +1620,49 @@ void Marble::advanceTime(F32 dt)
 
     if (mDataBlock->powerUps)
     {
-        // TODO: Finish Implementing advanceTime
+        for (S32 i = 0; i < PowerUpData::MaxPowerUps; i++)
+        {
+            if (mDataBlock->powerUps->emitter[i])
+            {
+                if (mPowerUpState->active)
+                {
+                    if (mPowerUpState[i].emitter.isNull())
+                    {
+                        mPowerUpState[i].emitter = new ParticleEmitter;
+                        mPowerUpState[i].emitter->setDataBlock(mDataBlock->powerUps->emitter[i]);
+                        mPowerUpState[i].emitter->registerObject();
+                    }
+                } else
+                {
+                    if (!mPowerUpState[i].emitter.isNull())
+                    {
+                        mPowerUpState[i].emitter->deleteWhenEmpty();
+                        mPowerUpState[i].emitter = NULL;
+                    }
+                }
+            }
+
+            if (!mPowerUpState[i].emitter.isNull())
+            {
+                Point3F renderP = mVelocity;
+                m_point3F_normalize(renderP);
+
+                mPowerUpState[i].emitter->emitParticles(mLastRenderPos, true, renderP, mVelocity, deltaTime);
+            }
+
+            if (mPowerUpState[i].active || (i == 0 && mBlastTimer))
+            {
+                if (mPowerUpState[i].imageSlot < 0)
+                    mPowerUpState[i].imageSlot = mountPowerupImage(mDataBlock->powerUps->image[i]);
+            } else
+            {
+                if (mPowerUpState[i].imageSlot >= 0)
+                {
+                    unmountImage(mPowerUpState[i].imageSlot);
+                    mPowerUpState[i].imageSlot = -1;
+                }
+            }
+        }
     }
 
     trailEmitter(deltaTime);
