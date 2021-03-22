@@ -695,7 +695,62 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 
 void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pitrVec)
 {
-    // TODO: Implement computeFirstPlatformIntersect
+    Box3F box;
+    box.min = mPosition + mObjBox.min - 0.5f;
+    box.max = mPosition + mObjBox.max + 0.5f;
+
+    Point3F deltaVelocity = mVelocity * dt;
+    if (deltaVelocity.x > 0.0f)
+        box.max.x += deltaVelocity.x;
+    else
+        box.min.x += deltaVelocity.x;
+
+    if (deltaVelocity.y > 0.0f)
+        box.max.y += deltaVelocity.y;
+    else
+        box.min.y += deltaVelocity.y;
+
+    if (deltaVelocity.z > 0.0f)
+        box.max.z += deltaVelocity.z;
+    else
+        box.min.z += deltaVelocity.z;
+
+    if (!pitrVec.empty())
+    {
+        S32 i = 0;
+        do
+        {
+            PathedInterior* it = pitrVec[i];
+            Box3F itBox = it->getExtrudedBox();
+            if (itBox.isOverlapped(box))
+            {
+                if (!mContacts.empty())
+                {
+                    S32 j = 0;
+                    while (mContacts[j].object != it)
+                    {
+                        j++;
+                        if (j >= mContacts.size())
+                            goto LABEL_16;
+                    }
+                } else
+                {
+LABEL_16:
+                    Point3F vel = it->getVelocity();
+                    Point3F boxCenter;
+                    itBox.getCenter(&boxCenter);
+
+                    Point3F diff = itBox.max - boxCenter;
+                    SphereF sphere(boxCenter, diff.len());
+                    polyList.clear();
+                    it->buildPolyList(&polyList, itBox, sphere);
+                    Point3D position = mPosition;
+                    testMove(mVelocity, position, dt, mRadius, 0, false);
+                }
+            }
+            i++;
+        } while(i < pitrVec.size());
+    }
 }
 
 void Marble::resetObjectsAndPolys(U32 collisionMask, const Box3F& testBox)
