@@ -613,7 +613,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 				}
 			}
 
-			// Todo: Implement getMaterial in ShapeBase, TerrainBlock, and InteriorInstance
+			// Todo: Implement getMaterial in TerrainBlock
 			Material* matProp = poly->object->getMaterial(poly->material);
 
 			PathedInterior* hitPI = dynamic_cast<PathedInterior*>(poly->object);

@@ -117,7 +117,6 @@ Marble::Marble()
     S32 i;
     for (i = 0; i < PowerUpData::MaxPowerUps; i++)
     {
-        // TODO: ticksLeft and imageSlot might be flipped here
         mPowerUpState[i].active = false;
         mPowerUpState[i].ticksLeft = 0;
         mPowerUpState[i].emitter = NULL;
@@ -528,7 +527,7 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
         {
             if (stream->writeFlag(mPowerUpState[i].active))
             {
-                stream->writeRangedU32(mPowerUpState[i].ticksLeft, 0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+                stream->writeRangedU32(mPowerUpState[i].ticksLeft, 0, mDataBlock->powerUps->duration[i] >> 5);
             }
         }
 
@@ -560,8 +559,6 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
             stream->write(mGravityFrame.x);
             stream->write(mGravityFrame.y);
             stream->write(mGravityFrame.z);
-
-            // TODO: There might be more here but it could just be a decompile error
 
             stream->writeFlag(mGravityFrame.w < 0.0f);
             stream->writeFlag((mask & (GravitySnapMask | WarpMask)) != 0);
@@ -619,7 +616,7 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
             mPowerUpState[i].active = stream->readFlag();
             if (mPowerUpState[i].active)
             {
-                mPowerUpState[i].ticksLeft = stream->readRangedU32(0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+                mPowerUpState[i].ticksLeft = stream->readRangedU32(0, mDataBlock->powerUps->duration[i] >> 5);
             }
         }
 
@@ -791,7 +788,7 @@ void Marble::writePacketData(GameConnection* conn, BitStream* stream)
     {
         if (stream->writeFlag(mPowerUpState[i].active))
         {
-            stream->writeRangedU32(mPowerUpState[i].ticksLeft, 0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+            stream->writeRangedU32(mPowerUpState[i].ticksLeft, 0, mDataBlock->powerUps->duration[i] >> 5);
         }
     }
 
@@ -853,7 +850,7 @@ void Marble::readPacketData(GameConnection* conn, BitStream* stream)
         mPowerUpState[i].active = stream->readFlag();
         if (mPowerUpState[i].active)
         {
-            mPowerUpState[i].ticksLeft = stream->readRangedU32(0, mDataBlock->powerUps->duration[i] >> 5); // TODO: is it supposed to be >> 5?
+            mPowerUpState[i].ticksLeft = stream->readRangedU32(0, mDataBlock->powerUps->duration[i] >> 5);
         }
     }
 
