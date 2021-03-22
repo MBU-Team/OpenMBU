@@ -1703,7 +1703,8 @@ void Marble::doPowerUp(S32 powerUpId)
 
 void Marble::prepShadows()
 {
-    // TODO: Implement prepShadows
+    // Serves no purpose in MBO but was left over from MBU
+    // Not really worth decompiling at this time.
 }
 
 bool Marble::onAdd()
