@@ -27,6 +27,7 @@
 #include "game/trigger.h"
 #include "game/item.h"
 #include "gfx/primBuilder.h"
+#include "sim/processList.h"
 
 //----------------------------------------------------------------------------
 

@@ -15,6 +15,7 @@
 #include "game/gameConnection.h"
 #include "math/mathIO.h"
 #include "editor/editor.h"
+#include "sim/processList.h"
 
 #define MaxPitch 1.5706
 #define CameraRadius	0.05;

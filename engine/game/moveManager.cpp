@@ -3,10 +3,18 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#include "core/bitStream.h"
+#include "platform/platform.h"
+#include "core/dnet.h"
 #include "console/consoleTypes.h"
-#include "math/mConstants.h"
-#include "game/moveManager.h"
+#include "console/simBase.h"
+#include "game/gameConnection.h"
+#include "game/shapeBase.h"
+#include "core/bitStream.h"
+#include "sim/pathManager.h"
+#include "audio/audio.h"
+#include "game/game.h"
+#include "sceneGraph/sceneGraph.h"
+#include "game/gameConnectionEvents.h"
 
 bool MoveManager::mDeviceIsKeyboardMouse = false;
 F32 MoveManager::mForwardAction = 0;
@@ -138,74 +146,240 @@ void Move::clamp()
     unclamp();
 }
 
-void Move::pack(BitStream* stream, const Move* basemove)
+void Move::pack(BitStream* stream)
 {
-    bool alwaysWriteAll = basemove != NULL;
-    if (!basemove)
-        basemove = &NullMove;
+    if (stream->writeFlag(pyaw != 0))
+        stream->writeInt(pyaw, 16);
+    if (stream->writeFlag(ppitch != 0))
+        stream->writeInt(ppitch, 16);
+    if (stream->writeFlag(proll != 0))
+        stream->writeInt(proll, 16);
 
-    S32 i;
-    bool triggerDifferent = false;
-    for (i = 0; i < MaxTriggerKeys; i++)
-        if (trigger[i] != basemove->trigger[i])
-            triggerDifferent = true;
-    bool somethingDifferent = (pyaw != basemove->pyaw) ||
-        (ppitch != basemove->ppitch) ||
-        (proll != basemove->proll) ||
-        (px != basemove->px) ||
-        (py != basemove->py) ||
-        (pz != basemove->pz) ||
-        (deviceIsKeyboardMouse != basemove->deviceIsKeyboardMouse) ||
-        (freeLook != basemove->freeLook) ||
-        triggerDifferent;
+    stream->writeInt(px, 6);
+    stream->writeInt(py, 6);
+    stream->writeInt(pz, 6);
+    stream->writeFlag(freeLook);
+    stream->writeFlag(deviceIsKeyboardMouse);
 
-    if (alwaysWriteAll || stream->writeFlag(somethingDifferent))
-    {
-        if (stream->writeFlag(pyaw != basemove->pyaw))
-            stream->writeInt(pyaw, 16);
-        if (stream->writeFlag(ppitch != basemove->ppitch))
-            stream->writeInt(ppitch, 16);
-        if (stream->writeFlag(proll != basemove->proll))
-            stream->writeInt(proll, 16);
-
-        if (stream->writeFlag(px != basemove->px))
-            stream->writeInt(px, 6);
-        if (stream->writeFlag(py != basemove->py))
-            stream->writeInt(py, 6);
-        if (stream->writeFlag(pz != basemove->pz))
-            stream->writeInt(pz, 6);
-        stream->writeFlag(freeLook);
-        stream->writeFlag(deviceIsKeyboardMouse);
-
-        if (stream->writeFlag(triggerDifferent))
-            for (i = 0; i < MaxTriggerKeys; i++)
-                stream->writeFlag(trigger[i]);
-    }
+    for (U32 i = 0; i < MaxTriggerKeys; i++)
+        stream->writeFlag(trigger[i]);
 }
 
-void Move::unpack(BitStream* stream, const Move* basemove)
+void Move::unpack(BitStream* stream)
 {
-    bool alwaysReadAll = basemove != NULL;
-    if (!basemove)
-        basemove = &NullMove;
+    if (stream->readFlag())
+        pyaw = stream->readInt(16);
+    else
+        pyaw = 0;
+    if (stream->readFlag())
+        ppitch = stream->readInt(16);
+    else
+        ppitch = 0;
+    if (stream->readFlag())
+        proll = stream->readInt(16);
+    else
+        proll = 0;
+    px = stream->readInt(6);
+    py = stream->readInt(6);
+    pz = stream->readInt(6);
 
-    if (alwaysReadAll || stream->readFlag())
+    unclamp();
+    freeLook = stream->readFlag();
+    deviceIsKeyboardMouse = stream->readFlag();
+
+    for (U32 i = 0; i < MaxTriggerKeys; i++)
+        trigger[i] = stream->readFlag();
+}
+
+bool GameConnection::getNextMove(Move& curMove)
+{
+    if (mMoveList.size() > MaxMoveQueueSize)
+        return false;
+
+    F32 pitchAdd = MoveManager::mPitchUpSpeed - MoveManager::mPitchDownSpeed;
+    F32 yawAdd = MoveManager::mYawLeftSpeed - MoveManager::mYawRightSpeed;
+    F32 rollAdd = MoveManager::mRollRightSpeed - MoveManager::mRollLeftSpeed;
+
+    curMove.pitch = MoveManager::mPitch + pitchAdd;
+    curMove.yaw = MoveManager::mYaw + yawAdd;
+    curMove.roll = MoveManager::mRoll + rollAdd;
+
+    MoveManager::mPitch = 0;
+    MoveManager::mYaw = 0;
+    MoveManager::mRoll = 0;
+
+
+    curMove.x = MoveManager::mRightAction - MoveManager::mLeftAction + MoveManager::mXAxis_L;
+    curMove.y = MoveManager::mForwardAction - MoveManager::mBackwardAction + MoveManager::mYAxis_L;
+    curMove.z = MoveManager::mUpAction - MoveManager::mDownAction;
+
+    curMove.freeLook = MoveManager::mFreeLook;
+    curMove.deviceIsKeyboardMouse = MoveManager::mDeviceIsKeyboardMouse;
+
+    for (U32 i = 0; i < MaxTriggerKeys; i++)
     {
-        pyaw = stream->readFlag() ? stream->readInt(16) : basemove->pyaw;
-        ppitch = stream->readFlag() ? stream->readInt(16) : basemove->ppitch;
-        proll = stream->readFlag() ? stream->readInt(16) : basemove->proll;
+        curMove.trigger[i] = false;
+        if (MoveManager::mTriggerCount[i] & 1)
+            curMove.trigger[i] = true;
+        else if (!(MoveManager::mPrevTriggerCount[i] & 1) && MoveManager::mPrevTriggerCount[i] != MoveManager::mTriggerCount[i])
+            curMove.trigger[i] = true;
+        MoveManager::mPrevTriggerCount[i] = MoveManager::mTriggerCount[i];
+    }
+    curMove.clamp();  // clamp for net traffic
+    return true;
+}
 
-        px = stream->readFlag() ? stream->readInt(6) : basemove->px;
-        py = stream->readFlag() ? stream->readInt(6) : basemove->py;
-        pz = stream->readFlag() ? stream->readInt(6) : basemove->pz;
-        freeLook = stream->readFlag();
-        deviceIsKeyboardMouse = stream->readFlag();
+void GameConnection::pushMove(const Move& mv)
+{
+    U32 id = mFirstMoveIndex + mMoveList.size();
+    U32 sz = mMoveList.size();
+    mMoveList.push_back(mv);
+    mMoveList[sz].id = id;
+    mMoveList[sz].sendCount = 0;
+}
 
-        bool triggersDiffer = stream->readFlag();
-        for (S32 i = 0; i < MaxTriggerKeys; i++)
-            trigger[i] = triggersDiffer ? stream->readFlag() : basemove->trigger[i];
-        unclamp();
+void GameConnection::getMoveList(Move** movePtr, U32* numMoves)
+{
+    if (isConnectionToServer())
+    {
+        // give back moves starting at the last client move...
+
+        AssertFatal(mLastClientMove >= mFirstMoveIndex, "Bad move request");
+        AssertFatal(mLastClientMove - mFirstMoveIndex <= mMoveList.size(), "Desynched first and last move.");
+        *numMoves = mMoveList.size() - mLastClientMove + mFirstMoveIndex;
+        *movePtr = mMoveList.address() + mLastClientMove - mFirstMoveIndex;
     }
     else
-        *this = *basemove;
+    {
+        // On the server we keep our own move list.
+        *numMoves = (mMoveList.size() < mMoveCredit) ?
+            mMoveList.size() : mMoveCredit;
+        *movePtr = mMoveList.begin();
+        //
+        mMoveCredit -= *numMoves;
+        mMoveList.setSize(*numMoves);
+    }
 }
+
+void GameConnection::collectMove(U32 time)
+{
+    Move mv;
+    if (!isPlayingBack() && getNextMove(mv))
+    {
+        pushMove(mv);
+        recordBlock(BlockTypeMove, sizeof(Move), &mv);
+    }
+}
+
+void GameConnection::clearMoves(U32 count)
+{
+    if (isConnectionToServer()) {
+        mLastClientMove += count;
+    }
+    else {
+        AssertFatal(count <= mMoveList.size(), "GameConnection: Clearing too many moves");
+        if (count == mMoveList.size())
+            mMoveList.clear();
+        else
+            while (count--)
+                mMoveList.pop_front();
+    }
+}
+
+void GameConnection::incMoveCredit(U32 ticks)
+{
+    AssertFatal(!isConnectionToServer(), "Cannot inc move credit on the client.");
+    // Game tick increment
+    if ((mMoveCredit += ticks) > MaxMoveCount)
+        mMoveCredit = MaxMoveCount;
+
+    // Clear pending moves for the elapsed time if there
+    // is no control object.
+    if (mControlObject.isNull())
+        mMoveList.clear();
+}
+
+bool GameConnection::areMovesPending()
+{
+    return isConnectionToServer() ?
+        mMoveList.size() - mLastClientMove + mFirstMoveIndex :
+        mMoveList.size();
+}
+
+bool GameConnection::isBacklogged()
+{
+    // If there are no pending moves and the input queue is full,
+    // then the connection to the server must be clogged.
+    if (!isConnectionToServer())
+        return false;
+    return mLastClientMove - mFirstMoveIndex == mMoveList.size() &&
+        mMoveList.size() >= MaxMoveCount;
+}
+
+
+void GameConnection::moveWritePacket(BitStream* bstream)
+{
+    Move* move;
+    U32 count;
+    AssertFatal(mLastMoveAck == mFirstMoveIndex, "Invalid move index.");
+    count = mMoveList.size();
+    move = mMoveList.address();
+    U32 start = mLastMoveAck;
+    U32 offset;
+    for (offset = 0; offset < count; offset++)
+        if (move[offset].sendCount < MAX_MOVE_PACKET_SENDS)
+            break;
+    if (offset == count && count != 0)
+        offset--;
+
+    start += offset;
+    count -= offset;
+
+    if (count > MaxMoveCount)
+        count = MaxMoveCount;
+    bstream->writeInt(start, 32);
+    bstream->writeInt(count, MoveCountBits);
+    for (int i = 0; i < count; i++)
+    {
+        move[offset + i].sendCount++;
+        move[offset + i].pack(bstream);
+    }
+}
+
+void GameConnection::moveReadPacket(BitStream* bstream)
+{
+    // Server side packet read.
+    U32 start = bstream->readInt(32);
+    U32 count = bstream->readInt(MoveCountBits);
+
+    // Skip forward (must be starting up), or over the moves
+    // we already have.
+    int skip = mLastMoveAck - start;
+    if (skip < 0) {
+        mLastMoveAck = start;
+        //mMoveList.clear();
+    }
+    else {
+        Move tmp;
+        if (skip > count)
+            skip = count;
+        for (int i = 0; i < skip; i++)
+            tmp.unpack(bstream);
+        start += skip;
+        count = count - skip;
+    }
+
+    // Put the rest on the move list.
+    int index = mMoveList.size();
+    mMoveList.increment(count);
+    while (index < mMoveList.size())
+    {
+        mMoveList[index].unpack(bstream);
+        mMoveList[index].id = start++;
+        index++;
+    }
+
+    mLastMoveAck += count;
+}
+
+

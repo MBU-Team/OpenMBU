@@ -12,6 +12,7 @@
 #include "console/consoleTypes.h"
 #include "sim/netConnection.h"
 #include "game/item.h"
+#include "sim/processList.h"
 
 #include "tsStatic.h"
 #include "collision/boxConvex.h"

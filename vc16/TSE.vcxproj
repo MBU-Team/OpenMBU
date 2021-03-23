@@ -1398,7 +1398,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\engine\game\moveList.cpp" />
     <ClCompile Include="..\engine\game\net\httpObject.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -1615,7 +1614,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\engine\game\tickCache.cpp" />
     <ClCompile Include="..\engine\game\trigger.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3715,7 +3713,6 @@
     <ClInclude Include="..\engine\game\marble\powerup.h" />
     <ClInclude Include="..\engine\game\missionArea.h" />
     <ClInclude Include="..\engine\game\missionMarker.h" />
-    <ClInclude Include="..\engine\game\moveList.h" />
     <ClInclude Include="..\engine\game\moveManager.h" />
     <ClInclude Include="..\engine\game\net\httpObject.h" />
     <ClInclude Include="..\engine\game\net\serverQuery.h" />
@@ -3732,7 +3729,6 @@
     <ClInclude Include="..\engine\game\showTSShape.h" />
     <ClInclude Include="..\engine\game\sphere.h" />
     <ClInclude Include="..\engine\game\staticShape.h" />
-    <ClInclude Include="..\engine\game\tickCache.h" />
     <ClInclude Include="..\engine\game\trigger.h" />
     <ClInclude Include="..\engine\game\tsStatic.h" />
     <ClInclude Include="..\engine\game\vehicles\flyingVehicle.h" />

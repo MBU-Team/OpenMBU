@@ -142,8 +142,9 @@ GameBase::GameBase()
     mNetFlags.set(Ghostable);
     mTypeMask |= GameBaseObjectType;
 
-    mProcessTag = 0;
+    mProcessLink.next = mProcessLink.prev = this;
     mAfterObject = 0;
+    mProcessTag = 0;
     mDataBlock = 0;
     mProcessTick = true;
     mNameTag = "";
@@ -339,6 +340,43 @@ void GameBase::scriptOnRemove()
 }
 
 
+//--------------------------------------------------------------------------
+void GameBase::plUnlink()
+{
+    mProcessLink.next->mProcessLink.prev = mProcessLink.prev;
+    mProcessLink.prev->mProcessLink.next = mProcessLink.next;
+    mProcessLink.next = mProcessLink.prev = this;
+}
+
+void GameBase::plLinkAfter(GameBase* obj)
+{
+    // Link this after obj
+    mProcessLink.next = obj->mProcessLink.next;
+    mProcessLink.prev = obj;
+    obj->mProcessLink.next = this;
+    mProcessLink.next->mProcessLink.prev = this;
+}
+
+void GameBase::plLinkBefore(GameBase* obj)
+{
+    // Link this before obj
+    mProcessLink.next = obj;
+    mProcessLink.prev = obj->mProcessLink.prev;
+    obj->mProcessLink.prev = this;
+    mProcessLink.prev->mProcessLink.next = this;
+}
+
+void GameBase::plJoin(GameBase* head)
+{
+    GameBase* tail1 = head->mProcessLink.prev;
+    GameBase* tail2 = mProcessLink.prev;
+    tail1->mProcessLink.next = this;
+    mProcessLink.prev = tail1;
+    tail2->mProcessLink.next = head;
+    head->mProcessLink.prev = tail2;
+}
+
+
 //----------------------------------------------------------------------------
 void GameBase::processAfter(GameBase* obj)
 {
@@ -410,8 +448,6 @@ U32 GameBase::packUpdate(NetConnection*, U32 mask, BitStream* stream)
         stream->writeRangedU32(mDataBlock->getId(),
             DataBlockObjectIdFirst,
             DataBlockObjectIdLast);
-        if (stream->writeFlag(mNetFlags.test(NetOrdered)))
-            stream->writeInt(mOrderGUID, 16);
     }
     stream->writeFlag(mHidden);
 
@@ -429,9 +465,6 @@ void GameBase::unpackUpdate(NetConnection* con, BitStream* stream)
         GameBaseData* dptr = 0;
         SimObjectId id = stream->readRangedU32(DataBlockObjectIdFirst,
             DataBlockObjectIdLast);
-
-        if (stream->readFlag())
-            mOrderGUID = stream->readInt(16);
 
         if (!Sim::findObject(id, dptr) || !setDataBlock(dptr))
             con->setLastError("Invalid packet GameBase::unpackUpdate()");

@@ -206,8 +206,6 @@ class NetObject : public SimObject
     friend class  NetConnection;
     friend struct GhostInfo;
     friend class  ProcessList;
-    friend class  ClientProcessList;
-    friend class  ServerProcessList;
 
     // Not the best way to do this, but the event needs access to mNetFlags
     friend class GhostAlwaysObjectEvent;

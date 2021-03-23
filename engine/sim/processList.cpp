@@ -12,88 +12,19 @@
 #include "platform/profiler.h"
 #include "console/consoleTypes.h"
 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 
-void ProcessObject::plUnlink()
+bool ProcessList::mDebugControlSync = false;
+
+ProcessList::ProcessList(bool isServer)
 {
-    mProcessLink.next->mProcessLink.prev = mProcessLink.prev;
-    mProcessLink.prev->mProcessLink.next = mProcessLink.next;
-    mProcessLink.next = mProcessLink.prev = this;
-}
-
-void ProcessObject::plLinkAfter(ProcessObject* obj)
-{
-    AssertFatal(mProcessLink.next == this && mProcessLink.prev == this, "ProcessObject::plLinkAfter: must be unlinked before calling this");
-#ifdef TORQUE_DEBUG
-    ProcessObject* test1 = obj;
-    ProcessObject* test2 = obj->mProcessLink.next;
-    ProcessObject* test3 = obj->mProcessLink.prev;
-    ProcessObject* test4 = this;
-#endif
-
-    // Link this after obj
-    mProcessLink.next = obj->mProcessLink.next;
-    mProcessLink.prev = obj;
-    obj->mProcessLink.next = this;
-    mProcessLink.next->mProcessLink.prev = this;
-
-#ifdef TORQUE_DEBUG
-    AssertFatal(test1->mProcessLink.next->mProcessLink.prev == test1 && test1->mProcessLink.prev->mProcessLink.next == test1, "Doh!");
-    AssertFatal(test2->mProcessLink.next->mProcessLink.prev == test2 && test2->mProcessLink.prev->mProcessLink.next == test2, "Doh!");
-    AssertFatal(test3->mProcessLink.next->mProcessLink.prev == test3 && test3->mProcessLink.prev->mProcessLink.next == test3, "Doh!");
-    AssertFatal(test4->mProcessLink.next->mProcessLink.prev == test4 && test4->mProcessLink.prev->mProcessLink.next == test4, "Doh!");
-#endif
-}
-
-void ProcessObject::plLinkBefore(ProcessObject* obj)
-{
-    AssertFatal(mProcessLink.next == this && mProcessLink.prev == this, "ProcessObject::plLinkBefore: must be unlinked before calling this");
-#ifdef TORQUE_DEBUG
-    ProcessObject* test1 = obj;
-    ProcessObject* test2 = obj->mProcessLink.next;
-    ProcessObject* test3 = obj->mProcessLink.prev;
-    ProcessObject* test4 = this;
-#endif
-
-    // Link this before obj
-    mProcessLink.next = obj;
-    mProcessLink.prev = obj->mProcessLink.prev;
-    obj->mProcessLink.prev = this;
-    mProcessLink.prev->mProcessLink.next = this;
-
-#ifdef TORQUE_DEBUG
-    AssertFatal(test1->mProcessLink.next->mProcessLink.prev == test1 && test1->mProcessLink.prev->mProcessLink.next == test1, "Doh!");
-    AssertFatal(test2->mProcessLink.next->mProcessLink.prev == test2 && test2->mProcessLink.prev->mProcessLink.next == test2, "Doh!");
-    AssertFatal(test3->mProcessLink.next->mProcessLink.prev == test3 && test3->mProcessLink.prev->mProcessLink.next == test3, "Doh!");
-    AssertFatal(test4->mProcessLink.next->mProcessLink.prev == test4 && test4->mProcessLink.prev->mProcessLink.next == test4, "Doh!");
-#endif
-}
-
-void ProcessObject::plJoin(ProcessObject* head)
-{
-    ProcessObject* tail1 = head->mProcessLink.prev;
-    ProcessObject* tail2 = mProcessLink.prev;
-    tail1->mProcessLink.next = this;
-    mProcessLink.prev = tail1;
-    tail2->mProcessLink.next = head;
-    head->mProcessLink.prev = tail2;
-}
-
-//-----------------------------------------------------------------------------
-
-ProcessList::ProcessList()
-{
-    mCurrentTag = 0;
     mDirty = false;
-
-    mTotalTicks = 0;
+    mCurrentTag = 0;
     mLastTick = 0;
     mLastTime = 0;
-    mLastDelta = 0.0f;
-}
-
-void ProcessList::addObject(ProcessObject* obj) {
-    obj->plLinkAfter(&mHead);
+    mLastDelta = 0;
+    mIsServer = isServer;
+    //   Con::addVariable("debugControlSync",TypeBool, &mDebugControlSync);
 }
 
 
@@ -101,105 +32,211 @@ void ProcessList::addObject(ProcessObject* obj) {
 
 void ProcessList::orderList()
 {
-    // ProcessObject tags are initialized to 0, so current tag should never be 0.
-    if (++mCurrentTag == 0)
+    // GameBase tags are intialized to 0, so current tag
+    // should never be 0.
+    if (!++mCurrentTag)
         mCurrentTag++;
 
     // Install a temporary head node
-    ProcessObject list;
-    list.plLinkBefore(mHead.mProcessLink.next);
-    mHead.plUnlink();
+    GameBase list;
+    list.plLinkBefore(head.mProcessLink.next);
+    head.plUnlink();
 
-    // start out by (bubble) sorting list by GUID
-    for (ProcessObject* cur = list.mProcessLink.next; cur != &list; cur = cur->mProcessLink.next)
-    {
-        if (cur->mOrderGUID == 0)
-            // special case -- can be no lower, so accept as lowest (this is also
-            // a common value since it is what non ordered objects have)
-            continue;
-
-        for (ProcessObject* walk = cur->mProcessLink.next; walk != &list; walk = walk->mProcessLink.next)
-        {
-            if (walk->mOrderGUID < cur->mOrderGUID)
-            {
-                // swap walk and cur -- need to be careful because walk might be just after cur
-                // so insert after item before cur and before item after walk
-                ProcessObject* before = cur->mProcessLink.prev;
-                ProcessObject* after = walk->mProcessLink.next;
-                cur->plUnlink();
-                walk->plUnlink();
-                cur->plLinkBefore(after);
-                walk->plLinkAfter(before);
-                ProcessObject* swap = walk;
-                walk = cur;
-                cur = swap;
-            }
-        }
-    }
-
-    // Reverse topological sort into the original head node
-    while (list.mProcessLink.next != &list)
-    {
-        ProcessObject* ptr = list.mProcessLink.next;
-        ProcessObject* afterObject = ptr->getAfterObject();
+    // Reverse topological sort into the orignal head node
+    while (list.mProcessLink.next != &list) {
+        GameBase* ptr = list.mProcessLink.next;
         ptr->mProcessTag = mCurrentTag;
         ptr->plUnlink();
-        if (afterObject)
-        {
-            // Build chain "stack" of dependent objects and patch
+        if (ptr->mAfterObject) {
+            // Build chain "stack" of dependant objects and patch
             // it to the end of the current list.
-            while (afterObject && afterObject->mProcessTag != mCurrentTag)
-            {
-                afterObject->mProcessTag = mCurrentTag;
-                afterObject->plUnlink();
-                afterObject->plLinkBefore(ptr);
-                ptr = afterObject;
-                afterObject = ptr->getAfterObject();
+            while (bool(ptr->mAfterObject) &&
+                ptr->mAfterObject->mProcessTag != mCurrentTag) {
+                ptr->mAfterObject->mProcessTag = mCurrentTag;
+                ptr->mAfterObject->plUnlink();
+                ptr->mAfterObject->plLinkBefore(ptr);
+                ptr = ptr->mAfterObject;
             }
-            ptr->plJoin(&mHead);
+            ptr->plJoin(&head);
         }
         else
-            ptr->plLinkBefore(&mHead);
+            ptr->plLinkBefore(&head);
     }
     mDirty = false;
-}
-
-void ProcessList::dumpToConsole()
-{
-    for (ProcessObject* pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
-    {
-        SimObject* obj = dynamic_cast<SimObject*>(pobj);
-        if (obj)
-            Con::printf("id %i, order guid %i, type %s", obj->getId(), pobj->mOrderGUID, obj->getClassName());
-        else
-            Con::printf("---unknown object type, order guid %i", pobj->mOrderGUID);
-    }
 }
 
 
 //----------------------------------------------------------------------------
 
-bool ProcessList::advanceTime(SimTime timeDelta)
+bool ProcessList::advanceServerTime(SimTime timeDelta)
 {
-    PROFILE_START(AdvanceTime);
+    PROFILE_START(AdvanceServerTime);
 
-    if (mDirty)
-        orderList();
+    if (mDirty) orderList();
 
     SimTime targetTime = mLastTime + timeDelta;
-    SimTime targetTick = targetTime - (targetTime % TickMs);
-    bool ret = mLastTick != targetTick;
+    SimTime targetTick = targetTime & ~TickMask;
+    SimTime tickCount = (targetTick - mLastTick) >> TickShift;
 
+    bool ret = mLastTick != targetTick;
     // Advance all the objects
     for (; mLastTick != targetTick; mLastTick += TickMs)
-        onAdvanceObjects();
+        advanceObjects();
+
+    // Credit all the connections with the elapsed ticks.
+    SimGroup* g = Sim::getClientGroup();
+    for (SimGroup::iterator i = g->begin(); i != g->end(); i++)
+        if (GameConnection* t = dynamic_cast<GameConnection*>(*i))
+            t->incMoveCredit(tickCount);
 
     mLastTime = targetTime;
-    mLastDelta = ((TickMs - ((targetTime + 1) % TickMs)) % TickMs) / F32(TickMs);
-
     PROFILE_END();
     return ret;
 }
+
+
+//----------------------------------------------------------------------------
+
+bool ProcessList::advanceClientTime(SimTime timeDelta)
+{
+    PROFILE_START(AdvanceClientTime);
+
+    if (mDirty) orderList();
+
+    SimTime targetTime = mLastTime + timeDelta;
+    SimTime targetTick = (targetTime + TickMask) & ~TickMask;
+    SimTime tickCount = (targetTick - mLastTick) >> TickShift;
+
+    // See if the control object has pending moves.
+    GameBase* control = 0;
+    GameConnection* connection = GameConnection::getConnectionToServer();
+    if (connection)
+    {
+        // If the connection to the server is backlogged
+        // the simulation is frozen.
+        if (connection->isBacklogged()) {
+            mLastTime = targetTime;
+            mLastTick = targetTick;
+            PROFILE_END();
+            return false;
+        }
+        if (connection->areMovesPending())
+            control = connection->getControlObject();
+    }
+
+    // If we are going to tick, or have moves pending for the
+    // control object, we need to reset everyone back to their
+    // last full tick pos.
+    if (mLastDelta && (tickCount || control))
+        for (GameBase* obj = head.mProcessLink.next; obj != &head;
+            obj = obj->mProcessLink.next)
+            if (obj->mProcessTick)
+                obj->interpolateTick(0);
+
+    // Produce new moves and advance all the objects
+    if (tickCount)
+    {
+        for (; mLastTick != targetTick; mLastTick += TickMs)
+        {
+            if (connection)
+            {
+                // process any demo blocks that are NOT moves, and exactly one move
+                // we advance time in the demo stream by a move inserted on
+                // each tick.  So before doing the tick processing we advance
+                // the demo stream until a move is ready
+                if (connection->isPlayingBack())
+                {
+                    U32 blockType;
+                    do
+                    {
+                        blockType = connection->getNextBlockType();
+                        bool res = connection->processNextBlock();
+                        // if there are no more blocks, exit out of this function,
+                        // as no more client time needs to process right now - we'll
+                        // get it all on the next advanceClientTime()
+                        if (!res)
+                            return true;
+                    } while (blockType != GameConnection::BlockTypeMove);
+                }
+                connection->collectMove(mLastTick);
+            }
+            advanceObjects();
+        }
+    }
+    else
+        if (control)
+        {
+            // Sync up the control object with the latest client moves.
+            Move* movePtr;
+            U32 m = 0, numMoves;
+            connection->getMoveList(&movePtr, &numMoves);
+            while (m < numMoves)
+            {
+                control->processTick(&movePtr[m++]);
+            }
+            connection->clearMoves(m);
+        }
+
+    mLastDelta = (TickMs - (targetTime & TickMask)) & TickMask;
+    F32 dt = mLastDelta / F32(TickMs);
+    for (GameBase* obj = head.mProcessLink.next; obj != &head;
+        obj = obj->mProcessLink.next)
+        if (obj->mProcessTick)
+            obj->interpolateTick(dt);
+
+    // Inform objects of total elapsed delta so they can advance
+    // client side animations.
+    dt = F32(timeDelta) / 1000;
+    for (GameBase* obj = head.mProcessLink.next; obj != &head;
+        obj = obj->mProcessLink.next)
+        obj->advanceTime(dt);
+
+    mLastTime = targetTime;
+    PROFILE_END();
+    return tickCount != 0;
+}
+
+//----------------------------------------------------------------------------
+
+bool ProcessList::advanceSPModeTime(SimTime timeDelta)
+{
+    PROFILE_START(AdvanceSPModeTime);
+
+    if (mDirty) orderList();
+
+    SimTime targetTime = mLastTime + timeDelta;
+    SimTime targetTick = targetTime & ~TickMask;
+    SimTime tickCount = (targetTick - mLastTick) >> TickShift;
+
+    bool ret = mLastTick != targetTick;
+    // Advance all the objects
+    for (; mLastTick != targetTick; mLastTick += TickMs)
+        advanceObjects();
+
+    F32 dt = F32(timeDelta) / 1000;
+    for (GameBase* obj = head.mProcessLink.next; obj != &head;
+        obj = obj->mProcessLink.next)
+        obj->advanceTime(dt);
+
+    mLastTime = targetTime;
+    PROFILE_END();
+    return ret;
+}
+
+//----------------------------------------------------------------------------
+
+void ProcessList::dumpToConsole()
+{
+    for (GameBase* pobj = head.mProcessLink.next; pobj != &head; pobj = pobj->mProcessLink.next)
+    {
+        SimObject* obj = dynamic_cast<SimObject*>(pobj);
+        if (obj)
+            Con::printf("id %i, order guid %i, type %s", obj->getId(), 0, obj->getClassName());
+        else
+            Con::printf("---unknown object type, order guid %i", 0);
+    }
+}
+
 
 //----------------------------------------------------------------------------
 
@@ -209,18 +246,37 @@ void ProcessList::advanceObjects()
 
     // A little link list shuffling is done here to avoid problems
     // with objects being deleted from within the process method.
-    ProcessObject list;
-    list.plLinkBefore(mHead.mProcessLink.next);
-    mHead.plUnlink();
-    for (ProcessObject* pobj = list.mProcessLink.next; pobj != &list; pobj = list.mProcessLink.next)
-    {
-        pobj->plUnlink();
-        pobj->plLinkBefore(&mHead);
+    GameBase list;
+    GameBase* obj;
+    list.plLinkBefore(head.mProcessLink.next);
+    head.plUnlink();
+    while ((obj = list.mProcessLink.next) != &list) {
+        obj->plUnlink();
+        obj->plLinkBefore(&head);
 
-        onTickObject(pobj);
+        // Each object is either advanced a single tick, or if it's
+        // being controlled by a client, ticked once for each pending move.
+        if (obj->mTypeMask & GameBaseObjectType) {
+
+            GameBase* pGB = static_cast<GameBase*>(obj);
+            GameConnection* con = pGB->getControllingClient();
+
+            if (con && con->getControlObject() == pGB) {
+                Move* movePtr;
+                U32 m, numMoves;
+
+                con->getMoveList(&movePtr, &numMoves);
+
+                for (m = 0; m < numMoves && pGB->getControllingClient() == con; )
+                    obj->processTick(&movePtr[m++]);
+
+                con->clearMoves(m);
+
+                continue;
+            }
+        }
+        if (obj->mProcessTick)
+            obj->processTick(0);
     }
-
-    mTotalTicks++;
-
     PROFILE_END();
 }

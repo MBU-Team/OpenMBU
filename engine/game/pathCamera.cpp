@@ -15,6 +15,7 @@
 #include "game/game.h"
 #include "game/gameConnection.h"
 #include "editor/editor.h"
+#include "sim/processList.h"
 
 #include "game/pathCamera.h"
 

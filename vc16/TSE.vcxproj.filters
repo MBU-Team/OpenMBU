@@ -1527,13 +1527,7 @@
     <ClCompile Include="..\engine\game\gameProcess.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\game\moveList.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\game\moveManager.cpp">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\game\tickCache.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="..\engine\gui\controls\guiXboxListCtrl.cpp">
@@ -2835,12 +2829,6 @@
       <Filter>Source Files\sim</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\game\gameProcess.h">
-      <Filter>Source Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\game\moveList.h">
-      <Filter>Source Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\game\tickCache.h">
       <Filter>Source Files\game</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\gui\controls\guiXboxListCtrl.h">

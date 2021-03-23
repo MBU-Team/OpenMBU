@@ -39,13 +39,15 @@ GameConnection::GameConnection()
     mLagging = false;
     mControlObject = NULL;
     mCameraObject = NULL;
-
-    mMoveList.setConnection(this);
+    mLastMoveAck = 0;
+    mLastClientMove = 0;
+    mFirstMoveIndex = 0;
+    mMoveCredit = MaxMoveCount;
 
     mDataBlockModifiedKey = 0;
     mMaxDataBlockModifiedKey = 0;
     mAuthInfo = NULL;
-    mControlForceMismatch = false;
+    mLastControlObjectChecksum = 0;
     mConnectArgc = 0;
     for (U32 i = 0; i < MaxConnectArgs; i++)
         mConnectArgv[i] = 0;
@@ -595,7 +597,7 @@ void GameConnection::handleRecordedBlock(U32 type, U32 size, void* data)
     switch (type)
     {
     case BlockTypeMove:
-        mMoveList.pushMove(*((Move*)data));
+        pushMove(*((Move*)data));
         if (isRecording()) // put it back into the stream
             recordBlock(type, size, data);
         break;
@@ -624,10 +626,15 @@ void GameConnection::writeDemoStartBlock(ResizeBitStream* stream)
     stream->write(mFirstPerson);
     stream->write(mCameraPos);
     stream->write(mCameraSpeed);
+    stream->write(mLastMoveAck);
+    stream->write(mLastClientMove);
+    stream->write(mFirstMoveIndex);
 
     stream->writeString(Con::getVariable("$Client::MissionFile"));
 
-    mMoveList.writeDemoStartBlock(stream);
+    stream->write(U32(mMoveList.size()));
+    for (U32 j = 0; j < mMoveList.size(); j++)
+        mMoveList[j].pack(stream);
 
     // dump all the "demo" vars associated with this connection:
     SimFieldDictionaryIterator itr(getFieldDictionary());
@@ -696,12 +703,23 @@ bool GameConnection::readDemoStartBlock(BitStream* stream)
     stream->read(&mFirstPerson);
     stream->read(&mCameraPos);
     stream->read(&mCameraSpeed);
+    stream->read(&mLastMoveAck);
+    stream->read(&mLastClientMove);
+    stream->read(&mFirstMoveIndex);
 
     char buf[256];
     stream->readString(buf);
     Con::setVariable("$Client::MissionFile", buf);
 
-    mMoveList.readDemoStartBlock(stream);
+    U32 size;
+    Move mv;
+    stream->read(&size);
+    mMoveList.clear();
+    while (size--)
+    {
+        mv.unpack(stream);
+        pushMove(mv);
+    }
 
     // read in all the demo vars associated with this recording
     // they are all tagged on to the object and start with the
@@ -749,27 +767,6 @@ void GameConnection::demoPlaybackComplete()
     Parent::demoPlaybackComplete();
 }
 
-void GameConnection::ghostPreRead(NetObject* nobj, bool newGhost)
-{
-    Parent::ghostPreRead(nobj, newGhost);
-
-    mMoveList.ghostPreRead(nobj, newGhost);
-}
-
-void GameConnection::ghostReadExtra(NetObject* nobj, BitStream* bstream, bool newGhost)
-{
-    Parent::ghostReadExtra(nobj, bstream, newGhost);
-
-    mMoveList.ghostReadExtra(nobj, bstream, newGhost);
-}
-
-void GameConnection::ghostWriteExtra(NetObject* nobj, BitStream* bstream)
-{
-    Parent::ghostWriteExtra(nobj, bstream);
-
-    mMoveList.ghostWriteExtra(nobj, bstream);
-}
-
 //----------------------------------------------------------------------------
 
 void GameConnection::readPacket(BitStream* bstream)
@@ -781,15 +778,24 @@ void GameConnection::readPacket(BitStream* bstream)
     bstream->clearCompressionPoint();
     if (isConnectionToServer())
     {
-        mMoveList.clientReadMovePacket(bstream);
-
         bool spMode = bstream->readFlag();
         if (spMode != gSPMode)
         {
             gSPMode = spMode;
             Con::executef(this, 2, "switchedSinglePlayerMode", Con::getIntArg((S32)gSPMode));
         }
-
+        
+        mLastMoveAck = bstream->readInt(32);
+        if (mLastMoveAck < mFirstMoveIndex)
+            mLastMoveAck = mFirstMoveIndex;
+        if (mLastMoveAck > mLastClientMove)
+            mLastClientMove = mLastMoveAck;
+        while (mFirstMoveIndex < mLastMoveAck)
+        {
+            AssertFatal(mMoveList.size(), "Popping off too many moves!");
+            mMoveList.pop_front();
+            mFirstMoveIndex++;
+        }
 
         //int processListDirty = bstream->readInt(10);
 
@@ -807,7 +813,9 @@ void GameConnection::readPacket(BitStream* bstream)
         {
             if (bstream->readFlag())
             {
-                // the control object is dirty...so we get an update:
+                // the control object is dirty...
+                // so we get an update:
+                mLastClientMove = mLastMoveAck;
                 bool callScript = false;
                 if (mControlObject.isNull())
                     callScript = true;
@@ -823,9 +831,6 @@ void GameConnection::readPacket(BitStream* bstream)
 #ifdef TORQUE_NET_STATS
                 obj->getClassRep()->updateNetStatReadData(bstream->getCurPos() - beginSize);
 #endif
-
-                // let move list know that control object is dirty
-                mMoveList.markControlDirty();
 
                 if (callScript)
                     Con::executef(this, 2, "initialControlSet");
@@ -874,16 +879,14 @@ void GameConnection::readPacket(BitStream* bstream)
     }
     else
     {
-        mMoveList.serverReadMovePacket(bstream);
-
         bool fp = bstream->readFlag();
         if (fp)
             mCameraPos = 0;
         else
             mCameraPos = 1;
 
-        if (bstream->readFlag())
-            mControlForceMismatch = true;
+        bstream->read(&mLastControlObjectChecksum);
+        moveReadPacket(bstream);
 
         // client changed first person
         if (bstream->readFlag()) {
@@ -907,13 +910,6 @@ void GameConnection::readPacket(BitStream* bstream)
     Parent::readPacket(bstream);
     bstream->clearCompressionPoint();
     bstream->setStringBuffer(NULL);
-
-    if (isConnectionToServer())
-    {
-        PROFILE_START(ClientCatchup);
-        gClientProcessList.clientCatchup(this);
-        PROFILE_END();
-    }
 }
 
 void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
@@ -928,25 +924,32 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
     U32 startPos = bstream->getCurPos();
     if (isConnectionToServer())
     {
-        mMoveList.clientWriteMovePacket(bstream);
-
         bstream->writeFlag(mCameraPos == 0);
+        U32 sum = 0;
+        // TODO: Implement Torque Hifi instead of the following.
+        if (mControlObject && !gSPMode && !gRenderPreview)
+        {
+            mControlObject->interpolateTick(0);
+            sum = mControlObject->getPacketDataChecksum(this);
+            mControlObject->interpolateTick(gClientProcessList.getLastInterpDelta());
+        }
 
         // if we're recording, we want to make sure that we get periodic updates of the
         // control object "just in case" - ie if the math copro is different between the
         // recording machine (SIMD vs FPU), we get periodic corrections
-
-        bool forceUpdate = false;
+        
         if (isRecording())
         {
             U32 currentTime = Platform::getVirtualMilliseconds();
             if (currentTime - mLastControlRequestTime > ControlRequestTime)
             {
                 mLastControlRequestTime = currentTime;
-                forceUpdate = true;
+                sum = 0;
             }
         }
-        bstream->writeFlag(forceUpdate);
+        bstream->write(sum);
+
+        moveWritePacket(bstream);
 
         // first person changed?
         if (bstream->writeFlag(mUpdateFirstPerson))
@@ -965,9 +968,12 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
     }
     else
     {
-        mMoveList.serverWriteMovePacket(bstream);
-
         bstream->writeFlag(gSPMode);
+
+        // The only time mMoveList will not be empty at this
+        // point is during a change in control object.
+
+        bstream->writeInt(mLastMoveAck - mMoveList.size(), 32);
 
         //bstream->writeInt(getCurrentServerProcessList()->isDirty() & 0x3FF, 10);
 
@@ -995,7 +1001,7 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
         if (bstream->writeFlag(gIndex != -1))
         {
             // assume that the control object will write in a compression point
-            if (bstream->writeFlag(mMoveList.isMismatch() || mControlForceMismatch))
+            if (bstream->writeFlag(mControlObject->getPacketDataChecksum(this) != mLastControlObjectChecksum))
             {
 #ifdef TORQUE_DEBUG_NET
                 Con::printf("packetDataChecksum disagree!");
@@ -1008,7 +1014,6 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
 #ifdef TORQUE_NET_STATS
                 mControlObject->getClassRep()->updateNetStatWriteData(bstream->getCurPos() - beginSize);
 #endif
-                mControlForceMismatch = false;
             }
             else
             {

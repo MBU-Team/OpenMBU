@@ -6,10 +6,6 @@
 #ifndef _MOVEMANAGER_H_
 #define _MOVEMANAGER_H_
 
-#ifndef _PLATFORM_H_
-#include "platform/platform.h"
-#endif
-
 enum MoveConstants {
     MaxTriggerKeys = 6,
     MaxMoveQueueSize = 45,
@@ -19,8 +15,6 @@ class BitStream;
 
 struct Move
 {
-    enum { ChecksumBits = 16, ChecksumMask = ((1 << ChecksumBits) - 1), ChecksumMismatch = U32(-1) };
-
     // packed storage rep, set in clamp
     S32 px, py, pz;
     U32 pyaw, ppitch, proll;
@@ -28,14 +22,13 @@ struct Move
     F32 yaw, pitch, roll; // 0-2PI
     U32 id;               // sync'd between server & client - debugging tool.
     U32 sendCount;
-    U32 checksum;
 
     bool deviceIsKeyboardMouse;
     bool freeLook;
     bool trigger[MaxTriggerKeys];
 
-    void pack(BitStream* stream, const Move* move = NULL);
-    void unpack(BitStream* stream, const Move* move = NULL);
+    void pack(BitStream* stream);
+    void unpack(BitStream* stream);
     void clamp();
     void unclamp();
 };

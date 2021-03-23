@@ -12,12 +12,6 @@
 #ifndef _RESMANAGER_H_
 #include "core/resManager.h"
 #endif
-#ifndef _PROCESSLIST_H_
-#include "sim/processList.h"
-#endif
-#ifndef _TICKCACHE_H_
-#include "game/tickCache.h"
-#endif
 
 class NetConnection;
 class ProcessList;
@@ -143,13 +137,11 @@ class GameConnection;
 /// writePacketData()/readPacketData() are called <i>in addition</i> to packUpdate/unpackUpdate().
 ///
 /// @nosubgrouping
-class GameBase : public SceneObject, public ProcessObject
+class GameBase : public SceneObject
 {
 private:
     typedef SceneObject Parent;
-    friend class ClientProcessList;
-    friend class ServerProcessList;
-    friend class SPModeProcessList;
+    friend class ProcessList;
 
     /// @name Datablock
     /// @{
@@ -158,11 +150,20 @@ private:
     StringTableEntry  mNameTag;
 
     /// @}
-    TickCache mTickCache;
 
     /// @name Tick Processing Internals
     /// @{
 private:
+    void plUnlink();
+    void plLinkAfter(GameBase*);
+    void plLinkBefore(GameBase*);
+    void plJoin(GameBase*);
+    struct Link {
+        GameBase* next;
+        GameBase* prev;
+    };
+    U32  mProcessTag;                      ///< Tag used to sort objects for processing.
+    Link mProcessLink;                     ///< Ordered process queue link.
     SimObjectPtr<GameBase> mAfterObject;
     /// @}
 
@@ -278,7 +279,6 @@ public:
     ///
     /// @see processAfter
     GameBase* getProcessAfter() { return mAfterObject; }
-    ProcessObject* getAfterObject() { return mAfterObject; }
 
     /// Removes this object from the tick-processing list
     void removeFromProcessList() { plUnlink(); }
