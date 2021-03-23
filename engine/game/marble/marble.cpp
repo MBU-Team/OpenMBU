@@ -982,6 +982,8 @@ bool Marble::onSceneAdd(SceneGraph* graph)
         mStencilMaterial = new MatInstance("Material_Stencil");
         mStencilMaterial->init(sgData, GFXVertexFlagXYZ);
     }
+
+    return true;
 }
 
 bool Marble::onNewDataBlock(GameBaseData* dptr)
