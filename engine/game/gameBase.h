@@ -305,7 +305,7 @@ public:
     virtual void preprocessMove(Move* move) {}
     /// @}
 
-#ifdef TORQUE_HIFI
+#ifdef TORQUE_HIFI_NET
     // tick cache methods for hifi networking...
     TickCache& getTickCache() { return mTickCache; }
     void setGhostUpdated(bool b) { if (b) mNetFlags.set(GhostUpdated); else mNetFlags.clear(GhostUpdated); }

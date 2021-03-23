@@ -43,7 +43,7 @@
 #define TORQUE_UNICODE
 
 /// Define me to enable Torque HiFi support
-//#define TORQUE_HIFI
+#define TORQUE_HIFI_NET
 
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
