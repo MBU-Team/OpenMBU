@@ -335,25 +335,24 @@ void GameConnection::resetMoveList()
 
 S32 GameConnection::getServerTicks(U32 serverTickNum)
 {
-    S32 result = 0;
-
+    S32 serverTicks = 0;
     if (serverTicksInitialized())
     {
-        result = serverTickNum - (mTotalServerTicks & 0x3FF);
-        if (result <= 512)
-        {
-            if ((S32)((mTotalServerTicks & 0x3FF) - serverTickNum) > 512)
-                result += 1024;
-            AssertFatal(result >= 0, "Server can't tick backwards!!!");
-        } else
-            result -= 1024;
-
-        if (result < 0)
-            result = 0;
+        // handle tick wrapping...
+        const S32 MaxTickCount = (1 << TotalTicksBits);
+        const S32 HalfMaxTickCount = MaxTickCount >> 1;
+        U32 prevTickNum = mTotalServerTicks & TotalTicksMask;
+        serverTicks = serverTickNum - prevTickNum;
+        if (serverTicks > HalfMaxTickCount)
+            serverTicks -= MaxTickCount;
+        else if (-serverTicks > HalfMaxTickCount)
+            serverTicks += MaxTickCount;
+        AssertFatal(serverTicks >= 0, "Server can't tick backwards!!!");
+        if (serverTicks < 0)
+            serverTicks = 0;
     }
     mTotalServerTicks = serverTickNum;
-
-    return result;
+    return serverTicks;
 }
 
 bool GameConnection::serverTicksInitialized()
@@ -363,55 +362,62 @@ bool GameConnection::serverTicksInitialized()
 
 void GameConnection::updateClientServerTickDiff(S32& tickDiff)
 {
-    if (!mLastMoveAck)
+    if (mLastMoveAck == 0)
         tickDiff = 0;
 
-    S32 tickDiff2 = tickDiff;
-    if (tickDiff <= 0)
+    // Make adjustments to move list to account for tick mis-matches between client and server.
+    if (tickDiff > 0)
     {
-        S32 i = 0;
-        do
+        // Server ticked more than client.  Adjust for this by reseting all hifi objects
+        // to a later position in the tick cache (see ageTickCache below) and at the same
+        // time pulling back some moves we thought we had made (so that time on client
+        // doesn't change).
+        S32 dropTicks = tickDiff;
+        while (dropTicks)
         {
-            if (mMoveList.size() <= mLastClientMove - mFirstMoveIndex)
+#ifdef TORQUE_DEBUG_NET_MOVES
+            Con::printf("dropping move%s", mLastClientMove > mFirstMoveIndex ? "" : " but none there");
+#endif
+            if (mLastClientMove > mFirstMoveIndex)
+                mLastClientMove--;
+            else
+                tickDiff--;
+            dropTicks--;
+        }
+        AssertFatal(mLastClientMove >= mFirstMoveIndex, "Bad move request");
+        AssertFatal(mLastClientMove - mFirstMoveIndex <= mMoveList.size(), "Desynched first and last move.");
+    }
+    else
+    {
+        // Client ticked more than server.  Adjust for this by taking extra moves
+        // (either adding back moves that were dropped above, or taking new ones).
+        for (S32 i = 0; i < -tickDiff; i++)
+        {
+            if (mMoveList.size() > mLastClientMove - mFirstMoveIndex)
+            {
+#ifdef TORQUE_DEBUG_NET_MOVES
+                Con::printf("add back move");
+#endif
+                mLastClientMove++;
+            }
+            else
             {
 #ifdef TORQUE_DEBUG_NET_MOVES
                 Con::printf("add back move -- create one");
 #endif
                 collectMove(0);
+                mLastClientMove++;
             }
-
-#ifdef TORQUE_DEBUG_NET_MOVES
-            Con::printf("add back move");
-#endif
-            mLastClientMove++;
-            i++;
-        } while (i < -tickDiff);
-    } else
-    {
-        do
-        {
-#ifdef TORQUE_DEBUG_NET_MOVES
-            Con::printf("dropping move%s", mLastClientMove > mFirstMoveIndex ? "" : " but none there");
-#endif
-            if (mLastClientMove <= mFirstMoveIndex)
-                --tickDiff;
-            else
-                --mLastClientMove;
-
-            --tickDiff2;
-        } while (tickDiff2);
-        AssertFatal(mLastClientMove >= mFirstMoveIndex, "Bad move request");
-        AssertFatal(mLastClientMove - mFirstMoveIndex <= mMoveList.size(), "Desynched first and last move.");
+        }
     }
 
-    U32 size = mLastSentMove - mFirstMoveIndex;
-    if (mLastClientMove - mFirstMoveIndex > size)
-        size = mLastClientMove - mFirstMoveIndex;
-    mMoveList.setSize(size);
+    // drop moves that are not made yet (because we rolled them back) and not yet sent   
+    U32 len = getMax(mLastClientMove - mFirstMoveIndex, mLastSentMove - mFirstMoveIndex);
+    mMoveList.setSize(len);
 
 #ifdef TORQUE_DEBUG_NET_MOVES
     Con::printf("move list size: %i, last move: %i, last sent: %i", mMoveList.size(), mLastClientMove - mFirstMoveIndex, mLastSentMove - mFirstMoveIndex);
-#endif    
+#endif       
 }
 
 //----------------------------------------------------------------------------
@@ -969,13 +975,25 @@ void GameConnection::readPacket(BitStream* bstream)
         Con::printf("server ticks: %i, client ticks: %i, diff: %i%s", serverTicks, ourTicks, tickDiff, !tickDiff ? "" : " (ticks mis-match)");
 #endif
 
+        // Apply the first (of two) client-side synchronization mechanisms.  Key is that
+        // we need to both synchronize client/server move streams (so first move in list is made
+        // at same "time" on both client and server) and maintain the "time" at which the most
+        // recent move was made on the server.  In both cases, "time" is the number of ticks
+        // it took to get to that move.
         updateClientServerTickDiff(tickDiff);
+
+        // Apply the second (and final) client-side synchronization mechanism.  The tickDiff adjustments above 
+        // make sure time is preserved on client.  But that assumes that a future (or previous) update will adjust
+        // time in the other direction, so that we don't get too far behind or ahead of the server.  The updateMoveSync
+        // mechanism tracks us over time to make sure we eventually return to be in sync, and makes adjustments
+        // if we don't after a certain time period (number of updates).  Unlike the tickDiff mechanism, when
+        // the updateMoveSync acts time is not preserved on the client.
         gClientProcessList.updateMoveSync(mLastSentMove - mLastClientMove);
+
+        // set catchup parameters...
         totalCatchup = mLastClientMove - mFirstMoveIndex;
-        S32 newTickDiff = tickDiff;
-        if (tickDiff <= 0)
-            newTickDiff = 0;
-        gClientProcessList.ageTickCache(ourTicks + newTickDiff, totalCatchup + 1);
+
+        gClientProcessList.ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
         gClientProcessList.forceHifiReset(tickDiff != 0);
 
         mDamageFlash = 0;

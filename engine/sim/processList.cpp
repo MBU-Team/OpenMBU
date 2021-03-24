@@ -51,19 +51,16 @@ struct MoveSync
     {
         if (diff && diff == moveDiff)
         {
-            ++moveDiffSteadyCount;
-        } else
+            moveDiffSteadyCount++;
+            moveDiffSameSignCount++;
+        }
+        else if (diff * moveDiff > 0)
         {
             moveDiffSteadyCount = 0;
-            if (diff * moveDiff <= 0)
-            {
-                moveDiff = 0;
-                moveDiffSameSignCount = 0;
-                moveDiff = diff;
-                return;
-            }
+            moveDiffSameSignCount++;
         }
-        ++moveDiffSameSignCount;
+        else
+            reset();
         moveDiff = diff;
     }
 };
@@ -729,7 +726,8 @@ void ProcessList::clientCatchup(GameConnection* connection, S32 catchup)
 
                 obj->processTick(movePtr);
 
-                movePtr->checksum = sum;
+                // set checksum if not set or check against stored value if set
+                movePtr->checksum = Move::ChecksumMask & obj->getPacketDataChecksum(obj->getControllingClient());
 
 #ifdef TORQUE_DEBUG_NET_MOVES
                 Con::printf("move checksum: %i, (start %i), (move %f %f %f)",

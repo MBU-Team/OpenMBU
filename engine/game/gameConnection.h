@@ -177,6 +177,10 @@ protected:
 
     MoveList    mMoveList;
     void resetMoveList();
+    
+    // client side tracking of server ticks
+    enum { TotalTicksBits = 10, TotalTicksMask = (1 << TotalTicksBits) - 1, ServerTicksUninitialized = 0xFFFFFFFF };
+
     S32 getServerTicks(U32 serverTickNum);
     bool serverTicksInitialized();
     void updateClientServerTickDiff(S32& tickDiff);
