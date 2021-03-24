@@ -32,7 +32,7 @@ public:
 
     // GameConnection overrides
     void clearMoves(U32 n);
-    virtual void getMoveList(Move**, U32* numMoves);
+    virtual U32 getMoveList(Move**, U32* numMoves);
 };
 
 

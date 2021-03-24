@@ -62,7 +62,7 @@ public:
     AIClient();
     ~AIClient();
 
-    void getMoveList(Move** movePtr, U32* numMoves);
+    U32 getMoveList(Move** movePtr, U32* numMoves);
 
     // ---Targeting and aiming sets/gets
     void setTargetObject(ShapeBase* targetObject);

@@ -929,8 +929,17 @@ void GameConnection::readPacket(BitStream* bstream)
             gSPMode = spMode;
             Con::executef(this, 2, "switchedSinglePlayerMode", Con::getIntArg((S32)gSPMode));
         }
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+        Con::printf("pre move ack: %i", mLastMoveAck);
+#endif
         
         mLastMoveAck = bstream->readInt(32);
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+        Con::printf("post move ack %i, first move %i, last move %i", mLastMoveAck, mFirstMoveIndex, mLastClientMove);
+#endif
+
         U32 ourTicks = mLastMoveAck - mFirstMoveIndex;
         if (mLastMoveAck < mFirstMoveIndex)
             mLastMoveAck = mFirstMoveIndex;
@@ -947,12 +956,19 @@ void GameConnection::readPacket(BitStream* bstream)
                 mFirstMoveIndex++;
             } else
             {
+                AssertWarn(1, "Popping off too many moves!");
                 mFirstMoveIndex = mLastMoveAck;
             }
         }
 
         U32 serverTickNum = bstream->readInt(10);
-        S32 tickDiff = getServerTicks(serverTickNum) - ourTicks;
+        S32 serverTicks = getServerTicks(serverTickNum);
+        S32 tickDiff = serverTicks - ourTicks;
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+        Con::printf("server ticks: %i, client ticks: %i, diff: %i%s", serverTicks, ourTicks, tickDiff, !tickDiff ? "" : " (ticks mis-match)");
+#endif
+
         updateClientServerTickDiff(tickDiff);
         gClientProcessList.updateMoveSync(mLastSentMove - mLastClientMove);
         totalCatchup = mLastClientMove - mFirstMoveIndex;
@@ -1066,8 +1082,13 @@ void GameConnection::readPacket(BitStream* bstream)
 
         if (mMoveList.size() > mMaxMoveListSize)
         {
-            clearMoves(mMoveList.size() - mTargetMoveListSize);
-            mAvgMoveQueueSize = mTargetMoveListSize;
+            U32 drop = mMoveList.size() - mTargetMoveListSize;
+            clearMoves(drop);
+            mAvgMoveQueueSize = (F32)mTargetMoveListSize;
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+            Con::printf("too many moves on server, dropping moves (%i)", drop);
+#endif
         }
 
         // client changed first person
@@ -1159,6 +1180,10 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
         // The only time mMoveList will not be empty at this
         // point is during a change in control object.
 
+#ifdef TORQUE_DEBUG_NET_MOVES
+        Con::printf("ack %i minus %i", mLastMoveAck, mMoveList.size());
+#endif
+
         bstream->writeInt(mLastMoveAck - mMoveList.size(), 32);
 
         bstream->writeInt(gServerProcessList.getTotalTicks() & 0x3FF, 10);
@@ -1190,7 +1215,10 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
             if (bstream->writeFlag(mControlMismatch || mControlForceMismatch))
             {
 #ifdef TORQUE_DEBUG_NET
-                Con::printf("packetDataChecksum disagree!");
+                if (mControlMismatch)
+                    Con::printf("packetDataChecksum disagree!");
+                else
+                    Con::printf("packetDataChecksum disagree! (force)");
 #endif
                 bstream->writeInt(gIndex, NetConnection::GhostIdBitSize);
 #ifdef TORQUE_NET_STATS

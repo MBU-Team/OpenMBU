@@ -241,7 +241,7 @@ bool ProcessList::advanceServerTime(SimTime timeDelta)
     if (mDirty) orderList();
 
     SimTime targetTime = mLastTime + timeDelta;
-    SimTime targetTick = targetTime - (targetTime % TickMs);
+    SimTime targetTick = targetTime - (targetTime & 31);
 
     bool ret = mLastTick != targetTick;
 
@@ -265,12 +265,13 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
     {
         timeDelta -= mSkipAdvanceObjectsMs;
         advanceClientTime(mSkipAdvanceObjectsMs);
+        AssertFatal(!mSkipAdvanceObjectsMs, "Doh!");
     }
 
     if (mDirty) orderList();
 
     SimTime targetTime = mLastTime + timeDelta;
-    SimTime targetTick = targetTime - (targetTime % TickMs);
+    SimTime targetTick = targetTime - (targetTime & 0x1F);
     SimTime tickCount = (targetTick - mLastTick) >> TickShift;
 
     // See if the control object has pending moves.
@@ -293,6 +294,7 @@ LABEL_19:
             ProcessObject* next = mHead.mProcessLink.next;
             ProcessObject* pNext = next;
             mLastDelta = (float)(-(targetTime + 1) & 0x1F) * 0.03125f;
+            AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
             if (next != &mHead)
             {
                 while(true)
@@ -311,7 +313,7 @@ LABEL_19:
                 }
             }
 
-            F32 dt = (float)timeDelta / 1000.0f;
+            F32 dt = F32(timeDelta) / 1000;
             ProcessObject* next2 = mHead.mProcessLink.next;
             ProcessObject* pNext2 = next2;
             if (next2 != &mHead)
@@ -445,14 +447,32 @@ void ProcessList::advanceObjects()
 
             if (numMoves)
             {
+#ifdef TORQUE_DEBUG_NET_MOVES
+                U32 sum = Move::ChecksumMask & obj->getPacketDataChecksum(con);
+#endif
+
                 obj->processTick(movePtr);
                 if (!obj.isNull() && con)
                 {
-                    U32 checksum = obj->getPacketDataChecksum(con);
+                    U32 newsum = Move::ChecksumMask & obj->getPacketDataChecksum(con);
                     if (obj->isGhost())
-                        movePtr->checksum = checksum;
-                    else if (movePtr->checksum != checksum)
-                        movePtr->checksum = -1;
+                        movePtr->checksum = newsum;
+                    else if (movePtr->checksum != newsum)
+                    {
+                        movePtr->checksum = Move::ChecksumMismatch;
+#ifdef TORQUE_DEBUG_NET_MOVES
+                        if (!obj->mIsAiControlled)
+                            Con::printf("move %i checksum disagree: %i != %i, (start %i), (move %f %f %f)",
+                                movePtr->id, movePtr->checksum, newsum, sum, movePtr->yaw, movePtr->y, movePtr->z);
+#endif
+                    } else
+                    {
+#ifdef TORQUE_DEBUG_NET_MOVES
+                        Con::printf("move %i checksum agree: %i == %i, (start %i), (move %f %f %f)",
+                            movePtr->id, movePtr->checksum, newsum, sum, movePtr->yaw, movePtr->y, movePtr->z);
+#endif
+                    }
+
                 }
                 con->clearMoves(1);
                 goto LABEL_16;
@@ -464,7 +484,7 @@ void ProcessList::advanceObjects()
             obj->processTick(NULL);
         }
 LABEL_16:
-        if (obj && obj->isGhost() && (obj->getTypeMask() & GameBaseHiFiObjectType) != 0)
+        if (obj && obj->isGhost() && (obj->getType() & GameBaseHiFiObjectType) != 0)
         {
             GameConnection* serverCon = GameConnection::getConnectionToServer();
 
@@ -516,7 +536,7 @@ void ProcessList::updateMoveSync(S32 moveDiff)
     moveSync.update(moveDiff);
     if (moveSync.doAction() && moveDiff < 0)
     {
-        gClientProcessList.skipAdvanceObjects(-32 * moveDiff);
+        gClientProcessList.skipAdvanceObjects(TickMs * -moveDiff);
         moveSync.reset();
     }
 }
@@ -703,8 +723,19 @@ void ProcessList::clientCatchup(GameConnection* connection, S32 catchup)
             // tick object
             if (obj == connection->getControlObject())
             {
+#ifdef TORQUE_DEBUG_NET_MOVES
+                U32 sum = Move::ChecksumMask & obj->getPacketDataChecksum(obj->getControllingClient());
+#endif
+
                 obj->processTick(movePtr);
-                movePtr->checksum = obj->getPacketDataChecksum(connection);
+
+                movePtr->checksum = sum;
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+                Con::printf("move checksum: %i, (start %i), (move %f %f %f)",
+                    movePtr->checksum, sum, movePtr->yaw, movePtr->y, movePtr->z);
+#endif
+
                 movePtr++;
             }
             else

@@ -157,7 +157,7 @@ void AIClient::clearAim() {
  * @param movePtr Pointer to move the move list into
  * @param numMoves Number of moves in the move list
  */
-void AIClient::getMoveList(Move** movePtr, U32* numMoves) {
+U32 AIClient::getMoveList(Move** movePtr, U32* numMoves) {
     //initialize the move structure and return pointers
     mMove = NullMove;
     *movePtr = &mMove;
@@ -169,7 +169,7 @@ void AIClient::getMoveList(Move** movePtr, U32* numMoves) {
 
     // We got a something controling us?
     if (!mPlayer)
-        return;
+        return *numMoves;
 
 
     // What is The Matrix?
@@ -189,7 +189,7 @@ void AIClient::getMoveList(Move** movePtr, U32* numMoves) {
     switch (mMoveMode) {
 
     case ModeStop:
-        return;     // Stop means no action
+        return *numMoves;     // Stop means no action
         break;
 
     case ModeStuck:
@@ -333,6 +333,8 @@ void AIClient::getMoveList(Move** movePtr, U32* numMoves) {
         mMove.trigger[i] = mTriggers[i];
         mTriggers[i] = false;
     }
+
+    return *numMoves;
 }
 
 /**

@@ -167,6 +167,12 @@ protected:
     bool mProcessTick;
     F32 mCameraFov;
 
+#ifdef TORQUE_DEBUG_NET_MOVES
+    U32 mLastMoveId;
+    U32 mTicksSinceLastMove;
+    bool mIsAiControlled;
+#endif   
+
 public:
     GameBase();
     virtual ~GameBase();

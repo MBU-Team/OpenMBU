@@ -108,7 +108,10 @@
 #define TORQUE_ENABLE_PROFILE_PATH
 
 /// Define me to enable a variety of network debugging aids.
-//#define TORQUE_DEBUG_NET
+#define TORQUE_DEBUG_NET
+
+/// Define me to enable a variety of network move packet debugging aids.
+#define TORQUE_DEBUG_NET_MOVES
 
 /// Define me to enable network bandwidth tracking at the ConsoleObject level.
 //#define TORQUE_NET_STATS

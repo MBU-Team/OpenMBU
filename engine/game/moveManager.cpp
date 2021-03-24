@@ -299,7 +299,7 @@ void GameConnection::pushMove(const Move& mv)
     mMoveList[sz].sendCount = 0;
 }
 
-void GameConnection::getMoveList(Move** movePtr, U32* numMoves)
+U32 GameConnection::getMoveList(Move** movePtr, U32* numMoves)
 {
     if (isConnectionToServer())
     {
@@ -315,8 +315,13 @@ void GameConnection::getMoveList(Move** movePtr, U32* numMoves)
         // On the server we keep our own move list.
         *numMoves = mMoveList.size();
 
-        mAvgMoveQueueSize = (1.0f - mSmoothMoveAvg) * mAvgMoveQueueSize;
-        mAvgMoveQueueSize += *numMoves * mSmoothMoveAvg;
+        mAvgMoveQueueSize *= (1.0f - mSmoothMoveAvg);
+        mAvgMoveQueueSize += mSmoothMoveAvg * F32(*numMoves);
+
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+        Con::printf("moves remaining: %i, running avg: %f", *numMoves, mAvgMoveQueueSize);
+#endif
 
         if (mTargetMoveListSize - mMoveListSizeSlack <= mAvgMoveQueueSize || *numMoves >= mTargetMoveListSize)
             goto LABEL_7;
@@ -326,6 +331,11 @@ void GameConnection::getMoveList(Move** movePtr, U32* numMoves)
             *numMoves = 0;
             F32 num = mMoveListSizeSlack + mAvgMoveQueueSize + 0.5f;
             mAvgMoveQueueSize = num != 0 ? num : 0;
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+            Con::printf("too few moves on server, padding with null move");
+#endif
+
 LABEL_7:
             if (*numMoves)
                 *numMoves = 1;
@@ -334,12 +344,19 @@ LABEL_7:
         if (mMoveList.size() > mMaxMoveListSize || mTargetMoveListSize + mMoveListSizeSlack < mAvgMoveQueueSize &&
             mMoveList.size() > mTargetMoveListSize)
         {
-            clearMoves(mMoveList.size() - mTargetMoveListSize);
-            mAvgMoveQueueSize = mTargetMoveListSize;
+            U32 drop = mMoveList.size() - mTargetMoveListSize;
+            clearMoves(drop);
+            mAvgMoveQueueSize = (F32)mTargetMoveListSize;
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+            Con::printf("too many moves on server, dropping moves (%i)", drop);
+#endif
         }
 
         *movePtr = mMoveList.begin();
     }
+
+    return *numMoves;
 }
 
 void GameConnection::resetClientMoves()
@@ -352,7 +369,7 @@ void GameConnection::collectMove(U32 time)
     Move mv;
     if (!isPlayingBack() && getNextMove(mv))
     {
-        mv.checksum = -1;
+        mv.checksum = Move::ChecksumMismatch;
         pushMove(mv);
         recordBlock(BlockTypeMove, sizeof(Move), &mv);
     }
@@ -362,19 +379,16 @@ void GameConnection::clearMoves(U32 count)
 {
     if (isConnectionToServer()) {
         mLastClientMove += count;
+        AssertFatal(mLastClientMove >= mFirstMoveIndex, "Bad move request");
+        AssertFatal(mLastClientMove - mFirstMoveIndex <= mMoveList.size(), "Desynched first and last move.");
     }
     else {
         AssertFatal(count <= mMoveList.size(), "GameConnection: Clearing too many moves");
-
-        if (count)
-        {
-            U32 i = count;
-            do
-            {
-                --i;
-                mControlMismatch = mMoveList[i].checksum == -1;
-            } while(i);
-        }
+        for (S32 i = 0; i < count; i++)
+            if (mMoveList[i].checksum == Move::ChecksumMismatch)
+                mControlMismatch = true;
+            else
+                mControlMismatch = false;
 
         if (count == mMoveList.size())
             mMoveList.clear();
@@ -433,6 +447,7 @@ void GameConnection::moveWritePacket(BitStream* bstream)
 
     if (count > MaxMoveCount)
         count = MaxMoveCount;
+
     bstream->writeInt(start, 32);
     bstream->writeInt(count, MoveCountBits);
     Move* baseMove = NULL;
@@ -440,7 +455,7 @@ void GameConnection::moveWritePacket(BitStream* bstream)
     {
         move[offset + i].sendCount++;
         move[offset + i].pack(bstream, baseMove);
-        bstream->writeInt(move[offset + i].checksum, 16);
+        bstream->writeInt(move[offset + i].checksum, Move::ChecksumBits);
 
         baseMove = &move[offset + i];
     }
@@ -452,28 +467,34 @@ void GameConnection::moveReadPacket(BitStream* bstream)
     U32 start = bstream->readInt(32);
     U32 count = bstream->readInt(MoveCountBits);
 
-    Move* baseMove = NULL;
+    Move* prevMove = NULL;
+    Move prevMoveHolder;
 
     // Skip forward (must be starting up), or over the moves
     // we already have.
     int skip = mLastMoveAck - start;
-    if (skip < 0) {
+    if (skip < 0)
+    {
         mLastMoveAck = start;
-        //mMoveList.clear();
     }
-    else {
-        Move prevMoveHolder;
+    else
+    {
         if (skip > count)
             skip = count;
         for (S32 i = 0; i < skip; i++)
         {
-            prevMoveHolder.unpack(bstream, baseMove);
-            U32 checksum = bstream->readInt(16);
-            prevMoveHolder.checksum = checksum;
-            baseMove = &prevMoveHolder;
-            S32 num = mMoveList.size() - skip;
-            if (i + num >= 0)
-                mMoveList[i + num].checksum = checksum;
+            prevMoveHolder.unpack(bstream, prevMove);
+            prevMoveHolder.checksum = bstream->readInt(Move::ChecksumBits);
+            prevMove = &prevMoveHolder;
+            S32 idx = mMoveList.size() - skip + i;
+            if (idx >= 0)
+            {
+#ifdef TORQUE_DEBUG_NET_MOVES
+                if (mMoveList[idx].checksum != prevMoveHolder.checksum)
+                    Con::printf("updated checksum on move %i from %i to %i", mMoveList[idx].id, mMoveList[idx].checksum, prevMoveHolder.checksum);
+#endif
+                mMoveList[idx].checksum = prevMoveHolder.checksum;
+            }
         }
         start += skip;
         count = count - skip;
@@ -484,10 +505,10 @@ void GameConnection::moveReadPacket(BitStream* bstream)
     mMoveList.increment(count);
     while (index < mMoveList.size())
     {
-        mMoveList[index].unpack(bstream, baseMove);
+        mMoveList[index].unpack(bstream, prevMove);
+        mMoveList[index].checksum = bstream->readInt(Move::ChecksumBits);
+        prevMove = &mMoveList[index];
         mMoveList[index].id = start++;
-        mMoveList[index].checksum = bstream->readInt(16);
-        baseMove = &mMoveList[index];
         index++;
     }
 

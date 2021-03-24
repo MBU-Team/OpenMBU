@@ -42,10 +42,12 @@ const Move& AIConnection::getMove()
  * have a connected client and simply generates moves on-the-fly
  * base on it's current state.
  */
-void AIConnection::getMoveList(Move** lngMove, U32* numMoves)
+U32 AIConnection::getMoveList(Move** lngMove, U32* numMoves)
 {
     *numMoves = 1;
     *lngMove = &mMove;
+
+    return *numMoves;
 }
 
 

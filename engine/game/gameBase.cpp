@@ -15,6 +15,10 @@
 #include "math/mathIO.h"
 #include "game/gameProcess.h"
 
+#ifdef TORQUE_DEBUG_NET_MOVES
+#include "game/aiConnection.h"
+#endif
+
 //----------------------------------------------------------------------------
 // Ghost update relative priority values
 
@@ -150,6 +154,12 @@ GameBase::GameBase()
     mNameTag = "";
     mControllingClient = 0;
     mTickCacheHead = NULL;
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+    mLastMoveId = 0;
+    mTicksSinceLastMove = 0;
+    mIsAiControlled = false;
+#endif
 }
 
 GameBase::~GameBase()
@@ -213,8 +223,59 @@ void GameBase::inspectPostApply()
 }
 
 //----------------------------------------------------------------------------
-void GameBase::processTick(const Move*)
+void GameBase::processTick(const Move* move)
 {
+#ifdef TORQUE_DEBUG_NET_MOVES
+    if (!move)
+        mTicksSinceLastMove++;
+
+    const char* srv = isClientObject() ? "client" : "server";
+    const char* who = "";
+    if (isClientObject())
+    {
+        if (this == (GameBase*)GameConnection::getConnectionToServer()->getControlObject())
+            who = " player";
+        else
+            who = " ghost";
+        if (mIsAiControlled)
+            who = " ai";
+    }
+    if (isServerObject())
+    {
+        if (dynamic_cast<AIConnection*>(getControllingClient()))
+        {
+            who = " ai";
+            mIsAiControlled = true;
+        }
+        else if (getControllingClient())
+        {
+            who = " player";
+            mIsAiControlled = false;
+        }
+        else
+        {
+            who = "";
+            mIsAiControlled = false;
+        }
+    }
+    U32 moveid = mLastMoveId + mTicksSinceLastMove;
+    if (move)
+        moveid = move->id;
+
+    if (getType() & GameBaseHiFiObjectType)
+    {
+        if (move)
+            Con::printf("Processing (%s%s id %i) move %i", srv, who, getId(), move->id);
+        else
+            Con::printf("Processing (%s%s id %i) move %i (%i)", srv, who, getId(), mLastMoveId + mTicksSinceLastMove, mTicksSinceLastMove);
+    }
+
+    if (move)
+    {
+        mLastMoveId = move->id;
+        mTicksSinceLastMove = 0;
+    }
+#endif
 }
 
 void GameBase::interpolateTick(F32 delta)
@@ -543,6 +604,11 @@ U32 GameBase::packUpdate(NetConnection*, U32 mask, BitStream* stream)
     }
     stream->writeFlag(mHidden);
 
+#ifdef TORQUE_DEBUG_NET_MOVES
+    stream->write(mLastMoveId);
+    stream->writeFlag(mIsAiControlled);
+#endif
+
     return 0;
 }
 
@@ -570,6 +636,12 @@ void GameBase::unpackUpdate(NetConnection* con, BitStream* stream)
     setHidden(stream->readFlag());
     if (wasHidden && !isHidden())
         onUnhide();
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+    stream->read(&mLastMoveId);
+    mTicksSinceLastMove = 0;
+    mIsAiControlled = stream->readFlag();
+#endif
 }
 
 //----------------------------------------------------------------------------

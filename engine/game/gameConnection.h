@@ -287,7 +287,7 @@ public:
     void           pushMove(const Move& mv);
     bool           getNextMove(Move& curMove);
     bool           isBacklogged();
-    virtual void   getMoveList(Move**, U32* numMoves);
+    virtual U32   getMoveList(Move**, U32* numMoves);
     MoveList&      getMoves() { return mMoveList; }
     void           resetClientMoves();
     virtual void   clearMoves(U32 count);
