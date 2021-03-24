@@ -1119,7 +1119,9 @@ void GameConnection::readPacket(BitStream* bstream)
         if (mControlObject && mControlObject->isGhostUpdated())
             mLastClientMove = mLastMoveAck;
 
+        PROFILE_START(ClientCatchup);
         gClientProcessList.clientCatchup(this, totalCatchup);
+        PROFILE_END();
     }
 }
 
