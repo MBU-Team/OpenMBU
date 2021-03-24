@@ -12,7 +12,12 @@
 #ifndef _RESMANAGER_H_
 #include "core/resManager.h"
 #endif
+#ifndef _PROCESSLIST_H_
+#include "sim/processList.h"
+#endif
 
+struct TickCacheEntry;
+struct TickCacheHead;
 class NetConnection;
 class ProcessList;
 struct Move;
@@ -137,7 +142,7 @@ class GameConnection;
 /// writePacketData()/readPacketData() are called <i>in addition</i> to packUpdate/unpackUpdate().
 ///
 /// @nosubgrouping
-class GameBase : public SceneObject
+class GameBase : public SceneObject, public ProcessObject
 {
 private:
     typedef SceneObject Parent;
@@ -148,23 +153,8 @@ private:
 private:
     GameBaseData* mDataBlock;
     StringTableEntry  mNameTag;
+    TickCacheHead* mTickCacheHead;
 
-    /// @}
-
-    /// @name Tick Processing Internals
-    /// @{
-private:
-    void plUnlink();
-    void plLinkAfter(GameBase*);
-    void plLinkBefore(GameBase*);
-    void plJoin(GameBase*);
-    struct Link {
-        GameBase* next;
-        GameBase* prev;
-    };
-    U32  mProcessTag;                      ///< Tag used to sort objects for processing.
-    Link mProcessLink;                     ///< Ordered process queue link.
-    SimObjectPtr<GameBase> mAfterObject;
     /// @}
 
     // Control interface
@@ -283,6 +273,14 @@ public:
     /// Removes this object from the tick-processing list
     void removeFromProcessList() { plUnlink(); }
 
+    void beginTickCacheList();
+    TickCacheEntry* incTickCacheList(bool addIfNeeded);
+    TickCacheEntry* addTickCacheEntry();
+    void ageTickCache(S32 numToAge, S32 len);
+    void setTickCacheSize(int len);
+    void dropOldest();
+    void dropNextOldest();
+
     /// Processes a move event and updates object state once every 32 milliseconds.
     ///
     /// This takes place both on the client and server, every 32 milliseconds (1 tick).
@@ -307,7 +305,6 @@ public:
 
 #ifdef TORQUE_HIFI_NET
     // tick cache methods for hifi networking...
-    TickCache& getTickCache() { return mTickCache; }
     void setGhostUpdated(bool b) { if (b) mNetFlags.set(GhostUpdated); else mNetFlags.clear(GhostUpdated); }
     bool isGhostUpdated() const { return mNetFlags.test(GhostUpdated); }
     void setNewGhost(bool n) { if (n) mNetFlags.set(NewGhost); else mNetFlags.clear(NewGhost); }

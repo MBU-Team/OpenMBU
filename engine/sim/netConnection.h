@@ -777,6 +777,10 @@ protected:
 
     void ghostWriteStartBlock(ResizeBitStream* stream);
     void ghostReadStartBlock(BitStream* stream);
+
+    virtual void ghostWriteExtra(NetObject*, BitStream*) {}
+    virtual void ghostReadExtra(NetObject*, BitStream*, bool newGhost) {}
+    virtual void ghostPreRead(NetObject*, bool newGhost) {}
     
 public:
     /// Some configuration values.

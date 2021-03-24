@@ -456,6 +456,8 @@ void NetConnection::ghostWritePacket(BitStream* bstream, PacketNotify* notify)
 
             AssertFatal((retMask & (~updateMask)) == 0, "Cannot set new bits in packUpdate return");
 
+            ghostWriteExtra(walk->obj, bstream);
+
             walk->updateMask = retMask;
             if (!retMask)
                 ghostPushToZero(walk);
@@ -542,6 +544,9 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     avar("class id mismatch for dest class %s.",
                         mLocalGhosts[index]->getClassName()));
 #endif
+
+                // give derived classes a chance to prepare ghost for reading
+                ghostPreRead(mLocalGhosts[index], true);
 #ifdef TORQUE_NET_STATS
                 U32 beginSize = bstream->getCurPos();
 #endif
@@ -560,6 +565,7 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     obj->mServerObject = mRemoteConnection->resolveObjectFromGhostIndex(index);
 
                 addObject(obj);
+                ghostReadExtra(mLocalGhosts[index], bstream, true);
             }
             else
             {
@@ -572,6 +578,8 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     avar("class id mismatch for dest class %s.",
                         mLocalGhosts[index]->getClassName()));
 #endif
+                // give derived classes a chance to prepare ghost for reading
+                ghostPreRead(mLocalGhosts[index], false);
 #ifdef TORQUE_NET_STATS
                 U32 beginSize = bstream->getCurPos();
 #endif
@@ -579,6 +587,7 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
 #ifdef TORQUE_NET_STATS
                 mLocalGhosts[index]->getClassRep()->updateNetStatUnpack(bstream->getCurPos() - beginSize);
 #endif
+                ghostReadExtra(mLocalGhosts[index], bstream, false);
             }
             //PacketStream::getStats()->addBits(PacketStats::Receive, bstream->getCurPos() - startPos, ghostRefs[index].localGhost->getPersistTag());
 #ifdef TORQUE_DEBUG_NET

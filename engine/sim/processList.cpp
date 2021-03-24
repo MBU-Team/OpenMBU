@@ -11,10 +11,113 @@
 #include "sim/processList.h"
 #include "platform/profiler.h"
 #include "console/consoleTypes.h"
+#include "core/bitStream.h"
+#include "game/gameProcess.h"
+#include "math/mathUtils.h"
+#include "game/tickCache.h"
 
 //----------------------------------------------------------------------------
 
 bool ProcessList::mDebugControlSync = false;
+U32 gNetOrderNextId = 0;
+F32 gMaxHiFiVelSq = 100 * 100;
+
+//--------------------------------------------------------------------------
+
+struct MoveSync
+{
+    enum
+    {
+        ActionCount = 4,
+    };
+
+    S32 moveDiff = 0;
+    S32 moveDiffSteadyCount = 0;
+    S32 moveDiffSameSignCount = 0;
+
+    bool doAction() const
+    {
+        return moveDiffSteadyCount >= 4 || moveDiffSameSignCount >= 16;
+    }
+
+    void reset()
+    {
+        moveDiff = 0;
+        moveDiffSteadyCount = 0;
+        moveDiffSameSignCount = 0;
+    }
+
+    void update(S32 diff)
+    {
+        if (diff && diff == moveDiff)
+        {
+            ++moveDiffSteadyCount;
+        } else
+        {
+            moveDiffSteadyCount = 0;
+            if (diff * moveDiff <= 0)
+            {
+                moveDiff = 0;
+                moveDiffSameSignCount = 0;
+                moveDiff = diff;
+                return;
+            }
+        }
+        ++moveDiffSameSignCount;
+        moveDiff = diff;
+    }
+};
+
+MoveSync moveSync;
+
+//--------------------------------------------------------------------------
+
+
+ProcessObject::ProcessObject()
+{
+    mAfterObject = NULL;
+    mProcessTag = 0;
+    mProcessLink.prev = this;
+    mProcessLink.next = this;
+    mNetOrderId = 0;
+}
+
+void ProcessObject::plUnlink()
+{
+    mProcessLink.next->mProcessLink.prev = mProcessLink.prev;
+    mProcessLink.prev->mProcessLink.next = mProcessLink.next;
+    mProcessLink.next = mProcessLink.prev = this;
+}
+
+void ProcessObject::plLinkAfter(ProcessObject* obj)
+{
+    // Link this after obj
+    mProcessLink.next = obj->mProcessLink.next;
+    mProcessLink.prev = obj;
+    obj->mProcessLink.next = this;
+    mProcessLink.next->mProcessLink.prev = this;
+}
+
+void ProcessObject::plLinkBefore(ProcessObject* obj)
+{
+    // Link this before obj
+    mProcessLink.next = obj;
+    mProcessLink.prev = obj->mProcessLink.prev;
+    obj->mProcessLink.prev = this;
+    mProcessLink.prev->mProcessLink.next = this;
+}
+
+void ProcessObject::plJoin(ProcessObject* head)
+{
+    ProcessObject* tail1 = head->mProcessLink.prev;
+    ProcessObject* tail2 = mProcessLink.prev;
+    tail1->mProcessLink.next = this;
+    mProcessLink.prev = tail1;
+    tail2->mProcessLink.next = head;
+    head->mProcessLink.prev = tail2;
+}
+
+//--------------------------------------------------------------------------
 
 ProcessList::ProcessList(bool isServer)
 {
@@ -22,11 +125,45 @@ ProcessList::ProcessList(bool isServer)
     mCurrentTag = 0;
     mLastTick = 0;
     mLastTime = 0;
-    mLastDelta = 0;
+    mTotalTicks = 0;
+    mLastDelta = 0.0f;
+    mSkipAdvanceObjectsMs = 0;
+    mForceHifiReset = false;
     mIsServer = isServer;
+
     //   Con::addVariable("debugControlSync",TypeBool, &mDebugControlSync);
 }
 
+GameBase* ProcessList::getGameBase(ProcessObject* obj)
+{
+    return static_cast<GameBase*>(obj);
+}
+
+void ProcessList::addObject(GameBase* obj) {
+
+    if (obj->mNetFlags.test(GameBase::NetOrdered))
+    {
+        if (!gNetOrderNextId)
+            ++gNetOrderNextId;
+
+        if (obj->isServerObject())
+            obj->mNetOrderId = gNetOrderNextId++;
+
+        obj->plLinkBefore(&mHead);
+
+        markDirty();
+    } else
+    {
+        if (obj->mNetFlags.test(GameBase::TickLast))
+        {
+            obj->mNetOrderId = -1;
+            obj->plLinkBefore(&mHead);
+        } else
+        {
+            obj->plLinkAfter(&mHead);
+        }
+    }
+}
 
 //----------------------------------------------------------------------------
 
@@ -38,29 +175,58 @@ void ProcessList::orderList()
         mCurrentTag++;
 
     // Install a temporary head node
-    GameBase list;
-    list.plLinkBefore(head.mProcessLink.next);
-    head.plUnlink();
+    ProcessObject list;
+    list.plLinkBefore(mHead.mProcessLink.next);
+    mHead.plUnlink();
 
-    // Reverse topological sort into the orignal head node
-    while (list.mProcessLink.next != &list) {
-        GameBase* ptr = list.mProcessLink.next;
-        ptr->mProcessTag = mCurrentTag;
-        ptr->plUnlink();
-        if (ptr->mAfterObject) {
-            // Build chain "stack" of dependant objects and patch
-            // it to the end of the current list.
-            while (bool(ptr->mAfterObject) &&
-                ptr->mAfterObject->mProcessTag != mCurrentTag) {
-                ptr->mAfterObject->mProcessTag = mCurrentTag;
-                ptr->mAfterObject->plUnlink();
-                ptr->mAfterObject->plLinkBefore(ptr);
-                ptr = ptr->mAfterObject;
+    ProcessObject* next = list.mProcessLink.next;
+    if (next != &list)
+    {
+        do
+        {
+            if (next->mNetOrderId)
+            {
+                for (ProcessObject* obj = next->mProcessLink.next; obj != &list; obj = obj->mProcessLink.next)
+                {
+                    if (obj->mNetOrderId < next->mNetOrderId)
+                    {
+                        ProcessObject* before = next->mProcessLink.prev;
+                        ProcessObject* after = obj->mProcessLink.next;
+                        next->plUnlink();
+                        obj->plUnlink();
+                        next->plLinkBefore(after);
+                        obj->plLinkAfter(before);
+
+                        ProcessObject* temp = obj;
+                        obj = next;
+                        next = temp;
+                    }
+                }
             }
-            ptr->plJoin(&head);
+            next = next->mProcessLink.next;
+
+        } while (next != &list);
+
+        // Reverse topological sort into the orignal head node
+        while (list.mProcessLink.next != &list) {
+            ProcessObject* ptr = list.mProcessLink.next;
+            ptr->mProcessTag = mCurrentTag;
+            ptr->plUnlink();
+            if (ptr->mAfterObject) {
+                // Build chain "stack" of dependant objects and patch
+                // it to the end of the current list.
+                while (bool(ptr->mAfterObject) &&
+                    ptr->mAfterObject->mProcessTag != mCurrentTag) {
+                    ptr->mAfterObject->mProcessTag = mCurrentTag;
+                    ptr->mAfterObject->plUnlink();
+                    ptr->mAfterObject->plLinkBefore(ptr);
+                    ptr = ptr->mAfterObject;
+                }
+                ptr->plJoin(&mHead);
+            }
+            else
+                ptr->plLinkBefore(&mHead);
         }
-        else
-            ptr->plLinkBefore(&head);
     }
     mDirty = false;
 }
@@ -75,19 +241,13 @@ bool ProcessList::advanceServerTime(SimTime timeDelta)
     if (mDirty) orderList();
 
     SimTime targetTime = mLastTime + timeDelta;
-    SimTime targetTick = targetTime & ~TickMask;
-    SimTime tickCount = (targetTick - mLastTick) >> TickShift;
+    SimTime targetTick = targetTime - (targetTime % TickMs);
 
     bool ret = mLastTick != targetTick;
+
     // Advance all the objects
     for (; mLastTick != targetTick; mLastTick += TickMs)
         advanceObjects();
-
-    // Credit all the connections with the elapsed ticks.
-    SimGroup* g = Sim::getClientGroup();
-    for (SimGroup::iterator i = g->begin(); i != g->end(); i++)
-        if (GameConnection* t = dynamic_cast<GameConnection*>(*i))
-            t->incMoveCredit(tickCount);
 
     mLastTime = targetTime;
     PROFILE_END();
@@ -101,99 +261,110 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
 {
     PROFILE_START(AdvanceClientTime);
 
+    if (mSkipAdvanceObjectsMs && timeDelta > mSkipAdvanceObjectsMs)
+    {
+        timeDelta -= mSkipAdvanceObjectsMs;
+        advanceClientTime(mSkipAdvanceObjectsMs);
+    }
+
     if (mDirty) orderList();
 
     SimTime targetTime = mLastTime + timeDelta;
-    SimTime targetTick = (targetTime + TickMask) & ~TickMask;
+    SimTime targetTick = targetTime - (targetTime % TickMs);
     SimTime tickCount = (targetTick - mLastTick) >> TickShift;
 
     // See if the control object has pending moves.
-    GameBase* control = 0;
+    //GameBase* control = 0;
     GameConnection* connection = GameConnection::getConnectionToServer();
-    if (connection)
+    if (connection && connection->isBacklogged())
     {
-        // If the connection to the server is backlogged
-        // the simulation is frozen.
-        if (connection->isBacklogged()) {
-            mLastTime = targetTime;
-            mLastTick = targetTick;
-            PROFILE_END();
-            return false;
-        }
-        if (connection->areMovesPending())
-            control = connection->getControlObject();
+        PROFILE_END();
+        return false;
     }
 
-    // If we are going to tick, or have moves pending for the
-    // control object, we need to reset everyone back to their
-    // last full tick pos.
-    if (mLastDelta && (tickCount || control))
-        for (GameBase* obj = head.mProcessLink.next; obj != &head;
-            obj = obj->mProcessLink.next)
-            if (obj->mProcessTick)
-                obj->interpolateTick(0);
-
-    // Produce new moves and advance all the objects
-    if (tickCount)
+    if (!tickCount || mLastTick == targetTick)
     {
-        for (; mLastTick != targetTick; mLastTick += TickMs)
+LABEL_19:
+        if (mSkipAdvanceObjectsMs)
         {
-            if (connection)
+            mSkipAdvanceObjectsMs -= timeDelta;
+        } else
+        {
+            ProcessObject* next = mHead.mProcessLink.next;
+            ProcessObject* pNext = next;
+            mLastDelta = (float)(-(targetTime + 1) & 0x1F) * 0.03125f;
+            if (next != &mHead)
             {
-                // process any demo blocks that are NOT moves, and exactly one move
-                // we advance time in the demo stream by a move inserted on
-                // each tick.  So before doing the tick processing we advance
-                // the demo stream until a move is ready
-                if (connection->isPlayingBack())
+                while(true)
                 {
-                    U32 blockType;
-                    do
+                    GameBase* gb = getGameBase(next);
+                    if (gb->mProcessTick)
                     {
-                        blockType = connection->getNextBlockType();
-                        bool res = connection->processNextBlock();
-                        // if there are no more blocks, exit out of this function,
-                        // as no more client time needs to process right now - we'll
-                        // get it all on the next advanceClientTime()
-                        if (!res)
-                            return true;
-                    } while (blockType != GameConnection::BlockTypeMove);
+                        gb->interpolateTick(mLastDelta);
+                        next = pNext;
+                    }
+
+                    pNext = next->mProcessLink.next;
+                    if (pNext == &mHead)
+                        break;
+                    next = next->mProcessLink.next;
                 }
-                connection->collectMove(mLastTick);
             }
+
+            F32 dt = (float)timeDelta / 1000.0f;
+            ProcessObject* next2 = mHead.mProcessLink.next;
+            ProcessObject* pNext2 = next2;
+            if (next2 != &mHead)
+            {
+                while (true)
+                {
+                    GameBase* gb = getGameBase(next2);
+                    gb->advanceTime(dt);
+
+                    pNext2 = pNext2->mProcessLink.next;
+                    if (pNext2 == &mHead)
+                        break;
+                    next2 = pNext2;
+                }
+            }
+        }
+
+        mLastTime = targetTime;
+        PROFILE_END();
+        return tickCount != 0;
+    }
+
+    while (!connection)
+    {
+LABEL_18:
+        mLastTick += TickMs;
+        if (mLastTick == targetTick)
+            goto LABEL_19;
+    }
+
+    if (!connection->isPlayingBack())
+    {
+LABEL_15:
+        if (!mSkipAdvanceObjectsMs)
+        {
+            connection->collectMove(mLastTick);
             advanceObjects();
         }
+        connection->incLastSentMove();
+        goto LABEL_18;
     }
-    else
-        if (control)
+
+    while (true)
+    {
+        U32 nextBlockType = connection->getNextBlockType();
+        if (!connection->processNextBlock())
         {
-            // Sync up the control object with the latest client moves.
-            Move* movePtr;
-            U32 m = 0, numMoves;
-            connection->getMoveList(&movePtr, &numMoves);
-            while (m < numMoves)
-            {
-                control->processTick(&movePtr[m++]);
-            }
-            connection->clearMoves(m);
+            PROFILE_END();
+            return true;
         }
-
-    mLastDelta = (TickMs - (targetTime & TickMask)) & TickMask;
-    F32 dt = mLastDelta / F32(TickMs);
-    for (GameBase* obj = head.mProcessLink.next; obj != &head;
-        obj = obj->mProcessLink.next)
-        if (obj->mProcessTick)
-            obj->interpolateTick(dt);
-
-    // Inform objects of total elapsed delta so they can advance
-    // client side animations.
-    dt = F32(timeDelta) / 1000;
-    for (GameBase* obj = head.mProcessLink.next; obj != &head;
-        obj = obj->mProcessLink.next)
-        obj->advanceTime(dt);
-
-    mLastTime = targetTime;
-    PROFILE_END();
-    return tickCount != 0;
+        if (nextBlockType == GameConnection::BlockTypeMove)
+            goto LABEL_15;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -205,7 +376,7 @@ bool ProcessList::advanceSPModeTime(SimTime timeDelta)
     if (mDirty) orderList();
 
     SimTime targetTime = mLastTime + timeDelta;
-    SimTime targetTick = targetTime & ~TickMask;
+    SimTime targetTick = targetTime - (targetTime % TickMs);
     SimTime tickCount = (targetTick - mLastTick) >> TickShift;
 
     bool ret = mLastTick != targetTick;
@@ -214,9 +385,12 @@ bool ProcessList::advanceSPModeTime(SimTime timeDelta)
         advanceObjects();
 
     F32 dt = F32(timeDelta) / 1000;
-    for (GameBase* obj = head.mProcessLink.next; obj != &head;
+    for (ProcessObject* obj = mHead.mProcessLink.next; obj != &mHead;
         obj = obj->mProcessLink.next)
-        obj->advanceTime(dt);
+    {
+        GameBase* gb = getGameBase(obj);
+        gb->advanceTime(dt);
+    }
 
     mLastTime = targetTime;
     PROFILE_END();
@@ -227,9 +401,9 @@ bool ProcessList::advanceSPModeTime(SimTime timeDelta)
 
 void ProcessList::dumpToConsole()
 {
-    for (GameBase* pobj = head.mProcessLink.next; pobj != &head; pobj = pobj->mProcessLink.next)
+    for (ProcessObject* pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
     {
-        SimObject* obj = dynamic_cast<SimObject*>(pobj);
+        SimObject* obj = dynamic_cast<SimObject*>(getGameBase(pobj));
         if (obj)
             Con::printf("id %i, order guid %i, type %s", obj->getId(), 0, obj->getClassName());
         else
@@ -244,39 +418,332 @@ void ProcessList::advanceObjects()
 {
     PROFILE_START(AdvanceObjects);
 
+    if (!mIsServer)
+        gMaxHiFiVelSq = 0.0f;
+
     // A little link list shuffling is done here to avoid problems
     // with objects being deleted from within the process method.
-    GameBase list;
-    GameBase* obj;
-    list.plLinkBefore(head.mProcessLink.next);
-    head.plUnlink();
-    while ((obj = list.mProcessLink.next) != &list) {
+    ProcessObject list;
+    list.plLinkBefore(mHead.mProcessLink.next);
+    mHead.plUnlink();
+    while (list.mProcessLink.next != &list)
+    {
+        SimObjectPtr<GameBase> obj = getGameBase(list.mProcessLink.next);
+
         obj->plUnlink();
-        obj->plLinkBefore(&head);
+        obj->plLinkBefore(&mHead);
 
         // Each object is either advanced a single tick, or if it's
         // being controlled by a client, ticked once for each pending move.
-        if (obj->mTypeMask & GameBaseObjectType) {
+        GameConnection* con = obj->getControllingClient();
 
-            GameBase* pGB = static_cast<GameBase*>(obj);
-            GameConnection* con = pGB->getControllingClient();
+        if (con && con->getControlObject() == obj) {
+            Move* movePtr;
+            U32 m, numMoves;
 
-            if (con && con->getControlObject() == pGB) {
-                Move* movePtr;
-                U32 m, numMoves;
+            con->getMoveList(&movePtr, &numMoves);
 
-                con->getMoveList(&movePtr, &numMoves);
-
-                for (m = 0; m < numMoves && pGB->getControllingClient() == con; )
-                    obj->processTick(&movePtr[m++]);
-
-                con->clearMoves(m);
-
-                continue;
+            if (numMoves)
+            {
+                obj->processTick(movePtr);
+                if (!obj.isNull() && con)
+                {
+                    U32 checksum = obj->getPacketDataChecksum(con);
+                    if (obj->isGhost())
+                        movePtr->checksum = checksum;
+                    else if (movePtr->checksum != checksum)
+                        movePtr->checksum = -1;
+                }
+                con->clearMoves(1);
+                goto LABEL_16;
             }
         }
+
         if (obj->mProcessTick)
-            obj->processTick(0);
+        {
+            obj->processTick(NULL);
+        }
+LABEL_16:
+        if (obj && obj->isGhost() && (obj->getTypeMask() & GameBaseHiFiObjectType) != 0)
+        {
+            GameConnection* serverCon = GameConnection::getConnectionToServer();
+
+            TickCacheEntry* entry = obj->addTickCacheEntry();
+
+            BitStream bs(entry->packetData, TickCacheEntry::MaxPacketSize);
+            obj->writePacketData(serverCon, &bs);
+
+            Point3F velocity = obj->getVelocity();
+            F32 velSq = mDot(velocity, velocity);
+            gMaxHiFiVelSq = getMax(gMaxHiFiVelSq, velSq);
+        }
     }
+
+    if (mIsServer)
+    {
+        SimGroup* group = Sim::gClientGroup;
+        for (S32 i = 0; i < group->size(); i++)
+        {
+            SimObject* obj = (*group)[i];
+            GameConnection* con = static_cast<GameConnection*>(obj);
+            if (!con->getControlObject() && !con->getMoves().empty())
+            {
+                con->clearMoves(1);
+            }
+        }
+    } else if (!GameConnection::getConnectionToServer()->getControlObject())
+    {
+        GameConnection::getConnectionToServer()->clearMoves(1);
+    }
+
+    mTotalTicks++;
+
     PROFILE_END();
+}
+
+void ProcessList::ageTickCache(S32 numToAge, S32 len)
+{
+    for (ProcessObject* i = mHead.mProcessLink.next; i != &mHead; i = i->mProcessLink.next)
+    {
+        GameBase* gb = getGameBase(i);
+        if ((gb->getTypeMask() & GameBaseHiFiObjectType) != 0)
+            gb->ageTickCache(numToAge, len);
+    }
+}
+
+void ProcessList::updateMoveSync(S32 moveDiff)
+{
+    moveSync.update(moveDiff);
+    if (moveSync.doAction() && moveDiff < 0)
+    {
+        gClientProcessList.skipAdvanceObjects(-32 * moveDiff);
+        moveSync.reset();
+    }
+}
+
+void ProcessList::clientCatchup(GameConnection* connection, S32 catchup)
+{
+#ifdef TORQUE_DEBUG_NET_MOVES
+    Con::printf("client catching up... (%i)%s", catchup, mForceHifiReset ? " reset" : "");
+#endif
+
+    const F32 maxVel = mSqrt(gMaxHiFiVelSq) * 1.25f;
+    F32 dt = F32(catchup + 1) * TickSec;
+    Point3F bigDelta(maxVel * dt, maxVel * dt, maxVel * dt);
+
+    // walk through all process objects looking for ones which were updated
+    // -- during first pass merely collect neighbors which need to be reset and updated in unison
+    ProcessObject* pobj;
+    if (catchup && !mForceHifiReset)
+    {
+        for (pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
+        {
+            GameBase* obj = getGameBase(pobj);
+            static SimpleQueryList nearby;
+            nearby.mList.clear();
+            // check for nearby objects which need to be reset and then caught up
+            // note the funky loop logic -- first time through obj is us, then
+            // we start iterating through nearby list (to look for objects nearby
+            // the nearby objects), which is why index starts at -1
+            // [objects nearby the nearby objects also get added to the nearby list]
+            for (S32 i = -1; obj; obj = ++i < nearby.mList.size() ? (GameBase*)nearby.mList[i] : NULL)
+            {
+                if (obj->isGhostUpdated() && (obj->getType() & GameBaseHiFiObjectType) && !obj->mNetFlags.test(GameBase::NetNearbyAdded))
+                {
+                    Point3F start = obj->getWorldSphere().center;
+                    Point3F end = start + 1.1f * dt * obj->getVelocity();
+                    F32 rad = 1.5f * obj->getWorldSphere().radius;
+
+                    // find nearby items not updated but are hi fi, mark them as updated (and restore old loc)
+                    // check to see if added items have neighbors that need updating
+                    Box3F box;
+                    Point3F rads(rad, rad, rad);
+                    box.min = box.max = start;
+                    box.min -= bigDelta + rads;
+                    box.max += bigDelta + rads;
+
+#ifdef MB_ULTRA
+                    // CodeReview - this is left in for MBU, but also so we can deal with the issue later.
+                    // add marble blast hack so hifi networking can see hidden objects
+                    // (since hidden is under control of hifi networking)
+                    gForceNotHidden = true;
+#endif
+
+                    S32 j = nearby.mList.size();
+                    gClientContainer.findObjects(box, GameBaseHiFiObjectType, SimpleQueryList::insertionCallback, &nearby);
+
+#ifdef MB_ULTRA
+                    // CodeReview - this is left in for MBU, but also so we can deal with the issue later.
+                    // disable above hack
+                    gForceNotHidden = false;
+#endif
+
+                    // drop anyone not heading toward us or already checked
+                    for (; j < nearby.mList.size(); j++)
+                    {
+                        GameBase* obj2 = (GameBase*)nearby.mList[j];
+                        // if both passive, these guys don't interact with each other
+                        bool passive = obj->mNetFlags.test(GameBase::HiFiPassive) && obj2->mNetFlags.test(GameBase::HiFiPassive);
+                        if (!obj2->isGhostUpdated() && !passive)
+                        {
+                            // compare swept spheres of obj and obj2
+                            // if collide, reset obj2, setGhostUpdated(true), and continue
+                            Point3F end2 = obj2->getWorldSphere().center;
+                            Point3F start2 = end2 - 1.1f * dt * obj2->getVelocity();
+                            F32 rad2 = 1.5f * obj->getWorldSphere().radius;
+                            if (MathUtils::capsuleCapsuleOverlap(start, end, rad, start2, end2, rad2))
+                            {
+                                // better add obj2
+                                obj2->beginTickCacheList();
+                                TickCacheEntry* tce = obj2->incTickCacheList(true);
+                                BitStream bs(tce->packetData, TickCacheEntry::MaxPacketSize);
+                                obj2->readPacketData(connection, &bs);
+                                obj2->setGhostUpdated(true);
+
+                                // continue so we later add the neighbors too
+                                continue;
+                            }
+
+                        }
+
+                        // didn't pass above test...so don't add it or nearby objects
+                        nearby.mList[j] = nearby.mList.last();
+                        nearby.mList.decrement();
+                        j--;
+                    }
+                    obj->mNetFlags.set(GameBase::NetNearbyAdded);
+                }
+            }
+        }
+    }
+
+    // save water mark -- for game base list
+    FrameAllocatorMarker mark;
+
+    // build ordered list of client objects which need to be caught up
+    ProcessObject list;
+    for (pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
+    {
+        GameBase* obj = getGameBase(pobj);
+
+        if (obj->isGhostUpdated() && (obj->getType() & GameBaseHiFiObjectType))
+        {
+            // construct process object and add it to the list
+            // hold pointer to our object in mAfterObject
+            ProcessObject* po = (ProcessObject*)FrameAllocator::alloc(sizeof(ProcessObject));
+            constructInPlace(po);
+            po->mAfterObject = obj;
+            po->plLinkBefore(&list);
+
+            // begin iterating through tick list (skip first tick since that is the state we've been reset to)
+            obj->beginTickCacheList();
+            obj->incTickCacheList(true);
+        }
+        else if (mForceHifiReset && (obj->getType() & GameBaseHiFiObjectType))
+        {
+            // add all hifi objects
+            obj->beginTickCacheList();
+            TickCacheEntry* tce = obj->incTickCacheList(true);
+            BitStream bs(tce->packetData, TickCacheEntry::MaxPacketSize);
+            obj->readPacketData(connection, &bs);
+            obj->setGhostUpdated(true);
+
+            // construct process object and add it to the list
+            // hold pointer to our object in mAfterObject
+            ProcessObject* po = (ProcessObject*)FrameAllocator::alloc(sizeof(ProcessObject));
+            constructInPlace(po);
+            po->mAfterObject = obj;
+            po->plLinkBefore(&list);
+        }
+        else if (obj == connection->getControlObject() && obj->isGhostUpdated())
+        {
+            // construct process object and add it to the list
+            // hold pointer to our object in mAfterObject
+            // .. but this is not a hi fi object, so don't mess with tick cache
+            ProcessObject* po = (ProcessObject*)FrameAllocator::alloc(sizeof(ProcessObject));
+            constructInPlace(po);
+            po->mAfterObject = obj;
+            po->plLinkBefore(&list);
+        }
+        else if (obj->isGhostUpdated())
+        {
+            // not hifi but we were updated, so perform net smooth now
+            obj->computeNetSmooth(mLastDelta);
+        }
+
+        // clear out work flags
+        obj->mNetFlags.clear(GameBase::NetNearbyAdded);
+        obj->setGhostUpdated(false);
+    }
+
+    // run through all the moves in the move list so we can play them with our control object
+    Move* movePtr;
+    U32 numMoves;
+
+    connection->resetClientMoves();
+    connection->getMoveList(&movePtr, &numMoves);
+    AssertFatal(catchup <= numMoves, "doh");
+
+    // tick catchup time
+    for (U32 m = 0; m < catchup; m++)
+    {
+        for (ProcessObject* walk = list.mProcessLink.next; walk != &list; walk = walk->mProcessLink.next)
+        {
+            // note that we get object from after object not getGameBase function
+            // this is because we are an on the fly linked list which uses mAfterObject
+            // rather than the linked list embedded in GameBase (clean this up?)
+            GameBase* obj = walk->mAfterObject;
+
+            // it's possible for a non-hifi object to get in here, but
+            // only if it is a control object...make sure we don't do any
+            // of the tick cache stuff if we are not hifi.
+            bool hifi = obj->getType() & GameBaseHiFiObjectType;
+            TickCacheEntry* tce = hifi ? obj->incTickCacheList(true) : NULL;
+
+            // tick object
+            if (obj == connection->getControlObject())
+            {
+                obj->processTick(movePtr);
+                movePtr->checksum = obj->getPacketDataChecksum(connection);
+                movePtr++;
+            }
+            else
+            {
+                AssertFatal(tce && hifi, "Should not get in here unless a hi fi object!!!");
+                obj->processTick(tce->move);
+            }
+
+            if (hifi)
+            {
+                BitStream bs(tce->packetData, TickCacheEntry::MaxPacketSize);
+                obj->writePacketData(connection, &bs);
+            }
+        }
+        if (connection->getControlObject() == NULL)
+            movePtr++;
+    }
+    connection->clearMoves(catchup);
+
+    // Handle network error smoothing here...but only for control object
+    GameBase* control = connection->getControlObject();
+    if (control && !control->isNewGhost())
+    {
+        control->computeNetSmooth(mLastDelta);
+        control->setNewGhost(false);
+    }
+
+    if (moveSync.doAction() && moveSync.moveDiff > 0)
+    {
+        S32 moveDiff = moveSync.moveDiff;
+#ifdef TORQUE_DEBUG_NET_MOVES
+        Con::printf("client timewarping to catchup %i moves", moveDiff);
+#endif
+        while (moveDiff--)
+            advanceObjects();
+        moveSync.reset();
+    }
+
+#ifdef TORQUE_DEBUG_NET_MOVES
+    Con::printf("---------");
+#endif
 }

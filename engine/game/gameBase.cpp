@@ -5,6 +5,8 @@
 
 #include "platform/platform.h"
 #include "game/gameBase.h"
+
+#include "tickCache.h"
 #include "console/consoleTypes.h"
 #include "console/consoleInternal.h"
 #include "core/bitStream.h"
@@ -142,18 +144,23 @@ GameBase::GameBase()
     mNetFlags.set(Ghostable);
     mTypeMask |= GameBaseObjectType;
 
-    mProcessLink.next = mProcessLink.prev = this;
-    mAfterObject = 0;
     mProcessTag = 0;
-    mDataBlock = 0;
+    mDataBlock = NULL;
     mProcessTick = true;
     mNameTag = "";
     mControllingClient = 0;
+    mTickCacheHead = NULL;
 }
 
 GameBase::~GameBase()
 {
     plUnlink();
+    if (mTickCacheHead)
+    {
+        setTickCacheSize(0);
+        TickCacheHead::free(mTickCacheHead);
+        mTickCacheHead = NULL;
+    }
 }
 
 
@@ -340,43 +347,6 @@ void GameBase::scriptOnRemove()
 }
 
 
-//--------------------------------------------------------------------------
-void GameBase::plUnlink()
-{
-    mProcessLink.next->mProcessLink.prev = mProcessLink.prev;
-    mProcessLink.prev->mProcessLink.next = mProcessLink.next;
-    mProcessLink.next = mProcessLink.prev = this;
-}
-
-void GameBase::plLinkAfter(GameBase* obj)
-{
-    // Link this after obj
-    mProcessLink.next = obj->mProcessLink.next;
-    mProcessLink.prev = obj;
-    obj->mProcessLink.next = this;
-    mProcessLink.next->mProcessLink.prev = this;
-}
-
-void GameBase::plLinkBefore(GameBase* obj)
-{
-    // Link this before obj
-    mProcessLink.next = obj;
-    mProcessLink.prev = obj->mProcessLink.prev;
-    obj->mProcessLink.prev = this;
-    mProcessLink.prev->mProcessLink.next = this;
-}
-
-void GameBase::plJoin(GameBase* head)
-{
-    GameBase* tail1 = head->mProcessLink.prev;
-    GameBase* tail2 = mProcessLink.prev;
-    tail1->mProcessLink.next = this;
-    mProcessLink.prev = tail1;
-    tail2->mProcessLink.next = head;
-    head->mProcessLink.prev = tail2;
-}
-
-
 //----------------------------------------------------------------------------
 void GameBase::processAfter(GameBase* obj)
 {
@@ -392,6 +362,126 @@ void GameBase::processAfter(GameBase* obj)
 void GameBase::clearProcessAfter()
 {
     mAfterObject = 0;
+}
+//----------------------------------------------------------------------------
+
+void GameBase::beginTickCacheList()
+{
+    if (mTickCacheHead)
+        mTickCacheHead->next = mTickCacheHead->oldest;
+}
+
+TickCacheEntry* GameBase::incTickCacheList(bool addIfNeeded)
+{
+    if (mTickCacheHead && mTickCacheHead->next)
+    {
+        TickCacheEntry* result = mTickCacheHead->next;
+        mTickCacheHead->next = result->next;
+
+        return result;
+    }
+
+    if (addIfNeeded)
+    {
+        addTickCacheEntry();
+
+        return mTickCacheHead->newest;
+    }
+
+    return NULL;
+}
+
+TickCacheEntry* GameBase::addTickCacheEntry()
+{
+    if (!mTickCacheHead)
+    {
+        mTickCacheHead = TickCacheHead::alloc();
+        mTickCacheHead->next = NULL;
+        mTickCacheHead->oldest = NULL;
+        mTickCacheHead->newest = NULL;
+        mTickCacheHead->numEntry = 0;
+    }
+
+    TickCacheEntry* entry;
+    if (mTickCacheHead->newest)
+    {
+        mTickCacheHead->newest->next = TickCacheEntry::alloc();
+        entry = mTickCacheHead->newest->next;
+    } else
+    {
+        mTickCacheHead->oldest = TickCacheEntry::alloc();
+        entry = mTickCacheHead->oldest;
+    }
+
+    mTickCacheHead->newest = entry;
+    mTickCacheHead->newest->next = NULL;
+    mTickCacheHead->newest->move = NULL;
+    mTickCacheHead->numEntry++;
+
+    return mTickCacheHead->newest;
+}
+
+void GameBase::ageTickCache(S32 numToAge, S32 len)
+{
+    while (numToAge)
+    {
+        --numToAge;
+        dropOldest();
+    }
+    while (mTickCacheHead->numEntry > len)
+        dropNextOldest();
+    while (mTickCacheHead->numEntry < len)
+        addTickCacheEntry();
+}
+
+void GameBase::setTickCacheSize(int len)
+{
+    TickCacheHead* head;
+
+    while (true)
+    {
+        head = mTickCacheHead;
+        if (head)
+        {
+            if (head->numEntry >= len)
+                break;
+        }
+        addTickCacheEntry();
+    }
+
+    while (head && head->numEntry > len)
+    {
+        dropOldest();
+        head = mTickCacheHead;
+    }
+}
+
+void GameBase::dropOldest()
+{
+    TickCacheEntry* lastOldest = mTickCacheHead->oldest;
+    mTickCacheHead->oldest = mTickCacheHead->oldest->next;
+    if (lastOldest->move)
+        TickCacheEntry::freeMove(lastOldest->move);
+    TickCacheEntry::free(lastOldest);
+
+    mTickCacheHead->numEntry--;
+
+    if (mTickCacheHead->numEntry < 2)
+        mTickCacheHead->newest = mTickCacheHead->oldest;
+}
+
+void GameBase::dropNextOldest()
+{
+    TickCacheEntry* lastOldest = mTickCacheHead->oldest->next;
+    (*lastOldest).next = lastOldest->next;
+    if (lastOldest->move)
+        TickCacheEntry::freeMove(lastOldest->move);
+    TickCacheEntry::free(lastOldest);
+
+    mTickCacheHead->numEntry--;
+
+    if (mTickCacheHead->numEntry == 1)
+        mTickCacheHead->newest = mTickCacheHead->oldest;
 }
 
 
@@ -448,6 +538,8 @@ U32 GameBase::packUpdate(NetConnection*, U32 mask, BitStream* stream)
         stream->writeRangedU32(mDataBlock->getId(),
             DataBlockObjectIdFirst,
             DataBlockObjectIdLast);
+        if (stream->writeFlag(mNetFlags.test(NetOrdered)))
+            stream->writeInt(mNetOrderId, 16);
     }
     stream->writeFlag(mHidden);
 
@@ -465,6 +557,10 @@ void GameBase::unpackUpdate(NetConnection* con, BitStream* stream)
         GameBaseData* dptr = 0;
         SimObjectId id = stream->readRangedU32(DataBlockObjectIdFirst,
             DataBlockObjectIdLast);
+
+
+        if (stream->readFlag())
+            mNetOrderId = stream->readInt(16);
 
         if (!Sim::findObject(id, dptr) || !setDataBlock(dptr))
             con->setLastError("Invalid packet GameBase::unpackUpdate()");

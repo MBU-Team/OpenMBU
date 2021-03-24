@@ -22,13 +22,14 @@ struct Move
     F32 yaw, pitch, roll; // 0-2PI
     U32 id;               // sync'd between server & client - debugging tool.
     U32 sendCount;
+    U32 checksum;
 
     bool deviceIsKeyboardMouse;
     bool freeLook;
     bool trigger[MaxTriggerKeys];
 
-    void pack(BitStream* stream);
-    void unpack(BitStream* stream);
+    void pack(BitStream* stream, const Move* baseMove = NULL);
+    void unpack(BitStream* stream, const Move* baseMove = NULL);
     void clamp();
     void unclamp();
 };

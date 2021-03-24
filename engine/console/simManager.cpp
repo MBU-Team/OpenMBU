@@ -232,12 +232,16 @@ namespace Sim
 
     void advanceTime(SimTime delta)
     {
-        advanceToTime(gCurrentTime + delta);
+        advanceToTime(getCurrentTime() + delta);
     }
 
     U32 getCurrentTime()
     {
-        return gCurrentTime;
+        Mutex::lockMutex(gEventQueueMutex);
+        U32 ret = gCurrentTime;
+        Mutex::unlockMutex(gEventQueueMutex);
+
+        return ret;
     }
 
     U32 getTargetTime()

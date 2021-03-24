@@ -1545,6 +1545,9 @@
     <ClCompile Include="..\engine\lightingSystem\blobShadow.cpp">
       <Filter>Source Files\lightingSystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\game\tickCache.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2842,6 +2845,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\lightingSystem\blobShadow.h">
       <Filter>Source Files\lightingSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\game\tickCache.h">
+      <Filter>Source Files\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

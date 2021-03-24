@@ -146,49 +146,110 @@ void Move::clamp()
     unclamp();
 }
 
-void Move::pack(BitStream* stream)
+void Move::pack(BitStream* stream, const Move* baseMove)
 {
-    if (stream->writeFlag(pyaw != 0))
-        stream->writeInt(pyaw, 16);
-    if (stream->writeFlag(ppitch != 0))
-        stream->writeInt(ppitch, 16);
-    if (stream->writeFlag(proll != 0))
-        stream->writeInt(proll, 16);
+    const Move* pBaseMove = baseMove;
+    bool alwaysWriteAll = baseMove != NULL;
+    if (!alwaysWriteAll)
+        pBaseMove = &NullMove;
 
-    stream->writeInt(px, 6);
-    stream->writeInt(py, 6);
-    stream->writeInt(pz, 6);
-    stream->writeFlag(freeLook);
-    stream->writeFlag(deviceIsKeyboardMouse);
-
+    bool somethingDifferent = false;
+    bool triggerDifferent = false;
     for (U32 i = 0; i < MaxTriggerKeys; i++)
-        stream->writeFlag(trigger[i]);
+    {
+        if (trigger[i] != pBaseMove->trigger[i])
+            triggerDifferent = true;
+    }
+
+    if (pyaw != pBaseMove->pyaw || ppitch != pBaseMove->ppitch || proll != pBaseMove->proll ||
+        px != pBaseMove->px || py != pBaseMove->py || pz != pBaseMove->pz ||
+        deviceIsKeyboardMouse != pBaseMove->deviceIsKeyboardMouse || freeLook != pBaseMove->freeLook || 
+        triggerDifferent)
+    {
+        somethingDifferent = true;
+    }
+
+    if (alwaysWriteAll || stream->writeFlag(somethingDifferent))
+    {
+        if (stream->writeFlag(pyaw != pBaseMove->pyaw))
+            stream->writeInt(pyaw, 16);
+        if (stream->writeFlag(ppitch != pBaseMove->ppitch))
+            stream->writeInt(ppitch, 16);
+        if (stream->writeFlag(proll != pBaseMove->proll))
+            stream->writeInt(proll, 16);
+
+        if (stream->writeFlag(px != pBaseMove->px))
+            stream->writeInt(px, 6);
+        if (stream->writeFlag(py != pBaseMove->py))
+            stream->writeInt(py, 6);
+        if (stream->writeFlag(pz != pBaseMove->pz))
+            stream->writeInt(pz, 6);
+
+        stream->writeFlag(freeLook);
+        stream->writeFlag(deviceIsKeyboardMouse);
+
+        if (stream->writeFlag(triggerDifferent))
+        {
+            for (U32 i = 0; i < MaxTriggerKeys; i++)
+                stream->writeFlag(trigger[i]);
+        }
+    }
 }
 
-void Move::unpack(BitStream* stream)
+void Move::unpack(BitStream* stream, const Move* baseMove)
 {
-    if (stream->readFlag())
-        pyaw = stream->readInt(16);
-    else
-        pyaw = 0;
-    if (stream->readFlag())
-        ppitch = stream->readInt(16);
-    else
-        ppitch = 0;
-    if (stream->readFlag())
-        proll = stream->readInt(16);
-    else
-        proll = 0;
-    px = stream->readInt(6);
-    py = stream->readInt(6);
-    pz = stream->readInt(6);
+    const Move* pBaseMove = baseMove;
+    bool alwaysReadAll = baseMove != NULL;
+    if (!alwaysReadAll)
+        pBaseMove = &NullMove;
 
-    unclamp();
-    freeLook = stream->readFlag();
-    deviceIsKeyboardMouse = stream->readFlag();
+    if (alwaysReadAll || stream->readFlag())
+    {
+        if (stream->readFlag())
+            pyaw = stream->readInt(16);
+        else
+            pyaw = pBaseMove->pyaw;
+        if (stream->readFlag())
+            ppitch = stream->readInt(16);
+        else
+            ppitch = pBaseMove->ppitch;
+        if (stream->readFlag())
+            proll = stream->readInt(16);
+        else
+            proll = pBaseMove->proll;
 
-    for (U32 i = 0; i < MaxTriggerKeys; i++)
-        trigger[i] = stream->readFlag();
+        if (stream->readFlag())
+            px = stream->readInt(6);
+        else
+            px = pBaseMove->px;
+
+        if (stream->readFlag())
+            py = stream->readInt(6);
+        else
+            py = pBaseMove->py;
+
+        if (stream->readFlag())
+            pz = stream->readInt(6);
+        else
+            pz = pBaseMove->pz;
+
+        freeLook = stream->readFlag();
+        deviceIsKeyboardMouse = stream->readFlag();
+
+        bool triggersDiffer = stream->readFlag();
+        for (U32 i = 0; i < MaxTriggerKeys; i++)
+        {
+            if (triggersDiffer)
+                trigger[i] = stream->readFlag();
+            else
+                trigger[i] = pBaseMove->trigger[i];
+        }
+
+        unclamp();
+    } else
+    {
+        dMemcpy(this, pBaseMove, sizeof(Move));
+    }
 }
 
 bool GameConnection::getNextMove(Move& curMove)
@@ -252,13 +313,38 @@ void GameConnection::getMoveList(Move** movePtr, U32* numMoves)
     else
     {
         // On the server we keep our own move list.
-        *numMoves = (mMoveList.size() < mMoveCredit) ?
-            mMoveList.size() : mMoveCredit;
+        *numMoves = mMoveList.size();
+
+        mAvgMoveQueueSize = (1.0f - mSmoothMoveAvg) * mAvgMoveQueueSize;
+        mAvgMoveQueueSize += *numMoves * mSmoothMoveAvg;
+
+        if (mTargetMoveListSize - mMoveListSizeSlack <= mAvgMoveQueueSize || *numMoves >= mTargetMoveListSize)
+            goto LABEL_7;
+
+        if (*numMoves)
+        {
+            *numMoves = 0;
+            F32 num = mMoveListSizeSlack + mAvgMoveQueueSize + 0.5f;
+            mAvgMoveQueueSize = num != 0 ? num : 0;
+LABEL_7:
+            if (*numMoves)
+                *numMoves = 1;
+        }
+
+        if (mMoveList.size() > mMaxMoveListSize || mTargetMoveListSize + mMoveListSizeSlack < mAvgMoveQueueSize &&
+            mMoveList.size() > mTargetMoveListSize)
+        {
+            clearMoves(mMoveList.size() - mTargetMoveListSize);
+            mAvgMoveQueueSize = mTargetMoveListSize;
+        }
+
         *movePtr = mMoveList.begin();
-        //
-        mMoveCredit -= *numMoves;
-        mMoveList.setSize(*numMoves);
     }
+}
+
+void GameConnection::resetClientMoves()
+{
+    mLastClientMove = mFirstMoveIndex;
 }
 
 void GameConnection::collectMove(U32 time)
@@ -266,6 +352,7 @@ void GameConnection::collectMove(U32 time)
     Move mv;
     if (!isPlayingBack() && getNextMove(mv))
     {
+        mv.checksum = -1;
         pushMove(mv);
         recordBlock(BlockTypeMove, sizeof(Move), &mv);
     }
@@ -278,6 +365,17 @@ void GameConnection::clearMoves(U32 count)
     }
     else {
         AssertFatal(count <= mMoveList.size(), "GameConnection: Clearing too many moves");
+
+        if (count)
+        {
+            U32 i = count;
+            do
+            {
+                --i;
+                mControlMismatch = mMoveList[i].checksum == -1;
+            } while(i);
+        }
+
         if (count == mMoveList.size())
             mMoveList.clear();
         else
@@ -286,17 +384,10 @@ void GameConnection::clearMoves(U32 count)
     }
 }
 
-void GameConnection::incMoveCredit(U32 ticks)
+void GameConnection::incLastSentMove()
 {
-    AssertFatal(!isConnectionToServer(), "Cannot inc move credit on the client.");
-    // Game tick increment
-    if ((mMoveCredit += ticks) > MaxMoveCount)
-        mMoveCredit = MaxMoveCount;
-
-    // Clear pending moves for the elapsed time if there
-    // is no control object.
-    if (mControlObject.isNull())
-        mMoveList.clear();
+    if (mMoveList.size() > mLastSentMove - mFirstMoveIndex)
+        mLastSentMove++;
 }
 
 bool GameConnection::areMovesPending()
@@ -322,8 +413,13 @@ void GameConnection::moveWritePacket(BitStream* bstream)
     Move* move;
     U32 count;
     AssertFatal(mLastMoveAck == mFirstMoveIndex, "Invalid move index.");
-    count = mMoveList.size();
+    
+    if (mLastSentMove < mFirstMoveIndex)
+        mLastSentMove = mFirstMoveIndex;
+
+    count = mLastSentMove - mFirstMoveIndex;
     move = mMoveList.address();
+
     U32 start = mLastMoveAck;
     U32 offset;
     for (offset = 0; offset < count; offset++)
@@ -339,10 +435,14 @@ void GameConnection::moveWritePacket(BitStream* bstream)
         count = MaxMoveCount;
     bstream->writeInt(start, 32);
     bstream->writeInt(count, MoveCountBits);
+    Move* baseMove = NULL;
     for (int i = 0; i < count; i++)
     {
         move[offset + i].sendCount++;
-        move[offset + i].pack(bstream);
+        move[offset + i].pack(bstream, baseMove);
+        bstream->writeInt(move[offset + i].checksum, 16);
+
+        baseMove = &move[offset + i];
     }
 }
 
@@ -352,6 +452,8 @@ void GameConnection::moveReadPacket(BitStream* bstream)
     U32 start = bstream->readInt(32);
     U32 count = bstream->readInt(MoveCountBits);
 
+    Move* baseMove = NULL;
+
     // Skip forward (must be starting up), or over the moves
     // we already have.
     int skip = mLastMoveAck - start;
@@ -360,11 +462,19 @@ void GameConnection::moveReadPacket(BitStream* bstream)
         //mMoveList.clear();
     }
     else {
-        Move tmp;
+        Move prevMoveHolder;
         if (skip > count)
             skip = count;
-        for (int i = 0; i < skip; i++)
-            tmp.unpack(bstream);
+        for (S32 i = 0; i < skip; i++)
+        {
+            prevMoveHolder.unpack(bstream, baseMove);
+            U32 checksum = bstream->readInt(16);
+            prevMoveHolder.checksum = checksum;
+            baseMove = &prevMoveHolder;
+            S32 num = mMoveList.size() - skip;
+            if (i + num >= 0)
+                mMoveList[i + num].checksum = checksum;
+        }
         start += skip;
         count = count - skip;
     }
@@ -374,8 +484,10 @@ void GameConnection::moveReadPacket(BitStream* bstream)
     mMoveList.increment(count);
     while (index < mMoveList.size())
     {
-        mMoveList[index].unpack(bstream);
+        mMoveList[index].unpack(bstream, baseMove);
         mMoveList[index].id = start++;
+        mMoveList[index].checksum = bstream->readInt(16);
+        baseMove = &mMoveList[index];
         index++;
     }
 

@@ -9,6 +9,8 @@
 #include "platform/platform.h"
 #include "sim/processList.h"
 
+#include "game/game.h"
+
 class GameBase;
 class GameConnection;
 struct Move;

@@ -42,6 +42,7 @@ class GameConnection : public NetConnection
 {
 private:
     typedef NetConnection Parent;
+    friend class ProcessList;
 
     enum PrivateConstants {
         MoveCountBits = 5,
@@ -162,12 +163,24 @@ protected:
     U32 mLastMoveAck;
     U32 mLastClientMove;
     U32 mFirstMoveIndex;
-    U32 mMoveCredit;
-    U32 mLastControlObjectChecksum;
+    U32 mLastSentMove;
+    bool mControlMismatch;
+    bool mControlForceMismatch;
+    F32 mAvgMoveQueueSize;
+    U32 mTargetMoveListSize;
+    U32 mMaxMoveListSize;
+    F32 mSmoothMoveAvg;
+    F32 mMoveListSizeSlack;
+    U32 mTotalServerTicks;
 
     Vector<SimDataBlock*> mDataBlockLoadList;
 
     MoveList    mMoveList;
+    void resetMoveList();
+    S32 getServerTicks(U32 serverTickNum);
+    bool serverTicksInitialized();
+    void updateClientServerTickDiff(S32& tickDiff);
+
     bool        mAIControlled;
     AuthInfo* mAuthInfo;
 
@@ -202,6 +215,9 @@ protected:
     bool readDemoStartBlock(BitStream* stream);
     void handleRecordedBlock(U32 type, U32 size, void* data);
     /// @}
+    ///
+    void ghostReadExtra(NetObject*, BitStream*, bool newGhost);
+    void ghostPreRead(NetObject*, bool newGhost);
     
 public:
 
@@ -272,10 +288,12 @@ public:
     bool           getNextMove(Move& curMove);
     bool           isBacklogged();
     virtual void   getMoveList(Move**, U32* numMoves);
+    MoveList&      getMoves() { return mMoveList; }
+    void           resetClientMoves();
     virtual void   clearMoves(U32 count);
     void           collectMove(U32 simTime);
     virtual bool   areMovesPending();
-    void           incMoveCredit(U32 count);
+    void           incLastSentMove();
     /// @}
 
     /// @name Authentication
