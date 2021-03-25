@@ -197,8 +197,13 @@ IMPLEMENT_CO_NETOBJECT_V1(Item);
 
 Item::Item()
 {
+#ifdef MB_ULTRA
     mTypeMask |= ItemObjectType | GameBaseHiFiObjectType;
     mNetFlags.set(HiFiPassive);
+    setModStaticFields(true);
+#else
+    mTypeMask |= ItemObjectType;
+#endif
     mDataBlock = 0;
     mCollideable = false;
     mStatic = false;
@@ -267,6 +272,13 @@ bool Item::onAdd()
         mDropTime = Sim::getCurrentTime();
     }
 
+#ifdef MB_ULTRA
+    if (mDataBlock->addToHUDRadar && isGhost())
+        Con::executef(this, 1, "onAddHUDRadarItem");
+    if (isGhost())
+        createBuddy();
+#endif
+
     return true;
 }
 
@@ -277,6 +289,12 @@ bool Item::onNewDataBlock(GameBaseData* dptr)
         return false;
 
     scriptOnNewDataBlock();
+
+#ifdef MB_ULTRA
+    if (isGhost())
+        createBuddy();
+#endif
+
     return true;
 }
 
@@ -284,6 +302,12 @@ void Item::onRemove()
 {
     mWorkingQueryBox.min.set(-1e9, -1e9, -1e9);
     mWorkingQueryBox.max.set(-1e9, -1e9, -1e9);
+
+#ifdef MB_ULTRA
+    if (mDataBlock && mDataBlock->addToHUDRadar && isGhost())
+        Con::executef(this, 1, "onRemoveHUDRadarItem");
+    destroyBuddy();
+#endif
 
     scriptOnRemove();
     removeFromScene();
@@ -428,6 +452,18 @@ void Item::processTick(const Move* move)
             delta.pos = getPosition();
         }
     }
+
+#ifdef MB_ULTRA
+    if (isGhost())
+    {
+        if (mHiddenTimer)
+        {
+            mHiddenTimer--;
+            if (!mHiddenTimer)
+                setHidden(false);
+        }
+    }
+#endif
 }
 
 void Item::interpolateTick(F32 dt)
@@ -447,6 +483,9 @@ void Item::interpolateTick(F32 dt)
 
 void Item::setTransform(const MatrixF& mat)
 {
+#ifdef MARBLE_BLAST
+    Parent::setTransform(mat);
+#else
     Point3F pos;
     mat.getColumn(3, &pos);
     MatrixF tmat;
@@ -460,6 +499,8 @@ void Item::setTransform(const MatrixF& mat)
         tmat.identity();
     tmat.setColumn(3, pos);
     Parent::setTransform(tmat);
+#endif
+
     if (!mStatic)
     {
         mAtRest = false;
@@ -870,8 +911,12 @@ U32 Item::packUpdate(NetConnection* connection, U32 mask, BitStream* stream)
         if (stream->writeFlag(getScale() != Point3F(1, 1, 1)))
             mathWrite(*stream, getScale());
 
+#ifdef MARBLE_BLAST
         stream->writeFlag(mPermanent);
+#endif
+#ifdef MB_ULTRA
         stream->writeFlag(mBuddyOn);
+#endif
     }
     if (mask & ThrowSrcMask && mCollisionObject) {
         S32 gIndex = connection->getGhostIndex(mCollisionObject);
@@ -911,8 +956,12 @@ void Item::unpackUpdate(NetConnection* connection, BitStream* stream)
         else
             mObjScale.set(1, 1, 1);
 
+#ifdef MARBLE_BLAST
         mPermanent = stream->readFlag();
+#endif
+#ifdef MB_ULTRA
         mBuddyOn = stream->readFlag();
+#endif
     }
     if (stream->readFlag()) {
         S32 gIndex = stream->readInt(10);
@@ -979,8 +1028,10 @@ void Item::unpackUpdate(NetConnection* connection, BitStream* stream)
     }
     Parent::setTransform(mat);
 
+#ifdef MB_ULTRA
     if (!mBuddy.isNull())
         mBuddy->setTransform(mat);
+#endif
 }
 
 
@@ -998,15 +1049,80 @@ void Item::readPacketData(GameConnection* conn, BitStream* stream)
     mHiddenTimer = stream->readRangedU32(0, 62);
 }
 
+#ifdef MARBLE_BLAST
 void Item::setHidden(bool hidden)
 {
     if (hidden && mHidden)
         mHiddenTimer = 0;
+#ifdef MB_ULTRA
     if (!mBuddy.isNull())
         mBuddy->setHidden(hidden);
+#endif
 
     Parent::setHidden(hidden);
 }
+#endif
+
+#ifdef MB_ULTRA
+void Item::setClientHidden(U32 timer)
+{
+    setHidden(true);
+    if (timer >> 5 >= 2000)
+        mHiddenTimer = 2000;
+    else
+        mHiddenTimer = timer >> 5;
+}
+
+void Item::createBuddy()
+{
+    destroyBuddy();
+    if (!isGhost() || !mBuddyOn)
+        return;
+
+    if (!mDataBlock->buddyShapeName)
+        return;
+
+    TSStatic* buddy = new TSStatic;
+    buddy->setTransform(getTransform());
+
+    buddy->setShapeName(mDataBlock->buddyShapeName);
+
+    buddy->mNetFlags.set(IsGhost);
+    buddy->mNetFlags.clear(Ghostable);
+    buddy->registerObject();
+
+    if (mDataBlock->buddySequence)
+        buddy->setSequence(mDataBlock->buddySequence);
+
+    mBuddy = buddy;
+}
+
+void Item::destroyBuddy()
+{
+    if (!mBuddy.isNull())
+    {
+        SimObject* obj = mBuddy;
+        mBuddy = NULL;
+        obj->deleteObject();
+    }
+}
+
+void Item::setBuddy(bool on)
+{
+    mBuddyOn = on;
+}
+
+ConsoleMethod(Item, setClientHidden, void, 3, 3, "(int timer)")
+{
+    object->setClientHidden(dAtoi(argv[2]));
+}
+
+ConsoleMethod(Item, setBuddy, void, 3, 3, "(bool buddyOn)")
+{
+    object->setBuddy(dAtob(argv[2]));
+}
+
+#endif
 
 ConsoleMethod(Item, isStatic, bool, 2, 2, "()"
     "Is the object static (ie, non-movable)?")

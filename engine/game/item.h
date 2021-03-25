@@ -183,7 +183,16 @@ public:
     virtual void writePacketData(GameConnection* conn, BitStream* stream);
     virtual void readPacketData(GameConnection* conn, BitStream* stream);
 
+#ifdef MARBLE_BLAST
     virtual void setHidden(bool hidden);
+#endif
+
+#ifdef MB_ULTRA
+    void setClientHidden(U32 timer);
+    void createBuddy();
+    void destroyBuddy();
+    void setBuddy(bool on);
+#endif
 };
 
 #endif

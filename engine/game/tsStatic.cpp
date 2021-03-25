@@ -439,6 +439,24 @@ void TSStatic::buildConvex(const Box3F& box, Convex* convex)
     }
 }
 
+void TSStatic::setShapeName(const char* shapeName)
+{
+    mShapeName = StringTable->insert(shapeName);
+}
+
+void TSStatic::setSequence(const char* sequenceName)
+{
+    if (mShape && mShapeInstance)
+    {
+        S32 seq = mShape->findSequence(sequenceName);
+        if (seq >= 0)
+        {
+            TSThread* thread = mShapeInstance->addThread();
+            mShapeInstance->setSequence(thread, seq, 0.0f);
+        }
+    }
+}
+
 
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------

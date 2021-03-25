@@ -114,6 +114,9 @@ public:
 
 
     void inspectPostApply();
+
+    void setShapeName(const char* shapeName);
+    void setSequence(const char* sequenceName);
 };
 
 #endif // _H_TSSTATIC
