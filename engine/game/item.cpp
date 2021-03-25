@@ -925,13 +925,20 @@ U32 Item::packUpdate(NetConnection* connection, U32 mask, BitStream* stream)
     }
     else
         stream->writeFlag(false);
+
+#ifndef MARBLE_BLAST
     if (stream->writeFlag(mask & RotationMask && !mRotate)) {
         // Assumes rotation is about the Z axis
         AngAxisF aa(mObjToWorld);
         stream->writeFlag(aa.axis.z < 0);
         stream->write(aa.angle);
     }
+#endif
     if (stream->writeFlag(mask & PositionMask)) {
+
+#ifdef MARBLE_BLAST
+        stream->writeAffineTransform(mObjToWorld);
+#endif
         Point3F pos;
         mObjToWorld.getColumn(3, &pos);
         mathWrite(*stream, pos);
@@ -968,6 +975,7 @@ void Item::unpackUpdate(NetConnection* connection, BitStream* stream)
         setCollisionTimeout(static_cast<ShapeBase*>(connection->resolveGhost(gIndex)));
     }
     MatrixF mat = mObjToWorld;
+#ifndef MARBLE_BLAST
     if (stream->readFlag()) {
         // Assumes rotation is about the Z axis
         AngAxisF aa;
@@ -978,7 +986,11 @@ void Item::unpackUpdate(NetConnection* connection, BitStream* stream)
         mObjToWorld.getColumn(3, &pos);
         mat.setColumn(3, pos);
     }
+#endif
     if (stream->readFlag()) {
+#ifdef MARBLE_BLAST
+        stream->readAffineTransform(&mat);
+#endif
         Point3F pos;
         mathRead(*stream, &pos);
         F32 speed = mVelocity.len();
