@@ -604,7 +604,23 @@ void SceneObject::setTransform(const MatrixF& mat)
 void SceneObject::setScale(const VectorF& scale)
 {
     mObjScale = scale;
+
+#ifdef MB_ULTRA
+    resetWorldBox();
+
+    if (mSceneManager != NULL && mNumCurrZones != 0) {
+        mSceneManager->zoneRemove(this);
+        mSceneManager->zoneInsert(this);
+        if (getContainer())
+            getContainer()->checkBins(this);
+    }
+
+    if (isClientObject() || gSPMode)
+        mLightingInfo.mDirty = true;
+
+#else
     setTransform(MatrixF(mObjToWorld));
+#endif
 
     // Make sure that any subclasses of me get a chance to react to the
     // scale being changed.

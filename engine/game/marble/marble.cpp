@@ -805,9 +805,6 @@ void Marble::writePacketData(GameConnection* conn, BitStream* stream)
 
     if (stream->writeFlag(mBlastTimer != 0))
         stream->writeRangedU32(mBlastTimer >> 5, 1, 16);
-
-    // TEMP: Fix desync properly!!
-    //packUpdate((NetConnection*)conn, 0xFFFFFFFF, stream);
 }
 
 void Marble::readPacketData(GameConnection* conn, BitStream* stream)
@@ -888,9 +885,6 @@ void Marble::readPacketData(GameConnection* conn, BitStream* stream)
     mObjToWorld.setColumn(3, mSinglePrecision.mPosition);
 
     Parent::setTransform(mObjToWorld);
-
-    // TEMP: Fix desync properly!!
-    //unpackUpdate((NetConnection*)conn, stream);
 }
 
 void Marble::renderShadowVolumes(SceneState* state)
