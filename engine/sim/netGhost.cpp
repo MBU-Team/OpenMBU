@@ -529,8 +529,11 @@ void NetConnection::ghostReadPacket(BitStream* bstream)
                     setLastError("Invalid packet.");
                     return;
                 }
-                
-                obj->mNetFlags = NetObject::IsGhost;
+
+                // remove all flags associated with netobject
+                obj->mNetFlags &= ~(BIT(NetObject::MaxNetFlagBit + 1) - 1);
+                // we're a ghost...
+                obj->mNetFlags |= NetObject::IsGhost;
 
                 // object gets initial update before adding to the manager
 

@@ -438,18 +438,16 @@ void ProcessList::advanceObjects()
 
         if (con && con->getControlObject() == obj) {
             Move* movePtr;
-            U32 m, numMoves;
+            U32 numMoves;
 
-            con->getMoveList(&movePtr, &numMoves);
-
-            if (numMoves)
+            if (con->getMoveList(&movePtr, &numMoves))
             {
 #ifdef TORQUE_DEBUG_NET_MOVES
                 U32 sum = Move::ChecksumMask & obj->getPacketDataChecksum(con);
 #endif
 
                 obj->processTick(movePtr);
-                if (!obj.isNull() && con)
+                if (!obj.isNull() && obj->getControllingClient())
                 {
                     U32 newsum = Move::ChecksumMask & obj->getPacketDataChecksum(con);
                     if (obj->isGhost())
