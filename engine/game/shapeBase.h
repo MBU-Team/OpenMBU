@@ -815,10 +815,18 @@ public:
     /// @see onCollision
     void notifyCollision();
 
+#ifdef MARBLE_BLAST
+    /// This gets called when an object collides with this object
+    /// @param   object   Object colliding with this object
+    /// @param   vec   Vector along which collision occured
+    /// @param   mat   Material that was collided with
+    virtual void onCollision(ShapeBase* object, VectorF vec, const Material* mat);
+#else
     /// This gets called when an object collides with this object
     /// @param   object   Object colliding with this object
     /// @param   vec   Vector along which collision occured
     virtual void onCollision(ShapeBase* object, VectorF vec);
+#endif
 
 #ifdef MARBLE_BLAST
     /// Add a collision to the queue of collisions waiting to be handled @see onCollision

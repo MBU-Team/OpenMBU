@@ -2833,14 +2833,20 @@ void ShapeBase::notifyCollision()
         {
             SimObjectPtr<ShapeBase> safePtr(ptr->object);
             SimObjectPtr<ShapeBase> safeThis(this);
-            onCollision(ptr->object, ptr->vector);
+            onCollision(ptr->object, ptr->vector, NULL);
             ptr->object = 0;
 
             if (!bool(safeThis))
                 return;
 
             if (bool(safePtr))
+            {
+#ifdef MARBLE_BLAST
+                safePtr->onCollision(this, ptr->vector, ptr->material);
+#else
                 safePtr->onCollision(this, ptr->vector);
+#endif
+            }
 
             if (!bool(safeThis))
                 return;
@@ -2848,6 +2854,22 @@ void ShapeBase::notifyCollision()
     }
 }
 
+#ifdef MARBLE_BLAST
+void ShapeBase::onCollision(ShapeBase* object, VectorF vec, const Material* mat)
+{
+    char buff1[256];
+    char buff2[32];
+
+    dSprintf(buff1, sizeof(buff1), "%g %g %g", vec.x, vec.y, vec.z);
+    dSprintf(buff2, sizeof(buff2), "%g", vec.len());
+
+    const char* matName = mat ? mat->getName() : "DefaultMaterial";
+
+    const char* funcName = isServerObject() ? "onCollision" : "onClientCollision";
+
+    Con::executef(mDataBlock, 6, funcName, scriptThis(), object->scriptThis(), buff1, buff2, matName);
+}
+#else
 void ShapeBase::onCollision(ShapeBase* object, VectorF vec)
 {
     if (!isGhost()) {
@@ -2859,6 +2881,7 @@ void ShapeBase::onCollision(ShapeBase* object, VectorF vec)
         Con::executef(mDataBlock, 5, "onCollision", scriptThis(), object->scriptThis(), buff1, buff2);
     }
 }
+#endif
 
 //--------------------------------------------------------------------------
 bool ShapeBase::pointInWater(Point3F& point)
