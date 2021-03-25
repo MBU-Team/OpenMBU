@@ -401,7 +401,7 @@ bool InteriorInstance::onAdd()
 
     // Do any handle loading, etc. required.
 
-    if (isClientObject() || gSPMode) {
+    //if (isClientObject() || gSPMode) {
 
         for (i = 0; i < mInteriorRes->getNumDetailLevels(); i++) {
             Interior* pInterior = mInteriorRes->getDetailLevel(i);
@@ -420,10 +420,10 @@ bool InteriorInstance::onAdd()
         }
 
         renewOverlays();
-    }
-    else {
-
-    }
+    //}
+    //else {
+    //
+    //}
 
     addToScene();
     return true;
