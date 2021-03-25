@@ -531,7 +531,7 @@ void ProcessList::updateMoveSync(S32 moveDiff)
     moveSync.update(moveDiff);
     if (moveSync.doAction() && moveDiff < 0)
     {
-        gClientProcessList.skipAdvanceObjects(TickMs * -moveDiff);
+        getCurrentClientProcessList()->skipAdvanceObjects(TickMs * -moveDiff);
         moveSync.reset();
     }
 }
@@ -585,7 +585,7 @@ void ProcessList::clientCatchup(GameConnection* connection, S32 catchup)
 #endif
 
                     S32 j = nearby.mList.size();
-                    gClientContainer.findObjects(box, GameBaseHiFiObjectType, SimpleQueryList::insertionCallback, &nearby);
+                    getCurrentClientContainer()->findObjects(box, GameBaseHiFiObjectType, SimpleQueryList::insertionCallback, &nearby);
 
 #ifdef MB_ULTRA
                     // CodeReview - this is left in for MBU, but also so we can deal with the issue later.

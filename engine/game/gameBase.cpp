@@ -414,8 +414,8 @@ void GameBase::processAfter(GameBase* obj)
     mAfterObject = obj;
     if ((const GameBase*)obj->mAfterObject == this)
         obj->mAfterObject = 0;
-    if (isGhost())
-        gClientProcessList.markDirty();
+    if (isGhost() || gSPMode)
+        getCurrentClientProcessList()->markDirty();
     else
         gServerProcessList.markDirty();
 }

@@ -988,13 +988,13 @@ void GameConnection::readPacket(BitStream* bstream)
         // mechanism tracks us over time to make sure we eventually return to be in sync, and makes adjustments
         // if we don't after a certain time period (number of updates).  Unlike the tickDiff mechanism, when
         // the updateMoveSync acts time is not preserved on the client.
-        gClientProcessList.updateMoveSync(mLastSentMove - mLastClientMove);
+        getCurrentClientProcessList()->updateMoveSync(mLastSentMove - mLastClientMove);
 
         // set catchup parameters...
         totalCatchup = mLastClientMove - mFirstMoveIndex;
 
-        gClientProcessList.ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
-        gClientProcessList.forceHifiReset(tickDiff != 0);
+        getCurrentClientProcessList()->ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
+        getCurrentClientProcessList()->forceHifiReset(tickDiff != 0);
 
         mDamageFlash = 0;
         mWhiteOut = 0;
@@ -1138,7 +1138,7 @@ void GameConnection::readPacket(BitStream* bstream)
             mLastClientMove = mLastMoveAck;
 
         PROFILE_START(ClientCatchup);
-        gClientProcessList.clientCatchup(this, totalCatchup);
+        getCurrentClientProcessList()->clientCatchup(this, totalCatchup);
         PROFILE_END();
     }
 }
