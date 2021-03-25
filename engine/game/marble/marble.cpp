@@ -985,16 +985,16 @@ bool Marble::onNewDataBlock(GameBaseData* dptr)
     if (!Parent::onNewDataBlock(dptr))
         return false;
 
-    this->mDataBlock = dynamic_cast<MarbleData*>(dptr);
-    if (this->mDataBlock)
-    {
-        updatePowerUpParams();
+    mDataBlock = dynamic_cast<MarbleData*>(dptr);
+    if (!mDataBlock)
+        return false;
+    
+    updatePowerUpParams();
 
-        if (this->mDataBlock->shape)
-        {
-            updateMass();
-            return true;
-        }
+    if (this->mDataBlock->shape)
+    {
+        updateMass();
+        return true;
     }
 
     return false;

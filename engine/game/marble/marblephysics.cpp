@@ -714,7 +714,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
     updateRollSound(contactPct, slipAmount);
 
-    dMemcpy(&delta.pos, &mPosition, sizeof(delta.pos));
+    dMemcpy(&delta.pos, &mPosition, sizeof(Point3D));
 
     delta.posVec -= delta.pos;
 
