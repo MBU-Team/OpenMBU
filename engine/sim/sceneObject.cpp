@@ -1106,7 +1106,7 @@ void Container::findObjects(const Box3F& box, U32 mask, FindCallback callback, v
                     chain->object->setContainerSeqKey(smCurrSeqKey);
 
                     if ((chain->object->getType() & mask) != 0 &&
-                        chain->object->isCollisionEnabled())
+                        chain->object->isCollisionEnabled() && !chain->object->isHidden())
                     {
                         if (chain->object->getWorldBox().isOverlapped(box) || chain->object->isGlobalBounds())
                         {
@@ -1126,7 +1126,7 @@ void Container::findObjects(const Box3F& box, U32 mask, FindCallback callback, v
             chain->object->setContainerSeqKey(smCurrSeqKey);
 
             if ((chain->object->getType() & mask) != 0 &&
-                chain->object->isCollisionEnabled())
+                chain->object->isCollisionEnabled() && !chain->object->isHidden())
             {
                 if (chain->object->getWorldBox().isOverlapped(box) || chain->object->isGlobalBounds())
                 {
