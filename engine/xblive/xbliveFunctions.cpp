@@ -75,6 +75,18 @@ ConsoleFunction(XBLiveIsSignedIn, bool, 1, 2, "([port])")
     return true;
 }
 
+ConsoleFunction(XBLiveIsSignedInSilver, bool, 1, 1, "()")
+{
+    argc;
+    return true;
+}
+
+ConsoleFunction(XBLiveIsSignedInGold, bool, 1, 1, "()")
+{
+    argc;
+    return true;
+}
+
 ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
 {
     argc;
