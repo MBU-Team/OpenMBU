@@ -346,9 +346,69 @@ void StaticShape::unpackUpdate(NetConnection* connection, BitStream* bstream)
 #ifdef MARBLE_BLAST
 bool StaticShape::getForce(Point3F& pos, Point3F* force)
 {
+    // TODO: Cleanup Decompile
+
     if (mDataBlock != NULL && (mTypeMask & ForceObjectType) != 0 && mPowered)
     {
-        // TODO: Implement StaticShape::getForce
+        F32 strength;
+        F32 dot;
+        bool retval = false;
+        S32 i = 0;
+        Point3F posVec;
+        while (true)
+        {
+            if (mDataBlock->forceType[i] == StaticShapeData::NoForce)
+                goto LABEL_19;
+
+            MatrixF node;
+            getMountTransform(mDataBlock->forceNode[i], &node);
+
+            Point3F nodeVec;
+            if (mDataBlock->forceVector[i].len() == 0.0f)
+                node.getColumn(1, &nodeVec);
+            else
+                nodeVec = mDataBlock->forceVector[i];
+
+            posVec = pos - node.getPosition();
+            dot = posVec.len();
+
+            if (mDataBlock->forceRadius[i] < dot)
+                goto LABEL_19;
+
+            StaticShapeData::ForceType forceType = mDataBlock->forceType[i];
+            strength = (1.0f - dot / mDataBlock->forceRadius[i]) * mDataBlock->forceStrength[i];
+
+            if (forceType == StaticShapeData::ForceSpherical)
+                break;
+
+            if (forceType == StaticShapeData::ForceField)
+            {
+                *force += nodeVec * strength;
+                goto LABEL_17;
+            }
+
+            if (forceType != StaticShapeData::ForceCone)
+                goto LABEL_19;
+
+            posVec *= 1.0f / dot;
+
+            F32 newDot = mDot(nodeVec, posVec);
+            F32 arc = mDataBlock->forceArc[i];
+            if (arc >= newDot)
+                goto LABEL_19;
+
+            *force += ((posVec * strength) * (newDot - arc)) / (1.0f - arc);
+LABEL_17:
+            retval = true;
+LABEL_19:
+            i++;
+            if (i >= 4)
+                return retval;
+        }
+
+        dot = strength / dot;
+        *force += posVec * dot;
+        goto LABEL_17;
     }
     return false;
 }
