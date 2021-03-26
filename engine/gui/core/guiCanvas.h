@@ -309,5 +309,6 @@ public:
 };
 
 extern GuiCanvas* Canvas;
+extern bool gEnableDatablockCanvasRepaint;
 
 #endif

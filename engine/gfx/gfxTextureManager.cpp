@@ -8,6 +8,7 @@
 #include "gfx/gfxDevice.h"
 #include "console/console.h"
 #include "console/consoleTypes.h"
+#include "gui/core/guiCanvas.h"
 #include "math/mathUtils.h"
 
 /// Threshold of total VRAM under which we start scaling textures down...
@@ -301,6 +302,9 @@ GFXTextureObject* GFXTextureManager::createTexture(GBitmap* bmp, GFXTextureProfi
         delete realBmp;
     if (deleteBmp)
         delete bmp;
+
+    if (gEnableDatablockCanvasRepaint)
+        Canvas->paint();
 
     // Return the new texture!
     return ret;

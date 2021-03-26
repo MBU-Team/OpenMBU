@@ -14,6 +14,7 @@
 #include "game/gameConnection.h"
 #include "math/mathIO.h"
 #include "game/gameProcess.h"
+#include "gui/core/guiCanvas.h"
 
 #ifdef TORQUE_DEBUG_NET_MOVES
 #include "game/aiConnection.h"
@@ -83,6 +84,10 @@ bool GameBaseData::preload(bool server, char errorBuffer[256])
     if (!Parent::preload(server, errorBuffer))
         return false;
     packed = false;
+
+    if (gEnableDatablockCanvasRepaint)
+        Canvas->paint();
+
     return true;
 }
 

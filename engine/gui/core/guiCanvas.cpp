@@ -16,6 +16,8 @@
 #include "gfx/screenshot.h"
 #include "sim/sceneObject.h"
 
+bool gEnableDatablockCanvasRepaint = false;
+
 extern bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl);
 
 // We formerly kept all the GUI related IMPLEMENT_CONOBJECT macros here.
@@ -196,6 +198,7 @@ ConsoleMethod(GuiCanvas, setDefaultFirstResponder, void, 2, 2, "()")
 void GuiCanvas::initPersistFields()
 {
     Con::addVariable("LastInputEventTime", TypeS32, &gLastEventTime);
+    Con::addVariable("EnableDatablockCanvasRepaint", TypeBool, &gEnableDatablockCanvasRepaint);
 }
 
 GuiCanvas::GuiCanvas()
@@ -923,6 +926,9 @@ void GuiCanvas::setContentControl(GuiControl* gui)
     if (!gui)
         return;
 
+    bool lastDataBlockRepaint = gEnableDatablockCanvasRepaint;
+    gEnableDatablockCanvasRepaint = false;
+
     //remove all dialogs on layer 0
     U32 index = 0;
     while (size() > index)
@@ -964,7 +970,10 @@ void GuiCanvas::setContentControl(GuiControl* gui)
         if (ctrl->mProfile->mModal)
             break;
     }
+
     refreshMouseControl();
+
+    gEnableDatablockCanvasRepaint = lastDataBlockRepaint;
 }
 
 GuiControl* GuiCanvas::getContentControl()
