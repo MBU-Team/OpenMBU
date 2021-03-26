@@ -414,7 +414,7 @@ void Marble::interpolateTick(F32 delta)
 
 S32 Marble::mountPowerupImage(ShapeBaseImageData* imageData)
 {
-    if (isServerObject() || !imageData)
+    if ((isServerObject() && !gSPMode) || !imageData)
         return -1;
 
     U32 i = 0;
@@ -720,13 +720,13 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
         float nY = mPosition.y - pos.y;
         float nZ = mPosition.z - pos.z;
 
-        if (gClientProcessList.getLastDelta() <= 0.001 || warp)
+        if (getCurrentClientProcessList()->getLastDelta() <= 0.001 || warp)
         {
             delta.posVec = Point3D(0, 0, 0);
         }
         else
         {
-            float invBD = 1.0f / gClientProcessList.getLastDelta();
+            float invBD = 1.0f / getCurrentClientProcessList()->getLastDelta();
             float posX = nX * invBD;
             float posY = nY * invBD;
             float posZ = nZ * invBD;
@@ -904,7 +904,7 @@ void Marble::renderImage(SceneState* state)
 
 void Marble::bounceEmitter(F32 speed, const Point3F& normal)
 {
-    if (isGhost() && !mBounceEmitDelay)
+    if ((isGhost() || gSPMode) && !mBounceEmitDelay)
     {
         if (mDataBlock->bounceEmitter)
         {
@@ -965,7 +965,7 @@ bool Marble::onSceneAdd(SceneGraph* graph)
     if (!Parent::onSceneAdd(graph))
         return false;
 
-    if (isGhost())
+    if ((isGhost() || gSPMode))
     {
         SceneGraphData sgData;
         sgData.useLightDir = true;
@@ -1200,7 +1200,7 @@ void Marble::doPowerUpPower(S32 powerUpId)
         mPowerUpState[powerUpId].ticksLeft = mDataBlock->powerUps->duration[powerUpId] >> 5;
 
         updatePowerUpParams();
-        if (isServerObject())
+        if (isServerObject() && !gSPMode)
         {
             v4 = this->mDataBlock->powerUps->timeFreeze[powerUpId];
             if (v4)
@@ -1224,7 +1224,7 @@ void Marble::updatePowerups()
             mPowerUpState[i].ticksLeft--;
             if (mPowerUpState[i].ticksLeft == 0)
             {
-                if (isServerObject())
+                if (isServerObject() && !gSPMode)
                     Con::executef(this, 2, "onPowerUpExpired", Con::getIntArg(i));
 
                 mPowerUpState[i].active = false;
@@ -1269,7 +1269,7 @@ void Marble::updateMass()
 
 void Marble::trailEmitter(U32 timeDelta)
 {
-    if (!isGhost() || !mDataBlock->trailEmitter)
+    if (!(isGhost() || gSPMode) || !mDataBlock->trailEmitter)
         return;
 
     F32 speed = mVelocity.len();
@@ -1428,7 +1428,7 @@ void Marble::findRenderPos(F32 dt)
     Point3F dPos = delta.pos;
     Point3F around = posVec + dPos;
 
-    float outforce = 1.0f - gClientProcessList.getLastDelta();
+    float outforce = 1.0f - getCurrentClientProcessList()->getLastDelta();
 
     if (mMovePathSize != 0)
     {
@@ -1708,7 +1708,7 @@ bool Marble::onAdd()
     if (!Parent::onAdd())
         return false;
 
-    if (isGhost())
+    if ((isGhost() || gSPMode))
     {
         Point3F pos = Point3F(0, 0, 0);
         mRollHandle = alxPlay(mDataBlock->sound[0], &getTransform(), &pos);
@@ -1745,7 +1745,7 @@ void Marble::processMoveTriggers(const Move * move)
         {
             doPowerUp(mPowerUpId);
             mPowerUpId = 0;
-            if (isServerObject())
+            if (isServerObject() && !gSPMode)
                 Con::executef(this, 1, "onPowerUpUsed");
             mPowerUpTimer = 0;
         }
@@ -1764,7 +1764,7 @@ void Marble::processMoveTriggers(const Move * move)
         if (mBlastTimer >= v5)
         {
             doPowerUpPower(0);
-            if (isServerObject())
+            if (isServerObject() && !gSPMode)
                 Con::executef(this, 1, "onBlastUsed");
             mBlastEnergy = 0;
             mBlastTimer = 0;
@@ -1860,7 +1860,7 @@ void Marble::processItemsAndTriggers(const Point3F& startPos, const Point3F& end
         v14 = sql.mList[i];
         if ((v14->getTypeMask() & TriggerObjectType) != 0)
         {
-            if (isServerObject())
+            if (isServerObject() && !gSPMode)
                 ((Trigger*)v14)->potentialEnterObject(this);
         }
         else if ((v14->getTypeMask() & ItemObjectType) != 0 && this != ((Item*)v14)->getCollisionObject())
@@ -1974,7 +1974,7 @@ void Marble::processTick(const Move* move)
     {
         bool oldOnPad = mOnPad;
         updatePadState();
-        if (oldOnPad != mOnPad && !isGhost())
+        if (oldOnPad != mOnPad && !(isGhost() || gSPMode))
         {
             const char* funcName = "onLeavePad";
             if (!oldOnPad)
@@ -1983,7 +1983,7 @@ void Marble::processTick(const Move* move)
         }
     }
 
-    if (isGhost())
+    if (isGhost() || gSPMode)
     {
         if (getControllingClient())
         {
@@ -2001,7 +2001,7 @@ void Marble::processTick(const Move* move)
     if (mOmega.len() < 0.000001)
         mOmega.set(0, 0, 0);
 
-    if (!isGhost() && mOOB && newMove->trigger[2])
+    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[2])
         Con::executef(this, 1, "onOOBClick");
 
     notifyCollision();

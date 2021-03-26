@@ -95,7 +95,7 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
 
             if (mDataBlock->sound[MarbleData::Jump])
             {
-                if (isGhost())
+                if (isGhost() || gSPMode)
                 {
                     MatrixF mat(true);
                     mat.setColumn(3, getPosition());
@@ -363,7 +363,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
                     F64 velLen = mVelocity.len();
                     Point3D surfaceVel = contact->normal * surfaceDot;
 
-                    if (isGhost() && !bouncedYet)
+                    if ((isGhost() || gSPMode) && !bouncedYet)
                     {
                         playBounceSound(*contact, -surfaceDot);
                         bouncedYet = true;
