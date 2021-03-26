@@ -376,7 +376,11 @@ void Marble::getLookMatrix(MatrixF* camMat)
     else if (mMouseX > M_PI_F && prevMouseX < M_PI_F && mMouseX - prevMouseX > M_PI_F)
         prevMouseX += M_2PI;
 
+#ifdef MB_ULTRA_PREVIEWS
     double dt = getCurrentClientProcessList()->getLastDelta();
+#else
+    double dt = gClientProcessList.getLastDelta();
+#endif
     double oneMinusDelta = 1.0 - dt;
 
     MatrixF xRot;
@@ -415,7 +419,11 @@ void Marble::cameraLookAtPt(const Point3F& pt)
 
 void Marble::resetPlatformsForCamera()
 {
+#ifdef MB_ULTRA_PREVIEWS
     float backDelta = getCurrentClientProcessList()->getLastDelta();
+#else
+    float backDelta = gClientProcessList.getLastDelta();
+#endif
 
     for (S32 i = 0; i < smPathItrVec.size(); i++)
     {
@@ -466,7 +474,11 @@ void Marble::setPlatformsForCamera(const Point3F& marblePos, const Point3F& star
     camBox.min -= 0.25f;
     camBox.max += 0.25f;
 
+#ifdef MB_ULTRA_PREVIEWS
     F32 delta = getCurrentClientProcessList()->getLastDelta();
+#else
+    F32 delta = gClientProcessList.getLastDelta();
+#endif
 
     for (PathedInterior* i = PathedInterior::getPathedInteriors(this); ; i = i->getNext())
     {

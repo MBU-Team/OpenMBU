@@ -414,7 +414,11 @@ void Marble::interpolateTick(F32 delta)
 
 S32 Marble::mountPowerupImage(ShapeBaseImageData* imageData)
 {
+#ifdef MB_ULTRA_PREVIEWS
     if ((isServerObject() && !gSPMode) || !imageData)
+#else
+    if (isServerObject() || !imageData)
+#endif
         return -1;
 
     U32 i = 0;
@@ -720,13 +724,21 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
         float nY = mPosition.y - pos.y;
         float nZ = mPosition.z - pos.z;
 
+#ifdef MB_ULTRA_PREVIEWS
         if (getCurrentClientProcessList()->getLastDelta() <= 0.001 || warp)
+#else
+        if (gClientProcessList.getLastDelta() <= 0.001 || warp)
+#endif
         {
             delta.posVec = Point3D(0, 0, 0);
         }
         else
         {
+#ifdef MB_ULTRA_PREVIEWS
             float invBD = 1.0f / getCurrentClientProcessList()->getLastDelta();
+#else
+            float invBD = 1.0f / gClientProcessList.getLastDelta();
+#endif
             float posX = nX * invBD;
             float posY = nY * invBD;
             float posZ = nZ * invBD;
@@ -904,7 +916,11 @@ void Marble::renderImage(SceneState* state)
 
 void Marble::bounceEmitter(F32 speed, const Point3F& normal)
 {
+#ifdef MB_ULTRA_PREVIEWS
     if ((isGhost() || gSPMode) && !mBounceEmitDelay)
+#else
+    if (isGhost() && !mBounceEmitDelay)
+#endif
     {
         if (mDataBlock->bounceEmitter)
         {
@@ -965,7 +981,11 @@ bool Marble::onSceneAdd(SceneGraph* graph)
     if (!Parent::onSceneAdd(graph))
         return false;
 
+#ifdef MB_ULTRA_PREVIEWS
     if ((isGhost() || gSPMode))
+#else
+    if (isGhost())
+#endif
     {
         SceneGraphData sgData;
         sgData.useLightDir = true;
@@ -1200,7 +1220,11 @@ void Marble::doPowerUpPower(S32 powerUpId)
         mPowerUpState[powerUpId].ticksLeft = mDataBlock->powerUps->duration[powerUpId] >> 5;
 
         updatePowerUpParams();
+#ifdef MB_ULTRA_PREVIEWS
         if (isServerObject() && !gSPMode)
+#else
+        if (isServerObject())
+#endif
         {
             v4 = this->mDataBlock->powerUps->timeFreeze[powerUpId];
             if (v4)
@@ -1224,7 +1248,11 @@ void Marble::updatePowerups()
             mPowerUpState[i].ticksLeft--;
             if (mPowerUpState[i].ticksLeft == 0)
             {
+#ifdef MB_ULTRA_PREVIEWS
                 if (isServerObject() && !gSPMode)
+#else
+                if (isServerObject())
+#endif
                     Con::executef(this, 2, "onPowerUpExpired", Con::getIntArg(i));
 
                 mPowerUpState[i].active = false;
@@ -1269,7 +1297,11 @@ void Marble::updateMass()
 
 void Marble::trailEmitter(U32 timeDelta)
 {
+#ifdef MB_ULTRA_PREVIEWS
     if (!(isGhost() || gSPMode) || !mDataBlock->trailEmitter)
+#else
+    if (!isGhost() || !mDataBlock->trailEmitter)
+#endif
         return;
 
     F32 speed = mVelocity.len();
@@ -1428,7 +1460,11 @@ void Marble::findRenderPos(F32 dt)
     Point3F dPos = delta.pos;
     Point3F around = posVec + dPos;
 
+#ifdef MB_ULTRA_PREVIEWS
     float outforce = 1.0f - getCurrentClientProcessList()->getLastDelta();
+#else
+    float outforce = 1.0f - gClientProcessList.getLastDelta();
+#endif
 
     if (mMovePathSize != 0)
     {
@@ -1708,7 +1744,11 @@ bool Marble::onAdd()
     if (!Parent::onAdd())
         return false;
 
-    if ((isGhost() || gSPMode))
+#ifdef MB_ULTRA_PREVIEWS
+    if (isGhost() || gSPMode)
+#else
+    if (isGhost())
+#endif
     {
         Point3F pos = Point3F(0, 0, 0);
         mRollHandle = alxPlay(mDataBlock->sound[0], &getTransform(), &pos);
@@ -1745,7 +1785,11 @@ void Marble::processMoveTriggers(const Move * move)
         {
             doPowerUp(mPowerUpId);
             mPowerUpId = 0;
+#ifdef MB_ULTRA_PREVIEWS
             if (isServerObject() && !gSPMode)
+#else
+            if (isServerObject())
+#endif
                 Con::executef(this, 1, "onPowerUpUsed");
             mPowerUpTimer = 0;
         }
@@ -1764,7 +1808,11 @@ void Marble::processMoveTriggers(const Move * move)
         if (mBlastTimer >= v5)
         {
             doPowerUpPower(0);
+#ifdef MB_ULTRA_PREVIEWS
             if (isServerObject() && !gSPMode)
+#else
+            if (isServerObject())
+#endif
                 Con::executef(this, 1, "onBlastUsed");
             mBlastEnergy = 0;
             mBlastTimer = 0;
@@ -1860,7 +1908,11 @@ void Marble::processItemsAndTriggers(const Point3F& startPos, const Point3F& end
         v14 = sql.mList[i];
         if ((v14->getTypeMask() & TriggerObjectType) != 0)
         {
+#ifdef MB_ULTRA_PREVIEWS
             if (isServerObject() && !gSPMode)
+#else
+            if (isServerObject())
+#endif
                 ((Trigger*)v14)->potentialEnterObject(this);
         }
         else if ((v14->getTypeMask() & ItemObjectType) != 0 && this != ((Item*)v14)->getCollisionObject())
@@ -1974,7 +2026,11 @@ void Marble::processTick(const Move* move)
     {
         bool oldOnPad = mOnPad;
         updatePadState();
+#ifdef MB_ULTRA_PREVIEWS
         if (oldOnPad != mOnPad && !(isGhost() || gSPMode))
+#else
+        if (oldOnPad != mOnPad && !isGhost())
+#endif
         {
             const char* funcName = "onLeavePad";
             if (!oldOnPad)
@@ -1983,7 +2039,11 @@ void Marble::processTick(const Move* move)
         }
     }
 
+#ifdef MB_ULTRA_PREVIEWS
     if (isGhost() || gSPMode)
+#else
+    if (isGhost())
+#endif
     {
         if (getControllingClient())
         {
@@ -2001,7 +2061,11 @@ void Marble::processTick(const Move* move)
     if (mOmega.len() < 0.000001)
         mOmega.set(0, 0, 0);
 
+#ifdef MB_ULTRA_PREVIEWS
     if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[2])
+#else
+    if (!isGhost()) && mOOB && newMove->trigger[2])
+#endif
         Con::executef(this, 1, "onOOBClick");
 
     notifyCollision();
