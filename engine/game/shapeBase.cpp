@@ -1090,6 +1090,17 @@ void ShapeBase::processTick(const Move* move)
         if (mWhiteOut <= 0.0)
             mWhiteOut = 0.0;
     }
+
+    if (mThreadCmd.delayTicks >= 0)
+    {
+        mThreadCmd.delayTicks--;
+        if (mThreadCmd.delayTicks < 0)
+        {
+            if (setThreadSequence(mThreadCmd.slot, mThreadCmd.seq, true, 1.0f))
+                setTimeScale(mThreadCmd.slot, mThreadCmd.timeScale);
+            setThreadDir(mThreadCmd.slot, mThreadCmd.timeScale > 0.0f);
+        }
+    }
 }
 
 void ShapeBase::advanceTime(F32 dt)
@@ -2132,10 +2143,10 @@ void ShapeBase::updateAudioPos()
 
 //----------------------------------------------------------------------------
 
-bool ShapeBase::setThreadSequence(U32 slot, S32 seq, bool reset)
+bool ShapeBase::setThreadSequence(U32 slot, S32 seq, bool reset, F32 timeScale)
 {
     Thread& st = mScriptThread[slot];
-    if (st.thread && st.sequence == seq && st.state == Thread::Play)
+    if (st.thread && st.sequence == seq && st.state == Thread::Play && reset)
         return true;
 
     if (seq < MaxSequenceIndex) {
@@ -2143,6 +2154,7 @@ bool ShapeBase::setThreadSequence(U32 slot, S32 seq, bool reset)
         st.sequence = seq;
         if (reset) {
             st.state = Thread::Play;
+            st.timeScale = timeScale;
             st.atEnd = false;
             st.forward = true;
         }
@@ -2150,12 +2162,28 @@ bool ShapeBase::setThreadSequence(U32 slot, S32 seq, bool reset)
             if (!st.thread)
                 st.thread = mShapeInstance->addThread();
             mShapeInstance->setSequence(st.thread, seq, 0);
+            mShapeInstance->setTimeScale(st.thread, st.timeScale);
             stopThreadSound(st);
             updateThread(st);
         }
         return true;
     }
     return false;
+}
+
+bool ShapeBase::setTimeScale(U32 slot, F32 timeScale)
+{
+    if (mScriptThread[slot].sequence == -1)
+        return false;
+
+    if (timeScale != mScriptThread[slot].timeScale)
+    {
+        setMaskBits(ThreadMaskN << slot);
+        mScriptThread[slot].timeScale = timeScale;
+        updateThread(mScriptThread[slot]);
+    }
+
+    return true;
 }
 
 void ShapeBase::updateThread(Thread& st)
@@ -2221,6 +2249,11 @@ bool ShapeBase::playThread(U32 slot)
     return false;
 }
 
+void ShapeBase::playThreadDelayed(const ThreadCmd& cmd)
+{
+    mThreadCmd = cmd;
+}
+
 bool ShapeBase::setThreadDir(U32 slot, bool forward)
 {
     Thread& st = mScriptThread[slot];
@@ -2251,6 +2284,8 @@ void ShapeBase::startSequenceSound(Thread& thread)
 
 void ShapeBase::advanceThreads(F32 dt)
 {
+    bool anim = false;
+
     for (U32 i = 0; i < MaxScriptThreads; i++) {
         Thread& st = mScriptThread[i];
         if (st.thread) {
@@ -2266,8 +2301,12 @@ void ShapeBase::advanceThreads(F32 dt)
                 }
             }
             mShapeInstance->advanceTime(dt, st.thread);
+            anim = true;
         }
     }
+
+    if (anim)
+        mShapeInstance->animate();
 }
 
 
@@ -3584,22 +3623,50 @@ ConsoleMethod(ShapeBase, stopAudio, bool, 3, 3, "(int slot)")
 
 
 //----------------------------------------------------------------------------
-ConsoleMethod(ShapeBase, playThread, bool, 3, 4, "(int slot, string sequenceName)")
+ConsoleMethod(ShapeBase, playThread, bool, 3, 6, "(int slot, string sequenceName)")
 {
     U32 slot = dAtoi(argv[2]);
-    if (slot >= 0 && slot < ShapeBase::MaxScriptThreads) {
-        if (argc == 4) {
-            if (object->getShape()) {
+    if (slot >= ShapeBase::MaxScriptThreads)
+    {
+        Con::errorf("ShapeBase::playThread: slot out of range");
+        return false;
+    }
+
+    if (argc != 6)
+    {
+        if (argc < 4)
+        {
+            if (object->playThread(slot))
+                return true;
+        } else
+        {
+            if (object->getShape())
+            {
                 S32 seq = object->getShape()->findSequence(argv[3]);
                 if (seq != -1 && object->setThreadSequence(slot, seq))
                     return true;
             }
         }
-        else
-            if (object->playThread(slot))
-                return true;
+
+        return false;
     }
-    return false;
+
+    U32 cmd = dAtoi(argv[2]);
+    S32 seq = -1;
+    if (object->getShape())
+        seq = object->getShape()->findSequence(argv[3]);
+    else
+        return false;
+
+    ShapeBase::ThreadCmd tcmd;
+    tcmd.slot = cmd;
+    tcmd.seq = seq;
+    tcmd.timeScale = dAtof(argv[4]);
+    tcmd.delayTicks = dAtoi(argv[5]) / 32;
+
+    object->playThreadDelayed(tcmd);
+
+    return true;
 }
 
 ConsoleMethod(ShapeBase, setThreadDir, bool, 4, 4, "(int slot, bool isForward)")

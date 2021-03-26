@@ -627,10 +627,31 @@ private:
         U32 sound;        ///< Handle to sound.
         bool atEnd;       ///< Are we at the end of this thread?
         bool forward;     ///< Are we playing the thread forward? (else backwards)
+        float timeScale;
     };
     Thread mScriptThread[MaxScriptThreads];
 
     /// @}
+
+public:
+    class ThreadCmd
+    {
+    public:
+        int slot;
+        int seq;
+        float timeScale;
+        int delayTicks;
+
+        ThreadCmd()
+        {
+            slot = 0;
+            seq = -1;
+            timeScale = 1.0f;
+            delayTicks = -1;
+        }
+    };
+private:
+    ThreadCmd mThreadCmd;
 
     /// @name Invincibility
     /// @{
@@ -1132,7 +1153,9 @@ public:
     /// @param   slot   Mount slot ID
     /// @param    seq   Sequance id
     /// @param   reset   Reset the sequence
-    bool setThreadSequence(U32 slot, S32 seq, bool reset = true);
+    bool setThreadSequence(U32 slot, S32 seq, bool reset = true, F32 timeScale = 1.0f);
+
+    bool setTimeScale(U32 slot, F32 timeScale);
 
     /// Update the animation thread
     /// @param   st   Thread to update
@@ -1149,6 +1172,8 @@ public:
     /// Start playing the running animation thread again
     /// @param   slot   Mount slot ID
     bool playThread(U32 slot);
+
+    void playThreadDelayed(const ThreadCmd& cmd);
 
     /// Toggle the thread as reversed or normal (For example, sidestep-right reversed is sidestep-left)
     /// @param   slot   Mount slot ID
