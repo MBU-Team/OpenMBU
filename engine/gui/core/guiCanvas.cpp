@@ -584,8 +584,8 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                 lastClickTime = &yLastClickTime[event->deviceInst];
             }
 
-            bool down = event->fValue < 0.f;
-            //bool down = event->fValue > 0.f; // This is totally counter-intuitive, and it doesn't make sense
+            //bool down = event->fValue < 0.f;
+            bool down = event->fValue > 0.f; // This is totally counter-intuitive, and it doesn't make sense
                                              // However, it was done to line up with the PC directX
 
             if (incomingValue < deadZone)
@@ -619,9 +619,9 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                 else
                 {
                     if (down)
-                        retval = responder->onGamepadButtonPressed(XI_DPAD_LEFT);
-                    else
                         retval = responder->onGamepadButtonPressed(XI_DPAD_RIGHT);
+                    else
+                        retval = responder->onGamepadButtonPressed(XI_DPAD_LEFT);
                 }
                 gLastEventTime = curTime;
             }

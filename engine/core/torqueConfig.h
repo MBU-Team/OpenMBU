@@ -156,7 +156,7 @@
 /// for instance.  Without it, you need to declare multiple jump functions
 /// that do the same thing and bind them separately (this is the Torque 
 /// default).
-//#define TORQUE_ALLOW_MULTIPLE_ACTIONMAP_BINDS
+#define TORQUE_ALLOW_MULTIPLE_ACTIONMAP_BINDS
 
 /// Define me to disable the password on the telnet console.  Only applies in 
 /// non-ship builds. Use for situations where you are using the telnet console 
