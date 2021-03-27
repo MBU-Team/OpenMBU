@@ -408,6 +408,7 @@ public:
     /// @param   box        Box bounding volume
     /// @param   sphere     Sphere bounding volume
     virtual bool     buildPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere);
+    virtual bool     buildRenderPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere);
 
     /// Builds a collision tree of all the polygons which collide with a bounding volume.
     ///

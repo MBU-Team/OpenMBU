@@ -14,6 +14,7 @@
 #include "interior/interiorRes.h"
 #include "audio/audio.h"
 
+class PathManager;
 class InteriorInstance;
 class EditGeometry;
 class EditInteriorResource;
@@ -126,18 +127,21 @@ public:
 
     PathedInterior* getNext() { return mNextPathedInterior; }
 
-    static PathedInterior* getClientPathedInteriors() { return mClientPathedInteriors; }
+    PathManager* getPathManager() const;
 
     void pushTickState();
     void popTickState();
     void resetTickState(bool setT);
 
     void processTick(const Move* move);
+    void interpolateTick(F32 delta);
     void setStopped();
     void resolvePathKey();
 
     bool onNewDataBlock(GameBaseData* dptr);
-    bool  buildPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere);
+    bool  buildPolyListHelper(AbstractPolyList* list, const Box3F& wsBox, const SphereF& __formal, bool render);
+    virtual bool  buildPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere);
+    virtual bool  buildRenderPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere);
     bool            readPI(Stream&);
     bool            writePI(Stream&) const;
     PathedInterior* clone() const;
@@ -146,13 +150,20 @@ public:
     static void initPersistFields();
     void setPathPosition(S32 newPosition);
     void setTargetPosition(S32 targetPosition);
-    void computeNextPathStep(U32 timeDelta);
+    void computeNextPathStep(F64 timeDelta);
     Box3F getExtrudedBox() { return mExtrudedBox; }
     Point3F getVelocity();
     void advance(F64 timeDelta);
 
     U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);
     void unpackUpdate(NetConnection* conn, BitStream* stream);
+
+    void writePacketData(GameConnection* conn, BitStream* stream);
+    void readPacketData(GameConnection* conn, BitStream* stream);
+
+    void doSustainSound();
+
+    bool castRay(const Point3F& start, const Point3F& end, RayInfo* info);
 };
 
 #endif // _H_PATHEDINTERIOR

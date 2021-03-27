@@ -149,19 +149,10 @@ bool PathedInterior::onAdd()
         mClientPathedInteriors = this;
         mInterior->prepForRendering(mInteriorRes.getFilePath());
         //      gInteriorLMManager.addInstance(mInterior->getLMHandle(), mLMHandle, NULL, this);
-    }
-
-    if (isClientObject())
+    } else
     {
-        Point3F initialPos(0.0, 0.0, 0.0);
-        mBaseTransform.getColumn(3, &initialPos);
-        Point3F pathPos(0.0, 0.0, 0.0);
-        //gClientPathManager->getPathPosition(mPathKey, 0, pathPos);
-        mOffset = initialPos - pathPos;
-        //gClientPathManager->getPathPosition(mPathKey, mCurrentPosition, pathPos);
-        MatrixF mat = getTransform();
-        mat.setColumn(3, pathPos + mOffset);
-        setTransform(mat);
+        mNextPathedInterior = mServerPathedInteriors;
+        mServerPathedInteriors = this;
     }
 
     addToScene();
@@ -203,22 +194,35 @@ bool PathedInterior::onNewDataBlock(GameBaseData* dptr)
 
 void PathedInterior::onRemove()
 {
+
+    PathedInterior** walk = &mClientPathedInteriors;
+    while (*walk)
+    {
+        if (*walk == this)
+        {
+            *walk = mNextPathedInterior;
+            break;
+        }
+        walk = &((*walk)->mNextPathedInterior);
+    }
+
+    walk = &mServerPathedInteriors;
+    while (*walk)
+    {
+        if (*walk == this)
+        {
+            *walk = mNextPathedInterior;
+            break;
+        }
+        walk = &((*walk)->mNextPathedInterior);
+    }
+
     if (isClientObject())
     {
         if (mSustainHandle)
         {
             alxStop(mSustainHandle);
             mSustainHandle = 0;
-        }
-        PathedInterior** walk = &mClientPathedInteriors;
-        while (*walk)
-        {
-            if (*walk == this)
-            {
-                *walk = mNextPathedInterior;
-                break;
-            }
-            walk = &((*walk)->mNextPathedInterior);
         }
         if(bool(mInteriorRes) && mLMHandle != 0xFFFFFFFF)
         {
@@ -231,16 +235,26 @@ void PathedInterior::onRemove()
 }
 
 //------------------------------------------------------------------------------
-bool PathedInterior::buildPolyList(AbstractPolyList* list, const Box3F& wsBox, const SphereF&)
+bool PathedInterior::buildPolyListHelper(AbstractPolyList* list, const Box3F& wsBox, const SphereF& __formal, bool render)
 {
     if (bool(mInteriorRes) == false)
         return false;
-
+        
     // Setup collision state data
-    list->setTransform(&getTransform(), getScale());
+    list->setTransform(render ? &mRenderObjToWorld : &getTransform(), getScale());
     list->setObject(this);
 
     return mInterior->buildPolyList(list, wsBox, mWorldToObj, getScale());
+}
+
+bool PathedInterior::buildPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere)
+{
+    return buildPolyListHelper(polyList, box, sphere, false);
+}
+
+bool PathedInterior::buildRenderPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere)
+{
+    return buildPolyListHelper(polyList, box, sphere, true);
 }
 
 
@@ -334,15 +348,25 @@ void PathedInterior::renderObject(SceneState* state)
 
 void PathedInterior::resolvePathKey()
 {
-    if (mPathKey == 0xFFFFFFFF && !isGhost())
+    if (mPathKey == 0xFFFFFFFF)
     {
         mPathKey = getPathKey();
         Point3F pathPos(0.0, 0.0, 0.0);
         Point3F initialPos(0.0, 0.0, 0.0);
         mBaseTransform.getColumn(3, &initialPos);
-        //gServerPathManager->getPathPosition(mPathKey, 0, pathPos);
+        QuatF rotation;
+        rotation.identity();
+        getPathManager()->getPathPosition(mPathKey, 0, pathPos, rotation);
         mOffset = initialPos - pathPos;
     }
+}
+
+PathManager* PathedInterior::getPathManager() const
+{
+    if (isGhost())
+        return gClientPathManager;
+    else
+        return gServerPathManager;
 }
 
 
@@ -357,14 +381,20 @@ U32 PathedInterior::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
         // Inital update...
         stream->writeString(mInteriorResName);
         stream->write(mInteriorResIndex);
-
-        stream->writeAffineTransform(mBaseTransform);
+        
+        MatrixF mat = mBaseTransform;
+        mat.setPosition(mOffset);
+        mathWrite(*stream, mat);
         mathWrite(*stream, mBaseScale);
 
         stream->write(mPathKey);
     }
     if (stream->writeFlag((mask & NewPositionMask) && mPathKey != Path::NoPathIndex))
-        stream->writeInt(S32(mCurrentPosition), gServerPathManager->getPathTimeBits(mPathKey));
+    {
+        stream->write(mCurrentPosition);
+        mathWrite(*stream, getTransform().getPosition());
+        mathWrite(*stream, mCurrentVelocity);
+    }
     if (stream->writeFlag((mask & NewTargetMask) && mPathKey != Path::NoPathIndex))
     {
         if (stream->writeFlag(mTargetPosition < 0))
@@ -372,7 +402,7 @@ U32 PathedInterior::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
             stream->writeFlag(mTargetPosition == -1);
         }
         else
-            stream->writeInt(S32(mTargetPosition), gServerPathManager->getPathTimeBits(mPathKey));
+            stream->writeInt(mTargetPosition, getPathManager()->getPathTimeBits(mPathKey));
     }
     return retMask;
 }
@@ -390,24 +420,22 @@ void PathedInterior::unpackUpdate(NetConnection* con, BitStream* stream)
         mInteriorResName = stream->readSTString();
         stream->read(&mInteriorResIndex);
 
-        stream->readAffineTransform(&tempXForm);
-        mathRead(*stream, &tempScale);
-        mBaseTransform = tempXForm;
-        mBaseScale = tempScale;
+        mathRead(*stream, &mBaseTransform);
+        mOffset = mBaseTransform.getPosition();
+
+        mathRead(*stream, &mBaseScale);
 
         stream->read(&mPathKey);
     }
     if (stream->readFlag())
     {
         Point3F pathPos;
-        mCurrentPosition = stream->readInt(gClientPathManager->getPathTimeBits(mPathKey));
-        if (isProperlyAdded())
-        {
-            //gClientPathManager->getPathPosition(mPathKey, mCurrentPosition, pathPos);
-            MatrixF mat = getTransform();
-            mat.setColumn(3, pathPos + mOffset);
-            setTransform(mat);
-        }
+
+        stream->read(&mCurrentPosition);
+        mathRead(*stream, &pathPos);
+        mathRead(*stream, &mCurrentVelocity);
+        mBaseTransform.setPosition(pathPos);
+        setTransform(mBaseTransform);
     }
     if (stream->readFlag())
     {
@@ -416,38 +444,70 @@ void PathedInterior::unpackUpdate(NetConnection* con, BitStream* stream)
             mTargetPosition = stream->readFlag() ? -1 : -2;
         }
         else
-            mTargetPosition = stream->readInt(gClientPathManager->getPathTimeBits(mPathKey));
+            mTargetPosition = stream->readInt(getPathManager()->getPathTimeBits(mPathKey));
     }
+}
+
+void PathedInterior::writePacketData(GameConnection* conn, BitStream* stream)
+{
+    Parent::writePacketData(conn, stream);
+    MatrixF mat = getTransform();
+    Point3F curPos = mat.getPosition();
+
+    stream->write(mCurrentPosition);
+    stream->write(mTargetPosition);
+    mathWrite(*stream, curPos);
+    mathWrite(*stream, mCurrentVelocity);
+    stream->write(mStopTime);
+}
+
+void PathedInterior::readPacketData(GameConnection* conn, BitStream* stream)
+{
+    Parent::readPacketData(conn, stream);
+    stream->read(&mCurrentPosition);
+    stream->read(&mTargetPosition);
+
+    Point3F pathPos;
+    mathRead(*stream, &pathPos);
+
+    mathRead(*stream, &mCurrentVelocity);
+
+    MatrixF mat = getTransform();
+    mat.setPosition(pathPos);
+
+    setTransform(mat);
+
+    stream->read(&mStopTime);
 }
 
 void PathedInterior::processTick(const Move* move)
 {
-    if (isServerObject())
+    computeNextPathStep(TickMs);
+    advance(TickMs);
+    U32 oldNetUpdate = mNextNetUpdate;
+    mNextNetUpdate--;
+    if (!oldNetUpdate)
     {
-        U32 timeMs = 32;
-        if (mCurrentPosition != mTargetPosition)
-        {
-            S32 delta;
-            if (mTargetPosition == -1)
-                delta = timeMs;
-            else if (mTargetPosition == -2)
-                delta = -timeMs;
-            else
-            {
-                delta = mTargetPosition - mCurrentPosition;
-                if (delta < -timeMs)
-                    delta = -timeMs;
-                else if (delta > timeMs)
-                    delta = timeMs;
-            }
-            mCurrentPosition += delta;
-            U32 totalTime = gClientPathManager->getPathTotalTime(mPathKey);
-            while (mCurrentPosition > totalTime)
-                mCurrentPosition -= totalTime;
-            while (mCurrentPosition < 0)
-                mCurrentPosition += totalTime;
-        }
+        setMaskBits(NewPositionMask);
+        mNextNetUpdate = TickMs;
     }
+    doSustainSound();
+    mCurrentVelocity *= getMin(mStopTime, (F64)TickMs) * 0.03125f;
+    mStopTime = 1000.0;
+}
+
+void PathedInterior::interpolateTick(F32 delta)
+{
+    MatrixF mat = getTransform();
+    Point3F newPoint = mCurrentVelocity * 0.03200000151991844;
+    newPoint = mat.getPosition() - (newPoint * delta);
+    mat.setPosition(newPoint);
+    setRenderTransform(mat);
+}
+
+void PathedInterior::doSustainSound()
+{
+    // TODO: Implement doSustainSound
 }
 
 void PathedInterior::setStopped()
@@ -455,10 +515,12 @@ void PathedInterior::setStopped()
     mStopTime = getMin(mAdvanceTime, mStopTime);
 }
 
-void PathedInterior::computeNextPathStep(U32 timeDelta)
+void PathedInterior::computeNextPathStep(F64 timeDelta)
 {
-    S32 timeMs = timeDelta;
-    //mStopped = false;
+    mAdvanceTime = 0.0;
+
+    if (mPathKey == -1)
+        resolvePathKey();
 
     if (mCurrentPosition == mTargetPosition)
     {
@@ -467,15 +529,15 @@ void PathedInterior::computeNextPathStep(U32 timeDelta)
     }
     else
     {
-        S32 delta;
+        F64 delta;
         if (mTargetPosition < 0)
         {
             if (mTargetPosition == -1)
-                delta = timeMs;
+                delta = timeDelta;
             else if (mTargetPosition == -2)
-                delta = -timeMs;
+                delta = -timeDelta;
             mCurrentPosition += delta;
-            U32 totalTime = gClientPathManager->getPathTotalTime(mPathKey);
+            U32 totalTime = getPathManager()->getPathTotalTime(mPathKey);
             while (mCurrentPosition >= totalTime)
                 mCurrentPosition -= totalTime;
             while (mCurrentPosition < 0)
@@ -484,10 +546,10 @@ void PathedInterior::computeNextPathStep(U32 timeDelta)
         else
         {
             delta = mTargetPosition - mCurrentPosition;
-            if (delta < -timeMs)
-                delta = -timeMs;
-            else if (delta > timeMs)
-                delta = timeMs;
+            if (delta < -timeDelta)
+                delta = -timeDelta;
+            else if (delta > timeDelta)
+                delta = timeDelta;
             mCurrentPosition += delta;
         }
 
@@ -495,7 +557,9 @@ void PathedInterior::computeNextPathStep(U32 timeDelta)
         Point3F newPoint(0.0, 0.0, 0.0);
         MatrixF mat = getTransform();
         mat.getColumn(3, &curPoint);
-        //gClientPathManager->getPathPosition(mPathKey, mCurrentPosition, newPoint);
+        QuatF rotation;
+        rotation.identity();
+        getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint, rotation);
         newPoint += mOffset;
 
         Point3F displaceDelta = newPoint - curPoint;
@@ -516,25 +580,6 @@ void PathedInterior::computeNextPathStep(U32 timeDelta)
 
         mCurrentVelocity = displaceDelta * 1000 / F32(timeDelta);
     }
-    Point3F pos;
-    mExtrudedBox.getCenter(&pos);
-    MatrixF mat = getTransform();
-    mat.setColumn(3, pos);
-    if (!mSustainHandle && mDataBlock->sound[PathedInteriorData::SustainSound])
-    {
-        //F32 volSave = mDataBlock->sound[PathedInteriorData::SustainSound]->mDescriptionObject->mDescription.mVolume;
-        //mDataBlock->sound[PathedInteriorData::SustainSound]->mDescriptionObject->mDescription.mVolume = 0;
-        mSustainHandle = alxPlay(mDataBlock->sound[PathedInteriorData::SustainSound], &mat);
-        //mDataBlock->sound[PathedInteriorData::SustainSound]->mDescriptionObject->mDescription.mVolume = volSave;
-    }
-    if (mSustainHandle)
-    {
-        Point3F pos;
-        mExtrudedBox.getCenter(&pos);
-        MatrixF mat = getTransform();
-        mat.setColumn(3, pos);
-        alxSourceMatrixF(mSustainHandle, &mat);
-    }
 }
 
 Point3F PathedInterior::getVelocity()
@@ -552,42 +597,68 @@ PathedInterior* PathedInterior::getPathedInteriors(NetObject* obj)
 
 void PathedInterior::pushTickState()
 {
-    // TODO: Implement pushTickState
+    MatrixF mat = getTransform();
+    Point3F curPos = mat.getPosition();
+    mSavedState.pathPosition = mCurrentPosition;
+    mSavedState.stopTime = mStopTime;
+    mSavedState.extrudedBox = mExtrudedBox;
+    mSavedState.velocity = mCurrentVelocity;
+    mSavedState.worldPosition = curPos;
+    mSavedState.targetPos = mTargetPosition;
 }
 
 void PathedInterior::popTickState()
 {
-    // TODO: Implement popTickState
+    mCurrentPosition = mSavedState.pathPosition;
+    mExtrudedBox = mSavedState.extrudedBox;
+    mCurrentVelocity = mSavedState.velocity;
+    resetTickState(true);
+    mStopTime = mSavedState.stopTime;
+    mTargetPosition = mSavedState.targetPos;
 }
 
 void PathedInterior::resetTickState(bool setT)
 {
-    // TODO: Implement resetTickState
+    mAdvanceTime = 0.0;
+    Point3F curPos = mSavedState.worldPosition;
+    if (setT)
+    {
+        MatrixF mat = getTransform();
+        mat.setPosition(curPos);
+        setTransform(mat);
+    } else
+    {
+        mObjToWorld.setPosition(curPos);
+    }
 }
+
+bool PathedInterior::castRay(const Point3F& start, const Point3F& end, RayInfo* info)
+{
+    info->object = this;
+    if (!mInterior->castRay(start, end, info))
+        return false;
+
+    PlaneF fakePlane(info->normal.x, info->normal.y, info->normal.z, 0.0f);
+
+    PlaneF result;
+    mTransformPlane(getTransform(), getScale(), fakePlane, &result);
+    info->normal = result;
+
+    return true;
+}
+
 
 void PathedInterior::advance(F64 timeDelta)
 {
-    //if (mStopped)
-    //    return;
-
-    F64 timeMs = timeDelta;
-    if (mCurrentVelocity.len() == 0)
+    if (timeDelta + mAdvanceTime < mStopTime ||
+       (timeDelta = timeDelta - ((timeDelta + mAdvanceTime) - mStopTime), timeDelta > 0.0))
     {
-        //      if(mSustainHandle)
-        //      {
-        //         alxStop(mSustainHandle);
-        //         mSustainHandle = 0;
-        //      }
-        return;
+        MatrixF mat = getTransform();
+        Point3F newPoint = (F32)timeDelta * mCurrentVelocity;
+        newPoint = (newPoint / 1000.0) + mat.getPosition();
+        mat.setPosition(newPoint);
+        setTransform(mat);
     }
-    MatrixF mat = getTransform();
-    Point3F newPoint;
-    mat.getColumn(3, &newPoint);
-    newPoint += mCurrentVelocity * timeDelta / 1000.0f;
-    //gClientPathManager->getPathPosition(mPathKey, mCurrentPosition, newPoint);
-    mat.setColumn(3, newPoint);// + mOffset);
-    setTransform(mat);
-    setRenderTransform(mat);
 }
 
 U32 PathedInterior::getPathKey()
@@ -614,9 +685,22 @@ void PathedInterior::setPathPosition(S32 newPosition)
     resolvePathKey();
     if (newPosition < 0)
         newPosition = 0;
-    if (newPosition > gServerPathManager->getPathTotalTime(mPathKey))
-        newPosition = gServerPathManager->getPathTotalTime(mPathKey);
+    if (newPosition > getPathManager()->getPathTotalTime(mPathKey))
+        newPosition = getPathManager()->getPathTotalTime(mPathKey);
     mCurrentPosition = mTargetPosition = newPosition;
+
+    MatrixF mat = getTransform();
+
+    QuatF rotation;
+    rotation.identity();
+
+    Point3F newPoint;
+    getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint, rotation);
+
+    newPoint += mOffset;
+    mat.setPosition(newPoint);
+    setTransform(mat);
+
     setMaskBits(NewPositionMask | NewTargetMask);
 }
 
@@ -625,8 +709,8 @@ void PathedInterior::setTargetPosition(S32 newPosition)
     resolvePathKey();
     if (newPosition < -2)
         newPosition = 0;
-    if (newPosition > S32(gServerPathManager->getPathTotalTime(mPathKey)))
-        newPosition = gServerPathManager->getPathTotalTime(mPathKey);
+    if (newPosition > S32(getPathManager()->getPathTotalTime(mPathKey)))
+        newPosition = getPathManager()->getPathTotalTime(mPathKey);
     if (mTargetPosition != newPosition)
     {
         mTargetPosition = newPosition;

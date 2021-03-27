@@ -402,6 +402,11 @@ bool SceneObject::buildPolyList(AbstractPolyList*, const Box3F&, const SphereF&)
     return false;
 }
 
+bool SceneObject::buildRenderPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere)
+{
+    return buildPolyList(polyList, box, sphere);
+}
+
 BSPNode* SceneObject::buildCollisionBSP(BSPTree*, const Box3F&, const SphereF&)
 {
     return NULL;

@@ -274,7 +274,7 @@ void BlobShadow::collisionCallback(SceneObject * obj, void* thisPtr)
    {
       // only interiors clip...
       ClippedPolyList::allowClipping = (dynamic_cast<InteriorInstance*>(obj) != NULL);
-      obj->buildPolyList(&smDepthSortList,gBlobShadowBox,gBlobShadowSphere);
+      obj->buildRenderPolyList(&smDepthSortList,gBlobShadowBox,gBlobShadowSphere);
       ClippedPolyList::allowClipping = true;
    }
 }
