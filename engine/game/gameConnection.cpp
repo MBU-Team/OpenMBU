@@ -1206,7 +1206,7 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
 
         bstream->writeInt(mLastMoveAck - mMoveList.size(), 32);
 
-        bstream->writeInt(gServerProcessList.getTotalTicks() & 0x3FF, 10);
+        bstream->writeInt(getCurrentServerProcessList()->getTotalTicks() & 0x3FF, 10);
 
         // get the ghost index of the control object, and write out
         // all the damage flash & white out

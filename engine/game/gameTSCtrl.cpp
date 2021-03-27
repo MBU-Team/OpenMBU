@@ -35,8 +35,10 @@ void GameTSCtrl::consoleInit()
 //---------------------------------------------------------------------------
 bool GameTSCtrl::processCameraQuery(CameraQuery* camq)
 {
+    if (gRenderPreview)
+        return true;
     GameUpdateCameraFov();
-    return GameProcessCameraQuery(camq) || gRenderPreview; // Might be wrong - Matt
+    return GameProcessCameraQuery(camq);
 }
 
 //---------------------------------------------------------------------------

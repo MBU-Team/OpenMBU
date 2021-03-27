@@ -450,7 +450,7 @@ void ProcessList::advanceObjects()
                 if (!obj.isNull() && obj->getControllingClient())
                 {
                     U32 newsum = Move::ChecksumMask & obj->getPacketDataChecksum(con);
-                    if (obj->isGhost())
+                    if (obj->isGhost() || gSPMode)
                         movePtr->checksum = newsum;
                     else if (movePtr->checksum != newsum)
                     {
@@ -479,7 +479,7 @@ void ProcessList::advanceObjects()
             obj->processTick(NULL);
         }
 LABEL_16:
-        if (obj && obj->isGhost() && (obj->getType() & GameBaseHiFiObjectType) != 0)
+        if (obj && (obj->isGhost() || gSPMode) && (obj->getType() & GameBaseHiFiObjectType) != 0)
         {
             GameConnection* serverCon = GameConnection::getConnectionToServer();
 
