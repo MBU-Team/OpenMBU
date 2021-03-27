@@ -5,6 +5,8 @@
 //--------------------------------------------------------------------------
 
 #include "interior/pathedInterior.h"
+
+#include "interiorInstance.h"
 #include "core/stream.h"
 #include "console/consoleTypes.h"
 #include "sceneGraph/sceneState.h"
@@ -75,9 +77,13 @@ bool PathedInteriorData::preload(bool server, char errorBuffer[256])
 
 PathedInterior::PathedInterior()
 {
-    // TODO: These are different in MB
+#ifdef MB_ULTRA
+    mNetFlags.set(TickLast | HiFiPassive | Ghostable);
+    mTypeMask = InteriorObjectType | GameBaseHiFiObjectType;
+#else
     mNetFlags.set(Ghostable);
     mTypeMask = InteriorObjectType;
+#endif
 
     mCurrentPosition = 0;
     mTargetPosition = 0;
@@ -159,6 +165,20 @@ bool PathedInterior::onAdd()
     }
 
     addToScene();
+
+    mDummyInst = new InteriorInstance;
+    mDummyInst->mZoneRefHead = mZoneRefHead;
+    mDummyInst->mLMHandle = mLMHandle;
+    mDummyInst->mReflectPlanes = mInterior->mReflectPlanes;
+    if (!mDummyInst->mReflectPlanes.empty())
+    {
+        // if any reflective planes, add interior to the reflective set of objects
+        SimSet* reflectSet = dynamic_cast<SimSet*>(Sim::findObject("reflectiveSet"));
+        reflectSet->addObject((SimObject*)mDummyInst);
+    }
+    
+    // Install material list
+    mDummyInst->mMaterialMaps.push_back(new MaterialList(mInterior->mMaterialList));
 
     return true;
 }
@@ -248,6 +268,15 @@ bool PathedInterior::prepRenderImage(SceneState* state, const U32 stateKey,
               image->obj = this;
               state->insertRenderImage(image);
         */
+
+        if (!isHidden())
+        {
+            mDummyInst->setTransform(mRenderObjToWorld);
+            mDummyInst->setScale(mObjScale);
+            GFX->pushWorldMatrix();
+            mInterior->prepBatchRender(mDummyInst, state);
+            GFX->popWorldMatrix();
+        }
     }
 
     return false;

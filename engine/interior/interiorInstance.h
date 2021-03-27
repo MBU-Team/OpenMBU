@@ -52,6 +52,7 @@ class InteriorInstance : public SceneObject
     typedef SceneObject Parent;
     friend class SceneLighting;
     friend class FloorPlan;
+    friend class PathedInterior;
 
 public:
     InteriorInstance();

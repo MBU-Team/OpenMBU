@@ -174,6 +174,7 @@ class Interior
     friend class InteriorConvex;
     friend class EditInteriorResource;
     friend class InteriorLMManager;
+    friend class PathedInterior;
 
     //-------------------------------------- Public interfaces
 public:
