@@ -495,9 +495,6 @@ void GameBase::ageTickCache(S32 numToAge, S32 len)
         dropOldest();
     }
 
-    if (gSPMode && mTickCacheHead == NULL)
-        addTickCacheEntry();
-
     while (mTickCacheHead->numEntry > len)
         dropNextOldest();
     while (mTickCacheHead->numEntry < len)
