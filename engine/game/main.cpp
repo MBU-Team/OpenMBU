@@ -289,6 +289,7 @@ static F32 gTimeScale = 1.0;
 static U32 gTimeAdvance = 0;
 static U32 gFrameSkip = 0;
 static U32 gFrameCount = 0;
+static bool gGamePaused = false;
 
 // Executes an entry script; can be controlled by command-line options.
 bool runEntryScript(int argc, const char** argv)
@@ -347,6 +348,7 @@ bool initGame(int argc, const char** argv)
     Con::addVariable("timeScale", TypeF32, &gTimeScale);
     Con::addVariable("timeAdvance", TypeS32, &gTimeAdvance);
     Con::addVariable("frameSkip", TypeS32, &gFrameSkip);
+    Con::addVariable("gamePaused", TypeBool, &gGamePaused);
     Con::addVariable("pref::Video::noRenderAstrolabe", TypeBool, &gNoRenderAstrolabe);
 
     // Stuff game types into the console
@@ -725,30 +727,36 @@ void DemoGame::processTimeEvent(TimeEvent* event)
 
     Platform::advanceTime(elapsedTime);
     bool tickPass;
-    PROFILE_START(ServerProcess);
-    tickPass = serverProcess(timeDelta);
-    PROFILE_END();
-    PROFILE_START(ServerNetProcess);
-    // only send packets if a tick happened
-    if (tickPass)
-        GNet->processServer();
-    PROFILE_END();
+    if (!gGamePaused)
+    {
+        PROFILE_START(ServerProcess);
+        tickPass = serverProcess(timeDelta);
+        PROFILE_END();
+        PROFILE_START(ServerNetProcess);
+        // only send packets if a tick happened
+        if (tickPass)
+            GNet->processServer();
+        PROFILE_END();
 
-    PROFILE_START(SPModeProcess);
-    tickPass = spmodeProcess(timeDelta);
-    PROFILE_END();
+        PROFILE_START(SPModeProcess);
+        tickPass = spmodeProcess(timeDelta);
+        PROFILE_END();
+    }
 
     PROFILE_START(SimAdvanceTime);
     Sim::advanceTime(timeDelta);
     PROFILE_END();
 
-    PROFILE_START(ClientProcess);
-    tickPass = clientProcess(timeDelta);
-    PROFILE_END();
-    PROFILE_START(ClientNetProcess);
-    if (tickPass)
-        GNet->processClient();
-    PROFILE_END();
+    if (!gGamePaused)
+    {
+        PROFILE_START(ClientProcess);
+        tickPass = clientProcess(timeDelta);
+        PROFILE_END();
+        PROFILE_START(ClientNetProcess);
+        if (tickPass)
+            GNet->processClient();
+        PROFILE_END();
+    }
 
     Material::updateTime();
 
