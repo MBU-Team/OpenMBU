@@ -713,8 +713,8 @@ public:
     bool isRemoved() const { return mFlags.test(Deleted | Removed); }
     bool isLocked();
     void setLocked(bool b);
-    bool isHidden();
-    void setHidden(bool b);
+    virtual bool isHidden();
+    virtual void setHidden(bool b);
 
     /// @}
 

@@ -177,7 +177,7 @@ void GuiShapeNameHud::onRender(Point2I, const RectI& updateRect)
     // so we can find all the shape base objects by iterating through
     // our current connection.
     for (SimSetIterator itr(conn); *itr; ++itr) {
-        if ((*itr)->getType() & ShapeBaseObjectType) {
+        if (((*itr)->getType() & ShapeBaseObjectType) != 0 && !(*itr)->isHidden()) {
             ShapeBase* shape = static_cast<ShapeBase*>(*itr);
 #ifdef MB_ULTRA
             Item* item = dynamic_cast<Item*>(shape);
@@ -492,8 +492,36 @@ LABEL_47:
     F32 low = mMinArrowFraction;
 
     F32 unk5 = mClampF(1.0f - distToShape / 100.0f, low, 1.0f);
+
+    F32 arrowWidth = mFullArrowWidth * unk5;
+
+    Point2F unk7(arrowWidth * arrowDir.y, arrowWidth * -arrowDir.x);
+
+    Point2F thingyNew = unk7 * 0.5f;
     
-    // TODO: Implement GuiShapeNameHud::renderArrow
+    F32 arrowLength = mFullArrowLength * unk5;
+
+    Point2F thingyNew2 = arrowLength * arrowDir;
+    Point2F thingyNew3 = drawPoint - thingyNew2;
+
+    Point2F potato = thingyNew3 + thingyNew;
+
+    Point2F foxNews = thingyNew3 - thingyNew;
+
+    F32 someVar2 = 0.5f * arrowWidth * someVar;
+    Point2F someVar3 = someVar2 * arrowDir;
+
+    F32 someVar4 = someVar * arrowLength;
+    Point2F someVar5 = someVar4 * arrowDir;
+
+    Point2F bingo = drawPoint - someVar5;
+    Point2F marco = bingo + someVar3;
+
+    Point2F doggo = bingo - someVar3;
+
+    Point2F polo = arrowDir * (someVar4 + someVar4);
+
+    Point2F fireflies = drawPoint - polo;
 
     GFX->setBaseRenderState();
     GFX->setCullMode(GFXCullNone);
@@ -529,18 +557,23 @@ LABEL_47:
 
     if (arrowAlpha != 0.0f)
     {
-        PrimBuild::begin(GFXLineStrip, 5);
+        PrimBuild::begin(GFXTriangleList, 6);
         GFX->setupGenericShaders();
         PrimBuild::color4f(refColor.red, refColor.green, refColor.blue, arrowAlpha);
         if (unk1)
         {
-            // TODO: Implement GuiShapeNameHud::renderArrow
+            PrimBuild::vertex2f(potato.x, potato.y);
+            PrimBuild::vertex2f(foxNews.x, foxNews.y);
+            PrimBuild::vertex2f(doggo.x, doggo.y);
+            PrimBuild::vertex2f(potato.x, potato.y);
+            PrimBuild::vertex2f(marco.x, marco.y);
+            PrimBuild::vertex2f(doggo.x, doggo.y);
         } else
         {
-            // TODO: Implement GuiShapeNameHud::renderArrow
+            PrimBuild::vertex2f(drawPoint.x, drawPoint.y);
+            PrimBuild::vertex2f(potato.x, potato.y);
+            PrimBuild::vertex2f(foxNews.x, foxNews.y);
         }
-
-        // TODO: Implement GuiShapeNameHud::renderArrow
 
         PrimBuild::end();
         PrimBuild::begin(GFXLineList, 12);
@@ -548,13 +581,27 @@ LABEL_47:
         PrimBuild::color4f(0.0f, 0.0f, 0.0f, arrowAlpha);
         if (unk1)
         {
-            // TODO: Implement GuiShapeNameHud::renderArrow
+            PrimBuild::vertex2f(potato.x, potato.y);
+            PrimBuild::vertex2f(marco.x, marco.y);
+            PrimBuild::vertex2f(marco.x, marco.y);
+            PrimBuild::vertex2f(doggo.x, doggo.y);
+            PrimBuild::vertex2f(doggo.x, doggo.y);
+            PrimBuild::vertex2f(foxNews.x, foxNews.y);
+            PrimBuild::vertex2f(foxNews.x, foxNews.y);
+            PrimBuild::vertex2f(potato.x, potato.y);
+            PrimBuild::vertex2f(marco.x, marco.y);
+            PrimBuild::vertex2f(fireflies.x, fireflies.y);
+            PrimBuild::vertex2f(doggo.x, doggo.y);
+            PrimBuild::vertex2f(fireflies.x, fireflies.y);
         } else
         {
-            // TODO: Implement GuiShapeNameHud::renderArrow
+            PrimBuild::vertex2f(drawPoint.x, drawPoint.y);
+            PrimBuild::vertex2f(potato.x, potato.y);
+            PrimBuild::vertex2f(potato.x, potato.y);
+            PrimBuild::vertex2f(foxNews.x, foxNews.y);
+            PrimBuild::vertex2f(foxNews.x, foxNews.y);
+            PrimBuild::vertex2f(drawPoint.x, drawPoint.y);
         }
-
-        // TODO: Implement GuiShapeNameHud::renderArrow
 
         PrimBuild::end();
     }
@@ -566,22 +613,84 @@ LABEL_47:
 
         GFX->setupGenericShaders();
         PrimBuild::color4f(refColor.red, refColor.green, refColor.blue, circleAlpha);
-
+        
         if (unk5 >= 0.7f)
         {
             if (unk5 < 0.8f)
-            {
-                // TODO: Implement GuiShapeNameHud::renderArrow
-            }
+                unk6 = ((unk5 - 0.7f) * 10.0f) * (unk6 - d2) + d2;
             PrimBuild::begin(GFXTriangleList, 12);
-            // TODO: Implement GuiShapeNameHud::renderArrow
+
+            Point2F unk11 = drawPoint - unk6;
+            Point2F unk12 = unk11 + d2;
+            Point2F unk14 = drawPoint + unk6;
+            Point2F unk13 = unk14 - d2;
+
+            // Top Left
+            PrimBuild::vertex2f(unk12.x, unk12.y);
+            PrimBuild::vertex2f(unk12.x, unk11.y);
+            PrimBuild::vertex2f(unk11.x, unk12.y);
+
+            // Top Right
+            PrimBuild::vertex2f(unk13.x, unk12.y);
+            PrimBuild::vertex2f(unk13.x, unk11.y);
+            PrimBuild::vertex2f(unk14.x, unk12.y);
+
+            // Bottom Right
+            PrimBuild::vertex2f(unk13.x, unk13.y);
+            PrimBuild::vertex2f(unk13.x, unk14.y);
+            PrimBuild::vertex2f(unk14.x, unk13.y);
+
+            // Bottom Left
+            PrimBuild::vertex2f(unk12.x, unk13.y);
+            PrimBuild::vertex2f(unk12.x, unk14.y);
+            PrimBuild::vertex2f(unk11.x, unk13.y);
+
+            PrimBuild::end();
+
+            PrimBuild::begin(GFXLineList, 8);
+            GFX->setupGenericShaders();
+            PrimBuild::color4f(0.0f, 0.0f, 0.0f, circleAlpha);
+
+            PrimBuild::vertex2f(unk12.x, unk11.y);
+            PrimBuild::vertex2f(unk11.x, unk12.y);
+            PrimBuild::vertex2f(unk13.x, unk11.y);
+
+            PrimBuild::vertex2f(unk14.x, unk12.y);
+            PrimBuild::vertex2f(unk13.x, unk14.y);
+            PrimBuild::vertex2f(unk14.x, unk13.y);
+
+            PrimBuild::vertex2f(unk12.x, unk14.y);
+            PrimBuild::vertex2f(unk11.x, unk13.y);
         } else
         {
             PrimBuild::begin(GFXTriangleList, 6);
-            // TODO: Implement GuiShapeNameHud::renderArrow
-        }
+            Point2F var42 = drawPoint - d2;
+            Point2F var43 = drawPoint + d2;
 
-        // TODO: Implement GuiShapeNameHud::renderArrow
+            PrimBuild::vertex2f(var42.x, drawPoint.y);
+            PrimBuild::vertex2f(var42.x, var42.y);
+            PrimBuild::vertex2f(var43.x, drawPoint.y);
+
+            PrimBuild::vertex2f(var42.x, drawPoint.y);
+            PrimBuild::vertex2f(drawPoint.x, var43.y);
+            PrimBuild::vertex2f(var43.x, drawPoint.y);
+
+            PrimBuild::end();
+            PrimBuild::begin(GFXLineList, 8);
+            GFX->setupGenericShaders();
+            PrimBuild::color4f(0.0f, 0.0f, 0.0f, circleAlpha);
+
+            PrimBuild::vertex2f(var43.x, drawPoint.y);
+            PrimBuild::vertex2f(drawPoint.x, var42.y);
+            PrimBuild::vertex2f(drawPoint.x, var42.y);
+
+            PrimBuild::vertex2f(var43.x, drawPoint.y);
+            PrimBuild::vertex2f(var43.x, drawPoint.y);
+            PrimBuild::vertex2f(drawPoint.x, var43.y);
+
+            PrimBuild::vertex2f(drawPoint.x, var43.y);
+            PrimBuild::vertex2f(var42.x, drawPoint.y);
+        }
 
         PrimBuild::end();
     }

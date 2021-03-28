@@ -20,7 +20,15 @@ GuiTSCtrl::GuiTSCtrl()
 
     mSaveModelview.identity();
     mSaveProjection.identity();
+
+    mLastCameraQuery.object = NULL;
+    mLastCameraQuery.nearPlane = 0.1f;
+    mLastCameraQuery.farPlane = 1000.0f;
+    mLastCameraQuery.fov = 1.5707964f;
+    mLastCameraQuery.fovy = 2.0943952f;
+    mLastCameraQuery.cameraMatrix.identity();
 }
+
 void GuiTSCtrl::initPersistFields()
 {
     Parent::initPersistFields();

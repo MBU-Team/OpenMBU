@@ -18,14 +18,14 @@
 
 struct CameraQuery
 {
-    SimObject* object;
-    F32         nearPlane;
-    F32         farPlane;
-    F32         fov;
+    SimObject* object = NULL;
+    F32         nearPlane = 1.0f;
+    F32         farPlane = 100.0f;
+    F32         fov = 1.5707964f;
 #ifdef MB_ULTRA
-    F32         fovy;
+    F32         fovy = 1.5707964f;
 #endif
-    MatrixF     cameraMatrix;
+    MatrixF     cameraMatrix = MatrixF(true);
 
     //Point3F position;
     //Point3F viewVector;
