@@ -70,8 +70,20 @@ bool GuiTSCtrl::unproject(const Point3F& pt, Point3F* dest)
 
 void GuiTSCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
+#ifdef MB_ULTRA
+    CameraQuery newCam = mLastCameraQuery;
+    newCam.fovy =  0.0f;
+    if (!processCameraQuery(&newCam))
+        return;
+
+    if (newCam.fovy == 0.0f)
+        newCam.fovy = mBounds.extent.y * newCam.fov / mBounds.extent.x;
+
+    mLastCameraQuery = newCam;
+#else
     if (!processCameraQuery(&mLastCameraQuery))
         return;
+#endif
 
     if (mForceFOV != 0)
         mLastCameraQuery.fov = mDegToRad(mForceFOV);

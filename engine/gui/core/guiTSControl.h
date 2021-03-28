@@ -22,6 +22,9 @@ struct CameraQuery
     F32         nearPlane;
     F32         farPlane;
     F32         fov;
+#ifdef MB_ULTRA
+    F32         fovy;
+#endif
     MatrixF     cameraMatrix;
 
     //Point3F position;

@@ -177,12 +177,18 @@ public:
     // Arithmetic w/ other points
     Point2F  operator+(const Point2F&) const;
     Point2F  operator-(const Point2F&) const;
+    Point2F  operator*(const Point2F&) const;
     Point2F& operator+=(const Point2F&);
     Point2F& operator-=(const Point2F&);
-
+    Point2F& operator*=(const Point2F&);
+    
     // Arithmetic w/ scalars
+    Point2F  operator+(const F32) const;
+    Point2F  operator-(const F32) const;
     Point2F  operator*(const F32) const;
     Point2F  operator/(const F32) const;
+    Point2F& operator+=(const F32);
+    Point2F& operator-=(const F32);
     Point2F& operator*=(const F32);
     Point2F& operator/=(const F32);
 
@@ -896,6 +902,11 @@ inline Point2F Point2F::operator-(const Point2F& _rSub) const
     return Point2F(x - _rSub.x, y - _rSub.y);
 }
 
+inline Point2F Point2F::operator*(const Point2F& _mul) const
+{
+    return Point2F(x * _mul.x, y * _mul.y);
+}
+
 
 inline Point2F& Point2F::operator+=(const Point2F& _add)
 {
@@ -915,6 +926,24 @@ inline Point2F& Point2F::operator-=(const Point2F& _rSub)
 }
 
 
+inline Point2F& Point2F::operator*=(const Point2F& _mul)
+{
+    x *= _mul.x;
+    y *= _mul.y;
+
+    return *this;
+}
+
+inline Point2F Point2F::operator+(const F32 _add) const
+{
+    return Point2F(x + _add, y + _add);
+}
+
+inline Point2F Point2F::operator-(const F32 _rSub) const
+{
+    return Point2F(x - _rSub, y - _rSub);
+}
+
 inline Point2F Point2F::operator*(const F32 _mul) const
 {
     return Point2F(x * _mul, y * _mul);
@@ -930,6 +959,21 @@ inline Point2F Point2F::operator/(const F32 _div) const
     return Point2F(x * inv, y * inv);
 }
 
+inline Point2F& Point2F::operator+=(const F32 _add)
+{
+    x += _add;
+    y += _add;
+
+    return *this;
+}
+
+inline Point2F& Point2F::operator-=(const F32 _rSub)
+{
+    x -= _rSub;
+    y -= _rSub;
+
+    return *this;
+}
 
 inline Point2F& Point2F::operator*=(const F32 _mul)
 {

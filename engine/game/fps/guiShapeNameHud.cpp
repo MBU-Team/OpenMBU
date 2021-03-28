@@ -9,6 +9,7 @@
 #include "sceneGraph/sceneGraph.h"
 #include "game/shapeBase.h"
 #include "game/gameConnection.h"
+#include "gfx/primBuilder.h"
 
 #ifdef MB_ULTRA
 #include "game/item.h"
@@ -38,6 +39,15 @@ class GuiShapeNameHud : public GuiControl {
     F32      mDistanceFade;
     bool     mShowFrame;
     bool     mShowFill;
+
+#ifdef MB_ULTRA
+    Point2F mEllipseScreenFraction;
+    F32 mMaxArrowAlpha;
+    F32 mMaxTargetAlpha;
+    F32 mFullArrowLength;
+    F32 mFullArrowWidth;
+    F32 mMinArrowFraction;
+#endif
 
 protected:
     void drawName(Point2I offset, const char* buf, F32 opacity);
@@ -69,8 +79,18 @@ GuiShapeNameHud::GuiShapeNameHud()
     mFrameColor.set(0, 1, 0, 1);
     mTextColor.set(0, 1, 0, 1);
     mShowFrame = mShowFill = true;
-    mVerticalOffset = 0.5;
-    mDistanceFade = 0.1;
+    mVerticalOffset = 0.5f;
+    mDistanceFade = 0.1f;
+
+#ifdef MB_ULTRA
+    mEllipseScreenFraction.x = 0.75;
+    mEllipseScreenFraction.y = 0.75;
+    mMaxArrowAlpha = 0.6f;
+    mMaxTargetAlpha = 0.4f;
+    mFullArrowLength = 60.0f;
+    mFullArrowWidth = 40.0f;
+    mMinArrowFraction = 0.3f;
+#endif
 }
 
 void GuiShapeNameHud::initPersistFields()
@@ -87,6 +107,15 @@ void GuiShapeNameHud::initPersistFields()
     addField("showFrame", TypeBool, Offset(mShowFrame, GuiShapeNameHud));
     addField("verticalOffset", TypeF32, Offset(mVerticalOffset, GuiShapeNameHud));
     addField("distanceFade", TypeF32, Offset(mDistanceFade, GuiShapeNameHud));
+
+#ifdef MB_ULTRA
+    addField("ellipseScreenFraction", TypePoint2F, Offset(mEllipseScreenFraction, GuiShapeNameHud));
+    addField("maxArrowAlpha", TypeF32, Offset(mMaxArrowAlpha, GuiShapeNameHud));
+    addField("maxTargetAlpha", TypeF32, Offset(mMaxTargetAlpha, GuiShapeNameHud));
+    addField("fullArrowLength", TypeF32, Offset(mFullArrowLength, GuiShapeNameHud));
+    addField("fullArrowWidth", TypeF32, Offset(mFullArrowWidth, GuiShapeNameHud));
+    addField("minArrowFraction", TypeF32, Offset(mMinArrowFraction, GuiShapeNameHud));
+#endif
     endGroup("Misc");
 }
 
@@ -274,6 +303,290 @@ void GuiShapeNameHud::drawName(Point2I offset, const char* name, F32 opacity)
 #ifdef MB_ULTRA
 void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
 {
+    GuiTSCtrl* parent = dynamic_cast<GuiTSCtrl*>(getParent());
+    if (!parent)
+        return;
+
+    GameConnection* con = GameConnection::getConnectionToServer();
+    if (!con)
+        return;
+
+    ShapeBase* control = con->getControlObject();
+    if (!control)
+        return;
+    
+    Marble* marble = dynamic_cast<Marble*>(control);
+
+    MatrixF gravityMat;
+    if (marble)
+        marble->getGravityRenderFrame().setMatrix(&gravityMat)->inverse();
+    else
+        gravityMat.identity();
+
+    MatrixF cam = parent->mLastCameraQuery.cameraMatrix;
+    Point3F shapeDir = shapePos - cam.getPosition();
+
+    U32 behindFrac = Platform::getVirtualMilliseconds() - theObject->mCreateTime;
+
+    F32 distToShape = shapeDir.len();
+    shapeDir.normalize();
+
+    bool projValid = false;
+
+    F32 fov = parent->mLastCameraQuery.fov * 0.5f;
+    F32 fovy = parent->mLastCameraQuery.fovy * 0.5f;
+
+    Point3F projPnt;
+    if (parent->project(shapePos, &projPnt) && projPnt.x > -75.0f && projPnt.y > -75.0f)
+    {
+        if ((F32)mBounds.extent.x + 75.0f > projPnt.x && (F32)mBounds.extent.y + 75.0f > projPnt.y)
+            projValid = true;
+    }
+
+    Point2F _test(projPnt.x, projPnt.y);
+    if (_test.x < 0.0f)
+        _test.x = 0.0f;
+    if (_test.y < 0.0f)
+        _test.y = 0.0f;
+
+    if (mBounds.extent.x < _test.x)
+        _test.x = mBounds.extent.x;
+    if (mBounds.extent.y < _test.y)
+        _test.y = mBounds.extent.y;
+
+    Point3F res;
+    cam.getColumn(2, &res);
+    Point3F camCone2G = mSin(fovy) * res;
+    cam.getColumn(0, &res);
+    Point3F camCone1G = res * mSin(fov);
+    cam.getColumn(1, &res);
+    camCone1G += res;
+
+    Point3F unk0 = camCone1G + camCone2G;
+    Point3F difference = camCone1G - camCone2G;
+
+    Point3F newThing;
+    m_matF_x_point3F(gravityMat, unk0, camCone1G);
+    m_matF_x_point3F(gravityMat, difference, camCone2G);
+    m_matF_x_point3F(gravityMat, shapeDir, newThing);
+
+    Point2F cc1(mSqrt(camCone1G.x * camCone1G.x + camCone1G.y * camCone1G.y), camCone1G.z);
+    Point2F cc2(mSqrt(camCone2G.x * camCone2G.x + camCone2G.y * camCone2G.y), camCone2G.z);
+    Point2F sd(mSqrt(newThing.x * newThing.x + newThing.y * newThing.y), newThing.z);
+    cc1.normalize();
+    cc2.normalize();
+    sd.normalize();
+
+    Point2F newPoint(0.0f, 0.0f);
+    if (cc1.y >= sd.y)
+    {
+        if (cc2.y <= sd.y)
+        {
+            newPoint.y = mBounds.extent.y * (sd.x * cc1.y - cc1.x * sd.y) / (sd.y * (cc2.x - cc1.x) - (cc2.y - cc1.y) * sd.x);
+        } else
+        {
+            newPoint.y = mBounds.extent.y;
+        }
+    }
+
+    bool blink = false;
+    if (behindFrac < 3000)
+        blink = (Platform::getVirtualMilliseconds() / 500) & 1;
+
+    MatrixF mat = cam;
+    mat.inverse();
+
+    Point3F xfPos;
+    m_matF_x_point3F(mat, shapePos, xfPos);
+    xfPos.z = 0.0f;
+    xfPos.normalize();
+
+    Point3F normal(0.0f, 1.0f, 0.0f);
+    Point3F posThing = mCross(xfPos, normal);
+    F32 circleAlpha = mAsin(posThing.z);
+    F32 dist = mDot(normal, xfPos);
+
+    F32 someVar = 0.0f;
+
+    bool unk1 = false;
+    if (dist < 0.5f)
+    {
+        unk1 = true;
+        someVar = (0.5f - dist) * 0.5f * 0.66f;
+    }
+
+    if (dist < 0.0f)
+    {
+        if (circleAlpha >= 0.0f)
+            circleAlpha += M_PI_F;
+        else
+            circleAlpha -= M_PI_F;
+    }
+
+    if (-fov <= circleAlpha)
+    {
+        if (fov >= circleAlpha)
+        {
+            newPoint.x = mBounds.extent.x * 0.5f + tanf(circleAlpha) * (mBounds.extent.x * 0.5f) / tanf(fov);
+        } else
+        {
+            newPoint.x = mBounds.extent.x;
+        }
+    }
+
+    Point2F drawPoint;
+    if (!projValid)
+    {
+LABEL_45:
+        drawPoint = newPoint;
+        goto LABEL_47;
+    }
+    drawPoint.set(projPnt.x, projPnt.y);
+
+    if (drawPoint != _test)
+    {
+        Point2F unk2(_test.x - projPnt.x, _test.y - projPnt.y);
+        F32 unk2Len = unk2.len();
+        if (unk2Len <= 75.0f)
+        {
+            drawPoint.interpolate(_test, newPoint, unk2Len / 75.0f);
+            goto LABEL_47;
+        }
+        goto LABEL_45;
+    }
+LABEL_47:
+    Point2F center(mBounds.extent.x, mBounds.extent.y);
+    center *= 0.5f;
+
+    Point2F ellipse = mEllipseScreenFraction * center;
+    Point2F arrowDir = drawPoint - center;
+
+    F32 unk3 = arrowDir.x * arrowDir.x / (ellipse.x * ellipse.x)
+             + arrowDir.y * arrowDir.y / (ellipse.y * ellipse.y);
+
+    ellipse = drawPoint;
+
+    unk3 = mSqrt(unk3);
+    
+    circleAlpha = 0.0f;
+
+    if (unk3 <= 1.0f)
+    {
+        if (unk3 <= 0.7f)
+        {
+            circleAlpha = mMaxTargetAlpha;
+        } else
+        {
+            circleAlpha = (mMaxArrowAlpha - ((unk3 - 0.7f) * 3.333333333333333f * mMaxArrowAlpha)) * mMaxTargetAlpha / mMaxArrowAlpha;
+        }
+    } else
+    {
+        drawPoint = arrowDir / unk3;
+        drawPoint += center;
+    }
+
+    Point2F unk4 = drawPoint - ellipse;
+    //unk4.len(); // unused return???
+    arrowDir.normalize();
+
+    F32 low = mMinArrowFraction;
+
+    F32 unk5 = mClampF(1.0f - distToShape / 100.0f, low, 1.0f);
+    
     // TODO: Implement GuiShapeNameHud::renderArrow
+
+    GFX->setBaseRenderState();
+    GFX->setCullMode(GFXCullNone);
+    GFX->setZEnable(false);
+    GFX->setLightingEnable(false);
+    GFX->setAlphaBlendEnable(true);
+    GFX->setSrcBlend(GFXBlendSrcAlpha);
+    GFX->setDestBlend(GFXBlendInvSrcAlpha);
+
+    GFX->setTextureStageColorOp(0, GFXTOPDisable);
+
+    MatrixF newMat(true);
+    GFX->setWorldMatrix(newMat);
+
+    ShapeBaseData* db = (ShapeBaseData*)theObject->getDataBlock();
+
+    F32 arrowAlpha = mMaxArrowAlpha;
+
+    ColorF refColor = db->referenceColor;
+    if (blink)
+    {
+        refColor.red = getMax(refColor.red, 0.5f);
+        refColor.green = getMax(refColor.green, 0.5f);
+        refColor.blue = getMax(refColor.blue, 0.5f);
+
+        arrowAlpha *= 1.3f;
+        if (arrowAlpha > 1.0f)
+            arrowAlpha = 1.0f;
+        circleAlpha *= 1.3f;
+        if (circleAlpha > 1.0f)
+            circleAlpha = 1.0f;
+    }
+
+    if (arrowAlpha != 0.0f)
+    {
+        PrimBuild::begin(GFXLineStrip, 5);
+        GFX->setupGenericShaders();
+        PrimBuild::color4f(refColor.red, refColor.green, refColor.blue, arrowAlpha);
+        if (unk1)
+        {
+            // TODO: Implement GuiShapeNameHud::renderArrow
+        } else
+        {
+            // TODO: Implement GuiShapeNameHud::renderArrow
+        }
+
+        // TODO: Implement GuiShapeNameHud::renderArrow
+
+        PrimBuild::end();
+        PrimBuild::begin(GFXLineList, 12);
+        GFX->setupGenericShaders();
+        PrimBuild::color4f(0.0f, 0.0f, 0.0f, arrowAlpha);
+        if (unk1)
+        {
+            // TODO: Implement GuiShapeNameHud::renderArrow
+        } else
+        {
+            // TODO: Implement GuiShapeNameHud::renderArrow
+        }
+
+        // TODO: Implement GuiShapeNameHud::renderArrow
+
+        PrimBuild::end();
+    }
+
+    if (circleAlpha != 0.0f)
+    {
+        F32 unk6 = mFullArrowLength * unk5 * 0.4f;
+        F32 d2 = unk6 * 0.55f;
+
+        GFX->setupGenericShaders();
+        PrimBuild::color4f(refColor.red, refColor.green, refColor.blue, circleAlpha);
+
+        if (unk5 >= 0.7f)
+        {
+            if (unk5 < 0.8f)
+            {
+                // TODO: Implement GuiShapeNameHud::renderArrow
+            }
+            PrimBuild::begin(GFXTriangleList, 12);
+            // TODO: Implement GuiShapeNameHud::renderArrow
+        } else
+        {
+            PrimBuild::begin(GFXTriangleList, 6);
+            // TODO: Implement GuiShapeNameHud::renderArrow
+        }
+
+        // TODO: Implement GuiShapeNameHud::renderArrow
+
+        PrimBuild::end();
+    }
+
+    GFX->setTextureStageColorOp(0, GFXTOPModulate);
+    GFX->setAlphaBlendEnable(false);
 }
 #endif

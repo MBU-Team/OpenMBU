@@ -106,12 +106,15 @@ ShapeBaseData::ShapeBaseData()
     useEyePoint = false;
     dynamicReflection = false;
 
+#ifdef MB_ULTRA
     renderGemAura = false;
     glass = false;
     astrolabe = false;
     astrolabePrime = false;
     gemAuraTextureName = "";
     gemAuraTexture = NULL;
+    referenceColor.set(1.0f, 1.0f, 1.0f, 1.0f);
+#endif
 
     observeThroughObject = false;
     computeCRC = false;
@@ -352,6 +355,11 @@ void ShapeBaseData::initPersistFields()
     addGroup("Render");
     addField("shapeFile", TypeFilename, Offset(shapeName, ShapeBaseData));
     addField("emap", TypeBool, Offset(emap, ShapeBaseData));
+
+#ifdef MB_ULTRA
+    addField("referenceColor", TypeColorF, Offset(referenceColor, ShapeBaseData));
+#endif
+
     endGroup("Render");
 
     addGroup("Destruction", "Parameters related to the destruction effects of this object.");
@@ -407,11 +415,13 @@ void ShapeBaseData::initPersistFields()
     addField("dynamicReflection", TypeBool, Offset(dynamicReflection, ShapeBaseData));
     endGroup("Misc");
 
+#ifdef MB_ULTRA
     addField("renderGemAura", TypeBool, Offset(renderGemAura, ShapeBaseData));
     addField("glass", TypeBool, Offset(glass, ShapeBaseData));
     addField("astrolabe", TypeBool, Offset(astrolabe, ShapeBaseData));
     addField("astrolabePrime", TypeBool, Offset(astrolabePrime, ShapeBaseData));
     addField("gemAuraTextureName", TypeFilename, Offset(gemAuraTextureName, ShapeBaseData));
+#endif
 
 }
 
@@ -562,11 +572,13 @@ void ShapeBaseData::packData(BitStream* stream)
     stream->writeFlag(useEyePoint);
     stream->writeFlag(dynamicReflection);
 
+#ifdef MB_ULTRA
     stream->writeFlag(renderGemAura);
     stream->writeFlag(glass);
     stream->writeFlag(astrolabe);
     stream->writeFlag(astrolabePrime);
     stream->writeString(gemAuraTextureName, 255);
+#endif
 }
 
 void ShapeBaseData::unpackData(BitStream* stream)
@@ -664,12 +676,14 @@ void ShapeBaseData::unpackData(BitStream* stream)
     useEyePoint = stream->readFlag();
     dynamicReflection = stream->readFlag();
 
+#ifdef MB_ULTRA
     renderGemAura = stream->readFlag();
     glass = stream->readFlag();
     astrolabe = stream->readFlag();
     astrolabePrime = stream->readFlag();
     gemAuraTextureName = stream->readSTString(false);
     gemAuraTexture.set(gemAuraTextureName, &GFXDefaultStaticDiffuseProfile);
+#endif
 }
 
 
@@ -2335,9 +2349,14 @@ bool ShapeBase::prepRenderImage(SceneState* state, const U32 stateKey,
         return false;
     setLastState(state, stateKey);
 
+#ifdef MB_ULTRA
     if (gNoRenderAstrolabe && mDataBlock != NULL && (mDataBlock->astrolabe || mDataBlock->astrolabePrime) ||
        (getDamageState() == Destroyed && !mDataBlock->renderWhenDestroyed))
         return false;
+#else
+    if ((getDamageState() == Destroyed) && (!mDataBlock->renderWhenDestroyed))
+        return false;
+#endif
     // Select detail levels on mounted items
     // but... always draw the control object's mounted images
     // in high detail (I can't believe I'm commenting this hack :)

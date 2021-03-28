@@ -217,6 +217,7 @@ public:
     SceneObject* getPad();
     S32 getPowerUpId();
     const QuatF& getGravityFrame();
+    const QuatF& getGravityRenderFrame() const { return mGravityRenderFrame; }
     const Point3F& getGravityDir(Point3F* result);
     U32 getMaxNaturalBlastEnergy();
     U32 getMaxBlastEnergy();

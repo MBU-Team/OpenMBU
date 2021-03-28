@@ -401,6 +401,7 @@ public:
 
     bool dynamicReflection;
 
+#ifdef MB_ULTRA
     // Marble Blast
     bool renderGemAura;
     bool glass;
@@ -408,6 +409,7 @@ public:
     bool astrolabePrime;
     StringTableEntry gemAuraTextureName;
     GFXTexHandle gemAuraTexture;
+#endif
 
     /// @name Destruction
     ///
@@ -461,6 +463,10 @@ public:
     Resource<TSShape> shape;         ///< Shape handle
     U32 mCRC;
     bool computeCRC;
+
+#ifdef MB_ULTRA
+    ColorF referenceColor;
+#endif
 
     S32 eyeNode;                         ///< Shape's eye node index
     S32 cameraNode;                      ///< Shape's camera node index
