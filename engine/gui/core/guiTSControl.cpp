@@ -121,8 +121,9 @@ void GuiTSCtrl::onRender(Point2I offset, const RectI& updateRect)
 
     getCurrentClientSceneGraph()->setVisibleDistance(mLastCameraQuery.farPlane);
 
-    mLastCameraQuery.cameraMatrix.inverse();
-    GFX->setWorldMatrix(mLastCameraQuery.cameraMatrix);
+    MatrixF invCamera = mLastCameraQuery.cameraMatrix;
+    invCamera.inverse();
+    GFX->setWorldMatrix(invCamera);
 
     mSaveProjection = GFX->getProjectionMatrix();
     mSaveModelview = GFX->getWorldMatrix();

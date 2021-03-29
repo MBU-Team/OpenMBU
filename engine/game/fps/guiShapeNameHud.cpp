@@ -343,49 +343,52 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
             projValid = true;
     }
 
-    Point2F _test(projPnt.x, projPnt.y);
-    if (_test.x < 0.0f)
-        _test.x = 0.0f;
-    if (_test.y < 0.0f)
-        _test.y = 0.0f;
+    Point2F projPointOnScreen(projPnt.x, projPnt.y);
+    if (projPointOnScreen.x < 0.0f)
+        projPointOnScreen.x = 0.0f;
+    if (projPointOnScreen.y < 0.0f)
+        projPointOnScreen.y = 0.0f;
 
-    if (mBounds.extent.x < _test.x)
-        _test.x = mBounds.extent.x;
-    if (mBounds.extent.y < _test.y)
-        _test.y = mBounds.extent.y;
+    if (mBounds.extent.x < projPointOnScreen.x)
+        projPointOnScreen.x = mBounds.extent.x;
+    if (mBounds.extent.y < projPointOnScreen.y)
+        projPointOnScreen.y = mBounds.extent.y;
 
     Point3F res;
-    cam.getColumn(2, &res);
+    cam.getColumn(2, &res); // Up Dir
     Point3F camCone2G = mSin(fovy) * res;
-    cam.getColumn(0, &res);
-    Point3F camCone1G = res * mSin(fov);
-    cam.getColumn(1, &res);
+    cam.getColumn(0, &res); // Right Dir
+    Point3F camCone1G = res * mSin(fov); 
+    cam.getColumn(1, &res); // Forward 
     camCone1G += res;
 
     Point3F unk0 = camCone1G + camCone2G;
     Point3F difference = camCone1G - camCone2G;
 
-    Point3F newThing;
-    m_matF_x_point3F(gravityMat, unk0, camCone1G);
-    m_matF_x_point3F(gravityMat, difference, camCone2G);
-    m_matF_x_point3F(gravityMat, shapeDir, newThing);
+    Point3F shapeDirGrav;
+    m_matF_x_point3F(gravityMat, unk0, camCone1G); // Direction of the top right?
+    m_matF_x_point3F(gravityMat, difference, camCone2G);// Direction of the bottom right?
+    m_matF_x_point3F(gravityMat, shapeDir, shapeDirGrav); // Shape dir but relative to gravity dir
 
     Point2F cc1(mSqrt(camCone1G.x * camCone1G.x + camCone1G.y * camCone1G.y), camCone1G.z);
     Point2F cc2(mSqrt(camCone2G.x * camCone2G.x + camCone2G.y * camCone2G.y), camCone2G.z);
-    Point2F sd(mSqrt(newThing.x * newThing.x + newThing.y * newThing.y), newThing.z);
+    Point2F sd(mSqrt(shapeDirGrav.x * shapeDirGrav.x + shapeDirGrav.y * shapeDirGrav.y), shapeDirGrav.z);
     cc1.normalize();
     cc2.normalize();
     sd.normalize();
 
-    Point2F newPoint(0.0f, 0.0f);
+    Point2F arrowOnScreenPos(0.0f, 0.0f);
+    // If sd.y is between cc1.y and cc2.y, then
     if (cc1.y >= sd.y)
     {
         if (cc2.y <= sd.y)
         {
-            newPoint.y = mBounds.extent.y * (sd.x * cc1.y - cc1.x * sd.y) / (sd.y * (cc2.x - cc1.x) - (cc2.y - cc1.y) * sd.x);
+            // the new y is the fraction of where it is
+            arrowOnScreenPos.y = mBounds.extent.y * (sd.x * cc1.y - cc1.x * sd.y) / (sd.y * (cc2.x - cc1.x) - (cc2.y - cc1.y) * sd.x);
         } else
         {
-            newPoint.y = mBounds.extent.y;
+            // otherwise snap to edge
+            arrowOnScreenPos.y = mBounds.extent.y;
         }
     }
 
@@ -393,68 +396,78 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
     if (behindFrac < 3000)
         blink = (Platform::getVirtualMilliseconds() / 500) & 1;
 
-    MatrixF mat = cam;
-    mat.inverse();
+    MatrixF inverseCam = cam;
+    inverseCam.inverse();
 
+    // Converting the object's position from world space to camera space.
     Point3F xfPos;
-    m_matF_x_point3F(mat, shapePos, xfPos);
+    m_matF_x_point3F(inverseCam, shapePos, xfPos);
     xfPos.z = 0.0f;
     xfPos.normalize();
 
     Point3F normal(0.0f, 1.0f, 0.0f);
-    Point3F posThing = mCross(xfPos, normal);
-    F32 circleAlpha = mAsin(posThing.z);
-    F32 dist = mDot(normal, xfPos);
+    Point3F crossProduct = mCross(xfPos, normal);
+    F32 xfPosAngle = mAsin(crossProduct.z);
+    F32 forwardness = mDot(normal, xfPos);
 
-    F32 someVar = 0.0f;
+    F32 foldAmount = 0.0f;
 
-    bool unk1 = false;
-    if (dist < 0.5f)
+    bool foldArrow = false;
+    if (forwardness < 0.5f)
     {
-        unk1 = true;
-        someVar = (0.5f - dist) * 0.5f * 0.66f;
+        foldArrow = true;
+        foldAmount = (0.5f - forwardness) * 0.5f * 0.66f;
     }
 
-    if (dist < 0.0f)
+    // Is the object behind us?
+    if (forwardness < 0.0f)
     {
-        if (circleAlpha >= 0.0f)
-            circleAlpha += M_PI_F;
+        // Get the angle into the correct range
+        if (xfPosAngle >= 0.0f)
+            xfPosAngle += M_PI_F;
         else
-            circleAlpha -= M_PI_F;
+            xfPosAngle -= M_PI_F;
     }
 
-    if (-fov <= circleAlpha)
+    // If aSinZ is between -fov and fov, then
+    if (-fov <= xfPosAngle)
     {
-        if (fov >= circleAlpha)
+        if (fov >= xfPosAngle)
         {
-            newPoint.x = mBounds.extent.x * 0.5f + tanf(circleAlpha) * (mBounds.extent.x * 0.5f) / tanf(fov);
+            // the new x is the fraction of where it is but convert it from an angle to tangent
+            arrowOnScreenPos.x = mBounds.extent.x * 0.5f + mTan(xfPosAngle) * (mBounds.extent.x * 0.5f) / mTan(fov);
         } else
         {
-            newPoint.x = mBounds.extent.x;
+            // otherwise snap to edge
+            arrowOnScreenPos.x = mBounds.extent.x;
         }
     }
 
     Point2F drawPoint;
+    // If the point we're trying to project isn't on screen, then
     if (!projValid)
     {
-LABEL_45:
-        drawPoint = newPoint;
-        goto LABEL_47;
-    }
-    drawPoint.set(projPnt.x, projPnt.y);
-
-    if (drawPoint != _test)
+        // use the calculated arrow position
+        drawPoint = arrowOnScreenPos;
+    } else
     {
-        Point2F unk2(_test.x - projPnt.x, _test.y - projPnt.y);
-        F32 unk2Len = unk2.len();
-        if (unk2Len <= 75.0f)
+        // otherwise we set it to the projection point
+        drawPoint.set(projPnt.x, projPnt.y);
+
+        // if we're within 75 pixels of the screen
+        if (drawPoint != projPointOnScreen)
         {
-            drawPoint.interpolate(_test, newPoint, unk2Len / 75.0f);
-            goto LABEL_47;
+            // interpolate between the 2 positions based on how far offscreen the object is
+            Point2F projPointOffscreen(projPointOnScreen.x - projPnt.x, projPointOnScreen.y - projPnt.y);
+            F32 distanceOffscreen = projPointOffscreen.len();
+
+            if (distanceOffscreen <= 75.0f)
+                drawPoint.interpolate(projPointOnScreen, arrowOnScreenPos, distanceOffscreen / 75.0f);
+            else
+                drawPoint = arrowOnScreenPos;
         }
-        goto LABEL_45;
     }
-LABEL_47:
+
     Point2F center(mBounds.extent.x, mBounds.extent.y);
     center *= 0.5f;
 
@@ -468,7 +481,7 @@ LABEL_47:
 
     unk3 = mSqrt(unk3);
     
-    circleAlpha = 0.0f;
+    F32 circleAlpha = 0.0f;
 
     if (unk3 <= 1.0f)
     {
@@ -488,40 +501,34 @@ LABEL_47:
     Point2F unk4 = drawPoint - ellipse;
     //unk4.len(); // unused return???
     arrowDir.normalize();
-
-    F32 low = mMinArrowFraction;
-
-    F32 unk5 = mClampF(1.0f - distToShape / 100.0f, low, 1.0f);
-
-    F32 arrowWidth = mFullArrowWidth * unk5;
-
-    Point2F unk7(arrowWidth * arrowDir.y, arrowWidth * -arrowDir.x);
-
-    Point2F thingyNew = unk7 * 0.5f;
     
-    F32 arrowLength = mFullArrowLength * unk5;
+    F32 arrowScale = mClampF(1.0f - distToShape / 100.0f, mMinArrowFraction, 1.0f);
 
-    Point2F thingyNew2 = arrowLength * arrowDir;
-    Point2F thingyNew3 = drawPoint - thingyNew2;
+    F32 arrowWidth = mFullArrowWidth * arrowScale;
+    F32 arrowLength = mFullArrowLength * arrowScale;
 
-    Point2F potato = thingyNew3 + thingyNew;
+    Point2F arrowSideVector(arrowWidth * arrowDir.y, arrowWidth * -arrowDir.x);
+    Point2F halfArrowSideVec = arrowSideVector * 0.5f;
+    
+    Point2F arrowForwardVec = arrowLength * arrowDir;
+    Point2F arrowBack = drawPoint - arrowForwardVec;
 
-    Point2F foxNews = thingyNew3 - thingyNew;
+    Point2F lowerRight = arrowBack + halfArrowSideVec;
+    Point2F lowerLeft = arrowBack - halfArrowSideVec;
 
-    F32 someVar2 = 0.5f * arrowWidth * someVar;
-    Point2F someVar3 = someVar2 * arrowDir;
+    F32 halfFoldWidth = 0.5f * arrowWidth * foldAmount;
+    Point2F halfFoldForwardWidthVec(halfFoldWidth * arrowDir.y, -halfFoldWidth * arrowDir.x);
 
-    F32 someVar4 = someVar * arrowLength;
-    Point2F someVar5 = someVar4 * arrowDir;
+    F32 foldLength = foldAmount * arrowLength;
+    Point2F foldForwardVec = foldLength * arrowDir;
 
-    Point2F bingo = drawPoint - someVar5;
-    Point2F marco = bingo + someVar3;
+    Point2F foldBack = drawPoint - foldForwardVec;
+    Point2F foldLowerRight = foldBack + halfFoldForwardWidthVec;
+    Point2F foldLowerLeft = foldBack - halfFoldForwardWidthVec;
 
-    Point2F doggo = bingo - someVar3;
+    Point2F doubleFoldVec = arrowDir * (foldLength + foldLength);
 
-    Point2F polo = arrowDir * (someVar4 + someVar4);
-
-    Point2F fireflies = drawPoint - polo;
+    Point2F foldedTip = drawPoint - doubleFoldVec;
 
     GFX->setBaseRenderState();
     GFX->setCullMode(GFXCullNone);
@@ -560,46 +567,46 @@ LABEL_47:
         PrimBuild::begin(GFXTriangleList, 6);
         GFX->setupGenericShaders();
         PrimBuild::color4f(refColor.red, refColor.green, refColor.blue, arrowAlpha);
-        if (unk1)
+        if (foldArrow)
         {
-            PrimBuild::vertex2f(potato.x, potato.y);
-            PrimBuild::vertex2f(foxNews.x, foxNews.y);
-            PrimBuild::vertex2f(doggo.x, doggo.y);
-            PrimBuild::vertex2f(potato.x, potato.y);
-            PrimBuild::vertex2f(marco.x, marco.y);
-            PrimBuild::vertex2f(doggo.x, doggo.y);
+            PrimBuild::vertex2f(lowerRight.x, lowerRight.y);
+            PrimBuild::vertex2f(lowerLeft.x, lowerLeft.y);
+            PrimBuild::vertex2f(foldLowerLeft.x, foldLowerLeft.y);
+            PrimBuild::vertex2f(lowerRight.x, lowerRight.y);
+            PrimBuild::vertex2f(foldLowerRight.x, foldLowerRight.y);
+            PrimBuild::vertex2f(foldLowerLeft.x, foldLowerLeft.y);
         } else
         {
             PrimBuild::vertex2f(drawPoint.x, drawPoint.y);
-            PrimBuild::vertex2f(potato.x, potato.y);
-            PrimBuild::vertex2f(foxNews.x, foxNews.y);
+            PrimBuild::vertex2f(lowerRight.x, lowerRight.y);
+            PrimBuild::vertex2f(lowerLeft.x, lowerLeft.y);
         }
 
         PrimBuild::end();
         PrimBuild::begin(GFXLineList, 12);
         GFX->setupGenericShaders();
         PrimBuild::color4f(0.0f, 0.0f, 0.0f, arrowAlpha);
-        if (unk1)
+        if (foldArrow)
         {
-            PrimBuild::vertex2f(potato.x, potato.y);
-            PrimBuild::vertex2f(marco.x, marco.y);
-            PrimBuild::vertex2f(marco.x, marco.y);
-            PrimBuild::vertex2f(doggo.x, doggo.y);
-            PrimBuild::vertex2f(doggo.x, doggo.y);
-            PrimBuild::vertex2f(foxNews.x, foxNews.y);
-            PrimBuild::vertex2f(foxNews.x, foxNews.y);
-            PrimBuild::vertex2f(potato.x, potato.y);
-            PrimBuild::vertex2f(marco.x, marco.y);
-            PrimBuild::vertex2f(fireflies.x, fireflies.y);
-            PrimBuild::vertex2f(doggo.x, doggo.y);
-            PrimBuild::vertex2f(fireflies.x, fireflies.y);
+            PrimBuild::vertex2f(lowerRight.x, lowerRight.y);
+            PrimBuild::vertex2f(foldLowerRight.x, foldLowerRight.y);
+            PrimBuild::vertex2f(foldLowerRight.x, foldLowerRight.y);
+            PrimBuild::vertex2f(foldLowerLeft.x, foldLowerLeft.y);
+            PrimBuild::vertex2f(foldLowerLeft.x, foldLowerLeft.y);
+            PrimBuild::vertex2f(lowerLeft.x, lowerLeft.y);
+            PrimBuild::vertex2f(lowerLeft.x, lowerLeft.y);
+            PrimBuild::vertex2f(lowerRight.x, lowerRight.y);
+            PrimBuild::vertex2f(foldLowerRight.x, foldLowerRight.y);
+            PrimBuild::vertex2f(foldedTip.x, foldedTip.y);
+            PrimBuild::vertex2f(foldLowerLeft.x, foldLowerLeft.y);
+            PrimBuild::vertex2f(foldedTip.x, foldedTip.y);
         } else
         {
             PrimBuild::vertex2f(drawPoint.x, drawPoint.y);
-            PrimBuild::vertex2f(potato.x, potato.y);
-            PrimBuild::vertex2f(potato.x, potato.y);
-            PrimBuild::vertex2f(foxNews.x, foxNews.y);
-            PrimBuild::vertex2f(foxNews.x, foxNews.y);
+            PrimBuild::vertex2f(lowerRight.x, lowerRight.y);
+            PrimBuild::vertex2f(lowerRight.x, lowerRight.y);
+            PrimBuild::vertex2f(lowerLeft.x, lowerLeft.y);
+            PrimBuild::vertex2f(lowerLeft.x, lowerLeft.y);
             PrimBuild::vertex2f(drawPoint.x, drawPoint.y);
         }
 
@@ -608,42 +615,42 @@ LABEL_47:
 
     if (circleAlpha != 0.0f)
     {
-        F32 unk6 = mFullArrowLength * unk5 * 0.4f;
-        F32 d2 = unk6 * 0.55f;
+        F32 arrowLen = mFullArrowLength * arrowScale * 0.4f;
+        F32 halfArrowLen = arrowLen * 0.55f;
 
         GFX->setupGenericShaders();
         PrimBuild::color4f(refColor.red, refColor.green, refColor.blue, circleAlpha);
         
-        if (unk5 >= 0.7f)
+        if (arrowScale >= 0.7f)
         {
-            if (unk5 < 0.8f)
-                unk6 = ((unk5 - 0.7f) * 10.0f) * (unk6 - d2) + d2;
+            if (arrowScale < 0.8f)
+                arrowLen = ((arrowScale - 0.7f) * 10.0f) * (arrowLen - halfArrowLen) + halfArrowLen;
             PrimBuild::begin(GFXTriangleList, 12);
 
-            Point2F unk11 = drawPoint - unk6;
-            Point2F unk12 = unk11 + d2;
-            Point2F unk14 = drawPoint + unk6;
-            Point2F unk13 = unk14 - d2;
+            Point2F topLeft = drawPoint - arrowLen;
+            Point2F midTopLeft = topLeft + halfArrowLen;
+            Point2F bottomRight = drawPoint + arrowLen;
+            Point2F midBottomRight = bottomRight - halfArrowLen;
 
             // Top Left
-            PrimBuild::vertex2f(unk12.x, unk12.y);
-            PrimBuild::vertex2f(unk12.x, unk11.y);
-            PrimBuild::vertex2f(unk11.x, unk12.y);
+            PrimBuild::vertex2f(midTopLeft.x, midTopLeft.y);
+            PrimBuild::vertex2f(midTopLeft.x, topLeft.y);
+            PrimBuild::vertex2f(topLeft.x, midTopLeft.y);
 
             // Top Right
-            PrimBuild::vertex2f(unk13.x, unk12.y);
-            PrimBuild::vertex2f(unk13.x, unk11.y);
-            PrimBuild::vertex2f(unk14.x, unk12.y);
+            PrimBuild::vertex2f(midBottomRight.x, midTopLeft.y);
+            PrimBuild::vertex2f(midBottomRight.x, topLeft.y);
+            PrimBuild::vertex2f(bottomRight.x, midTopLeft.y);
 
             // Bottom Right
-            PrimBuild::vertex2f(unk13.x, unk13.y);
-            PrimBuild::vertex2f(unk13.x, unk14.y);
-            PrimBuild::vertex2f(unk14.x, unk13.y);
+            PrimBuild::vertex2f(midBottomRight.x, midBottomRight.y);
+            PrimBuild::vertex2f(midBottomRight.x, bottomRight.y);
+            PrimBuild::vertex2f(bottomRight.x, midBottomRight.y);
 
             // Bottom Left
-            PrimBuild::vertex2f(unk12.x, unk13.y);
-            PrimBuild::vertex2f(unk12.x, unk14.y);
-            PrimBuild::vertex2f(unk11.x, unk13.y);
+            PrimBuild::vertex2f(midTopLeft.x, midBottomRight.y);
+            PrimBuild::vertex2f(midTopLeft.x, bottomRight.y);
+            PrimBuild::vertex2f(topLeft.x, midBottomRight.y);
 
             PrimBuild::end();
 
@@ -651,45 +658,49 @@ LABEL_47:
             GFX->setupGenericShaders();
             PrimBuild::color4f(0.0f, 0.0f, 0.0f, circleAlpha);
 
-            PrimBuild::vertex2f(unk12.x, unk11.y);
-            PrimBuild::vertex2f(unk11.x, unk12.y);
-            PrimBuild::vertex2f(unk13.x, unk11.y);
+            PrimBuild::vertex2f(midTopLeft.x, topLeft.y);
+            PrimBuild::vertex2f(topLeft.x, midTopLeft.y);
 
-            PrimBuild::vertex2f(unk14.x, unk12.y);
-            PrimBuild::vertex2f(unk13.x, unk14.y);
-            PrimBuild::vertex2f(unk14.x, unk13.y);
+            PrimBuild::vertex2f(midBottomRight.x, topLeft.y);
+            PrimBuild::vertex2f(bottomRight.x, midTopLeft.y);
 
-            PrimBuild::vertex2f(unk12.x, unk14.y);
-            PrimBuild::vertex2f(unk11.x, unk13.y);
+            PrimBuild::vertex2f(midBottomRight.x, bottomRight.y);
+            PrimBuild::vertex2f(bottomRight.x, midBottomRight.y);
+
+            PrimBuild::vertex2f(midTopLeft.x, bottomRight.y);
+            PrimBuild::vertex2f(topLeft.x, midBottomRight.y);
         } else
         {
             PrimBuild::begin(GFXTriangleList, 6);
-            Point2F var42 = drawPoint - d2;
-            Point2F var43 = drawPoint + d2;
+            Point2F halfTopLeft = drawPoint - halfArrowLen;
+            Point2F halfBottomRight = drawPoint + halfArrowLen;
 
-            PrimBuild::vertex2f(var42.x, drawPoint.y);
-            PrimBuild::vertex2f(var42.x, var42.y);
-            PrimBuild::vertex2f(var43.x, drawPoint.y);
+            // Top
+            PrimBuild::vertex2f(halfTopLeft.x, drawPoint.y);
+            PrimBuild::vertex2f(drawPoint.x, halfTopLeft.y);
+            PrimBuild::vertex2f(halfBottomRight.x, drawPoint.y);
 
-            PrimBuild::vertex2f(var42.x, drawPoint.y);
-            PrimBuild::vertex2f(drawPoint.x, var43.y);
-            PrimBuild::vertex2f(var43.x, drawPoint.y);
+            // Bottom
+            PrimBuild::vertex2f(halfTopLeft.x, drawPoint.y);
+            PrimBuild::vertex2f(drawPoint.x, halfBottomRight.y);
+            PrimBuild::vertex2f(halfBottomRight.x, drawPoint.y);
 
             PrimBuild::end();
             PrimBuild::begin(GFXLineList, 8);
             GFX->setupGenericShaders();
             PrimBuild::color4f(0.0f, 0.0f, 0.0f, circleAlpha);
 
-            PrimBuild::vertex2f(var43.x, drawPoint.y);
-            PrimBuild::vertex2f(drawPoint.x, var42.y);
-            PrimBuild::vertex2f(drawPoint.x, var42.y);
+            PrimBuild::vertex2f(halfBottomRight.x, drawPoint.y);
+            PrimBuild::vertex2f(drawPoint.x, halfTopLeft.y);
 
-            PrimBuild::vertex2f(var43.x, drawPoint.y);
-            PrimBuild::vertex2f(var43.x, drawPoint.y);
-            PrimBuild::vertex2f(drawPoint.x, var43.y);
+            PrimBuild::vertex2f(drawPoint.x, halfTopLeft.y);
+            PrimBuild::vertex2f(halfTopLeft.x, drawPoint.y);
 
-            PrimBuild::vertex2f(drawPoint.x, var43.y);
-            PrimBuild::vertex2f(var42.x, drawPoint.y);
+            PrimBuild::vertex2f(halfTopLeft.x, drawPoint.y);
+            PrimBuild::vertex2f(drawPoint.x, halfBottomRight.y);
+
+            PrimBuild::vertex2f(drawPoint.x, halfBottomRight.y);
+            PrimBuild::vertex2f(halfBottomRight.x, drawPoint.y);
         }
 
         PrimBuild::end();
