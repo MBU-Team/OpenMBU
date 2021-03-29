@@ -479,6 +479,12 @@ function pauseOrEscape()
 	}
 }
 
+function respawn(%val)
+{
+   if (%val)
+      LocalClientConnection.respawnPlayer();
+}
+
 //------------------------------------------------------------------------------
 // Bind input to commands
 //------------------------------------------------------------------------------
@@ -541,6 +547,9 @@ if (isPCBuild())
 
    moveMap.bind(keyboard, m, spawnStupidMarble);
    moveMap.bind( xinput, btn_y, spawnStupidMarble );
+   
+   
+   moveMap.bind(keyboard, r, respawn);
 
    if (strstr(getGamepadName(), "Logitech") != -1)
    {
