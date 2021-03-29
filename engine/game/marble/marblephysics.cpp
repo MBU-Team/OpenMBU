@@ -347,97 +347,95 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
     {
         done = true;
         itersIn++;
-
-        if (!mContacts.empty())
+        
+        for (S32 i = 0; i < mContacts.size(); i++)
         {
-            S32 i = 0;
-            do
+            Contact* contact =  &mContacts[i];
+
+            Point3D sVel = mVelocity - contact->surfaceVelocity;
+            F64 surfaceDot = mDot(contact->normal, sVel);
+
+            if ((!looped && surfaceDot < 0.0) || surfaceDot < -SurfaceDotThreshold)
             {
-                Contact* contact =  &mContacts[i];
+                F64 velLen = mVelocity.len();
+                Point3D surfaceVel = contact->normal * surfaceDot;
 
-                Point3D sVel = mVelocity - contact->surfaceVelocity;
-                F64 surfaceDot = mDot(contact->normal, sVel);
-
-                if ((!looped && surfaceDot < 0.0) || surfaceDot < -SurfaceDotThreshold)
+#ifdef MB_ULTRA_PREVIEWS
+                if ((isGhost() || gSPMode) && !bouncedYet)
+#else
+                if (isGhost() && !bouncedYet)
+#endif
                 {
-                    F64 velLen = mVelocity.len();
-                    Point3D surfaceVel = contact->normal * surfaceDot;
-
-                    if ((isGhost() || gSPMode) && !bouncedYet)
-                    {
-                        playBounceSound(*contact, -surfaceDot);
-                        bouncedYet = true;
-                    }
-
-                    if (noBounce)
-                    {
-                        mVelocity -= surfaceVel;
-                    } else if (contact->object != NULL && (contact->object->getType() & PlayerObjectType) != 0)
-                    {
-                        Marble* otherMarble = (Marble*)contact->object;
-                        
-                        F64 ourMass = getMass();
-                        F64 theirMass = otherMarble->getMass();
-
-                        F64 bounce = getMax(mDataBlock->bounceRestitution, otherMarble->mDataBlock->bounceRestitution);
-
-                        Point3D dp = mVelocity * ourMass - otherMarble->getVelocityD() * theirMass;
-                        Point3D normP = mDot(dp, contact->normal) * contact->normal;
-
-                        normP *= bounce + 1.0;
-
-                        mVelocity -= normP / ourMass;
-
-                        otherMarble->setVelocityD(otherMarble->getVelocityD() + normP / theirMass);
-                        contact->surfaceVelocity = otherMarble->getVelocityD();
-                    } else
-                    {
-                        if (contact->surfaceVelocity.len() == 0.0 && !surfaceSlide && surfaceDot > -mDataBlock->maxDotSlide * velLen)
-                        {
-
-                            mVelocity -= surfaceVel;
-                            m_point3D_normalize(mVelocity);
-                            mVelocity *= velLen;
-                            surfaceSlide = true;
-                        } else if (surfaceDot >= -mDataBlock->minBounceVel)
-                        {
-                            mVelocity -= surfaceVel;
-                        } else
-                        {
-                            F64 restitution = contact->restitution * mPowerUpParams.bounce;
-                            Point3D velocityAdd = -(1.0 + restitution) * surfaceVel;
-                            Point3D vAtC = sVel + mCross(mOmega, -contact->normal * mRadius);
-                            F64 normalVel = -mDot(contact->normal, sVel);
-
-                            bounceEmitter(sVel.len() * restitution, contact->normal);
-
-                            vAtC -= contact->normal * mDot(contact->normal, sVel);
-
-                            F64 vAtCMag = vAtC.len();
-                            if (vAtCMag != 0.0) {
-                                F64 friction = mDataBlock->bounceKineticFriction * contact->friction;
-
-                                F64 angVMagnitude = friction * 5.0 * normalVel / (mRadius + mRadius);
-                                if (vAtCMag / mRadius < angVMagnitude)
-                                    angVMagnitude = vAtCMag / mRadius;
-
-                                Point3D vAtCDir = vAtC / vAtCMag;
-
-                                Point3D deltaOmega = angVMagnitude * mCross(-contact->normal, -vAtCDir);
-                                mOmega += deltaOmega;
-                                
-                                mVelocity -= mCross(-deltaOmega, -contact->normal * mRadius);
-                            }
-                            mVelocity += velocityAdd;
-                        }
-
-                    }
-
-                    done = false;
+                    playBounceSound(*contact, -surfaceDot);
+                    bouncedYet = true;
                 }
 
-                ++i;
-            } while(i < mContacts.size());
+                if (noBounce)
+                {
+                    mVelocity -= surfaceVel;
+                } else if (contact->object != NULL && (contact->object->getType() & PlayerObjectType) != 0)
+                {
+                    Marble* otherMarble = (Marble*)contact->object;
+                    
+                    F64 ourMass = getMass();
+                    F64 theirMass = otherMarble->getMass();
+
+                    F64 bounce = getMax(mDataBlock->bounceRestitution, otherMarble->mDataBlock->bounceRestitution);
+
+                    Point3D dp = mVelocity * ourMass - otherMarble->getVelocityD() * theirMass;
+                    Point3D normP = mDot(dp, contact->normal) * contact->normal;
+
+                    normP *= bounce + 1.0;
+
+                    mVelocity -= normP / ourMass;
+
+                    otherMarble->setVelocityD(otherMarble->getVelocityD() + normP / theirMass);
+                    contact->surfaceVelocity = otherMarble->getVelocityD();
+                } else
+                {
+                    if (contact->surfaceVelocity.len() == 0.0 && !surfaceSlide && surfaceDot > -mDataBlock->maxDotSlide * velLen)
+                    {
+
+                        mVelocity -= surfaceVel;
+                        m_point3D_normalize(mVelocity);
+                        mVelocity *= velLen;
+                        surfaceSlide = true;
+                    } else if (surfaceDot >= -mDataBlock->minBounceVel)
+                    {
+                        mVelocity -= surfaceVel;
+                    } else
+                    {
+                        F64 restitution = contact->restitution * mPowerUpParams.bounce;
+                        Point3D velocityAdd = -(1.0 + restitution) * surfaceVel;
+                        Point3D vAtC = sVel + mCross(mOmega, -contact->normal * mRadius);
+                        F64 normalVel = -mDot(contact->normal, sVel);
+
+                        bounceEmitter(sVel.len() * restitution, contact->normal);
+
+                        vAtC -= contact->normal * mDot(contact->normal, sVel);
+
+                        F64 vAtCMag = vAtC.len();
+                        if (vAtCMag != 0.0) {
+                            F64 friction = mDataBlock->bounceKineticFriction * contact->friction;
+
+                            F64 angVMagnitude = friction * 5.0 * normalVel / (mRadius + mRadius);
+                            if (vAtCMag / mRadius < angVMagnitude)
+                                angVMagnitude = vAtCMag / mRadius;
+
+                            Point3D vAtCDir = vAtC / vAtCMag;
+
+                            Point3D deltaOmega = angVMagnitude * mCross(-contact->normal, -vAtCDir);
+                            mOmega += deltaOmega;
+                            
+                            mVelocity -= mCross(-deltaOmega, -contact->normal * mRadius);
+                        }
+                        mVelocity += velocityAdd;
+                    }
+
+                }
+
+                done = false;
+            }
         }
 
         looped = true;
@@ -646,7 +644,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
         findContacts(sContactMask, NULL, NULL);
 
-        bool stoppedPaths;
+        bool stoppedPaths = false;
         velocityCancel(isCentered, false, bouncedYet, stoppedPaths, smPathItrVec);
         Point3D A = getExternalForces(move, timeStep);
 
