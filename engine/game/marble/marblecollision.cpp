@@ -385,7 +385,6 @@ noedgeint:
                 goto CONTINUE_FIRST_LOOP;
         }
 LABEL_52:
-        // Warning, this is the point where anyone attempting to write a marble class will go insane...
         F64 wow = velocity.y * velocity.y + velocity.x * velocity.x + velocity.z * velocity.z;
 
 	    Point3D posVertDiff = position - theVert;
@@ -394,64 +393,64 @@ LABEL_52:
 
         F64 tx = wow * 4.0;
 
-        F64 blabla = posVertDiffDotSq * posVertDiffDotSq - (posVertDiff.lenSquared() - radSq) * tx;
+        F64 var12 = posVertDiffDotSq * posVertDiffDotSq - (posVertDiff.lenSquared() - radSq) * tx;
 
-        if (wow != 0.0 && blabla >= 0.0)
+        if (wow != 0.0 && var12 >= 0.0)
         {
-            F64 boink = 0.5 / wow;
-            F64 blablaSqrt = mSqrtD(blabla);
-            F64 wink = -posVertDiffDotSq - blablaSqrt;
-            F64 glowingSharkInTheDark = (blablaSqrt - posVertDiffDotSq) * boink;
-            F64 owoUwuIlikeWaifus = wink * boink;
-            if (owoUwuIlikeWaifus < glowingSharkInTheDark)
+            F64 var13 = 0.5 / wow;
+            F64 var12Sqrt = mSqrtD(var12);
+            F64 var14 = -posVertDiffDotSq - var12Sqrt;
+            F64 var1 = (var12Sqrt - posVertDiffDotSq) * var13;
+            F64 var2 = var14 * var13;
+            if (var2 < var1)
             {
-                F64 shutUpWeeb = owoUwuIlikeWaifus;
-                owoUwuIlikeWaifus = glowingSharkInTheDark;
-                glowingSharkInTheDark = shutUpWeeb;
+                F64 temp = var2;
+                var2 = var1;
+                var1 = temp;
             }
-            if (owoUwuIlikeWaifus > 0.0001 && finalT > glowingSharkInTheDark)
+            if (var2 > 0.0001 && finalT > var1)
             {
-                if (glowingSharkInTheDark <= 0.0 && glowingSharkInTheDark > -0.0001)
-                    glowingSharkInTheDark = 0.0;
+                if (var1 <= 0.0 && var1 > -0.0001)
+                    var1 = 0.0;
 
-                if (glowingSharkInTheDark >= 0.0)
+                if (var1 >= 0.0)
                 {
-                    finalT = glowingSharkInTheDark;
+                    finalT = var1;
                     contactPoly = poly;
-                    finalPosition = velocity * glowingSharkInTheDark + position;
+                    finalPosition = velocity * var1 + position;
                     lastContactPos = theVert;
                 }
             }
         }
 
-        Point3D weebCount = position - nextVert;
-        F64 weebCountLenVelDot = mDot(weebCount, velocity);
-        F64 feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone = weebCountLenVelDot + weebCountLenVelDot;
-        F64 VosaiAndFacading_CrossedTheLine_Feat_LinnSandin_NCSRelease_MP3 = feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone * feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone - (weebCount.lenSquared() - radSq) * tx;
-        if (wow == 0.0 || VosaiAndFacading_CrossedTheLine_Feat_LinnSandin_NCSRelease_MP3 < 0.0)
+        Point3D var3 = position - nextVert;
+        F64 var4 = mDot(var3, velocity);
+        F64 var5 = var4 + var4;
+        F64 var6 = var5 * var5 - (var3.lenSquared() - radSq) * tx;
+        if (wow == 0.0 || var6 < 0.0)
             goto noedgeint;
 
-        F64 oopsIPooped = 0.5 / wow;
-        F64 buttcheeks = mSqrtD(VosaiAndFacading_CrossedTheLine_Feat_LinnSandin_NCSRelease_MP3);
-        F64 iThinkINeedABreakNoNotABreakPointButARealBreakImStartingToLoseMyMarbles = -feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone - buttcheeks;
-        F64 ohNoesNotAnotherVariable = (buttcheeks - feelingLikeItNeverEndsBackAgainSquareOneTryToLeaveMyselfBehindLookingForABetterPlaceNotToStayAlone) * oopsIPooped;
-        F64 variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO = iThinkINeedABreakNoNotABreakPointButARealBreakImStartingToLoseMyMarbles * oopsIPooped;
-        if (variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO < ohNoesNotAnotherVariable)
+        F64 var7 = 0.5 / wow;
+        F64 var8 = mSqrtD(var6);
+        F64 var9 = -var5 - var8;
+        F64 var10 = (var8 - var5) * var7;
+        F64 var11 = var9 * var7;
+        if (var11 < var10)
         {
-            F64 freeGarbageForMonkeys = variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO;
-            variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO = ohNoesNotAnotherVariable;
-            ohNoesNotAnotherVariable = freeGarbageForMonkeys;
+            F64 temp = var11;
+            var11 = var10;
+            var10 = temp;
         }
 
-        if (variable123HiImMrVariableLMAOXDWOWOKCALMDOWNNO <= 0.0001 || finalT <= ohNoesNotAnotherVariable)
+        if (var11 <= 0.0001 || finalT <= var10)
             goto noedgeint;
-        if (ohNoesNotAnotherVariable <= 0.0 && ohNoesNotAnotherVariable > -0.0001)
-            ohNoesNotAnotherVariable = 0.0;
-        if (ohNoesNotAnotherVariable < 0.0)
+        if (var10 <= 0.0 && var10 > -0.0001)
+            var10 = 0.0;
+        if (var10 < 0.0)
             goto noedgeint;
 
-        finalT = ohNoesNotAnotherVariable;
-        finalPosition = velocity * ohNoesNotAnotherVariable + position;
+        finalT = var10;
+        finalPosition = velocity * var10 + position;
         lastContactPos = nextVert;
         contactPoly = poly;
 
