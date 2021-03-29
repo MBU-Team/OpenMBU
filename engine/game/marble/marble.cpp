@@ -33,6 +33,8 @@ Vector<PathedInterior*> Marble::smPathItrVec;
 Vector<Marble*> Marble::marbles;
 ConcretePolyList Marble::polyList;
 
+bool Marble::smTrapLaunch = false;
+
 Marble::Marble()
 {
     mVertBuff = NULL;
@@ -170,6 +172,14 @@ void Marble::initPersistFields()
     Parent::initPersistFields();
 
     addField("Controllable", TypeBool, Offset(mControllable, Marble));
+}
+
+// This was not in the original
+void Marble::consoleInit()
+{
+    Parent::consoleInit();
+
+    Con::addVariable("Pref::Marble::EnableTrapLaunch", TypeBool, &Marble::smTrapLaunch);
 }
 
 //----------------------------------------------------------------------------

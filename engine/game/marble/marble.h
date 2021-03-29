@@ -206,6 +206,9 @@ private:
     bool mShadowGenerated;
     MatInstance* mStencilMaterial;
 
+    // This was not in the original
+    static bool smTrapLaunch;
+
 public:
     DECLARE_CONOBJECT(Marble);
 
@@ -213,6 +216,9 @@ public:
     ~Marble();
 
     static void initPersistFields();
+
+    // This was not in the original
+    static void consoleInit();
 
     SceneObject* getPad();
     S32 getPowerUpId();
