@@ -18,6 +18,10 @@
 #include "core/frameAllocator.h"
 #include "sceneGraph/sceneGraph.h"
 
+#ifdef MARBLE_BLAST
+#include "game/marble/marble.h"
+#endif
+
 IMPLEMENT_CO_NETOBJECT_V1(PathedInterior);
 IMPLEMENT_CO_DATABLOCK_V1(PathedInteriorData);
 
@@ -600,7 +604,14 @@ void PathedInterior::pushTickState()
     MatrixF mat = getTransform();
     Point3F curPos = mat.getPosition();
     mSavedState.pathPosition = mCurrentPosition;
-    mSavedState.stopTime = mStopTime;
+
+#ifdef MARBLE_BLAST
+    if (!Marble::smTrapLaunch)
+#endif
+    {
+        // This line was added in MBO to fix trap launch
+        mSavedState.stopTime = mStopTime;
+    }
     mSavedState.extrudedBox = mExtrudedBox;
     mSavedState.velocity = mCurrentVelocity;
     mSavedState.worldPosition = curPos;
@@ -613,7 +624,13 @@ void PathedInterior::popTickState()
     mExtrudedBox = mSavedState.extrudedBox;
     mCurrentVelocity = mSavedState.velocity;
     resetTickState(true);
-    mStopTime = mSavedState.stopTime;
+#ifdef MARBLE_BLAST
+    if (!Marble::smTrapLaunch)
+#endif
+    {
+        // This line was added in MBO to fix trap launch
+        mStopTime = mSavedState.stopTime;
+    }
     mTargetPosition = mSavedState.targetPos;
 }
 
@@ -650,8 +667,13 @@ bool PathedInterior::castRay(const Point3F& start, const Point3F& end, RayInfo* 
 
 void PathedInterior::advance(F64 timeDelta)
 {
-    if (timeDelta + mAdvanceTime < mStopTime ||
-       (timeDelta = timeDelta - ((timeDelta + mAdvanceTime) - mStopTime), timeDelta > 0.0))
+    F64 newDelta = timeDelta + mAdvanceTime;
+#ifdef MARBLE_BLAST
+    if (Marble::smTrapLaunch)
+        mAdvanceTime = newDelta; // This line was added in MBO to fix trap launch
+#endif
+    if (newDelta < mStopTime ||
+       (timeDelta = timeDelta - (newDelta - mStopTime), timeDelta > 0.0))
     {
         MatrixF mat = getTransform();
         Point3F newPoint = (F32)timeDelta * mCurrentVelocity;

@@ -206,9 +206,6 @@ private:
     bool mShadowGenerated;
     MatInstance* mStencilMaterial;
 
-    // This was not in the original
-    static bool smTrapLaunch;
-
 public:
     DECLARE_CONOBJECT(Marble);
 
@@ -326,6 +323,9 @@ public:
     static Vector<PathedInterior*> smPathItrVec;
     static Vector<Marble*> marbles;
     static ConcretePolyList polyList;
+
+    // This was not in the original
+    static bool smTrapLaunch;
 
 private:
     virtual void setTransform(const MatrixF& mat);
