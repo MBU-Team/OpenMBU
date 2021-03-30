@@ -460,13 +460,16 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             }
         }
 
-
-    // MBU Xbox
-    // } while(!done);
-
+#ifdef MB_PHYSICS_SWITCHABLE
+    // Both with variable
+    } while ((Marble::smTrapLaunch) ? (!done) : (!done && itersIn < 20));
+#elif defined(MBO_PHYSICS)
     // MBO
-    //} while(!done && itersIn < 20); // Part of trap launch fix
-    } while((Marble::smTrapLaunch) ? (!done) : (!done && itersIn < 20));
+    } while(!done && itersIn < 20); // Part of trap launch fix
+#else
+    // MBU X360
+    } while (!done);
+#endif
     
     if (mVelocity.lenSquared() < 625.0)
     {

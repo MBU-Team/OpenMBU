@@ -214,7 +214,8 @@ public:
 
     static void initPersistFields();
 
-    // This was not in the original
+    // consoleInit was not overriden in the original decompile
+    // if you want it to match MBO exactly, then remove it.
     static void consoleInit();
 
     SceneObject* getPad();
@@ -324,8 +325,9 @@ public:
     static Vector<Marble*> marbles;
     static ConcretePolyList polyList;
 
-    // This was not in the original
+#ifdef MB_PHYSICS_SWITCHABLE
     static bool smTrapLaunch;
+#endif
 
 private:
     virtual void setTransform(const MatrixF& mat);

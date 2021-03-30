@@ -12,8 +12,6 @@ $vidAlreadySet = false;
 
 $pref::Console::alwaysUseDebugOutput = true;
 
-$pref::Marble::EnableTrapLaunch = true;
-
 //-----------------------------------------------------------------------------
 // Support functions used to manage the mod string
 

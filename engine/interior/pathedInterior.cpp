@@ -606,12 +606,19 @@ void PathedInterior::pushTickState()
     mSavedState.pathPosition = mCurrentPosition;
 
 #ifdef MARBLE_BLAST
+#ifdef MB_PHYSICS_SWITCHABLE
     if (!Marble::smTrapLaunch)
-#endif
     {
         // This line was added in MBO to fix trap launch
         mSavedState.stopTime = mStopTime;
     }
+#elif defined(MBO_PHYSICS)
+    // This line was added in MBO to fix trap launch
+    mSavedState.stopTime = mStopTime;
+#endif
+#else
+    mSavedState.stopTime = mStopTime;
+#endif
     mSavedState.extrudedBox = mExtrudedBox;
     mSavedState.velocity = mCurrentVelocity;
     mSavedState.worldPosition = curPos;
@@ -625,12 +632,19 @@ void PathedInterior::popTickState()
     mCurrentVelocity = mSavedState.velocity;
     resetTickState(true);
 #ifdef MARBLE_BLAST
+#ifdef MB_PHYSICS_SWITCHABLE
     if (!Marble::smTrapLaunch)
-#endif
     {
         // This line was added in MBO to fix trap launch
         mStopTime = mSavedState.stopTime;
     }
+#elif defined(MBO_PHYSICS)
+    // This line was added in MBO to fix trap launch
+    mStopTime = mSavedState.stopTime;
+#endif
+#else
+    mStopTime = mSavedState.stopTime;
+#endif
     mTargetPosition = mSavedState.targetPos;
 }
 
@@ -669,8 +683,12 @@ void PathedInterior::advance(F64 timeDelta)
 {
     F64 newDelta = timeDelta + mAdvanceTime;
 #ifdef MARBLE_BLAST
+#ifdef MB_PHYSICS_SWITCHABLE
     if (Marble::smTrapLaunch)
-        mAdvanceTime = newDelta; // This line was added in MBO to fix trap launch
+        mAdvanceTime = newDelta; // This line was removed in MBO to fix trap launch
+#elif !defined(MBO_PHYSICS)
+    mAdvanceTime = newDelta; // This line was removed in MBO to fix trap launch
+#endif
 #endif
     if (newDelta < mStopTime ||
        (timeDelta = timeDelta - (newDelta - mStopTime), timeDelta > 0.0))

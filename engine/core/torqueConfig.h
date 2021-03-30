@@ -62,6 +62,12 @@
 #define MB_ULTRA
 #endif
 
+// Define me to allow switching physics systems in script
+//#define MB_PHYSICS_SWITCHABLE
+
+// Define me to use MBO physics (does nothing if MB_PHYSICS_SWITCHABLE is defined
+//#define MBO_PHYSICS
+
 // Define me to enable MarbleBlastUltra Preview System
 #define MB_ULTRA_PREVIEWS
 
