@@ -1548,6 +1548,12 @@
     <ClCompile Include="..\engine\game\tickCache.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\gui\game\guiBarCtrl.cpp">
+      <Filter>Source Files\gui\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\gui\game\guiEnergyBarHud.cpp">
+      <Filter>Source Files\gui\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2848,6 +2854,12 @@
     </ClInclude>
     <ClInclude Include="..\engine\game\tickCache.h">
       <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\game\guiBarCtrl.h">
+      <Filter>Source Files\gui\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\game\guiEnergyBarHud.h">
+      <Filter>Source Files\gui\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

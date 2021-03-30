@@ -2023,8 +2023,10 @@
     <ClCompile Include="..\engine\gui\editor\guiInspectorTypes.cpp" />
     <ClCompile Include="..\engine\gui\editor\guiMenuBar.cpp" />
     <ClCompile Include="..\engine\gui\game\guiAviBitmapCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\game\guiBarCtrl.cpp" />
     <ClCompile Include="..\engine\gui\game\guiBitmapAnimation.cpp" />
     <ClCompile Include="..\engine\gui\game\guiChunkedBitmapCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\game\guiEnergyBarHud.cpp" />
     <ClCompile Include="..\engine\gui\game\guiFadeinBitmapCtrl.cpp" />
     <ClCompile Include="..\engine\gui\game\guiMessageVectorCtrl.cpp" />
     <ClCompile Include="..\engine\gui\game\guiProgressCtrl.cpp" />
@@ -3820,7 +3822,9 @@
     <ClInclude Include="..\engine\gui\editor\guiInspectorTypes.h" />
     <ClInclude Include="..\engine\gui\editor\guiMenuBar.h" />
     <ClInclude Include="..\engine\gui\game\guiAviBitmapCtrl.h" />
+    <ClInclude Include="..\engine\gui\game\guiBarCtrl.h" />
     <ClInclude Include="..\engine\gui\game\guiBitmapAnimation.h" />
+    <ClInclude Include="..\engine\gui\game\guiEnergyBarHud.h" />
     <ClInclude Include="..\engine\gui\game\guiMessageVectorCtrl.h" />
     <ClInclude Include="..\engine\gui\game\guiProgressCtrl.h" />
     <ClInclude Include="..\engine\gui\shiny\guiTickCtrl.h" />
