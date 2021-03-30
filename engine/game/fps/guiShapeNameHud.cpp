@@ -478,8 +478,6 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
     F32 ellipseDistance = arrowDir.x * arrowDir.x / (ellipse.x * ellipse.x)
                         + arrowDir.y * arrowDir.y / (ellipse.y * ellipse.y);
 
-    ellipse = drawPoint;
-
     ellipseDistance = mSqrt(ellipseDistance);
 
     F32 arrowAlpha = mMaxArrowAlpha;
@@ -501,9 +499,7 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
         drawPoint = arrowDir / ellipseDistance;
         drawPoint += center;
     }
-
-    Point2F unk4 = drawPoint - ellipse;
-    //unk4.len(); // unused return???
+    
     arrowDir.normalize();
     
     F32 arrowScale = mClampF(1.0f - distToShape / 100.0f, mMinArrowFraction, 1.0f);
