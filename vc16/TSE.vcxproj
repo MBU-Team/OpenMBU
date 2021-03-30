@@ -2030,6 +2030,7 @@
     <ClCompile Include="..\engine\gui\game\guiFadeinBitmapCtrl.cpp" />
     <ClCompile Include="..\engine\gui\game\guiMessageVectorCtrl.cpp" />
     <ClCompile Include="..\engine\gui\game\guiProgressCtrl.cpp" />
+    <ClCompile Include="..\engine\gui\game\guiScoreCountHud.cpp" />
     <ClCompile Include="..\engine\gui\shiny\guiTickCtrl.cpp" />
     <ClCompile Include="..\engine\gui\utility\guiBubbleTextCtrl.cpp" />
     <ClCompile Include="..\engine\gui\utility\guiInputCtrl.cpp" />
@@ -3827,6 +3828,7 @@
     <ClInclude Include="..\engine\gui\game\guiEnergyBarHud.h" />
     <ClInclude Include="..\engine\gui\game\guiMessageVectorCtrl.h" />
     <ClInclude Include="..\engine\gui\game\guiProgressCtrl.h" />
+    <ClInclude Include="..\engine\gui\game\guiScoreCountHud.h" />
     <ClInclude Include="..\engine\gui\shiny\guiTickCtrl.h" />
     <ClInclude Include="..\engine\gui\utility\guiBubbleTextCtrl.h" />
     <ClInclude Include="..\engine\gui\utility\guiInputCtrl.h" />

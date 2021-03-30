@@ -1554,6 +1554,9 @@
     <ClCompile Include="..\engine\gui\game\guiEnergyBarHud.cpp">
       <Filter>Source Files\gui\game</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\gui\game\guiScoreCountHud.cpp">
+      <Filter>Source Files\gui\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2859,6 +2862,9 @@
       <Filter>Source Files\gui\game</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\gui\game\guiEnergyBarHud.h">
+      <Filter>Source Files\gui\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\game\guiScoreCountHud.h">
       <Filter>Source Files\gui\game</Filter>
     </ClInclude>
   </ItemGroup>
