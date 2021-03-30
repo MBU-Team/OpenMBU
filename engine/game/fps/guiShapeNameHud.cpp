@@ -326,7 +326,7 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
     MatrixF cam = parent->mLastCameraQuery.cameraMatrix;
     Point3F shapeDir = shapePos - cam.getPosition();
 
-    U32 behindFrac = Platform::getVirtualMilliseconds() - theObject->mCreateTime;
+    U32 lifetime = Platform::getVirtualMilliseconds() - theObject->mCreateTime;
 
     F32 distToShape = shapeDir.len();
     shapeDir.normalize();
@@ -393,7 +393,7 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
     }
 
     bool blink = false;
-    if (behindFrac < 3000)
+    if (lifetime < 3000)
         blink = (Platform::getVirtualMilliseconds() / 500) & 1;
 
     MatrixF inverseCam = cam;
