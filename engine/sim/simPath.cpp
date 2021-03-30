@@ -306,7 +306,7 @@ static EnumTable::Enums markerEnums[] =
    { Marker::SmoothingTypeLinear , "Linear" },
    { Marker::SmoothingTypeAccelerate , "Accelerate" },
 };
-static EnumTable markerSmoothingTable(2, &markerEnums[0]);
+static EnumTable markerSmoothingTable(3, &markerEnums[0]);
 
 static EnumTable::Enums knotEnums[] =
 {
