@@ -465,8 +465,8 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
     // } while(!done);
 
     // MBO
-    // } while(!done || itersIn < 20);
-    } while((Marble::smTrapLaunch) ? (!done) : (!done || itersIn < 20));
+     //} while(!done && itersIn < 20);
+    } while((Marble::smTrapLaunch) ? (!done) : (!done && itersIn < 20));
     
     if (mVelocity.lenSquared() < 625.0)
     {
