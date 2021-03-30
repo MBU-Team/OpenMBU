@@ -474,27 +474,31 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
     Point2F ellipse = mEllipseScreenFraction * center;
     Point2F arrowDir = drawPoint - center;
 
-    F32 unk3 = arrowDir.x * arrowDir.x / (ellipse.x * ellipse.x)
-             + arrowDir.y * arrowDir.y / (ellipse.y * ellipse.y);
+    // The portion of the radius of arrowDir relative to the ellipse
+    F32 ellipseDistance = arrowDir.x * arrowDir.x / (ellipse.x * ellipse.x)
+                        + arrowDir.y * arrowDir.y / (ellipse.y * ellipse.y);
 
     ellipse = drawPoint;
 
-    unk3 = mSqrt(unk3);
-    
+    ellipseDistance = mSqrt(ellipseDistance);
+
+    F32 arrowAlpha = mMaxArrowAlpha;
     F32 circleAlpha = 0.0f;
 
-    if (unk3 <= 1.0f)
+    if (ellipseDistance <= 1.0f)
     {
-        if (unk3 <= 0.7f)
+        if (ellipseDistance <= 0.7f)
         {
+            arrowAlpha = 0.0f;
             circleAlpha = mMaxTargetAlpha;
         } else
         {
-            circleAlpha = (mMaxArrowAlpha - ((unk3 - 0.7f) * 3.333333333333333f * mMaxArrowAlpha)) * mMaxTargetAlpha / mMaxArrowAlpha;
+            arrowAlpha = (ellipseDistance - 0.7f) * 3.333333333333333f * mMaxArrowAlpha;
+            circleAlpha = mMaxArrowAlpha - arrowAlpha * mMaxTargetAlpha / mMaxArrowAlpha;
         }
     } else
     {
-        drawPoint = arrowDir / unk3;
+        drawPoint = arrowDir / ellipseDistance;
         drawPoint += center;
     }
 
@@ -544,8 +548,6 @@ void GuiShapeNameHud::renderArrow(ShapeBase* theObject, Point3F shapePos)
     GFX->setWorldMatrix(newMat);
 
     ShapeBaseData* db = (ShapeBaseData*)theObject->getDataBlock();
-
-    F32 arrowAlpha = mMaxArrowAlpha;
 
     ColorF refColor = db->referenceColor;
     if (blink)
