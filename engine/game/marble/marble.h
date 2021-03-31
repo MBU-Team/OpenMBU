@@ -226,6 +226,7 @@ public:
     U32 getMaxNaturalBlastEnergy();
     U32 getMaxBlastEnergy();
     F32 getBlastPercent();
+    F32 getRenderBlastPercent() { return mRenderBlastPercent; }
     F32 getBlastEnergy() const;
     void setBlastEnergy(F32 energy);
     void setUseFullMarbleTime(bool useFull);

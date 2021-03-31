@@ -81,11 +81,10 @@ void GuiBarCtrl::onRender(Point2I offset, const RectI& updateRect)
     if (val > 0.00001f)
     {
         RectI renderRect(offset, ctrlRect.extent);
-
-        const Orientation orientation = mOrientation;
-        if (orientation == LeftRight)
+        
+        if (mOrientation == LeftRight)
         {
-            renderRect.extent.x *= (S32)val;
+            renderRect.extent.x = (F32)ctrlRect.extent.x * val;
             colors[0] = mColors[0];
             colors[1] = colorEnd;
             colors[2] = colorEnd;
@@ -95,7 +94,7 @@ void GuiBarCtrl::onRender(Point2I offset, const RectI& updateRect)
             texCoords[2].set(val, 1.0f);
             texCoords[3].set(0.0f, 1.0f);
         }
-        else if (orientation == RightLeft)
+        else if (mOrientation == RightLeft)
         {
             S32 xOffset = ctrlRect.extent.x - (S32)(val * (F32)ctrlRect.extent.x);
             renderRect.point.x = xOffset + offset.x;
@@ -109,7 +108,7 @@ void GuiBarCtrl::onRender(Point2I offset, const RectI& updateRect)
             texCoords[2].set(1.0f - val, 1.0f);
             texCoords[3].set(1.0f, 1.0f);
         }
-        else if (orientation == BottomTop)
+        else if (mOrientation == BottomTop)
         {
             S32 yOffset = ctrlRect.extent.y - (S32)(val * (F32)ctrlRect.extent.y);
             renderRect.point.y = yOffset + offset.y;
@@ -123,9 +122,9 @@ void GuiBarCtrl::onRender(Point2I offset, const RectI& updateRect)
             texCoords[2].set(1.0f, 1.0f);
             texCoords[3].set(0.0f, 1.0f);
         }
-        else if (orientation == TopBottom)
+        else if (mOrientation == TopBottom)
         {
-            renderRect.extent.y *= (S32)val;
+            renderRect.extent.y = (F32)ctrlRect.extent.y * val;
             colors[0] = mColors[0];
             colors[1] = colors[0];
             colors[2] = colorEnd;

@@ -1644,9 +1644,9 @@ void Marble::advanceTime(F32 dt)
     F32 deltaTime = dt * 1000.0f;
 
     if (mBlastEnergy >= mDataBlock->maxNaturalBlastRecharge >> 5)
-        mRenderBlastPercent = getMin(F32(mBlastEnergy / mDataBlock->blastRechargeTime >> 5), dt * 0.75f + mRenderBlastPercent);
+        mRenderBlastPercent = getMin(F32((F32)mBlastEnergy / (mDataBlock->blastRechargeTime >> 5)), dt * 0.75f + mRenderBlastPercent);
     else
-        mRenderBlastPercent = mBlastEnergy / mDataBlock->blastRechargeTime >> 5;
+        mRenderBlastPercent = (F32)mBlastEnergy / (mDataBlock->blastRechargeTime >> 5);
 
     F32 newDt = dt / 0.4f * 2.302585124969482f;
     F32 smooth = 1.0f / (newDt * (newDt * 0.235f * newDt) + newDt + 1.0f + 0.48f * newDt * newDt);
