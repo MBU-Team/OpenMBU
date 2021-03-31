@@ -152,7 +152,7 @@ public:
     void setTargetPosition(S32 targetPosition);
     void computeNextPathStep(F64 timeDelta);
     Box3F getExtrudedBox() { return mExtrudedBox; }
-    Point3F getVelocity();
+    Point3F getVelocity() const;
     void advance(F64 timeDelta);
 
     U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);

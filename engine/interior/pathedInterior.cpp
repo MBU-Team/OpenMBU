@@ -586,7 +586,7 @@ void PathedInterior::computeNextPathStep(F64 timeDelta)
     }
 }
 
-Point3F PathedInterior::getVelocity()
+Point3F PathedInterior::getVelocity() const
 {
     return mCurrentVelocity;
 }
