@@ -1744,6 +1744,24 @@
     <class>        <name>GuiBackgroundCtrl</name>
         <base>GuiControl</base>
     </class>
+    <class>        <name>GuiBarCtrl</name>
+        <base>GuiControl</base>
+        <field>            <name>direction</name>
+            <desc>enumval direction</desc>
+        </field>
+        <field>            <name>endColor</name>
+            <desc>ColorI endColor</desc>
+        </field>
+        <field>            <name>startColor</name>
+            <desc>ColorI startColor</desc>
+        </field>
+        <field>            <name>texture</name>
+            <desc>filename texture</desc>
+        </field>
+        <field>            <name>value</name>
+            <desc>float value</desc>
+        </field>
+    </class>
     <class>        <name>GuiBitmapAnimation</name>
         <base>GuiControl</base>
         <field>            <name>animationFrameDelay</name>
@@ -2241,6 +2259,21 @@
             <desc>string refCtrl</desc>
         </field>
     </class>
+    <class>        <name>GuiEnergyBarCtrl</name>
+        <base>GuiBarCtrl</base>
+        <field>            <name>activeColor</name>
+            <desc>ColorI activeColor</desc>
+        </field>
+        <field>            <name>inactiveColor</name>
+            <desc>ColorI inactiveColor</desc>
+        </field>
+        <field>            <name>minActiveValue</name>
+            <desc>float minActiveValue</desc>
+        </field>
+        <field>            <name>ultraColor</name>
+            <desc>ColorI ultraColor</desc>
+        </field>
+    </class>
     <class>        <name>GuiFadeinBitmapCtrl</name>
         <base>GuiBitmapCtrl</base>
         <field>            <name>done</name>
@@ -2704,11 +2737,29 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>distanceFade</name>
             <desc>float distanceFade</desc>
         </field>
+        <field>            <name>ellipseScreenFraction</name>
+            <desc>Point2F ellipseScreenFraction</desc>
+        </field>
         <field>            <name>fillColor</name>
             <desc>ColorF fillColor</desc>
         </field>
         <field>            <name>frameColor</name>
             <desc>ColorF frameColor</desc>
+        </field>
+        <field>            <name>fullArrowLength</name>
+            <desc>float fullArrowLength</desc>
+        </field>
+        <field>            <name>fullArrowWidth</name>
+            <desc>float fullArrowWidth</desc>
+        </field>
+        <field>            <name>maxArrowAlpha</name>
+            <desc>float maxArrowAlpha</desc>
+        </field>
+        <field>            <name>maxTargetAlpha</name>
+            <desc>float maxTargetAlpha</desc>
+        </field>
+        <field>            <name>minArrowFraction</name>
+            <desc>float minArrowFraction</desc>
         </field>
         <field>            <name>showFill</name>
             <desc>bool showFill</desc>
@@ -3301,6 +3352,12 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <method>            <name>isStatic</name>
             <desc>Is the object static (ie, non-movable)?</desc>
+        </method>
+        <method>            <name>setBuddy</name>
+            <args>bool buddyOn</args>
+        </method>
+        <method>            <name>setClientHidden</name>
+            <args>int timer</args>
         </method>
         <method>            <name>setCollisionTimeout</name>
             <args>ShapeBase obj</args>
@@ -4654,6 +4711,11 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getWorldBoxCenter</name>
             <desc>Returns the center of the world bounding box.</desc>
         </method>
+        <method>            <name>isHidden</name>
+        </method>
+        <method>            <name>setHidden</name>
+            <args>bool show</args>
+        </method>
         <method>            <name>setScale</name>
             <args>Point3F scale</args>
         </method>
@@ -4935,8 +4997,6 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <method>            <name>isEnabled</name>
         </method>
-        <method>            <name>isHidden</name>
-        </method>
         <method>            <name>isImageFiring</name>
             <args>int slot</args>
         </method>
@@ -4982,9 +5042,6 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <method>            <name>setEnergyLevel</name>
             <args>float level</args>
-        </method>
-        <method>            <name>setHidden</name>
-            <args>bool show</args>
         </method>
         <method>            <name>setImageAmmo</name>
             <args>int slot, bool hasAmmo</args>
@@ -5151,6 +5208,9 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>observeThroughObject</name>
             <desc>bool observeThroughObject</desc>
+        </field>
+        <field>            <name>referenceColor</name>
+            <desc>ColorF referenceColor</desc>
         </field>
         <field>            <name>renderGemAura</name>
             <desc>bool renderGemAura</desc>
@@ -8132,5 +8192,9 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     </function>
     <function>        <name>XBLiveIsSignedIn</name>
         <args>[port]</args>
+    </function>
+    <function>        <name>XBLiveIsSignedInGold</name>
+    </function>
+    <function>        <name>XBLiveIsSignedInSilver</name>
     </function>
 </exports>
