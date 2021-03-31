@@ -496,14 +496,14 @@ void PathedInterior::processTick(const Move* move)
         mNextNetUpdate = TickMs;
     }
     doSustainSound();
-    mCurrentVelocity *= getMin(mStopTime, (F64)TickMs) * 0.03125f;
+    mCurrentVelocity *= getMin((F32)mStopTime, (F32)TickMs) / (F32)TickMask;
     mStopTime = 1000.0;
 }
 
 void PathedInterior::interpolateTick(F32 delta)
 {
     MatrixF mat = getTransform();
-    Point3F newPoint = mCurrentVelocity * 0.03200000151991844;
+    Point3F newPoint = mCurrentVelocity / TickMs;
     newPoint = mat.getPosition() - (newPoint * delta);
     mat.setPosition(newPoint);
     setRenderTransform(mat);
