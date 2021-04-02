@@ -145,6 +145,9 @@ GuiControlProfile::GuiControlProfile(void) :
     mBitmapName = NULL;
     mFontCharset = TGE_ANSI_CHARSET;
 
+    mSoundButtonDown = NULL;
+    mSoundButtonOver = NULL;
+    mSoundOptionChanged = NULL;
     mRowHeight = 0;
 
     GuiControlProfile* def = dynamic_cast<GuiControlProfile*>(Sim::findObject("GuiDefaultProfile"));
@@ -182,6 +185,7 @@ GuiControlProfile::GuiControlProfile(void) :
         // default sound
         mSoundButtonDown = def->mSoundButtonDown;
         mSoundButtonOver = def->mSoundButtonOver;
+        mSoundOptionChanged = def->mSoundOptionChanged;
 
         //used by GuiTextCtrl
         mModal = def->mModal;
@@ -249,6 +253,7 @@ void GuiControlProfile::initPersistFields()
 
     addField("soundButtonDown", TypeAudioProfilePtr, Offset(mSoundButtonDown, GuiControlProfile));
     addField("soundButtonOver", TypeAudioProfilePtr, Offset(mSoundButtonOver, GuiControlProfile));
+    addField("soundOptionChanged", TypeAudioProfilePtr, Offset(mSoundOptionChanged, GuiControlProfile));
 
     addField("rowHeight", TypeS32, Offset(mRowHeight, GuiControlProfile));
     addField("iconPosition", TypePoint2I, Offset(mIconPosition, GuiControlProfile));

@@ -155,6 +155,7 @@ public:
     // sound members
     AudioProfile* mSoundButtonDown;
     AudioProfile* mSoundButtonOver;
+    AudioProfile* mSoundOptionChanged;
 
 public:
     DECLARE_CONOBJECT(GuiControlProfile);
