@@ -160,8 +160,47 @@ U32 GuiXboxOptionListCtrl::getRowCount()
 
 S32 GuiXboxOptionListCtrl::getRowIndex(Point2I localPoint)
 {
-    // TODO: Implement GuiXboxOptionListCtrl::getRowIndex
-    return 0;
+    S32 yExtent = 0;
+    if (!mProfile->mBitmapArrayRects.empty())
+        yExtent = mProfile->mBitmapArrayRects[0].extent.y;
+
+    S32 rowHeight = mRowHeight + mProfile->mTextOffset.y;
+    if (rowHeight <= yExtent)
+        rowHeight = yExtent;
+
+    S32 hitTop = 0;
+    S32 hitBottom = rowHeight;
+    if (mProfile->mHitArea.size() == 2)
+    {
+        hitTop = mProfile->mHitArea[0];
+        hitBottom = mProfile->mHitArea[1];
+    }
+
+    S32 result = mTopRow;
+    S32 lastRow = result + mRowsPerPage;
+
+    if (result < lastRow)
+    {
+        S32 cur = rowHeight * result;
+        while (result < mRowText.size())
+        {
+            S32 num;
+            if (mProfile->mRowHeight)
+                num = result * mProfile->mRowHeight;
+            else
+                num = cur;
+
+            if (num + hitTop <= localPoint.y && localPoint.y <= hitBottom + num)
+                return result;
+
+            cur += rowHeight;
+            result++;
+            if (result >= lastRow)
+                return -1;
+        }
+    }
+
+    return -1;
 }
 
 void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
@@ -429,7 +468,33 @@ void GuiXboxOptionListCtrl::onMouseUp(const GuiEvent& event)
 
 void GuiXboxOptionListCtrl::clickOption(S32 xPos)
 {
-    // TODO: Implement GuiXboxOptionListCtrl::clickOption
+    S32 bitmapArrowWidth = 0;
+    if (mProfile->mBitmapArrayRects.size() > 2)
+        bitmapArrowWidth = mProfile->mBitmapArrayRects[2].extent.x;
+
+    S32 c2LM = 0;
+    S32 c2RM = 0;
+    if (mColumnMargins.size() > 2)
+        c2LM = mColumnMargins[2];
+    if (mColumnMargins.size() > 3)
+        c2RM = mColumnMargins[3];
+
+    S32 unk1 = (S32)((F32)mColumnWidth[0] / 100.0f * (F32)mBounds.extent.x);
+    S32 unk2 = c2LM + unk1;
+    S32 unk3 = unk1 + (S32)((F32)mBounds.extent.x * ((F32)mColumnWidth[1] / 100.0f)) - c2RM;
+
+    if (unk2 > xPos || xPos > bitmapArrowWidth + unk2)
+    {
+        if (unk3 - bitmapArrowWidth <= xPos && xPos <= unk3)
+        {
+            incOption();
+            Con::executef(this, 1, "onRight");
+        }
+    } else
+    {
+        decOption();
+        Con::executef(this, 1, "onLeft");
+    }
 }
 
 void GuiXboxOptionListCtrl::addRow(const char* text, const char* data, S32 bitmapIndex)
