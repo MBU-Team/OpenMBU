@@ -576,12 +576,24 @@ void GuiXboxOptionListCtrl::clickOption(S32 xPos)
         if (unk3 - bitmapArrowWidth <= xPos && xPos <= unk3)
         {
             incOption();
+#ifdef MBO_UNTOUCHED_MENUS
             Con::executef(this, 1, "onRight");
+#else
+            const char* retval = Con::executef(this, 1, "onRight");
+            if (!dStrcmp(retval, ""))
+                Parent::onGamepadButtonPressed(XI_DPAD_RIGHT);
+#endif
         }
     } else
     {
         decOption();
+#ifdef MBO_UNTOUCHED_MENUS
         Con::executef(this, 1, "onLeft");
+#else
+        const char* retval = Con::executef(this, 1, "onLeft");
+        if (!dStrcmp(retval, ""))
+            Parent::onGamepadButtonPressed(XI_DPAD_LEFT);
+#endif
     }
 }
 
