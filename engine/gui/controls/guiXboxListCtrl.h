@@ -20,7 +20,9 @@ protected:
     Vector<S32> mBitmapIndices;
     Vector<bool> mRowEnabled;
     StringTableEntry mInitialRows;
+#ifndef MBO_UNTOUCHED_MENUS
     bool mMouseDown;
+#endif
 
 public:
     DECLARE_CONOBJECT(GuiXboxListCtrl);
@@ -41,8 +43,10 @@ public:
     const char* getSelectedData();
     void setRowEnabled(S32 idx, bool enabled);
     bool getRowEnabled(S32 idx);
+#ifndef MBO_UNTOUCHED_MENUS
     void onMouseLeave(const GuiEvent& event);
     void onMouseMove(const GuiEvent& event);
+#endif
     void onMouseDown(const GuiEvent& event);
     void onMouseUp(const GuiEvent& event);
     void addRow(const char* text, const char* data, U32 addedHeight, S32 bitmapIndex);

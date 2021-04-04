@@ -14,7 +14,9 @@ IMPLEMENT_CONOBJECT(GuiXboxListCtrl);
 GuiXboxListCtrl::GuiXboxListCtrl()
 {
     mInitialRows = StringTable->insert("");
+#ifndef MBO_UNTOUCHED_MENUS
     mMouseDown = false;
+#endif
 }
 
 void GuiXboxListCtrl::initPersistFields()
@@ -295,13 +297,13 @@ void GuiXboxListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
             Point2I clickOffset(0, 0);
 
+#ifndef MBO_UNTOUCHED_MENUS
             if (mMouseDown && i == mSelected)
             {
                 GFX->setBitmapModulation(ColorI(128, 128, 128, 255));
                 clickOffset.set(1, 1);
-            } else {
-                GFX->setBitmapModulation(ColorI(255, 255, 255, 255));
             }
+#endif
 
             if (hasBitmap)
             {
@@ -339,10 +341,14 @@ void GuiXboxListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
             fontColor.alpha = 255;
 
+#ifdef MBO_UNTOUCHED_MENUS
+            GFX->setBitmapModulation(fontColor);
+#else
             if (mMouseDown && i == mSelected)
                 GFX->setBitmapModulation(fontColor * 0.5f);
             else
                 GFX->setBitmapModulation(fontColor);
+#endif
 
             point += mProfile->mTextOffset;
             renderJustifiedText(point + clickOffset, Point2I(extentX, bitmapHeight), mRowText[i]);
@@ -380,40 +386,53 @@ bool GuiXboxListCtrl::getRowEnabled(S32 idx)
     return mRowEnabled[idx];
 }
 
+#ifndef MBO_UNTOUCHED_MENUS
 void GuiXboxListCtrl::onMouseLeave(const GuiEvent& event)
 {
     mMouseDown = false;
 }
+#endif
 
+#ifndef MBO_UNTOUCHED_MENUS
 void GuiXboxListCtrl::onMouseMove(const GuiEvent& event)
 {
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
     S32 row = getRowIndex(localPoint);
     if (row >= 0 && row != mSelected)
         move(row - mSelected);
-
-    //Parent::onMouseMove(event);
 }
+#endif
 
 void GuiXboxListCtrl::onMouseDown(const GuiEvent& event)
 {
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
     S32 row = getRowIndex(localPoint);
+#ifdef MBO_UNTOUCHED_MENUS
+    if (row >= 0 && row != mSelected)
+        move(row - mSelected);
+#else
     if (row >= 0)
         mMouseDown = true;
+#endif
 }
 
 void GuiXboxListCtrl::onMouseUp(const GuiEvent& event)
 {
+#ifndef MBO_UNTOUCHED_MENUS
     mMouseDown = false;
+#endif
 
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
 
     if (mSelected == getRowIndex(localPoint))
     {
+#ifdef MBO_UNTOUCHED_MENUS
+        Con::executef(this, 1, "onClick");
+#else
         const char* retval = Con::executef(this, 1, "onClick");
         if (!dStrcmp(retval, ""))
             onGamepadButtonPressed(XI_A);
+#endif
     }
 }
 
