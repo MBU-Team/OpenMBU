@@ -17,6 +17,10 @@ GuiXboxOptionListCtrl::GuiXboxOptionListCtrl()
     mColumnWidth.push_back(50);
     mColumnWidth.push_back(50);
     mShowRects = false;
+#ifndef MBO_UNTOUCHED_MENUS
+    mMouseDown = false;
+    mArrowHover = 0;
+#endif
 }
 
 void GuiXboxOptionListCtrl::initPersistFields()
@@ -382,7 +386,11 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
                     arrowOffset = (rowHeight - bitmapArrowHeight) / 2;
             }
 
+#ifdef MBO_UNTOUCHED_MENUS
             GFX->clearBitmapModulation();
+#else
+            ColorI arrowHighlightColor(128, 128, 255);
+#endif
 
             S32 leftArrowIndex = selectedLeftArrowIndex;
             if (index != mSelected)
@@ -390,6 +398,13 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
             if (leftArrowIndex != -1)
             {
+#ifndef MBO_UNTOUCHED_MENUS
+                if (mArrowHover == -1 && index == mSelected)
+                    GFX->setBitmapModulation(arrowHighlightColor);
+                else
+                    GFX->clearBitmapModulation();
+#endif
+
                 RectI rect;
                 rect.point.set(rightRect.point.x, yPos + arrowOffset + rightRect.point.y);
                 rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
@@ -403,6 +418,13 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
             if (rightArrowIndex != -1)
             {
+#ifndef MBO_UNTOUCHED_MENUS
+                if (mArrowHover == 1 && index == mSelected)
+                    GFX->setBitmapModulation(arrowHighlightColor);
+                else
+                    GFX->clearBitmapModulation();
+#endif
+
                 RectI rect;
                 rect.point.set(rightRect.extent.x + rightRect.point.x - bitmapArrowWidth,
                                yPos + arrowOffset + rightRect.point.y);
@@ -410,6 +432,10 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
                 GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[rightArrowIndex]);
             }
+
+#ifndef MBO_UNTOUCHED_MENUS
+            GFX->clearBitmapModulation();
+#endif
 
             if (mShowRects)
             {
@@ -449,17 +475,79 @@ const char* GuiXboxOptionListCtrl::getSelectedData()
     return mRowData[mSelected];
 }
 
+#ifndef MBO_UNTOUCHED_MENUS
+void GuiXboxOptionListCtrl::onMouseLeave(const GuiEvent& event)
+{
+    mMouseDown = false;
+}
+#endif
+
+#ifndef MBO_UNTOUCHED_MENUS
+void GuiXboxOptionListCtrl::onMouseMove(const GuiEvent& event)
+{
+    mArrowHover = 0;
+
+    Point2I localPoint = globalToLocalCoord(event.mousePoint);
+    S32 row = getRowIndex(localPoint);
+
+    if (row >= 0)
+    {
+        if (row != mSelected)
+            move(row - mSelected);
+
+        // Arrow hover
+        S32 bitmapArrowWidth = 0;
+        if (mProfile->mBitmapArrayRects.size() > 2)
+            bitmapArrowWidth = mProfile->mBitmapArrayRects[2].extent.x;
+
+        S32 c2LM = 0;
+        S32 c2RM = 0;
+        if (mColumnMargins.size() > 2)
+            c2LM = mColumnMargins[2];
+        if (mColumnMargins.size() > 3)
+            c2RM = mColumnMargins[3];
+
+        S32 unk1 = (S32)((F32)mColumnWidth[0] / 100.0f * (F32)mBounds.extent.x);
+        S32 unk2 = c2LM + unk1;
+        S32 unk3 = unk1 + (S32)((F32)mBounds.extent.x * ((F32)mColumnWidth[1] / 100.0f)) - c2RM;
+
+        if (unk2 > localPoint.x || localPoint.x > bitmapArrowWidth + unk2)
+        {
+            if (unk3 - bitmapArrowWidth <= localPoint.x && localPoint.x <= unk3)
+            {
+                // Right arrow hover
+                mArrowHover = 1;
+            }
+        }
+        else
+        {
+            // Left arrow hover
+            mArrowHover = -1;
+        }
+    }
+}
+#endif
+
 void GuiXboxOptionListCtrl::onMouseDown(const GuiEvent& event)
 {
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
     S32 row = getRowIndex(localPoint);
 
+#ifdef MBO_UNTOUCHED_MENUS
     if (row >= 0 && row != mSelected)
         move(row - mSelected);
+#else
+    if (row >= 0)
+        mMouseDown = true;
+#endif
 }
 
 void GuiXboxOptionListCtrl::onMouseUp(const GuiEvent& event)
 {
+#ifndef MBO_UNTOUCHED_MENUS
+    mMouseDown = false;
+#endif
+
     Point2I localPoint = globalToLocalCoord(event.mousePoint);
 
     if (mSelected == getRowIndex(localPoint))

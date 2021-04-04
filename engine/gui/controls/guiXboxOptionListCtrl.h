@@ -24,6 +24,10 @@ protected:
     Vector<S32> mColumnWidth;
     Vector<S32> mColumnMargins;
     S32 mColumnGap;
+#ifndef MBO_UNTOUCHED_MENUS
+    bool mMouseDown;
+    S32 mArrowHover;
+#endif
 
 public:
     DECLARE_CONOBJECT(GuiXboxOptionListCtrl);
@@ -43,6 +47,10 @@ public:
     const char* getSelectedText();
     S32 getSelectedIndex();
     const char* getSelectedData();
+#ifndef MBO_UNTOUCHED_MENUS
+    void onMouseLeave(const GuiEvent& event);
+    void onMouseMove(const GuiEvent& event);
+#endif
     void onMouseDown(const GuiEvent& event);
     void onMouseUp(const GuiEvent& event);
     void onMouseDragged(const GuiEvent& event);
