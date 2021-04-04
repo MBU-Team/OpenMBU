@@ -166,8 +166,238 @@ S32 GuiXboxOptionListCtrl::getRowIndex(Point2I localPoint)
 
 void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
-    // TODO: Implement GuiXboxOptionListCtrl::onRender
-    Parent::onRender(offset, updateRect);
+    S32 maxLen = 0;
+    for (S32 i = 0; i < mRowText.size(); i++)
+    {
+        S32 strWidth = mProfile->mFont->getStrWidth(mRowText[i]);
+        if (strWidth > maxLen)
+            maxLen = strWidth;
+    }
+
+    S32 numRects = mProfile->mBitmapArrayRects.size();
+
+    S32 bitmapSelectWidth = 0;
+    S32 bitmapSelectHeight = 0;
+    S32 bitmapArrowWidth = 0;
+    S32 bitmapArrowHeight = 0;
+    S32 unselectedBitmapIndex = (numRects > 0) - 1;
+    S32 selectedBitmapIndex = 2 * (numRects > 1) - 1;
+    S32 unselectedLeftArrowIndex = numRects <= 2 ? -1 : 2;
+    S32 selectedLeftArrowIndex = 4 * (numRects > 3) - 1;
+    S32 unselectedRightArrowIndex = numRects <= 4 ? -1 : 4;
+    S32 selectedRightArrowIndex = numRects <= 5 ? -1 : 5;
+    bool hasSelectBitmap = numRects > 0;
+
+    if (hasSelectBitmap)
+    {
+        bitmapSelectWidth = mProfile->mBitmapArrayRects[0].extent.x;
+        bitmapSelectHeight = mProfile->mBitmapArrayRects[0].extent.y;
+    }
+
+    if (numRects > 2)
+    {
+        bitmapArrowWidth = mProfile->mBitmapArrayRects[2].extent.x;
+        bitmapArrowHeight = mProfile->mBitmapArrayRects[2].extent.y;
+    }
+
+    S32 c1LM = 0;
+    S32 c1RM = 0;
+    S32 c2LM = 0;
+    S32 c2RM = 0;
+
+    S32 numMargins = mColumnMargins.size();
+    if (numMargins > 0)
+        c1LM = mColumnMargins[0];
+    if (numMargins > 1)
+        c1RM = mColumnMargins[1];
+    if (numMargins > 2)
+        c2LM = mColumnMargins[2];
+    if (numMargins > 3)
+        c2RM = mColumnMargins[3];
+
+    RectI leftRect;
+    leftRect.point.set(offset.x + c1LM, offset.y);
+
+    S32 c1 = (S32)((F32)mColumnWidth[0] / 100.0f * (F32)mBounds.extent.x);
+    leftRect.extent.set(c1 - c1RM - c1LM, mBounds.extent.y);
+
+    RectI rightRect;
+    rightRect.point.set(c2LM + offset.x + c1, offset.y);
+
+    S32 c2 = (S32)((F32)mBounds.extent.x * (F32)mColumnWidth[1] / 100.0f);
+    rightRect.extent.set(c2 - c2RM - c2LM, mBounds.extent.y);
+
+    if (mShowRects)
+    {
+        GFX->drawRect(RectI(offset, mBounds.extent), ColorI(255, 0, 255));
+        GFX->drawRect(leftRect, ColorI(255, 255, 0));
+        GFX->drawRect(rightRect, ColorI(255, 255, 0));
+    }
+
+    S32 rowHeight = mRowHeight + mProfile->mTextOffset.y;
+    if (rowHeight <= bitmapSelectHeight)
+        rowHeight = bitmapSelectHeight;
+
+    S32 rowWidth = c1 + c2;
+    if (rowWidth <= bitmapSelectWidth)
+        rowWidth = bitmapSelectWidth;
+
+    if (mBorder || mProfile->mBorder)
+    {
+        GFX->drawRect(leftRect, mProfile->mBorderColor);
+        GFX->drawRect(rightRect, mProfile->mBorderColor);
+    }
+
+    S32 index = mTopRow;
+    if (mTopRow < mTopRow + mRowsPerPage)
+    {
+        S32 curRow = mTopRow;
+        S32 unk2 = rowHeight * curRow;
+        for (S32 i = unk2; curRow < mRowText.size(); unk2 = i)
+        {
+            S32 yPos = mProfile->mRowHeight ? curRow * mProfile->mRowHeight : unk2;
+
+            ColorI fontColor;
+
+            S32 iconIndex = mRowIconIndex[curRow];
+            if (curRow == mSelected)
+            {
+                if (iconIndex != -1)
+                    iconIndex++;
+                if (selectedBitmapIndex != -1)
+                {
+                    GFX->clearBitmapModulation();
+                    
+                    RectI srcRect = mProfile->mBitmapArrayRects[selectedBitmapIndex];
+
+                    RectI dstRect;
+                    dstRect.point.set(offset.x + mProfile->mTextOffset.x, yPos + offset.y);
+                    dstRect.extent.set(rowWidth, rowHeight);
+
+                    GFX->drawBitmapStretchSR(mProfile->mTextureObject, dstRect, srcRect);
+                }
+
+                fontColor = mProfile->mFontColors[1];
+            } else
+            {
+                if (unselectedBitmapIndex != -1)
+                {
+                    GFX->clearBitmapModulation();
+
+                    RectI srcRect = mProfile->mBitmapArrayRects[unselectedBitmapIndex];
+
+                    RectI dstRect;
+                    dstRect.point.set(offset.x + mProfile->mTextOffset.x, yPos + offset.y);
+                    dstRect.extent.set(rowWidth, rowHeight);
+
+                    GFX->drawBitmapStretchSR(mProfile->mTextureObject, dstRect, srcRect);
+                }
+
+                fontColor = mProfile->mFontColors[0];
+            }
+
+            if (iconIndex != -1 && iconIndex < mProfile->mBitmapArrayRects.size())
+            {
+                GFX->clearBitmapModulation();
+                
+                Point2I renderPos(offset.x + mProfile->mIconPosition.x, yPos + offset.y + mProfile->mIconPosition.y);
+
+                GFX->drawBitmapSR(mProfile->mTextureObject, renderPos, mProfile->mBitmapArrayRects[iconIndex]);
+            }
+
+            fontColor.alpha = 255;
+            GuiControlProfile::AlignmentType oldAlignment = mProfile->mAlignment;
+            if (hasSelectBitmap)
+                mProfile->mAlignment = GuiControlProfile::RightJustify;
+
+            GFX->setBitmapModulation(fontColor);
+
+            renderJustifiedText(Point2I(leftRect.point.x + mProfile->mTextOffset.x, yPos + leftRect.point.y),
+                                Point2I(leftRect.extent.x, rowHeight),
+                                mRowText[index]);
+
+            mProfile->mAlignment = oldAlignment;
+            
+            if (index == mSelected)
+                fontColor = mProfile->mFontColors[3];
+            else
+                fontColor = mProfile->mFontColors[2];
+            fontColor.alpha = 255;
+
+            mProfile->mAlignment = GuiControlProfile::CenterJustify;
+
+            const char* optionText = getOptionText(index, mRowOptionIndex[index]);
+
+            GFX->setBitmapModulation(fontColor);
+
+            renderJustifiedText(Point2I(rightRect.point.x + mProfile->mTextOffset.x, yPos + rightRect.point.y), Point2I(rightRect.extent.x, rowHeight), optionText);
+
+            mProfile->mAlignment = oldAlignment;
+
+            S32 arrowOffset = 0;
+            if (hasSelectBitmap)
+            {
+                if ((rowHeight - bitmapArrowHeight) / 2 <= 0)
+                    arrowOffset = 0;
+                else
+                    arrowOffset = (rowHeight - bitmapArrowHeight) / 2;
+            }
+
+            GFX->clearBitmapModulation();
+
+            S32 leftArrowIndex = selectedLeftArrowIndex;
+            if (index != mSelected)
+                leftArrowIndex = unselectedLeftArrowIndex;
+
+            if (leftArrowIndex != -1)
+            {
+                RectI rect;
+                rect.point.set(rightRect.point.x, yPos + arrowOffset + rightRect.point.y);
+                rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+
+                GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[leftArrowIndex]);
+            }
+
+            S32 rightArrowIndex = selectedRightArrowIndex;
+            if (index != mSelected)
+                rightArrowIndex = unselectedRightArrowIndex;
+
+            if (rightArrowIndex != -1)
+            {
+                RectI rect;
+                rect.point.set(rightRect.extent.x + rightRect.point.x - bitmapArrowWidth,
+                               yPos + arrowOffset + rightRect.point.y);
+                rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+
+                GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[rightArrowIndex]);
+            }
+
+            if (mShowRects)
+            {
+                S32 rHeight = rowHeight;
+                S32 separation = 0;
+                if (mProfile->mHitArea.size() == 2)
+                {
+                    separation = mProfile->mHitArea[0];
+                    rHeight = mProfile->mHitArea[1];
+                }
+
+                RectI rect;
+                rect.point.set(offset.x + mProfile->mTextOffset.x, offset.y + yPos + separation);
+                rect.extent.set(rowWidth, rHeight + yPos);
+
+                GFX->drawRect(rect, ColorI(255, 192, 255));
+            }
+
+            i += rowHeight;
+            index++;
+            if (index >= mTopRow + mRowsPerPage)
+                break;
+            curRow = index;
+        }
+    }
+
+    renderChildControls(offset, updateRect);
 }
 
 const char* GuiXboxOptionListCtrl::getSelectedText()
