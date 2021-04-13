@@ -2098,6 +2098,11 @@ ConsoleMethod(Marble, setPosition, void, 4, 4, "(transform, mouseY)")
 {
     Point3F posf;
     AngAxisF angAxis;
+
+    // Without this, if an axis is not provided, these are NaN
+    angAxis.axis.set(0, 0, 0);
+    angAxis.angle = 0;
+
     dSscanf(argv[2], "%f %f %f %f %f %f %f", &posf.x, &posf.y, &posf.z, &angAxis.axis.x, &angAxis.axis.y, &angAxis.axis.z, &angAxis.angle);
 
     object->setPosition(Point3D(posf.x, posf.y, posf.z), angAxis, dAtof(argv[3]));

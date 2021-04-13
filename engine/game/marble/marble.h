@@ -35,6 +35,16 @@ extern bool gMarbleAxisSet;
 extern Point3F gWorkGravityDir;
 extern Point3F gMarbleSideDir;
 
+// These might be useful later
+//#include <cmath>
+//#define CheckNAN(c) { if(isnan(c)) __debugbreak(); }
+//#define CheckNAN3(c) { CheckNAN(c.x) CheckNAN(c.y) CheckNAN(c.z) }
+//#define CheckNAN3p(c) { CheckNAN(c->x) CheckNAN(c->y) CheckNAN(c->z) }
+//#define CheckNANBox(c) { Check3(c.min) Check3(c.min) }
+//#define CheckNANBoxp(c) { Check3(c->min) Check3(c->min) }
+//#define CheckNANAng(c) { CheckNAN(c.axis.x) CheckNAN(c.axis.y) CheckNAN(c.axis.z) CheckNAN(c.angle) }
+//#define CheckNANAngp(c) { CheckNAN(c->axis.x) CheckNAN(c->axis.y) CheckNAN(c->axis.z) CheckNAN(c->angle) }
+
 class MarbleData;
 
 class Marble : public ShapeBase
