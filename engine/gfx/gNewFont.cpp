@@ -309,6 +309,18 @@ ConsoleFunction(duplicateCachedFont, void, 4, 4, "(oldFontName, oldFontSize, new
     }
 }
 
+ConsoleFunction(getStrWidthPrecise, S32, 4, 4, "(string)")
+{
+    Resource<GFont> font = GFont::create(argv[1], dAtoi(argv[2]), Con::getVariable("$GUI::fontCacheDirectory"));
+    if (font.isNull())
+    {
+        Con::errorf("Error: Font does not exist.");
+        return -1;
+    }
+
+    return font->getStrWidthPrecise(argv[3]);
+}
+
 ResourceInstance* constructNewFont(Stream& stream)
 {
     GFont* ret = new GFont;
