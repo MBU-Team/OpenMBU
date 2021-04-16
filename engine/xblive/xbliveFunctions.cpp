@@ -101,3 +101,10 @@ ConsoleFunction(XBLiveGetUserId, S32, 1, 1, "()")
 
     return 1;
 }
+
+ConsoleFunction(XBLiveGetSignInPort, S32, 1, 1, "()")
+{
+    argc;
+
+    return 0;
+}
