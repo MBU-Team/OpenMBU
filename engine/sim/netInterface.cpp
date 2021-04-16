@@ -618,5 +618,11 @@ ConsoleFunction(allowConnections, void, 2, 2, "allowConnections(bool);")
     GNet->setAllowsConnections(dAtob(argv[1]));
 }
 
+ConsoleFunction(doesAllowConnections, bool, 1, 1, "doesAllowConnections();")
+{
+    argc;
+    return GNet->doesAllowConnections();
+}
+
 ConsoleFunctionGroupEnd(NetInterface);
 
