@@ -22,7 +22,7 @@
 // can be overriden by mods:
 //-----------------------------------------------------------------------------
 
-$EnableFMS = false;
+$EnableFMS = true;
 
 if ($testLevel)
    $EnableFMS = false;
