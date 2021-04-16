@@ -155,7 +155,7 @@
 /// memory corruption issues quickly.
 ///
 /// Debug guard requires the Torque Memory manager.
-//#define TORQUE_DEBUG_GUARD
+#define TORQUE_DEBUG_GUARD
 
 /// Define to enable multiple binds per console function in an actionmap.  
 /// With this, you can bind multiple keys to the same "jump()" function 

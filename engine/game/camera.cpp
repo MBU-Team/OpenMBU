@@ -249,6 +249,7 @@ void Camera::onDeleteNotify(SimObject* obj)
 void Camera::interpolateTick(F32 dt)
 {
     Parent::interpolateTick(dt);
+#ifndef MB_ULTRA_PREVIEWS
     Point3F rot = delta.rot + delta.rotVec * dt;
 
     if (mode == OrbitObjectMode || mode == OrbitPointMode)
@@ -277,6 +278,7 @@ void Camera::interpolateTick(F32 dt)
         Point3F pos = delta.pos + delta.posVec * dt;
         setPosition(pos, rot);
     }
+#endif
 }
 
 void Camera::setPosition(const Point3F& pos, const Point3F& rot)

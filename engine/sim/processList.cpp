@@ -379,9 +379,34 @@ bool ProcessList::advanceSPModeTime(SimTime timeDelta)
     SimTime tickCount = (targetTick - mLastTick) >> TickShift;
 
     bool ret = mLastTick != targetTick;
+
+    GameConnection* con = GameConnection::getConnectionToServer();
+
     // Advance all the objects
     for (; mLastTick != targetTick; mLastTick += TickMs)
+    {
+        if (con)
+            con->collectMove(mLastTick);
         advanceObjects();
+        if (con)
+        {
+            U32 lastMove = con->mLastSentMove;
+            U32 moveCount = lastMove - con->mFirstMoveIndex;
+            if (con->mMoveList.size() > moveCount)
+                con->mLastSentMove++;
+        }
+    }
+
+    mLastDelta = (float)(-(targetTime + 1) & 0x1F) * 0.03125f;
+    AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
+
+    for (ProcessObject* obj = mHead.mProcessLink.next; obj != &mHead;
+        obj = obj->mProcessLink.next)
+    {
+        GameBase* gb = getGameBase(obj);
+        if (gb->mProcessTick)
+            gb->interpolateTick(mLastDelta);
+    }
 
     F32 dt = F32(timeDelta) / 1000;
     for (ProcessObject* obj = mHead.mProcessLink.next; obj != &mHead;
