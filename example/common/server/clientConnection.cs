@@ -85,18 +85,18 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
    }
    
    // kick any players with this xblive id
-   if (%xbLiveId !$= "")
-   {
-      %count = ClientGroup.getCount();
-      for (%cl = 0; %cl < %count; %cl++) {
-         %other = ClientGroup.getObject(%cl);
-         if (%other.xbLiveId $= %xbLiveId)
-         {
-            error("@@@@@ Duplicate xblive Id detected: kicking previous player");
-            %other.delete("CR_DUPID");
-         }
-      }
-   }
+   //if (%xbLiveId !$= "") // TODO: uncomment when this is set up in the engine
+   //{
+      //%count = ClientGroup.getCount();
+      //for (%cl = 0; %cl < %count; %cl++) {
+         //%other = ClientGroup.getObject(%cl);
+         //if (%other.xbLiveId $= %xbLiveId)
+         //{
+            //error("@@@@@ Duplicate xblive Id detected: kicking previous player");
+            //%other.delete("CR_DUPID");
+         //}
+      //}
+   //}
    
    return "";
 }
