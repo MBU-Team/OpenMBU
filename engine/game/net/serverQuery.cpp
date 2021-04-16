@@ -172,6 +172,7 @@ struct ServerFilter
         Buddy = 1,
         Offline = 2,
         Favorites = 3,
+        OfflineFiltered = 4,
     };
 
     Type  type;
@@ -260,7 +261,7 @@ static void updatePingProgress();
 static void updateQueryProgress();
 Vector<MasterInfo>* getMasterServerList();
 bool pickMasterServer();
-void clearServerList();
+void clearServerList(bool clearServerInfo);
 
 
 //-----------------------------------------------------------------------------
@@ -337,13 +338,13 @@ public:
 
 void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missionType,
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing, U16 minCPU,
-    U8 filterFlags)
+    U8 filterFlags, bool clearServerInfo, bool useFilters)
 {
     sgServerQueryActive = true;
-    clearServerList();
+    clearServerList(clearServerInfo);
     pushServerFavorites();
 
-    sActiveFilter.type = ServerFilter::Offline;
+    sActiveFilter.type = useFilters ? ServerFilter::OfflineFiltered : ServerFilter::Offline;
 
     // Clear the filter:
     if (!sActiveFilter.gameType || dStricmp(sActiveFilter.gameType, "Any") != 0)
@@ -381,7 +382,7 @@ void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missi
 }
 
 //-----------------------------------------------------------------------------
-ConsoleFunction(queryLanServers, void, 12, 12, "queryLanServers(...);")
+ConsoleFunction(queryLanServers, void, 13, 14, "queryLanServers(...);")
 {
     argc;
 
@@ -400,9 +401,13 @@ ConsoleFunction(queryLanServers, void, 12, 12, "queryLanServers(...);")
     U32 maxPing = dAtoi(argv[9]);
     U16 minCPU = dAtoi(argv[10]);
     U8 filterFlags = dAtoi(argv[11]);
+    bool clearServerInfo = dAtoi(argv[12]) != 0;
+    bool useFilters = false;
+    if (argc >= 14)
+        useFilters = dAtoi(argv[13]) != 0;
 
     queryLanServers(lanPort, flags, gameType, missionType, minPlayers, maxPlayers, maxBots,
-        regionMask, maxPing, minCPU, filterFlags);
+        regionMask, maxPing, minCPU, filterFlags, clearServerInfo, useFilters);
 
     dFree(gameType);
     dFree(missionType);
@@ -809,10 +814,11 @@ bool pickMasterServer()
 
 //-----------------------------------------------------------------------------
 
-void clearServerList()
+void clearServerList(bool clearServerInfo)
 {
     gPacketStatusList.clear();
-    gServerList.clear();
+    if (clearServerInfo)
+        gServerList.clear();
     gFinishedList.clear();
     gPingList.clear();
     gQueryList.clear();
@@ -1682,7 +1688,7 @@ static void handleGamePingResponse(const NetAddress* address, BitStream* stream,
     // Find if the server info already exists (favorite or refreshing):
     ServerInfo* si = findServerInfo(address);
     bool applyFilter = false;
-    if (sActiveFilter.type == ServerFilter::Normal)
+    if (sActiveFilter.type == ServerFilter::Normal || sActiveFilter.type == ServerFilter::OfflineFiltered)
         applyFilter = si ? !si->isUpdating() : true;
 
     char addrString[256];
@@ -1878,7 +1884,7 @@ static void handleGameInfoResponse(const NetAddress* address, BitStream* stream,
         return;
 
     bool isUpdate = si->isUpdating();
-    bool applyFilter = !isUpdate && (sActiveFilter.type == ServerFilter::Normal);
+    bool applyFilter = !isUpdate && (sActiveFilter.type == ServerFilter::Normal || sActiveFilter.type == ServerFilter::OfflineFiltered);
     char addrString[256];
     Net::addressToString(address, addrString);
 
