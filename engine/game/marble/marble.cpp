@@ -51,7 +51,7 @@ Marble::Marble()
 
     mNetFlags.set(Ghostable | NetOrdered);
 
-    mTypeMask |= PlayerObjectType | GameBaseHiFiObjectType;
+    mTypeMask |= PlayerObjectType;// | GameBaseHiFiObjectType;
 
     mDataBlock = NULL;
     mAnimateScale = true;

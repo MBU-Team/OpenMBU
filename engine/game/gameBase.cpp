@@ -491,12 +491,13 @@ TickCacheEntry* GameBase::addTickCacheEntry()
 
 void GameBase::ageTickCache(S32 numToAge, S32 len)
 {
-    AssertISV(mTickCacheHead, "GameBase::ageTickCache: tick cache head is null!")
     while (numToAge)
     {
         --numToAge;
         dropOldest();
     }
+
+    AssertISV(mTickCacheHead, "GameBase::ageTickCache: tick cache head is null!")
 
     while (mTickCacheHead->numEntry > len)
         dropNextOldest();
@@ -545,6 +546,7 @@ void GameBase::dropOldest()
 void GameBase::dropNextOldest()
 {
     AssertISV(mTickCacheHead, "GameBase::dropNextOldest: tick cache head is null!")
+    AssertISV(mTickCacheHead->oldest, "GameBase::dropNextOldest: mTickCacheHead->oldest is null!")
     TickCacheEntry* lastOldest = mTickCacheHead->oldest->next;
     (*lastOldest).next = lastOldest->next;
     if (lastOldest->move)
