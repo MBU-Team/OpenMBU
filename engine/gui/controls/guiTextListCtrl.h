@@ -10,6 +10,10 @@
 #include "gui/core/guiArrayCtrl.h"
 #endif
 
+#ifndef CORE_TDICTIONARY_H
+#include "core/tDictionary.h"
+#endif
+
 class GuiTextListCtrl : public GuiArrayCtrl
 {
 private:
@@ -37,10 +41,19 @@ protected:
     enum {
         InvalidId = 0xFFFFFFFF
     };
-    Vector<S32> mColumnOffsets;
+    Vector<S32>  mColumnOffsets;
+    Vector<S32>  mColumnAligns;
+    Vector<bool> mColumnBmps;
 
+    bool  mAutoResize;
     bool  mFitParentWidth;
     bool  mClipColumnText;
+
+    S32   mRowHeightOffset;
+    bool  mCenterBmpsVert;
+    bool  mCenterBmpsHoriz;
+
+    Map<U32, GFXTexHandle, HashTable<U32, GFXTexHandle>> mTextureMap;
 
     U32 getRowWidth(Entry* row);
     void onCellSelected(Point2I cell);
@@ -71,6 +84,7 @@ public:
     U32 getEntryId(U32 index);
 
     bool onWake();
+    void onSleep();
     void removeEntry(U32 id);
     virtual void removeEntryByIndex(S32 id);
     virtual void sort(U32 column, bool increasing = true);
@@ -87,6 +101,7 @@ public:
     void onRemove();
     void addColumnOffset(S32 offset) { mColumnOffsets.push_back(offset); }
     void clearColumnOffsets() { mColumnOffsets.clear(); }
+    void clearBmps();
 };
 
 #endif //_GUI_TEXTLIST_CTRL_H

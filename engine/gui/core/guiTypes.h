@@ -147,6 +147,8 @@ public:
     GFXTexHandle mTextureObject;
     Vector<RectI> mBitmapArrayRects;                ///< Used for controls which use an array of bitmaps such as checkboxes
 
+    S32 mShadow;
+
     // game menu members
     U32 mRowHeight;
     Vector<int> mHitArea;

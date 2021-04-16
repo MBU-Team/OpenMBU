@@ -57,8 +57,14 @@ GuiTextListCtrl::GuiTextListCtrl()
     mResizeCell = true;
     mSize.set(1, 0);
     mColumnOffsets.push_back(0);
+    mColumnAligns.push_back(0);
+    mColumnBmps.push_back(0);
+    mAutoResize = true;
     mFitParentWidth = true;
     mClipColumnText = false;
+    mRowHeightOffset = 0;
+    mCenterBmpsVert = true;
+    mCenterBmpsHoriz = true;
 }
 
 void GuiTextListCtrl::initPersistFields()
@@ -67,8 +73,14 @@ void GuiTextListCtrl::initPersistFields()
     addField("enumerate", TypeBool, Offset(mEnumerate, GuiTextListCtrl));
     addField("resizeCell", TypeBool, Offset(mResizeCell, GuiTextListCtrl));
     addField("columns", TypeS32Vector, Offset(mColumnOffsets, GuiTextListCtrl));
+    addField("columnAligns", TypeS32Vector, Offset(mColumnAligns, GuiTextListCtrl));
+    addField("columnBmps", TypeBoolVector, Offset(mColumnBmps, GuiTextListCtrl));
     addField("fitParentWidth", TypeBool, Offset(mFitParentWidth, GuiTextListCtrl));
+    addField("autoResize", TypeBool, Offset(mAutoResize, GuiTextListCtrl));
     addField("clipColumnText", TypeBool, Offset(mClipColumnText, GuiTextListCtrl));
+    addField("rowHeightOffset", TypeS32, Offset(mRowHeightOffset, GuiTextListCtrl));
+    addField("centerBmpsVert", TypeBool, Offset(mCenterBmpsVert, GuiTextListCtrl));
+    addField("centerBmpsHoriz", TypeBool, Offset(mCenterBmpsHoriz, GuiTextListCtrl));
 }
 
 ConsoleMethod(GuiTextListCtrl, getSelectedId, S32, 2, 2, "Get the ID of the currently selected item.")
@@ -222,7 +234,14 @@ bool GuiTextListCtrl::onWake()
         return false;
 
     setSize(mSize);
+    mProfile->constructBitmapArray();
     return true;
+}
+
+void GuiTextListCtrl::onSleep()
+{
+    Parent::onSleep();
+    clearBmps();
 }
 
 U32 GuiTextListCtrl::getSelectedId()
@@ -243,6 +262,15 @@ void GuiTextListCtrl::onCellSelected(Point2I cell)
 
 void GuiTextListCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, bool mouseOver)
 {
+    if (cell.y % 2 < mProfile->mBitmapArrayRects.size())
+    {
+        GFX->setBitmapModulation(ColorI(255, 255, 255));
+
+        RectI clipRect(offset, Point2I(mCellSize.x, mCellSize.y - mRowHeightOffset));
+
+        GFX->drawBitmapStretchSR(mProfile->mTextureObject, clipRect, mProfile->mBitmapArrayRects[cell.y % 2]);
+    }
+
     if (mList[cell.y].active)
     {
         if (selected || (mProfile->mMouseOverSelected && mouseOver))
@@ -270,25 +298,98 @@ void GuiTextListCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, 
 
             Point2I pos(offset.x + 4 + mColumnOffsets[index], offset.y);
 
-            RectI saveClipRect;
-            bool clipped = false;
+            F32 extentX = (index < mColumnOffsets.size() - 1 ? mColumnOffsets[index + 1] : mBounds.extent.x - 5) - mColumnOffsets[index];
 
-            if (mClipColumnText && (index != (mColumnOffsets.size() - 1)))
+            if (index < mColumnBmps.size() && mColumnBmps[index])
             {
-                saveClipRect = GFX->getClipRect();
+                ColorI bmpMod(255, 255, 255);
+                GFX->setBitmapModulation(bmpMod);
 
-                RectI clipRect(pos, Point2I(mColumnOffsets[index + 1] - mColumnOffsets[index] - 4, mCellSize.y));
-                if (clipRect.intersect(saveClipRect))
+                GFXTexHandle texture;
+
+                char tempStr[1024];
+                dStrncpy(tempStr, text, slen);
+                tempStr[slen] = '\0';
+
+                if (tempStr[0])
                 {
-                    clipped = true;
-                    GFX->setClipRect(clipRect);
+                    U32 hash = StringTable->hashString(tempStr);
+                    if (mTextureMap[hash].isNull())
+                        mTextureMap[hash].set(tempStr, &GFXDefaultStaticDiffuseProfile);
+
+                    texture = mTextureMap[hash];
+                }
+
+                if (texture.isValid())
+                {
+                    RectI rect(Point2I(pos.x, offset.y), Point2I(extentX, mCellSize.y));
+
+                    U32 width = texture.getWidth();
+                    if (width < extentX)
+                    {
+                        if (mCenterBmpsHoriz)
+                            rect.point.x = pos.x + (((U32)extentX - (U32)width) >> 1);
+                        rect.extent.x = width;
+                    }
+
+                    U32 height = texture.getHeight();
+                    if (height < mCellSize.y)
+                    {
+                        if (mCenterBmpsVert)
+                            rect.point.y += (mCellSize.y - height) >> 1;
+                        rect.extent.y = height;
+                    }
+
+                    GFX->drawBitmapStretch(texture, rect);
                 }
             }
+            else
+            {
+                char tempStr[1024];
+                dStrncpy(tempStr, text, slen);
+                tempStr[slen] = '\0';
 
-            GFX->drawTextN(mFont, pos, text, slen, mProfile->mFontColors);
+                U32 strWidth = mProfile->mFont->getStrWidth(tempStr);
+                S32 colAligns = mColumnAligns[index];
+                if (colAligns == 1)
+                    pos.x += (S32)(extentX - strWidth) / 2;
+                else if (colAligns == 2)
+                    pos.x += extentX - strWidth - 1;
 
-            if (clipped) {
-                GFX->setClipRect(saveClipRect);
+                RectI saveClipRect;
+                bool clipped = false;
+
+                if (mClipColumnText && (index != (mColumnOffsets.size() - 1)))
+                {
+                    saveClipRect = GFX->getClipRect();
+
+                    RectI clipRect(pos, Point2I(mColumnOffsets[index + 1] - mColumnOffsets[index] - 4, mCellSize.y));
+                    if (clipRect.intersect(saveClipRect))
+                    {
+                        clipped = true;
+                        GFX->setClipRect(clipRect);
+                    }
+                }
+
+                if (mProfile->mShadow)
+                {
+                    ColorI saveColor;
+                    GFX->getBitmapModulation(&saveColor);
+
+                    ColorI shadowColor(0, 0, 0, 128);
+                    GFX->setBitmapModulation(shadowColor);
+
+                    GFX->drawTextN(mFont, Point2I(pos.x + 1 + mProfile->mTextOffset.x, offset.y + 1 + mProfile->mTextOffset.y), text, slen);
+
+                    GFX->setBitmapModulation(saveColor);
+                }
+
+                Point2I newPos(pos.x + mProfile->mTextOffset.x, offset.y + mProfile->mTextOffset.y);
+                GFX->drawTextN(mFont, newPos, text, slen, mProfile->mFontColors);
+
+                if (clipped) {
+                    GFX->setClipRect(saveClipRect);
+                }
             }
         }
         if (!nextCol)
@@ -430,11 +531,19 @@ void GuiTextListCtrl::setSize(Point2I newSize)
 
             mCellSize.x = maxWidth + 8;
         }
-
-        mCellSize.y = mFont->getHeight() + 2;
+        
+        U32 cellHeight = mFont->getHeight() + 2;
+        if (cellHeight < mProfile->mRowHeight)
+            cellHeight = mProfile->mRowHeight;
+        mCellSize.y = cellHeight + mRowHeightOffset;
     }
 
-    Point2I newExtent(newSize.x * mCellSize.x + mHeaderDim.x, newSize.y * mCellSize.y + mHeaderDim.y);
+    Point2I newExtent;
+    if (mAutoResize)
+        newExtent.set(newSize.x * mCellSize.x + mHeaderDim.x, newSize.y * mCellSize.y + mHeaderDim.y);
+    else
+        newExtent = mBounds.extent;
+
     resize(mBounds.point, newExtent);
 }
 
@@ -578,3 +687,20 @@ bool GuiTextListCtrl::onKeyDown(const GuiEvent& event)
 
 }
 
+void GuiTextListCtrl::clearBmps()
+{
+    auto i = mTextureMap.begin();
+    auto end = mTextureMap.end();
+
+    if (i != end)
+    {
+        end = mTextureMap.end();
+        do
+        {
+            delete i->value;
+            i++;
+        } while (i != end);
+    }
+
+    mTextureMap.clear();
+}

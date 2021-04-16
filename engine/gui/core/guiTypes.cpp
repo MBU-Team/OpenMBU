@@ -150,6 +150,8 @@ GuiControlProfile::GuiControlProfile(void) :
     mSoundOptionChanged = NULL;
     mRowHeight = 0;
 
+    mShadow = 0;
+
     GuiControlProfile* def = dynamic_cast<GuiControlProfile*>(Sim::findObject("GuiDefaultProfile"));
     if (def)
     {
@@ -195,6 +197,8 @@ GuiControlProfile::GuiControlProfile(void) :
         mReturnTab = def->mReturnTab;
         mNumbersOnly = def->mNumbersOnly;
         mCursorColor = def->mCursorColor;
+
+        mShadow = def->mShadow;
 
         mRowHeight = def->mRowHeight;
         mHitArea = def->mHitArea;
@@ -251,6 +255,8 @@ void GuiControlProfile::initPersistFields()
 
     addField("bitmap", TypeFilename, Offset(mBitmapName, GuiControlProfile));
 
+    addField("shadow", TypeS32, Offset(mShadow, GuiControlProfile));
+
     addField("soundButtonDown", TypeAudioProfilePtr, Offset(mSoundButtonDown, GuiControlProfile));
     addField("soundButtonOver", TypeAudioProfilePtr, Offset(mSoundButtonOver, GuiControlProfile));
     addField("soundOptionChanged", TypeAudioProfilePtr, Offset(mSoundOptionChanged, GuiControlProfile));
@@ -273,6 +279,9 @@ S32 GuiControlProfile::constructBitmapArray()
 {
     if (mBitmapArrayRects.size())
         return mBitmapArrayRects.size();
+
+    if (mTextureObject.isNull())
+        return 0;
 
     GBitmap* bmp = mTextureObject->getBitmap();
 
