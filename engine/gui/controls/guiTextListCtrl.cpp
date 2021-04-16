@@ -697,7 +697,8 @@ void GuiTextListCtrl::clearBmps()
         end = mTextureMap.end();
         do
         {
-            delete i->value;
+            if (i->value)
+                i->value = NULL;
             i++;
         } while (i != end);
     }
