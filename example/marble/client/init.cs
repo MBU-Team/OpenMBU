@@ -403,6 +403,30 @@ function waitForPreviewLevel()
    $Client::GameLoaded = true;
 }
 
+// Manually connect to server by ip
+function connectManual(%address, %invited)
+{
+   $disconnectGui = RootGui.contentGui;
+   
+   GameMissionInfo.setMode(GameMissionInfo.MPMode);
+
+   if ($EnableFMS)
+   {
+      %missionIndex = GameMissionInfo.getCurrentIndex();
+   
+      if (%missionIndex == -1)
+         %missionIndex = 0;
+   
+      GameMissionInfo.selectMission(%missionIndex);
+   }
+
+   RootGui.setContent(MissionLoadingGui);
+   if ($EnableFMS)
+      establishConnection(%address, true, %invited);
+   else
+      connectToServer(%address, %invited);
+}
+
 // connect to a server.  if address is empty a local connect is assumed
 function connectToServer(%address,%invited)
 {
