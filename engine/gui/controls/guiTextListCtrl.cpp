@@ -517,6 +517,12 @@ void GuiTextListCtrl::setSize(Point2I newSize)
             GuiScrollCtrl* parent = dynamic_cast<GuiScrollCtrl*>(getParent());
             if (parent)
                 mCellSize.x = parent->getContentExtent().x;
+            else
+            {
+                GuiControl* p = getParent();
+                if (p)
+                    mCellSize.x = p->mBounds.extent.x;
+            }
         }
         else
         {
