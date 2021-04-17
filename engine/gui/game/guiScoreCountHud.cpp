@@ -83,14 +83,15 @@ void GuiScoreCountHud::onRender(Point2I offset, const RectI& updateRect)
 
             renderPt.y -= (mAcceleration * 0.5f * t * t + t * mVelocity);
 
-            char scoreBuffer[3];
-            scoreBuffer[0] = '+';
-            scoreBuffer[1] = score.score + '0';
-            scoreBuffer[2] = '\0';
+            // original gg code
+            //char scoreBuffer[3];
+            //scoreBuffer[0] = '+';
+            //scoreBuffer[1] = score.score + '0';
+            //scoreBuffer[2] = '\0';
 
             // if we ever want to support anything besides single-digit positive numbers, use this instead of the above
-            //char scoreBuffer[256];
-            //dSprintf(scoreBuffer, 256, "%c%d", (score.score < 0 ? '-' : '+'), score.score);
+            char scoreBuffer[256];
+            dSprintf(scoreBuffer, 256, "%c%d", (score.score < 0 ? ' ' : '+'), score.score);
 
             renderPt.x -= mProfile->mFont->getStrWidth(scoreBuffer) >> 1;
             renderPt.y -= mProfile->mFont->getHeight();
