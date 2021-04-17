@@ -123,10 +123,11 @@ function serverCmdMissionStartPhase3Ack(%client, %seq)
 
    if ($EnableFMS)
    {
+      commandToClient(%client, 'ShowMission', GameMissionInfo.getCurrentMission().file);
+      
       if (isSinglePlayerMode()) // We just loaded the MegaMission
       {
          commandToClient(%client, 'SetCamera');
-         commandToClient(%client, 'ShowMission', GameMissionInfo.getCurrentMission().file);
       }
       else //if (GameMissionInfo.mode $= GameMissionInfo.SPMode) // We just started a singleplayer level
       {
