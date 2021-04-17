@@ -876,7 +876,7 @@ void ShapeBase::onRemove()
     Parent::onRemove();
 
     // Stop any running sounds on the client
-    if (isGhost())
+    if (gSPMode || isGhost())
         for (S32 i = 0; i < MaxSoundThreads; i++)
             stopAudio(i);
 }

@@ -359,8 +359,7 @@ bool ShowTSShape::onAdd()
 
 void ShowTSShape::onRemove()
 {
-    getCurrentClientSceneGraph()->removeObjectFromScene(this);
-    getCurrentClientContainer()->removeObject(this);
+    removeFromScene();
 
     if (this == currentShow)
     {

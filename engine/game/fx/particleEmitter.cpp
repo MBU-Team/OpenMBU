@@ -384,11 +384,7 @@ bool ParticleEmitter::onAdd()
 //-----------------------------------------------------------------------------
 void ParticleEmitter::onRemove()
 {
-    if (mSceneManager != NULL)
-    {
-        getCurrentClientContainer()->removeObject(this);
-        getCurrentClientSceneGraph()->removeObjectFromScene(this);
-    }
+    removeFromScene();
 
     Parent::onRemove();
 }
