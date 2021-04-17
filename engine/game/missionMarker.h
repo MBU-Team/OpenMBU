@@ -154,6 +154,9 @@ public:
     F32      mSphereWeight;
     F32      mIndoorWeight;
     F32      mOutdoorWeight;
+#ifdef MB_ULTRA
+    GameBaseData* mGemDataBlock;
+#endif
 
     static void initPersistFields();
 

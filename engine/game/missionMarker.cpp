@@ -7,6 +7,10 @@
 #include "console/consoleTypes.h"
 #include "core/color.h"
 
+#ifdef MB_ULTRA
+#include "sim/netConnection.h"
+#endif
+
 extern bool gEditingMission;
 IMPLEMENT_CO_DATABLOCK_V1(MissionMarkerData);
 
@@ -232,6 +236,10 @@ SpawnSphere::SpawnSphere()
     mSphereWeight = 100.f;
     mIndoorWeight = 100.f;
     mOutdoorWeight = 100.f;
+
+#ifdef MB_ULTRA
+    mGemDataBlock = NULL;
+#endif
 }
 
 bool SpawnSphere::onAdd()
@@ -262,6 +270,11 @@ U32 SpawnSphere::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
         stream->write(mSphereWeight);
         stream->write(mIndoorWeight);
         stream->write(mOutdoorWeight);
+
+#ifdef MB_ULTRA
+        if (stream->writeFlag(mGemDataBlock != 0))
+            stream->writeRangedU32(mGemDataBlock->getId(), 3, 1026);
+#endif
     }
     return(retMask);
 }
@@ -275,12 +288,26 @@ void SpawnSphere::unpackUpdate(NetConnection* con, BitStream* stream)
         stream->read(&mSphereWeight);
         stream->read(&mIndoorWeight);
         stream->read(&mOutdoorWeight);
+
+#ifdef MB_ULTRA
+        if (stream->readFlag())
+        {
+            if (!Sim::findObject<GameBaseData>(stream->readRangedU32(3, 1026), mGemDataBlock))
+                NetConnection::setLastError("Invalid gem datablock received for spawn point");
+        }
+#endif
     }
 }
 
 void SpawnSphere::initPersistFields()
 {
     Parent::initPersistFields();
+
+#ifdef MB_ULTRA
+    addGroup("MarbleBlast");
+    addField("gemDataBlock", TypeGameBaseDataPtr, Offset(mGemDataBlock, SpawnSphere));
+    endGroup("MarbleBlast");
+#endif
 
     addGroup("Dimensions");
     addField("radius", TypeF32, Offset(mRadius, SpawnSphere));
@@ -291,4 +318,12 @@ void SpawnSphere::initPersistFields()
     addField("indoorWeight", TypeF32, Offset(mIndoorWeight, SpawnSphere));
     addField("outdoorWeight", TypeF32, Offset(mOutdoorWeight, SpawnSphere));
     endGroup("Weight");
+}
+
+ConsoleMethod(SpawnSphere, getGemDatablock, S32, 2, 2, "() - gets the gem datablock")
+{
+    if (object->mGemDataBlock)
+        return object->mGemDataBlock->getId();
+
+    return 0;
 }
