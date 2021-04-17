@@ -90,7 +90,7 @@ void GuiScoreCountHud::onRender(Point2I offset, const RectI& updateRect)
 
             // if we ever want to support anything besides single-digit positive numbers, use this instead of the above
             //char scoreBuffer[256];
-            //dSprintf("%c%d", (score.score < 0 ? '-' : '+'), score.score);
+            //dSprintf(scoreBuffer, 256, "%c%d", (score.score < 0 ? '-' : '+'), score.score);
 
             renderPt.x -= mProfile->mFont->getStrWidth(scoreBuffer) >> 1;
             renderPt.y -= mProfile->mFont->getHeight();
