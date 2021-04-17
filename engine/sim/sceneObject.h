@@ -812,6 +812,8 @@ public:
     /// @see setHidden
     bool isHidden() { return mHidden && !gForceNotHidden; }
 
+    SceneGraph* getSceneManager() { return mSceneManager; }
+
 
     /// @name Rendering Members
     /// @{

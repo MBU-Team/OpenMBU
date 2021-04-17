@@ -37,6 +37,8 @@
 #include "platform/profiler.h"
 #include "gfx/gfxCubemap.h"
 #include "core/iTickable.h"
+#include "core/tDictionary.h"
+#include <game/missionMarker.h>
 
 static void cPanoramaScreenShot(SimObject*, S32, const char** argv);
 
@@ -79,6 +81,82 @@ ConsoleFunction(isSinglePlayerMode, bool, 1, 1, "() - Checks if singleplayer onl
     argc;
 
     return gSPMode;
+}
+#endif
+
+#ifdef MB_ULTRA
+ConsoleFunction(SetupGemSpawnGroups, void, 3, 3, "(gemGroupRadius, maxGemsPerGroup) - Sets up gem spawn groups")
+{
+    U32 start = Platform::getRealMilliseconds();
+    S32 gemGroupRadius = dAtoi(argv[1]);
+    S32 maxGemsPerGroup = dAtoi(argv[2]);
+
+    SimObject* oldGroup = Sim::findObject("GemSpawnGroups");
+    if (oldGroup)
+        oldGroup->deleteObject();
+
+    SimGroup* gemSpawnGroups = new SimGroup;
+    gemSpawnGroups->assignName("GemSpawnGroups");
+    gemSpawnGroups->registerObject();
+
+    SimGroup* gemSpawns = dynamic_cast<SimGroup*>(Sim::findObject("GemSpawns"));
+
+    Map<U32, bool, HashTable<U32, bool>> spawnInScene;
+    if (gemSpawns)
+    {
+        for (S32 i = 0; i < gemSpawns->size(); i++)
+        {
+            SceneObject* obj = dynamic_cast<SceneObject*>((*gemSpawns)[i]);
+            if (obj)
+            {
+                spawnInScene[obj->getId()] = obj->getSceneManager() != 0;
+                if (!obj->getSceneManager())
+                    obj->addToScene();
+            }
+        }
+
+        for (S32 i = 0; i < gemSpawns->size(); i++)
+        {
+            SceneObject* obj = dynamic_cast<SceneObject*>((*gemSpawns)[i]);
+            if (obj)
+            {
+                SimSet* spawnGroup = new SimSet;
+                spawnGroup->registerObject();
+                gemSpawnGroups->addObject(spawnGroup);
+                spawnGroup->addObject(obj);
+
+                getCurrentServerContainer()->initRadiusSearch(obj->getPosition(), gemGroupRadius, 1);
+
+                while (true)
+                {
+                    U32 search = getCurrentServerContainer()->containerSearchNext();
+                    if (!search || spawnGroup->size() >= maxGemsPerGroup)
+                        break;
+
+                    SpawnSphere* spawnSphere = dynamic_cast<SpawnSphere*>(Sim::findObject(search));
+                    if (spawnSphere && spawnSphere->getId() != obj->getId())
+                        spawnGroup->addObject(spawnSphere);
+                }
+            }
+        }
+
+        for (S32 i = 0; i < gemSpawns->size(); i++)
+        {
+            SceneObject* obj = dynamic_cast<SceneObject*>((*gemSpawns)[i]);
+            if (obj)
+            {
+                if (!spawnInScene[obj->getId()])
+                    obj->removeFromScene();
+            }
+        }
+    }
+
+    U32 end = Platform::getRealMilliseconds();
+    Con::printf("Created %d gem spawn groups using radius %d and max gems %d in %ums",
+                gemSpawnGroups->size(),
+                gemGroupRadius,
+                maxGemsPerGroup,
+                end - start);
 }
 #endif
 
