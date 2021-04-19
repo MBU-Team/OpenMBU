@@ -1,0 +1,41 @@
+﻿[Strings]
+$Text::NewContent = "Get New Content!";
+;-------------------------------------------------------------------------------
+; PDLC and Unlock Stuff
+;-------------------------------------------------------------------------------
+$Text::PDLCFreeThanks = "Enjoy your free Marble Blast Ultra Map!";
+$Text::PDLCThanksPack1 = "Thank you for unlocking the Marble Fu Expansion Pack!";
+$Text::PDLCThanksPack2 = "Thank you for unlocking the Agoraphobia Expansion Pack!";
+$Text::PDLCThanksPackBoth = "Thank you for unlocking the Marble Fu and Agoraphobia Expansion Packs!";
+$Text::UnlockFreeMap = "Unlock Free Map";    // Displayed on main menu
+$Text::UnlockMapPack = "Unlock Map Pack";    // ""
+$Text::CorruptPDLC = "Couldn't read %1.  It may be damaged.  Please try downloading it again."; // Displayed if PDLC corrupt; %1 replaced with XCONTENT_DATA.szDisplayName
+$Text::DownloadContent = "Download Content";
+$Text::UnlockPDLC0 = "Unlock Marble It Up!";              // Displayed on mission selection
+$Text::UnlockPDLC1 = "Unlock Marble Fu Expansion Pack";   // ""
+$Text::UnlockPDLC2 = "Unlock Agoraphobia Expansion Pack"; // ""
+$Text::PDLCUpsell00 = "Unlock this Marble Blast multiplayer map pack now and...\n\n";           // PDLC Upsell Screen 
+$Text::PDLCUpsell01 = "Get 5 new multiplayer levels that you can host and practice!\n\n";       // ""
+$Text::PDLCUpsell02 = "Take a shot at earning a new achievement (worth 20 gamerscore)!\n\n";    // ""
+$Text::PDLCUpsell03 = "\n\n";                                                                   // ""
+$Text::PDLCUpsell04 = "\n\n";                                                                   // ""
+$Text::GGCredits = "<spush><font:Arial Bold:%1>GarageGames Team<spop>\n\n<spush><font:Arial Bold:%2>Development<spop>\nTim Aste\nJane Chase\nTimothy Clarke\nAdam deGrandis\nClark Fagot\nMatt Fairfax\nMark Frohnmayer\nBen Garney\nTim Gift\nDavey Jackson\nJustin Kovac\nJoe Maruschak\nMark McCoy\nJay Moore\nRick Overman\nJohn Quigley\nBrian Ramage\nKevin Ryan\nLiam Ryan\nAlex Swanson\nJeff Tunnell\nPat Wilson\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nCafe Aroma\nCafe Yumm!\nMezza Luna Pizzeria\nPizza Research Institute\nThe GarageGames Community";
+$Text::AchievementName13 = "Blue Gem Hunt";
+$Text::AchievementName14 = "Map Pack Dominator";
+$Text::AchievementName15 = "Master of the Spires";
+$Text::AchievementDescription13 = "Collect a blue gem in a Marble It Up! multiplayer match.";
+$Text::AchievementDescription14 = "Get 40 gems in any 3 of Playground, Bowl, Concentric, Vortex Effect, Blast Club (Marble Fu pack).";
+$Text::AchievementDescription15 = "Collect 50 gems in Spires (Agoraphobia pack).";
+;-------------------------------------------------------------------------------                            
+; Singleplayer Game Strings                                                                                 
+$Text::LevelNameMP11 = "Marble It Up! (Add-on)";	// Add-on levels
+$Text::LevelNameMP12 = "Playground (Add-on)";		// ""
+$Text::LevelNameMP13 = "Bowl (Add-on)";			// "" 
+$Text::LevelNameMP14 = "Concentric (Add-on)";        	// "" 
+$Text::LevelNameMP15 = "Vortex Effect (Add-on)";     	// "" 
+$Text::LevelNameMP16 = "Blast Club (Add-on)";        	// "" 
+$Text::LevelNameMP17 = "Core (Add-on)";              	// "" 
+$Text::LevelNameMP18 = "Triumvirate (Add-on)";       	// "" 
+$Text::LevelNameMP19 = "Ziggurat (Add-on)";          	// "" 
+$Text::LevelNameMP20 = "Promontory (Add-on)";        	// "" 
+$Text::LevelNameMP21 = "Spires (Add-on)";            	// "" 

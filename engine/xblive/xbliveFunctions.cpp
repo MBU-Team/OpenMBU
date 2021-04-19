@@ -108,3 +108,36 @@ ConsoleFunction(XBLiveGetSignInPort, S32, 1, 1, "()")
 
     return 0;
 }
+
+ConsoleFunction(PDLCAllowMission, bool, 2, 2, "(levelId)")
+{
+    argc;
+
+    S32 levelId = dAtoi(argv[1]);
+    if (levelId < 80)
+        return true;
+    
+    // original x360 code
+    // return ((1 << ((levelId - 80) & 7)) & *((U8*)dlcmissionoffset + ((levelId - 80) >> 3))) != 0;
+
+    // Just allow all maps in our version
+    return true;
+}
+
+ConsoleFunction(ContentQuery, const char*, 1, 2, "([contentCategory])")
+{
+    S32 category = -1;
+    if (argc > 1)
+        category = dAtoi(argv[1]);
+
+    Con::printf(" >> Checking for content from categories: %d", category);
+
+    S32 newContentCount = 0;
+    S32 totalContentCount = 3;
+
+    char* result = Con::getReturnBuffer(64);
+
+    dSprintf(result, 64, "%d %d", newContentCount, totalContentCount);
+
+    return result;
+}

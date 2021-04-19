@@ -108,6 +108,8 @@ function handleClientJoin(%msgType, %msgString, %clientName, %joinData, %isMe)
    {
       ServerConnection.selfJoined = true;
       $Player::ClientId = %clientId;
+
+      resetClientGracePeroid();
    }
    
    if (%isAdmin)
@@ -145,7 +147,13 @@ function handleClientDrop(%msgType, %msgString, %clientName, %clientId, %xbLiveI
    if (ServerConnection.isMultiplayer && XBLiveIsStatsSessionActive())
    {
       // keep track of people who drop when a game is active
-      clientAddDroppedClient(%clientId, %xbLiveId);
+ 
+      // This should now call clientAddDroppedClient ONLY if it is a ranked game
+      // or if the client is in his grace peroid, or if this is NOT our drop message -pw
+      if( $Client::isInGracePeroid || XBLiveIsRanked() || $Player::ClientId != %clientId )
+         clientAddDroppedClient(%clientId, %xbLiveId);
+      else if( !$Client::isInGracePeroid && $Player::ClientId == %clientId && $Client::willfullDisconnect )
+         zeroMyClientScoreCuzICheat();
    }
 
    if (XBLiveIsRanked() && ServerConnection.gameState !$= "wait" && XBLiveIsStatsSessionActive())
@@ -187,6 +195,12 @@ function handleMPGameOver(%msgType, %msgString, %tied, %leaderName, %leaderPoint
      
    %msg = avar(%msg, %name, %leaderPoints);
    addChatLine(%msg);
+}      
+
+function zeroMyClientScoreCuzICheat()
+{
+   echo( "[Client " @ $Player::ClientId @ "]: ZEROING SCORE FOR CALCULATIONS CUZ I AM A JERK WHO QUITS EARLY!" );
+   PlayerListGui.updateScore( $Player::ClientId, 0, 0 );
 }
 
 function handleClientScoreChanged(%msgType, %msgString, %clientId, %isMe, %newScore, %oldScore)

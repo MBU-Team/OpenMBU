@@ -9,8 +9,8 @@ new GuiControl(OptimatchGui) {
          
    new GuiXboxOptionListCtrl(OptimatchOptionList) {
       profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallWideProfile";
-      position = isWidescreen()? "380 211" : "0 100";
-      extent = isWidescreen()? "815 400" : "640 250";
+      position = isWidescreen()? "360 211" : "-30 100";
+      extent = isWidescreen()? "835 400" : "672 250";
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = "center";
       // there can only be two columns; these values are percentages of total extent
@@ -65,10 +65,33 @@ function OptimatchGui::setCenterText(%this,%text)
 
 function OptimatchOptionList::onOptionChange(%this, %increase)
 {
-   if (OptimatchOptionList.getSelectedIndex() == OptimatchGui.missionOption &&
-       %this.getOptionIndex(OptimatchGui.missionOption) > 0)
+   if (OptimatchOptionList.getSelectedIndex() == OptimatchGui.missionOption)
    {
-      GameMissionInfo.selectMission(%this.getOptionIndex(OptimatchGui.missionOption) - 1);
+      // Check if we are not on the 'any' option now:
+      if(%this.getOptionIndex(OptimatchGui.missionOption) > 0)
+      {
+         %prevMission = GameMissionInfo.getCurrentIndex();
+   
+         GameMissionInfo.selectMission(%this.getOptionIndex(OptimatchGui.missionOption) - 1);
+   
+         %curMission = GameMissionInfo.getCurrentIndex();
+
+         if(%increase && (%curMission == 0) && (%prevMission != %curMission))
+         {
+            // Wrapped around back to beginning -- shove the 'any' choice in
+            %this.setOptionIndex( OptimatchGui.missionOption, 0 );
+         }
+         else
+         {
+            // Fix displayed name in case selectMission magics
+            %this.setOptionIndex( OptimatchGui.missionOption, GameMissionInfo.getCurrentIndex() + 1 );
+         }
+      }
+      else
+      {
+         // Force first mission visible to simplify this hack...
+         GameMissionInfo.selectMission(0);
+      }
    }
 }
 

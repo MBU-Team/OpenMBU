@@ -200,7 +200,7 @@ function levelPreviewGui::onA()
       
    alxPlay( AudioButtonDown );
    
-   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+   if( GameMissionInfo.currentMissionLocked() )
    {
       // nothing - see x button
    }
@@ -276,20 +276,25 @@ function levelPreviewGui::setButtons(%this)
    RootGui.setY($Text::Leaderboard);
    
    RootGui.setB($Text::Back);
-   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+   if( GameMissionInfo.currentMissionLocked() )
       RootGui.setA("");
    else
       RootGui.setA($Text::Play);
 
    if (isDemoLaunch())
       RootGui.setX($Text::DemoUpsell07);
+   else if( GameMissionInfo.currentMissionLocked() )
+      RootGui.setX(getMapPackUpsellTag(GameMissionInfo.getCurrentMission().level));
+   else
+      RootGui.setX("");
 }
 
 function levelPreviewGui::onLeft(%this)
 {
    alxPlay( AudioButtonOver );
-   
-   GameMissionInfo.selectPreviousMission();
+
+   // Skip ownership check (showing locked icon already):
+   GameMissionInfo.selectPreviousMission(false);
       
    levelPreviewGui.setSelected();
   
@@ -300,8 +305,9 @@ function levelPreviewGui::onRight(%this)
 {
    alxPlay( AudioButtonOver );
      
-   GameMissionInfo.selectNextMission();
-         
+   // Skip ownership check (showing locked icon already):
+   GameMissionInfo.selectNextMission(false);
+            
    levelPreviewGui.setSelected();
      
    return true;
@@ -368,7 +374,7 @@ function levelPreviewGui::populateLevelInfo(%this)
    LP_difficultyText.setText( %lineSpacingHack @ $Text::Level SPC %biggerFont @ %mission.level @ 
                                        "\n" @ %lineSpacingHack @ $Text::Difficulty SPC %biggerFont @ %mission.difficulty);
 
-   if( !GameMissionInfo.getCurrentMission().isInDemoMode && isDemoLaunch() )
+   if( GameMissionInfo.currentMissionLocked() )
    {
       //levelPreviewGui::setPreviewText( $Text::SeeItPlayed, true );
       levelPreviewGui::setPreviewText( "", false );

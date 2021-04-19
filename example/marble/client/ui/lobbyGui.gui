@@ -102,8 +102,8 @@ new GuiControl(LobbyGui)
       profile = "bgBoxProfile";
       horizSizing = "right";
       vertSizing = "bottom";
-	   position = isWideScreen() ? "580 485" : "97 287";
-	   extent = isWideScreen() ? "513 118" : "503 118";
+	   position = isWideScreen() ? "515 485" : "63 287";
+	   extent = isWideScreen() ? "578 118" : "573 118";
       maxLength = "255";
       resizeWidth = "0";
       resizeHeight = "0";
@@ -116,8 +116,8 @@ new GuiControl(LobbyGui)
 	   new GuiMLTextCtrl(LobbyGuiHostGameInfo)
 	   {
 	      profile = "BigInfoTextProfile";
-	      position = "52 25";
-	      extent = "495 285";
+	      position = "38 25";
+	      extent = "555 285";
 	      autoResize = false; // don't try to resize to accommodate new rows - stay within extents
 	      rowsPerPage = 10;    // maximum number of rows to render per page
 	      minExtent = "8 8";
@@ -838,7 +838,9 @@ function LobbyGui::onB(%this)
    if (%this.hosting && ClientGroup.getCount() > 1)
       XMessagePopupDlg.show(0, $Text::ErrorClientsWillDrop, $Text::OK, "LobbyGui.exitGame();", $Text::Cancel, "");
    else
+   {
       LobbyGui.exitGame();
+   }
 
    return true;
 }
@@ -849,8 +851,9 @@ function LobbyGui::onLeft(%this)
       return;
       
    alxPlay( AudioButtonOver );
-   
-   GameMissionInfo.selectPreviousMission();
+
+   // Check ownership with cycle:
+   GameMissionInfo.selectPreviousMission(true);
    
    if ($EnableFMS)
    {
@@ -877,7 +880,8 @@ function LobbyGui::onRight(%this)
 
    alxPlay( AudioButtonOver );
      
-   GameMissionInfo.selectNextMission();
+   // Check ownership with cycle:
+   GameMissionInfo.selectNextMission(true);
 
    if ($EnableFMS)
    {

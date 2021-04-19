@@ -52,6 +52,10 @@ function MultiPlayerGui::onA(%this)
       case 3:
          // Auto enter the MP leaderboards
          RootGui.setContent( LevelScoresGui, GameMissionInfo.MPMode, $Leaderboard::MPScrumOverall, %this );
+      case 4:
+         // Show marketplace UI, this is kinda hacked since it's not a demo launch
+         clientShowMarketplaceUI();
+         $PDLCMarketView = true;
    }
       
    return true;
@@ -142,6 +146,21 @@ function MultiPlayerGui::show(%this)
       // shouldn't be here
       XMessagePopupDlg.show(0, $Text::MPNotAllowed, $Text::OK, "RootGui.setContent(MainMenuGui);");
    }
+   else if( !isDemoLaunch() )
+   {
+      if(!hasAllMapPacks())
+      {
+         if(hasFreeMapPack())
+            MultiPlayerMenu.addRow($Text::UnlockMapPack, "", 0, 4);
+         else
+            MultiPlayerMenu.addRow($Text::UnlockFreeMap, "", 0, 4);
+      }
+//      // Check to see if there is new content waiting
+//      if( CheckAsynchContentQuery() > 0 )
+//      {
+//         MultiPlayerMenu.addRow($Text::NewContent, "", 0, 4);
+//      }
+   }
       
 //   if (XBLiveIsSignedInGold())
 //   {
@@ -153,6 +172,10 @@ function MultiPlayerGui::show(%this)
 //      %checkContentStatus = false;
 //      clientPromptSignedIn("MultiPlayerGui.onSignInComplete(" @ %checkContentStatus @ ");", $Text::SignInForMultiplayer, "XBLiveIsSignedInGold();", "MultiPlayerGui.exit(false);");
 //   }
+ 
+   if(UpsellGui.displayPDLCUpsell) 
+	   UpsellGui.schedule(0, displayPDLCPostGame, false);
+	
 }
 
 function MultiPlayerGui::onSignInComplete(%this, %checkContentStatus)

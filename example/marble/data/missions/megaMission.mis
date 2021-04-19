@@ -2,16 +2,16 @@
 new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
-         artist = "Alex Swanson";
-         level = "0";
-         name = "Level Preview Mission";
          gameType = "singleplayer";
          desc = "Level Preview Mission";
-         include = "1";
+         level = "0";
          isInDemoMode = "1";
-         difficulty = "1";
-         type = "none";
          time = "50000";
+         include = "1";
+         type = "none";
+         name = "Level Preview Mission";
+         difficulty = "1";
+         artist = "Alex Swanson";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";
@@ -11484,7 +11484,7 @@ new SimGroup(MissionGroup) {
          outdoorWeight = "100";
       };
    };
-   new SimGroup(MarbleCityGroup) {
+   new SimGroup(marblecity2Group) {
 
       new InteriorInstance() {
          position = "0 0 0";
@@ -11492,12 +11492,12 @@ new SimGroup(MissionGroup) {
          scale = "1 1 1";
          hidden = "1";
          reanderShadow = "1";
-         interiorFile = "./Multiplayer/Marble City/marblecity.dif";
+         interiorFile = "./Multiplayer/Marble City 2/marblecity2.dif";
          showTerrainInside = "0";
       };
       new SpawnSphere() {
-         position = "-55.9425 15.8977 -0.128559";
-         rotation = "0.104087 -0.149139 0.983323 111.078";
+         position = "35.4183 -20.6198 0.634074";
+         rotation = "0.208788 0.112218 -0.971501 57.9062";
          scale = "1 1 1";
          hidden = "1";
          reanderShadow = "1";
@@ -12508,6 +12508,2588 @@ new SimGroup(MissionGroup) {
          outdoorWeight = "100";
       };
    };
+   new SimGroup(marbleitupGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Marbleitup/marbleitup.dif";
+         showTerrainInside = "0";
+      };
+      new SpawnSphere() {
+         position = "-23.4458 6.05711 4.58578";
+         rotation = "-0.0499054 0.0756195 0.995887 113.371";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(playgroundGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Playground/playground.dif";
+         showTerrainInside = "0";
+      };
+      new InteriorInstance() {
+         position = "16.5 -8 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "9.5 -8 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "16.5 6 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "9.5 6 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-7.5 6 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-14.5 6 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-7.5 -8 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-14.5 -8 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-28 -44 1";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-30.5 -51.5 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-28.5 17.5 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "32.5 41.5 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "30.5 -19.5 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "28 42 1";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "32.5 41.5 2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "30.5 -19.5 2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-28.5 17.5 2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-30.5 -51.5 2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-41.5 -51.5 -2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-41.5 17.5 -2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "43.5 -19.5 -2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "43.5 41.5 -2";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-28 -44 -3";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "43.5 -19.5 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "43.5 41.5 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-41.5 17.5 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-41.5 -51.5 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new SpawnSphere() {
+         position = "22.8124 -21.3248 10.7864";
+         rotation = "0.449363 0.207081 -0.869017 55.8733";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(bowlGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Bowl/bowl.dif";
+         showTerrainInside = "0";
+      };
+      new SpawnSphere() {
+         position = "84.8136 25.3869 -5.94322";
+         rotation = "0.01523 -0.0707355 0.997379 155.76";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(concentricGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Concentric/concentric_holes.dif";
+         showTerrainInside = "0";
+      };
+      new SpawnSphere() {
+         position = "46.6263 13.4346 17.3075";
+         rotation = "0.192814 0.255219 -0.947463 108.81";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+      new StaticShape() {
+         position = "-5.97114 -47.3476 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "-23.6606 -41.4455 6";
+         rotation = "0 0 1 22.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "-37.6971 -29.2554 6";
+         rotation = "0 0 1 45";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "-46.0219 -12.591 6";
+         rotation = "0 0 1 67.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "-47.3452 6.04073 6";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "-41.4384 23.6792 6";
+         rotation = "0 0 1 112.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "-29.2093 37.736 6";
+         rotation = "0 0 1 135";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "-12.5318 46.0593 6";
+         rotation = "0 0 1 157.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "6.02869 47.3508 6";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "12.5287 46.0359 6";
+         rotation = "0 0 1 22.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "29.2402 37.6951 6";
+         rotation = "0 0 1 45";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "41.4409 23.6262 6";
+         rotation = "0 0 1 67.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "47.3267 6.02292 6";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "46.0197 -12.5849 6";
+         rotation = "0 0 1 112.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "37.7214 -29.2096 6";
+         rotation = "0 0 1 135";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+      new StaticShape() {
+         position = "23.6369 -41.4434 6";
+         rotation = "0 0 1 157.5";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "glass_9shape";
+      };
+   };
+   new SimGroup(vortexeffectGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Vortex/vortexeffect.dif";
+         showTerrainInside = "0";
+      };
+      new InteriorInstance() {
+         position = "15 -28.5 -1.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "15 -34.5 -1.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "9 -34.5 -1.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "9 -28.5 -1.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new SpawnSphere() {
+         position = "-61.0012 -69.1348 18.7585";
+         rotation = "0.314944 -0.181678 0.93156 63.5349";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(blastclubGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Blastclub/blastclub.dif";
+         showTerrainInside = "0";
+      };
+      new InteriorInstance() {
+         position = "-39.5 8.5 -9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "39.5 -8.5 -9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "28.5 8.5 -13";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "8.5 28.5 -13";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "23.5 -8.5 -9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "8.5 -23.5 -9";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "8.5 -39.5 -9";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "10.5 7.5 -9";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "7.5 25.5 -9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "7.5 10.5 -9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "25.5 7.5 -9";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "10.5 7.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "7.5 10.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "7.5 25.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "25.5 7.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "28.5 8.5 -29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "8.5 28.5 -29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "23.5 -8.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "39.5 -8.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "8.5 -39.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "8.5 -23.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-28.5 -8.5 -13";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-8.5 -28.5 -13";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-23.5 8.5 -9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-8.5 23.5 -9";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-8.5 39.5 -9";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-10.5 -7.5 -9";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-7.5 -25.5 -9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-7.5 -10.5 -9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-25.5 -7.5 -9";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-10.5 -7.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-7.5 -10.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-7.5 -25.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-25.5 -7.5 -17";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-28.5 -8.5 -29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-8.5 -28.5 -29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-23.5 8.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-39.5 8.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-8.5 39.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-8.5 23.5 -25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-20.5 -15.5 -10.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-20.5 -12.5 -10.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-15.5 -20.5 -10.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "20.5 15.5 -10.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "20.5 12.5 -10.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "15.5 20.5 -10.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "12.5 20.5 -10.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-12.5 -20.5 -10.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new SpawnSphere() {
+         position = "-22.3839 -31.1947 4.33496";
+         rotation = "0.491756 -0.22684 0.840666 57.5085";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(coreGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Core/core.dif";
+         showTerrainInside = "0";
+      };
+      new SpawnSphere() {
+         position = "35.6645 29.5084 25.5017";
+         rotation = "-0.0850517 -0.147472 0.985403 239.22";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(triumvirateGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Triumvirate/triumvirate.dif";
+         showTerrainInside = "0";
+      };
+      new InteriorInstance() {
+         position = "-15.5 -15.5 -1.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-15.5 -8.5 -1.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-15.5 -15.5 2.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-3.5 -11.5 8.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 -11.5 8.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-15.5 -8.5 2.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-11.5 11.5 4.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 11.5 0.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-11.5 11.5 0.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "4.5 3.5 31";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-4.5 3.5 31";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-3.5 4.5 31";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-3.5 -4.5 31";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-4.5 -3.5 31";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "4.5 -3.5 31";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 -4.5 31";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 4.5 31";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 11.5 -11.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 11.5 -7.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 11.5 8.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-3.5 -7 15";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-3.5 7 15";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 -7 15";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "3.5 7 15";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "11.5 11.5 18.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-3.5 11.5 22.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "11.5 11.5 14.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-65.5 -48.5 -9";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-34.5 -87.5 -3.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-81.5 -87.5 -3.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-42.5 -79.5 4.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 -79.5 4.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-42.5 -79.5 8.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-46.5 -67.5 14.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-46.5 -60.5 14.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 -79.5 8.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -75.5 10.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -60.5 6.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -75.5 6.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-42.5 -48.5 2.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-65.5 -48.5 2.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-61.5 -59.5 37";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-61.5 -68.5 37";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-62.5 -67.5 37";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-53.5 -67.5 37";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-54.5 -68.5 37";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-54.5 -59.5 37";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-53.5 -60.5 37";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-62.5 -60.5 37";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-34.5 -87.5 -19.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-81.5 -87.5 -19.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -60.5 -5.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -60.5 -1.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -60.5 14.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-51 -67.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-65 -67.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-51 -60.5 21";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-65 -60.5 21";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -52.5 24.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -67.5 28.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-69.5 -52.5 20.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "22.5 -111.5 -7.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "29.5 -111.5 -7.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "22.5 -111.5 -3.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "26.5 -99.5 2.5";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "26.5 -92.5 2.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "29.5 -111.5 -3.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "33.5 -92.5 25";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "42.5 -92.5 25";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "41.5 -91.5 25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "41.5 -100.5 25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "42.5 -99.5 25";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "33.5 -99.5 25";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "34.5 -100.5 25";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "34.5 -91.5 25";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "31 -99.5 9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "45 -99.5 9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "31 -92.5 9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "45 -92.5 9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_corner.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "49.5 -84.5 12.5";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "49.5 -99.5 16.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_2_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "49.5 -84.5 8.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "29.5 -111.5 -15.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "22.5 -111.5 -15.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/vertical_support.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new SpawnSphere() {
+         position = "-36.405 12.6613 26.8892";
+         rotation = "0.0438293 -0.103781 0.993634 134.471";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(zigguratGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Ziggurat/ziggurat.dif";
+         showTerrainInside = "0";
+      };
+      new SpawnSphere() {
+         position = "38.0881 -29.0699 -5.81805";
+         rotation = "0.242792 0.133132 -0.9609 59.4224";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(promontoryGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Promontory/promontory.dif";
+         showTerrainInside = "0";
+      };
+      new InteriorInstance() {
+         position = "-81.5 -8.5 13";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-82.5 -7.5 13";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-50.5 24.5 13";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 23.5 13";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 -7.5 13";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-2.5 -39.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "13.5 -55.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "30.5 -55.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-1.5 -40.5 21";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "45.5 -40.5 21";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "45.5 -23.5 21";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "30.5 -8.5 21";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "29.5 -7.5 21";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-9.5 -7.5 21";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-50.5 -8.5 13";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_8_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-81.5 -8.5 21";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 23.5 21";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 7.5 21";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 -7.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-49.5 8.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-65.5 -8.5 21";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-50.5 -8.5 21";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "30.5 -55.5 29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "13.5 -40.5 29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-1.5 -40.5 29";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-9.5 -24.5 21";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "45.5 -40.5 29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "46.5 -39.5 29";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "30.5 -23.5 29";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "10.5 -7.5 29";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-9.5 -7.5 29";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-10.5 -8.5 29";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-18.5 39.5 9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-2.5 40.5 9";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-1.5 24.5 9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-17.5 23.5 9";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-2.5 23.5 9";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-1.5 39.5 9";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-17.5 40.5 9";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-18.5439 24.6147 9";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-2.5 -24.5 29";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-2.5 -39.5 29";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-10.5 -23.5 29";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "9.5 -7.5 29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "29.5 -7.5 29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "45.5 -23.5 29";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "46.5 -24.5 29";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "30.5 -40.5 29";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "13.5 -55.5 29";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-66.5 -8.5 21";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-82.5 7.5 21";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-65.5 24.5 21";
+         rotation = "0 0 1 180";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-50.5 24.5 21";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-66.5 24.5 21";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-82.5 -7.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new InteriorInstance() {
+         position = "-82.5 8.5 21";
+         rotation = "0 0 1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./parts/arch_4_normal.dif";
+         showTerrainInside = "0";
+            className = "interior";
+      };
+      new SpawnSphere() {
+         position = "-101.193 -31.2793 -6.48033";
+         rotation = "-0.22106 0.121794 0.967625 59.3136";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
+   new SimGroup(spiresGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         interiorFile = "./Multiplayer/Spires/spires.dif";
+         showTerrainInside = "0";
+      };
+      new SpawnSphere() {
+         position = "-24.4302 -11.4843 5.8595";
+         rotation = "-0.264338 0.12255 0.956612 51.7131";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+   };
    new SimGroup(marblepickerGroup) {
 
       new InteriorInstance() {
@@ -12531,8 +15113,6 @@ new SimGroup(MissionGroup) {
          indoorWeight = "100";
          outdoorWeight = "100";
       };
-   };
-   new SimGroup(ServerGroup) {
    };
 };
 //--- OBJECT WRITE END ---

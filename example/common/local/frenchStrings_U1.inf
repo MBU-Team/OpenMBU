@@ -1,0 +1,41 @@
+﻿[Strings]
+$Text::ESRBWarning = "ESRB Notice: Game Experience May Change During Online Play";
+$Text::NewContent = "Découvrez du nouveau contenu !";
+;-------------------------------------------------------------------------------
+; PDLC and Unlock Stuff
+;-------------------------------------------------------------------------------
+$Text::PDLCFreeThanks = "Découvrez votre carte Marble Blast Ultra gratuite !";
+$Text::PDLCThanksPack1 = "Merci d'avoir déverrouillé le pack d'extension Karaté-bille !";
+$Text::PDLCThanksPack2 = "Merci d'avoir déverrouillé le pack d'extension Agoraphobie !";
+$Text::PDLCThanksPackBoth = "Merci d'avoir déverrouillé les packs d'extension Karaté-bille et Agoraphobie !";
+$Text::UnlockFreeMap = "Déverrouiller la carte gratuite";    // Displayed on main menu
+$Text::UnlockMapPack = "Déverrouiller le pack de carte";    // ""
+$Text::CorruptPDLC = "Impossible de lire %1.  Le contenu est peut-être corrompu.  Veuillez réessayer de le télécharger."; // Displayed if PDLC corrupt; %1 replaced with XCONTENT_DATA.szDisplayName
+$Text::DownloadContent = "Télécharger le contenu";
+$Text::UnlockPDLC0 = "Déverrouiller Billomania";              // Displayed on mission selection
+$Text::UnlockPDLC1 = "Déverrouiller le pack d'extension Karaté-bille";   // ""
+$Text::UnlockPDLC2 = "Déverrouiller le pack d'extension Agoraphobie"; // ""
+$Text::PDLCUpsell00 = "Déverrouillez dès maintenant ce pack de carte multijoueur Marble Blast et...\n\n";           // PDLC Upsell Screen 
+$Text::PDLCUpsell01 = "Et découvrez 5 nouveaux niveaux multijoueur pour héberger des parties et vous entraîner !\n\n";       // ""
+$Text::PDLCUpsell02 = "Tentez de remporter un nouveau succès (valant 20 score du joueur) !\n\n";    // ""
+$Text::PDLCUpsell03 = "\n\n";                                                                   // ""
+$Text::PDLCUpsell04 = "\n\n";                                                                   // ""
+$Text::RTArcadeMenu = "Retour vers Arcade";
+$Text::GGCredits = "<spush><font:Arial Bold:30>GarageGames Team<spop>\n\n<spush><font:Arial Bold:24>Development<spop>\nTim Aste\nJane Chase\nTimothy Clarke\nAdam deGrandis\nClark Fagot\nMatt Fairfax\nMark Frohnmayer\nBen Garney\nTim Gift\nDavey Jackson\nJustin Kovac\nJoe Maruschak\nMark McCoy\nJay Moore\nRick Overman\nJohn Quigley\nBrian Ramage\nKevin Ryan\nLiam Ryan\nAlex Swanson\nJeff Tunnell\nPat Wilson\n\n<spush><font:Arial Bold:24>Special Thanks<spop>\nCafe Aroma\nCafe Yumm!\nMezza Luna Pizzeria\nPizza Research Institute\nThe GarageGames Community";
+$Text::AchievementName13 = "Chasse au joyau bleu";
+$Text::AchievementName14 = "Maître du pack de carte";
+$Text::AchievementName15 = "Maître des Flèches";
+$Text::AchievementDescription13 = "Récupérez un joyau bleu dans une partie multijoueur Billomania.";
+$Text::AchievementDescription14 = "Récupérez 40 joyaux dans: Terrain de jeu, Cuvette, Concentrique, Vortex, Club Blast (Marble Fu).";
+$Text::AchievementDescription15 = "Récupérez 50 joyaux dans le niveau Flèches (pack Agoraphobie).";
+$Text::LevelNameMP11 = "Billomania (complément)";	// Add-on levels
+$Text::LevelNameMP12 = "Terrain de jeu (complément)";		// ""
+$Text::LevelNameMP13 = "Cuvette (complément)";			// "" 
+$Text::LevelNameMP14 = "Concentrique (complément)";        	// "" 
+$Text::LevelNameMP15 = "Effet Vortex (complément)";     	// "" 
+$Text::LevelNameMP16 = "Club Blast (complément)";        	// "" 
+$Text::LevelNameMP17 = "Noyau (complément)";              	// "" 
+$Text::LevelNameMP18 = "Triumvirat (complément)";       	// "" 
+$Text::LevelNameMP19 = "Ziggourat (complément)";          	// "" 
+$Text::LevelNameMP20 = "Promontoire (complément)";        	// "" 
+$Text::LevelNameMP21 = "Flèches (complément)";            	// "" 

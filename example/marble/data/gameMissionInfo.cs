@@ -266,7 +266,11 @@ function GameMissionInfo::selectMission(%this, %index)
    %goNeg = false;
    if (%index < %this.getCurrentIndex())
       %goNeg = true;
-
+      
+   %haxGoNeg = %goNeg;
+   if( %this.getCurrentIndex() == 0 && %index == ( %this.getCurrentMissionGroup().numAddedMissions - 1 ) )
+      %haxGoNeg = true;
+      
    if( %index < 0 )
       %index = %this.getCurrentMissionGroup().numAddedMissions - 1;
    else if ( %index > %this.getCurrentMissionGroup().numAddedMissions - 1 )
@@ -290,6 +294,30 @@ function GameMissionInfo::selectMission(%this, %index)
             %index = 0;
          
          %mission = %group.getObject( %index );
+      }
+   }
+   else if( %this.mode $= GameMissionInfo.MPMode ) // Only execute PDLC check for mutliplayer
+   {
+      %group = %this.getCurrentMissionGroup();
+      %mission = %group.getObject( %index );
+
+	  // Assumed that mission is 'locked' by gui which invoked (skip ownership check)
+      while( !%this.levelIsVisible( %mission.level, false ) )
+      {
+         //echo( "PDLCAllowMission false for level " @ %mission.level @ " [" @ %index @ "]" );
+         if (%haxGoNeg)
+            %index--;
+         else
+            %index++;
+            
+         //echo( "Adjusting index [" @ %index @ "]" );
+
+		 %index = %this.wrapMissionIndex( %index );
+            
+         //echo( "Using index [" @ %index @ "]" );
+         
+         %mission = %group.getObject( %index );
+         //echo( "-- Trying level: " @ %mission.level );
       }
    }
    
@@ -360,14 +388,96 @@ function GameMissionInfo::setCamera(%this)
    $previewCamera.setTransform(%this.getCurrentMission().cameraPos);
 }
 
-function GameMissionInfo::selectPreviousMission(%this)
+function GameMissionInfo::currentMissionLocked(%this)
 {
-   %this.selectMission(%this.getCurrentIndex() - 1);
+	if(isDemoLaunch())
+	{
+		if(%this.getCurrentMission().isInDemoMode)
+			return false;
+		else
+			return true;
+	}
+	else if(%this.mode $= %this.MPMode) 
+	{
+		if(PDLCAllowMission(%this.getCurrentMission().level))
+			return false;
+		else
+			return true;
+	}
+	else
+		return false;
 }
 
-function GameMissionInfo::selectNextMission(%this)
+function GameMissionInfo::wrapMissionIndex(%this, %index)
 {
-   %this.selectMission(%this.getCurrentIndex() + 1);
+	if( %index < 0 )
+	   %index = %this.getCurrentMissionGroup().numAddedMissions - 1;
+	else if ( %index > %this.getCurrentMissionGroup().numAddedMissions - 1 )
+	   %index = 0;
+	return %index;
+}
+
+function GameMissionInfo::levelIsVisible(%this, %level, %checkOwnership)
+{
+	if(!isLevelContentAvailable(%level))
+	{
+		// In the event that MarketPlace query fails; still allow owned content at least.
+		return PDLCAllowMission(%level);
+	}
+
+	if(%checkOwnership)
+	{
+		if(isDemoLaunch())
+			return false;
+
+		return PDLCAllowMission(%level);
+	}
+
+	return true;
+}
+
+function GameMissionInfo::selectPreviousMission(%this, %checkOwnership)
+{
+   %index = %this.getCurrentIndex() - 1;
+   
+   if( %this.mode $= GameMissionInfo.MPMode )
+   {
+      %group = %this.getCurrentMissionGroup();
+      %index = %this.wrapMissionIndex(%index);
+      %mission = %group.getObject( %index );
+      
+      while( !%this.levelIsVisible( %mission.level, %checkOwnership ) )
+      {
+         %index--;
+		   %index = %this.wrapMissionIndex(%index);
+         
+         %mission = %group.getObject( %index );
+      }
+   }
+      
+   %this.selectMission( %index );
+}
+
+function GameMissionInfo::selectNextMission(%this, %checkOwnership)
+{
+   %index = %this.getCurrentIndex() + 1;
+
+   if( %this.mode $= GameMissionInfo.MPMode )
+   {
+      %group = %this.getCurrentMissionGroup();
+      %index = %this.wrapMissionIndex(%index);
+      %mission = %group.getObject( %index );
+      
+      while( !%this.levelIsVisible( %mission.level, %checkOwnership ) )
+      {
+         %index++;
+		   %index = %this.wrapMissionIndex(%index);
+         
+         %mission = %group.getObject( %index );
+      }
+   }
+      
+   %this.selectMission( %index );
 }
 
 function GameMissionInfo::getDefaultMission(%this)

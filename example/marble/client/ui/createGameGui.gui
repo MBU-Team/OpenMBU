@@ -9,8 +9,8 @@ new GuiControl(CreateGameGui) {
          
    new GuiXboxOptionListCtrl(CreateGameOptionList) {
       profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallWideProfile";
-      position = isWidescreen()? "380 373" : "0 195";
-      extent = isWidescreen()? "815 400" : "640 250";
+      position = isWidescreen()? "360 373" : "-20 195";
+      extent = isWidescreen()? "835 400" : "660 250";
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = isWidescreen()? "bottom" : "top";
       // there can only be two columns; these values are percentages of total extent
@@ -105,7 +105,7 @@ function CreateGameGui::show(%this,%backGui)
    
    %this.creatingGame = false;
    
-   if (!isPCBuild() && $Client::QoSData $= "")
+   if (!isPCBuild() && $Client::QoSData $= "" && $Client::UseXBLiveMatchMaking)
    {
       RootGui.displayLoadingAnimation( "center" );
       CreateGameOptionList.visible = false;
@@ -133,8 +133,11 @@ function CreateGameGui::setButtons(%this)
    if (isDemoLaunch())
       RootGui.setX($Text::DemoUpsell07);
    
-   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+   if( GameMissionInfo.currentMissionLocked() )
    {
+      if(!isDemoLaunch())
+         RootGui.setX(getMapPackUpsellTag(GameMissionInfo.getCurrentMission().level));
+         
       CG_DemoLock.setVisible( true );
       RootGui.setA("");
    }
@@ -142,6 +145,7 @@ function CreateGameGui::setButtons(%this)
    {
       CG_DemoLock.setVisible( false );
       RootGui.setA($Text::GO);
+      RootGui.setX("");
    }
 }
 
@@ -251,6 +255,10 @@ function CreateGameOptionList::onOptionChange(%this, %increase)
    if (CreateGameOptionList.getSelectedIndex() == CreateGameGui.missionIndex)
    {
       GameMissionInfo.selectMission(%this.getOptionIndex(CreateGameGui.missionIndex));
+
+      // Fix displayed name in case selectMission magics
+      %this.setOptionIndex( CreateGameGui.missionIndex, GameMissionInfo.getCurrentIndex() );
+      
       CreateGameGui.onMissionChanged();
    }
    
@@ -276,6 +284,8 @@ function CreateGameGui::onGameCreated(%this)
       RootGui.setContent(ConnErrorGui, $Text::ErrorCannotConnect, "Internal Error: Create Hosted Match failed.");
       return;
    }
+   if (!$Client::UseXBLiveMatchMaking)
+      XBLiveSetEnabled(false);
    
    $Server::UsingLobby = true;
    RootGui.setContent(LobbyGui);
@@ -331,6 +341,7 @@ function CreateGameGui::createGame(%this)
       $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
       $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
       
+      $pref::Server::missionId = $Server::MissionId;
       onMissionLoaded();
    }
       
@@ -379,7 +390,7 @@ function CreateGameGui::onA(%this)
    
    alxPlay( AudioButtonDown );
    
-   if( !GameMissionInfo.getCurrentMission().isInDemoMode  && isDemoLaunch() )
+   if( GameMissionInfo.currentMissionLocked() )
    {
       // shouldn't be here
       // upsell their ass

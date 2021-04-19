@@ -100,6 +100,8 @@ function pauseToggle(%defaultItem)
 
 function escapeFromGame(%forcePreviewMode) // its ok for this to be empty, default is don't force preview mode
 {  
+   $Client::willfullDisconnect = true;
+   
    %killMission = MissionLoadingGui.isAwake();
    // if we are hosting a multiplayer server, we just re-enter preview mode
    // without disconnecting

@@ -19,6 +19,11 @@ function setupAchievementMasks()
    $numLevelsIntermediate = 0;
    $numLevelsAdvanced   = 0;
 
+   // Map Pack Achievement code:
+   $numGemsNeededMapPackB = 40;  // You need to get $numGemsNeededMapPackB gems in $numlevelsNeededMapPackB out of the five levels to get the achievement
+   $numGemsNeededMapPackC = 50;  // Num gems you need to collect in Spires to get the achievement
+   $numLevelsNeededMapPackB = 3;  // You need to get $numGemsNeededMapPackB gems in $numlevelsNeededMapPackB out of the five levels to get the achievement
+
    $numEasterEggs = 20;
    $allEggsMask = 0;
    for (%i = 1; %i <= $numEasterEggs; %i++)
@@ -228,6 +233,46 @@ function checkForAchievements()
       if (%mpOverallpoints >= $pointThreshold12)
          XBLiveWriteAchievement(%port, 12, "notifyAwardOfAchievement(" @ 12 @ ");");      
    }
+
+   // Map Pack Achievement code:
+   // Map Pack A - Get a Blue gem with at least one other person in the level.
+   if (!XBLiveHasAchievement(%port, 13))
+   {
+      echo("\n\n------------------------- TEST ACHIEVEMENT 13");
+      %eMapPackA = getMapPackA_Achievement();
+      echo("------------------------- MAP PACK A MASK: " @ %eMapPackA);
+      if (%eMapPackA)
+      {
+         echo("------------------------- YOU GOT MAP PACK A ACHIEVEMENT");
+         XBLiveWriteAchievement(%port, 13, "notifyAwardOfAchievement(" @ 13 @ ");");
+      }
+   }
+
+   // Map Pack B - Get X number of gems in 3 out of the 5 levels.  With at least one other person in the level.
+   if (!XBLiveHasAchievement(%port, 14))
+   {
+      echo("\n\n------------------------- TEST ACHIEVEMENT 14");
+      %eMapPackB = getMapPackB_Achievement();
+      echo("------------------------- MAP PACK B MASK: " @ %eMapPackB);
+      if (countBits(%eMapPackB) >= $numLevelsNeededMapPackB)
+      {
+         echo("------------------------- YOU GOT MAP PACK B ACHIEVEMENT");
+         XBLiveWriteAchievement(%port, 14, "notifyAwardOfAchievement(" @ 14 @ ");");
+      }
+   }
+
+   // Map Pack C - In Spires you have to collect X number of gems.  You can do this solo.
+   if (!XBLiveHasAchievement(%port, 15))
+   {
+      echo("\n\n------------------------- TEST ACHIEVEMENT 15");
+      %eMapPackC = getMapPackC_Achievement();
+      echo("------------------------- MAP PACK C MASK: " @ %eMapPackC);
+      if (%eMapPackC)
+      {
+         echo("------------------------- U GOT MAP PACK C ACHIEVEMENT");
+         XBLiveWriteAchievement(%port, 15, "notifyAwardOfAchievement(" @ 15 @ ");");
+      }
+   }
 }
 
 function getNumAwardedAchievements()
@@ -310,6 +355,27 @@ function getFirstPlace()
    return $UserAchievements::MPFirstPlace;
 }
 
+// Map Pack Achievement code:
+function getMapPackA_Achievement()
+{
+   return $UserAchievements::MPMapPackA;
+}
+
+function getMapPackB_Achievement()
+{
+   return $UserAchievements::MPMapPackB;
+}
+
+function getMapPackC_Achievement()
+{
+   return $UserAchievements::MPMapPackC;
+}
+
+function gotABlueGemInTheLevel()
+{
+   return $UserAchievements::MPGotABlueGem;
+}
+
 // Used to update the achievement leaderboards
 function finishedMission(%levelid)
 {
@@ -348,6 +414,24 @@ function finishedMission(%levelid)
 function finishedFirstPlaceInMP()
 {
    $UserAchievements::MPFirstPlace = 1;
+}
+
+// Map Pack Achievement code:
+function completedMapPackA_Achievement()
+{
+   $UserAchievements::MPMapPackA = 1;
+}
+
+function completedMapPackB_Achievement(%levelid)
+{
+   //Levels: 81-85
+   %bit = BIT(%levelid - 81);
+   eval("$UserAchievements::MPMapPackB |= %bit;");
+}
+
+function completedMapPackC_Achievement()
+{
+   $UserAchievements::MPMapPackC = 1;
 }
 
 function finishedPar(%levelid)

@@ -343,6 +343,27 @@ function destroyGame()
    $timeKeeper = 0;
 }
 
+function faceGems( %player )
+{
+   // In multi-player, set the position, and face gems
+   if( $Server::ServerType $= "MultiPlayer" &&
+       isObject( $LastFilledGemSpawnGroup ) &&
+       $LastFilledGemSpawnGroup.getCount() )
+   {
+      %avgGemPos = 0;
+      // Ok, for right now, just use the first gem in the group. In final implementation
+      // do an average of all the positions of the gems, and look at that.
+      for( %i = 0; %i < $LastFilledGemSpawnGroup.getCount(); %i++ )
+      {
+         %gem = $LastFilledGemSpawnGroup.getObject( %i );
+         
+         %avgGemPos = VectorAdd( %avgGemPos, %gem.getPosition() );
+      }
+      %avgGemPos = VectorScale( %avgGemPos, 1 / $LastFilledGemSpawnGroup.getCount() );
+      
+      %player.cameraLookAtPt( %avgGemPos );
+   }
+}
 //-----------------------------------------------------------------------------
 
 function onGameDurationEnd()
@@ -789,6 +810,8 @@ function fillGemGroup(%gemGroup)
    }
    
    echo("Took" SPC (getRealTime() - %start) @ "ms to fill gem groups");
+   
+   $LastFilledGemSpawnGroup = %gemGroup;
 }
 
 // setup the gem groups
@@ -932,7 +955,9 @@ function GameConnection::onClientJoinGame(%this)
       %this.updateGameState();
 
    updateAvgPlayerCount();
-
+   
+   faceGems( %this.player );
+   
    // keep Lobby status updated   
    messageClient(%this, 'MsgClientUpdateLobbyStatus', "", serverIsInLobby() );
 }
@@ -1271,6 +1296,12 @@ function GameConnection::onFoundGem(%this,%amount,%gem,%points)
       //else
       //   messageClient(%this, 'MsgItemPickup', $Text::Tagged::GemPickupNPoints, %points);
 
+      // Map Pack Achievement code:
+      %this.gemCount += %amount;
+      commandToClient(%this,'setGemCount',%this.gemCount,$Game::GemCount);
+      if(%points == GemItem_5pts.points)
+         commandToClient(%this, 'pickedUpABlueGem');
+         
       return;
    }
 
@@ -1318,6 +1349,9 @@ function GameConnection::onFoundGem(%this,%amount,%gem,%points)
    }
 
    commandToClient(%this,'setGemCount',%this.gemCount,$Game::GemCount);
+
+   if(%point == GemItem_5pts.points)
+      commandToClient(%this,pickedUpABlueGem);
 }
 
 //-----------------------------------------------------------------------------
@@ -1400,8 +1434,6 @@ function GameConnection::respawnPlayer(%this)
    %this.player.setVelocity("0 0 0");
    %this.player.setVelocityRot("0 0 0");
    
-   
-   
    if (($Server::ServerType $= "SinglePlayer" || MissionInfo.gameMode $= "Race") && isObject(%this.checkPoint))
    {
       // Check and if there is a checkpoint shape, use that instead so the marble gets centered
@@ -1428,8 +1460,12 @@ function GameConnection::respawnPlayer(%this)
    }
 
    %spawnPos = getSpawnPosition(%spawnPoint);
+   
    %this.player.setPosition(%spawnPos, 0.45);
    setGravity(%this.player, %spawnPoint);
+   
+   faceGems( %this.player );
+   
    //%this.player.setGravityDir("1 0 0 0 -1 0 0 0 -1",true);
    
    serverPlay3d(spawnSfx, %this.player.getTransform());
@@ -1538,11 +1574,16 @@ function GameConnection::createPlayer(%this, %spawnPoint)
    if ($Server::ServerType $= "MultiPlayer")
       %player.setUseFullMarbleTime(true);
    setGravity(%player, %spawnPoint);
+   
    //%player.setGravityDir("1 0 0 0 -1 0 0 0 -1",true);
 
    // Update the camera to start with the player
    if (isObject(%this.camera))
-      %this.camera.setTransform(%player.getEyeTransform());
+      %this.camera.setTransform(%player.getEyeTransform());       
+   
+   // In multi-player, set the position, and face gems
+   faceGems( %player );
+   echo( "Created Player." );
 
    // Give the client control of the player
    %this.player = %player;

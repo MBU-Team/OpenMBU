@@ -21,7 +21,7 @@ new GuiControl(PlayerListGui) {
 		horizSizing = "relative";
 	   vertSizing = "relative";
       position = "33 54";
-      extent = "356 360";
+      extent = "392 360";
       minExtent = "8 8";
       visible = "1";
       helpTag = "0";
@@ -32,7 +32,7 @@ new GuiControl(PlayerListGui) {
 	      position = "0 0";
    		horizSizing = "right";
 		   vertSizing = "bottom";
-	      extent = "350 128";
+	      extent = "386 128";
 			bitmap = "./game/scoreBackdrop.png";
 			visible = "1";
 	        
@@ -54,7 +54,7 @@ new GuiControl(PlayerListGui) {
          //horizSizing = "width";
          //vertSizing = "height";
          position = "27 43";
-         extent = "356 271";
+         extent = "392 271";
          minExtent = "8 8";
          visible = "1";
          helpTag = "0";
@@ -74,7 +74,7 @@ new GuiControl(PlayerListGui) {
          //horizSizing = "width";
          //vertSizing = "height";
          position = "27 43";
-         extent = "356 271";
+         extent = "392 271";
          minExtent = "8 8";
          visible = "0";
          helpTag = "0";
@@ -183,6 +183,25 @@ function PlayerListGui::updateScore(%this,%clientId,%score,%cumScore)
    PlayerListGuiList.setRowById(%clientId, %text);
    PlayerListGuiList.sortNumerical(2,false);
    %this.updateShortPlayerList(%clientId);
+}
+
+function PlayerListGui::updateVoiceStatus( %this, %xbLiveId, %talking )
+{
+   // Skip this if reporting our own talking status
+   if( XBLiveGetUserId() $= %xbLiveId )
+      return;
+      
+   %clientId = LobbyGui.findClientIdByXBLiveId( %xbLiveId );
+   
+   if( %talking )
+      %icon = "marble/client/ui/xbox/voiceIconSpeak.png";
+   else
+      %icon = "";
+   
+   %text = PlayerListGuiList.getRowTextById( %clientId );
+   %text = setField( %text, 0, %icon );
+   PlayerListGuiList.setRowById( %clientId, %text );
+   %this.updateShortPlayerList( %clientId );
 }
 
 function PlayerListGui::updateShortPlayerList(%this)

@@ -5,6 +5,32 @@ if (isPCBuild())
    $Player::XBLiveId = XBLiveGetUserId();
 }
 
+function refreshPDLC()
+{
+	echo(" *** Refreshing PDLC ownership");
+
+	// Enumerate content:
+	if(!isDemoLaunch())
+	{
+		// Re-enumerate PDLC, and 
+		checkForPDLC();
+
+		// Figure out what screen we be on:
+		%contentGui = canvas.getContent().contentGui;
+		%content = %contentGui.getName();
+
+		// Refresh only those which matter:
+		if((%content $= "MainMenuGui") || (%content $= "CreateGameGui") || 
+		   (%content $= "MultiPlayerGui" ) || (%content $= "LevelPreviewGui"))
+		{
+            echo(" *** Refreshing screen " SPC %content);
+
+			// redisplay content on the root gui so that it can update itself to full version
+			RootGui.redisplayContent();
+		}
+	}
+}
+
 function onXBLiveSignInStateChanged()
 {
    error("@@@@@ Sign in state changed");   
@@ -20,11 +46,15 @@ function onXBLiveSignoff(%port)
    // call script signoff callback.  we don't wait until system ui deactivates (if its active).  might
    // need to delay until it deactivates.  will wait for feedback from test team.
    clientOnSignedOff(%port);
+
+   refreshPDLC();
 }
 
 function onXBLiveSignon(%port)
 {
    // somebody signed on
+   echo(" *** XBLive signon to port: " SPC %port);
+   refreshPDLC();
       
    // if we have a locked controller we ignore this
 //   if ($Input::LockedController == -1 || $Input::LockedController $= "-1")
@@ -107,14 +137,33 @@ function clientShowMarketplaceUI()
 //      error("client not signed in with silver access, can't show marketplace");
 //      return;
 //   }
+//   if (!isDemoLaunch() && hasAllMapPacks())
+//   {
+//      // uhhh
+//      error("attempting to view marketplace and we have nothing to purchase...");
+//      return;
+//   }
+
+   UpsellGui.hasMapPack1 = hasMapPack1();
+   UpsellGui.hasMapPack2 = hasMapPack2();
+   UpsellGui.hasFreeMap = hasFreeMapPack();
+
    if (!isDemoLaunch())
+	   $PDLCMarketView = true;
+
+   // Setup category/itemId for XBShowMarketplaceUI:
+   if(isDemoLaunch())
    {
-      // uhhh
-      error("attempting to view marketplace and we aren't a demo");
-      return;
+      %category = -1;
+      %itemId = 1;
+   }
+   else
+   {
+      %category = $PDLC::ContentCategory;
+      %itemId = 0;
    }
    
-   $Client::ViewingMarketplace = XBShowMarketplaceUI(XBLiveGetSigninPort());
+   $Client::ViewingMarketplace = XBShowMarketplaceUI(XBLiveGetSigninPort(), %category, %itemId);
 }
 
 function clientCompleteMarketplace()
@@ -128,19 +177,75 @@ function clientCompleteMarketplace()
    if (!isDemoLaunch())
    {
       echo("User purchased game, converting demo to full version");
-      if (UpsellGui.isAwake())
-         UpsellGui.onB();
       
-      // redisplay content on the root gui so that it can update itself to full version
-      RootGui.redisplayContent();
+      if (UpsellGui.isAwake())
+      {
+          if(RootGui.BEnabled())
+             UpsellGui.onB();
+          else if(RootGui.AEnabled())
+             UpsellGui.onA();
+      }
       
       // just in case
       $Demo::TimeRemaining = $Demo::DefaultStartingTime; 
       ServerConnection.demoOutOfTime = false;
       
+      // Re-enumerate PDLC, and 
+      checkForPDLC();
+	  StartAsynchContentQuery();
+      
+      // redisplay content on the root gui so that it can update itself to full version
+      RootGui.redisplayContent();
+      
       // thank them for their money
-      XMessagePopupDlg.show(0, $Text::PurchasedThanks, $Text::OK);
+      if( !$PDLCMarketView )
+         XMessagePopupDlg.show(0, $Text::PurchasedThanks, $Text::OK);
+	  else
+	  {
+		 %hasPack1 = hasMapPack1();
+		 %hasPack2 = hasMapPack2();
+		 %hasFreeMap = hasFreeMapPack();
+	
+		 // thank them for buying map packs
+		 if(!UpsellGui.hasMapPack2 && %hasPack2 && !UpsellGui.hasMapPack1 && %hasPack1)
+		 {
+			 echo("TEST**********************bought both thank you************************");
+
+			 XMessagePopupDlg.show(0, $Text::PDLCThanksPackBoth, $Text::OK);
+		 }
+		 else if(!UpsellGui.hasMapPack1 && %hasPack1) 
+		 {
+			 echo("TEST**********************pack 1 thank you************************");
+
+			 XMessagePopupDlg.show(0, $Text::PDLCThanksPack1, $Text::OK);
+		 }
+		 else if(!UpsellGui.hasMapPack2 && %hasPack2)
+		 {
+			 echo("TEST**********************pack 2 thank you************************");
+
+			 XMessagePopupDlg.show(0, $Text::PDLCThanksPack2, $Text::OK);
+		 }
+		 else if(!UpsellGui.hasFreeMap && %hasFreeMap) 
+		 {
+			 echo("TEST**********************free map thank you************************");
+
+			 XMessagePopupDlg.show(0, $Text::PDLCFreeThanks, $Text::OK);
+         }
+      }
    }
+
+   // Update ownership flags:
+   UpsellGui.hasMapPack1 = hasMapPack1();
+   UpsellGui.hasMapPack2 = hasMapPack2();
+   UpsellGui.hasFreeMap = hasFreeMapPack();
+
+   $PDLCMarketView = false;
+}
+
+function onXBStorageDevicesChanged()
+{
+	echo(" *** Storage device change");
+	refreshPDLC();
 }
 
 //-----------------------------------------------------------------------------
@@ -157,7 +262,10 @@ function onXBLivePlayerTalking(%xbLiveId, %talking)
 {
    echo("updating talking status" SPC %talking);
    if ($Client::connectedMultiplayer)
+   {
       LobbyGui.updateCommunicatorTalking(%xbLiveId, %talking);
+      PlayerListGui.updateVoiceStatus(%xbLiveId, %talking);
+   }
 }
 
 function onXBLiveMuteListChanged()
@@ -377,6 +485,15 @@ function clientSetSigninPort(%port)
       
       // set presence info to "menus"
       XBLiveSetRichPresence(%port, 0);
+      
+      if( !isDemoLaunch() )
+      {
+         // Check for PDLC
+         checkForPDLC();
+      }
+
+	  // Perform initial (blocking) content query for MapPacks category:
+	  performContentQuery(2);
    }
 }
 
@@ -565,16 +682,36 @@ function clientShowSignInMessage()
 }
 
 $profileVersion = 72;
+$profileUpdateTag = 195948557;   // 0xbadf00d
+$profileUpdateIdx = 14 + 60 + 1; // previous profile settings + numSinglePlayerLevels
+
+function XBGamerProfile::dumpProfileInfo(%this, %title)
+{
+   echo(" GamerProfile Info: " @ %title);
+   for(%i = 0; %i < 100; %i++)
+      echo( " - profileInfo[" @ %i @ "] = " @ %this.intProfileInfo[%i]);
+}
 
 function XBGamerProfile::unpackProfile(%this, %string)
 {
+   %this.dumpProfileInfo("unpackProfile");
+
    %version = %this.intProfileInfo[0];
+   
    if (%version != $profileVersion)
    {
       error("   profile version mismatch, can't load profile string:" SPC $profileVersion SPC %version);
       return;
    }
-   
+
+   // TitleUpdate cannot version this data (users can switch from new<->old version? crap!)
+   //  - append the profileInfo with the TitleUpdate achievements
+   //  - look for special tag to signify data is present
+   %isUpdatedProfile = (%this.intProfileInfo[$profileUpdateIdx] == $profileUpdateTag);
+
+   if(%isUpdatedProfile)
+      echo(" !!! Loading updated profile.");
+
    // if you add something here make sure you delete the appropriate global variable 
    // when the user signs off (see deleteVariables() in clientOnSignedOff())
    $pref::invertXCamera = %this.intProfileInfo[1];
@@ -592,9 +729,44 @@ function XBGamerProfile::unpackProfile(%this, %string)
    $pref::Option::MusicVolume = %this.intProfileInfo[13];
    $pref::Option::FXVolume = %this.intProfileInfo[14];
    
+   // Map Pack Achievement code:
+   if(%isUpdatedProfile)
+   {
+      $UserAchievements::MPMapPackA = %this.intProfileInfo[$profileUpdateIdx + 1];
+      $UserAchievements::MPMapPackB = %this.intProfileInfo[$profileUpdateIdx + 2];
+      $UserAchievements::MPMapPackC = %this.intProfileInfo[$profileUpdateIdx + 3];
+   }
+   else
+   {
+      $UserAchievements::MPMapPackA = 0;
+      $UserAchievements::MPMapPackB = 0;
+      $UserAchievements::MPMapPackC = 0;
+   }
+
+   if(0) // Clear achievements
+   {
+      $UserAchievements::beginnerLevels = 0;
+      $UserAchievements::IntermediateLevels = 0;
+      $UserAchievements::AdvancedLevels = 0;
+      $UserAchievements::easterEggs = 0;
+      $UserAchievements::beginnerPars = 0;
+      $UserAchievements::IntermediatePars = 0;
+      $UserAchievements::AdvancedPars = 0;
+      $UserAchievements::MPFirstPlace = 0;
+      $UserAchievements::MPHighScore = 0;
+      $UserAchievements::MPMapPackA = 0;
+      $UserAchievements::MPMapPackB = 0;
+      $UserAchievements::MPMapPackC = 0;
+   }
+
+   if((14 + SinglePlayMissionGroup.getCount()) != ($profileUpdateIdx - 1))
+      error(" @@@ Single player mission count assumption blown!");
+
    for( %i = 0; %i < SinglePlayMissionGroup.getCount(); %i++ )
    {
       %mission = SinglePlayMissionGroup.getObject( %i );
+      if((14 + %mission.level) >= $profileUpdateIdx)
+         error(" @@@ Profile index out of range for level: " @ %obj.level);
       %cacheTime = %this.intProfileInfo[14 + %mission.level];
       $CachedUserTime::levelTime[%mission.level] = %cacheTime;
    }
@@ -729,9 +901,18 @@ function XBGamerProfile::packProfile(%this)
    for( %i = 0; %i < SinglePlayMissionGroup.getCount(); %i++ )
    {
       %obj = SinglePlayMissionGroup.getObject( %i );
+      if((14 + %obj.level) >= $profileUpdateIdx)
+         error(" @@@ Profile index out of range for level: " @ %obj.level);
       %this.intProfileInfo[14 + %obj.level] = $CachedUserTime::levelTime[%obj.level];
    }
-      
+
+   // Map Pack Achievement code (cannot bump base version.. ugh):
+   %this.intProfileInfo[$profileUpdateIdx] = $profileUpdateTag;
+   %this.intProfileInfo[$profileUpdateIdx + 1] = $UserAchievements::MPMapPackA;
+   %this.intProfileInfo[$profileUpdateIdx + 2] = $UserAchievements::MPMapPackB;
+   %this.intProfileInfo[$profileUpdateIdx + 3] = $UserAchievements::MPMapPackC;
+
+   %this.dumpProfileInfo("packProfile");
    return "";
 }
 
@@ -981,3 +1162,105 @@ function onXBLiveFriendChanged()
       levelScoresGui.updateLeaderboard(false);
    }
 }
+
+//-----------------------------------------------------------------------------
+// PDLC/MapPack helpers:
+//-----------------------------------------------------------------------------
+$PDLC::MapPack0LevelStart = 80;
+$PDLC::MapPack0LevelEnd = 80;
+$PDLC::MapPack1LevelStart = 81;
+$PDLC::MapPack1LevelEnd = 85;
+$PDLC::MapPack2LevelStart = 86;
+$PDLC::MapPack2LevelEnd = 90;
+
+$PDLC::NumAvailableMapPacks = 0;	// Set to '3' if everything is known live and wanting to avoid query
+$PDLC::ContentCategory = 2;
+
+function hasFreeMapPack()
+{
+   return PDLCAllowMission($PDLC::MapPack0LevelStart);
+}
+
+function hasMapPack1()
+{
+   return PDLCAllowMission($PDLC::MapPack1LevelStart);
+}
+
+function hasMapPack2()
+{
+   return PDLCAllowMission($PDLC::MapPack2LevelStart);
+}
+
+function hasAllMapPacks()
+{
+	if($PDLC::NumAvailableMapPacks >= 3)
+		return hasFreeMapPack() && hasMapPack1() && hasMapPack2();
+	if($PDLC::NumAvailableMapPacks == 2)
+		return hasFreeMapPack() && hasMapPack1();
+	if($PDLC::NumAvailableMapPacks == 1)
+		return hasFreeMapPack();
+	return true;
+}
+
+function getMapPackUpsellTag(%level)
+{
+   if(%level >= $PDLC::MapPack0LevelStart && %level <= $PDLC::MapPack0LevelEnd)
+      return $Text::UnlockPDLC0;
+   if(%level >= $PDLC::MapPack1LevelStart && %level <= $PDLC::MapPack1LevelEnd)
+      return $Text::UnlockPDLC1;
+   if(%level >= $PDLC::MapPack2LevelStart && %level <= $PDLC::MapPack2LevelEnd)
+      return $Text::UnlockPDLC2;
+   return "";
+}
+
+function performContentQuery(%contentCategory)
+{
+	if($PDLC::NumAvailableMapPacks == 0)
+	{
+		echo(" *** Checking for available content in category:" SPC %contentCategory);
+
+		// Returns "<newContentCount>, <totalContentCount>":
+		%content = ContentQuery(%contentCategory);
+	
+		// Assumed mappacks become live sequentially and no other content is avilable:
+		$PDLC::NumAvailableMapPacks = getWord(%content, 1);
+	}
+
+	echo("Num content packs available: " SPC $PDLC::NumAvailableMapPacks);
+}
+
+// Return boolean if the given level is available to play/purchase (but may not be owned)
+function isLevelContentAvailable(%level)
+{
+	// Assume non-mappack level ok:
+	if(%level < $PDLC::MapPack0LevelStart || %level > $PDLC::MapPack2LevelEnd)
+		return true;
+
+	// No packs available:
+	if($PDLC::NumAvailableMapPacks <= 0)
+		return false;
+
+	// Get valid range:
+	%start = $PDLC::MapPack0LevelStart;
+	%end = $PDLC::MapPack0LevelEnd; 
+
+	if($PDLC::NumAvailableMapPacks == 2)
+		%end = $PDLC::MapPack1LevelEnd;
+
+	if($PDLC::NumAvailableMapPacks >= 3)
+		%end = $PDLC::MapPack2LevelEnd;
+
+	// Check against range:
+	if(%level >= %start && %level <= %end)
+		return true;
+
+	return false;
+}
+//-----------------------------------------------------------------------------
+
+function onXBLiveContentCreateFailed(%contentName)
+{
+	%message = avar( $Text::CorruptPDLC, %contentName );
+	XMessagePopupDlg.show(0, %message, $Text::OK);
+}
+

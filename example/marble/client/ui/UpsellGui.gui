@@ -61,6 +61,15 @@ function UpsellGui::getFeatureListText(%this)
          $Text::DemoUpsell06;
 }
 
+function UpsellGui::getPDLCFeatureListText(%this)
+{
+   return $Text::PDLCUpsell01 @
+         $Text::PDLCUpsell02 @
+         $Text::PDLCUpsell03 @
+         $Text::PDLCUpsell04;
+}
+
+
 function UpsellGui::displayUpsell( %this, %isQuitting, %callbackFxn, %nextGui )
 {
    if( nameToId( RootGui.contentGui ) != nameToId( %this ) )
@@ -101,6 +110,49 @@ function UpsellGui::displayUpsell( %this, %isQuitting, %callbackFxn, %nextGui )
    }
 }
 
+function UpsellGui::displayPDLCUpsell( %this, %isQuitting, %callbackFxn, %nextGui )
+{
+   if( nameToId( RootGui.contentGui ) != nameToId( %this ) )
+   {      
+	  %this.displayPDLCUpsell = false;
+
+	  %this._goBackToGui = RootGui.contentGui;
+      %this._nextGui = 0;
+      if (isObject(%nextGui))
+         %this._nextGui = %nextGui;
+      
+      RootGui.setContent( %this );
+      
+      if( %callbackFxn !$= "" )
+      {
+         %this._callbackFxn = %callbackFxn;
+      }
+      else
+      {
+         %this._callbackFxn = "";
+      }
+      
+      // default to displaying the feature list
+      %text = $Text::PDLCUpsell00 @ %this.getPDLCFeatureListText();
+         
+      %this.setDisplayText(%text);
+      
+      RootGui.setX( $Text::UnlockMapPack );
+      if( !%isQuitting )
+      {
+         RootGui.setA( $Text::Continue ); // don't buy
+      }
+      else
+      {
+         //RootGui.setB( $Text::DemoUpsell09 ); // back to game
+         RootGui.setB( $Text::DemoUpsell10 ); // quit
+      }
+      
+      %this._isQuitting = false;//%isQuitting;
+   }
+}
+
+
 function UpsellGui::setDisplayText(%this, %text)
 {
    UpsellGenericText.setText(%text);
@@ -120,6 +172,16 @@ function UpsellGui::displayMPPostGame(%this, %hostDropped)
       %this.setDisplayText($Text::DemoUpsellMP5 @ %this.getFeatureListText());
 }
 
+function UpsellGui::displayPDLCPostGame(%this, %hostDropped)
+{
+   %this.displayPDLCUpsell(false, "", MainMenuGui);
+   //if (%hostDropped)
+   //   %this.setDisplayText($Text::UnlockPDLC08 @ %this.getPDLCFeatureListText());
+   //else
+   //   %this.setDisplayText($Text::UnlockPDLC09 @ %this.getPDLCFeatureListText());
+}
+
+
 function UpsellGui::displayMPGuide(%this, %nextGui, %backGui)
 {
    %text = 
@@ -132,6 +194,19 @@ function UpsellGui::displayMPGuide(%this, %nextGui, %backGui)
    %this.displayGenericText(%text, %nextGui, %backGui);
    RootGui.setTitle($Text::MultiplayerMenu);
 }
+
+function UpsellGui::displayPDLC(%this, %nextGui, %backGui)
+{
+   %text = 
+      $Text::PDLCUpsell01 @ 
+      $Text::PDLCUpsell02;
+      //$Text::PDLCUpsell03;
+      //$Text::PDLCUpsell04 @ 
+      
+   %this.displayGenericText(%text, %nextGui, %backGui);
+   RootGui.setTitle($Text::MultiplayerMenu);
+}
+
 
 function UpsellGui::displayGenericText(%this, %text, %nextGui, %backGui)
 {
@@ -162,7 +237,13 @@ function UpsellGui::displayGenericText(%this, %text, %nextGui, %backGui)
 
 function UpsellGui::onWake( %this )
 {
-   RootGui.setTitle( $Text::DemoUpsell00 );
+	if(isDemoLaunch()) 
+	{
+		RootGui.setTitle( $Text::DemoUpsell00 );
+	}
+	else
+		RootGui.setTitle( $Text::UnlockPDLC00 );
+
 }
 
 //------------------------------------------------------------------------------
@@ -199,12 +280,9 @@ function UpsellGui::onX( %this )
    if (!RootGui.XEnabled())
       return;
       
-   if (isDemoLaunch())
-   {
-      alxPlay( AudioButtonDown );
-            
-      clientShowMarketplaceUI();
-   }
+   alxPlay( AudioButtonDown );
+        
+   clientShowMarketplaceUI();
    return true;
 }
 

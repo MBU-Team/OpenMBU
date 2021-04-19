@@ -117,7 +117,7 @@ new GuiControl(RootCenterCtrl) {
 		   profile = "GuiDefaultProfile";
 		   horizSizing = "right";
 		   vertSizing = "bottom";
-		   position = isWidescreen()? "75 531" : "0 350";
+		   position = isWidescreen()? "75 531" : "-4 350";
 		   extent = isWidescreen()? "512 128" : "348 90";
 		   minExtent = "8 8";
 			bitmap = "./xbox/BG_NavBarUnderButtonsLeft";

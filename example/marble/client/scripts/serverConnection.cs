@@ -131,6 +131,38 @@ function GameConnection::onConnectRequestTimedOut(%this)
    RootGui.setContent(connErrorGui, $Text::ErrorConnectionLost);
 }
 
+//------------------------------------------------------------------------------
+// Grace peroid changes for patch -pw
+
+function clearClientGracePeroid()
+{
+   if( isEventPending( $Client::graceSchedule ) )
+      cancel( $Client::graceSchedule );
+      
+   $Client::isInGracePeroid = false;
+   $Client::willfullDisconnect = false;
+   
+   echo( "Client (" @ $Player::ClientId @ ") grace peroid reset." );
+}
+
+function checkClientGracePeroid()
+{
+   $Client::isInGracePeroid = false;
+   echo( "Client (" @ $Player::ClientId @ ") grace peroid check, NO LONGER IN GRACE PEROID!!." );
+}
+
+function resetClientGracePeroid()
+{
+   $Client::isInGracePeroid = true;
+   
+   if( isEventPending( $Client::graceSchedule ) )
+      cancel( $Client::graceSchedule );
+   
+   schedule( $Client::gracePeroidMS, 0, "checkClientGracePeroid" );
+   
+   echo( "Client (" @ $Player::ClientId @ ") grace peroid reset, " @ $Client::gracePeroidMS @ " MS until reset." );
+}
+
 //-----------------------------------------------------------------------------
 // Disconnect
 //-----------------------------------------------------------------------------
@@ -141,7 +173,12 @@ function disconnect()
    {
       // store the fact that I am dropping (may need it for ratings calculation)
       echo("disconnect(): I dropped");
-      clientAddDroppedClient($Player::ClientId, $Player::XBLiveId);
+      
+      // Changed for patch -pw
+      if( $Client::isInGracePeroid || XBLiveIsRanked() )
+         clientAddDroppedClient($Player::ClientId, $Player::XBLiveId);
+      else if( !$Client::isInGracePeroid && $Client::willfullDisconnect )
+         zeroMyClientScoreCuzICheat();
       
       if ($Client::currentGameCounts)
          clientWriteMultiplayerScores();
@@ -264,17 +301,21 @@ function enterLobbyMode()
       updateAvgPlayerCount();
       
       // clean up stats sessions
-//      if (XBLiveIsStatsSessionActive())
-//      {
-//         echo("enterLobbyMode(): Host ended game (considered a drop)");
-//         clientAddDroppedClient($Host::ClientId, $Host::XBLiveId);
-//         
-//         if ($Client::currentGameCounts)
-//            clientWriteMultiplayerScores();
-//         echo("enterLobbyMode(): Ending stats session and cleaning up stats");
-//         XBLiveEndStatsSession();
-//         clientCleanupStats();
-//      }
+      if( XBLiveIsStatsSessionActive() && !XBLiveIsRanked() && ClientGroup.getCount() > 1 )
+      {
+         echo("enterLobbyMode(): Host ended game (considered a drop)");
+         
+         if( $Client::willfullDisconnect && !$Client::isInGracePeroid && !XBLiveIsRanked() )
+            zeroMyClientScoreCuzICheat();
+         else
+            clientAddDroppedClient($Host::ClientId, $Host::XBLiveId);
+         
+         if ($Client::currentGameCounts)
+            clientWriteMultiplayerScores();
+         echo("enterLobbyMode(): Ending stats session and cleaning up stats");
+         XBLiveEndStatsSession();
+         clientCleanupStats();
+      }
       
       destroyGame();
       
@@ -304,7 +345,11 @@ function enterPreviewMode(%clientDropCode)
       if (XBLiveIsStatsSessionActive())
       {
          echo("enterPreviewMode(): Host dropped");
-         clientAddDroppedClient($Host::ClientId, $Host::XBLiveId);
+         
+         if( $Client::willfullDisconnect && !$Client::isInGracePeroid && !XBLiveIsRanked() && ClientGroup.getCount() > 1 )
+            zeroMyClientScoreCuzICheat();
+         else
+            clientAddDroppedClient($Host::ClientId, $Host::XBLiveId);
          
          if ($Client::currentGameCounts)
             clientWriteMultiplayerScores();

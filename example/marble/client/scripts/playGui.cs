@@ -69,6 +69,14 @@ function PlayGui::onWake(%this)
    
    // make sure our controller is plugged in
    checkLockedController();
+
+   if(!isDemoLaunch())
+   {
+	   %levelPlaying = GameMissionInfo.getCurrentMission().level;
+	   %hasLevel = PDLCAllowMission(%levelPlaying);
+	   %isFreeLevel = (%levelPlaying == $PDLC::MapPack0LevelStart);
+	   UpsellGui.displayPDLCUpsell = %isFreeLevel ? false : !%hasLevel;
+   }
 }
 
 function PlayGui::show(%this)

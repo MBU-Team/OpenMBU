@@ -77,3 +77,12 @@ $Shell::maxPlayersFilter = -1;
 $Demo::DefaultStartingTime = 7 * 60 * 1000; // 7 minutes
 $Demo::TimeRemaining = $Demo::DefaultStartingTime; 
 //$Demo::TimeRemaining = 10 * 1000; // 10 seconds for testing
+
+$Client::gracePeroidMS = 45 * 1000; // 45 seconds?
+
+if (!isPCBuild() && !$Client::UseXBLiveMatchMaking)
+{
+   // if we aren't using live matchmaking, force the live sign in functions to return true 
+   eval("function XBLiveIsSignedInGold() { return true; }");
+   eval("function XBLiveIsSignedInSilver() { return true; }");
+}

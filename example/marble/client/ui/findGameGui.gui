@@ -136,7 +136,7 @@ function PC_XBLiveSearchForMatches(%gamemodefilter, %missionfilter, %maxplayersf
    // if we are a Xenon, we don't want any Xenons to respond to the Lan query, because we will 
    // also get them from Xbox Live.  So set the no-xenon's flag (filter bit 6)
    %filterFlags = 0;
-   if (!isPCBuild())
+   if (!isPCBuild() && $Client::UseXBLiveMatchMaking)
       %filterFlags |= 1 << 6;
       
    queryLanServers(
@@ -423,7 +423,7 @@ function FindGameGui::onSearchComplete(%this,%type)
    }
    
    // now, process PC query results in PC builds or in xbox non-release builds
-   if (isPCBuild() || !isRelease())
+   if (isPCBuild() || !$Client::UseXBLiveMatchMaking)
    {
       %sc = getServerCount();
       echo(%sc @ " games returned from LAN search.");
@@ -458,7 +458,7 @@ function FindGameGui::onSearchComplete(%this,%type)
    }
       
    // if we're a PC build just display the results now
-   if (isPCBuild())
+   if (isPCBuild() || !$Client::UseXBLiveMatchMaking)
    {
       RootGui.displayLoadingAnimation();
       %this.displayResults();
@@ -644,7 +644,7 @@ function FindGameGui::continueSearch(%this)
       XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, %this.maxplayersfilter, 
          -1, "FindGameGui.onSearchComplete(xblive);");
       
-      if (!isRelease())   
+      if (!isRelease() && !$Client::UseXBLiveMatchMaking) 
       {
          %this.pcSearchActive = true;
          PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 

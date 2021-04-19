@@ -281,6 +281,7 @@ new GuiControlProfile(PlayerListGuiProfile : TextArrayProfile)
    tab = false; 
    canKeyFocus = false; 
    bitmap = ""; 	
+   shadow = true;
    
    fontColor = "235 235 235";
 };

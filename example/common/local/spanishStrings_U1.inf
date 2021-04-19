@@ -1,0 +1,41 @@
+﻿[Strings]
+$Text::NewContent = "¡Consigue nuevo contenido!";
+;-------------------------------------------------------------------------------
+; PDLC and Unlock Stuff
+;-------------------------------------------------------------------------------
+$Text::PDLCFreeThanks = "¡Disfruta de tu mapa de Marble Blast Ultra gratuito!";
+$Text::PDLCThanksPack1 = "¡Gracias por desbloquear el Pack de expansión Marble Fu!";
+$Text::PDLCThanksPack2 = "¡Gracias por desbloquear el Pack de expansión Agoraphobia!";
+$Text::PDLCThanksPackBoth = "¡Gracias por desbloquear los Packs de expansión Marble Fu y Agoraphobia!";
+$Text::UnlockFreeMap = "Desbloquear mapa gratuito";    // Displayed on main menu
+$Text::UnlockMapPack = "Desbloquear Pack de mapas";    // ""
+$Text::CorruptPDLC = "No se pudo leer %1.  Puede que esté dañado.  Intenta descargarlo de nuevo."; // Displayed if PDLC corrupt; %1 replaced with XCONTENT_DATA.szDisplayName
+$Text::DownloadContent = "Descargar contenido";
+$Text::UnlockPDLC0 = "¡Desbloquea Marble It Up!";              // Displayed on mission selection
+$Text::UnlockPDLC1 = "Desbloquear el Pack de expansión Marble Fu";   // ""
+$Text::UnlockPDLC2 = "Desbloquear el Pack de expansión Agoraphobia"; // ""
+$Text::PDLCUpsell00 = "Desbloquea este pack de mapas multijugador de Marble Blast ahora y...\n\n";           // PDLC Upsell Screen 
+$Text::PDLCUpsell01 = "¡Consigue 5 nuevos niveles multijugador que puedes albergar y practicar!\n\n";       // ""
+$Text::PDLCUpsell02 = "¡Intenta conseguir un nuevo logro (equivale a una puntuación de jugador de 20)!\n\n";    // ""
+$Text::PDLCUpsell03 = "\n\n";                                                                   // ""
+$Text::PDLCUpsell04 = "\n\n";                                                                   // ""
+$Text::RTArcadeMenu = "Volver a Arcade";
+$Text::GGCredits = "<spush><font:Arial Bold:30>GarageGames Team<spop>\n\n<spush><font:Arial Bold:24>Development<spop>\nTim Aste\nJane Chase\nTimothy Clarke\nAdam deGrandis\nClark Fagot\nMatt Fairfax\nMark Frohnmayer\nBen Garney\nTim Gift\nDavey Jackson\nJustin Kovac\nJoe Maruschak\nMark McCoy\nJay Moore\nRick Overman\nJohn Quigley\nBrian Ramage\nKevin Ryan\nLiam Ryan\nAlex Swanson\nJeff Tunnell\nPat Wilson\n\n<spush><font:Arial Bold:24>Special Thanks<spop>\nCafe Aroma\nCafe Yumm!\nMezza Luna Pizzeria\nPizza Research Institute\nThe GarageGames Community";
+$Text::AchievementName13 = "Caza de la gema azul";
+$Text::AchievementName14 = "Dominador del pack de mapas";
+$Text::AchievementName15 = "Maestro de los capiteles";
+$Text::AchievementDescription13 = "Recoge una gema azul en una partida multijugador de Marble It Up!";
+$Text::AchievementDescription14 = "Consiga 40 gemas en Patio de recreo, Vasija, Concéntrico, Efecto de Vórtice, Club Blast (Marble Fu). ";
+$Text::AchievementDescription15 = "Recoge 50 gemas en Capiteles (pack Agoraphobia).";
+$Text::LevelNameMP9 = "Gemas en carretera";
+$Text::LevelNameMP11 = "Marble It Up!";	// Add-on levels
+$Text::LevelNameMP12 = "Patio recreo";		// ""
+$Text::LevelNameMP13 = "Vasija";			// "" 
+$Text::LevelNameMP14 = "Concéntrico";        	// "" 
+$Text::LevelNameMP15 = "Efecto vórtice";     	// "" 
+$Text::LevelNameMP16 = "Club de explosiones";        	// "" 
+$Text::LevelNameMP17 = "Núcleo";              	// "" 
+$Text::LevelNameMP18 = "Triunvirato";       	// "" 
+$Text::LevelNameMP19 = "Zigurat";          	// "" 
+$Text::LevelNameMP20 = "Promontorio";        	// "" 
+$Text::LevelNameMP21 = "Capiteles";            	// "" 

@@ -469,6 +469,8 @@ function connectToServer(%address,%invited)
       $Client::connectedMultiplayer = true;
       %conn.connect(%address);
    }
+
+   clearClientGracePeroid();
 }
 
 function connectToPreviewServer()
@@ -542,6 +544,8 @@ function establishConnection(%address, %mp, %invited)
       $Client::connectedMultiplayer = true;
       %conn.connect(%address);
    }
+
+   clearClientGracePeroid();
 }
 
 function populatePreviewMission()

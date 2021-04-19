@@ -2,7 +2,7 @@
 new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
-         include = "1";
+         include = "0";
          gameMode = "Scrum";
          artist = "Adam deGrandis";
          difficulty = "2";

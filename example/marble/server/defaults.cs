@@ -45,9 +45,9 @@ $Pref::Server::MaxChatLen = 120;
 
 $Server::AbsMaxPlayers = 8;
 $Server::HighBandwidthMin = 100000; // minimum kilo bits per second up and down required for "high bandwidth" (5,6 players with no warning)
-$Server::MaxPlayers_LowBandwidth = 6;
+$Server::MaxPlayers_LowBandwidth = 5;
 $Server::MaxPlayers_HighBandwidth = $Server::AbsMaxPlayers;
-$Pref::Server::MaxPlayers = $Server::MaxPlayers_HighBandwidth;
+$Pref::Server::MaxPlayers = 5; //$Server::MaxPlayers_HighBandwidth; // CHANGED FOR PATCH!!
 
 $Server::GemGroupRadius = 20;
 $Server::MaxGemsPerGroup = 4;

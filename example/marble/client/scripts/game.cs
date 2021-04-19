@@ -11,7 +11,9 @@ function clientCmdShowMission(%missionName)
 {
    %missionIndex = GameMissionInfo.findIndexByPath(%missionName);
 
+   $Client_CMD_Select_Mission_Hack = true;
    GameMissionInfo.selectMission(%missionIndex);
+   $Client_CMD_Select_Mission_Hack = false;
 }
 
 function clientCmdSetCamera()
@@ -47,6 +49,9 @@ function clientCmdGameStart()
       return;
       
    PlayerListGui.zeroScores();
+
+   // Map Pack Achievement code:
+   $UserAchievements::MPGotABlueGem = 0;
 }
 
 function clientCmdGameEnd()
@@ -56,11 +61,12 @@ function clientCmdGameEnd()
       
    // Restore simulation time
    $timeScale = 1.0;
-   
+   //GameMissionInfo
    // Get out of the game.
    // Additional check here is to make sure that, when this executes, the same
    // user is signed in as was when they finished the leve, this is for
    // bug # 15401 -pw
+   
    if( !$Client::connectedMultiplayer && $GameEndUserName $= XBLiveGetUserName() )
    {
       if (!UpsellGui.isAwake()) // wait user gets off the upsell gui 
@@ -80,7 +86,16 @@ function clientCmdGameEnd()
 
    // JMQ: cycle back to wait mode for prototype
    //commandToServer('SetWaitState');
+
+   // Map Pack Achievement code:
+   $UserAchievements::MPGotABlueGem = 0;
    return;
+}
+
+// Map Pack Achievement code:
+function clientCmdPickedUpABlueGem()
+{
+   $UserAchievements::MPGotABlueGem = 1;
 }
 
 function clientCmdSetGemCount(%gems,%maxGems)
@@ -664,6 +679,37 @@ function clientWriteMultiplayerScore(%client)
                finishedFirstPlaceInMP();
             }
          }
+
+         %mission = GameMissionInfo.getCurrentMission();
+
+         echo("LEVEL ENDED");
+         // Map Pack Achievement code:
+         if(ClientRanks.numFinishers > 1)
+         {
+            if(hasFreeMapPack())
+            {
+               if(%mission.level == 80 && gotABlueGemInTheLevel())
+               {
+                  echo("\n\n-------------------------- MAP PACK A COMPLETED!!!!\n\n");
+                  completedMapPackA_Achievement();   
+               }
+            }
+            if(hasMapPack1())
+            {
+               if(%mission.level >= 81 && %mission.level <= 85 && %score >= $numGemsNeededMapPackB)
+               {
+                  echo("\n\n-------------------------- MAP PACK B COMPLETED  LEVEL:" @ %mission.level @ "\n\n");
+                  completedMapPackB_Achievement(%mission.level);   
+               }
+            }
+         }
+
+         if(hasMapPack2())
+            if(%mission.level == 90 && %score >= $numGemsNeededMapPackC)
+            {
+               echo("\n\n-------------------------- MAP PACK C COMPLETED!!!!\n\n");
+               completedMapPackC_Achievement();   
+            }
       }
 
       if (ClientRanks.numFinishers > 1)
@@ -687,7 +733,7 @@ function clientWriteMultiplayerScore(%client)
 
 function clientAreStatsAllowed()
 {
-   return !isDemoLaunch() && !isPCBuild() && XBLiveIsSignedInSilver();
+   return !isDemoLaunch() && !isPCBuild() && XBLiveIsSignedInSilver() && $Client::UseXBLiveMatchMaking;
 }
 
 function clientAreOfflineStatsAllowed()
@@ -888,7 +934,8 @@ function clientCmdSetGameState(%state, %data)
             error("Stats session already active on game start");
          }
       }
-            
+      
+      
       // if we are in end state, write scores
       if (XBLiveIsStatsSessionActive() && (%state $= "end" || %state $= "wait"))
       {
@@ -964,8 +1011,10 @@ function clientCmdSetGameState(%state, %data)
       ClientRanks.clear();
       
    if (%state $= "end" && ServerConnection.isMultiplayer)
+   {
       // make sure scores in Lobby reflect scoreboard on games that finished normally
       LobbyGui.updateScores();
+   }
       
    // demo timer stuff
    if (isDemoLaunch())

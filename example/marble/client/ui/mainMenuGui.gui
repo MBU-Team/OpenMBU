@@ -28,6 +28,7 @@ new GuiControl(mainMenuGui) {
   				
 };
 //--- OBJECT WRITE END ---
+
 function mainMenuGui::onA(%this)
 {
    %idx = MainMenu.getSelectedIndex();
@@ -85,11 +86,8 @@ function mainMenuGui::onA(%this)
          XBLiveShowAchievementsUI();
       case 4:
          RootGui.setContent(HelpAndOptionsGui, MainMenuGui);
-      case 5: // exit game or unlock full game in demo
-         if (isDemoLaunch())
-            clientShowMarketplaceUI();
-         else
-            %this.exitGame();
+      case 5: // upsell
+         clientShowMarketplaceUI();
       case 6: // exit game in demo
          %this.exitGame();
    }
@@ -137,8 +135,23 @@ function MainMenuGui::show(%this)
    MainMenu.addRow($Text::LeaderBoards, "", 0, 6);
    MainMenu.addRow($Text::Achievements, "", 0, 6);
    MainMenu.addRow($Text::HelpAndOptions, "", 0, 8);
+
+   // MarketPlace button always visible:
    if (isDemoLaunch())
+   {
       MainMenu.addRow($Text::UnlockFullGame, "", 0, 2);
+   }
+   else if(!hasAllMapPacks())
+   {
+      if(hasFreeMapPack())
+         MainMenu.addRow($Text::UnlockMapPack, "", 0, 2);
+      else
+         MainMenu.addRow($Text::UnlockFreeMap, "", 0, 2);
+   }
+   else
+   {
+      MainMenu.addRow($Text::DownloadContent, "", 0, 2);
+   }
    MainMenu.addRow($Text::RTArcadeMenu, "", 0, 10);
    
    // disable some stuff
@@ -153,7 +166,10 @@ function MainMenuGui::show(%this)
    
    // Stat up the title music
    if( xbHasPlaybackControl() && !xbIsPlayingMusic() )
-      playMusic();         
+      playMusic();   
+
+   if(UpsellGui.displayPDLCUpsell) 
+	   UpsellGui.schedule(0, displayPDLCPostGame, false);      
 }
 
 function MainMenuGui::onRequireSignInComplete(%this)

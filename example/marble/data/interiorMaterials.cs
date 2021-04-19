@@ -233,6 +233,169 @@ new ShaderData( HalfTile )
    version = 2.0;
 };
 
+%mat = new CustomMaterial( Material_Tile_Beginner_shadow )
+{
+   mapTo = tile_beginner_shadow;
+   texture[0] = "./textures/tile_beginner";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+%mat = new CustomMaterial( Material_Tile_Beginner_Red_shadow  )
+{
+   mapTo = tile_beginner_red_shadow;
+   texture[0] = "./textures/tile_beginner";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_red_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+
+%mat = new CustomMaterial( Material_Tile_Beginner_Blue_shadow  )
+{
+   mapTo = tile_beginner_blue_shadow;
+   texture[0] = "./textures/tile_beginner";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_blue_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+
+%mat = new CustomMaterial( Material_Tile_Intermediate_shadow  )
+{
+   mapTo = tile_intermediate_shadow;
+   texture[0] = "./textures/tile_intermediate";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+      force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+%mat = new CustomMaterial( Material_Tile_Intermediate_green_shadow  )
+{
+   mapTo = tile_intermediate_green_shadow;
+   texture[0] = "./textures/tile_intermediate";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_green_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+%mat = new CustomMaterial( Material_Tile_Intermediate_red_shadow  )
+{
+   mapTo = tile_intermediate_red_shadow;
+   texture[0] = "./textures/tile_intermediate";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_red_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+%mat = new CustomMaterial( Material_Tile_Advanced_shadow  )
+{
+   mapTo = tile_advanced_shadow;
+   texture[0] = "./textures/tile_advanced";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+%mat = new CustomMaterial( Material_Tile_Advanced_Blue_shadow  )
+{
+   mapTo = tile_advanced_blue_shadow;
+   texture[0] = "./textures/tile_advanced";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_blue_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
+%mat = new CustomMaterial( Material_Tile_Advanced_Green_shadow  )
+{
+   mapTo = tile_advanced_green_shadow;
+   texture[0] = "./textures/tile_advanced";
+   texture[1] = "./textures/tile_intermediate.normal";
+   texture[2] = "./textures/noise_green_shadow";
+   
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 40.0;
+
+   friction = 1;
+   restitution = 1;
+   force = 0;
+
+   shader = NoiseTile;
+   version = 2.0;
+};
+
 %mat = new CustomMaterial( Material_Tile_Underside  )
 {
    mapTo = tile_underside;
@@ -266,6 +429,17 @@ new ShaderData( HalfTile )
    
 };
 
+%mat = new Material(Material_Edge_White_shadow : DefaultMaterial)
+{
+   mapTo = "edge_white_shadow";
+   baseTex[0] = "./textures/edge_white_shadow";
+   bumpTex[0] = "./textures/edge.normal";
+
+   specular[0] = "0.2 0.2 0.2 0.2";
+   specularPower[0] = 50.0;
+   
+};
+
 %mat = new Material(Material_beam : DefaultMaterial) {
    baseTex[0] = "./textures/beam";
    bumpTex[0] = "./textures/beam.normal";
@@ -293,35 +467,6 @@ new ShaderData( HalfTile )
    mapto="tube_warm";
    baseTex[0] = "./textures/tube_advanced";
 };
-
-%mat = new Material(cement : CementMaterial)
-{
-   mapto = "cement";
-   baseTex[0] = "./textures/cement";
-};
-
-// ---------------------------------------------------------------------------
-// Bounce Materials
-// ---------------------------------------------------------------------------
-
-%mat = new CustomMaterial( Material_Tile_Bounce  )
-{
-   mapTo = tile_bouncy;
-   texture[0] = "./textures/tile_bouncy";
-   texture[1] = "./textures/tile_intermediate.normal";
-   texture[2] = "./textures/noise";
-   
-   specular[0] = "0.8 0.8 0.8 1.0";
-   specularPower[0] = 30.0;
-
-   shader = NoiseTile;
-   version = 2.0;
-   
-   friction = 0.01;
-   restitution = 3.5;
-   force = 0;
-};
-
 
 // ---------------------------------------------------------------------------
 // Friction Materials
@@ -361,228 +506,38 @@ new ShaderData( HalfTile )
    bumpTex[0] = "./textures/friction_high.normal";
 };
 
-%mat = new Material(Material_VeryHighFriction : DefaultMaterial) {
-   friction = 2;
-   restitution = 1;
+%mat = new Material(Material_HighFriction_Shadow : DefaultMaterial) {
+   friction = 4.5;
+   restitution = 0.5;
+   force = 0;
+  
+   specular[0] = "0.15 0.15 0.16 1.0";
+   specularPower[0] = 10.0;
+   
+   MAPTO = "friction_high_shadow";
+   baseTex[0] = "./textures/friction_high_shadow";
+   bumpTex[0] = "./textures/friction_high.normal";
+};
+
+%mat = new Material(Material_LowFriction_Shadow) {
+   baseTex[0] = "./textures/friction_low_shadow";
+   bumpTex[0] = "./textures/friction_low.normal";
+   friction = 0.20;
+   restitution = 1.0;
    force = 0;
    
-   baseTex[0] = "./textures/friction_ramp_yellow";
-   bumpTex[0] = "./textures/friction_ramp_yellow.bump";
+   mapTo = friction_low_shadow;
+   
+   cubemap[0] = iceCubemap;
+   
+   pixelSpecular[0] = true;
+   specular[0] = "0.3 0.3 0.35 1.0";
+   specularPower[0] = 128.0;
 };
 
-
-//new Material(RubberFloorMaterial) {
-//   friction = 1;
-//   restitution = 1;
-//   force = 0;
-//};
-//
-//new Material(IceMaterial) {
-//   friction = 0.05;
-//   restitution = 0.5;
-//   force = 0;
-//};
-//
-//new Material(BumperMaterial) {
-//   friction = 0.5;
-//   restitution = 0;
-//   force = 15;
-//};
-//
-//new Material(ButtonMaterial) {
-//   friction = 1;
-//   restitution = 1;
-//   force = 0;
-//};
-
-// ---------------------------------------------------------------------------
-// Grid materials
-// ---------------------------------------------------------------------------
-
-%mat = new Material(Material_GridWarm1 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_warm1";
-   bumpTex[0] = "./textures/grid_4square.bump";
-};
-
-%mat = new Material(Material_GridWarm2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_warm2";
-   bumpTex[0] = "./textures/grid_square.bump";
-};
-
-%mat = new Material(Material_GridWarm3 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_warm3";
-   bumpTex[0] = "./textures/grid_square.bump";
-};
-
-%mat = new Material(Material_grid_neutral3 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_neutral3";
-   bumpTex[0] = "./textures/grid_square.bump";
-};
-
-// ---------------------------------------------------------------------------
-// Edge, Wall, Stripe materials
-// ---------------------------------------------------------------------------
-%mat = new Material(Material_edge_white : DefaultMaterial)
-{
-   baseTex[0] = "./textures/edge_white";
-   bumpTex[0] = "./textures/edge_white.bump";
-};
-
-%mat = new Material(Material_edge_white2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/edge_white2";
-   bumpTex[0] = "./textures/edge_white2.bump";
-};
-
-%mat = new Material(Material_wall_white : DefaultMaterial)
-{
-   baseTex[0] = "./textures/wall_white";
-};
-
-%mat = new Material(Material_wall_warm2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/wall_warm2";
-   bumpTex[0] = "./textures/wall.bump";
-};
-
+// Adding this back in
 %mat = new Material(Material_stripe_caution : DefaultMaterial)
 {
+   mapTo = stripe_caution;
    baseTex[0] = "./textures/stripe_caution";
-};
-
-%mat = new Material(Material_stripe_warm2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/stripe_warm2";
-};
-
-
-// ---------------------------------------------------------------------------
-// Pattern materials
-// ---------------------------------------------------------------------------
-%mat = new Material(Material_pattern_cool2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/pattern_cool2";
-   bumpTex[0] = "./textures/pattern_cool2.bump";
-};
-
-%mat = new Material(Material_pattern_warm3 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/pattern_warm3";
-};
-
-%mat = new Material(Material_pattern_warm4 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/pattern_warm4";
-};
-
-%mat = new Material(Material_chevron_warm : DefaultMaterial)
-{
-   baseTex[0] = "./textures/chevron_warm";
-   bumpTex[0] = "./textures/chevron_warm.bump";
-};
-
-%mat = new Material(Material_trim_warm2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/trim_warm2";
-   bumpTex[0] = "./textures/trim_warm2.bump";
-};
-
-%mat = new Material(Material_wall_neutral2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/wall_neutral2";
-   bumpTex[0] = "./textures/wall_neutral2.bump";
-};
-
-%mat = new Material(grid_neutral : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_neutral";
-   bumpTex[0] = "./textures/grid_neutral.bump";
-};
-
-//new ShaderData( ReflectBump )
-//{
-//   DXVertexShaderFile 	= "shaders/planarReflectBumpV.hlsl";
-//   DXPixelShaderFile 	= "shaders/planarReflectBumpP.hlsl";
-//   pixVersion = 2.0;
-//};
-//
-//%mat = new CustomMaterial(Material_Grey)
-//{
-//   friction = 1;
-//   restitution = 1;
-//   force = 0;
-//
-//   texture[1] = "$backbuff";
-//   texture[0] = "marble/data/interiors/grey";
-//   texture[2] = "marble/data/interiors/noise.bump";
-//   shader = ReflectBump;
-//   version = 2.0;
-//   planarReflection = true;
-//};
-//
-
-%mat = new Material(Material_wall_neutral3 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/wall_neutral3";
-   bumpTex[0] = "./textures/wall.bump";
-};
-
-%mat = new Material(Material_grid_neutral1 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_neutral1";
-   bumpTex[0] = "./textures/grid_square.bump";
-};
-
-%mat = new Material(Pattern_Cool1 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/pattern_cool1";
-};
-
-%mat = new Material(Pattern_Warm1 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/pattern_warm1";
-};
-
-%mat = new Material(Grid_Cool2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_cool2";
-};
-
-%mat = new Material(Trim_Cool1 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/trim_cool1";
-};
-
-%mat = new Material(Solid_Neutral2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/solid_neutral2";
-};
-
-%mat = new Material(Wall_Cool1 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/Wall_Cool1";
-};
-
-%mat = new Material(Solid_Warm2 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/solid_warm2";
-};
-
-%mat = new Material(Grid_Warm : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_warm";
-};
-
-%mat = new Material(Grid_Neutral4 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/grid_neutral4";
-};
-
-%mat = new Material(Trim_Cool3 : DefaultMaterial)
-{
-   baseTex[0] = "./textures/trim_cool3";
 };

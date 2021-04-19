@@ -139,7 +139,14 @@ if( $platform $= "windows" && $locLanguage !$= "" )
    eval(%str);
 }
 
+$langValue = $language;
+if($language $= "portuguese")
+   $language = "english";
+   
 loadLocaleInf("common/local/" @ $language @ "Strings.inf"); 
+loadLocaleInf("common/local/" @ $language @ "Strings_U1.inf"); 
+
+$language = $langValue;
 
 if (isJapanese())
    $GFXDevice::FontDrawYOffset = 2;
