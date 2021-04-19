@@ -27,12 +27,8 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
         if (testMove(velocity, position, time, 0.25, sCameraCollisionMask, true))
         {
             moveSuccess = true;
-
-            F64 normals = mLastContact.normal.x * velocity.x
-                      + mLastContact.normal.y * velocity.y
-                      + mLastContact.normal.z * velocity.z;
             
-            velocity -= mLastContact.normal * normals;
+            velocity -= mLastContact.normal * mDot(mLastContact.normal, velocity);
         }
         ++i;
 
