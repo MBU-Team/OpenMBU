@@ -242,13 +242,17 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 	// Marble on Platform collision
 	if (!polyList.mPolyList.empty())
 	{
+        Point3D velAddition;
+        Point3F vert;
+        PlaneD plane;
+
         ConcretePolyList::Poly* poly;
         S32 index = 0;
         while(true)
         {
             poly = &polyList.mPolyList[index];
 
-            PlaneD plane = poly->plane;
+            plane = poly->plane;
 
             if (plane.y * velocityDir.y + plane.x * velocityDir.x + plane.z * velocityDir.z > -0.001 ||
                 plane.y * finalPosition.y + plane.x * finalPosition.x + plane.z * finalPosition.z + plane.d > radius)
@@ -263,9 +267,9 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
                 break;
 
             U32 vertIndex = polyList.mIndexList[poly->vertexCount - 1 + poly->vertexStart];
-            Point3F vert = polyList.mVertexList[vertIndex];
+            vert = polyList.mVertexList[vertIndex];
 
-            Point3D velAddition = velocity * timeVar + position;
+            velAddition = velocity * timeVar + position;
 
             bool hasVertices = poly->vertexCount != 0;
 
@@ -311,6 +315,11 @@ CONTINUE_FIRST_LOOP:
         F64 lastZ;
 
         Point3D theVert;
+        Point3D velTimePosVert;
+        Point3D thePosThing;
+        Point3D theVelocity;
+        Point3D vertDiff;
+        Point3D posDiff;
 
         F64 radSq = radius * radius;
         S32 iter = 0;
@@ -318,14 +327,12 @@ CONTINUE_FIRST_LOOP:
         {
             theVert = polyList.mVertexList[polyList.mIndexList[iter + poly->vertexStart]];
 
-            Point3D vertDiff = nextVert - theVert;
+            vertDiff = nextVert - theVert;
 
-            Point3D posDiff = position - theVert;
+            posDiff = position - theVert;
 
-            Point3D theVelocity;
             mCross(vertDiff, velocity, &theVelocity);
 
-            Point3D thePosThing;
             mCross(vertDiff, posDiff, &thePosThing);
 
             F64 theVelLen = theVelocity.lenSquared();
@@ -358,7 +365,7 @@ CONTINUE_FIRST_LOOP:
 
             F64 vertDiffLen = vertDiff.len();
             
-            Point3D velTimePosVert = velocity * t1 + position - theVert;
+            velTimePosVert = velocity * t1 + position - theVert;
 
             F64 theVar = mDot(velTimePosVert, vertDiff) / vertDiffLen;
 
