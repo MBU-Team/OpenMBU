@@ -392,7 +392,7 @@ noedgeint:
                 goto CONTINUE_FIRST_LOOP;
         }
 LABEL_52:
-        F64 wow = velocity.y * velocity.y + velocity.x * velocity.x + velocity.z * velocity.z;
+        F64 wow = velocity.lenSquared();
 
 	    Point3D posVertDiff = position - theVert;
         F64 posVertDiffDot = mDot(posVertDiff, velocity);
