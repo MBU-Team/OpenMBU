@@ -173,9 +173,9 @@ void SceneGraph::renderScene(const U32 objectMask)
 
 
     // grab the lights...
-    PROFILE_START(RegisterLights);
-    mLightManager.sgRegisterGlobalLights(false);
-    PROFILE_END();
+    //PROFILE_START(RegisterLights);
+    //mLightManager.sgRegisterGlobalLights(false);
+    //PROFILE_END();
 
 
     DetailManager::beginPrepRender();
@@ -194,9 +194,9 @@ void SceneGraph::renderScene(const U32 objectMask)
 
 
     // grab the lights...
-    PROFILE_START(UnregisterLights);
-    mLightManager.sgUnregisterAllLights();
-    PROFILE_END();
+    //PROFILE_START(UnregisterLights);
+    //mLightManager.sgUnregisterAllLights();
+    //PROFILE_END();
 
 
     delete pBaseState;
