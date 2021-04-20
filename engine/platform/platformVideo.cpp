@@ -151,10 +151,12 @@ ConsoleFunction( isDeviceFullScreenOnly, bool, 2, 2, "( string deviceName )")
     }
 
     return( device->isFullScreenOnly() );
-}
+}*/
 
 
 //------------------------------------------------------------------------------
+static F32 sgOriginalGamma = -1.0;
+static F32 sgGammaCorrection = 0.0;
 
 ConsoleFunction(videoSetGammaCorrection, void, 2, 2, "setGammaCorrection(gamma);")
 {
@@ -169,10 +171,6 @@ ConsoleFunction(videoSetGammaCorrection, void, 2, 2, "setGammaCorrection(gamma);
 }
 
 ConsoleFunctionGroupEnd(Video);
-*/
-
-static F32 sgOriginalGamma = -1.0;
-static F32 sgGammaCorrection = 0.0;
 
 //------------------------------------------------------------------------------
 void Video::init()
