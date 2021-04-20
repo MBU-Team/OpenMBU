@@ -389,7 +389,66 @@ void SceneLighting::addInterior(ShadowVolumeBSP* shadowVolume, InteriorProxy& in
             // added to the SVBSP tree)
             F32 dot = mDot(projPlane, light->mDirection);
             if (dot > -gParellelVectorThresh && !(GFX->getPixelShaderVersion() > 0.0))
+            {
+                if (shadowedTree)
+                {
+                    // alarm lighting
+                    GFXTexHandle normHandle = gInteriorLMManager.duplicateBaseLightmap(detail->getLMHandle(), interior->getLMHandle(), detail->getNormalLMapIndex(surfaceIndex));
+                    GFXTexHandle alarmHandle;
+
+                    GBitmap* normLightmap = normHandle->getBitmap();
+                    GBitmap* alarmLightmap = 0;
+
+                    // check if they share the lightmap
+                    if (hasAlarm)
+                    {
+                        if (detail->getNormalLMapIndex(surfaceIndex) != detail->getAlarmLMapIndex(surfaceIndex))
+                        {
+                            alarmHandle = gInteriorLMManager.duplicateBaseLightmap(detail->getLMHandle(), interior->getLMHandle(), detail->getAlarmLMapIndex(surfaceIndex));
+                            alarmLightmap = alarmHandle->getBitmap();
+                        }
+                    }
+
+                    // attemp to light normal and alarm lighting
+                    for (U32 c = 0; c < 2; c++)
+                    {
+                        GBitmap* lightmap = (c == 0) ? normLightmap : alarmLightmap;
+                        if (!lightmap)
+                            continue;
+
+                        // fill it
+                        for (U32 y = 0; y < surface.mapSizeY; y++)
+                        {
+                            ColorI color = light->mAmbient;
+                            U8* pBits = lightmap->getAddress(surface.mapOffsetX, surface.mapOffsetY + y);
+                            for (U32 x = 0; x < surface.mapSizeX; x++)
+                            {
+#ifdef SET_COLORS
+                                * pBits++ = color.red;
+                                *pBits++ = color.green;
+                                *pBits++ = color.blue;
+#else
+
+                                // the previous *pBit++ = ... code is broken.
+                                U32 _r = static_cast<U32>(color.red) + static_cast<U32>(*pBits);
+                                *pBits = (_r <= 255) ? _r : 255;
+                                pBits++;
+
+                                U32 _g = static_cast<U32>(color.green) + static_cast<U32>(*pBits);
+                                *pBits = (_g <= 255) ? _g : 255;
+                                pBits++;
+
+                                U32 _b = static_cast<U32>(color.blue) + static_cast<U32>(*pBits);
+                                *pBits = (_b <= 255) ? _b : 255;
+                                pBits++;
+
+#endif
+                            }
+                        }
+                    }
+                }
                 continue;
+            }
 
             ShadowVolumeBSP::SVPoly* poly = buildInteriorPoly(shadowVolume, interior, detail,
                 surfaceIndex, light, shadowedTree);
