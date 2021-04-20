@@ -986,7 +986,7 @@ Point3F Marble::getGravityRenderDir()
 
 void Marble::getShadowLightVectorHack(Point3F& lightVec)
 {
-    *lightVec = *getGravityRenderDir();
+    lightVec = getGravityRenderDir();
 }
 
 bool Marble::onSceneAdd(SceneGraph* graph)

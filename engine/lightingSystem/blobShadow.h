@@ -22,7 +22,7 @@ class BlobShadow : public ShadowBase
 
    Vector<DepthSortList::Poly> mPartition;
    Vector<Point3F> mPartitionVerts;
-   GFXVertexBufferHandle<GFXVertexPCT> mShadowBuffer;
+   GFXVertexBufferHandle<GFXVertexPT> mShadowBuffer;
 
    static U32 smShadowMask;
 

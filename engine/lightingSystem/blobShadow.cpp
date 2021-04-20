@@ -17,7 +17,11 @@ DepthSortList BlobShadow::smDepthSortList;
 GFXTexHandle BlobShadow::smGenericShadowTexture = NULL;
 S32 BlobShadow::smGenericShadowDim = 32;
 U32 BlobShadow::smShadowMask = TerrainObjectType | InteriorObjectType;
+#ifdef MB_ULTRA
+F32 BlobShadow::smGenericRadiusSkew = 0.6f; // shrink radius of shape when it always uses generic shadow...
+#else
 F32 BlobShadow::smGenericRadiusSkew = 0.4f; // shrink radius of shape when it always uses generic shadow...
+#endif
 
 Box3F gBlobShadowBox;
 SphereF gBlobShadowSphere;
@@ -49,16 +53,12 @@ bool BlobShadow::shouldRender(F32 camDist)
    F32 shadowLen = mShapeInstance->getShape()->radius;
    Point3F pos = mShapeInstance->getShape()->center;
 
+   Point3F scale = mParentObject->getScale();
 #ifdef MB_ULTRA
    shadowLen *= 200.0f;
-   if (mParentObject->getTypeMask() & ShapeBaseObjectType)
-       pos = ((ShapeBase*)mParentObject)->getShadowTransform().getPosition();
-   Point3F scale = mParentObject->getShadowScale();
-   lightDir = mParentLight->mDirection;
-   mParentObject->getShadowLightVectorHack(lightDir);
 #else
-   Point3F scale = mParentObject->getScale();
    shadowLen *= 10.0f;
+#endif
    // this is a bit of a hack...move generic shadows towards feet/base of shape
    pos *= 0.5f;
    pos.convolve(scale);
@@ -66,13 +66,15 @@ bool BlobShadow::shouldRender(F32 camDist)
    if (mParentLight->mType == LightInfo::Vector)
    {
        lightDir = mParentLight->mDirection;
+#ifdef MB_ULTRA
+       mParentObject->getShadowLightVectorHack(lightDir);
+#endif
    }
    else
    {
        lightDir = pos - mParentLight->mPos;
        lightDir.normalize();
    }
-#endif
 
    // pos is where shadow will be centered (in world space)
    setRadius(mShapeInstance, scale);
@@ -223,7 +225,11 @@ void BlobShadow::buildPartition(const Point3F & p, const Point3F & lightDir, F32
 
    // get polys
 
-   gClientContainer.findObjects(smShadowMask,BlobShadow::collisionCallback,this);
+#ifdef MB_ULTRA_PREVIEWS
+   getCurrentClientContainer()->findObjects(smShadowMask,BlobShadow::collisionCallback,this);
+#else
+   gClientContainer.findObjects(smShadowMask, BlobShadow::collisionCallback, this);
+#endif
 
    // setup partition list
    gBlobShadowPoly[0].set(-radius,0,-radius);
@@ -238,18 +244,18 @@ void BlobShadow::buildPartition(const Point3F & p, const Point3F & lightDir, F32
    if(mPartitionVerts.empty())
       return;
    // now set up tverts & colors
-   mShadowBuffer.set(GFX, mPartitionVerts.size(), GFXBufferTypeDynamic);
+   mShadowBuffer.set(GFX, mPartitionVerts.size(), GFXBufferTypeVolatile);
    mShadowBuffer.lock();
 
-   F32 visibleAlpha = 255;
-   if (mShapeBase && mShapeBase->getFadeVal())
-      visibleAlpha = mClampF(255.0f * mShapeBase->getFadeVal(), 0, 255);
+   //F32 visibleAlpha = 255;
+   //if (mShapeBase && mShapeBase->getFadeVal())
+   //   visibleAlpha = mClampF(255.0f * mShapeBase->getFadeVal(), 0, 255);
    F32 invRadius = 1.0f / radius;
    for (S32 i=0; i<mPartitionVerts.size(); i++)
    {
       Point3F vert = mPartitionVerts[i];
       mShadowBuffer[i].point.set(vert);
-      mShadowBuffer[i].color.set(255, 255, 255, visibleAlpha);
+      //mShadowBuffer[i].color.set(255, 255, 255, visibleAlpha);
       mShadowBuffer[i].texCoord.set(0.5f + 0.5f * mPartitionVerts[i].x * invRadius, 0.5f + 0.5f * mPartitionVerts[i].z * invRadius);
    };
 
@@ -289,6 +295,15 @@ void BlobShadow::render(F32 camDist)
    world.mul(mLightToWorld);
    GFX->setWorldMatrix(world);
 
+   F32 left;
+   F32 right;
+   F32 bottom;
+   F32 top;
+   F32 near;
+   F32 far;
+   GFX->getFrustum(&left, &right, &bottom, &top, &near, &far);
+   GFX->setFrustum(left, right, bottom, top, near, far);
+
    F32 depthbias = -0.0002f;
    GFX->setZBias(*((U32 *)&depthbias));
 
@@ -297,11 +312,12 @@ void BlobShadow::render(F32 camDist)
    GFX->disableShaders();
    GFX->setCullMode(GFXCullNone);
    GFX->setLightingEnable(false);
+
+   GFX->setAlphaBlendEnable(true);
    
    GFX->setZEnable(true);
    GFX->setZWriteEnable(false);
    
-   GFX->setAlphaBlendEnable(true);
    GFX->setSrcBlend(GFXBlendSrcAlpha);
    GFX->setDestBlend(GFXBlendInvSrcAlpha);
 
@@ -314,7 +330,7 @@ void BlobShadow::render(F32 camDist)
 
    GFX->setVertexBuffer(mShadowBuffer);
 
-   GFX->setupGenericShaders( GFXDevice::GSModColorTexture );
+   //GFX->setupGenericShaders( GFXDevice::GSModColorTexture );
 
    for(U32 p=0; p<mPartition.size(); p++)
       GFX->drawPrimitive(GFXTriangleFan, mPartition[p].vertexStart, (mPartition[p].vertexCount - 2));
