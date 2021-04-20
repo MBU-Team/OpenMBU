@@ -19,9 +19,17 @@ void RenderElemMgr::setupLights(RenderInst* inst, SceneGraphData& data)
     MatrixF objTrans = *inst->objXform;
     objTrans.inverse();
 
-    // clean up later...
-    dMemcpy(&data.light, &inst->light, sizeof(inst->light));
-    dMemcpy(&data.lightSecondary, &inst->lightSecondary, sizeof(inst->lightSecondary));
+    if (Material::isDebugLightingEnabled())
+    {
+        // clean up later...
+        dMemcpy(&data.light, Material::getDebugLight(), sizeof(data.light));
+        dMemcpy(&data.lightSecondary, Material::getDebugLight(), sizeof(data.lightSecondary));
+    } else {
+        // clean up later...
+        dMemcpy(&data.light, &inst->light, sizeof(inst->light));
+        dMemcpy(&data.lightSecondary, &inst->lightSecondary, sizeof(inst->lightSecondary));
+    }
+
     data.dynamicLight = inst->dynamicLight;
     data.dynamicLightSecondary = inst->dynamicLightSecondary;
 
@@ -74,6 +82,8 @@ void RenderElemMgr::setupLights(RenderInst* inst, SceneGraphData& data)
     lightingmat = data.lightSecondary.sgLightingTransform;
     GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat, 4);
 
+    if (Material::isDebugLightingEnabled())
+        return;
 
     // need to reassign the textures...
     RenderPassData* pass = inst->matInst->getPass(inst->matInst->getCurPass());

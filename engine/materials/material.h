@@ -181,6 +181,9 @@ protected:
     static U32 mLastTime;
     static SimSet* gMatSet;
 
+    static LightInfo smDebugLight;
+    static bool smDebugLightingEnabled;
+
     bool  hasSetStageData;
     MatType mType;
 
@@ -200,6 +203,9 @@ public:
     static void initPersistFields();
     static void updateTime();
     static SimSet* getMaterialSet();
+
+    static LightInfo* getDebugLight();
+    static bool isDebugLightingEnabled() {return smDebugLightingEnabled; }
 
     virtual void setShaderConstants(const SceneGraphData& sgData, U32 stageNum);
     void setBlendState(Material::BlendOp blendOp);

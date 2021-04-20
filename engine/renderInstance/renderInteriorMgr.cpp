@@ -148,15 +148,18 @@ void RenderInteriorMgr::render()
                     break;
                 }
 
-                if (passRI->type == RenderInstManager::RIT_InteriorDynamicLighting)
-                {
-                    // don't break the material multipass rendering...
-                    GFX->setAlphaBlendEnable(true);
-                    GFX->setSrcBlend(GFXBlendSrcAlpha);
-                    GFX->setDestBlend(GFXBlendOne);
+                //if (passRI->type == RenderInstManager::RIT_InteriorDynamicLighting)
+                //{
+                    if (!Material::isDebugLightingEnabled())
+                    {
+                        // don't break the material multipass rendering...
+                        GFX->setAlphaBlendEnable(true);
+                        GFX->setSrcBlend(GFXBlendSrcAlpha);
+                        GFX->setDestBlend(GFXBlendOne);
+                    }
 
                     setupLights(passRI, sgData);
-                }
+                //}
 
                 // fill in shader constants that change per draw
                 //-----------------------------------------------

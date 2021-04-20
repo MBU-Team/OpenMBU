@@ -134,15 +134,15 @@ SceneGraphData Interior::setupSceneGraphInfo(InteriorInstance* intInst,
     sgData.light.mDirection.set(sunVector);
     sgData.light.mPos.set(sunVector * -10000.0);
     sgData.light.mAmbient = sunlight->mAmbient;
-    //sgData.light.mColor = sunlight->mColor;
+    sgData.light.mColor = sunlight->mColor;
 
-    LightInfoList lightlist;
+    /*LightInfoList lightlist;
     getCurrentClientSceneGraph()->getLightManager()->sgGetAllUnsortedLights(lightlist);
     for(U32 i=0; i<lightlist.size(); i++)
     {
         if(lightlist[i]->mType == LightInfo::Point)
             sgData.light.mPos.set(lightlist[i]->mPos);
-    }
+    }*/
 
     // fill in camera position relative to interior
     sgData.camPos = state->getCameraPosition();
@@ -331,13 +331,13 @@ void Interior::setupRender(InteriorInstance* intInst,
     *coreRi->objXform = intInst->getRenderTransform();
 
     // grab the sun data from the light manager
-    const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    /*const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
     VectorF sunVector = sunlight->mDirection;
 
     coreRi->light.mDirection.set(sunVector);
     coreRi->light.mPos.set(sunVector * -10000.0);
     coreRi->light.mAmbient = sunlight->mAmbient;
-    coreRi->light.mColor = sunlight->mColor;
+    coreRi->light.mColor = sunlight->mColor;*/
 
     coreRi->type = RenderInstManager::RIT_Interior;
     coreRi->backBuffTex = &GFX->getSfxBackBuffer();

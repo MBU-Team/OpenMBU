@@ -11,6 +11,7 @@
 #include "gfx/cubemapData.h"
 #include "math/mathIO.h"
 #include "materialPropertyMap.h"
+#include <sceneGraph/sceneGraph.h>
 
 //****************************************************************************
 // Material
@@ -21,6 +22,8 @@ F32 Material::mDt = 0.0;
 U32 Material::mLastTime = 0;
 F32 Material::mAccumTime = 0.0;
 SimSet* Material::gMatSet = NULL;
+LightInfo Material::smDebugLight;
+bool Material::smDebugLightingEnabled = true;
 
 static EnumTable::Enums gBlendOpEnums[] =
 {
@@ -485,3 +488,14 @@ SimSet* Material::getMaterialSet()
     return gMatSet;
 }
 
+LightInfo* Material::getDebugLight()
+{
+    LightInfo *light = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    if (!light)
+        return &smDebugLight;
+
+    dMemcpy(&smDebugLight, light, sizeof(smDebugLight));
+    smDebugLight.sgTempModelInfo[0] = 0.0f;
+
+    return &smDebugLight;
+}
