@@ -83,11 +83,16 @@ void Sun::registerLights(LightManager* lightManager, bool relight)
     mRegisteredLight = mLight;
     LightManager::sgGetFilteredLightColor(mRegisteredLight.mColor, mRegisteredLight.mAmbient, 0);
 
-    // Matt: Try to make lighting color like MBU
-    // Likely to do this properly we'd have to revert the render system to TSE 0.1 or something.
-    mRegisteredLight.mColor.red *= 0.77;
-    mRegisteredLight.mColor.green *= 0.86;
-    mRegisteredLight.mColor.blue *= 2.25;
+#ifdef MB_ULTRA_PREVIEWS
+    // This code is not here on MBU x360 but it achieves the same result.
+    // It likely works on x360 just because it uses the old TSE 0.1 render system.
+    static ColorF previewSunColor(0.0f, 0.0f, 0.0f);
+
+    if (gSPMode)
+        previewSunColor = mRegisteredLight.mColor;
+    else
+        mRegisteredLight.mColor = previewSunColor;
+#endif
 
     if (relight)
     {
