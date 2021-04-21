@@ -562,7 +562,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     resetObjectsAndPolys(sCameraCollisionMask, testBox);
     RayInfo coll;
     position = endPos;
-    if (mCameraInit && isCameraClear(mLastCamPos, endPos) && !mContainer->castRay(mLastCamPos, endPos, sCameraCollisionMask, &coll))
+    /*if (mCameraInit && isCameraClear(mLastCamPos, endPos) && !mContainer->castRay(mLastCamPos, endPos, sCameraCollisionMask, &coll))
     {
         position = endPos;
     }
@@ -573,7 +573,11 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
             preStartPos = position;
 
         moveCamera(preStartPos, endPos, position, 4, 1.0f);
-    }
+    }*/
+
+    // TODO: Figure out why the above camera clipping code isn't working.
+    // as a temporary work around always call moveCamera. This doesn't work as well as the above code should.
+    moveCamera(startCam, endPos, position, 4, 1.0f);
 
     resetPlatformsForCamera();
 
