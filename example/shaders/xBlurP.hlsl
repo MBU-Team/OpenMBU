@@ -44,7 +44,7 @@ Fragout main( ConnectData IN,
       accumColor += tex2D(diffuseMap3, IN.tex3 ) * kernel[i].w;
    }
 
-   OUT.col = accumColor;// / divisor;
+   OUT.col = accumColor / divisor;
    OUT.col.a = OUT.col.x + OUT.col.y + OUT.col.z / 3.0;
 	OUT.col.xyz *= 1.25;
 

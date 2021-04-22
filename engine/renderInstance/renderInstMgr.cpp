@@ -86,8 +86,9 @@ void RenderInstManager::initBins()
     mRenderBins.setSize(NumRenderBins);
     dMemset(mRenderBins.address(), 0, mRenderBins.size() * sizeof(RenderElemMgr*));
 
-    mRenderBins[Sky] = new RenderObjectMgr;
     mRenderBins[Begin] = new RenderObjectMgr;
+    mRenderBins[Sky] = new RenderObjectMgr;
+    mRenderBins[SkyShape] = new RenderTranslucentMgr;
     mRenderBins[Interior] = new RenderInteriorMgr;
     mRenderBins[InteriorDynamicLighting] = new RenderInteriorMgr;
     mRenderBins[Mesh] = new RenderMeshMgr;
@@ -98,7 +99,10 @@ void RenderInstManager::initBins()
     mRenderBins[Water] = new RenderObjectMgr;
     mRenderBins[Foliage] = new RenderObjectMgr;
     mRenderBins[Translucent] = new RenderTranslucentMgr;
+    mRenderBins[TranslucentPreGlow] = new RenderTranslucentMgr;
     mRenderBins[Glow] = new RenderGlowMgr;
+
+    // maybe add renderZOnlyMgr from MBO?
 }
 
 //-----------------------------------------------------------------------------
@@ -126,57 +130,71 @@ void RenderInstManager::addInst(RenderInst* inst)
 
     AssertISV(mInitialized, "RenderInstManager not initialized - call console function 'initRenderInstManager()'");
 
-    // handle special cases that don't require insertion into multiple bins
-    if (inst->translucent || (inst->matInst && inst->matInst->getMaterial()->translucent))
+    bool hasGlow = true;
+    if (!inst->matInst || !inst->matInst->hasGlow() || getCurrentClientSceneGraph()->isReflectPass() || inst->obj)
+        hasGlow = false;
+
+    if (inst->matInst && inst->matInst->getMaterial() && inst->matInst->getMaterial()->renderBin)
     {
-        mRenderBins[Translucent]->addElement(inst);
-        return;
+        mRenderBins[inst->matInst->getMaterial()->renderBin]->addElement(inst);
+    }
+    else
+    {
+
+        // handle special cases that don't require insertion into multiple bins
+        if (inst->translucent || (inst->matInst && inst->matInst->getMaterial()->translucent))
+        {
+            if (!hasGlow)
+                mRenderBins[Translucent]->addElement(inst);
+            goto END_ADDINST;
+        }
+
+        // handle standard cases
+        switch (inst->type)
+        {
+        case RIT_Interior:
+            mRenderBins[Interior]->addElement(inst);
+            break;
+
+        case RIT_InteriorDynamicLighting:
+            mRenderBins[InteriorDynamicLighting]->addElement(inst);
+            break;
+
+        case RIT_Shadow:
+            mRenderBins[Shadow]->addElement(inst);
+            break;
+
+        case RIT_Decal:
+            mRenderBins[Decal]->addElement(inst);
+            break;
+
+        case RIT_Sky:
+            mRenderBins[Sky]->addElement(inst);
+            break;
+
+        case RIT_Water:
+            mRenderBins[Water]->addElement(inst);
+            break;
+
+        case RIT_Mesh:
+            mRenderBins[Mesh]->addElement(inst);
+            break;
+
+        case RIT_Foliage:
+            mRenderBins[Foliage]->addElement(inst);
+            break;
+
+        case RIT_Begin:
+            mRenderBins[Begin]->addElement(inst);
+            break;
+
+        default:
+            mRenderBins[MiscObject]->addElement(inst);
+            break;
+        }
     }
 
-    // handle standard cases
-    switch (inst->type)
-    {
-    case RIT_Interior:
-        mRenderBins[Interior]->addElement(inst);
-        break;
-
-    case RIT_InteriorDynamicLighting:
-        mRenderBins[InteriorDynamicLighting]->addElement(inst);
-        break;
-
-    case RIT_Shadow:
-        mRenderBins[Shadow]->addElement(inst);
-        break;
-
-    case RIT_Decal:
-        mRenderBins[Decal]->addElement(inst);
-        break;
-
-    case RIT_Sky:
-        mRenderBins[Sky]->addElement(inst);
-        break;
-
-    case RIT_Water:
-        mRenderBins[Water]->addElement(inst);
-        break;
-
-    case RIT_Mesh:
-        mRenderBins[Mesh]->addElement(inst);
-        break;
-
-    case RIT_Foliage:
-        mRenderBins[Foliage]->addElement(inst);
-        break;
-
-    case RIT_Begin:
-        mRenderBins[Begin]->addElement(inst);
-        break;
-
-    default:
-        mRenderBins[MiscObject]->addElement(inst);
-        break;
-
-    }
+END_ADDINST:
 
     // handle extra insertions
     if (inst->matInst)

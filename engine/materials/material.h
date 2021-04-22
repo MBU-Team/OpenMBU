@@ -12,6 +12,7 @@
 #include "materials/miscShdrDat.h"
 #include "gfx/gfxTextureHandle.h"
 #include "gfx/gfxStructs.h"
+#include <renderInstance/renderInstMgr.h>
 
 class CubemapData;
 struct SceneGraphData;
@@ -118,6 +119,7 @@ public:
 #ifdef MB_ULTRA
     // Fall back in case this material is unsupported on the current GPU
     Material*         fallback;
+    GFXTextureProfile::Compression texCompression[4];
 #endif
 
     // yes this should be U32 - we test for 2 or 4...
@@ -143,6 +145,9 @@ public:
     bool              glow[MAX_STAGES];          // entire stage glows
     bool              emissive[MAX_STAGES];
 
+#ifdef MB_ULTRA
+    RenderInstManager::RenderBinTypes renderBin;
+#endif
 
     bool              castsShadow;
     bool              breakable;
@@ -189,6 +194,8 @@ protected:
 
     static EnumTable mBlendOpTable;
     static EnumTable mWaveTypeTable;
+    static EnumTable mCompressionTypeTable;
+    static EnumTable mRenderBinTable;
 
     virtual void mapMaterial();
 

@@ -116,13 +116,12 @@ public:
         RIT_NumTypess
     };
 
-private:
-
     // bins are rendered in this order
     enum RenderBinTypes
     {
-        Sky = 0,
-        Begin,
+        Begin = 0,
+        Sky,
+        SkyShape,
         Interior,
         InteriorDynamicLighting,
         Mesh,
@@ -131,12 +130,14 @@ private:
         Decal,
         Refraction,
         Water,
+        TranslucentPreGlow,
         Glow,
         Foliage,
         Translucent,
         NumRenderBins
     };
 
+private:
 
     //-------------------------------------
     // data

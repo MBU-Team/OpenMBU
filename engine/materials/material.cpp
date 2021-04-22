@@ -44,6 +44,39 @@ static EnumTable::Enums gWaveTypeEnums[] =
 };
 EnumTable Material::mWaveTypeTable(3, gWaveTypeEnums);
 
+#ifdef MB_ULTRA
+static EnumTable::Enums gCompressionEnums[] =
+{
+   { GFXTextureProfile::Compression::None,    "None" },
+   { GFXTextureProfile::Compression::DXT1,    "DXT1" },
+   { GFXTextureProfile::Compression::DXT2,    "DXT2" },
+   { GFXTextureProfile::Compression::DXT3,    "DXT3" },
+   { GFXTextureProfile::Compression::DXT4,    "DXT4" },
+   { GFXTextureProfile::Compression::DXT5,    "DXT5" }
+};
+EnumTable Material::mCompressionTypeTable(6, gCompressionEnums);
+
+static EnumTable::Enums gRenderBinEnums[] =
+{
+   { RenderInstManager::RenderBinTypes::Begin,    "Begin" },
+   { RenderInstManager::RenderBinTypes::Interior,    "Interior" },
+   { RenderInstManager::RenderBinTypes::InteriorDynamicLighting,    "InteriorDynamicLighting" },
+   { RenderInstManager::RenderBinTypes::Mesh,    "Mesh" },
+   { RenderInstManager::RenderBinTypes::Sky,    "Sky" },
+   { RenderInstManager::RenderBinTypes::SkyShape,    "SkyShape" },
+   { RenderInstManager::RenderBinTypes::MiscObject,    "MiscObject" },
+   { RenderInstManager::RenderBinTypes::Shadow,    "Shadow" },
+   { RenderInstManager::RenderBinTypes::Decal,    "Decal" },
+   { RenderInstManager::RenderBinTypes::Refraction,    "Refraction" },
+   { RenderInstManager::RenderBinTypes::Water,    "Water" },
+   { RenderInstManager::RenderBinTypes::TranslucentPreGlow,    "TranslucentPreGlow" },
+   { RenderInstManager::RenderBinTypes::Glow,    "Glow" },
+   { RenderInstManager::RenderBinTypes::Foliage,    "Foliage" },
+   { RenderInstManager::RenderBinTypes::Translucent,    "Translucent" },
+};
+EnumTable Material::mRenderBinTable(sizeof(gRenderBinEnums) / sizeof(EnumTable::Enums), gRenderBinEnums);
+#endif
+
 //----------------------------------------------------------------------------
 // Constructor
 //----------------------------------------------------------------------------
@@ -105,6 +138,8 @@ Material::Material()
 #endif
 
 #ifdef MB_ULTRA
+    dMemset(texCompression, 0, sizeof(texCompression));
+    renderBin = RenderInstManager::RenderBinTypes::Begin;
     softwareMipOffset = 0.0f;
     noiseTexFileName = NULL;
     fallback = NULL;
@@ -159,6 +194,11 @@ void Material::initPersistFields()
     addField("detailTex", TypeFilename, Offset(detailFilename, Material), MAX_STAGES);
     addField("bumpTex", TypeFilename, Offset(bumpFilename, Material), MAX_STAGES);
     addField("envTex", TypeFilename, Offset(envFilename, Material), MAX_STAGES);
+
+#ifdef MB_ULTRA
+    addField("texCompression", TypeEnum, Offset(texCompression, Material), MAX_STAGES, &mCompressionTypeTable);
+    addField("renderBin", TypeEnum, Offset(renderBin, Material), 1, &mRenderBinTable);
+#endif
 
     // cubemap
     addField("cubemap", TypeString, Offset(cubemapName, Material));

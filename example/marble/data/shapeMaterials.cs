@@ -570,6 +570,7 @@ new CustomMaterial(Material_Marble_BB)
    translucent[0] = true;
 
    emissive[0] = true;
+   renderBin = "SkyShape";
 };
 
 %mat = new Material(Material_astrolabe_solid)
@@ -581,6 +582,7 @@ new CustomMaterial(Material_Marble_BB)
    translucent[0] = true;
 
    emissive[0] = true;
+   renderBin = "SkyShape";
 };
 
 %mat = new Material(Material_clouds_beginner)
@@ -592,6 +594,7 @@ new CustomMaterial(Material_Marble_BB)
    translucent[0] = true;
 
    emissive[0] = true;
+   renderBin = "SkyShape";
 };
 
 %mat = new Material(Material_clouds_intermediate)
@@ -603,6 +606,7 @@ new CustomMaterial(Material_Marble_BB)
    translucent[0] = true;
 
    emissive[0] = true;
+   renderBin = "SkyShape";
 };
 
 %mat = new Material(Material_clouds_advanced)
@@ -614,12 +618,14 @@ new CustomMaterial(Material_Marble_BB)
    translucent[0] = true;
 
    emissive[0] = true;
+   renderBin = "SkyShape";
 };
 
 new CustomMaterial(Mat_Glass_NoRefract)
 {
    
    texture[0] = "~/data/shapes/structures/glass2";
+    baseTex[0] = "~/data/shapes/structures/glass";
    
    friction = 1;
    restitution = 1;
@@ -652,6 +658,7 @@ new CustomMaterial(Material_glass)
    shader = RefractPix;
 
    pass[0] = Mat_Glass_NoRefract;
+   renderBin = "TranslucentPreGlow";
 };
 
 
