@@ -134,10 +134,12 @@ bool Platform::excludeOtherInstances(const char* mutexName)
     return true;
 }
 
+static void setCursorVisible(bool visible);
+
 //--------------------------------------
 void Platform::AlertOK(const char* windowTitle, const char* message)
 {
-    ShowCursor(true);
+    setCursorVisible(true);
 #ifdef UNICODE
     UTF16 m[1024], t[512];
     convertUTF8toUTF16((UTF8*)windowTitle, t, sizeof(t));
@@ -151,7 +153,7 @@ void Platform::AlertOK(const char* windowTitle, const char* message)
 //--------------------------------------
 bool Platform::AlertOKCancel(const char* windowTitle, const char* message)
 {
-    ShowCursor(true);
+    setCursorVisible(true);
 #ifdef UNICODE
     UTF16 m[1024], t[512];
     convertUTF8toUTF16((UTF8*)windowTitle, t, sizeof(t));
@@ -165,7 +167,7 @@ bool Platform::AlertOKCancel(const char* windowTitle, const char* message)
 //--------------------------------------
 bool Platform::AlertRetry(const char* windowTitle, const char* message)
 {
-    ShowCursor(true);
+    setCursorVisible(true);
     return (MessageBoxA(NULL, message, windowTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TASKMODAL | MB_RETRYCANCEL) == IDRETRY);
 }
 
@@ -181,13 +183,64 @@ static void InitInput()
     }
 }
 
+//**********************************************************************************************
+// * There has got to be a better way of handling the mouse on the window borders than this... *
+//**********************************************************************************************
+static bool cursorInWindow()
+{
+    RECT cRect;
+    GetClientRect(winState.appWindow, &cRect);
+
+    RECT clientRectOriginal = cRect;
+    AdjustWindowRectEx(&cRect, Win32Window->mStyle, false, Win32Window->mExStyle);
+
+    RECT windowRect;
+    GetWindowRect(winState.appWindow, &windowRect);
+
+    POINT p;
+    GetCursorPos(&p);
+
+    p.x -= windowRect.left - cRect.left;
+    p.y -= windowRect.top - cRect.top;
+
+    if (p.x <= clientRectOriginal.left || p.x >= clientRectOriginal.right)
+        return false;
+
+    if (p.y <= clientRectOriginal.top || p.y >= clientRectOriginal.bottom)
+        return false;
+
+    return true;
+}
+
+static bool cursorVisibleWanted = true;
+static void setCursorVisible(bool visible)
+{
+    cursorVisibleWanted = visible;
+}
+
+static bool IsCursorVisible()
+{
+    CURSORINFO ci = { sizeof(CURSORINFO) };
+    if (GetCursorInfo(&ci))
+        return ci.flags & CURSOR_SHOWING;
+    return false;
+}
+
+static void updateCursorVisibility()
+{
+    bool show = cursorVisibleWanted || !cursorInWindow();
+    if (show != IsCursorVisible())
+        ShowCursor(show);
+}
+//**********************************************************************************************
+
 //--------------------------------------
 static void setMouseClipping()
 {
     ClipCursor(NULL);
     if (windowActive)
     {
-        ShowCursor(false);
+        setCursorVisible(false);
 
         RECT r;
         GetWindowRect(winState.appWindow, &r);
@@ -208,7 +261,7 @@ static void setMouseClipping()
             SetCursorPos(lastCursorPos.x + r.left, lastCursorPos.y + r.top);
     }
     else
-        ShowCursor(true);
+        setCursorVisible(true);
 }
 
 //--------------------------------------
@@ -540,7 +593,7 @@ static LRESULT PASCAL WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         }
         break;
     case WM_ACTIVATE:
-        ShowCursor(false);
+        setCursorVisible(false);
         windowActive = LOWORD(wParam) != WA_INACTIVE;
         if (windowActive)
         {
@@ -1018,6 +1071,8 @@ S32 PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, S32)
 //--------------------------------------
 void TimeManager::process()
 {
+    updateCursorVisibility();
+
     TimeEvent event;
     event.elapsedTime = gTimer.getElapsedMS();
 

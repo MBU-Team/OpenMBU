@@ -99,11 +99,10 @@ void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y
 
     RectI newRect = getCenteredWindowRect(width, height, fullscreen);
 
-    DWORD	dwExStyle;
-    DWORD dwStyle = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-    dwStyle |= WS_OVERLAPPED | WS_THICKFRAME | WS_CAPTION;
+    mStyle = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    mStyle |= WS_OVERLAPPED | WS_THICKFRAME | WS_CAPTION;
 
-    dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+    mExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
 #ifdef UNICODE
     UTF16 winTitle[64];
@@ -114,10 +113,10 @@ void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y
 
 
     bool result = winState.appWindow = CreateWindowEx(
-        dwExStyle,
+        mExStyle,
         winState.wc.lpszClassName,          //class name
         winTitle,                        //window title
-        dwStyle,                            //style - need clip siblings/children for opengl
+        mStyle,                            //style - need clip siblings/children for opengl
         newRect.point.x,
         newRect.point.y,
         newRect.extent.x,

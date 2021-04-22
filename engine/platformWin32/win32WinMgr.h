@@ -19,6 +19,9 @@ public:
     RectI getCenteredWindowRect(const U32 width, const U32 height, bool fullscreen);
 
     void resizeWindow(const U32 width, const U32 height, bool fullscreen);
+
+    DWORD mStyle;
+    DWORD mExStyle;
 };
 
 #endif // _WIN32WINMGR_H_
