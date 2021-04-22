@@ -1,6 +1,7 @@
 #include "platform/platform.h"
 #include "console/console.h"
 #include "console/consoleInternal.h"
+#include <Windows.h> // TEMP:
 
 ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 {
@@ -91,7 +92,16 @@ ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
 {
     argc;
     char* ret = Con::getReturnBuffer(1024);
-    dSprintf(ret, 1024, "%s", "Alex");
+
+    // TEMP: Get windows user name
+    char buff[16];
+    DWORD len = 15;
+    GetUserNameA(buff, &len);
+    buff[15] = '\0';
+
+    dSprintf(ret, 1024, "%s", buff);
+
+    //dSprintf(ret, 1024, "%s", "Alex");
     return ret;
 }
 
