@@ -276,7 +276,7 @@ void BlobShadow::updatePartition()
 
 void BlobShadow::collisionCallback(SceneObject * obj, void* thisPtr)
 {
-   if (obj->getWorldBox().isOverlapped(gBlobShadowBox))
+   if (!obj->isHidden() && obj->getWorldBox().isOverlapped(gBlobShadowBox))
    {
       // only interiors clip...
       ClippedPolyList::allowClipping = (dynamic_cast<InteriorInstance*>(obj) != NULL);
