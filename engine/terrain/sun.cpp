@@ -86,12 +86,12 @@ void Sun::registerLights(LightManager* lightManager, bool relight)
 #ifdef MB_ULTRA_PREVIEWS
     // This code is not here on MBU x360 but it achieves the same result.
     // It likely works on x360 just because it uses the old TSE 0.1 render system.
-    static ColorF previewSunColor(0.0f, 0.0f, 0.0f);
+    static LightInfo previewSun = mRegisteredLight;
 
     if (gSPMode)
-        previewSunColor = mRegisteredLight.mColor;
+        previewSun = mRegisteredLight;
     else
-        mRegisteredLight.mColor = previewSunColor;
+        mRegisteredLight = previewSun;
 #endif
 
     if (relight)
