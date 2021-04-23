@@ -17,14 +17,27 @@ struct Fragout
 //-----------------------------------------------------------------------------
 // Main                                                                        
 //-----------------------------------------------------------------------------
-Fragout main( ConnectData IN, uniform sampler2D diffuseMap : register(S0) )
+Fragout main( ConnectData IN, uniform sampler2D diffuseMap : register(S0),
+                              uniform sampler1D gammaRamp : register(S1),
+                              uniform float gammaRampInvSize : register(C8))
 {
-   Fragout OUT;
-   
-   float4 diffuseColor = tex2D(diffuseMap, IN.texCoord);
+    Fragout OUT;
 
-   OUT.col = IN.color * diffuseColor;
-   
-   return OUT;
+    float4 color = tex2D(diffuseMap, IN.texCoord);
+
+    // The center of the first texel of the LUT contains the value for 0, and the
+    // center of the last texel contains the value for 1.
+
+    color = color * (1.0f - gammaRampInvSize) + (0.5 * gammaRampInvSize);
+	
+	// commented for now so that the whole game doesn't look like an acid trip
+    //color.x = tex1D(gammaRamp, color.x);
+    //color.y = tex1D(gammaRamp, color.y);
+    //color.z = tex1D(gammaRamp, color.z);
+
+    // Force alpha to 1 to make sure the surface won't be translucent.
+    OUT.col = float4(color.xyz, 1.0f);
+
+    return OUT;
 }
 
