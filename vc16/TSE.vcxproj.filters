@@ -1557,6 +1557,9 @@
     <ClCompile Include="..\engine\gui\game\guiScoreCountHud.cpp">
       <Filter>Source Files\gui\game</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\gfx\gammaBuffer.cpp">
+      <Filter>Source Files\gfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2866,6 +2869,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\gui\game\guiScoreCountHud.h">
       <Filter>Source Files\gui\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gfx\gammaBuffer.h">
+      <Filter>Source Files\gfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -64,6 +64,21 @@ new GlowBuffer(GlowBufferData)
 };
 
 //-----------------------------------------------------------------------------
+// Gamma Buffer Datablock
+//-----------------------------------------------------------------------------
+new ShaderData( GammaShader )
+{
+   DXVertexShaderFile 	= "shaders/gammaV.hlsl";
+   DXPixelShaderFile 	= "shaders/gammaP.hlsl";
+   pixVersion = 2.0;
+};
+
+new GammaBuffer(GammaBufferData)
+{
+   shader = GammaShader;
+};
+
+//-----------------------------------------------------------------------------
 // Stencil shadow shader
 //-----------------------------------------------------------------------------
 new ShaderData( Shader_Stencil )

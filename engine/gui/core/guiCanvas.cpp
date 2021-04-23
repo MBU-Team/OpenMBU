@@ -15,6 +15,7 @@
 #include "console/consoleTypes.h"
 #include "gfx/screenshot.h"
 #include "sim/sceneObject.h"
+#include "gfx/gammaBuffer.h"
 
 bool gEnableDatablockCanvasRepaint = false;
 
@@ -1219,6 +1220,7 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
         return;
     }
 
+
     // for now, just always reset the update regions - this is a
     // fix for FSAA on ATI cards
     resetUpdateRegions();
@@ -1265,17 +1267,36 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
     GFX->setActiveDevice(0);
     GFX->beginScene();
 
+    // ---------------------------------------
+    // Gamma Buffer
+    // ---------------------------------------
+
+    GammaBuffer* gammaBuff = static_cast<GammaBuffer*>(Sim::findObject("GammaBufferData"));
+
+    static bool initGamma = false;
+    if (!initGamma && gammaBuff)
+    {
+        initGamma = true;
+        gammaBuff->init();
+    }
+
+    RectI vp = GFX->getViewport();
+
+    if (gammaBuff)
+    {
+        GFX->pushActiveRenderSurfaces();
+        gammaBuff->setAsRenderTarget();
+    }
+
+    // ---------------------------------------
+
     // do this at beginning of frame
     updateReflections();
-
-
 
     // TO DISABLE DIRTY RECTS...
 
     GFX->clear(GFXClearZBuffer | GFXClearStencil | GFXClearTarget, gCanvasClearColor, 1.0f, 0);
     resetUpdateRegions();
-
-
 
     PROFILE_END();
     RectI updateUnion;
@@ -1320,6 +1341,16 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
             mouseCursor->render(pos);
         }
     }
+
+    // ---------------------------------------
+    // Gamma Buffer
+    // ---------------------------------------
+    if (gammaBuff)
+    {
+        GFX->popActiveRenderSurfaces();
+        gammaBuff->copyToScreen(vp);
+    }
+    // ---------------------------------------
 
     // mPending is set when the console function "screenShot()" is called
     // this situation is necessary because it needs to take the screenshot
