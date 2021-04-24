@@ -180,8 +180,8 @@ void BaseTexFeat::processPix(Vector<ShaderComponent*>& componentList,
     diffuseMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
 
     if (fd.features[GFXShaderFeatureData::CubeMap] ||
-        fd.features[GFXShaderFeatureData::PixSpecular] ||
-        fd.features[GFXShaderFeatureData::DynamicLightDual]
+        fd.features[GFXShaderFeatureData::PixSpecular]// ||
+        //fd.features[GFXShaderFeatureData::DynamicLightDual]
         )
     {
         MultiLine* meta = new MultiLine;
@@ -746,16 +746,16 @@ void ReflectCubeFeat::processPix(Vector<ShaderComponent*>& componentList,
     cubeMap->sampler = true;
     cubeMap->constNum = Var::getTexUnitNum();     // used as texture unit num here
 
-    Var* attn = NULL;
+    /*Var* attn = NULL;
     if (fd.materialFeatures[GFXShaderFeatureData::DynamicLight])
-        attn = (Var*)LangElement::find("attn");
+        attn = (Var*)LangElement::find("attn");*/
 
     if (glossColor)
     {
         LangElement* statement;
-        if (attn)
-            statement = new GenOp("@.x * @.a * texCUBE(@, @)", attn, glossColor, cubeMap, reflectVec);
-        else
+        //if (attn)
+        //    statement = new GenOp("@.x * @.a * texCUBE(@, @)", attn, glossColor, cubeMap, reflectVec);
+        //else
             statement = new GenOp("@.a * texCUBE(@, @)", glossColor, cubeMap, reflectVec);
         meta->addStatement(new GenOp("   @;\r\n", assignColor(statement, true)));
         output = meta;
@@ -763,9 +763,9 @@ void ReflectCubeFeat::processPix(Vector<ShaderComponent*>& componentList,
     else
     {
         LangElement* statement;
-        if (attn)
-            statement = new GenOp("@.x * texCUBE(@, @)", attn, cubeMap, reflectVec);
-        else
+        //if (attn)
+        //    statement = new GenOp("@.x * texCUBE(@, @)", attn, cubeMap, reflectVec);
+        //else
             statement = new GenOp("texCUBE(@, @)", cubeMap, reflectVec);
         output = new GenOp("   @;\r\n", assignColor(statement, true));
     }
@@ -850,8 +850,10 @@ void VertLightColor::processVert(Vector<ShaderComponent*>& componentList,
     GFXShaderFeatureData& fd)
 {
     // arrgh, need to know if vert has normal, if not, then do nothing
-
-    if (!fd.useLightDir)
+    // 
+    // if bumpmap is present, do nothing
+    if (fd.features[GFXShaderFeatureData::BumpMap] || 
+        !fd.useLightDir)
     {
         output = NULL;
         return;
@@ -864,19 +866,19 @@ void VertLightColor::processVert(Vector<ShaderComponent*>& componentList,
     outColor->setStructName("OUT");
     outColor->setType("float4");
 
-    Var* inColor = new Var;
-    inColor->setType("float4");
-    inColor->setName("inLightColor");
-    inColor->uniform = true;
-    inColor->constNum = VC_LIGHT_DIFFUSE1;
+    //Var* inColor = new Var;
+    //inColor->setType("float4");
+    //inColor->setName("inLightColor");
+    //inColor->uniform = true;
+    //inColor->constNum = VC_LIGHT_DIFFUSE1;
 
 
-    // if bumpmap present, we just want to transfer the color
-    if (fd.features[GFXShaderFeatureData::BumpMap])
-    {
-        output = new GenOp("   @ = @;\r\n", outColor, inColor);
-        return;
-    }
+    //// if bumpmap present, we just want to transfer the color
+    //if (fd.features[GFXShaderFeatureData::BumpMap])
+    //{
+    //    output = new GenOp("   @ = @;\r\n", outColor, inColor);
+    //    return;
+    //}
 
 
     // search for vert normal
@@ -896,8 +898,8 @@ void VertLightColor::processVert(Vector<ShaderComponent*>& componentList,
 
     MultiLine* meta = new MultiLine;
     meta->addStatement(new GenOp("   @ = saturate( dot(-@, @) );\r\n", outColor, inLightVec, inNormal));
-    meta->addStatement(new GenOp("   @.w = 1.0;\r\n", outColor));
-    meta->addStatement(new GenOp("   @ *= @;\r\n", outColor, inColor));
+    //meta->addStatement(new GenOp("   @.w = 1.0;\r\n", outColor));
+    //meta->addStatement(new GenOp("   @ *= @;\r\n", outColor, inColor));
     output = meta;
 
 }
@@ -911,7 +913,8 @@ void VertLightColor::processPix(Vector<ShaderComponent*>& componentList,
     // arrgh, need to know if vert has normal, if not, then do nothing
 
 
-    if (fd.features[GFXShaderFeatureData::LightMap] ||
+    if (fd.features[GFXShaderFeatureData::BumpMap] || 
+        fd.features[GFXShaderFeatureData::LightMap] || // lightmap will use it
         !fd.useLightDir)
     {
         output = NULL;
@@ -937,12 +940,12 @@ void VertLightColor::processPix(Vector<ShaderComponent*>& componentList,
     inColor->setType("float4");
 
 
-    // if bumpmap present, do NOT add ambient to shading color, this happens later
-    if (fd.features[GFXShaderFeatureData::BumpMap])
-    {
-        output = new GenOp("");// "   @;\r\n", assignColor( inColor ) );
-        return;
-    }
+    //// if bumpmap present, do NOT add ambient to shading color, this happens later
+    //if (fd.features[GFXShaderFeatureData::BumpMap])
+    //{
+    //    output = new GenOp("");// "   @;\r\n", assignColor( inColor ) );
+    //    return;
+    //}
 
     LangElement* addAmbient = new GenOp("@ + @", inColor, ambient);
     output = new GenOp("   @;\r\n", assignColor(addAmbient));
@@ -1065,7 +1068,10 @@ void FogFeat::processPix(Vector<ShaderComponent*>& componentList,
     }
     else
     {
-        if (fd.features[GFXShaderFeatureData::DynamicLight])
+        LangElement* statement = new GenOp("lerp( @, @, @.a )", color, fogColor, fogColor);
+        meta->addStatement(new GenOp("   @ = @;\r\n", color, statement));
+
+        /*if (fd.features[GFXShaderFeatureData::DynamicLight])
         {
             meta->addStatement(new GenOp("   @.a = 1.0 - @.a;\r\n", color, fogColor));
         }
@@ -1073,7 +1079,7 @@ void FogFeat::processPix(Vector<ShaderComponent*>& componentList,
         {
             LangElement* statement = new GenOp("lerp(@.rgb, @.rgb, @.a)", color, fogColor, fogColor);
             meta->addStatement(new GenOp("   @.rgb = @;\r\n", color, statement));
-        }
+        }*/
     }
 
     output = meta;

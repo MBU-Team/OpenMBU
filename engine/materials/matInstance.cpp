@@ -141,7 +141,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
         }
 
         // if normal/bump mapping disabled, continue
-        if (Con::getBoolVariable("$pref::Video::disableNormalmapping", false) &&
+        /*if (Con::getBoolVariable("$pref::Video::disableNormalmapping", false) &&
             (i == GFXShaderFeatureData::BumpMap || i == GFXShaderFeatureData::LightNormMap))
         {
             continue;
@@ -175,7 +175,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             (GFX->getPixelShaderVersion() >= 2.0) &&
             (fd.features[GFXShaderFeatureData::DynamicLight]))
             fd.features[i] = true;
-
+            */
         // texture coordinate animation
         if (i == GFXShaderFeatureData::TexAnim)
         {
@@ -189,7 +189,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
         if (i == GFXShaderFeatureData::RTLighting)
         {
             if (mSGData.useLightDir &&
-                !mMaterial->emissive[stageNum] && !isDynamicLightingMaterial())
+                !mMaterial->emissive[stageNum])// && !isDynamicLightingMaterial())
             {
                 fd.features[i] = true;
             }
@@ -198,9 +198,9 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
         // pixel specular
         if (GFX->getPixelShaderVersion() >= 2.0)
         {
-            if ((i == GFXShaderFeatureData::PixSpecular) &&
+            if ((i == GFXShaderFeatureData::PixSpecular/*) &&
                 (!isDynamicLightingMaterial() || (LightInfo::sgAllowSpecular(dynamicLightingFeatures))) &&
-                !Con::getBoolVariable("$pref::Video::disablePixSpecular", false))
+                !Con::getBoolVariable("$pref::Video::disablePixSpecular", false*/))
             {
                 if (mMaterial->pixelSpecular[stageNum])
                 {
@@ -224,7 +224,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             !mMaterial->emissive[stageNum] &&
             stageNum == (mMaxStages - 1))
         {
-            if (mSGData.lightmap && !isDynamicLightingMaterial())
+            if (mSGData.lightmap)// && !isDynamicLightingMaterial())
             {
                 fd.features[i] = true;
             }
@@ -235,7 +235,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             !mMaterial->emissive[stageNum] &&
             stageNum == (mMaxStages - 1))
         {
-            if (mSGData.normLightmap && !isDynamicLightingMaterial())
+            if (mSGData.normLightmap)// && !isDynamicLightingMaterial())
             {
                 fd.features[i] = true;
             }
@@ -244,9 +244,9 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
         // cubemap
         if (i == GFXShaderFeatureData::CubeMap &&
             stageNum < 1 &&      // cubemaps only available on stage 0 for now - bramage
-            ((mMaterial->mCubemapData && mMaterial->mCubemapData->cubemap) || mMaterial->dynamicCubemap) &&
+            ((mMaterial->mCubemapData && mMaterial->mCubemapData->cubemap) || mMaterial->dynamicCubemap)/* &&
             (!isDynamicLightingMaterial() || (LightInfo::sgAllowCubeMapping(dynamicLightingFeatures))) &&
-            !Con::getBoolVariable("$pref::Video::disableCubemapping", false))
+            !Con::getBoolVariable("$pref::Video::disableCubemapping", false)*/)
         {
             fd.features[i] = true;
         }
@@ -283,7 +283,7 @@ void MatInstance::init(SceneGraphData& dat, GFXVertexFlags vertFlags)
         mProcessedMaterial = true;
     }
 
-    if (!isDynamicLightingMaterial() && !mMaterial->emissive[0])
+    /*if (!isDynamicLightingMaterial() && !mMaterial->emissive[0])
     {
         clearDynamicLightingMaterials();
 
@@ -320,7 +320,7 @@ void MatInstance::init(SceneGraphData& dat, GFXVertexFlags vertFlags)
                 }
             }
         }
-    }
+    }*/
 }
 
 //----------------------------------------------------------------------------
@@ -434,6 +434,17 @@ void MatInstance::createPasses(GFXShaderFeatureData& stageFeatures, U32 stageNum
     {
         if (!stageFeatures.features[i]) continue;
 
+        /*//if (i == GFXShaderFeatureData::RTLighting) continue;
+        if (//i == GFXShaderFeatureData::RTLighting ||
+            //i == GFXShaderFeatureData::DynamicLight ||
+            //i == GFXShaderFeatureData::DynamicLightDual ||
+            i == GFXShaderFeatureData::LightMap ||
+            i == GFXShaderFeatureData::LightNormMap ||
+            //i == GFXShaderFeatureData::BaseTex ||
+            //i == GFXShaderFeatureData::DetailMap ||
+            i == GFXShaderFeatureData::BumpMap)
+            continue;*/
+
         ShaderFeature* sf = gFeatureMgr.get(i);
         U32 numTexReg = sf->getResources(passData.fData).numTexReg;
 
@@ -508,7 +519,7 @@ void MatInstance::setTextureStages(SceneGraphData& sgData, U32 pass)
             GFX->setTexture(i, mPasses[pass].tex[i]);
             break;
 
-        case Material::DynamicLight:
+        /*case Material::DynamicLight:
             //GFX->setTextureBorderColor(i, ColorI(0, 0, 0, 0));
             GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
             GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
@@ -522,7 +533,7 @@ void MatInstance::setTextureStages(SceneGraphData& sgData, U32 pass)
             GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
             GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
             GFX->setTexture(i, sgData.dynamicLightSecondary);
-            break;
+            break;*/
 
         case Material::Lightmap:
             GFX->setTexture(i, sgData.lightmap);
@@ -663,11 +674,11 @@ bool MatInstance::setupPass(SceneGraphData& sgData)
     {
         setTextureTransforms();
 
-        if (mMaterial->doubleSided)
+        /*if (mMaterial->doubleSided)
         {
             GFX->setCullMode(GFXCullNone);
             mCullMode = GFX->getCullMode();
-        }
+        }*/
     }
 
     return true;
@@ -698,11 +709,11 @@ void MatInstance::cleanup()
         }
     }
 
-    if (mCullMode != -1)
+    /*if (mCullMode != -1)
     {
         GFX->setCullMode((GFXCullMode)mCullMode);
         mCullMode = -1;
-    }
+    }*/
 
     GFX->setAlphaBlendEnable(false);
     GFX->setAlphaTestEnable(false);

@@ -79,43 +79,43 @@ public:
         MultiLine* multi = new MultiLine;
         multi->addStatement(new GenOp("   @ = tex3D(@, @) * @;\r\n", attn, dlightMap, inTex, lightcolor));
 
-        if (fd.features[GFXShaderFeatureData::DynamicLightDual])
-        {
-            Var* inTexsec = connectComp->getElement(RT_TEXCOORD);
-            inTexsec->setName("dlightCoordSec");
-            inTexsec->setStructName("IN");
-            inTexsec->setType("float4");
-            inTexsec->mapsToSampler = true;
+        //if (fd.features[GFXShaderFeatureData::DynamicLightDual])
+        //{
+        //    Var* inTexsec = connectComp->getElement(RT_TEXCOORD);
+        //    inTexsec->setName("dlightCoordSec");
+        //    inTexsec->setStructName("IN");
+        //    inTexsec->setType("float4");
+        //    inTexsec->mapsToSampler = true;
 
-            Var* dlightMapsec = new Var;
-            dlightMapsec->setType("sampler3D");
-            dlightMapsec->setName("dlightMapSec");
-            dlightMapsec->uniform = true;
-            dlightMapsec->sampler = true;
-            dlightMapsec->constNum = Var::getTexUnitNum();
+        //    Var* dlightMapsec = new Var;
+        //    dlightMapsec->setType("sampler3D");
+        //    dlightMapsec->setName("dlightMapSec");
+        //    dlightMapsec->uniform = true;
+        //    dlightMapsec->sampler = true;
+        //    dlightMapsec->constNum = Var::getTexUnitNum();
 
-            Var* lightcolorsec = new Var;
-            lightcolorsec->setType("float4");
-            lightcolorsec->setName("lightColorSec");
-            lightcolorsec->uniform = true;
-            lightcolorsec->constNum = PC_DIFF_COLOR2;
+        //    Var* lightcolorsec = new Var;
+        //    lightcolorsec->setType("float4");
+        //    lightcolorsec->setName("lightColorSec");
+        //    lightcolorsec->uniform = true;
+        //    lightcolorsec->constNum = PC_DIFF_COLOR2;
 
-            Var* attnsecvar = new Var();
-            attnsecvar->setName("attnsec");
-            attnsecvar->setType("float4");
-            LangElement* attnsec = new DecOp(attnsecvar);
+        //    Var* attnsecvar = new Var();
+        //    attnsecvar->setName("attnsec");
+        //    attnsecvar->setType("float4");
+        //    LangElement* attnsec = new DecOp(attnsecvar);
 
-            multi->addStatement(new GenOp("   @ = tex3D(@, @) * @;\r\n", attnsec, dlightMapsec, inTexsec, lightcolorsec));
+        //    multi->addStatement(new GenOp("   @ = tex3D(@, @) * @;\r\n", attnsec, dlightMapsec, inTexsec, lightcolorsec));
 
-            if (fd.features[GFXShaderFeatureData::BumpMap])
-                multi->addStatement(new GenOp("   @;\r\n", assignColor(attnvar)));// secondary gets added later...
-            else
-            {
-                LangElement* attntotal = new GenOp("(@ + @)", attnvar, attnsecvar);
-                multi->addStatement(new GenOp("   @;\r\n", assignColor(attntotal)));
-            }
-        }
-        else
+        //    if (fd.features[GFXShaderFeatureData::BumpMap])
+        //        multi->addStatement(new GenOp("   @;\r\n", assignColor(attnvar)));// secondary gets added later...
+        //    else
+        //    {
+        //        LangElement* attntotal = new GenOp("(@ + @)", attnvar, attnsecvar);
+        //        multi->addStatement(new GenOp("   @;\r\n", assignColor(attntotal)));
+        //    }
+        //}
+        //else
             multi->addStatement(new GenOp("   @;\r\n", assignColor(attnvar)));
 
         output = multi;
@@ -160,44 +160,44 @@ public:
 
         multi->addStatement(new GenOp("   @ = mul(@, @) + 0.5;\r\n", outTex, lighting, outTex));
 
-        if (fd.features[GFXShaderFeatureData::DynamicLightDual])
-        {
-            Var* outTexsec = connectComp->getElement(RT_TEXCOORD);
-            outTexsec->setName("dlightCoordSec");
-            outTexsec->setStructName("OUT");
-            outTexsec->setType("float4");
-            outTexsec->mapsToSampler = true;
+        //if (fd.features[GFXShaderFeatureData::DynamicLightDual])
+        //{
+        //    Var* outTexsec = connectComp->getElement(RT_TEXCOORD);
+        //    outTexsec->setName("dlightCoordSec");
+        //    outTexsec->setStructName("OUT");
+        //    outTexsec->setType("float4");
+        //    outTexsec->mapsToSampler = true;
 
-            // grab light position var
-            Var* lightpossec = new Var;
-            lightpossec->setType("float4");
-            lightpossec->setName("lightPosSec");
-            lightpossec->uniform = true;
-            lightpossec->constNum = VC_LIGHT_POS2;
+        //    // grab light position var
+        //    Var* lightpossec = new Var;
+        //    lightpossec->setType("float4");
+        //    lightpossec->setName("lightPosSec");
+        //    lightpossec->uniform = true;
+        //    lightpossec->constNum = VC_LIGHT_POS2;
 
-            multi->addStatement(new GenOp("   @ = ((mul(@, @.xyz) - mul(@, @.xyz)) * @.w);\r\n",
-                outTexsec, objTrans, inpos, objTrans, lightpossec, lightpossec));
+        //    multi->addStatement(new GenOp("   @ = ((mul(@, @.xyz) - mul(@, @.xyz)) * @.w);\r\n",
+        //        outTexsec, objTrans, inpos, objTrans, lightpossec, lightpossec));
 
-            Var* lightingsec = new Var;
-            lightingsec->setType("float4x4");
-            lightingsec->setName("lightingMatrixSec");
-            lightingsec->uniform = true;
-            lightingsec->constNum = VC_LIGHT_TRANS2;
+        //    Var* lightingsec = new Var;
+        //    lightingsec->setType("float4x4");
+        //    lightingsec->setName("lightingMatrixSec");
+        //    lightingsec->uniform = true;
+        //    lightingsec->constNum = VC_LIGHT_TRANS2;
 
-            multi->addStatement(new GenOp("   @ = mul(@, @) + 0.5;\r\n", outTexsec, lightingsec, outTexsec));
-        }
+        //    multi->addStatement(new GenOp("   @ = mul(@, @) + 0.5;\r\n", outTexsec, lightingsec, outTexsec));
+        //}
 
         output = multi;
     }
     ShaderFeature::Resources getResources(GFXShaderFeatureData& fd)
     {
         Resources res;
-        if (fd.features[GFXShaderFeatureData::DynamicLightDual])
+        /*if (fd.features[GFXShaderFeatureData::DynamicLightDual])
         {
             res.numTex = 2;
             res.numTexReg = 2;
         }
-        else
+        else*/
         {
             res.numTex = 1;
             res.numTexReg = 1;
@@ -208,8 +208,8 @@ public:
         RenderPassData& passData, U32& texIndex)
     {
         passData.texFlags[texIndex++] = Material::DynamicLight;
-        if (fd.features[GFXShaderFeatureData::DynamicLightDual])
-            passData.texFlags[texIndex++] = Material::DynamicLightSecondary;
+        //if (fd.features[GFXShaderFeatureData::DynamicLightDual])
+        //    passData.texFlags[texIndex++] = Material::DynamicLightSecondary;
     }
     virtual Material::BlendOp getBlendOp() { return Material::None; }
 };
