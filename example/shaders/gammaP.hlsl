@@ -19,7 +19,7 @@ struct Fragout
 //-----------------------------------------------------------------------------
 Fragout main( ConnectData IN, uniform sampler2D diffuseMap : register(S0),
                               uniform sampler1D gammaRamp : register(S1),
-                              uniform float gammaRampInvSize : register(C8))
+                              uniform float gammaRampInvSize : register(C0))
 {
     Fragout OUT;
 
@@ -30,10 +30,9 @@ Fragout main( ConnectData IN, uniform sampler2D diffuseMap : register(S0),
 
     color = color * (1.0f - gammaRampInvSize) + (0.5 * gammaRampInvSize);
 	
-	// commented for now so that the whole game doesn't look like an acid trip
-    //color.x = tex1D(gammaRamp, color.x);
-    //color.y = tex1D(gammaRamp, color.y);
-    //color.z = tex1D(gammaRamp, color.z);
+    color.x = tex1D(gammaRamp, color.x);
+    color.y = tex1D(gammaRamp, color.y);
+    color.z = tex1D(gammaRamp, color.z);
 
     // Force alpha to 1 to make sure the surface won't be translucent.
     OUT.col = float4(color.xyz, 1.0f);

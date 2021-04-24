@@ -76,6 +76,7 @@ new ShaderData( GammaShader )
 new GammaBuffer(GammaBufferData)
 {
    shader = GammaShader;
+   bitmap = "./gammaRamp";
 };
 
 //-----------------------------------------------------------------------------

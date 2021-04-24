@@ -21,44 +21,6 @@
 
 class GFXVertexBuffer;
 
-struct GammaRamp {
-    struct NormalEntry {
-        union {
-            struct {
-                U32 b : 10;
-                U32 g : 10;
-                U32 r : 10;
-                U32 : 2;
-            };
-            U32 value;
-        };
-    };
-
-    struct PWLValue {
-        union {
-            struct {
-                U16 base;
-                U16 delta;
-            };
-            U32 value;
-        };
-    };
-
-    struct PWLEntry {
-        union {
-            struct {
-                PWLValue r;
-                PWLValue g;
-                PWLValue b;
-            };
-            PWLValue values[3];
-        };
-    };
-
-    NormalEntry normal[256];
-    PWLEntry pwl[128];
-};
-
 //**************************************************************************
 // Gamma Buffer
 //**************************************************************************
@@ -71,17 +33,12 @@ private:
     // Data
     //--------------------------------------------------------------
     ShaderData* mGammaShader;
-    const char* mGammaShaderName;
+    StringTableEntry mGammaShaderName;
+    StringTableEntry mGammaRampBitmapName;
     GFXTexHandle        mSurface;
-    GammaRamp        mGammaRamp;
-    U32           mMapping[256];
-    U32           mMappingPWL[128];
-    GFXTexHandle    mGamma;
-    GFXTexHandle    mGammaPWL;
+    GFXTexHandle mGammaRamp;
     S32                 mCallbackHandle;
     bool                mDisabled;
-
-    GFXVertexBufferHandle<GFXVertexPT> mVertBuff;
 
     MatrixF setupOrthoProjection();
     void setupRenderStates();
