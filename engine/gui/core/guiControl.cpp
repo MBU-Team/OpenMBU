@@ -13,6 +13,9 @@
 #include "gui/core/guiControl.h"
 #include "gui/core/guiDefaultControlRender.h"
 
+Point2I FontShadowLowerRightOffset(2, 2);
+Point2I FontShadowUpperLeftOffset(-2, -2);
+ColorI FontShadowColor(0, 0, 0);
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 IMPLEMENT_CONOBJECT(GuiControl);
@@ -1559,7 +1562,54 @@ void GuiControl::renderJustifiedText(Point2I offset, Point2I extent, const char*
     else
         start.y = (extent.y - font->getHeight()) / 2;
 
+    if (mProfile->mShadow)
+    {
+        if (mProfile->mShadow == 2)
+        {
+            start += FontShadowLowerRightOffset;
+        }
+
+        ColorI color;
+        GFX->getBitmapModulation(&color);
+
+        renderShadowText(mProfile->mShadow, font, color.alpha / 255.0f, start + offset, text, dStrlen(text));
+    }
+
     GFX->drawText(font, start + offset, text, mProfile->mFontColors);
+}
+
+void GuiControl::renderShadowText(U32 shadowType, const GFont* font, F32 alpha, const Point2I& drawPoint, const char* text, U32 textLen)
+{
+    U32 len = 2 * textLen + 2;
+    FrameTemp<UTF16> ubuf(len);
+
+    U32 newLen = convertUTF8toUTF16(text, ubuf, len);
+
+    renderShadowText(shadowType, font, alpha, drawPoint, ubuf, newLen);
+}
+
+void GuiControl::renderShadowText(U32 shadowType, const GFont* font, F32 alpha, const Point2I& drawPoint, const UTF16* text, U32 textLen)
+{
+    if (!shadowType || !font)
+        return;
+
+    ColorI shadowColor = FontShadowColor;
+    shadowColor.alpha = alpha * 255.0f;
+
+    ColorI savedColor;
+    GFX->getBitmapModulation(&savedColor);
+
+    GFX->setBitmapModulation(shadowColor);
+
+    if (shadowType == 1 || shadowType == 2)
+    {
+        GFX->drawTextN((GFont*)font, FontShadowLowerRightOffset + drawPoint, text, textLen);
+
+        if (shadowType == 2)
+            GFX->drawTextN((GFont*)font, FontShadowUpperLeftOffset + drawPoint, text, textLen);
+    }
+
+    GFX->setBitmapModulation(savedColor);
 }
 
 void GuiControl::getCursor(GuiCursor*& cursor, bool& showCursor, const GuiEvent& lastGuiEvent)

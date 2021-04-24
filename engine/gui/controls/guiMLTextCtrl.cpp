@@ -194,7 +194,8 @@ void GuiMLTextCtrl::drawAtomText(bool sel, U32 start, U32 end, Atom* atom, Line*
 
     if (!sel)
     {
-        if (atom->style->shadowOffset.x || atom->style->shadowOffset.y)
+        // In MBU this code isn't here, and it uses the profile shadow value instead.
+        /*if (atom->style->shadowOffset.x || atom->style->shadowOffset.y)
         {
             ColorI shadowColor = atom->style->shadowColor;
             shadowColor.alpha = shadowColor.alpha * mAlpha;
@@ -202,7 +203,17 @@ void GuiMLTextCtrl::drawAtomText(bool sel, U32 start, U32 end, Atom* atom, Line*
 
 
             GFX->drawTextN(font, drawPoint + atom->style->shadowOffset, tmp, end - start, mAllowColorChars ? mProfile->mFontColors : NULL);
+        }*/
+
+        if (mProfile->mShadow)
+        {
+            if (mProfile->mShadow == 2)
+                drawPoint += FontShadowLowerRightOffset;
+
+            float alpha = (color.alpha / 255.0f) * mAlpha;
+            renderShadowText(mProfile->mShadow, font, alpha, drawPoint, tmp, end - start);
         }
+
         color.alpha = color.alpha * mAlpha;
         GFX->setBitmapModulation(color);
         GFX->drawTextN(font, drawPoint, tmp, end - start, mAllowColorChars ? mProfile->mFontColors : NULL);
@@ -212,6 +223,17 @@ void GuiMLTextCtrl::drawAtomText(bool sel, U32 start, U32 end, Atom* atom, Line*
         {
             Point2I p2 = drawPoint;
             p2.x += font->getStrNWidthPrecise(tmp, end - start);
+
+            if (mProfile->mShadow)
+            {
+                if (mProfile->mShadow == 2)
+                    p2 += FontShadowLowerRightOffset;
+
+                float alpha = (color.alpha / 255.0f);
+                renderShadowText(mProfile->mShadow, font, alpha, p2, "...", 3);
+            }
+            GFX->setBitmapModulation(color);
+
             GFX->drawTextN(font, p2, "...", 3, mAllowColorChars ? mProfile->mFontColors : NULL);
         }
     }
@@ -224,6 +246,16 @@ void GuiMLTextCtrl::drawAtomText(bool sel, U32 start, U32 end, Atom* atom, Line*
         rect.extent.y = line->height + 1;
 
         GFX->drawRectFill(rect, mProfile->mFillColorHL);
+
+        if (mProfile->mShadow)
+        {
+            if (mProfile->mShadow == 2)
+                drawPoint += FontShadowLowerRightOffset;
+
+            float alpha = (mProfile->mFontColorHL.alpha / 255.0f);
+            renderShadowText(mProfile->mShadow, font, alpha, drawPoint, tmp, end - start);
+        }
+
         GFX->setBitmapModulation(mProfile->mFontColorHL);  // over-ride atom color:
         GFX->drawTextN(font, drawPoint, tmp, end - atom->textStart, mAllowColorChars ? mProfile->mFontColors : NULL);
 
@@ -232,6 +264,17 @@ void GuiMLTextCtrl::drawAtomText(bool sel, U32 start, U32 end, Atom* atom, Line*
         {
             Point2I p2 = drawPoint;
             p2.x += font->getStrNWidthPrecise(tmp, end - atom->textStart);
+
+            if (mProfile->mShadow)
+            {
+                if (mProfile->mShadow == 2)
+                    p2 += FontShadowLowerRightOffset;
+
+                float alpha = (mProfile->mFontColorHL.alpha / 255.0f);
+                renderShadowText(mProfile->mShadow, font, alpha, p2, "...", 3);
+            }
+            GFX->setBitmapModulation(mProfile->mFontColorHL);
+
             GFX->drawTextN(font, p2, "...", 3, mAllowColorChars ? mProfile->mFontColors : NULL);
         }
     }
