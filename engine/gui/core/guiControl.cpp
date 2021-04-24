@@ -1557,10 +1557,13 @@ void GuiControl::renderJustifiedText(Point2I offset, Point2I extent, const char*
         start.set(0, 0);
 
     // center the vertical
-    if (font->getHeight() > extent.y)
+    /*if (font->getHeight() > extent.y)
         start.y = 0 - ((font->getHeight() - extent.y) / 2);
     else
-        start.y = (extent.y - font->getHeight()) / 2;
+        start.y = (extent.y - font->getHeight()) / 2;*/
+
+    // On MBU on xbox this happens instead of the above
+    start.y = (extent.y - font->getHeight() + 2) / 2;
 
     if (mProfile->mShadow)
     {
