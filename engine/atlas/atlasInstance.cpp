@@ -68,7 +68,7 @@ bool AtlasInstance::onAdd()
     if (isClientObject())
     {
         // Set up the shader for rendering the terrain surface.
-        mMaterial = new MatInstance(mMaterialName);
+        mMaterial = new MatInstance((char*)mMaterialName);
 
         if (!mMaterial || !mMaterial->getMaterial())
         {
@@ -263,7 +263,7 @@ void AtlasInstance::renderObject(SceneState* state, RenderInst* ri)
     sgData.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
     // grab the sun data from the light manager
-    const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    const LightInfo* sunlight = &getCurrentClientSceneGraph()->getLightManager()->getLight(0);//sgGetSpecialLight(LightManager::sgSunLightType);
     VectorF sunVector = sunlight->mDirection; //first light is always sun
 
     // set the sun data into scenegraph data

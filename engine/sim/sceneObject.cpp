@@ -16,7 +16,7 @@
 #include "terrain/terrData.h"
 #include "atlas/runtime/atlasInstance2.h"
 #include "gfx/gBitmap.h"
-#include "lightingSystem/sgLightObject.h"
+//#include "lightingSystem/sgLightObject.h"
 #include "sim/netConnection.h"
 
 IMPLEMENT_CONOBJECT(SceneObject);
@@ -2121,34 +2121,34 @@ void SceneObject::setVelocity(const Point3F&)
 
 void SceneObject::findLights(const char* name, NetConnection* con)
 {
-    SimObject* object = Sim::findObject(name);
-    if (!object)
-        return;
-    SimGroup* group = dynamic_cast<SimGroup*>(object);
-    if (!group)
-    {
-        sgLightObject* light = dynamic_cast<sgLightObject*>(object);
-        if (!light)
-            return;
+    //SimObject* object = Sim::findObject(name);
+    //if (!object)
+    //    return;
+    //SimGroup* group = dynamic_cast<SimGroup*>(object);
+    //if (!group)
+    //{
+    //    sgLightObject* light = dynamic_cast<sgLightObject*>(object);
+    //    if (!light)
+    //        return;
 
-        // its a light object...
-        S32 id = con->getGhostIndex(light);
-        if (id > -1)
-            lightIds.push_back(id);
-    }
-    else
-    {
-        // its a group object so get the contained light objects...
-        for (SimObject** obj = group->begin(); obj != group->end(); obj++)
-        {
-            sgLightObject* light = dynamic_cast<sgLightObject*>(*obj);
-            if (!light)
-                continue;
-            S32 id = con->getGhostIndex(light);
-            if (id > -1)
-                lightIds.push_back(id);
-        }
-    }
+    //    // its a light object...
+    //    S32 id = con->getGhostIndex(light);
+    //    if (id > -1)
+    //        lightIds.push_back(id);
+    //}
+    //else
+    //{
+    //    // its a group object so get the contained light objects...
+    //    for (SimObject** obj = group->begin(); obj != group->end(); obj++)
+    //    {
+    //        sgLightObject* light = dynamic_cast<sgLightObject*>(*obj);
+    //        if (!light)
+    //            continue;
+    //        S32 id = con->getGhostIndex(light);
+    //        if (id > -1)
+    //            lightIds.push_back(id);
+    //    }
+    //}
 }
 
 /// converts lightGroupName into a list of sgUniversalStaticLight objects.

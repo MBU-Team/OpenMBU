@@ -10,28 +10,22 @@
 #include "gfx/cubemapData.h"
 #include "gfx/gfxCubemap.h"
 
-Vector< MatInstance* > MatInstance::mMatInstList;
-
 //****************************************************************************
 // Material Instance
 //****************************************************************************
 MatInstance::MatInstance(Material& mat)
 {
-    materialType = mtStandard;
-    dMemset(dynamicLightingMaterials_Single, 0, sizeof(dynamicLightingMaterials_Single));
-    dMemset(dynamicLightingMaterials_Dual, 0, sizeof(dynamicLightingMaterials_Dual));
-
     mMaterial = &mat;
-    mCullMode = -1;
-    construct();
+    mCurPass = 0;
+    mProcessedMaterial = false;
+    mVertFlags = (GFXVertexFlags)NULL;
+    mMaxStages = 1;
+
+    mHasGlow = false;
 }
 
-MatInstance::MatInstance(const char* matName)
+MatInstance::MatInstance(char* matName)
 {
-    materialType = mtStandard;
-    dMemset(dynamicLightingMaterials_Single, 0, sizeof(dynamicLightingMaterials_Single));
-    dMemset(dynamicLightingMaterials_Dual, 0, sizeof(dynamicLightingMaterials_Dual));
-
     // Get the material
     Material* foundMat;
 
@@ -42,40 +36,11 @@ MatInstance::MatInstance(const char* matName)
     }
 
     mMaterial = foundMat;
-
-    construct();
-}
-
-//----------------------------------------------------------------------------
-// Construct
-//----------------------------------------------------------------------------
-void MatInstance::construct()
-{
-    mCurPass = -1;
-    mHasGlow = false;
+    mCurPass = 0;
     mProcessedMaterial = false;
     mVertFlags = (GFXVertexFlags)NULL;
     mMaxStages = 1;
 
-    mMatInstList.push_back(this);
-}
-
-//----------------------------------------------------------------------------
-// Destructor
-//----------------------------------------------------------------------------
-MatInstance::~MatInstance()
-{
-    clearDynamicLightingMaterials();
-
-    // remove from global MatInstance list
-    for (U32 i = 0; i < mMatInstList.size(); i++)
-    {
-        if (mMatInstList[i] == this)
-        {
-            mMatInstList[i] = mMatInstList.last();
-            mMatInstList.decrement();
-        }
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -140,42 +105,6 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             }
         }
 
-        // if normal/bump mapping disabled, continue
-        if (Con::getBoolVariable("$pref::Video::disableNormalmapping", false) &&
-            (i == GFXShaderFeatureData::BumpMap || i == GFXShaderFeatureData::LightNormMap))
-        {
-            continue;
-        }
-
-        if ((i == GFXShaderFeatureData::SelfIllumination) && mMaterial->emissive[stageNum])
-            fd.features[i] = true;
-
-        if ((i == GFXShaderFeatureData::ExposureX2) &&
-            (mMaterial->exposure[stageNum] == 2))
-            fd.features[i] = true;
-
-        if ((i == GFXShaderFeatureData::ExposureX4) &&
-            (mMaterial->exposure[stageNum] == 4))
-            fd.features[i] = true;
-
-        // dynamic lighting...
-        if (i == GFXShaderFeatureData::DynamicLight &&
-            !mMaterial->emissive[stageNum] &&
-            stageNum == (mMaxStages - 1))
-        {
-            if (isDynamicLightingMaterial())
-            {
-                fd.features[i] = true;
-            }
-        }
-
-        // dual dynamic lighting...
-        if ((i == GFXShaderFeatureData::DynamicLightDual) &&
-            (isDynamicLightingMaterial_Dual()) &&
-            (GFX->getPixelShaderVersion() >= 2.0) &&
-            (fd.features[GFXShaderFeatureData::DynamicLight]))
-            fd.features[i] = true;
-
         // texture coordinate animation
         if (i == GFXShaderFeatureData::TexAnim)
         {
@@ -189,7 +118,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
         if (i == GFXShaderFeatureData::RTLighting)
         {
             if (mSGData.useLightDir &&
-                !mMaterial->emissive[stageNum] && !isDynamicLightingMaterial())
+                !mMaterial->emissive[stageNum])
             {
                 fd.features[i] = true;
             }
@@ -198,9 +127,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
         // pixel specular
         if (GFX->getPixelShaderVersion() >= 2.0)
         {
-            if ((i == GFXShaderFeatureData::PixSpecular) &&
-                (!isDynamicLightingMaterial() || (LightInfo::sgAllowSpecular(dynamicLightingFeatures))) &&
-                !Con::getBoolVariable("$pref::Video::disablePixSpecular", false))
+            if (i == GFXShaderFeatureData::PixSpecular)
             {
                 if (mMaterial->pixelSpecular[stageNum])
                 {
@@ -224,7 +151,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             !mMaterial->emissive[stageNum] &&
             stageNum == (mMaxStages - 1))
         {
-            if (mSGData.lightmap && !isDynamicLightingMaterial())
+            if (mSGData.lightmap)
             {
                 fd.features[i] = true;
             }
@@ -235,7 +162,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             !mMaterial->emissive[stageNum] &&
             stageNum == (mMaxStages - 1))
         {
-            if (mSGData.normLightmap && !isDynamicLightingMaterial())
+            if (mSGData.normLightmap)
             {
                 fd.features[i] = true;
             }
@@ -244,9 +171,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
         // cubemap
         if (i == GFXShaderFeatureData::CubeMap &&
             stageNum < 1 &&      // cubemaps only available on stage 0 for now - bramage
-            ((mMaterial->mCubemapData && mMaterial->mCubemapData->cubemap) || mMaterial->dynamicCubemap) &&
-            (!isDynamicLightingMaterial() || (LightInfo::sgAllowCubeMapping(dynamicLightingFeatures))) &&
-            !Con::getBoolVariable("$pref::Video::disableCubemapping", false))
+            ((mMaterial->mCubemapData && mMaterial->mCubemapData->cubemap) || mMaterial->dynamicCubemap))
         {
             fd.features[i] = true;
         }
@@ -268,7 +193,7 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
 }
 
 //----------------------------------------------------------------------------
-// Init
+// Temp function
 //----------------------------------------------------------------------------
 void MatInstance::init(SceneGraphData& dat, GFXVertexFlags vertFlags)
 {
@@ -277,79 +202,11 @@ void MatInstance::init(SceneGraphData& dat, GFXVertexFlags vertFlags)
 
     mMaterial->setStageData();
 
+
     if (!mProcessedMaterial)
     {
         processMaterial();
         mProcessedMaterial = true;
-    }
-
-    if (!isDynamicLightingMaterial() && !mMaterial->emissive[0])
-    {
-        clearDynamicLightingMaterials();
-
-        CustomMaterial* custmat = dynamic_cast<CustomMaterial*>(mMaterial);
-        if (custmat)
-        {
-            if (custmat->dynamicLightingMaterial)
-            {
-                // custom materials only use the assigned single-full dynamic lighting shader...
-                dynamicLightingMaterials_Single[LightInfo::sgFull] = new MatInstance(*custmat->dynamicLightingMaterial);
-                dynamicLightingMaterials_Single[LightInfo::sgFull]->materialType = mtDynamicLightingSingle;
-                dynamicLightingMaterials_Single[LightInfo::sgFull]->dynamicLightingFeatures = LightInfo::sgFull;
-                dynamicLightingMaterials_Single[LightInfo::sgFull]->init(dat, vertFlags);
-            }
-        }
-        else
-        {
-            for (U32 i = 0; i < LightInfo::sgFeatureCount; i++)
-            {
-                // always build these...
-                dynamicLightingMaterials_Single[i] = new MatInstance(*mMaterial);
-                dynamicLightingMaterials_Single[i]->materialType = mtDynamicLightingSingle;
-                dynamicLightingMaterials_Single[i]->dynamicLightingFeatures = LightInfo::sgFeatures(i);
-                dynamicLightingMaterials_Single[i]->init(dat, vertFlags);
-
-                // cube mapping exceeds 8 tex params, and 2.0 needed...
-                if ((i > LightInfo::sgFull) && (GFX->getPixelShaderVersion() >= 2.0))
-                {
-                    // build the piggybacked dual light materials...
-                    dynamicLightingMaterials_Dual[i] = new MatInstance(*mMaterial);
-                    dynamicLightingMaterials_Dual[i]->materialType = mtDynamicLightingDual;
-                    dynamicLightingMaterials_Dual[i]->dynamicLightingFeatures = LightInfo::sgFeatures(i);
-                    dynamicLightingMaterials_Dual[i]->init(dat, vertFlags);
-                }
-            }
-        }
-    }
-}
-
-//----------------------------------------------------------------------------
-// reInitialize
-//----------------------------------------------------------------------------
-void MatInstance::reInit()
-{
-    mPasses.clear();
-    processMaterial();
-    mProcessedMaterial = true;
-
-    for (U32 i = 0; i < LightInfo::sgFeatureCount; i++)
-    {
-        if (dynamicLightingMaterials_Single[i])
-            dynamicLightingMaterials_Single[i]->reInit();
-
-        if (dynamicLightingMaterials_Dual[i])
-            dynamicLightingMaterials_Dual[i]->reInit();
-    }
-}
-
-//----------------------------------------------------------------------------
-// reInitInstances - static function
-//----------------------------------------------------------------------------
-void MatInstance::reInitInstances()
-{
-    for (U32 i = 0; i < mMatInstList.size(); i++)
-    {
-        mMatInstList[i]->reInit();
     }
 
 }
@@ -393,7 +250,7 @@ void MatInstance::setPassBlendOp(ShaderFeature* sf,
     GFXShaderFeatureData& stageFeatures,
     U32 stageNum)
 {
-    if (sf->getBlendOp() == Material::None)
+    if (sf->getBlendOp() == Material::BlendOp::None)
     {
         return;
     }
@@ -490,67 +347,47 @@ void MatInstance::processMaterial()
 //----------------------------------------------------------------------------
 // Set the textures for each stage used.
 //----------------------------------------------------------------------------
-void MatInstance::setTextureStages(SceneGraphData& sgData, U32 pass)
+void MatInstance::setTextureStages(SceneGraphData& sgData)
 {
-#ifdef TORQUE_DEBUG
-    AssertFatal(pass < mPasses.size(), "Pass out of bounds");
-#endif
-
-    for (U32 i = 0; i < mPasses[pass].numTex; i++)
+    for (U32 i = 0; i < mPasses[mCurPass].numTex; i++)
     {
         GFX->setTextureStageColorOp(i, GFXTOPModulate);
 
-        switch (mPasses[pass].texFlags[i])
+        switch (mPasses[mCurPass].texFlags[i])
         {
-        case 0:
-            GFX->setTextureStageAddressModeU(i, GFXAddressWrap);
-            GFX->setTextureStageAddressModeV(i, GFXAddressWrap);
-            GFX->setTexture(i, mPasses[pass].tex[i]);
-            break;
+            case 0:
+                GFX->setTextureStageAddressModeU(i, GFXAddressWrap);
+                GFX->setTextureStageAddressModeV(i, GFXAddressWrap);
+                GFX->setTexture(i, mPasses[mCurPass].tex[i]);
+                break;
 
-        case Material::DynamicLight:
-            //GFX->setTextureBorderColor(i, ColorI(0, 0, 0, 0));
-            GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
-            GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
-            GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
-            GFX->setTexture(i, sgData.dynamicLight);
-            break;
+            case Material::Lightmap:
+                GFX->setTexture(i, sgData.lightmap);
+                break;
 
-        case Material::DynamicLightSecondary:
-            //GFX->setTextureBorderColor(i, ColorI(0, 0, 0, 0));
-            GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
-            GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
-            GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
-            GFX->setTexture(i, sgData.dynamicLightSecondary);
-            break;
+            case Material::NormLightmap:
+                GFX->setTexture(i, sgData.normLightmap);
+                break;
 
-        case Material::Lightmap:
-            GFX->setTexture(i, sgData.lightmap);
-            break;
+            case Material::Cube:
+                GFX->setCubeTexture(i, mPasses[mCurPass].cubeMap);
+                break;
 
-        case Material::NormLightmap:
-            GFX->setTexture(i, sgData.normLightmap);
-            break;
+            case Material::SGCube:
+                GFX->setCubeTexture(i, sgData.cubemap);
+                break;
 
-        case Material::Cube:
-            GFX->setCubeTexture(i, mPasses[pass].cubeMap);
-            break;
+            case Material::Fog:
+            {
+                GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
+                GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
+                GFX->setTexture(i, sgData.fogTex);
+                break;
+            }
 
-        case Material::SGCube:
-            GFX->setCubeTexture(i, sgData.cubemap);
-            break;
-
-        case Material::Fog:
-        {
-            GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
-            GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
-            GFX->setTexture(i, sgData.fogTex);
-            break;
-        }
-
-        case Material::BackBuff:
-            GFX->setTexture(i, sgData.backBuffTex);
-            break;
+            case Material::BackBuff:
+                GFX->setTexture(i, sgData.backBuffTex);
+                break;
         }
     }
 }
@@ -582,11 +419,10 @@ bool MatInstance::filterGlowPasses(SceneGraphData& sgData)
 //----------------------------------------------------------------------------
 bool MatInstance::setupPass(SceneGraphData& sgData)
 {
+    CustomMaterial* custMat = dynamic_cast<CustomMaterial*>(mMaterial);
 
-    if (mMaterial->getType() != Material::base)
+    if (custMat)
     {
-        CustomMaterial* custMat = static_cast<CustomMaterial*>(mMaterial);
-
         // This setTexTrans nonsense is set to make sure that setTextureTransforms()
         // is called only once per material draw, not per pass
         static bool setTexTrans = false;
@@ -606,8 +442,6 @@ bool MatInstance::setupPass(SceneGraphData& sgData)
             return false;
         }
     }
-
-    ++mCurPass;
 
     // return when done with all passes
     if (mCurPass >= mPasses.size() ||
@@ -633,7 +467,7 @@ bool MatInstance::setupPass(SceneGraphData& sgData)
     {
         GFX->setAlphaBlendEnable(true);
         mMaterial->setBlendState(mMaterial->translucentBlendOp);
-        GFX->setZWriteEnable(mMaterial->translucentZWrite);
+        GFX->setZWriteEnable(false);
         GFX->setAlphaTestEnable(true);
         GFX->setAlphaRef(1);
         GFX->setAlphaFunc(GFXCmpGreaterEqual);
@@ -657,18 +491,14 @@ bool MatInstance::setupPass(SceneGraphData& sgData)
         GFX->setTextureStageColorOp(mPasses[mCurPass].numTex, GFXTOPDisable);
     }
 
-    setTextureStages(sgData, mCurPass);
+    setTextureStages(sgData);
 
     if (mCurPass == 0)
     {
         setTextureTransforms();
-
-        if (mMaterial->doubleSided)
-        {
-            GFX->setCullMode(GFXCullNone);
-            mCullMode = GFX->getCullMode();
-        }
     }
+
+    mCurPass++;
 
     return true;
 }
@@ -678,7 +508,7 @@ bool MatInstance::setupPass(SceneGraphData& sgData)
 //--------------------------------------------------------------------------
 void MatInstance::cleanup()
 {
-    --mCurPass;
+    mCurPass = 0;
 
     if (mPasses.size())
     {
@@ -698,17 +528,11 @@ void MatInstance::cleanup()
         }
     }
 
-    if (mCullMode != -1)
-    {
-        GFX->setCullMode((GFXCullMode)mCullMode);
-        mCullMode = -1;
-    }
-
     GFX->setAlphaBlendEnable(false);
     GFX->setAlphaTestEnable(false);
     GFX->setZWriteEnable(true);
 
-    mCurPass = -1;
+
 }
 
 //--------------------------------------------------------------------------
@@ -725,9 +549,9 @@ void MatInstance::setTextureTransforms()
 
 
     // handle scroll anim type
-    if (mMaterial->animFlags[i] & Material::Scroll)
+    if (mMaterial->animFlags[i] & Material::AnimType::Scroll)
     {
-        if (mMaterial->animFlags[i] & Material::Wave)
+        if (mMaterial->animFlags[i] & Material::AnimType::Wave)
         {
             Point3F scrollOffset;
             scrollOffset.x = mMaterial->scrollDir[i].x * waveOffset;
@@ -754,7 +578,7 @@ void MatInstance::setTextureTransforms()
     // handle rotation
     if (mMaterial->animFlags[i] & Material::Rotate)
     {
-        if (mMaterial->animFlags[i] & Material::Wave)
+        if (mMaterial->animFlags[i] & Material::AnimType::Wave)
         {
             F32 rotPos = waveOffset * M_2PI;
             texMat.set(EulerF(0.0, 0.0, rotPos));
@@ -782,8 +606,8 @@ void MatInstance::setTextureTransforms()
     }
 
     // Handle scale + wave offset
-    if (mMaterial->animFlags[i] & Material::Scale &&
-        mMaterial->animFlags[i] & Material::Wave)
+    if (mMaterial->animFlags[i] & Material::AnimType::Scale &&
+        mMaterial->animFlags[i] & Material::AnimType::Wave)
     {
         F32 wOffset = fabs(waveOffset);
 
@@ -798,7 +622,7 @@ void MatInstance::setTextureTransforms()
     }
 
     // handle sequence
-    if (mMaterial->animFlags[i] & Material::Sequence)
+    if (mMaterial->animFlags[i] & Material::AnimType::Sequence)
     {
         static F32 accumTime = 0.0;
         accumTime += mMaterial->mDt;
@@ -825,76 +649,55 @@ F32 MatInstance::getWaveOffset(U32 stage)
 
     switch (mMaterial->waveType[stage])
     {
-    case Material::Sin:
-    {
-        return mMaterial->waveAmp[stage] * mSin(M_2PI * mMaterial->wavePos[stage]);
-        break;
-    }
-
-    case Material::Triangle:
-    {
-        F32 frac = mMaterial->wavePos[stage] - mFloor(mMaterial->wavePos[stage]);
-        if (frac > 0.0 && frac <= 0.25)
+        case Material::WaveType::Sin:
         {
-            return mMaterial->waveAmp[stage] * frac * 4.0;
+            return mMaterial->waveAmp[stage] * mSin(M_2PI * mMaterial->wavePos[stage]);
+            break;
         }
 
-        if (frac > 0.25 && frac <= 0.5)
+        case Material::WaveType::Triangle:
         {
-            return mMaterial->waveAmp[stage] * (1.0 - ((frac - 0.25) * 4.0));
+            F32 frac = mMaterial->wavePos[stage] - mFloor(mMaterial->wavePos[stage]);
+            if (frac > 0.0 && frac <= 0.25)
+            {
+                return mMaterial->waveAmp[stage] * frac * 4.0;
+            }
+
+            if (frac > 0.25 && frac <= 0.5)
+            {
+                return mMaterial->waveAmp[stage] * (1.0 - ((frac - 0.25) * 4.0));
+            }
+
+            if (frac > 0.5 && frac <= 0.75)
+            {
+                return mMaterial->waveAmp[stage] * (frac - 0.5) * -4.0;
+            }
+
+            if (frac > 0.75 && frac <= 1.0)
+            {
+                return -mMaterial->waveAmp[stage] * (1.0 - ((frac - 0.75) * 4.0));
+            }
+
+            break;
         }
 
-        if (frac > 0.5 && frac <= 0.75)
+        case Material::WaveType::Square:
         {
-            return mMaterial->waveAmp[stage] * (frac - 0.5) * -4.0;
+            F32 frac = mMaterial->wavePos[stage] - mFloor(mMaterial->wavePos[stage]);
+            if (frac > 0.0 && frac <= 0.5)
+            {
+                return 0.0;
+            }
+            else
+            {
+                return mMaterial->waveAmp[stage];
+            }
+            break;
         }
-
-        if (frac > 0.75 && frac <= 1.0)
-        {
-            return -mMaterial->waveAmp[stage] * (1.0 - ((frac - 0.75) * 4.0));
-        }
-
-        break;
-    }
-
-    case Material::Square:
-    {
-        F32 frac = mMaterial->wavePos[stage] - mFloor(mMaterial->wavePos[stage]);
-        if (frac > 0.0 && frac <= 0.5)
-        {
-            return 0.0;
-        }
-        else
-        {
-            return mMaterial->waveAmp[stage];
-        }
-        break;
-    }
 
     }
 
     return 0.0;
-}
-
-//------------------------------------------------------------------------------
-// set lightmaps - this data is outside Material definitions and needs to be
-//                 set separately
-//------------------------------------------------------------------------------
-void MatInstance::setLightmaps(SceneGraphData& sgData)
-{
-#ifdef MB_ULTRA
-    setTextureStages(sgData, mCurPass);
-#else
-    if (mMaterial->getType() != Material::base)
-    {
-        CustomMaterial* custMat = static_cast<CustomMaterial*>(mMaterial);
-        custMat->setLightmaps(sgData);
-    }
-    else
-    {
-        setTextureStages(sgData, mCurPass);
-    }
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -910,25 +713,15 @@ bool MatInstance::hasCubemap()
     }
 
     // cubemaps are currently only on stage 0
-    if (getCurStageNum() > 0)
-    {
-        return false;
-    }
+    //if (getCurStageNum() > 0)
+    //{
+    //    return false;
+    //}
 
-    if (mPasses[getCurPass()].cubeMap)
+    if (mPasses[mCurPass].cubeMap)
     {
         return true;
     }
 
     return false;
 }
-
-
-//------------------------------------------------------------------------------
-// Console functions
-//------------------------------------------------------------------------------
-ConsoleFunction(reInitMaterials, void, 1, 1, "")
-{
-    MatInstance::reInitInstances();
-}
-

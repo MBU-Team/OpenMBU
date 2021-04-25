@@ -265,12 +265,34 @@ bool ShowTSShape::prepRenderImage(SceneState* state, const U32 stateKey,
 void ShowTSShape::prepBatchRender(SceneState* state)
 {
     // setup light
-    LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    /*LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
 
     sunlight->mType = LightInfo::Vector;
     sunlight->mDirection.set(-lightDir.x, -lightDir.y, -lightDir.z);
     sunlight->mColor.set(diffR, diffG, diffB);
-    sunlight->mAmbient.set(ambR, ambG, ambB);
+    sunlight->mAmbient.set(ambR, ambG, ambB);*/
+
+    // setup light
+    Vector<LightInfo*> lights;
+    getCurrentClientSceneGraph()->getLightManager()->getLights(lights);
+
+    if (!lights.size())
+    {
+        // create directional light
+        static LightInfo light;
+        light.mType = LightInfo::Vector;
+        light.mDirection.set(-lightDir.x, -lightDir.y, -lightDir.z);
+        light.mColor.set(diffR, diffG, diffB);
+        light.mAmbient.set(ambR, ambG, ambB);
+        getCurrentClientSceneGraph()->getLightManager()->addLight(&light);
+    }
+    else
+    {
+        lights[0]->mType = LightInfo::Vector;
+        lights[0]->mDirection.set(-lightDir.x, -lightDir.y, -lightDir.z);
+        lights[0]->mColor.set(diffR, diffG, diffB);
+        lights[0]->mAmbient.set(ambR, ambG, ambB);
+    }
 
 
     RectI viewport = GFX->getViewport();

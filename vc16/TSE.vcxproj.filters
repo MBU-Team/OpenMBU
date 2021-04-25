@@ -1443,51 +1443,6 @@
     <ClCompile Include="..\engine\renderInstance\renderTranslucentMgr.cpp">
       <Filter>Source Files\renderInstance</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgDecalProjector.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgDynamicRangeLighting.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgFormatManager.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgLightingModel.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgLightManager.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgLightMap.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgLightObject.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgMissionLightingFilter.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgObjectBasedProjector.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgObjectShadows.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgSceneLighting.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgSceneLightingInterior.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgSceneLightingTerrain.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\sgScenePersist.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\lightingSystem\volLight.cc">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\gfx\bitmapMng.cpp">
       <Filter>Source Files\gfx</Filter>
     </ClCompile>
@@ -2759,57 +2714,6 @@
     <ClInclude Include="..\engine\renderInstance\renderTranslucentMgr.h">
       <Filter>Source Files\renderInstance</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgDecalProjector.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgDynamicRangeLighting.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgFormatManager.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgHashMap.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgLighting.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgLightingFeatures.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgLightingModel.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgLightManager.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgLightMap.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgLightObject.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgMissionLightingFilter.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgObjectBasedProjector.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgObjectShadows.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgSceneLighting.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgSceneLightingGlobals.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\sgScenePersist.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\volLight.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\platform\types.visualc.h">
       <Filter>Source Files\platform</Filter>
     </ClInclude>
@@ -2852,9 +2756,6 @@
     <ClInclude Include="..\engine\gui\controls\guiXboxOptionListCtrl.h">
       <Filter>Source Files\gui\controls</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\lightingSystem\shadowBase.h">
-      <Filter>Source Files\lightingSystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\lightingSystem\blobShadow.h">
       <Filter>Source Files\lightingSystem</Filter>
     </ClInclude>
@@ -2872,6 +2773,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\gfx\gammaBuffer.h">
       <Filter>Source Files\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\lightingSystem\shadowBase.h">
+      <Filter>Source Files\lightingSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

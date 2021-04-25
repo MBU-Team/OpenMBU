@@ -1693,10 +1693,12 @@ bool fxSunLight::prepRenderImage(SceneState* state, const U32 stateKey, const U3
         // Yes, so calculate real sun elevation/azimuth.
 
         // Do we have any lights?
-        const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+        Vector<LightInfo*> lights;
+        /*const LightInfo* sunlight = */getCurrentClientSceneGraph()->getLightManager()->getLights(lights);//sgGetSpecialLight(LightManager::sgSunLightType);
 
         // Yes, so fetch sunlight ( always first light ).
-        VectorF sunVector = -sunlight->mDirection;
+        //VectorF sunVector = -sunlight->mDirection;
+        VectorF sunVector = -lights[0]->mDirection;
 
         // Calculate Pitch/Yaw.
         F32 Yaw, Pitch;

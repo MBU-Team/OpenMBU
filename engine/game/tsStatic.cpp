@@ -15,7 +15,7 @@
 #include "sceneGraph/detailManager.h"
 #include "sim/netConnection.h"
 #include "gfx/gfxDevice.h"
-#include "lightingSystem/sgLighting.h"
+//#include "lightingSystem/sgLighting.h"
 
 IMPLEMENT_CO_NETOBJECT_V1(TSStatic);
 
@@ -236,7 +236,7 @@ void TSStatic::renderObject(SceneState* state)
     GFX->pushWorldMatrix();
 
 
-    getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
+    //getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
 
     MatrixF mat = getRenderTransform();
     mat.scale(mObjScale);
@@ -245,7 +245,7 @@ void TSStatic::renderObject(SceneState* state)
     mShapeInstance->animate();
     mShapeInstance->render();
 
-    getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
+    //getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
 
 
     GFX->popWorldMatrix();
@@ -273,7 +273,7 @@ U32 TSStatic::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
         stream->writeFlag(customAmbientForSelfIllumination);
         stream->write(customAmbientLighting);
         stream->writeFlag(receiveLMLighting);
-        if (isServerObject())
+        /*if (isServerObject())
         {
             lightIds.clear();
             findLightGroup(con);
@@ -294,7 +294,7 @@ U32 TSStatic::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
             {
                 stream->writeInt(lightIds[i], NetConnection::GhostIdBitSize);
             }
-        }
+        }*/
     }
 
     return retMask;
@@ -323,13 +323,13 @@ void TSStatic::unpackUpdate(NetConnection* con, BitStream* stream)
         stream->read(&customAmbientLighting);
         receiveLMLighting = stream->readFlag();
 
-        U32 count = stream->readInt(SG_TSSTATIC_MAX_LIGHT_SHIFT);
+        /*U32 count = stream->readInt(SG_TSSTATIC_MAX_LIGHT_SHIFT);
         lightIds.clear();
         for (U32 i = 0; i < count; i++)
         {
             S32 id = stream->readInt(NetConnection::GhostIdBitSize);
             lightIds.push_back(id);
-        }
+        }*/
     }
 }
 

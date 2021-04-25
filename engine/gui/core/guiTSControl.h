@@ -13,7 +13,7 @@
 #include "math/mMath.h"
 #endif
 
-#include "lightingSystem/sgDynamicRangeLighting.h"
+//#include "lightingSystem/sgDynamicRangeLighting.h"
 
 
 struct CameraQuery
@@ -45,7 +45,7 @@ class GuiTSCtrl : public GuiControl
     F32            mCameraZRot;
     F32            mForceFOV;
 
-    sgDRLSystem drlSystem;
+    //sgDRLSystem drlSystem;
 
 public:
     CameraQuery    mLastCameraQuery;

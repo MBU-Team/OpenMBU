@@ -60,7 +60,7 @@
 #include "gfx/debugDraw.h"
 #include "game/badWordFilter.h"
 
-#include "lightingSystem/sgFormatManager.h"
+//#include "lightingSystem/sgFormatManager.h"
 
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
@@ -104,7 +104,7 @@ ConsoleFunction(createCanvas, bool, 2, 2, "(string windowTitle)"
     */
     Platform::initWindow(Point2I(800, 600), argv[1]);
 
-    sgFormatManager::sgInit();
+    //sgFormatManager::sgInit();
 
     // create the canvas, and add it to the manager
     Canvas = new GuiCanvas();
@@ -463,8 +463,8 @@ void shutdownGame()
     gSPModeSceneGraph = NULL;
     gDecalManager = NULL;
 
-    sgShadowTextureCache::sgClear();
-    sgShadowSharedZBuffer::sgClear();
+    //sgShadowTextureCache::sgClear();
+    //sgShadowSharedZBuffer::sgClear();
 
     TerrainRender::shutdown();
 }
@@ -760,8 +760,8 @@ void DemoGame::processTimeEvent(TimeEvent* event)
 
     Material::updateTime();
 
-    sgObjectShadowMonitor::sgCleanupUnused();
-    sgShadowTextureCache::sgCleanupUnused();
+    //sgObjectShadowMonitor::sgCleanupUnused();
+    //sgShadowTextureCache::sgCleanupUnused();
 
     if (Canvas && GFX->allowRender())
     {

@@ -1597,7 +1597,9 @@ GBitmap* TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, Ma
     getCurrentClientSceneGraph()->buildFogTexture(&state);
 
     // we'll also need to add a light to the scene if there isn't one already
-    const LightInfo* light = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    //const LightInfo* light = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    Vector<LightInfo*> lights;
+    /*const LightInfo* light = */getCurrentClientSceneGraph()->getLightManager()->getLights(lights);
 
     TSMesh::setCamTrans(cameraMatrix);
     TSMesh::setSceneState(&state);

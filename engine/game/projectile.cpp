@@ -415,7 +415,7 @@ bool Projectile::onNewDataBlock(GameBaseData* dptr)
 
 void Projectile::registerLights(LightManager* lightManager, bool lightingScene)
 {
-    if (lightingScene)
+    /*if (lightingScene)
         return;
 
     if (mDataBlock->hasLight && mHidden == false)
@@ -425,7 +425,7 @@ void Projectile::registerLights(LightManager* lightManager, bool lightingScene)
         mLight.mRadius = mDataBlock->lightRadius;
         mLight.mColor = mDataBlock->lightColor;
         lightManager->sgRegisterGlobalLight(&mLight, this, false);
-    }
+    }*/
 }
 
 

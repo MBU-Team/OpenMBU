@@ -13,6 +13,7 @@
 #include "game/trigger.h"
 #include "materials/matInstance.h"
 #include "sceneGraph/sceneGraph.h"
+#include "console/consoleTypes.h"
 
 //----------------------------------------------------------------------------
 

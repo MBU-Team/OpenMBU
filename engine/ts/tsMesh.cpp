@@ -22,7 +22,7 @@
 #include "renderInstance/renderInstMgr.h"
 #include "game/shapeBase.h"
 #include "game/game.h"
-#include "lightingSystem/sgLightingModel.h"
+//#include "lightingSystem/sgLightingModel.h"
 
 // Not worth the effort, much less the effort to comment, but if the draw types
 // are consecutive use addition rather than a table to go from index to command value...
@@ -335,7 +335,7 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
     coreRI->primBuff = &mPB;
 
     //-----------------------------------------------------------------
-    LightManager* lm = getCurrentClientSceneGraph()->getLightManager();
+    /*LightManager* lm = getCurrentClientSceneGraph()->getLightManager();
     LightInfoList baselights;
     lm->sgGetBestLights(baselights);
 
@@ -350,7 +350,7 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
         baselights.push_back(lm->sgGetSpecialLight(LightManager::sgSunLightType));
 
     LightInfoDualList duallights;
-    lm->sgBuildDualLightLists(baselights, duallights);
+    lm->sgBuildDualLightLists(baselights, duallights);*/
 
     // sun must be first for fog...
     // handled in the render managers...
@@ -367,7 +367,7 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
         break;
     }*/
 
-    for (U32 l = 0; l < duallights.size(); l++)
+    /*for (U32 l = 0; l < duallights.size(); l++)
     {
         bool sunlight = false;
         LightInfoDual* duallight = &duallights[l];
@@ -526,7 +526,7 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
                 gRenderInstManager.addInst(ri);
             }
         }
-    }
+    }*/
 
     // clean up
     if (smGlowPass)

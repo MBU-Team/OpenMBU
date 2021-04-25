@@ -41,13 +41,13 @@ void RenderElemMgr::setupLights(RenderInst* inst, SceneGraphData& data)
     objTrans.mulP(lightPos);
     objTrans.mulV(lightDir);
 
-    Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, data.light.sgTempModelInfo[0]);
+    Point3F lightPosModel(lightPos.x, lightPos.y, lightPos.z);//, data.light.sgTempModelInfo[0]);
     GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
     GFX->setVertexShaderConstF(VC_LIGHT_DIR1, (float*)&lightDir, 1);
     GFX->setVertexShaderConstF(VC_LIGHT_DIFFUSE1, (float*)&data.light.mColor, 1);
     GFX->setPixelShaderConstF(PC_AMBIENT_COLOR, (float*)&data.light.mAmbient, 1);
 
-    if (inst->matInst && inst->matInst->getMaterial())
+    /*if (inst->matInst && inst->matInst->getMaterial())
     {
         U32 stagenum = inst->matInst->getCurStageNum();
         if (!inst->matInst->getMaterial()->emissive[stagenum])
@@ -65,7 +65,7 @@ void RenderElemMgr::setupLights(RenderInst* inst, SceneGraphData& data)
     }
 
     MatrixF lightingmat = data.light.sgLightingTransform;
-    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);
+    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);*/
 
 
     // fill in secondary light
@@ -75,11 +75,11 @@ void RenderElemMgr::setupLights(RenderInst* inst, SceneGraphData& data)
     objTrans.mulP(lightPos);
     objTrans.mulV(lightDir);
 
-    lightPosModel = Point4F(lightPos.x, lightPos.y, lightPos.z, data.lightSecondary.sgTempModelInfo[0]);
+    lightPosModel = Point3F(lightPos.x, lightPos.y, lightPos.z);//, data.lightSecondary.sgTempModelInfo[0]);
     GFX->setVertexShaderConstF(VC_LIGHT_POS2, (float*)&lightPosModel, 1);
     GFX->setPixelShaderConstF(PC_DIFF_COLOR2, (float*)&data.lightSecondary.mColor, 1);
 
-    lightingmat = data.lightSecondary.sgLightingTransform;
+    /*lightingmat = data.lightSecondary.sgLightingTransform;
     GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat, 4);
 
     if (Material::isDebugLightingEnabled())
@@ -107,7 +107,7 @@ void RenderElemMgr::setupLights(RenderInst* inst, SceneGraphData& data)
             GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
             GFX->setTexture(i, data.dynamicLightSecondary);
         }
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
@@ -158,15 +158,15 @@ S32 FN_CDECL RenderElemMgr::cmpKeyFunc(const void* p1, const void* p2)
     const MainSortElem* mse1 = (const MainSortElem*)p1;
     const MainSortElem* mse2 = (const MainSortElem*)p2;
 
-    // dynamic lights *MUST* be rendered after the base pass!
-    if (mse1->inst && mse1->inst->matInst &&
-        mse2->inst && mse2->inst->matInst)
-    {
-        S32 testA = S32(mse1->inst->matInst->isDynamicLightingMaterial()) -
-            S32(mse2->inst->matInst->isDynamicLightingMaterial());
-        if (testA != 0)
-            return testA;
-    }
+    //// dynamic lights *MUST* be rendered after the base pass!
+    //if (mse1->inst && mse1->inst->matInst &&
+    //    mse2->inst && mse2->inst->matInst)
+    //{
+    //    S32 testA = S32(mse1->inst->matInst->isDynamicLightingMaterial()) -
+    //        S32(mse2->inst->matInst->isDynamicLightingMaterial());
+    //    if (testA != 0)
+    //        return testA;
+    //}
 
     S32 test1 = S32(mse1->key) - S32(mse2->key);
 

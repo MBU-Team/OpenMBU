@@ -1308,7 +1308,9 @@ void Precipitation::renderObject(SceneState* state, RenderInst* ri)
     ColorF ambient(1, 1, 1);
     if (mUseLighting)
     {
-        const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+        Vector<LightInfo*> lights;
+        /*const LightInfo* sunlight = */getCurrentClientSceneGraph()->getLightManager()->getLights(lights);//sgGetSpecialLight(LightManager::sgSunLightType);
+        const LightInfo* sunlight = lights[0];
         ambient = sunlight->mColor;
     }
 

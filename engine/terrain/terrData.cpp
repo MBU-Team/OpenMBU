@@ -897,8 +897,8 @@ void TerrainBlock::renderObject(SceneState* state, RenderInst* ri)
     sgData.camPos = state->getCameraPosition();
 
 
-    getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this, state->getCameraPosition(),
-        Point3F(0, 0, 0), state->getVisibleDistance(), MaxVisibleLights);
+    //getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this, state->getCameraPosition(),
+    //    Point3F(0, 0, 0), state->getVisibleDistance(), MaxVisibleLights);
     //gClientSceneGraph->getLightManager()->sgGetBestLights();
 
 
@@ -907,7 +907,7 @@ void TerrainBlock::renderObject(SceneState* state, RenderInst* ri)
     TerrainRender::renderBlock(this, state, &tMat, sgData);
 
 
-    getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
+    //getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
 
 
     // Clean up after...

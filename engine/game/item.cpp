@@ -326,45 +326,45 @@ void Item::onDeleteNotify(SimObject* obj)
 
 void Item::registerLights(LightManager* lightManager, bool lightingScene)
 {
-    if (lightingScene)
-        return;
+    //if (lightingScene)
+    //    return;
 
-    if (mDataBlock->lightOnlyStatic && !mStatic)
-        return;
+    //if (mDataBlock->lightOnlyStatic && !mStatic)
+    //    return;
 
-    F32 intensity;
-    switch (mDataBlock->lightType)
-    {
-    case ConstantLight:
-        intensity = mFadeVal;
-        break;
+    //F32 intensity;
+    //switch (mDataBlock->lightType)
+    //{
+    //case ConstantLight:
+    //    intensity = mFadeVal;
+    //    break;
 
-    case PulsingLight:
-    {
-        F32 delta = Sim::getCurrentTime() - mDropTime;
-        intensity = 0.5f + 0.5f * mSin(M_PI * delta / F32(mDataBlock->lightTime));
-        intensity = 0.15f + intensity * 0.85f;
-        intensity *= mFadeVal;  // fade out light on flags
-        break;
-    }
+    //case PulsingLight:
+    //{
+    //    F32 delta = Sim::getCurrentTime() - mDropTime;
+    //    intensity = 0.5f + 0.5f * mSin(M_PI * delta / F32(mDataBlock->lightTime));
+    //    intensity = 0.15f + intensity * 0.85f;
+    //    intensity *= mFadeVal;  // fade out light on flags
+    //    break;
+    //}
 
-    default:
-        return;
-    }
+    //default:
+    //    return;
+    //}
 
-    mLight.mColor = mDataBlock->lightColor * intensity;
-    mLight.mColor.clamp();
-    mLight.mType = LightInfo::Point;
-    mLight.mRadius = mDataBlock->lightRadius;
+    //mLight.mColor = mDataBlock->lightColor * intensity;
+    //mLight.mColor.clamp();
+    //mLight.mType = LightInfo::Point;
+    //mLight.mRadius = mDataBlock->lightRadius;
 
-    mLight.mPos = getBoxCenter();
+    //mLight.mPos = getBoxCenter();
 
-    // this is not a flash effect like projectiles,
-    // explosions, and weapon fire, so we need a
-    // better quality type, but still keep it fast...
-    mLight.sgSupportedFeatures = LightInfo::sgNoSpecCube;
+    //// this is not a flash effect like projectiles,
+    //// explosions, and weapon fire, so we need a
+    //// better quality type, but still keep it fast...
+    //mLight.sgSupportedFeatures = LightInfo::sgNoSpecCube;
 
-    lightManager->sgRegisterGlobalLight(&mLight, this, false);
+    //lightManager->sgRegisterGlobalLight(&mLight, this, false);
 }
 
 

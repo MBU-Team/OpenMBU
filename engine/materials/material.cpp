@@ -335,13 +335,13 @@ void Material::setShaderConstants(const SceneGraphData& sgData, U32 stageNum)
     objTrans.mulP(lightPos);
     objTrans.mulV(lightDir);
 
-    Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, sgData.light.sgTempModelInfo[0]);
+    Point3F lightPosModel(lightPos.x, lightPos.y, lightPos.z);//, sgData.light.sgTempModelInfo[0]);
     GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
     GFX->setVertexShaderConstF(VC_LIGHT_DIR1, (float*)&lightDir, 1);
     GFX->setVertexShaderConstF(VC_LIGHT_DIFFUSE1, (float*)&sgData.light.mColor, 1);
     GFX->setPixelShaderConstF(PC_AMBIENT_COLOR, (float*)&sgData.light.mAmbient, 1);
 
-    if (!emissive[stageNum])
+    /*if (!emissive[stageNum])
         GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&sgData.light.mColor, 1);
     else
     {
@@ -350,7 +350,7 @@ void Material::setShaderConstants(const SceneGraphData& sgData, U32 stageNum)
     }
 
     MatrixF lightingmat = sgData.light.sgLightingTransform;
-    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);
+    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);*/
 
 
     // fill in secondary light
@@ -360,12 +360,12 @@ void Material::setShaderConstants(const SceneGraphData& sgData, U32 stageNum)
     objTrans.mulP(lightPos);
     objTrans.mulV(lightDir);
 
-    lightPosModel = Point4F(lightPos.x, lightPos.y, lightPos.z, sgData.lightSecondary.sgTempModelInfo[0]);
+    lightPosModel = Point3F(lightPos.x, lightPos.y, lightPos.z);//, sgData.lightSecondary.sgTempModelInfo[0]);
     GFX->setVertexShaderConstF(VC_LIGHT_POS2, (float*)&lightPosModel, 1);
     GFX->setPixelShaderConstF(PC_DIFF_COLOR2, (float*)&sgData.lightSecondary.mColor, 1);
 
-    lightingmat = sgData.lightSecondary.sgLightingTransform;
-    GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat, 4);
+    //lightingmat = sgData.lightSecondary.sgLightingTransform;
+    //GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat, 4);
 
 
     // fill in cubemap data
@@ -530,12 +530,14 @@ SimSet* Material::getMaterialSet()
 
 LightInfo* Material::getDebugLight()
 {
-    LightInfo *light = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    Vector<LightInfo*> lights;
+    /*LightInfo *light = */getCurrentClientSceneGraph()->getLightManager()->getLights(lights);//sgGetSpecialLight(LightManager::sgSunLightType);
+    LightInfo* light = lights[0];
     if (!light)
         return &smDebugLight;
 
     dMemcpy(&smDebugLight, light, sizeof(smDebugLight));
-    smDebugLight.sgTempModelInfo[0] = 0.0f;
+    //smDebugLight.sgTempModelInfo[0] = 0.0f;
 
     return &smDebugLight;
 }

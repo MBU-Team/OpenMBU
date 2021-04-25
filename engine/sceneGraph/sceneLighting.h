@@ -22,11 +22,6 @@
 #include "sceneGraph/shadowVolumeBSP.h"
 #endif
 
-
-#include "lightingSystem/sgSceneLighting.h"
-
-
-/*
 #define TERRAIN_OVERRANGE 2.0f
 
 //------------------------------------------------------------------------------
@@ -277,5 +272,5 @@ inline bool SceneLighting::isInterior(SceneObject * obj)
 {
    return obj && ((obj->getTypeMask() & InteriorObjectType) != 0);
 }
-*/
+
 #endif

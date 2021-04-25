@@ -27,50 +27,50 @@ Var* BumpFeat::setupLightVec(Vector<ShaderComponent*>& componentList,
     lightVec->setStructName("OUT");
     lightVec->setType("float3");
 
-    if (fd.features[GFXShaderFeatureData::DynamicLight])
-    {
-        Var* inpos = (Var*)LangElement::find("position");
-        Var* lightpos = (Var*)LangElement::find("lightPos");
-        Var* dlightcoord = (Var*)LangElement::find("dlightCoord");
-        Var* N = (Var*)LangElement::find("N");
+    //if (fd.features[GFXShaderFeatureData::DynamicLight])
+    //{
+    //    Var* inpos = (Var*)LangElement::find("position");
+    //    Var* lightpos = (Var*)LangElement::find("lightPos");
+    //    Var* dlightcoord = (Var*)LangElement::find("dlightCoord");
+    //    Var* N = (Var*)LangElement::find("N");
 
-        // setup language elements to output incoming tex coords to output
-        if (inpos && lightpos)
-        {
-            meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVec, lightpos, inpos));
-            if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
-                meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVec, N));
-        }
+    //    // setup language elements to output incoming tex coords to output
+    //    if (inpos && lightpos)
+    //    {
+    //        meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVec, lightpos, inpos));
+    //        if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
+    //            meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVec, N));
+    //    }
 
-        if (fd.features[GFXShaderFeatureData::DynamicLightDual])
-        {
-            Var* lightVecSec = connectComp->getElement(RT_TEXCOORD);
-            lightVecSec->setName("outLightVecSec");
-            lightVecSec->setStructName("OUT");
-            lightVecSec->setType("float3");
+    //    if (fd.features[GFXShaderFeatureData::DynamicLightDual])
+    //    {
+    //        Var* lightVecSec = connectComp->getElement(RT_TEXCOORD);
+    //        lightVecSec->setName("outLightVecSec");
+    //        lightVecSec->setStructName("OUT");
+    //        lightVecSec->setType("float3");
 
-            lightpos = (Var*)LangElement::find("lightPosSec");
-            dlightcoord = (Var*)LangElement::find("dlightCoordSec");
+    //        lightpos = (Var*)LangElement::find("lightPosSec");
+    //        dlightcoord = (Var*)LangElement::find("dlightCoordSec");
 
-            // setup language elements to output incoming tex coords to output
-            if (inpos && lightpos)
-            {
-                meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVecSec, lightpos, inpos));
-                if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
-                    meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVecSec, N));
-            }
-        }
-    }
-    else if (fd.features[GFXShaderFeatureData::SelfIllumination])
-    {
-        Var* N = (Var*)LangElement::find("N");
-        if (N)
-        {
-            meta->addStatement(new GenOp("   @.xyz = @;\r\n", lightVec, N));
-        }
-    }
-    else
-    {
+    //        // setup language elements to output incoming tex coords to output
+    //        if (inpos && lightpos)
+    //        {
+    //            meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVecSec, lightpos, inpos));
+    //            if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
+    //                meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVecSec, N));
+    //        }
+    //    }
+    //}
+    //else if (fd.features[GFXShaderFeatureData::SelfIllumination])
+    //{
+    //    Var* N = (Var*)LangElement::find("N");
+    //    if (N)
+    //    {
+    //        meta->addStatement(new GenOp("   @.xyz = @;\r\n", lightVec, N));
+    //    }
+    //}
+    //else
+    //{
         if (fd.useLightDir)
         {
             // grab light direction var
@@ -94,7 +94,7 @@ Var* BumpFeat::setupLightVec(Vector<ShaderComponent*>& componentList,
             LangElement* assign = new GenOp("   @.xyz = normalize(@ - @.xyz);\r\n", lightVec, lightPos, position);
             meta->addStatement(assign);
         }
-    }
+    //}
 
     return lightVec;
 }
@@ -173,12 +173,12 @@ void BumpFeat::processVert(Vector<ShaderComponent*>& componentList,
     LangElement* assign2 = new GenOp("   @.xyz = mul(@, @);\r\n", lightVec, texSpaceMat, lightVec);
     meta->addStatement(assign2);
 
-    if (fd.features[GFXShaderFeatureData::DynamicLightDual])
+    /*if (fd.features[GFXShaderFeatureData::DynamicLightDual])
     {
         Var* lightVecSec = (Var*)LangElement::find("outLightVecSec");
         if (lightVecSec)
             meta->addStatement(new GenOp("   @.xyz = mul(@, @);\r\n", lightVecSec, texSpaceMat, lightVecSec));
-    }
+    }*/
 
     // shift tex coords on ps 1.1 because it clamps them from 0.0 to 1.0
     if (GFX->getPixelShaderVersion() < 2.0)
@@ -298,16 +298,16 @@ void BumpFeat::processPix(Vector<ShaderComponent*>& componentList,
     Var* dlightcoord = (Var*)LangElement::find("dlightCoord");
 
     // assign it
-    if ((GFX->getPixelShaderVersion() < 2.0) ||
+    /*if ((GFX->getPixelShaderVersion() < 2.0) ||
         (!fd.features[GFXShaderFeatureData::DynamicLight]))
     {
         if (dlightcoord && (GFX->getPixelShaderVersion() >= 2.0))
             meta->addStatement(new GenOp("   @ = saturate( dot(@.xyz * 2.0 - 1.0, @.xyz) * @.w );\r\n",
                 bumpDotDecl, bumpNorm, lightVec, dlightcoord));
-        else
+        else*/
             meta->addStatement(new GenOp("   @ = saturate( dot(@.xyz * 2.0 - 1.0, @.xyz) );\r\n",
                 bumpDotDecl, bumpNorm, lightVec));
-    }
+    /*}
     else
     {
         if (dlightcoord && (GFX->getPixelShaderVersion() >= 2.0))
@@ -330,7 +330,7 @@ void BumpFeat::processPix(Vector<ShaderComponent*>& componentList,
                 meta->addStatement(new GenOp("   @ *= saturate( dot(@.xyz * 2.0 - 1.0, normalize(@.xyz)) * @.w );\r\n",
                     attnsec, bumpNorm, lightVecSec, dlightcoordsec));
         }
-    }
+    }*/
 
     if (fd.features[GFXShaderFeatureData::LightNormMap])
     {
@@ -371,7 +371,7 @@ void BumpFeat::processPix(Vector<ShaderComponent*>& componentList,
         return;
     }
 
-    if (fd.features[GFXShaderFeatureData::DynamicLight])
+    /*if (fd.features[GFXShaderFeatureData::DynamicLight])
     {
         meta->addStatement(new GenOp("   @;\r\n", assignColor(bumpDot)));
     }
@@ -390,7 +390,7 @@ void BumpFeat::processPix(Vector<ShaderComponent*>& componentList,
             LangElement* blend = new GenOp("(@ * @)", attnsec, diffuseColor);
             meta->addStatement(new GenOp("   @;\r\n", assignColor(blend, true)));
         }
-    }
+    }*/
 
     output = meta;
 }

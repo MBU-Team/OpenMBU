@@ -15,7 +15,7 @@
 #include "core/bitStream.h"
 #include "gfx/debugDraw.h"
 #include "renderInstance/renderInstMgr.h"
-#include "lightingSystem/sgLightingModel.h"
+//#include "lightingSystem/sgLightingModel.h"
 #include "math/mathUtils.h"
 #include "atlas/runtime/atlasClipMapUniqueCache.h"
 #include "atlas/runtime/atlasClipMapBlenderCache.h"

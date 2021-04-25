@@ -236,10 +236,10 @@ void RenderInteriorMgr::render()
                     dirty = true;
                 }
 
-                if (dirty && (passRI->type != RenderInstManager::RIT_InteriorDynamicLighting))
+                /*if (dirty && (passRI->type != RenderInstManager::RIT_InteriorDynamicLighting))
                 {
                     mat->setLightmaps(sgData);
-                }
+                }*/
                 //-------------------------------------
 
 

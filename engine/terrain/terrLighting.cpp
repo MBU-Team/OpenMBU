@@ -63,40 +63,74 @@ U32 TerrainRender::testSquareLights(GridSquare* sq, S32 level, Point2I pos, U32 
 //jff tmp
 #include "sceneGraph/lightManager.h"
 #include "sceneGraph/sceneGraph.h"
-#include "lightingSystem/sgLightingModel.h"
+//#include "lightingSystem/sgLightingModel.h"
+
+//void TerrainRender::buildLightArray()
+//{
+//    static LightInfoList lights;
+//    lights.clear();
+//    getCurrentClientSceneGraph()->getLightManager()->getBsgGetBestLights(lights);
+//
+//    // create terrain lights from these...
+//    U32 curIndex = 0;
+//    for (U32 i = 0; i < lights.size(); i++)
+//    {
+//        if ((lights[i]->mType != LightInfo::Point) && (lights[i]->mType != LightInfo::Spot))
+//            continue;
+//
+//        // set the 'fo
+//        TerrLightInfo& info = mTerrainLights[curIndex++];
+//        mCurrentBlock->getWorldTransform().mulP(lights[i]->mPos, &info.pos);
+//
+//        // get the model...
+//        sgLightingModel& lightingmodel = sgLightingModelManager::sgGetLightingModel(
+//            lights[i]->sgLightingModelName);
+//        lightingmodel.sgSetState(lights[i]);
+//        // get the info...
+//        info.radius = lightingmodel.sgGetMaxRadius(true);
+//        lights[i]->sgTempModelInfo[0] = 0.5f / info.radius;
+//        // reset the model...
+//        lightingmodel.sgResetState();
+//
+//        info.radiusSquared = info.radius * info.radius;
+//        info.r = lights[i]->mColor.red;
+//        info.g = lights[i]->mColor.green;
+//        info.b = lights[i]->mColor.blue;
+//        info.light = lights[i];
+//
+//        Point3F dVec = mCamPos - lights[i]->mPos;
+//        info.distSquared = mDot(dVec, dVec);
+//    }
+//
+//    mDynamicLightCount = curIndex;
+//}
 
 void TerrainRender::buildLightArray()
 {
-    static LightInfoList lights;
+    static Vector<LightInfo*> lights;
+
+    //
     lights.clear();
-    getCurrentClientSceneGraph()->getLightManager()->sgGetBestLights(lights);
+    gClientSceneGraph->getLightManager()->getBestLights(mClipPlane, mNumClipPlanes, mCamPos, lights, MaxTerrainLights);
 
     // create terrain lights from these...
     U32 curIndex = 0;
     for (U32 i = 0; i < lights.size(); i++)
     {
-        if ((lights[i]->mType != LightInfo::Point) && (lights[i]->mType != LightInfo::Spot))
+        if (lights[i]->mType != LightInfo::Point)
             continue;
 
         // set the 'fo
         TerrLightInfo& info = mTerrainLights[curIndex++];
+
         mCurrentBlock->getWorldTransform().mulP(lights[i]->mPos, &info.pos);
-
-        // get the model...
-        sgLightingModel& lightingmodel = sgLightingModelManager::sgGetLightingModel(
-            lights[i]->sgLightingModelName);
-        lightingmodel.sgSetState(lights[i]);
-        // get the info...
-        info.radius = lightingmodel.sgGetMaxRadius(true);
-        lights[i]->sgTempModelInfo[0] = 0.5f / info.radius;
-        // reset the model...
-        lightingmodel.sgResetState();
-
+        info.radius = lights[i]->mRadius; //jff
         info.radiusSquared = info.radius * info.radius;
+
+        //
         info.r = lights[i]->mColor.red;
         info.g = lights[i]->mColor.green;
         info.b = lights[i]->mColor.blue;
-        info.light = lights[i];
 
         Point3F dVec = mCamPos - lights[i]->mPos;
         info.distSquared = mDot(dVec, dVec);
@@ -104,4 +138,3 @@ void TerrainRender::buildLightArray()
 
     mDynamicLightCount = curIndex;
 }
-

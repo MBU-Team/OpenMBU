@@ -2471,7 +2471,7 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex)
     TSMesh::setObject(this);
 
 
-    getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
+    //getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
 
     if (mountedImageIndex != -1)
     {
@@ -2518,7 +2518,7 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex)
         mShapeInstance->render();
     }
 
-    getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
+    //getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
 
 
     GFX->popWorldMatrix();
@@ -2563,12 +2563,12 @@ void ShapeBase::renderShadow(SceneState* state, RenderInst* ri)
     TSMesh::setGlow(false);
     TSMesh::setRefract(false);
 
-    getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
+    //getCurrentClientSceneGraph()->getLightManager()->sgSetupLights(this);
 
     Point3F cam = state->getCameraPosition() - getRenderPosition();
-    shadows.sgRender(this, getShapeInstance(), cam.len());
+    //shadows.sgRender(this, getShapeInstance(), cam.len());
 
-    getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
+    //getCurrentClientSceneGraph()->getLightManager()->sgResetLights();
 
     GFX->setProjectionMatrix(proj);
     GFX->setViewport(viewport);

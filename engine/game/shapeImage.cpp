@@ -689,7 +689,8 @@ void ShapeBaseImageData::registerImageLights(LightManager* lightManager, bool li
     mountTransform.getColumn(3, &mountOffset);
     mLight.mPos = objectPosition + mountOffset;
 
-    lightManager->sgRegisterGlobalLight(&mLight, this, false);
+    //lightManager->sgRegisterGlobalLight(&mLight, this, false);
+    lightManager->addLight(&mLight);
 }
 
 

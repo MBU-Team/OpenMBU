@@ -216,7 +216,8 @@ ConsoleFunction(lightScene, bool, 1, 3, "(script_function completeCallback=NULL,
 ConsoleFunction(registerLights, void, 1, 1, "()")
 {
     LightManager* lManager = getCurrentClientSceneGraph()->getLightManager();
-    lManager->sgRegisterGlobalLights(false);
+    //lManager->sgRegisterGlobalLights(false);
+    lManager->registerLights(true);
 }
 
 //--------------------------------------------------------------------------

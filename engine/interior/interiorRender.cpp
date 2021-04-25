@@ -24,8 +24,8 @@
 #include "math/mathUtils.h"
 #include "renderInstance/renderInstMgr.h"
 #include "core/frameAllocator.h"
-#include "lightingSystem/sgLightingModel.h"
-#include "lightingSystem/sgHashMap.h"
+//#include "lightingSystem/sgLightingModel.h"
+//#include "lightingSystem/sgHashMap.h"
 
 extern bool sgFogActive;
 extern U16* sgActivePolyList;
@@ -126,15 +126,21 @@ SceneGraphData Interior::setupSceneGraphInfo(InteriorInstance* intInst,
     SceneGraphData sgData;
 
     // grab the sun data from the light manager
+    //Vector<LightInfo*> lights;
+    //const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    //VectorF sunVector = sunlight->mDirection; //first light is always sun
+
     Vector<LightInfo*> lights;
-    const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
-    VectorF sunVector = sunlight->mDirection; //first light is always sun
+    gClientSceneGraph->getLightManager()->getLights(lights);
+    VectorF sunVector = lights[0]->mDirection; //first light is always sun
 
     // set the sun data into scenegraph data
     sgData.light.mDirection.set(sunVector);
     sgData.light.mPos.set(sunVector * -10000.0);
-    sgData.light.mAmbient = sunlight->mAmbient;
-    sgData.light.mColor = sunlight->mColor;
+    //sgData.light.mAmbient = sunlight->mAmbient;
+    //sgData.light.mColor = sunlight->mColor;
+    sgData.light.mAmbient = lights[0]->mAmbient;
+    sgData.light.mColor = lights[0]->mColor;
 
     /*LightInfoList lightlist;
     getCurrentClientSceneGraph()->getLightManager()->sgGetAllUnsortedLights(lightlist);
@@ -386,7 +392,7 @@ void Interior::prepBatchRender(InteriorInstance* intInst, SceneState* state)
     // render reflective surfaces
     if (!getCurrentClientSceneGraph()->isReflectPass())
     {
-        renderLights(intInst, sgData, coreRi, zoneVis);
+        //renderLights(intInst, sgData, coreRi, zoneVis);
 
         GFX->setVertexBuffer(mReflectVertBuff);
         GFX->setPrimitiveBuffer(mReflectPrimBuff);
@@ -439,155 +445,155 @@ public:
 bool Interior::renderLights(InteriorInstance* intInst, SceneGraphData& sgData,
     RenderInst* coreRi, const ZoneVisDeterminer& zonevis)
 {
-    sgDynamicLightCache lightdatacache;
-    LightInfoList lights;
-    LightManager* lm = getCurrentClientSceneGraph()->getLightManager();
+    //sgDynamicLightCache lightdatacache;
+    //LightInfoList lights;
+    //LightManager* lm = getCurrentClientSceneGraph()->getLightManager();
 
-    // get all lights...
-    lm->sgGetAllUnsortedLights(lights);
+    //// get all lights...
+    //lm->sgGetAllUnsortedLights(lights);
 
-    // filter down to needed lights...
-    for (U32 i = 0; i < lights.size(); i++)
-    {
-        LightInfo* light = lights[i];
-        if ((light->mType != ::LightInfo::Point) && (light->mType != ::LightInfo::Spot))
-            continue;
+    //// filter down to needed lights...
+    //for (U32 i = 0; i < lights.size(); i++)
+    //{
+    //    LightInfo* light = lights[i];
+    //    if ((light->mType != ::LightInfo::Point) && (light->mType != ::LightInfo::Spot))
+    //        continue;
 
-        // get info...
-        sgLightingModel& lightingmodel = sgLightingModelManager::sgGetLightingModel(light->sgLightingModelName);
-        lightingmodel.sgSetState(light);
+    //    // get info...
+    //    sgLightingModel& lightingmodel = sgLightingModelManager::sgGetLightingModel(light->sgLightingModelName);
+    //    lightingmodel.sgSetState(light);
 
-        F32 maxrad = lightingmodel.sgGetMaxRadius(true);
-        light->sgTempModelInfo[0] = 0.5f / maxrad;
+    //    F32 maxrad = lightingmodel.sgGetMaxRadius(true);
+    //    light->sgTempModelInfo[0] = 0.5f / maxrad;
 
-        GFXTexHandle tex;
-        if (light->mType == LightInfo::Spot)
-            tex = lightingmodel.sgGetDynamicLightingTextureSpot();
-        else
-            tex = lightingmodel.sgGetDynamicLightingTextureOmni();
+    //    GFXTexHandle tex;
+    //    if (light->mType == LightInfo::Spot)
+    //        tex = lightingmodel.sgGetDynamicLightingTextureSpot();
+    //    else
+    //        tex = lightingmodel.sgGetDynamicLightingTextureOmni();
 
-        lightingmodel.sgResetState();
+    //    lightingmodel.sgResetState();
 
-        Point3F offset = Point3F(maxrad, maxrad, maxrad);
-        Point3F lightpos = light->mPos;
-        intInst->getRenderWorldTransform().mulP(lightpos);
-        lightpos.convolveInverse(intInst->getScale());
-        Box3F box;
-        box.min = lightpos;
-        box.max = lightpos;
-        box.min -= offset;
-        box.max += offset;
+    //    Point3F offset = Point3F(maxrad, maxrad, maxrad);
+    //    Point3F lightpos = light->mPos;
+    //    intInst->getRenderWorldTransform().mulP(lightpos);
+    //    lightpos.convolveInverse(intInst->getScale());
+    //    Box3F box;
+    //    box.min = lightpos;
+    //    box.max = lightpos;
+    //    box.min -= offset;
+    //    box.max += offset;
 
-        // test visible...
-        // TODO!!! - nm, using zone vis instead...
+    //    // test visible...
+    //    // TODO!!! - nm, using zone vis instead...
 
-        // test illuminate interior...
-        if (intInst->getObjBox().isOverlapped(box) == false)
-            continue;
+    //    // test illuminate interior...
+    //    if (intInst->getObjBox().isOverlapped(box) == false)
+    //        continue;
 
-        // add to the list...
-        lightdatacache.increment();
-        lightdatacache.last().sgLight = light;
-        lightdatacache.last().sgMaxRadius = maxrad;
-        lightdatacache.last().sgTexture = tex;
-    }
+    //    // add to the list...
+    //    lightdatacache.increment();
+    //    lightdatacache.last().sgLight = light;
+    //    lightdatacache.last().sgMaxRadius = maxrad;
+    //    lightdatacache.last().sgTexture = tex;
+    //}
 
-    // build the render instances...
-    for (U32 z = 0; z < mZones.size(); z++)
-    {
-        if (!zonevis.isZoneVisible(z))
-            continue;
+    //// build the render instances...
+    //for (U32 z = 0; z < mZones.size(); z++)
+    //{
+    //    if (!zonevis.isZoneVisible(z))
+    //        continue;
 
-        Zone& zone = mZones[z];
-        S32 zoneid = zone.zoneId - 1;
-        if (zoneid > -1)
-            zoneid += intInst->getZoneRangeStart();// only zone managers...
-        else
-            zoneid = intInst->getCurrZone(0);// if not what zone is it in...
+    //    Zone& zone = mZones[z];
+    //    S32 zoneid = zone.zoneId - 1;
+    //    if (zoneid > -1)
+    //        zoneid += intInst->getZoneRangeStart();// only zone managers...
+    //    else
+    //        zoneid = intInst->getCurrZone(0);// if not what zone is it in...
 
-        // compare the lights and build list...
-        lights.clear();
-        for (U32 i = 0; i < lightdatacache.size(); i++)
-        {
-            if (!lightdatacache[i].sgLight->sgAllowDiffuseZoneLighting(zoneid))
-                continue;
+    //    // compare the lights and build list...
+    //    lights.clear();
+    //    for (U32 i = 0; i < lightdatacache.size(); i++)
+    //    {
+    //        if (!lightdatacache[i].sgLight->sgAllowDiffuseZoneLighting(zoneid))
+    //            continue;
 
-            // am I in the zone?
-            // need to verify - this is the only thing stopping
-            // the entire interior from being rerendered!!!
-            if (!lightdatacache[i].sgLight->sgIsInZone(zoneid))
-                continue;
+    //        // am I in the zone?
+    //        // need to verify - this is the only thing stopping
+    //        // the entire interior from being rerendered!!!
+    //        if (!lightdatacache[i].sgLight->sgIsInZone(zoneid))
+    //            continue;
 
-            lights.push_back(lightdatacache[i].sgLight);
-        }
+    //        lights.push_back(lightdatacache[i].sgLight);
+    //    }
 
-        if (lights.size() <= 0)
-            continue;
+    //    if (lights.size() <= 0)
+    //        continue;
 
-        // get the dual sorted list...
-        LightInfoDualList duallist;
-        lm->sgBuildDualLightLists(lights, duallist);
+    //    // get the dual sorted list...
+    //    LightInfoDualList duallist;
+    //    lm->sgBuildDualLightLists(lights, duallist);
 
-        for (U32 d = 0; d < duallist.size(); d++)
-        {
-            sgDynamicLightCacheData* lightpri = lightdatacache.sgFind(duallist[d].sgLightPrimary);
-            sgDynamicLightCacheData* lightsec = lightdatacache.sgFind(duallist[d].sgLightSecondary);
+    //    for (U32 d = 0; d < duallist.size(); d++)
+    //    {
+    //        sgDynamicLightCacheData* lightpri = lightdatacache.sgFind(duallist[d].sgLightPrimary);
+    //        sgDynamicLightCacheData* lightsec = lightdatacache.sgFind(duallist[d].sgLightSecondary);
 
-            if (!lightpri)
-                continue;
+    //        if (!lightpri)
+    //            continue;
 
-            // avoid dual on single groups...
-            bool allowdual = (lightsec != NULL);
+    //        // avoid dual on single groups...
+    //        bool allowdual = (lightsec != NULL);
 
-            for (U32 j = 0; j < mZoneRNList[z].renderNodeList.size(); j++)
-            {
-                RenderNode& node = mZoneRNList[z].renderNodeList[j];
+    //        for (U32 j = 0; j < mZoneRNList[z].renderNodeList.size(); j++)
+    //        {
+    //            RenderNode& node = mZoneRNList[z].renderNodeList[j];
 
-                // find the primary material (secondary lights all render the same)...
-                MatInstance* dmat = MatInstance::getDynamicLightingMaterial(
-                    node.matInst, lightpri->sgLight, allowdual);
-                if (!node.matInst || !dmat)
-                    continue;
+    //            // find the primary material (secondary lights all render the same)...
+    //            MatInstance* dmat = MatInstance::getDynamicLightingMaterial(
+    //                node.matInst, lightpri->sgLight, allowdual);
+    //            if (!node.matInst || !dmat)
+    //                continue;
 
-                RenderInst* ri = gRenderInstManager.allocInst();
-                *ri = *coreRi;
-                ri->type = RenderInstManager::RIT_InteriorDynamicLighting;
-                ri->matInst = dmat;
-                ri->primBuffIndex = node.primInfoIndex;
-                ri->dynamicLight = lightpri->sgTexture;
-                dMemcpy(&ri->light, lightpri->sgLight, sizeof(ri->light));
+    //            RenderInst* ri = gRenderInstManager.allocInst();
+    //            *ri = *coreRi;
+    //            ri->type = RenderInstManager::RIT_InteriorDynamicLighting;
+    //            ri->matInst = dmat;
+    //            ri->primBuffIndex = node.primInfoIndex;
+    //            ri->dynamicLight = lightpri->sgTexture;
+    //            dMemcpy(&ri->light, lightpri->sgLight, sizeof(ri->light));
 
-                if (dmat->isDynamicLightingMaterial_Dual())
-                {
-                    ri->dynamicLightSecondary = lightsec->sgTexture;
-                    dMemcpy(&ri->lightSecondary, lightsec->sgLight, sizeof(ri->lightSecondary));
-                    gRenderInstManager.addInst(ri);
-                    continue;
-                }
+    //            if (dmat->isDynamicLightingMaterial_Dual())
+    //            {
+    //                ri->dynamicLightSecondary = lightsec->sgTexture;
+    //                dMemcpy(&ri->lightSecondary, lightsec->sgLight, sizeof(ri->lightSecondary));
+    //                gRenderInstManager.addInst(ri);
+    //                continue;
+    //            }
 
-                gRenderInstManager.addInst(ri);
+    //            gRenderInstManager.addInst(ri);
 
-                // could be the material is only single...
-                if (lightsec)
-                {
-                    // own pass needs own material...
-                    dmat = MatInstance::getDynamicLightingMaterial(
-                        node.matInst, lightsec->sgLight, false);
-                    if (!node.matInst || !dmat)
-                        continue;
+    //            // could be the material is only single...
+    //            if (lightsec)
+    //            {
+    //                // own pass needs own material...
+    //                dmat = MatInstance::getDynamicLightingMaterial(
+    //                    node.matInst, lightsec->sgLight, false);
+    //                if (!node.matInst || !dmat)
+    //                    continue;
 
-                    RenderInst* ri = gRenderInstManager.allocInst();
-                    *ri = *coreRi;
-                    ri->type = RenderInstManager::RIT_InteriorDynamicLighting;
-                    ri->matInst = dmat;
-                    ri->primBuffIndex = node.primInfoIndex;
-                    ri->dynamicLight = lightsec->sgTexture;
-                    dMemcpy(&ri->light, lightsec->sgLight, sizeof(ri->light));
-                    gRenderInstManager.addInst(ri);
-                }
-            }
-        }
-    }
+    //                RenderInst* ri = gRenderInstManager.allocInst();
+    //                *ri = *coreRi;
+    //                ri->type = RenderInstManager::RIT_InteriorDynamicLighting;
+    //                ri->matInst = dmat;
+    //                ri->primBuffIndex = node.primInfoIndex;
+    //                ri->dynamicLight = lightsec->sgTexture;
+    //                dMemcpy(&ri->light, lightsec->sgLight, sizeof(ri->light));
+    //                gRenderInstManager.addInst(ri);
+    //            }
+    //        }
+    //    }
+    //}
 
     //LightInfoDualList duallist;
     //lm->sgBuildDualLightLists(lights, duallist);

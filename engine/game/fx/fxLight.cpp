@@ -563,7 +563,9 @@ void fxLight::registerLights(LightManager* lightManager, bool lightingScene)
     mLight.mColor = mAnimationColour;
 
     // Add light to light manager.
-    lightManager->sgRegisterGlobalLight(&mLight, this, false);
+    //lightManager->sgRegisterGlobalLight(&mLight, this, false);
+
+    lightManager->addLight(&mLight);
 }
 
 //------------------------------------------------------------------------------

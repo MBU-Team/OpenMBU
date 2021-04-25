@@ -34,7 +34,7 @@
 #include "renderInstance/renderInstMgr.h"
 #endif
 
-#include "lightingSystem/sgObjectShadows.h"
+//#include "lightingSystem/sgObjectShadows.h"
 
 class GFXCubemap;
 class TSShapeInstance;
@@ -671,7 +671,7 @@ private:
     /// @}
 
 protected:
-    sgObjectShadows shadows;
+    //sgObjectShadows shadows;
 
     /// @name Mounted Images
     /// @{

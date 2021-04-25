@@ -862,18 +862,18 @@ void Explosion::prepBatchRender(SceneState* state)
 void Explosion::registerLights(LightManager* lightManager, bool lightingScene)
 {
 
-    if (lightingScene)
-        return;
+    //if (lightingScene)
+    //    return;
 
-    // Update the light's info and add it to the scene, the light will
-    // only be visible for this current frame.
-    getRenderTransform().getColumn(3, &mLight.mPos);
-    F32 t = F32(mCurrMS) / F32(mEndingMS);
-    mLight.mRadius = mDataBlock->lightStartRadius +
-        (mDataBlock->lightEndRadius - mDataBlock->lightStartRadius) * t;
-    mLight.mColor = mDataBlock->lightStartColor +
-        (mDataBlock->lightEndColor - mDataBlock->lightStartColor) * t;
-    lightManager->sgRegisterGlobalLight(&mLight, this, false);
+    //// Update the light's info and add it to the scene, the light will
+    //// only be visible for this current frame.
+    //getRenderTransform().getColumn(3, &mLight.mPos);
+    //F32 t = F32(mCurrMS) / F32(mEndingMS);
+    //mLight.mRadius = mDataBlock->lightStartRadius +
+    //    (mDataBlock->lightEndRadius - mDataBlock->lightStartRadius) * t;
+    //mLight.mColor = mDataBlock->lightStartColor +
+    //    (mDataBlock->lightEndColor - mDataBlock->lightStartColor) * t;
+    //lightManager->sgRegisterGlobalLight(&mLight, this, false);
 
 }
 

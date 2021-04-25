@@ -23,7 +23,7 @@
 #include "terrain/terrBatch.h"
 #include "terrain/terrTexture.h"
 #include "gfx/gfxCanon.h"
-#include "lightingSystem/sgLightingModel.h"
+//#include "lightingSystem/sgLightingModel.h"
 
 MatrixF     TerrainRender::mCameraToObject;
 SceneState* TerrainRender::mSceneState;
@@ -1313,7 +1313,7 @@ void TerrainRender::renderBlock(TerrainBlock* block, SceneState* state, MatInsta
     AllocatedTexture* step;
 
     U32 emitCount = 0;
-    Vector<LightingChunkInfo> geomchunks;
+    /*Vector<LightingChunkInfo> geomchunks;
 
     // light map used in final render, not in blend...
     GFX->setTextureStageAlphaOp(2, GFXTOPModulate);
@@ -1414,6 +1414,33 @@ void TerrainRender::renderBlock(TerrainBlock* block, SceneState* state, MatInsta
             if (rendered)
                 TerrBatch::end(dmat, sgData, NULL, true, true);
         }
+    }*/
+
+    while (step = TerrTexture::getNextFrameTexture())
+    {
+        PROFILE_START(TerrainRenderStep);
+
+        EmitChunk* sq;
+
+        for (sq = step->emitList; sq; sq = sq->next)
+        {
+            TerrBatch::begin();
+            PROFILE_START(TerrainRenderStepChunk);
+
+            // Emit the appropriate geometry for our rendering mode...
+            if (mRenderingCommander)
+                renderChunkCommander(sq);
+            else
+                renderChunkNormal(sq);
+
+            emitCount++;
+
+            PROFILE_END();
+            TerrBatch::end(m, sgData, step->handle);
+        }
+
+
+        PROFILE_END();
     }
 
     //   Con::printf("Emitted %d chunks", emitCount);

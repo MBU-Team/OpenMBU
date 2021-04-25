@@ -25,10 +25,10 @@ Sun::Sun()
     mLight.mColor.set(0.7f, 0.7f, 0.7f);
     mLight.mAmbient.set(0.3f, 0.3f, 0.3f);
 
-    mLight.sgCastsShadows = true;
+    /*mLight.sgCastsShadows = true;
     mLight.sgDoubleSidedAmbient = true;
     mLight.sgUseNormals = true;
-    mLight.sgZone[0] = 0;
+    mLight.sgZone[0] = 0;*/
 
     useBloom = false;
     useToneMapping = false;
@@ -81,7 +81,7 @@ void Sun::onRemove()
 void Sun::registerLights(LightManager* lightManager, bool relight)
 {
     mRegisteredLight = mLight;
-    LightManager::sgGetFilteredLightColor(mRegisteredLight.mColor, mRegisteredLight.mAmbient, 0);
+    //LightManager::sgGetFilteredLightColor(mRegisteredLight.mColor, mRegisteredLight.mAmbient, 0);
 
 #ifdef MB_ULTRA_PREVIEWS
     // This code is not here on MBU x360 but it achieves the same result.
@@ -94,7 +94,9 @@ void Sun::registerLights(LightManager* lightManager, bool relight)
         mRegisteredLight = previewSun;
 #endif
 
-    if (relight)
+    lightManager->addLight(&mRegisteredLight);
+
+    /*if (relight)
     {
         // static lighting not affected by this option when using the sun...
         mRegisteredLight.sgCastsShadows = true;
@@ -115,7 +117,7 @@ void Sun::registerLights(LightManager* lightManager, bool relight)
 
     LightManager::sgBloomCutOff = bloomCutOff;
     LightManager::sgBloomAmount = bloomAmount;
-    LightManager::sgBloomSeedAmount = bloomSeedAmount;
+    LightManager::sgBloomSeedAmount = bloomSeedAmount;*/
 }
 
 //-----------------------------------------------------------------------------
@@ -148,7 +150,7 @@ void Sun::unpackUpdate(NetConnection*, BitStream* stream)
         stream->read(&mLight.mAmbient.blue);
         stream->read(&mLight.mAmbient.alpha);
 
-        mLight.sgCastsShadows = stream->readFlag();
+        //mLight.sgCastsShadows = stream->readFlag();
 
         stream->read(&useBloom);
         stream->read(&useToneMapping);
@@ -183,7 +185,7 @@ U32 Sun::packUpdate(NetConnection*, U32 mask, BitStream* stream)
         stream->write(mLight.mAmbient.blue);
         stream->write(mLight.mAmbient.alpha);
 
-        stream->writeFlag(mLight.sgCastsShadows);
+        //stream->writeFlag(mLight.sgCastsShadows);
 
         stream->write(useBloom);
         stream->write(useToneMapping);
@@ -212,7 +214,7 @@ void Sun::initPersistFields()
     addField("color", TypeColorF, Offset(mLight.mColor, Sun));
     addField("ambient", TypeColorF, Offset(mLight.mAmbient, Sun));
 
-    addField("castsShadows", TypeBool, Offset(mLight.sgCastsShadows, Sun));
+    //addField("castsShadows", TypeBool, Offset(mLight.sgCastsShadows, Sun));
     endGroup("Misc");
 
 

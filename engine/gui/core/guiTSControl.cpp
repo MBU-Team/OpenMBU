@@ -132,7 +132,7 @@ void GuiTSCtrl::onRender(Point2I offset, const RectI& updateRect)
 
 
     // prepare the DRL system...
-    drlSystem.sgPrepSystem(updateRect.point, updateRect.extent);
+    //drlSystem.sgPrepSystem(updateRect.point, updateRect.extent);
 
     renderWorld(updateRect);
 
@@ -140,7 +140,7 @@ void GuiTSCtrl::onRender(Point2I offset, const RectI& updateRect)
 
 
     // render DRL system...
-    drlSystem.sgRenderSystem();
+    //drlSystem.sgRenderSystem();
 
 
     // screen fx...

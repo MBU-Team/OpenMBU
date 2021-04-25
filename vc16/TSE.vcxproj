@@ -2189,21 +2189,6 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
     <ClCompile Include="..\engine\lightingSystem\blobShadow.cpp" />
-    <ClCompile Include="..\engine\lightingSystem\sgDecalProjector.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgDynamicRangeLighting.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgFormatManager.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgLightingModel.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgLightManager.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgLightMap.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgLightObject.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgMissionLightingFilter.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgObjectBasedProjector.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgObjectShadows.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgSceneLighting.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgSceneLightingInterior.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgSceneLightingTerrain.cc" />
-    <ClCompile Include="..\engine\lightingSystem\sgScenePersist.cc" />
-    <ClCompile Include="..\engine\lightingSystem\volLight.cc" />
     <ClCompile Include="..\engine\materials\customMaterial.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3852,24 +3837,7 @@
     <ClInclude Include="..\engine\interior\mirrorSubObject.h" />
     <ClInclude Include="..\engine\interior\pathedInterior.h" />
     <ClInclude Include="..\engine\lightingSystem\blobShadow.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgDecalProjector.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgDynamicRangeLighting.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgFormatManager.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgHashMap.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgLighting.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgLightingFeatures.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgLightingModel.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgLightManager.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgLightMap.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgLightObject.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgMissionLightingFilter.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgObjectBasedProjector.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgObjectShadows.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgSceneLighting.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgSceneLightingGlobals.h" />
-    <ClInclude Include="..\engine\lightingSystem\sgScenePersist.h" />
     <ClInclude Include="..\engine\lightingSystem\shadowBase.h" />
-    <ClInclude Include="..\engine\lightingSystem\volLight.h" />
     <ClInclude Include="..\engine\materials\customMaterial.h" />
     <ClInclude Include="..\engine\materials\material.h" />
     <ClInclude Include="..\engine\materials\materialList.h" />

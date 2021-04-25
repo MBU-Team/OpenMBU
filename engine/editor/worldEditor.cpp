@@ -2393,7 +2393,7 @@ static void findObjectsCallback(SceneObject* obj, void* val)
 
 void WorldEditor::renderScene(const RectI& updateRect)
 {
-    sgRelightFilter::sgRenderAllowedObjects(this);
+    //sgRelightFilter::sgRenderAllowedObjects(this);
 
     // Render the paths
     renderPaths(Sim::findObject("MissionGroup"));

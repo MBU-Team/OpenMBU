@@ -17,7 +17,7 @@
 #include "game/staticShape.h"
 #include "math/mathIO.h"
 #include "game/shadow.h"
-#include "lightingSystem/sgLighting.h"
+//#include "lightingSystem/sgLighting.h"
 #include "sim/netConnection.h"
 
 extern void wireCube(F32 size, Point3F pos);
@@ -279,7 +279,7 @@ U32 StaticShape::packUpdate(NetConnection* connection, U32 mask, BitStream* bstr
         bstream->writeFlag(customAmbientForSelfIllumination);
         bstream->write(customAmbientLighting);
         bstream->writeFlag(receiveLMLighting);
-        if (isServerObject())
+        /*if (isServerObject())
         {
             lightIds.clear();
             findLightGroup(connection);
@@ -300,7 +300,7 @@ U32 StaticShape::packUpdate(NetConnection* connection, U32 mask, BitStream* bstr
             {
                 bstream->writeInt(lightIds[i], NetConnection::GhostIdBitSize);
             }
-        }
+        }*/
     }
 
     return retMask;
@@ -333,13 +333,13 @@ void StaticShape::unpackUpdate(NetConnection* connection, BitStream* bstream)
         bstream->read(&customAmbientLighting);
         receiveLMLighting = bstream->readFlag();
 
-        U32 count = bstream->readInt(SG_TSSTATIC_MAX_LIGHT_SHIFT);
+        /*U32 count = bstream->readInt(SG_TSSTATIC_MAX_LIGHT_SHIFT);
         lightIds.clear();
         for (U32 i = 0; i < count; i++)
         {
             S32 id = bstream->readInt(NetConnection::GhostIdBitSize);
             lightIds.push_back(id);
-        }
+        }*/
     }
 }
 

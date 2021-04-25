@@ -399,7 +399,8 @@ SceneGraphData WaterBlock::setupSceneGraphInfo(SceneState* state)
 
     // grab the sun data from the light manager
     Vector<LightInfo*> lights;
-    const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    /*const LightInfo* sunlight = */getCurrentClientSceneGraph()->getLightManager()->getLights(lights);//sgGetSpecialLight(LightManager::sgSunLightType);
+    LightInfo* sunlight = lights[0];
     VectorF sunVector = sunlight->mDirection;
 
     // set the sun data into scenegraph data
