@@ -49,8 +49,8 @@ Sun::Sun()
 
 void Sun::conformLight()
 {
-    mLight.mDirection.normalize();
-    //mLight.mColor.clamp();
+    //mLight.mDirection.normalize();
+    mLight.mColor.clamp();
     mLight.mAmbient.clamp();
 }
 
@@ -63,7 +63,8 @@ bool Sun::onAdd()
 
     if (isClientObject() || gSPMode)
         Sim::getLightSet()->addObject(this);
-    else
+
+    if (!isClientObject())
         conformLight();
 
     return(true);

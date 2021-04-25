@@ -372,6 +372,10 @@ SceneObject::SceneObject()
     mBinMaxY = 0xFFFFFFFF;
 
     mHidden = false;
+
+#ifdef MB_ULTRA
+    mRenderShadow = false;
+#endif
 }
 
 SceneObject::~SceneObject()
@@ -696,6 +700,12 @@ void SceneObject::initPersistFields()
     addGroup("Visibility");
     addField("hidden", TypeBool, Offset(mHidden, SceneObject));
     endGroup("Visibility");
+
+#ifdef MB_ULTRA
+    addGroup("Lighting");
+    addField("reanderShadow", TypeBool, Offset(mRenderShadow, SceneObject));
+    endGroup("Lighting");
+#endif
 }
 
 bool SceneObject::onSceneAdd(SceneGraph* pGraph)

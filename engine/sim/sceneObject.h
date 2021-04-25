@@ -726,6 +726,10 @@ protected:
 
     bool    mHidden;
 
+#ifdef MB_ULTRA
+    bool mRenderShadow;
+#endif
+
     /// Regenerates the world-space bounding box and bounding sphere
     void    resetWorldBox();
 
