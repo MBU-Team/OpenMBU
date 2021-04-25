@@ -26,6 +26,14 @@ void RenderInteriorMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
     data.dynamicLight = ri->dynamicLight;
     data.dynamicLightSecondary = ri->dynamicLightSecondary;
 
+    //const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    //VectorF sunVector = sunlight->mDirection;
+
+    //data.light.mDirection.set(sunVector);
+    //data.light.mPos.set(sunVector * -10000.0);
+    //data.light.mColor = sunlight->mColor;
+    //data.light.mAmbient = sunlight->mColor;// + sunlight->mAmbient;
+
     data.camPos = gRenderInstManager.getCamPos();
     data.objTrans = *ri->objXform;
     data.backBuffTex = *ri->backBuffTex;

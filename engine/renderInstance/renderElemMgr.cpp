@@ -24,6 +24,12 @@ void RenderElemMgr::setupLights(RenderInst* inst, SceneGraphData& data)
         // clean up later...
         dMemcpy(&data.light, Material::getDebugLight(), sizeof(data.light));
         dMemcpy(&data.lightSecondary, Material::getDebugLight(), sizeof(data.lightSecondary));
+
+        data.light.mPos.set(data.light.mDirection * -10000.0);
+
+        // Attempt to fix edge lighting...
+        if (inst->matInst->getMaterial()->getType() == Material::base)
+            data.light.mAmbient = data.light.mAmbient + data.light.mColor * 0.3;
     } else {
         // clean up later...
         dMemcpy(&data.light, &inst->light, sizeof(inst->light));
