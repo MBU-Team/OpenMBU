@@ -331,13 +331,13 @@ void Interior::setupRender(InteriorInstance* intInst,
     *coreRi->objXform = intInst->getRenderTransform();
 
     // grab the sun data from the light manager
-    /*const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+    const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
     VectorF sunVector = sunlight->mDirection;
 
     coreRi->light.mDirection.set(sunVector);
     coreRi->light.mPos.set(sunVector * -10000.0);
     coreRi->light.mAmbient = sunlight->mAmbient;
-    coreRi->light.mColor = sunlight->mColor;*/
+    coreRi->light.mColor = sunlight->mColor;
 
     coreRi->type = RenderInstManager::RIT_Interior;
     coreRi->backBuffTex = &GFX->getSfxBackBuffer();

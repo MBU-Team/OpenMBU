@@ -148,16 +148,17 @@ void RenderInteriorMgr::render()
             {
                 RenderInst* passRI = mElementList[a].inst;
 
+                // commented out the reflective check as it is what causes the interior flickering for v4. MBO used debug interior rendering, but that's not ideal.
                 if (mat != passRI->matInst ||
-                    (a != j && passRI->reflective))  // if reflective, we want to reset textures in case this piece of geometry uses different reflect texture
+                    (a != j))// && passRI->reflective))  // if reflective, we want to reset textures in case this piece of geometry uses different reflect texture
                 {
                     lastLM = NULL;  // pointer no longer valid after setupPass() call
                     lastLNM = NULL;
                     break;
                 }
 
-                //if (passRI->type == RenderInstManager::RIT_InteriorDynamicLighting)
-                //{
+                if (passRI->type == RenderInstManager::RIT_InteriorDynamicLighting || Material::isDebugLightingEnabled())
+                {
                     if (!Material::isDebugLightingEnabled())
                     {
                         // don't break the material multipass rendering...
@@ -167,7 +168,21 @@ void RenderInteriorMgr::render()
                     }
 
                     setupLights(passRI, sgData);
-                //}
+                }
+
+                /*if (passRI->type != RenderInstManager::RIT_InteriorDynamicLighting)
+                {
+                    const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
+                    VectorF sunVector = sunlight->mDirection;
+
+                    passRI->light.mDirection.set(sunVector);
+                    passRI->light.mPos.set(sunVector * -10000.0);
+                    passRI->light.mColor = sunlight->mColor;
+                    passRI->light.mAmbient = sunlight->mAmbient;
+
+                    passRI->lightSecondary = passRI->light;
+                    setupLights(passRI, sgData);
+                }*/
 
                 // fill in shader constants that change per draw
                 //-----------------------------------------------

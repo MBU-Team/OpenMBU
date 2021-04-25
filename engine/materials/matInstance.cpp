@@ -882,9 +882,9 @@ F32 MatInstance::getWaveOffset(U32 stage)
 //------------------------------------------------------------------------------
 void MatInstance::setLightmaps(SceneGraphData& sgData)
 {
-#ifdef MB_ULTRA
-    setTextureStages(sgData, mCurPass);
-#else
+//#ifdef MB_ULTRA
+//    setTextureStages(sgData, mCurPass);
+//#else
     if (mMaterial->getType() != Material::base)
     {
         CustomMaterial* custMat = static_cast<CustomMaterial*>(mMaterial);
@@ -894,7 +894,7 @@ void MatInstance::setLightmaps(SceneGraphData& sgData)
     {
         setTextureStages(sgData, mCurPass);
     }
-#endif
+//#endif
 }
 
 //------------------------------------------------------------------------------

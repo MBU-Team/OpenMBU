@@ -86,9 +86,398 @@ void SceneLighting::InteriorProxy::light(LightInfo* light)
     U32 i;
     U32 countthispass = 0;
 
+    ColorF ambient = light->mAmbient;
+
+    S32 time = Platform::getRealMilliseconds();
+
+    // create own shadow volume
+    ShadowVolumeBSP shadowVolume;
+
+    // add the other objects lit surfaces into shadow volume
+    for (ObjectProxy** itr = gLighting->mLitObjects.begin(); itr != gLighting->mLitObjects.end(); itr++)
+    {
+        if (!(*itr)->getObject())
+            continue;
+
+        if (gLighting->isInterior((*itr)->mObj))
+        {
+            if (*itr == this)
+                continue;
+
+            if (isShadowedBy(static_cast<InteriorProxy*>(*itr)))
+                gLighting->addInterior(&shadowVolume, *static_cast<InteriorProxy*>(*itr), light, SceneLighting::SHADOW_DETAIL);
+        }
+
+        // insert the terrain squares
+        if (gLighting->isTerrain((*itr)->mObj))
+        {
+            TerrainProxy* terrain = static_cast<TerrainProxy*>(*itr);
+
+            Vector<PlaneF> clipPlanes;
+            clipPlanes = mTerrainTestPlanes;
+            for (U32 i = 0; i < mOppositeBoxPlanes.size(); i++)
+                clipPlanes.push_back(mOppositeBoxPlanes[i]);
+
+            Vector<U16> shadowList;
+            if (terrain->getShadowedSquares(clipPlanes, shadowList))
+            {
+                TerrainBlock* block = static_cast<TerrainBlock*>((*itr)->getObject());
+                Point3F offset;
+                block->getTransform().getColumn(3, &offset);
+
+                F32 squareSize = block->getSquareSize();
+
+                for (U32 j = 0; j < shadowList.size(); j++)
+                {
+                    Point2I pos(shadowList[j] & TerrainBlock::BlockMask, shadowList[j] >> TerrainBlock::BlockShift);
+                    Point2F wPos(pos.x * squareSize + offset.x,
+                        pos.y * squareSize + offset.y);
+
+                    Point3F pnts[4];
+                    pnts[0].set(wPos.x, wPos.y, fixedToFloat(block->getHeight(pos.x, pos.y)));
+                    pnts[1].set(wPos.x + squareSize, wPos.y, fixedToFloat(block->getHeight(pos.x + 1, pos.y)));
+                    pnts[2].set(wPos.x + squareSize, wPos.y + squareSize, fixedToFloat(block->getHeight(pos.x + 1, pos.y + 1)));
+                    pnts[3].set(wPos.x, wPos.y + squareSize, fixedToFloat(block->getHeight(pos.x, pos.y + 1)));
+
+                    GridSquare* gs = block->findSquare(0, pos);
+
+                    U32 squareIdx = (gs->flags & GridSquare::Split45) ? 0 : 2;
+
+                    for (U32 k = squareIdx; k < (squareIdx + 2); k++)
+                    {
+                        // face plane inwards
+                        PlaneF plane(pnts[TerrainSquareIndices[k][2]],
+                            pnts[TerrainSquareIndices[k][1]],
+                            pnts[TerrainSquareIndices[k][0]]);
+
+                        if (mDot(plane, light->mDirection) > gParellelVectorThresh)
+                        {
+                            ShadowVolumeBSP::SVPoly* poly = shadowVolume.createPoly();
+                            poly->mWindingCount = 3;
+
+                            poly->mWinding[0] = pnts[TerrainSquareIndices[k][0]];
+                            poly->mWinding[1] = pnts[TerrainSquareIndices[k][1]];
+                            poly->mWinding[2] = pnts[TerrainSquareIndices[k][2]];
+                            poly->mPlane = plane;
+
+                            // create the shadow volume for this and insert
+                            shadowVolume.buildPolyVolume(poly, light);
+                            shadowVolume.insertPoly(poly);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // light all details
+    for (U32 i = 0; i < sgInterior->getResource()->getNumDetailLevels(); i++)
+    {
+        // clear lightmaps
+        Interior* detail = sgInterior->getResource()->getDetailLevel(i);
+        gInteriorLMManager.clearLightmaps(detail->getLMHandle(), sgInterior->getLMHandle());
+
+        // clear out the last inserted interior
+        shadowVolume.removeLastInterior();
+
+        bool hasAlarm = detail->hasAlarmState();
+
+        gLighting->addInterior(&shadowVolume, *this, light, i);
+
+        for (U32 j = 0; j < shadowVolume.mSurfaces.size(); j++)
+        {
+            ShadowVolumeBSP::SurfaceInfo* surfaceInfo = shadowVolume.mSurfaces[j];
+
+            U32 surfaceIndex = surfaceInfo->mSurfaceIndex;
+
+            const Interior::Surface& surface = detail->getSurface(surfaceIndex);
+
+            // alarm lighting
+            GFXTexHandle normHandle = gInteriorLMManager.duplicateBaseLightmap(detail->getLMHandle(), sgInterior->getLMHandle(), detail->getNormalLMapIndex(surfaceIndex));
+            GFXTexHandle alarmHandle;
+
+            GBitmap* normLightmap = normHandle->getBitmap();
+            GBitmap* alarmLightmap = 0;
+
+            // check if the lightmaps are shared
+            if (hasAlarm)
+            {
+                if (detail->getNormalLMapIndex(surfaceIndex) != detail->getAlarmLMapIndex(surfaceIndex))
+                {
+                    alarmHandle = gInteriorLMManager.duplicateBaseLightmap(detail->getLMHandle(), sgInterior->getLMHandle(), detail->getAlarmLMapIndex(surfaceIndex));
+                    alarmLightmap = alarmHandle->getBitmap();
+                }
+            }
+
+            // points right way?
+            PlaneF plane = detail->getPlane(surface.planeIndex);
+            if (Interior::planeIsFlipped(surface.planeIndex))
+                plane.neg();
+
+            const MatrixF& transform = sgInterior->getTransform();
+            const Point3F& scale = sgInterior->getScale();
+
+            //
+            PlaneF projPlane;
+            mTransformPlane(transform, scale, plane, &projPlane);
+
+            F32 dot = mDot(projPlane, -light->mDirection);
+
+            // cancel out lambert dot product and ambient lighting on hardware
+            // with pixel shaders
+            if (GFX->getPixelShaderVersion() > 0.0)
+            {
+                dot = 1.0;
+                ambient.set(0.0, 0.0, 0.0);
+            }
+
+            // shadowed?
+            if (!surfaceInfo->mShadowed.size())
+            {
+                // calc the color and convert to U8 rep
+                ColorF tmp = (light->mColor * dot) + ambient;
+                tmp.clamp();
+                ColorI color = tmp;
+
+                // attempt to light both the normal and the alarm states
+                for (U32 c = 0; c < 2; c++)
+                {
+                    GBitmap* lightmap = (c == 0) ? normLightmap : alarmLightmap;
+                    if (!lightmap)
+                        continue;
+
+                    // fill it
+                    for (U32 y = 0; y < surface.mapSizeY; y++)
+                    {
+                        U8* pBits = lightmap->getAddress(surface.mapOffsetX, surface.mapOffsetY + y);
+                        for (U32 x = 0; x < surface.mapSizeX; x++)
+                        {
+#ifdef SET_COLORS
+                            * pBits++ = color.red;
+                            *pBits++ = color.green;
+                            *pBits++ = color.blue;
+#else
+                            U32 _r = static_cast<U32>(color.red) + static_cast<U32>(*pBits);
+                            *pBits = (_r <= 255) ? _r : 255;
+                            pBits++;
+
+                            U32 _g = static_cast<U32>(color.green) + static_cast<U32>(*pBits);
+                            *pBits = (_g <= 255) ? _g : 255;
+                            pBits++;
+
+                            U32 _b = static_cast<U32>(color.blue) + static_cast<U32>(*pBits);
+                            *pBits = (_b <= 255) ? _b : 255;
+                            pBits++;
+#endif
+                        }
+                    }
+                }
+
+                continue;
+            }
+
+            // get the lmagGen...
+            const Interior::TexGenPlanes& lmTexGenEQ = detail->getLMTexGenEQ(surfaceIndex);
+
+            const F32* const lGenX = lmTexGenEQ.planeX;
+            const F32* const lGenY = lmTexGenEQ.planeY;
+
+            AssertFatal((lGenX[0] * lGenX[1] == 0.f) &&
+                (lGenX[0] * lGenX[2] == 0.f) &&
+                (lGenX[1] * lGenX[2] == 0.f), "Bad lmTexGen!");
+            AssertFatal((lGenY[0] * lGenY[1] == 0.f) &&
+                (lGenY[0] * lGenY[2] == 0.f) &&
+                (lGenY[1] * lGenY[2] == 0.f), "Bad lmTexGen!");
+
+            // get the axis index for the texgens (could be swapped)
+            S32 si;
+            S32 ti;
+            S32 axis = -1;
+
+            //
+            if (lGenX[0] == 0.f && lGenY[0] == 0.f)          // YZ
+            {
+                axis = 0;
+                if (lGenX[1] == 0.f) { // swapped?
+                    si = 2;
+                    ti = 1;
+                }
+                else {
+                    si = 1;
+                    ti = 2;
+                }
+            }
+            else if (lGenX[1] == 0.f && lGenY[1] == 0.f)     // XZ
+            {
+                axis = 1;
+                if (lGenX[0] == 0.f) { // swapped?
+                    si = 2;
+                    ti = 0;
+                }
+                else {
+                    si = 0;
+                    ti = 2;
+                }
+            }
+            else if (lGenX[2] == 0.f && lGenY[2] == 0.f)     // XY
+            {
+                axis = 2;
+                if (lGenX[0] == 0.f) { // swapped?
+                    si = 1;
+                    ti = 0;
+                }
+                else {
+                    si = 0;
+                    ti = 1;
+                }
+            }
+            AssertFatal(!(axis == -1), "SceneLighting::lightInterior: bad TexGen!");
+
+            const F32* pNormal = ((const F32*)plane);
+
+            Point3F start;
+            F32* pStart = ((F32*)start);
+
+            F32 lumelScale = 1.0 / (lGenX[si] * normLightmap->getWidth());
+
+            // get the start point on the lightmap
+            pStart[si] = (((surface.mapOffsetX * lumelScale) / (1.0 / lGenX[si])) - lGenX[3]) / lGenX[si];
+            pStart[ti] = (((surface.mapOffsetY * lumelScale) / (1.0 / lGenY[ti])) - lGenY[3]) / lGenY[ti];
+            pStart[axis] = ((pNormal[si] * pStart[si]) + (pNormal[ti] * pStart[ti]) + plane.d) / -pNormal[axis];
+
+            start.convolve(scale);
+            transform.mulP(start);
+
+            // get the s/t vecs oriented on the surface
+            Point3F sVec;
+            Point3F tVec;
+
+            F32* pSVec = ((F32*)sVec);
+            F32* pTVec = ((F32*)tVec);
+
+            F32 angle;
+            Point3F planeNormal;
+
+            // s
+            pSVec[si] = 1.f;
+            pSVec[ti] = 0.f;
+
+            planeNormal = plane;
+            ((F32*)planeNormal)[ti] = 0.f;
+            planeNormal.normalize();
+
+            angle = mAcos(mClampF(((F32*)planeNormal)[axis], -1.f, 1.f));
+            pSVec[axis] = (((F32*)planeNormal)[si] < 0.f) ? mTan(angle) : -mTan(angle);
+
+            // t
+            pTVec[ti] = 1.f;
+            pTVec[si] = 0.f;
+
+            planeNormal = plane;
+            ((F32*)planeNormal)[si] = 0.f;
+            planeNormal.normalize();
+
+            angle = mAcos(mClampF(((F32*)planeNormal)[axis], -1.f, 1.f));
+            pTVec[axis] = (((F32*)planeNormal)[ti] < 0.f) ? mTan(angle) : -mTan(angle);
+
+            // scale the vectors
+
+            sVec *= lumelScale;
+            tVec *= lumelScale;
+
+            // project vecs
+            transform.mulV(sVec);
+            sVec.convolve(scale);
+
+            transform.mulV(tVec);
+            tVec.convolve(scale);
+
+            Point3F& curPos = start;
+            Point3F sRun = sVec * surface.mapSizeX;
+
+            // get the lexel area
+            Point3F cross;
+            mCross(sVec, tVec, &cross);
+            F32 maxLexelArea = cross.len();
+
+            const PlaneF& surfacePlane = shadowVolume.getPlane(surfaceInfo->mPlaneIndex);
+
+            // get the world coordinate for each lexel
+            for (U32 y = 0; y < surface.mapSizeY; y++)
+            {
+                U8* normBits = normLightmap->getAddress(surface.mapOffsetX, surface.mapOffsetY + y);
+                U8* alarmBits = alarmLightmap ? alarmLightmap->getAddress(surface.mapOffsetX, surface.mapOffsetY + y) : 0;
+
+                for (U32 x = 0; x < surface.mapSizeX; x++)
+                {
+                    ShadowVolumeBSP::SVPoly* poly = shadowVolume.createPoly();
+                    poly->mPlane = surfacePlane;
+                    poly->mWindingCount = 4;
+
+                    // set the poly indices
+                    poly->mWinding[0] = curPos;
+                    poly->mWinding[1] = curPos + sVec;
+                    poly->mWinding[2] = curPos + sVec + tVec;
+                    poly->mWinding[3] = curPos + tVec;
+
+                    //               // insert poly which has been clipped to own shadow volume
+                    //               ShadowVolumeBSP::SVPoly * store = 0;
+                    //               shadowVolume.clipToSelf(surfaceInfo->mShadowVolume, &store, poly);
+                    //
+                    //               if(!store)
+                    //                  continue;
+                    //
+                    //               F32 lexelArea = shadowVolume.getPolySurfaceArea(store);
+                    //               F32 area = shadowVolume.getLitSurfaceArea(store, surfaceInfo);
+
+                    F32 area = shadowVolume.getLitSurfaceArea(poly, surfaceInfo);
+                    F32 shadowScale = mClampF(area / maxLexelArea, 0.f, 1.f);
+
+                    // get the color into U8
+                    ColorF tmp = (light->mColor * dot * shadowScale) + ambient;
+                    tmp.clamp();
+                    ColorI color = tmp;
+
+                    // attempt to light both normal and alarm lightmaps
+                    for (U32 c = 0; c < 2; c++)
+                    {
+                        U8*& pBits = (c == 0) ? normBits : alarmBits;
+                        if (!pBits)
+                            continue;
+
+#ifdef SET_COLORS
+                        * pBits++ = color.red;
+                        *pBits++ = color.green;
+                        *pBits++ = color.blue;
+#else
+                        U32 _r = static_cast<U32>(color.red) + static_cast<U32>(*pBits);
+                        *pBits = (_r <= 255) ? _r : 255;
+                        pBits++;
+
+                        U32 _g = static_cast<U32>(color.green) + static_cast<U32>(*pBits);
+                        *pBits = (_g <= 255) ? _g : 255;
+                        pBits++;
+
+                        U32 _b = static_cast<U32>(color.blue) + static_cast<U32>(*pBits);
+                        *pBits = (_b <= 255) ? _b : 255;
+                        pBits++;
+#endif
+                    }
+
+                    curPos += sVec;
+                }
+
+                curPos -= sRun;
+                curPos += tVec;
+            }
+        }
+    }
+
+    Con::printf("    = interior lit in %3.3f seconds", (Platform::getRealMilliseconds() - time) / 1000.f);
+
 
     // stats...
-    sgStatistics::sgInteriorObjectIlluminationCount++;
+    /*sgStatistics::sgInteriorObjectIlluminationCount++;
 
 
     for (i = sgCurrentSurfaceIndex; i < sgSurfaces.size(); i++)
@@ -99,7 +488,7 @@ void SceneLighting::InteriorProxy::light(LightInfo* light)
         sgCurrentSurfaceIndex++;
         if ((countthispass >= sgSurfacesPerPass) && (sgLights.last() != light))
             break;
-    }
+    }*/
 }
 
 void SceneLighting::InteriorProxy::sgProcessSurface(const Interior::Surface& surface,

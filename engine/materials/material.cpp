@@ -23,7 +23,7 @@ U32 Material::mLastTime = 0;
 F32 Material::mAccumTime = 0.0;
 SimSet* Material::gMatSet = NULL;
 LightInfo Material::smDebugLight;
-bool Material::smDebugLightingEnabled = true;
+bool Material::smDebugLightingEnabled = false;
 
 static EnumTable::Enums gBlendOpEnums[] =
 {
