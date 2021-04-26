@@ -84,6 +84,11 @@ void Sun::registerLights(LightManager* lightManager, bool relight)
     mRegisteredLight = mLight;
     LightManager::sgGetFilteredLightColor(mRegisteredLight.mColor, mRegisteredLight.mAmbient, 0);
 
+#ifdef MB_ULTRA
+    // Color correction to match MBU as close as possible (this took several hours of trial and error, your welcome.)
+    mRegisteredLight.mAmbient *= ColorF(1.18f, 1.06f, 0.95f);
+#endif
+
 #ifdef MB_ULTRA_PREVIEWS
     // This code is not here on MBU x360 but it achieves the same result.
     // It likely works on x360 just because it uses the old TSE 0.1 render system.
