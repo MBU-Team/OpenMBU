@@ -1975,6 +1975,7 @@
     </ClCompile>
     <ClCompile Include="..\engine\gfx\reflectPlane.cpp" />
     <ClCompile Include="..\engine\gfx\screenshot.cpp" />
+    <ClCompile Include="..\engine\gui\containers\guiAutoScrollCtrl.cpp" />
     <ClCompile Include="..\engine\gui\containers\guiCtrlArrayCtrl.cpp" />
     <ClCompile Include="..\engine\gui\containers\guiFrameCtrl.cpp" />
     <ClCompile Include="..\engine\gui\containers\guiPaneCtrl.cpp" />
@@ -3783,6 +3784,7 @@
     <ClInclude Include="..\engine\gfx\primBuilder.h" />
     <ClInclude Include="..\engine\gfx\reflectPlane.h" />
     <ClInclude Include="..\engine\gfx\screenshot.h" />
+    <ClInclude Include="..\engine\gui\containers\guiAutoScrollCtrl.h" />
     <ClInclude Include="..\engine\gui\containers\guiCtrlArrayCtrl.h" />
     <ClInclude Include="..\engine\gui\containers\guiFrameCtrl.h" />
     <ClInclude Include="..\engine\gui\containers\guiPaneCtrl.h" />

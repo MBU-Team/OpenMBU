@@ -1560,6 +1560,9 @@
     <ClCompile Include="..\engine\gfx\gammaBuffer.cpp">
       <Filter>Source Files\gfx</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\gui\containers\guiAutoScrollCtrl.cpp">
+      <Filter>Source Files\gui\containers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -2872,6 +2875,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\gfx\gammaBuffer.h">
       <Filter>Source Files\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\gui\containers\guiAutoScrollCtrl.h">
+      <Filter>Source Files\gui\containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

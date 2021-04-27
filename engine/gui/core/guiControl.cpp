@@ -281,22 +281,38 @@ Point2I GuiControl::globalToLocalCoord(const Point2I& src)
 
 void GuiControl::resize(const Point2I& newPosition, const Point2I& newExtent)
 {
-    //call set update both before and after
-    setUpdate();
     Point2I actualNewExtent = Point2I(getMax(mMinExtent.x, newExtent.x),
         getMax(mMinExtent.y, newExtent.y));
-    iterator i;
-    for (i = begin(); i != end(); i++)
-    {
-        GuiControl* ctrl = static_cast<GuiControl*>(*i);
-        ctrl->parentResized(mBounds.extent, actualNewExtent);
-    }
-    mBounds.set(newPosition, actualNewExtent);
 
-    GuiControl* parent = getParent();
-    if (parent)
-        parent->childResized(this);
-    setUpdate();
+    // only do the child control resizing stuff if you really need to.
+    // If we didn't size anything, return false to indicate such
+    bool extentChanged = (actualNewExtent != mBounds.extent);
+    bool positionChanged = (newPosition != mBounds.point);
+    if (!extentChanged && !positionChanged)
+        return;
+
+    // Update Extent
+    if (extentChanged)
+    {
+        //call set update both before and after
+        setUpdate();
+        iterator i;
+        for (i = begin(); i != end(); i++)
+        {
+            GuiControl* ctrl = static_cast<GuiControl*>(*i);
+            ctrl->parentResized(mBounds.extent, actualNewExtent);
+        }
+        mBounds.set(newPosition, actualNewExtent);
+
+        GuiControl* parent = getParent();
+        if (parent)
+            parent->childResized(this);
+        setUpdate();
+    }
+
+    // Update Position
+    if (positionChanged)
+        mBounds.point = newPosition;
 }
 
 void GuiControl::setPosition(const Point2I& newPosition)
