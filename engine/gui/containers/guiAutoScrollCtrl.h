@@ -22,7 +22,7 @@ private:
    F32 mStartDelay;
    F32 mResetDelay;
    S32 mChildBorder;
-   F32 mScrollSpeed;
+   F32 mScrollInterval;
    bool mTickCallback;
 
    F32 mControlPositionY;

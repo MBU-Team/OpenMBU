@@ -18,7 +18,7 @@ GuiAutoScrollCtrl::GuiAutoScrollCtrl()
    mStartDelay = 3.0f;
    mResetDelay = 5.0f;
    mChildBorder = 10;
-   mScrollSpeed = 1.0f;
+   mScrollInterval = 1.0f;
    mTickCallback = false;
    //mIsContainer = true;
 
@@ -40,7 +40,7 @@ void GuiAutoScrollCtrl::initPersistFields()
    addField("startDelay", TypeF32, Offset(mStartDelay, GuiAutoScrollCtrl));
    addField("resetDelay", TypeF32, Offset(mResetDelay, GuiAutoScrollCtrl));
    addField("childBorder", TypeS32, Offset(mChildBorder, GuiAutoScrollCtrl));
-   addField("scrollSpeed", TypeF32, Offset(mScrollSpeed, GuiAutoScrollCtrl));
+   addField("scrollInterval", TypeF32, Offset(mScrollInterval, GuiAutoScrollCtrl));
    addField("tickCallback", TypeBool, Offset(mTickCallback, GuiAutoScrollCtrl));
 }
 
@@ -124,7 +124,7 @@ void GuiAutoScrollCtrl::advanceTime(F32 timeDelta)
 
    else
    {
-      mControlPositionY -= mScrollSpeed * timeDelta;
+      mControlPositionY -= mScrollInterval * timeDelta;
       control->setPosition(Point2I(oldPosition.x, (S32)mControlPositionY));
    }
 }
