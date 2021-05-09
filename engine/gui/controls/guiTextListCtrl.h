@@ -53,6 +53,8 @@ protected:
     bool  mCenterBmpsVert;
     bool  mCenterBmpsHoriz;
 
+    bool mAlternatingRows;
+
     Map<U32, GFXTexHandle, HashTable<U32, GFXTexHandle>> mTextureMap;
 
     U32 getRowWidth(Entry* row);

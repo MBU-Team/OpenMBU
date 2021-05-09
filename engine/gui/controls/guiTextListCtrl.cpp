@@ -65,6 +65,7 @@ GuiTextListCtrl::GuiTextListCtrl()
     mRowHeightOffset = 0;
     mCenterBmpsVert = true;
     mCenterBmpsHoriz = true;
+    mAlternatingRows = true;
 }
 
 void GuiTextListCtrl::initPersistFields()
@@ -262,7 +263,7 @@ void GuiTextListCtrl::onCellSelected(Point2I cell)
 
 void GuiTextListCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, bool mouseOver)
 {
-    if (cell.y % 2 < mProfile->mBitmapArrayRects.size())
+    if (mAlternatingRows && cell.y % 2 < mProfile->mBitmapArrayRects.size())
     {
         GFX->setBitmapModulation(ColorI(255, 255, 255));
 

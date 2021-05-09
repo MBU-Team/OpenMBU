@@ -625,6 +625,7 @@ void GuiMenuBackgroundCtrl::onMouseDragged(const GuiEvent& event)
 GuiMenuTextListCtrl::GuiMenuTextListCtrl(GuiMenuBar* ctrl)
 {
     mMenuBarCtrl = ctrl;
+    mAlternatingRows = false;
 }
 
 void GuiMenuTextListCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, bool mouseOver)
