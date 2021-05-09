@@ -6,6 +6,17 @@
 //--------------------------------------------------------------------------
 
 $Gui::fontCacheDirectory = expandFilename("./cache");
+
+// Check for a localized font cache
+error("@@@ Checking for localized font cache dir:" SPC $Gui::fontCacheDirectory @ "/" @ getLanguage());
+if( IsDirectory( $Gui::fontCacheDirectory @ "/" @ getLanguage() ) )
+{
+   error( "@@@ Using localized font cache for " @ getLanguage() @ " language." );
+   $Gui::fontCacheDirectory = $Gui::fontCacheDirectory @ "/" @ getLanguage();
+}
+else
+   error( "@@@ Using default font cache, since no font cache for " @ getLanguage() @ " exists." );
+
 $Gui::clipboardFile      = expandFilename("./cache/clipboard.gui");
 
 // GuiDefaultProfile is a special case, all other profiles are initialized
@@ -37,12 +48,14 @@ if(!isObject(GuiDefaultProfile)) new GuiControlProfile (GuiDefaultProfile)
    // font
    fontType = "Arial";
    fontSize = 14;
-   fontCharset = CHINESEBIG5;
+   
+   // Changed for loc debug builds
+   fontCharset = $locCharacterSet;
 
    fontColor = "0 0 0";
    fontColorHL = "32 100 100";
    fontColorNA = "0 0 0";
-   
+   fontColorSEL= "200 200 200";
 
    // bitmap information
    bitmap = ($platform $= "macos") ? "./osxWindow" : "./darkWindow";
@@ -57,10 +70,19 @@ if(!isObject(GuiDefaultProfile)) new GuiControlProfile (GuiDefaultProfile)
    returnTab = false;
    numbersOnly = false;
    cursorColor = "0 0 0 255";
+   
+   shadow = 0;
 
    // sounds
    soundButtonDown = "";
    soundButtonOver = "";
+   soundOptionChanged = "";
+};
+
+if(!isObject(PlayerNameProfile)) new GuiControlProfile (PlayerNameProfile )
+{
+   fontType = "Arial Bold";
+   fontSize = 18;
 };
 
 if(!isObject(GuiInputCtrlProfile)) new GuiControlProfile( GuiInputCtrlProfile )
@@ -85,7 +107,7 @@ if(!isObject(GuiWindowProfile)) new GuiControlProfile (GuiWindowProfile)
    fillColor = ($platform $= "macos") ? "211 211 211" : "192 192 192";
    fillColorHL = ($platform $= "macos") ? "190 255 255" : "64 150 150";
    fillColorNA = ($platform $= "macos") ? "255 255 255" : "150 150 150";
-   fontColor = ($platform $= "macos") ? "0 0 0" : "255 255 255";
+   fontColor = ($platform $= "macos") ? "0 0 0" : "235 235 235";
    fontColorHL = ($platform $= "macos") ? "200 200 200" : "0 0 0";
    text = "GuiWindowCtrl test";
    bitmap = ($platform $= "macos") ? "./osxWindow" : "./darkWindow";
@@ -101,7 +123,7 @@ if(!isObject(GuiToolWindowProfile)) new GuiControlProfile (GuiToolWindowProfile)
    fillColor = "192 192 192";
    fillColorHL = "64 150 150";
    fillColorNA = "150 150 150";
-   fontColor = "255 255 255";
+   fontColor = "235 235 235";
    fontColorHL = "0 0 0";
    bitmap = "./torqueToolWindow";
    textOffset = "6 6";
@@ -135,7 +157,7 @@ if( !isObject(GuiTabPageProfile) ) new GuiControlProfile (GuiTabPageProfile)
 if(!isObject(GuiContentProfile)) new GuiControlProfile (GuiContentProfile)
 {
    opaque = true;
-   fillColor = "255 255 255";
+   fillColor = "235 235 235";
 };
 
 if(!isObject(GuiModelessDialogProfile)) new GuiControlProfile("GuiModelessDialogProfile")
@@ -169,7 +191,7 @@ if(!isObject(GuiMenuBarProfile)) new GuiControlProfile (GuiMenuBarProfile)
    fillColorHL = "0 0 96";
    border = 4;
    fontColor = "0 0 0";
-   fontColorHL = "255 255 255";
+   fontColorHL = "235 235 235";
    fontColorNA = "128 128 128";
    fixedExtent = true;
    justify = "center";
@@ -197,11 +219,22 @@ if(!isObject(GuiRadioProfile)) new GuiControlProfile (GuiRadioProfile)
 if(!isObject(GuiScrollProfile)) new GuiControlProfile (GuiScrollProfile)
 {
    opaque = true;
-   fillColor = "255 255 255";
+   fillColor = "235 235 235";
    border = 3;
    borderThickness = 2;
    borderColor = "0 0 0";
    bitmap = ($platform $= "macos") ? "./osxScroll" : "./darkScroll";
+   hasBitmapArray = true;
+};
+
+new GuiControlProfile (GuiAutoScrollProfile)
+{
+   opaque = true;
+   fillColor = "255 255 255";
+   border = 3;
+   borderThickness = 2;
+   borderColor = "0 0 0";
+   bitmap = "./demoScroll";
    hasBitmapArray = true;
 };
 
@@ -236,13 +269,13 @@ if(!isObject(GuiCenterTextProfile)) new GuiControlProfile (GuiCenterTextProfile 
 if(!isObject(GuiTextEditProfile)) new GuiControlProfile (GuiTextEditProfile)
 {
    opaque = true;
-   fillColor = "255 255 255";
+   fillColor = "235 235 235";
    fillColorHL = "128 128 128";
    border = 3;
    borderThickness = 2;
    borderColor = "0 0 0";
    fontColor = "0 0 0";
-   fontColorHL = "255 255 255";
+   fontColorHL = "235 235 235";
    fontColorNA = "128 128 128";
    textOffset = "0 2";
    autoSizeWidth = false;
@@ -254,12 +287,12 @@ if(!isObject(GuiTextEditProfile)) new GuiControlProfile (GuiTextEditProfile)
 if(!isObject(GuiControlListPopupProfile)) new GuiControlProfile (GuiControlListPopupProfile)
 {
    opaque = true;
-   fillColor = "255 255 255";
+   fillColor = "235 235 235";
    fillColorHL = "128 128 128";
    border = true;
    borderColor = "0 0 0";
    fontColor = "0 0 0";
-   fontColorHL = "255 255 255";
+   fontColorHL = "235 235 235";
    fontColorNA = "128 128 128";
    textOffset = "0 2";
    autoSizeWidth = false;
@@ -384,11 +417,11 @@ if(!isObject(GuiMLTextEditProfile)) new GuiControlProfile (GuiMLTextEditProfile)
    fontColorLink = "255 96 96"; 
    fontColorLinkHL = "0 0 255"; 
 
-   fillColor = "255 255 255"; 
+   fillColor = "235 235 235"; 
    fillColorHL = "128 128 128"; 
 
    fontColor = "0 0 0"; 
-   fontColorHL = "255 255 255"; 
+   fontColorHL = "235 235 235"; 
    fontColorNA = "128 128 128"; 
 
    autoSizeWidth = true; 
