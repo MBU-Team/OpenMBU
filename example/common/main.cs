@@ -59,6 +59,7 @@ function initBaseClient()
    exec("./client/mission.cs");
    exec("./client/missionDownload.cs");
    exec("./client/actionMap.cs");
+   exec("./client/musicPlayer.cs");
 
    // There are also a number of support scripts loaded by the canvas
    // when it's first initialized.  Check out client/canvas.cs

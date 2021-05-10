@@ -67,6 +67,23 @@ new AudioDescription(AudioMusic)
    type     = $MusicAudioType;
 };
 
+new AudioDescription(TimTranceDescription : AudioMusic)
+{
+   volume = 0.75;
+};
+
+new AudioProfile(TimTranceSfx)
+{
+   fileName = "~/data/sound/music/Tim_Trance.ogg";
+   description = "TimTranceDescription";
+   preload = false;
+};
+
+if (isObject(MusicPlayer))
+{
+   MusicPlayer.addTrack(TimTranceSfx);
+}
+
 function musicControlChanged(%haveControl)
 {
    if(%haveControl)

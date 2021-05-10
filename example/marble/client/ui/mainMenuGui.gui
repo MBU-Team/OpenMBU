@@ -165,8 +165,10 @@ function MainMenuGui::show(%this)
    glogo.visible = 1;
    
    // Stat up the title music
-   if( xbHasPlaybackControl() && !xbIsPlayingMusic() )
-      playMusic();   
+   //if( xbHasPlaybackControl() && !xbIsPlayingMusic() )
+   //   playMusic();  
+   if (isObject(MusicPlayer)) 
+      MusicPlayer.play();
 
    if(UpsellGui.displayPDLCUpsell) 
 	   UpsellGui.schedule(0, displayPDLCPostGame, false);      

@@ -104,7 +104,7 @@ function PlayGui::onSleep(%this)
       Canvas.popDialog(GamePauseGui);
       
    // Terminate all playing sounds
-   alxStopAll();
+   //alxStopAll();
    playShellMusic();
    // pop the keymaps
    moveMap.pop();

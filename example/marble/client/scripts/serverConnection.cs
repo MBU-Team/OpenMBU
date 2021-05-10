@@ -224,8 +224,8 @@ function disconnectedCleanup()
       
    // Clear misc script stuff
    HudMessageVector.clear();
-   if (isObject(MusicPlayer))
-      MusicPlayer.stop();
+   //if (isObject(MusicPlayer))
+   //   MusicPlayer.stop();
    //
    LagIcon.setVisible(false);
    PlayerListGui.clear();

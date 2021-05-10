@@ -161,6 +161,9 @@ function initClient()
    // Default player key bindings
    exec("./scripts/default.bind.cs");
    exec("./scripts/xbControler.cs");
+   
+   if (isObject(MusicPlayer))
+      MusicPlayer.activate();
 
    // Copy saved script prefs into C++ code.
    setShadowDetailLevel( $pref::shadows );

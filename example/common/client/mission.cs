@@ -16,7 +16,7 @@ function clientCmdMissionStart(%seq)
 function clientCmdMissionEnd(%seq)
 {
    // Recieved when the current mission is ended.
-   alxStopAll();
+   //alxStopAll();
 
    // Disable mission lighting if it's going, this is here
    // in case the mission ends while we are in the process
