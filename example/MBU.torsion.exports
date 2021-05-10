@@ -1706,6 +1706,15 @@
     <class>        <name>GameTSCtrl</name>
         <base>GuiTSCtrl</base>
     </class>
+    <class>        <name>GammaBuffer</name>
+        <base>SimObject</base>
+        <field>            <name>bitmap</name>
+            <desc>filename bitmap</desc>
+        </field>
+        <field>            <name>shader</name>
+            <desc>string shader</desc>
+        </field>
+    </class>
     <class>        <name>GFXCardProfiler</name>
         <method>            <name>getCard</name>
             <desc>- Returns the card name (GeforceFX 5950 Ultra).</desc>
@@ -1734,6 +1743,24 @@
     </class>
     <class>        <name>GuiArrayCtrl</name>
         <base>GuiControl</base>
+    </class>
+    <class>        <name>GuiAutoScrollCtrl</name>
+        <base>GuiTickCtrl</base>
+        <field>            <name>childBorder</name>
+            <desc>int childBorder</desc>
+        </field>
+        <field>            <name>resetDelay</name>
+            <desc>float resetDelay</desc>
+        </field>
+        <field>            <name>scrollInterval</name>
+            <desc>float scrollInterval</desc>
+        </field>
+        <field>            <name>startDelay</name>
+            <desc>float startDelay</desc>
+        </field>
+        <field>            <name>tickCallback</name>
+            <desc>bool tickCallback</desc>
+        </field>
     </class>
     <class>        <name>GuiAviBitmapCtrl</name>
         <base>GuiControl</base>
@@ -2162,11 +2189,17 @@
         <field>            <name>rowHeight</name>
             <desc>int rowHeight</desc>
         </field>
+        <field>            <name>shadow</name>
+            <desc>int shadow</desc>
+        </field>
         <field>            <name>soundButtonDown</name>
             <desc>AudioProfile soundButtonDown</desc>
         </field>
         <field>            <name>soundButtonOver</name>
             <desc>AudioProfile soundButtonOver</desc>
+        </field>
+        <field>            <name>soundOptionChanged</name>
+            <desc>AudioProfile soundOptionChanged</desc>
         </field>
         <field>            <name>tab</name>
             <desc>bool tab</desc>
@@ -2708,6 +2741,24 @@ More of a helper function than anything.   If console access to the field list i
     <class>        <name>GuiRadioCtrl</name>
         <base>GuiCheckBoxCtrl</base>
     </class>
+    <class>        <name>GuiScoreCountHud</name>
+        <base>GuiControl</base>
+        <method>            <name>addScore</name>
+            <args>score, foreColor, backColor</args>
+        </method>
+        <field>            <name>acceleration</name>
+            <desc>float acceleration</desc>
+        </field>
+        <field>            <name>time</name>
+            <desc>int time</desc>
+        </field>
+        <field>            <name>velocity</name>
+            <desc>float velocity</desc>
+        </field>
+        <field>            <name>verticalOffset</name>
+            <desc>float verticalOffset</desc>
+        </field>
+    </class>
     <class>        <name>GuiScrollCtrl</name>
         <base>GuiControl</base>
         <method>            <name>scrollToBottom</name>
@@ -3003,8 +3054,23 @@ More of a helper function than anything.   If console access to the field list i
             <args>int columnID, bool increasing=false</args>
             <desc>Perform a numerical sort on the values in the specified column.</desc>
         </method>
+        <field>            <name>autoResize</name>
+            <desc>bool autoResize</desc>
+        </field>
+        <field>            <name>centerBmpsHoriz</name>
+            <desc>bool centerBmpsHoriz</desc>
+        </field>
+        <field>            <name>centerBmpsVert</name>
+            <desc>bool centerBmpsVert</desc>
+        </field>
         <field>            <name>clipColumnText</name>
             <desc>bool clipColumnText</desc>
+        </field>
+        <field>            <name>columnAligns</name>
+            <desc>intList columnAligns</desc>
+        </field>
+        <field>            <name>columnBmps</name>
+            <desc>boolList columnBmps</desc>
         </field>
         <field>            <name>columns</name>
             <desc>intList columns</desc>
@@ -3017,6 +3083,9 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>resizeCell</name>
             <desc>bool resizeCell</desc>
+        </field>
+        <field>            <name>rowHeightOffset</name>
+            <desc>int rowHeightOffset</desc>
         </field>
     </class>
     <class>        <name>GuiTickCtrl</name>
@@ -3205,6 +3274,47 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <field>            <name>rows</name>
             <desc>string rows</desc>
+        </field>
+    </class>
+    <class>        <name>GuiXboxOptionListCtrl</name>
+        <base>GuiControl</base>
+        <method>            <name>addRow</name>
+            <args>text, [data], [bitmapIndex]</args>
+        </method>
+        <method>            <name>clear</name>
+        </method>
+        <method>            <name>getBottomRow</name>
+        </method>
+        <method>            <name>getOptionIndex</name>
+            <args>row</args>
+        </method>
+        <method>            <name>getRowCount</name>
+        </method>
+        <method>            <name>getSelectedData</name>
+        </method>
+        <method>            <name>getSelectedIndex</name>
+        </method>
+        <method>            <name>getSelectedText</name>
+        </method>
+        <method>            <name>getTopRow</name>
+        </method>
+        <method>            <name>setOptionIndex</name>
+            <args>row, idx</args>
+        </method>
+        <method>            <name>setOptionWrap</name>
+            <args>row, wrap</args>
+        </method>
+        <field>            <name>border</name>
+            <desc>bool border</desc>
+        </field>
+        <field>            <name>columnMargins</name>
+            <desc>intList columnMargins</desc>
+        </field>
+        <field>            <name>columns</name>
+            <desc>intList columns</desc>
+        </field>
+        <field>            <name>showRects</name>
+            <desc>bool showRects</desc>
         </field>
     </class>
     <class>        <name>HoverVehicle</name>
@@ -3721,6 +3831,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>planarReflection</name>
             <desc>bool planarReflection</desc>
         </field>
+        <field>            <name>renderBin</name>
+            <desc>enumval renderBin</desc>
+        </field>
         <field>            <name>restitution</name>
             <desc>float restitution</desc>
         </field>
@@ -3753,6 +3866,9 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>specularPower</name>
             <desc>float specularPower</desc>
+        </field>
+        <field>            <name>texCompression</name>
+            <desc>enumval texCompression</desc>
         </field>
         <field>            <name>translucent</name>
             <desc>bool translucent</desc>
@@ -4728,6 +4844,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>Position</name>
             <desc>MatrixPosition Position</desc>
         </field>
+        <field>            <name>reanderShadow</name>
+            <desc>bool reanderShadow</desc>
+        </field>
         <field>            <name>rotation</name>
             <desc>MatrixRotation rotation</desc>
         </field>
@@ -5614,6 +5733,12 @@ More of a helper function than anything.   If console access to the field list i
     </class>
     <class>        <name>SpawnSphere</name>
         <base>MissionMarker</base>
+        <method>            <name>getGemDatablock</name>
+            <desc>- gets the gem datablock</desc>
+        </method>
+        <field>            <name>gemDataBlock</name>
+            <desc>GameBaseData gemDataBlock</desc>
+        </field>
         <field>            <name>indoorWeight</name>
             <desc>float indoorWeight</desc>
         </field>
@@ -7091,6 +7216,11 @@ More of a helper function than anything.   If console access to the field list i
         <args>handle</args>
         <desc>or alxPlay(profile) or alxPlay(profile, x,y,z)</desc>
     </function>
+    <function>        <name>alxSetChannelVolume</name>
+        <args>int channel_id, float volume</args>
+        <desc>@param channel_id  ID of channel to set volume on.
+@param volume      New volume of channel, from 0.0f-1.0f</desc>
+    </function>
     <function>        <name>alxSetMasterVolume</name>
         <args>float volume</args>
     </function>
@@ -7231,6 +7361,9 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>containsBadWords</name>
         <args>text</args>
     </function>
+    <function>        <name>ContentQuery</name>
+        <args>[contentCategory]</args>
+    </function>
     <function>        <name>countBits</name>
         <desc>count the number of bits in the specified 32 bit integer</desc>
     </function>
@@ -7272,6 +7405,8 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     </function>
     <function>        <name>doChunkGen</name>
         <desc>Test chunk generation.</desc>
+    </function>
+    <function>        <name>doesAllowConnections</name>
     </function>
     <function>        <name>dumpConsoleClasses</name>
         <desc>dumps all declared console classes to the console.</desc>
@@ -7493,6 +7628,9 @@ Real time is platform defined; typically time since the computer booted.</desc>
         <desc>Return the current sim time in milliseconds.
 
 Sim time is time since the game started.</desc>
+    </function>
+    <function>        <name>getStrWidthPrecise</name>
+        <args>string</args>
     </function>
     <function>        <name>getSubStr</name>
         <args>string str, int start, int numChars</args>
@@ -7769,6 +7907,9 @@ Possible parameters are:
     <function>        <name>pathOnMissionLoadDone</name>
         <desc>Load all path information from interiors.</desc>
     </function>
+    <function>        <name>PDLCAllowMission</name>
+        <args>levelId</args>
+    </function>
     <function>        <name>playJournal</name>
         <args>string filename, bool break=false</args>
         <desc>Begin playback of a journal from a specified field, optionally breaking at the start.</desc>
@@ -7970,6 +8111,10 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     <function>        <name>setSinglePlayerMode</name>
         <args> flag </args>
         <desc>- Enable or disable singleplayer only mode.</desc>
+    </function>
+    <function>        <name>SetupGemSpawnGroups</name>
+        <args>gemGroupRadius, maxGemsPerGroup</args>
+        <desc>- Sets up gem spawn groups</desc>
     </function>
     <function>        <name>setVerticalSync</name>
         <args> bool f </args>
@@ -8180,11 +8325,16 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
         <args>Vector3F a, Vector3F b</args>
         <desc>Returns a-b.</desc>
     </function>
+    <function>        <name>videoSetGammaCorrection</name>
+        <desc>setGammaCorrection(gamma);</desc>
+    </function>
     <function>        <name>warn</name>
         <args>text [, ... ]</args>
     </function>
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
+    </function>
+    <function>        <name>XBLiveGetSignInPort</name>
     </function>
     <function>        <name>XBLiveGetUserId</name>
     </function>
