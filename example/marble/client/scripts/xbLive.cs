@@ -999,6 +999,12 @@ function loadPCUserProfile()
    alxSetMasterVolume($pref::Option::FXVolume * 0.01);
 }
 
+function xbSetMusicVolume(%volume)
+{
+   $pref::Audio::channelVolume[$MusicAudioType] = %volume;
+   alxSetChannelVolume($MusicAudioType, $pref::Audio::channelVolume[$MusicAudioType]);
+}
+
 function XBGamerProfile::onProfileLoaded(%this, %string)
 {
    echo("Profile Loaded:" SPC %string);
