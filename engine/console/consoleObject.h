@@ -294,6 +294,11 @@ protected:
     /// @name Fields
     /// @{
 public:
+
+    /// This is a function pointer typedef to support get/set callbacks for fields
+    typedef bool (*SetDataNotify)(void* obj, const char* data);
+    typedef const char* (*GetDataNotify)(void* obj, const char* data);
+
     enum ACRFieldTypes
     {
         StartGroupFieldType = 0xFFFFFFFD,
@@ -312,9 +317,11 @@ public:
         U32            type;          ///< A type ID. @see ACRFieldTypes
         U32            offset;        ///< Memory offset from beginning of class for this field.
         S32            elementCount;  ///< Number of elements, if this is an array.
-        EnumTable* table;         ///< If this is an enum, this points to the table defining it.
+        const EnumTable* table;         ///< If this is an enum, this points to the table defining it.
         BitSet32       flag;          ///< Stores various flags
         TypeValidator* validator;     ///< Validator, if any.
+        SetDataNotify  setDataFn;     ///< Set data notify Fn
+        GetDataNotify  getDataFn;     ///< Get data notify Fn
     };
     typedef Vector<Field> FieldList;
 
@@ -439,6 +446,8 @@ public:
 };
 
 //------------------------------------------------------------------------------
+// Forward declaration of this function so  it can be used in the class
+const char* defaultProtectedGetFn(void* obj, const char* data);
 
 /// Interface class to the console.
 ///
@@ -577,6 +586,40 @@ protected:
         const U32      in_fieldType,
         const dsize_t  in_fieldOffset,
         TypeValidator* v,
+        const char* in_pFieldDocs = NULL);
+
+    /// Register a complex protected field.
+    ///
+    /// @param  in_pFieldname     Name of the field.
+    /// @param  in_fieldType      Type of the field. @see ConsoleDynamicTypes
+    /// @param  in_fieldOffset    Offset to  the field from the start of the class; calculated using the Offset() macro.
+    /// @param  in_setDataFn      When this field gets set, it will call the callback provided. @see console_protected
+    /// @param  in_getDataFn      When this field is accessed for it's data, it will return the value of this function
+    /// @param  in_elementCount   Number of elements in this field. Arrays of elements are assumed to be contiguous in memory.
+    /// @param  in_table          An EnumTable, if this is an enumerated field.
+    /// @param  in_pFieldDocs     Usage string for this field. @see console_autodoc
+    static void addProtectedField(const char* in_pFieldname,
+        const U32     in_fieldType,
+        const dsize_t in_fieldOffset,
+        AbstractClassRep::SetDataNotify in_setDataFn,
+        AbstractClassRep::GetDataNotify in_getDataFn = &defaultProtectedGetFn,
+        const U32     in_elementCount = 1,
+        const EnumTable* in_table = NULL,
+        const char* in_pFieldDocs = NULL);
+
+    /// Register a simple protected field.
+    ///
+    /// @param  in_pFieldname  Name of the field.
+    /// @param  in_fieldType   Type of the field. @see ConsoleDynamicTypes
+    /// @param  in_fieldOffset Offset to  the field from the start of the class; calculated using the Offset() macro.
+    /// @param  in_setDataFn   When this field gets set, it will call the callback provided. @see console_protected
+    /// @param  in_getDataFn   When this field is accessed for it's data, it will return the value of this function
+    /// @param  in_pFieldDocs  Usage string for this field. @see console_autodoc
+    static void addProtectedField(const char* in_pFieldname,
+        const U32     in_fieldType,
+        const dsize_t in_fieldOffset,
+        AbstractClassRep::SetDataNotify in_setDataFn,
+        AbstractClassRep::GetDataNotify in_getDataFn = &defaultProtectedGetFn,
         const char* in_pFieldDocs = NULL);
 
     /// Add a deprecated field.
@@ -756,5 +799,23 @@ inline bool& ConsoleObject::getDynamicGroupExpand()
    ConcreteClassRep<className> className::dynClassRep(#className, NetClassGroupGameMask, NetClassTypeDataBlock, 0, className::getParentStaticClassRep())
 
 /// @}
+
+//------------------------------------------------------------------------------
+// Protected field default get/set functions
+//
+// The reason for these functions is that it will save one branch per console 
+// data request and script functions will still execute at the same speed as
+// before the modifications to allow protected static fields. These will just
+// inline and the code should be roughly the same size, and just as fast as
+// before the modifications. -pw
+inline bool defaultProtectedSetFn(void* obj, const char* data)
+{
+    return true;
+}
+
+inline const char* defaultProtectedGetFn(void* obj, const char* data)
+{
+    return data;
+}
 
 #endif //_CONSOLEOBJECT_H_

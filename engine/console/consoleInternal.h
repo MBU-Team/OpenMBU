@@ -106,6 +106,7 @@ public:
     void buildHashTable();
     void clearEntries();
     bool classLinkTo(Namespace* parent);
+    bool unlinkClass(Namespace* parent);
 
     const char* tabComplete(const char* prevText, S32 baseLen, bool fForward);
 

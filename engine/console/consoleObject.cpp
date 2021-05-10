@@ -208,6 +208,8 @@ void ConsoleObject::addGroup(const char* in_pGroupname, const char* in_pGroupDoc
     f.elementCount = 0;
     f.groupExpand = false;
     f.validator = NULL;
+    f.setDataFn = &defaultProtectedSetFn;
+    f.getDataFn = &defaultProtectedGetFn;
 
     // Add to field list.
     sg_tempFieldList.push_back(f);
@@ -229,6 +231,8 @@ void ConsoleObject::endGroup(const char* in_pGroupname)
     f.type = AbstractClassRep::EndGroupFieldType;
     f.groupExpand = false;
     f.validator = NULL;
+    f.setDataFn = &defaultProtectedSetFn;
+    f.getDataFn = &defaultProtectedGetFn;
     f.elementCount = 0;
 
     // Add to field list.
@@ -244,6 +248,24 @@ void ConsoleObject::addField(const char* in_pFieldname,
         in_pFieldname,
         in_fieldType,
         in_fieldOffset,
+        1,
+        NULL,
+        in_pFieldDocs);
+}
+
+void ConsoleObject::addProtectedField(const char* in_pFieldname,
+    const U32 in_fieldType,
+    const dsize_t in_fieldOffset,
+    AbstractClassRep::SetDataNotify in_setDataFn,
+    AbstractClassRep::GetDataNotify in_getDataFn,
+    const char* in_pFieldDocs)
+{
+    addProtectedField(
+        in_pFieldname,
+        in_fieldType,
+        in_fieldOffset,
+        in_setDataFn,
+        in_getDataFn,
         1,
         NULL,
         in_pFieldDocs);
@@ -271,6 +293,39 @@ void ConsoleObject::addField(const char* in_pFieldname,
     f.table = in_table;
     f.validator = NULL;
 
+    f.setDataFn = &defaultProtectedSetFn;
+    f.getDataFn = &defaultProtectedGetFn;
+
+    sg_tempFieldList.push_back(f);
+}
+
+void ConsoleObject::addProtectedField(const char* in_pFieldname,
+    const U32 in_fieldType,
+    const dsize_t in_fieldOffset,
+    AbstractClassRep::SetDataNotify in_setDataFn,
+    AbstractClassRep::GetDataNotify in_getDataFn,
+    const U32 in_elementCount,
+    const EnumTable* in_table,
+    const char* in_pFieldDocs)
+{
+    AbstractClassRep::Field f;
+    f.pFieldname = StringTable->insert(in_pFieldname);
+    f.pGroupname = NULL;
+
+    if (in_pFieldDocs)
+        f.pFieldDocs = StringTable->insert(in_pFieldDocs);
+    else
+        f.pFieldDocs = NULL;
+
+    f.type = in_fieldType;
+    f.offset = in_fieldOffset;
+    f.elementCount = in_elementCount;
+    f.table = in_table;
+    f.validator = NULL;
+
+    f.setDataFn = in_setDataFn;
+    f.getDataFn = in_getDataFn;
+
     sg_tempFieldList.push_back(f);
 }
 
@@ -291,6 +346,8 @@ void ConsoleObject::addFieldV(const char* in_pFieldname,
     f.offset = in_fieldOffset;
     f.elementCount = 1;
     f.table = NULL;
+    f.setDataFn = &defaultProtectedSetFn;
+    f.getDataFn = &defaultProtectedGetFn;
     f.validator = v;
     v->fieldIndex = sg_tempFieldList.size();
 
@@ -308,6 +365,8 @@ void ConsoleObject::addDepricatedField(const char* fieldName)
     f.elementCount = 0;
     f.table = NULL;
     f.validator = NULL;
+    f.setDataFn = &defaultProtectedSetFn;
+    f.getDataFn = &defaultProtectedGetFn;
 
     sg_tempFieldList.push_back(f);
 }

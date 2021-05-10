@@ -66,13 +66,13 @@ bool GuiControl::onAdd()
 {
     if (!Parent::onAdd())
         return false;
-    const char* name = getName();
+    /*const char* name = getName();
     if (name && name[0] && getClassRep())
     {
         Namespace* parent = getClassRep()->getNameSpace();
         if (Con::linkNamespaces(parent->mName, name))
             mNameSpace = Con::lookupNamespace(name);
-    }
+    }*/
     Sim::getGuiGroup()->addObject(this);
     Con::executef(this, 1, "onAdd");
 

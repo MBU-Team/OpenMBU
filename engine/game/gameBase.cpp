@@ -48,26 +48,26 @@ bool GameBaseData::onAdd()
     if (!Parent::onAdd())
         return false;
 
-    // Link our object name to the datablock class name and
-    // then onto our C++ class name.
-    const char* name = getName();
-    if (name && name[0] && getClassRep()) {
-        bool linkSuccess = false;
-        Namespace* parent = getClassRep()->getNameSpace();
-        if (className && className[0] && dStricmp(className, parent->mName)) {
-            linkSuccess = Con::linkNamespaces(parent->mName, className);
-            if (linkSuccess)
-                linkSuccess = Con::linkNamespaces(className, name);
-        }
-        else
-            linkSuccess = Con::linkNamespaces(parent->mName, name);
-        if (linkSuccess)
-            mNameSpace = Con::lookupNamespace(name);
-    }
+    //// Link our object name to the datablock class name and
+    //// then onto our C++ class name.
+    //const char* name = getName();
+    //if (name && name[0] && getClassRep()) {
+    //    bool linkSuccess = false;
+    //    Namespace* parent = getClassRep()->getNameSpace();
+    //    if (className && className[0] && dStricmp(className, parent->mName)) {
+    //        linkSuccess = Con::linkNamespaces(parent->mName, className);
+    //        if (linkSuccess)
+    //            linkSuccess = Con::linkNamespaces(className, name);
+    //    }
+    //    else
+    //        linkSuccess = Con::linkNamespaces(parent->mName, name);
+    //    if (linkSuccess)
+    //        mNameSpace = Con::lookupNamespace(name);
+    //}
 
-    // If no className was specified, set it to our C++ class name
-    if (!className || !className[0])
-        className = getClassRep()->getClassName();
+    //// If no className was specified, set it to our C++ class name
+    //if (!className || !className[0])
+    //    className = getClassRep()->getClassName();
 
     return true;
 }

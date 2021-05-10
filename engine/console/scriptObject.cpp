@@ -47,37 +47,37 @@ bool ScriptObject::onAdd()
     if (!Parent::onAdd())
         return false;
 
-    // it's possible that all the namespace links can fail, if
-    // multiple objects are named the same thing with different script
-    // hierarchies.
-    // linkNamespaces will now return false and echo an error message
-    // rather than asserting.
+    //// it's possible that all the namespace links can fail, if
+    //// multiple objects are named the same thing with different script
+    //// hierarchies.
+    //// linkNamespaces will now return false and echo an error message
+    //// rather than asserting.
 
-    // superClassName -> ScriptObject
-    StringTableEntry parent = StringTable->insert("ScriptObject");
-    if (mSuperClassName[0])
-    {
-        if (Con::linkNamespaces(parent, mSuperClassName))
-            parent = mSuperClassName;
-    }
+    //// superClassName -> ScriptObject
+    //StringTableEntry parent = StringTable->insert("ScriptObject");
+    //if (mSuperClassName[0])
+    //{
+    //    if (Con::linkNamespaces(parent, mSuperClassName))
+    //        parent = mSuperClassName;
+    //}
 
-    // className -> superClassName
-    if (mClassName[0])
-    {
-        if (Con::linkNamespaces(parent, mClassName))
-            parent = mClassName;
-    }
+    //// className -> superClassName
+    //if (mClassName[0])
+    //{
+    //    if (Con::linkNamespaces(parent, mClassName))
+    //        parent = mClassName;
+    //}
 
-    // objectName -> className
-    StringTableEntry objectName = getName();
-    if (objectName && objectName[0])
-    {
-        if (Con::linkNamespaces(parent, objectName))
-            parent = objectName;
-    }
+    //// objectName -> className
+    //StringTableEntry objectName = getName();
+    //if (objectName && objectName[0])
+    //{
+    //    if (Con::linkNamespaces(parent, objectName))
+    //        parent = objectName;
+    //}
 
-    // Store our namespace
-    mNameSpace = Con::lookupNamespace(parent);
+    //// Store our namespace
+    //mNameSpace = Con::lookupNamespace(parent);
 
     // Call onAdd in script!
     Con::executef(this, 2, "onAdd", Con::getIntArg(getId()));
@@ -131,31 +131,31 @@ bool ScriptGroup::onAdd()
     if (!Parent::onAdd())
         return false;
 
-    // superClassName -> ScriptGroup
-    StringTableEntry parent = StringTable->insert("ScriptGroup");
-    if (mSuperClassName[0])
-    {
-        if (Con::linkNamespaces(parent, mSuperClassName))
-            parent = mSuperClassName;
-    }
+    //// superClassName -> ScriptGroup
+    //StringTableEntry parent = StringTable->insert("ScriptGroup");
+    //if (mSuperClassName[0])
+    //{
+    //    if (Con::linkNamespaces(parent, mSuperClassName))
+    //        parent = mSuperClassName;
+    //}
 
-    // className -> superClassName
-    if (mClassName[0])
-    {
-        if (Con::linkNamespaces(parent, mClassName))
-            parent = mClassName;
-    }
+    //// className -> superClassName
+    //if (mClassName[0])
+    //{
+    //    if (Con::linkNamespaces(parent, mClassName))
+    //        parent = mClassName;
+    //}
 
-    // objectName -> className
-    StringTableEntry objectName = getName();
-    if (objectName && objectName[0])
-    {
-        if (Con::linkNamespaces(parent, objectName))
-            parent = objectName;
-    }
+    //// objectName -> className
+    //StringTableEntry objectName = getName();
+    //if (objectName && objectName[0])
+    //{
+    //    if (Con::linkNamespaces(parent, objectName))
+    //        parent = objectName;
+    //}
 
-    // Store our namespace
-    mNameSpace = Con::lookupNamespace(parent);
+    //// Store our namespace
+    //mNameSpace = Con::lookupNamespace(parent);
 
     // Call onAdd in script!
     Con::executef(this, 2, "onAdd", Con::getIntArg(getId()));

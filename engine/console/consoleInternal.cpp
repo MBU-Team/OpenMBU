@@ -592,6 +592,30 @@ Namespace* Namespace::find(StringTableEntry name, StringTableEntry package)
     return ret;
 }
 
+bool Namespace::unlinkClass(Namespace* parent)
+{
+    Namespace* walk = this;
+    while (walk->mParent && walk->mParent->mName == mName)
+        walk = walk->mParent;
+
+    if (walk->mParent && walk->mParent != parent)
+    {
+        Con::errorf(ConsoleLogEntry::General, "Namespace::unlinkClass - cannot unlink namespace parent linkage for %s for %s.",
+            walk->mName, walk->mParent->mName);
+        return false;
+    }
+
+    mRefCountToParent--;
+    AssertFatal(mRefCountToParent >= 0, "Namespace::unlinkClass - reference count to parent is less than 0");
+
+    if (mRefCountToParent == 0)
+        walk->mParent = NULL;
+
+    trashCache();
+
+    return true;
+}
+
 bool Namespace::classLinkTo(Namespace* parent)
 {
     Namespace* walk = this;

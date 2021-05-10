@@ -102,7 +102,7 @@ bool GuiTextEditCtrl::onAdd()
     return true;
 }
 
-void GuiTextEditCtrl::onStaticModified(const char* slotName)
+void GuiTextEditCtrl::onStaticModified(const char* slotName, const char* newValue)
 {
     if (!dStricmp(slotName, "text"))
         setText(mText);

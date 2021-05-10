@@ -10,6 +10,7 @@
 #include "core/fileObject.h"
 #include "console/consoleInternal.h"
 #include "console/typeValidators.h"
+#include "core/frameAllocator.h"
 
 namespace Sim
 {
@@ -207,6 +208,9 @@ SimObject::SimObject()
     mTypeMask = 0;
 
     mFieldDictionary = NULL;
+
+    mClassName = NULL;
+    mSuperClassName = NULL;
 }
 
 static void writeTabs(Stream& stream, U32 count)
@@ -321,22 +325,28 @@ void SimObject::assignFieldsFrom(SimObject* parent)
     {
         const AbstractClassRep::FieldList& list = getFieldList();
 
-        // copy out all the fields:   
+        // copy out all the fields:
         for (U32 i = 0; i < list.size(); i++)
         {
             const AbstractClassRep::Field* f = &list[i];
-            if (f->elementCount == 1)
+            S32 lastField = f->elementCount - 1;
+            for (S32 j = 0; j <= lastField; j++)
             {
-                const char* fieldVal = Con::getData(f->type, (void*)(((const char*)parent) + f->offset), 0, f->table, f->flag);
+                const char* fieldVal = (*f->getDataFn)(this, Con::getData(f->type, (void*)(((const char*)parent) + f->offset), j, f->table, f->flag));
+                //if(fieldVal)
+                //   Con::setData(f->type, (void *) (((const char *)this) + f->offset), j, 1, &fieldVal, f->table);
                 if (fieldVal)
-                    Con::setData(f->type, (void*)(((const char*)this) + f->offset), 0, 1, &fieldVal, f->table);
-            }
-            else
-            {
-                for (U32 j = 0; j < f->elementCount; j++)
                 {
-                    const char* fieldVal = Con::getData(f->type, (void*)(((const char*)parent) + f->offset), j, f->table, f->flag);
-                    if (fieldVal)
+                    // code copied from SimObject::setDataField().
+                    // TODO: paxorr: abstract this into a better setData / getData that considers prot fields.
+                    FrameTemp<char> buffer(2048);
+                    FrameTemp<char> bufferSecure(2048); // This buffer is used to make a copy of the data
+                    ConsoleBaseType* cbt = ConsoleBaseType::getType(f->type);
+                    const char* szBuffer = cbt->prepData(fieldVal, buffer, 2048);
+                    dMemset(bufferSecure, 0, 2048);
+                    dMemcpy(bufferSecure, szBuffer, dStrlen(szBuffer));
+
+                    if ((*f->setDataFn)(this, bufferSecure))
                         Con::setData(f->type, (void*)(((const char*)this) + f->offset), j, 1, &fieldVal, f->table);
                 }
             }
@@ -448,7 +458,12 @@ void SimObject::dumpToConsole(bool includeFunctions)
 
         for (U32 j = 0; S32(j) < f->elementCount; j++)
         {
-            const char* val = Con::getData(f->type, (void*)(((const char*)this) + f->offset), j, f->table, f->flag);
+            //const char* val = Con::getData(f->type, (void*)(((const char*)this) + f->offset), j, f->table, f->flag);
+            // [neo, 07/05/2007 - #3000]
+            // Some objects use dummy vars and projected fields so make sure we call the get functions 
+            //const char *val = Con::getData(f->type, (void *) (((const char *)object) + f->offset), j, f->table, f->flag);                          
+            const char* val = (*f->getDataFn)(this, Con::getData(f->type, (void*)(((const char*)this) + f->offset), j, f->table, f->flag));// + typeSizes[fld.type] * array1));
+
             if (!val /*|| !*val*/)
                 continue;
             if (f->elementCount == 1)
@@ -760,20 +775,44 @@ void SimObject::setDataField(StringTableEntry slotName, const char* array, const
         {
             if (fld->type == AbstractClassRep::DepricatedFieldType ||
                 fld->type == AbstractClassRep::StartGroupFieldType ||
-                fld->type == AbstractClassRep::EndGroupFieldType) return;
+                fld->type == AbstractClassRep::EndGroupFieldType)
+                return;
 
             S32 array1 = array ? dAtoi(array) : 0;
+
             if (array1 >= 0 && array1 < fld->elementCount && fld->elementCount >= 1)
-                Con::setData(fld->type, (void*)(((const char*)this) + fld->offset), array1, 1, &value, fld->table);
+            {
+                // If the set data notify callback returns true, then go ahead and
+                // set the data, otherwise, assume the set notify callback has either
+                // already set the data, or has deemed that the data should not
+                // be set at all.
+                FrameTemp<char> buffer(2048);
+                FrameTemp<char> bufferSecure(2048); // This buffer is used to make a copy of the data
+                // so that if the prep functions or any other functions use the string stack, the data
+                // is not corrupted.
+
+                ConsoleBaseType* cbt = ConsoleBaseType::getType(fld->type);
+                AssertFatal(cbt != NULL, "Could not resolve Type Id.");
+
+                const char* szBuffer = cbt->prepData(value, buffer, 2048);
+                dMemset(bufferSecure, 0, 2048);
+                dMemcpy(bufferSecure, szBuffer, dStrlen(szBuffer));
+
+                if ((*fld->setDataFn)(this, bufferSecure))
+                    Con::setData(fld->type, (void*)(((const char*)this) + fld->offset), array1, 1, &value, fld->table);
+
+                if (fld->validator)
+                    fld->validator->validateType(this, (void*)(((const char*)this) + fld->offset));
+
+                onStaticModified(slotName, value);
+
+                return;
+            }
+
             if (fld->validator)
                 fld->validator->validateType(this, (void*)(((const char*)this) + fld->offset));
-            /*else if(array1 == -1 && fld->elementCount == argc)
-              {
-              S32 i;
-              for(i = 0; i < argc;i++)
-              Con::setData(fld->type, (void *) (U32(this) + fld->offset), i, 1, argv + i, fld->table);
-              }*/
-            onStaticModified(slotName);
+
+            onStaticModified(slotName, value);
             return;
         }
     }
@@ -803,9 +842,9 @@ const char* SimObject::getDataField(StringTableEntry slotName, const char* array
         if (fld)
         {
             if (array1 == -1 && fld->elementCount == 1)
-                return Con::getData(fld->type, (void*)(((const char*)this) + fld->offset), 0, fld->table, fld->flag);
+                return (*fld->getDataFn)(this, Con::getData(fld->type, (void*)(((const char*)this) + fld->offset), 0, fld->table, fld->flag));
             if (array1 >= 0 && array1 < fld->elementCount)
-                return Con::getData(fld->type, (void*)(((const char*)this) + fld->offset), array1, fld->table, fld->flag);// + typeSizes[fld.type] * array1));
+                return (*fld->getDataFn)(this, Con::getData(fld->type, (void*)(((const char*)this) + fld->offset), array1, fld->table, fld->flag));// + typeSizes[fld.type] * array1));
             return "";
         }
     }
@@ -891,6 +930,8 @@ bool SimObject::onAdd()
     if (getClassRep())
         mNameSpace = getClassRep()->getNameSpace();
 
+    linkNamespaces();
+
     // onAdd() should return FALSE if there was an error
     return true;
 }
@@ -898,6 +939,8 @@ bool SimObject::onAdd()
 void SimObject::onRemove()
 {
     mFlags.clear(Added);
+    
+    unlinkNamespaces();
 }
 
 void SimObject::onGroupAdd()
@@ -916,13 +959,111 @@ void SimObject::onNameChange(const char*)
 {
 }
 
-void SimObject::onStaticModified(const char*)
+void SimObject::onStaticModified(const char*, const char* newValue)
 {
 }
 
 bool SimObject::processArguments(S32 argc, const char**)
 {
     return argc == 0;
+}
+
+void SimObject::linkNamespaces()
+{
+    if (mNameSpace)
+        unlinkNamespaces();
+
+    StringTableEntry parent = StringTable->insert(getClassName());
+    if ((mNSLinkMask & LinkSuperClassName) && mSuperClassName && mSuperClassName[0])
+    {
+        if (Con::linkNamespaces(parent, mSuperClassName))
+            parent = mSuperClassName;
+        else
+            mSuperClassName = StringTable->insert(""); // CodeReview Is this behavior that we want?
+         // CodeReview This will result in the mSuperClassName variable getting hosed
+         // CodeReview if Con::linkNamespaces returns false. Looking at the code for
+         // CodeReview Con::linkNamespaces, and the call it makes to classLinkTo, it seems
+         // CodeReview like this would only fail if it had bogus data to begin with, but
+         // CodeReview I wanted to note this behavior which occurs in some implementations
+         // CodeReview but not all. -patw
+    }
+
+    // ClassName -> SuperClassName
+    if ((mNSLinkMask & LinkClassName) && mClassName && mClassName[0])
+    {
+        if (Con::linkNamespaces(parent, mClassName))
+            parent = mClassName;
+        else
+            mClassName = StringTable->insert(""); // CodeReview (See previous note on this code)
+    }
+
+    // ObjectName -> ClassName
+    StringTableEntry objectName = getName();
+    if (objectName && objectName[0])
+    {
+        if (Con::linkNamespaces(parent, objectName))
+            parent = objectName;
+    }
+
+    // Store our namespace.
+    mNameSpace = Con::lookupNamespace(parent);
+}
+
+void SimObject::unlinkNamespaces()
+{
+    if (!mNameSpace)
+        return;
+
+    // Restore NameSpaces
+    StringTableEntry child = getName();
+    if (child && child[0])
+    {
+        if ((mNSLinkMask & LinkClassName) && mClassName && mClassName[0])
+        {
+            if (Con::unlinkNamespaces(mClassName, child))
+                child = mClassName;
+        }
+
+        if ((mNSLinkMask & LinkSuperClassName) && mSuperClassName && mSuperClassName[0])
+        {
+            if (Con::unlinkNamespaces(mSuperClassName, child))
+                child = mSuperClassName;
+        }
+
+        Con::unlinkNamespaces(getClassName(), child);
+    }
+    else
+    {
+        child = mClassName;
+        if (child && child[0])
+        {
+            if ((mNSLinkMask & LinkSuperClassName) && mSuperClassName && mSuperClassName[0])
+            {
+                if (Con::unlinkNamespaces(mSuperClassName, child))
+                    child = mSuperClassName;
+            }
+
+            if (mNSLinkMask & LinkClassName)
+                Con::unlinkNamespaces(getClassName(), child);
+        }
+        else
+        {
+            if ((mNSLinkMask & LinkSuperClassName) && mSuperClassName && mSuperClassName[0])
+                Con::unlinkNamespaces(getClassName(), mSuperClassName);
+        }
+    }
+
+    mNameSpace = NULL;
+}
+
+void SimObject::setClassNamespace(const char* classNamespace)
+{
+    mClassName = StringTable->insert(classNamespace);
+}
+
+void SimObject::setSuperClassNamespace(const char* superClassNamespace)
+{
+    mSuperClassName = StringTable->insert(superClassNamespace);
 }
 
 //--------------------------------------------------------------------------- 
@@ -1063,6 +1204,35 @@ void SimObject::clearAllNotifications()
 void SimObject::initPersistFields()
 {
     Parent::initPersistFields();
+
+    //add the canSaveDynamicFields property:
+    addGroup("SimBase");
+    addField("internalName", TypeString, Offset(mInternalName, SimObject));
+    addProtectedField("parentGroup", TypeSimObjectPtr, Offset(mGroup, SimObject), &setProtectedParent, &defaultProtectedGetFn, "Group hierarchy parent of the object.");
+    endGroup("SimBase");
+
+    // Namespace Linking.
+    addGroup("Namespace Linking");
+    addProtectedField("superClass", TypeString, Offset(mSuperClassName, SimObject), &setSuperClass, &defaultProtectedGetFn,
+        "Script super-class of object.");
+    addProtectedField("class", TypeString, Offset(mClassName, SimObject), &setClass, &defaultProtectedGetFn,
+        "Script class of object.");
+    // For legacy support
+    addProtectedField("className", TypeString, Offset(mClassName, SimObject), &setClass, &defaultProtectedGetFn,
+        "Script class of object.");
+    endGroup("Namespace Linking");
+}
+
+bool SimObject::setProtectedParent(void* obj, const char* data)
+{
+    SimGroup* parent = NULL;
+    SimObject* object = static_cast<SimObject*>(obj);
+
+    if (Sim::findObject(data, parent))
+        parent->addObject(object);
+
+    // always return false, because we've set mGroup when we called addObject
+    return false;
 }
 
 bool SimObject::addToSet(SimObjectId spid)
@@ -1180,7 +1350,7 @@ void SimDataBlock::assignId()
         setId(sNextObjectId++);
 }
 
-void SimDataBlock::onStaticModified(const char*)
+void SimDataBlock::onStaticModified(const char*, const char* newValue)
 {
     modifiedKey = sNextModifiedKey++;
 

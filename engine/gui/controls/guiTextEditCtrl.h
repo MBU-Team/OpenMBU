@@ -114,7 +114,7 @@ public:
     void parentResized(const Point2I& oldParentExtent, const Point2I& newParentExtent);
     bool hasText();
 
-    void onStaticModified(const char* slotName);
+    void onStaticModified(const char* slotName, const char* newValue);
 
     void onPreRender();
     void onRender(Point2I offset, const RectI& updateRect);

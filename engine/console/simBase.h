@@ -514,6 +514,41 @@ private:
 protected:
     StringTableEntry mInternalName; ///< Stores object Internal Name
 
+    // Namespace linking
+    StringTableEntry mClassName;     ///< Stores the class name to link script class namespaces
+    StringTableEntry mSuperClassName;   ///< Stores super class name to link script class namespaces
+
+    // Namespace protected set methods
+    static bool setClass(void* obj, const char* data) { static_cast<SimObject*>(obj)->setClassNamespace(data); return false; };
+    static bool setSuperClass(void* obj, const char* data) { static_cast<SimObject*>(obj)->setSuperClassNamespace(data); return false; };
+
+    // Group hierarchy protected set method 
+    static bool setProtectedParent(void* obj, const char* data);
+
+    // Accessors
+public:
+    StringTableEntry getClassNamespace() const { return mClassName; };
+    StringTableEntry getSuperClassNamespace() const { return mSuperClassName; };
+    void setClassNamespace(const char* classNamespace);
+    void setSuperClassNamespace(const char* superClassNamespace);
+    // By setting the value of mNSLinkMask in the constructor of a class that 
+    // inherits from SimObject, you can specify how the namespaces are linked
+    // for that class. An easy way to think about this change, if you have worked
+    // with this in the past is that ScriptObject uses:
+    //    mNSLinkMask = LinkSuperClassName | LinkClassName;
+    // which will attempt to do a full namespace link checking mClassName and mSuperClassName
+    // 
+    // and BehaviorTemplate does not set the value of NSLinkMask, which means that
+    // only the default link will be made, which is: ObjectName -> ClassName
+    enum SimObjectNSLinkType
+    {
+        LinkClassName = BIT(0),
+        LinkSuperClassName = BIT(1)
+    };
+    U8 mNSLinkMask;
+    void linkNamespaces();
+    void unlinkNamespaces();
+
 public:
     /// @name Accessors
     /// @{
@@ -576,7 +611,7 @@ public:
     virtual void onGroupAdd();                           ///< Called when the object is added to a SimGroup.
     virtual void onGroupRemove();                        ///< Called when the object is removed from a SimGroup.
     virtual void onNameChange(const char* name);         ///< Called when the object's name is changed.
-    virtual void onStaticModified(const char* slotName); ///< Called when a static field is modified.
+    virtual void onStaticModified(const char* slotName, const char* newValue); ///< Called when a static field is modified.
                                                          ///
                                                          ///  Specifically, this is called by setDataField
                                                          ///  when a static field is modified, see
@@ -1003,7 +1038,7 @@ public:
     S32 getModifiedKey() const { return modifiedKey; }
 
     bool onAdd();
-    void onStaticModified(const char* slotName);
+    void onStaticModified(const char* slotName, const char* newValue);
     //void setLastError(const char*);
     void assignId();
 

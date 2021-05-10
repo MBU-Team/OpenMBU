@@ -1081,6 +1081,23 @@ namespace Con
         return false;
     }
 
+    bool unlinkNamespaces(const char* parent, const char* child)
+    {
+        Namespace* pns = lookupNamespace(parent);
+        Namespace* cns = lookupNamespace(child);
+
+        if (pns == cns)
+        {
+            Con::warnf("Con::unlinkNamespaces - trying to unlink '%s' from itself, aborting.", parent);
+            return false;
+        }
+
+        if (pns && cns)
+            return cns->unlinkClass(pns);
+
+        return false;
+    }
+
     bool classLinkNamespaces(Namespace* parent, Namespace* child)
     {
         if (parent && child)
@@ -1088,14 +1105,14 @@ namespace Con
         return false;
     }
 
-    void setData(S32 type, void* dptr, S32 index, S32 argc, const char** argv, EnumTable* tbl, BitSet32 flag)
+    void setData(S32 type, void* dptr, S32 index, S32 argc, const char** argv, const EnumTable* tbl, BitSet32 flag)
     {
         ConsoleBaseType* cbt = ConsoleBaseType::getType(type);
         AssertFatal(cbt, "Con::setData - could not resolve type ID!");
         cbt->setData((void*)(((const char*)dptr) + index * cbt->getTypeSize()), argc, argv, tbl, flag);
     }
 
-    const char* getData(S32 type, void* dptr, S32 index, EnumTable* tbl, BitSet32 flag)
+    const char* getData(S32 type, void* dptr, S32 index, const EnumTable* tbl, BitSet32 flag)
     {
         ConsoleBaseType* cbt = ConsoleBaseType::getType(type);
         AssertFatal(cbt, "Con::getData - could not resolve type ID!");
