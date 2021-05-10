@@ -73,6 +73,7 @@ void CMDerror(char *, ...);
    SlotAssignNode *  slist;
    VarNode *         var;
    SlotDecl          slot;
+   InternalSlotDecl  intslot;
    ObjectBlockDecl   odcl;
    ObjectDeclNode *  od;
    AssignDecl        asn;
@@ -110,6 +111,7 @@ void CMDerror(char *, ...);
 %type <slist>  slot_assign_list
 %type <slist>  slot_assign
 %type <slot>   slot_acc
+%type <intslot>   intslot_acc
 %type <stmt>   expression_stmt
 %type <var>    var_list
 %type <var>    var_list_decl
@@ -131,6 +133,7 @@ void CMDerror(char *, ...);
 %left '*' '/' '%'
 %right '!' '~' opPLUSPLUS opMINUSMINUS UNARY
 %left '.'
+%left opINTNAME opINTNAMER
 
 %%
 
@@ -219,14 +222,18 @@ var_list
 
 datablock_decl
    : rwDATABLOCK IDENT '(' IDENT parent_block ')'  '{' slot_assign_list '}' ';'
-      { $$ = ObjectDeclNode::alloc(ConstantNode::alloc($2), ConstantNode::alloc($4), NULL, $5, $8, NULL, true); }
+      { $$ = ObjectDeclNode::alloc(ConstantNode::alloc($2), ConstantNode::alloc($4), NULL, $5, $8, NULL, true, false); }
    ;
    
 object_decl
    : rwDECLARE class_name_expr '(' object_name parent_block object_args ')' '{' object_declare_block '}'
-      { $$ = ObjectDeclNode::alloc($2, $4, $6, $5, $9.slots, $9.decls, false); }
+      { $$ = ObjectDeclNode::alloc($2, $4, $6, $5, $9.slots, $9.decls, false, false); }
    | rwDECLARE class_name_expr '(' object_name parent_block object_args ')'
-      { $$ = ObjectDeclNode::alloc($2, $4, $6, $5, NULL, NULL, false); }
+      { $$ = ObjectDeclNode::alloc($2, $4, $6, $5, NULL, NULL, false, false); }
+   | rwDECLARE class_name_expr '(' '[' object_name ']' parent_block object_args ')' '{' object_declare_block '}'
+      { $$ = ObjectDeclNode::alloc($2, $5, $8, $7, $11.slots, $11.decls, false, true); }
+   | rwDECLARE class_name_expr '(' '[' object_name ']' parent_block object_args ')'
+      { $$ = ObjectDeclNode::alloc($2, $5, $8, $7, NULL, NULL, false, true); }
    ;
 
 parent_block
@@ -405,6 +412,8 @@ expr
       { $$ = ConstantNode::alloc(StringTable->insert("break")); }
    | slot_acc
       { $$ = SlotAccessNode::alloc($1.object, $1.array, $1.slotName); }
+   | intslot_acc
+      { $$ = InternalSlotAccessNode::alloc($1.object, $1.slotExpr, $1.recurse); }
    | IDENT
       { $$ = ConstantNode::alloc($1); }
    | STRATOM
@@ -420,6 +429,13 @@ slot_acc
       { $$.object = $1; $$.slotName = $3; $$.array = NULL; }
    | expr '.' IDENT '[' aidx_expr ']'
       { $$.object = $1; $$.slotName = $3; $$.array = $5; }
+   ;
+
+intslot_acc
+   : expr opINTNAME class_name_expr
+     { $$.object = $1; $$.slotExpr = $3; $$.recurse = false; }
+   | expr opINTNAMER class_name_expr
+     { $$.object = $1; $$.slotExpr = $3; $$.recurse = true; }
    ;
 
 class_name_expr

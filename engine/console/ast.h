@@ -382,6 +382,24 @@ struct SlotAccessNode : ExprNode
     TypeReq getPreferredType();
 };
 
+struct InternalSlotDecl
+{
+    ExprNode* object;
+    ExprNode* slotExpr;
+    bool             recurse;
+};
+
+struct InternalSlotAccessNode : ExprNode
+{
+    ExprNode* objectExpr, * slotExpr;
+    bool recurse;
+
+    static InternalSlotAccessNode* alloc(ExprNode* objectExpr, ExprNode* slotExpr, bool recurse);
+    U32 precompile(TypeReq type);
+    U32 compile(U32* codeStream, U32 ip, TypeReq type);
+    TypeReq getPreferredType();
+};
+
 struct SlotAssignNode : ExprNode
 {
     ExprNode* objectExpr, * arrayExpr;
@@ -418,9 +436,10 @@ struct ObjectDeclNode : ExprNode
     SlotAssignNode* slotDecls;
     ObjectDeclNode* subObjects;
     bool structDecl;
+    bool isClassNameInternal;
     U32 failOffset;
 
-    static ObjectDeclNode* alloc(ExprNode* classNameExpr, ExprNode* objectNameExpr, ExprNode* argList, StringTableEntry parentObject, SlotAssignNode* slotDecls, ObjectDeclNode* subObjects, bool structDecl);
+    static ObjectDeclNode* alloc(ExprNode* classNameExpr, ExprNode* objectNameExpr, ExprNode* argList, StringTableEntry parentObject, SlotAssignNode* slotDecls, ObjectDeclNode* subObjects, bool structDecl, bool classNameInternal);
     U32 precompile(TypeReq type);
     U32 precompileSubObject(bool);
     U32 compile(U32* codeStream, U32 ip, TypeReq type);

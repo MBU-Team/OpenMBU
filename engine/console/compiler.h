@@ -81,6 +81,7 @@ namespace Compiler
 
         OP_SETCUROBJECT,
         OP_SETCUROBJECT_NEW,
+        OP_SETCUROBJECT_INTERNAL,
 
         OP_SETCURFIELD,
         OP_SETCURFIELD_ARRAY,

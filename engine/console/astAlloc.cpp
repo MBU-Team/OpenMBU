@@ -282,6 +282,16 @@ SlotAccessNode* SlotAccessNode::alloc(ExprNode* objectExpr, ExprNode* arrayExpr,
     return ret;
 }
 
+InternalSlotAccessNode* InternalSlotAccessNode::alloc(ExprNode* objectExpr, ExprNode* slotExpr, bool recurse)
+{
+    InternalSlotAccessNode* ret = (InternalSlotAccessNode*)consoleAlloc(sizeof(InternalSlotAccessNode));
+    constructInPlace(ret);
+    ret->objectExpr = objectExpr;
+    ret->slotExpr = slotExpr;
+    ret->recurse = recurse;
+    return ret;
+}
+
 SlotAssignNode* SlotAssignNode::alloc(ExprNode* objectExpr, ExprNode* arrayExpr, StringTableEntry slotName, ExprNode* valueExpr)
 {
     SlotAssignNode* ret = (SlotAssignNode*)consoleAlloc(sizeof(SlotAssignNode));
@@ -305,7 +315,7 @@ SlotAssignOpNode* SlotAssignOpNode::alloc(ExprNode* objectExpr, StringTableEntry
     return ret;
 }
 
-ObjectDeclNode* ObjectDeclNode::alloc(ExprNode* classNameExpr, ExprNode* objectNameExpr, ExprNode* argList, StringTableEntry parentObject, SlotAssignNode* slotDecls, ObjectDeclNode* subObjects, bool structDecl)
+ObjectDeclNode* ObjectDeclNode::alloc(ExprNode* classNameExpr, ExprNode* objectNameExpr, ExprNode* argList, StringTableEntry parentObject, SlotAssignNode* slotDecls, ObjectDeclNode* subObjects, bool structDecl, bool classNameInternal)
 {
     ObjectDeclNode* ret = (ObjectDeclNode*)consoleAlloc(sizeof(ObjectDeclNode));
     constructInPlace(ret);
@@ -315,6 +325,7 @@ ObjectDeclNode* ObjectDeclNode::alloc(ExprNode* classNameExpr, ExprNode* objectN
     ret->slotDecls = slotDecls;
     ret->subObjects = subObjects;
     ret->structDecl = structDecl;
+    ret->isClassNameInternal = classNameInternal;
     if (parentObject)
         ret->parentObject = parentObject;
     else

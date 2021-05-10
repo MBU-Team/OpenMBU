@@ -344,7 +344,8 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
             // Read some useful info.
             objParent = U32toSTE(code[ip]);
             bool isDataBlock = code[ip + 1];
-            failJump = code[ip + 2];
+            bool isInternal = code[ip + 2];
+            failJump = code[ip + 3];
 
             // If we don't allow calls, we certainly don't allow creating objects!
             // Moved this to after failJump is set. Engine was crashing when
@@ -472,7 +473,12 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
 
                 // If a name was passed, assign it.
                 if (callArgv[2][0])
-                    currentNewObject->assignName(callArgv[2]);
+                {
+                    if (!isInternal)
+                        currentNewObject->assignName(callArgv[2]);
+                    else
+                        currentNewObject->setInternalName(callArgv[2]);
+                }
 
                 // Do the constructor parameters.
                 if (!currentNewObject->processArguments(callArgc - 3, callArgv + 3))
@@ -492,7 +498,7 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
             }
 
             // Advance the IP past the create info...
-            ip += 3;
+            ip += 4;
             break;
         }
 
@@ -808,7 +814,42 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
             break;
 
         case OP_SETCUROBJECT:
-            curObject = Sim::findObject(STR.getStringValue());
+            // Save the previous object for parsing vector fields.
+            val = STR.getStringValue();
+
+            // Sim::findObject will sometimes find valid objects from
+            // multi-component strings. This makes sure that doesn't
+            // happen.
+            for (const char* check = val; *check; check++)
+            {
+                if (*check == ' ')
+                {
+                    val = "";
+                    break;
+                }
+            }
+            curObject = Sim::findObject(val);
+            break;
+
+        case OP_SETCUROBJECT_INTERNAL:
+            ++ip; // To skip the recurse flag if the object wasn't found
+            if (curObject)
+            {
+                SimSet* set = dynamic_cast<SimSet*>(curObject);
+                if (set)
+                {
+                    StringTableEntry intName = StringTable->insert(STR.getStringValue());
+                    bool recurse = code[ip - 1];
+                    SimObject* obj = set->findObjectByInternalName(intName, recurse);
+                    intStack[UINT + 1] = obj ? obj->getId() : 0;
+                    UINT++;
+                }
+                else
+                {
+                    Con::errorf(ConsoleLogEntry::Script, "%s: Attempt to use -> on non-set %s of class %s.", getFileLine(ip - 2), curObject->getName(), curObject->getClassName());
+                    intStack[UINT] = 0;
+                }
+            }
             break;
 
         case OP_SETCUROBJECT_NEW:

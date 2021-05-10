@@ -511,6 +511,9 @@ protected:
 private:
     SimFieldDictionary* mFieldDictionary;    ///< Storage for dynamic fields.
 
+protected:
+    StringTableEntry mInternalName; ///< Stores object Internal Name
+
 public:
     /// @name Accessors
     /// @{
@@ -542,6 +545,14 @@ public:
     ///
     /// This dictionary can be iterated over using a SimFieldDictionaryIterator.
     SimFieldDictionary* getFieldDictionary() { return(mFieldDictionary); }
+    
+    /// These functions support internal naming that is not namespace
+    /// bound for locating child controls in a generic way.
+    ///
+    /// Set the internal name of this control (Not linked to a namespace)
+    void setInternalName(const char* newname);
+    /// Get the internal of of this control
+    StringTableEntry getInternalName();
 
     /// Check if a method exists in the objects current namespace.
     bool isMethod(const char* methodName);
@@ -1137,6 +1148,7 @@ public:
     void write(Stream& stream, U32 tabStop, U32 flags = 0);
 
     virtual SimObject* findObject(const char* name);
+    SimObject* findObjectByInternalName(const char* internalName, bool searchChildren = false);
 
     //bool isHidden();
     void setHidden(bool b);

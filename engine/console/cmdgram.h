@@ -9,6 +9,7 @@ typedef union {
    SlotAssignNode *  slist;
    VarNode *         var;
    SlotDecl          slot;
+   InternalSlotDecl  intslot;
    ObjectBlockDecl   odcl;
    ObjectDeclNode *  od;
    AssignDecl        asn;
@@ -77,6 +78,8 @@ typedef union {
 #define	opNTASN	318
 #define	opSTRNE	319
 #define	UNARY	320
+#define	opINTNAME	321
+#define	opINTNAMER	322
 
 
 extern YYSTYPE CMDlval;

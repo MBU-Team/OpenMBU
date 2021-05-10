@@ -194,6 +194,7 @@ const char* SimFieldDictionary::getFieldValue(StringTableEntry slotName)
 SimObject::SimObject()
 {
     objectName = NULL;
+    mInternalName = NULL;
     nextNameObject = (SimObject*)-1;
     nextManagerNameObject = (SimObject*)-1;
     nextIdObject = NULL;
@@ -697,6 +698,32 @@ ConsoleMethod(SimObject, getType, S32, 2, 2, "obj.getType()")
 {
     argc; argv;
     return((S32)object->getType());
+}
+
+void SimObject::setInternalName(const char* newname)
+{
+    if (newname)
+        mInternalName = StringTable->insert(newname);
+}
+
+//-----------------------------------------------------------------------------
+//	Set the internal name, can be used to find child objects
+//	in a meaningful way, usually from script, while keeping
+//	common script functionality together using the controls "Name" field.
+//-----------------------------------------------------------------------------
+ConsoleMethod(SimObject, setInternalName, void, 3, 3, "string InternalName")
+{
+    object->setInternalName(argv[2]);
+}
+
+StringTableEntry SimObject::getInternalName()
+{
+    return mInternalName;
+}
+
+ConsoleMethod(SimObject, getInternalName, const char*, 2, 2, "getInternalName returns the objects internal name")
+{
+    return object->getInternalName();
 }
 
 bool SimObject::isMethod(const char* methodName)
@@ -1344,6 +1371,28 @@ void SimSet::write(Stream& stream, U32 tabStop, U32 flags)
     }
     writeTabs(stream, tabStop);
     stream.write(4, "};\r\n");
+}
+
+SimObject* SimSet::findObjectByInternalName(const char* internalName, bool searchChildren)
+{
+    iterator i;
+    for (i = begin(); i != end(); i++)
+    {
+        SimObject* childObj = static_cast<SimObject*>(*i);
+        if (childObj->getInternalName() == internalName)
+            return childObj;
+        else if (searchChildren)
+        {
+            SimSet* childSet = dynamic_cast<SimSet*>(*i);
+            if (childSet)
+            {
+                SimObject* found = childSet->findObjectByInternalName(internalName, searchChildren);
+                if (found) return found;
+            }
+        }
+    }
+
+    return NULL;
 }
 
 ConsoleMethod(SimSet, listObjects, void, 2, 2, "set.listObjects();")
