@@ -1527,8 +1527,6 @@ U32 ObjectDeclNode::precompileSubObject(bool)
     // add all the sub objects.
     // OP_END_OBJECT 1
     // root? 1
-    // To fix the stack issue [7/9/2007 Black]
-    // OP_FINISH_OBJECT <-- fail point jumps to this opcode
 
     U32 argSize = 0;
     precompileIdent(parentObject);
@@ -1548,8 +1546,7 @@ U32 ObjectDeclNode::precompileSubObject(bool)
         subObjSize += objectWalk->precompileSubObject(false);
 
     failOffset = 10 + nameSize + argSize + slotSize + subObjSize;
-    // +1 because the failOffset should jump to OP_FINISH_OBJECT [7/9/2007 Black]
-    return failOffset + 1;
+    return failOffset;
 }
 
 U32 ObjectDeclNode::precompile(TypeReq type)
@@ -1594,8 +1591,6 @@ U32 ObjectDeclNode::compileSubObject(U32* codeStream, U32 ip, bool root)
         ip = objectWalk->compileSubObject(codeStream, ip, false);
     codeStream[ip++] = OP_END_OBJECT;
     codeStream[ip++] = root || structDecl;
-    // Added to fix the object creation issue [7/9/2007 Black]
-    codeStream[ip++] = OP_FINISH_OBJECT;
     return ip;
 }
 

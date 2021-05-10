@@ -286,15 +286,6 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
     U32 failJump;
     StringTableEntry fnName;
     StringTableEntry fnNamespace, fnPackage;
-    
-    // Add local object creation stack [7/9/2007 Black]
-    static const U32 objectCreationStackSize = 16;
-    U32 objectCreationStackIndex = 0;
-    struct {
-        SimObject* newObject;
-        U32 failJump;
-    } objectCreationStack[objectCreationStackSize];
-
     SimObject* currentNewObject = 0;
     StringTableEntry curField;
     SimObject* curObject;
@@ -341,25 +332,17 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
 
         case OP_CREATE_OBJECT:
         {
-            // Read some useful info.
-            objParent = U32toSTE(code[ip]);
-            bool isDataBlock = code[ip + 1];
-            failJump = code[ip + 2];
-
             // If we don't allow calls, we certainly don't allow creating objects!
-            // Moved this to after failJump is set. Engine was crashing when
-            // noCalls = true and an object was being created at the beginning of
-            // a file. ADL.
             if (noCalls)
             {
                 ip = failJump;
                 break;
             }
 
-            // Push the old info to the stack
-            //Assert( objectCreationStackIndex < objectCreationStackSize );
-            objectCreationStack[objectCreationStackIndex].newObject = currentNewObject;
-            objectCreationStack[objectCreationStackIndex++].failJump = failJump;
+            // Read some useful info.
+            objParent = U32toSTE(code[ip]);
+            bool isDataBlock = code[ip + 1];
+            failJump = code[ip + 2];
 
             // Get the constructor information off the stack.
             STR.getArgcArgv(NULL, &callArgc, &callArgv);
@@ -578,16 +561,6 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
             bool placeAtRoot = code[ip++];
             if (!placeAtRoot)
                 UINT--;
-            break;
-        }
-
-
-        case OP_FINISH_OBJECT:
-        {
-            //Assert( objectCreationStackIndex >= 0 );
-            // Restore the object info from the stack [7/9/2007 Black]
-            currentNewObject = objectCreationStack[--objectCreationStackIndex].newObject;
-            failJump = objectCreationStack[objectCreationStackIndex].failJump;
             break;
         }
 
