@@ -1,18 +1,18 @@
 typedef union {
-    char              c;
-    int               i;
-    const char* s;
-    char* str;
-    double            f;
-    StmtNode* stmt;
-    ExprNode* expr;
-    SlotAssignNode* slist;
-    VarNode* var;
-    SlotDecl          slot;
-    ObjectBlockDecl   odcl;
-    ObjectDeclNode* od;
-    AssignDecl        asn;
-    IfStmtNode* ifnode;
+   char              c;
+   int               i;
+   const char *      s;
+   char *            str;
+   double            f;
+   StmtNode *        stmt;
+   ExprNode *        expr;
+   SlotAssignNode *  slist;
+   VarNode *         var;
+   SlotDecl          slot;
+   ObjectBlockDecl   odcl;
+   ObjectDeclNode *  od;
+   AssignDecl        asn;
+   IfStmtNode *      ifnode;
 } YYSTYPE;
 #define	rwDEFINE	258
 #define	rwENDDEF	259
