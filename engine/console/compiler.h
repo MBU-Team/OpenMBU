@@ -30,6 +30,9 @@ namespace Compiler
         OP_CREATE_OBJECT,
         OP_ADD_OBJECT,
         OP_END_OBJECT,
+        // Added to fix the stack issue [7/9/2007 Black]
+        OP_FINISH_OBJECT,
+
         OP_JMPIFFNOT,
         OP_JMPIFNOT,
         OP_JMPIFF,
