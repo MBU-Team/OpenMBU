@@ -106,34 +106,31 @@ HEXDIGIT [a-fA-F0-9]
 "|="        return(CMDlval.i = opORASN);
 "<<="       return(CMDlval.i = opSLASN);
 ">>="       return(CMDlval.i = opSRASN);
-"->"     return(CMDlval.i = opINTNAME);
-"-->"    return(CMDlval.i = opINTNAMER);
 "NL"        {CMDlval.i = '\n'; return '@'; }
 "TAB"       {CMDlval.i = '\t'; return '@'; }
 "SPC"       {CMDlval.i = ' '; return '@'; }
 "@"         {CMDlval.i = 0; return '@'; }
-"/*" { /* this comment stops syntax highlighting from getting messed up when editing the lexer in TextPad */
-         register int c = 0, l;
-         for ( ; ; )
-         {
-            l = c;
-            c = yyinput();
+"/*"		{
+				register int c;
+				for ( ; ; )
+				{
+					while ( (c = CMDgetc()) != '*' && c != EOF )
+					; /* eat up text of comment */
 
-            // Is this an open comment?
-            if ( c == EOF )
-            {
-               CMDerror( "unexpected end of file found in comment" );
-               break;
-            }
+					if ( c == '*' )
+					{
+						while ( (c = CMDgetc()) == '*' )
+						;
+						if ( c == '/' )
+							break; /* found the end */
+					}
 
-            // Increment line numbers.
-            else if ( c == '\n' )
-               lineIndex++;
-
-            // Did we find the end of the comment?
-            else if ( l == '*' && c == '/' )
-               break;
-               }
+					if ( c == EOF )
+					{
+						CMDerror( "EOF in comment" );
+						break;
+					}
+				}
 			}
 "?" |
 "[" |
@@ -202,88 +199,14 @@ int CMDGetCurrentLine()
    return lineIndex;
 }
 
-extern bool gConsoleSyntaxError;
-
-void CMDerror(char *format, ...)
+void CMDerror(char *, ...)
 {
-   Compiler::gSyntaxError = true;
-
-   const int BUFMAX = 1024;
-   char tempBuf[BUFMAX];
-   va_list args;
-   va_start( args, format );
-#ifdef TORQUE_OS_WIN32
-   _vsnprintf( tempBuf, BUFMAX, format, args );
-#else
-   vsnprintf( tempBuf, BUFMAX, format, args );
-#endif
-
+   gSyntaxError = true;
    if(fileName)
-   {
-      Con::errorf(ConsoleLogEntry::Script, "%s Line: %d - %s", fileName, lineIndex, tempBuf);
-
-#ifndef NO_ADVANCED_ERROR_REPORT
-      // dhc - lineIndex is bogus.  let's try to add some sanity back in.
-      int i,j,n;
-      char c;
-      int linediv = 1;
-      // first, walk the buffer, trying to detect line ending type.
-      // this is imperfect, if inconsistant line endings exist...
-      for (i=0; i<scanIndex; i++)
-      {
-         c = scanBuffer[i];
-         if (c=='\r' && scanBuffer[i+1]=='\n') linediv = 2; // crlf detected
-         if (c=='\r' || c=='\n' || c==0) break; // enough for us to stop.
-      }
-      // grab some of the chars starting at the error location - lineending.
-      i = 1; j = 0; n = 1;
-      // find prev lineending
-      while (n<BUFMAX-8 && i<scanIndex) // cap at file start
-      {
-         c = scanBuffer[scanIndex-i];
-         if ((c=='\r' || c=='\n') && i>BUFMAX>>2) break; // at least get a little data
-         n++; i++;
-      }
-      // find next lineending
-      while (n<BUFMAX-8 && j<BUFMAX>>1) // cap at half-buf-size forward
-      {
-         c = scanBuffer[scanIndex+j];
-         if (c==0) break;
-         if ((c=='\r' || c=='\n') && j>BUFMAX>>2) break; // at least get a little data
-         n++; j++;
-      }
-      if (i) i--; // chop off extra linefeed.
-      if (j) j--; // chop off extra linefeed.
-      // build our little text block
-      if (i) dStrncpy(tempBuf,scanBuffer+scanIndex-i,i);
-      dStrncpy(tempBuf+i,"##", 2); // bracketing.
-      tempBuf[i+2] = scanBuffer[scanIndex]; // copy the halt character.
-      dStrncpy(tempBuf+i+3,"##", 2); // bracketing.
-      if (j) dStrncpy(tempBuf+i+5,scanBuffer+scanIndex+1,j); // +1 to go past current char.
-      tempBuf[i+j+5] = 0; // null terminate
-      for(n=0; n<i+j+5; n++) // convert CR to LF if alone...
-         if (tempBuf[n]=='\r' && tempBuf[n+1]!='\n') tempBuf[n] = '\n';
-      // write out to console the advanced error report
-      Con::warnf(ConsoleLogEntry::Script, ">>> Advanced script error report.  Line %d.", lineIndex);
-      Con::warnf(ConsoleLogEntry::Script, ">>> Some error context, with ## on sides of error halt:");
-      Con::errorf(ConsoleLogEntry::Script, "%s", tempBuf);
-      Con::warnf(ConsoleLogEntry::Script, ">>> Error report complete.\n");
-#endif
-
-      // Update the script-visible error buffer.
-      const char *prevStr = Con::getVariable("$ScriptError");
-      if (prevStr[0])
-         dSprintf(tempBuf, sizeof(tempBuf), "%s\n%s Line: %d - Syntax error.", prevStr, fileName, lineIndex);
-      else
-         dSprintf(tempBuf, sizeof(tempBuf), "%s Line: %d - Syntax error.", fileName, lineIndex);
-      Con::setVariable("$ScriptError", tempBuf);
-
-      // We also need to mark that we came up with a new error.
-      static S32 sScriptErrorHash=1000;
-      Con::setIntVariable("$ScriptErrorHash", sScriptErrorHash++);
-   }
+      Con::errorf(ConsoleLogEntry::Script, "%s Line: %d - Syntax error.",
+         fileName, lineIndex);
    else
-      Con::errorf(ConsoleLogEntry::Script, tempBuf);
+      Con::errorf(ConsoleLogEntry::Script, "Syntax error in input.");
 }
 
 void CMDSetScanBuffer(const char *sb, const char *fn)

@@ -1349,49 +1349,6 @@ TypeReq SlotAccessNode::getPreferredType()
     return TypeReqNone;
 }
 
-//-----------------------------------------------------------------------------
-
-U32 InternalSlotAccessNode::precompile(TypeReq type)
-{
-    if (type == TypeReqNone)
-        return 0;
-
-    U32 size = 3;
-
-    // eval object expression sub + 3 (op_setCurField + OP_SETCUROBJECT)
-    size += objectExpr->precompile(TypeReqString);
-    size += slotExpr->precompile(TypeReqString);
-    if (type != TypeReqUInt)
-        size++;
-
-    // get field in desired type:
-    return size;
-}
-
-U32 InternalSlotAccessNode::compile(U32* codeStream, U32 ip, TypeReq type)
-{
-    if (type == TypeReqNone)
-        return ip;
-
-    ip = objectExpr->compile(codeStream, ip, TypeReqString);
-    codeStream[ip++] = OP_SETCUROBJECT;
-
-    ip = slotExpr->compile(codeStream, ip, TypeReqString);
-    codeStream[ip++] = OP_SETCUROBJECT_INTERNAL;
-    codeStream[ip++] = recurse;
-
-    if (type != TypeReqUInt)
-        codeStream[ip++] = conversionOp(TypeReqUInt, type);
-    return ip;
-}
-
-TypeReq InternalSlotAccessNode::getPreferredType()
-{
-    return TypeReqUInt;
-}
-
-//-----------------------------------------------------------------------------
-
 //------------------------------------------------------------
 
 U32 SlotAssignNode::precompile(TypeReq type)
@@ -1579,7 +1536,7 @@ U32 ObjectDeclNode::precompileSubObject(bool)
         argSize += exprWalk->precompile(TypeReqString) + 1;
     argSize += classNameExpr->precompile(TypeReqString) + 1;
 
-    U32 nameSize = objectNameExpr->precompile(TypeReqString) + 1;
+    U32 nameSize = objectNameExpr->precompile(TypeReqString);
 
     U32 slotSize = 0;
     for (SlotAssignNode* slotWalk = slotDecls; slotWalk; slotWalk = (SlotAssignNode*)slotWalk->getNext())
@@ -1628,7 +1585,6 @@ U32 ObjectDeclNode::compileSubObject(U32* codeStream, U32 ip, bool root)
     codeStream[ip] = STEtoU32(parentObject, ip);
     ip++;
     codeStream[ip++] = structDecl;
-    codeStream[ip++] = isClassNameInternal;
     codeStream[ip++] = start + failOffset;
     for (SlotAssignNode* slotWalk = slotDecls; slotWalk; slotWalk = (SlotAssignNode*)slotWalk->getNext())
         ip = slotWalk->compile(codeStream, ip, TypeReqNone);
