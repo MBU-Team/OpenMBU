@@ -238,7 +238,6 @@ namespace Con
 
         // Set up the parser(s)
         CON_ADD_PARSER(CMD, "cs", true);   // TorqueScript
-        CON_ADD_PARSER(BAS, "bas", false);  // TorqueBasic
 
         // Variables
         setVariable("Con::prompt", "% ");

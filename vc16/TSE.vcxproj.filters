@@ -204,12 +204,6 @@
     <ClCompile Include="..\engine\console\astNodes.cpp">
       <Filter>Source Files\console</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\console\BASgram.cpp">
-      <Filter>Source Files\console</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\console\BASscan.cpp">
-      <Filter>Source Files\console</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\console\cmdgram.cpp">
       <Filter>Source Files\console</Filter>
     </ClCompile>

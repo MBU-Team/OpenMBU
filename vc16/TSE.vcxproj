@@ -453,8 +453,6 @@
     </ClCompile>
     <ClCompile Include="..\engine\console\astAlloc.cpp" />
     <ClCompile Include="..\engine\console\astNodes.cpp" />
-    <ClCompile Include="..\engine\console\BASgram.cpp" />
-    <ClCompile Include="..\engine\console\BASscan.cpp" />
     <ClCompile Include="..\engine\console\cmdgram.cpp" />
     <ClCompile Include="..\engine\console\CMDscan.cpp" />
     <ClCompile Include="..\engine\console\codeBlock.cpp" />
