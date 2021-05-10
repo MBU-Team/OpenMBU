@@ -346,7 +346,11 @@ ConsoleFunction(alxPlay, S32, 2, 5, "alxPlay(handle) or "
     {
         AUDIOHANDLE handle = dAtoi(argv[1]);
         if (handle != 0)
-            return alxPlay(handle);
+        {
+            S32 ret = alxPlay(handle);
+            if (ret != NULL_AUDIOHANDLE)
+                return ret;
+        }
     }
 
     AudioProfile* profile = dynamic_cast<AudioProfile*>(Sim::findObject(argv[1]));
