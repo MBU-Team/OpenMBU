@@ -38,11 +38,13 @@ function inputAndSoundOptionsGui::show(%this, %backGui)
    inputAndSoundOptionsList.addRow($Text::InvX, $Text::InvOnOff, 8); // invert x
    inputAndSoundOptionsList.addRow($Text::MusicVol, GetOptionListRangeText(0, 100, 5), 8); // "Music"
    inputAndSoundOptionsList.addRow($Text::FXVol, GetOptionListRangeText(0, 100, 5), 8); // "FX"
+   inputAndSoundOptionsList.addRow($Text::MouseSensitivity, GetOptionListRangeText(10, 100, 5), 8); // mouse sensitivity
 
    inputAndSoundOptionsList.setOptionIndex(0, $pref::invertYCamera);
    inputAndSoundOptionsList.setOptionIndex(1, $pref::invertXCamera);
    inputAndSoundOptionsList.setOptionIndex(2, ($pref::Option::MusicVolume) / 5 );
    inputAndSoundOptionsList.setOptionIndex(3, ($pref::Option::FXVolume) / 5 );
+   inputAndSoundOptionsList.setOptionIndex(4, (($pref::Input::MouseSensitivity * 10000) / 5) - 2);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( $Text::About1Title );
@@ -77,6 +79,9 @@ function inputAndSoundOptionsList::onOptionChange(%this, %increase)
          $pref::Option::FXVolume = %val * 5;
          alxSetMasterVolume($pref::Option::FXVolume * 0.01);
          alxPlay(OptionsGuiTestSound);
+      case 4:
+         // mouse sensitivity
+         $pref::Input::MouseSensitivity = mClamp((%val+2) * 0.05, 0.1, 1) * 0.01;
    }  
 }
 

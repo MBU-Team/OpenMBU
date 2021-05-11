@@ -311,6 +311,7 @@ $Text::MusicVol = "Music Volume";
 $Text::FXVol = "Effects Volume";
 $Text::InvX = "Camera X-Axis";
 $Text::InvY = "Camera Y-Axis";
+$Text::MouseSensitivity = "Mouse Sensitivity";
 $Text::InvOnOff = "Normal\tInverted";
 $Text::MarbleSkin = "Marble Type";
 

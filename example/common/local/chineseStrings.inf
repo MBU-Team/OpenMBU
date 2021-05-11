@@ -311,6 +311,7 @@ $Text::MusicVol="音量";
 $Text::FXVol="特效音量";
 $Text::InvX="視角 X 軸";
 $Text::InvY="視角 Y 軸";
+$Text::MouseSensitivity = "鼠標靈敏度";
 $Text::InvOnOff="正常\t反轉";
 $Text::MarbleSkin="彈珠類型";
 

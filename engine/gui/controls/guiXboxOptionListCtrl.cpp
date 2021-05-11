@@ -69,7 +69,11 @@ ConsoleMethod(GuiXboxOptionListCtrl, getOptionIndex, S32, 3, 3, "(row)")
 
 ConsoleMethod(GuiXboxOptionListCtrl, setOptionIndex, void, 4, 4, "(row, idx)")
 {
-    object->setOptionIndex(dAtoi(argv[2]), dAtoi(argv[3]));
+    // TODO: Deal with floating point issues better
+    //S32 idx = dAtoi(argv[3]);
+    S32 idx = (S32)dAtof(argv[3]);
+
+    object->setOptionIndex(dAtoi(argv[2]), idx);
 }
 
 ConsoleMethod(GuiXboxOptionListCtrl, setOptionWrap, void, 4, 4, "(row, wrap)")

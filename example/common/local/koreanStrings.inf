@@ -311,6 +311,7 @@ $Text::MusicVol = "음악 볼륨";
 $Text::FXVol = "사운드효과 볼륨";
 $Text::InvX = "카메라 수평 이동";
 $Text::InvY = "카메라 수직 이동";
+$Text::MouseSensitivity = "마우스 감도";
 $Text::InvOnOff = "일반\t반전";
 $Text::MarbleSkin = "마블공 종류";
 $Text::MarbleOptions = "1번\t2번\t3번\t4번\t5번\t6번\t7번\t8번";

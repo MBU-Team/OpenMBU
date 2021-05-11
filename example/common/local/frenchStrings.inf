@@ -311,6 +311,7 @@ $Text::MusicVol = "Volume";
 $Text::FXVol = "Volume des effets";
 $Text::InvX = "Axe caméra X";
 $Text::InvY = "Axe caméra Y";
+$Text::MouseSensitivity = "Sensibilité de la souris";
 $Text::InvOnOff = "Normal\tInversé";
 $Text::MarbleSkin = "Type de bille";
 

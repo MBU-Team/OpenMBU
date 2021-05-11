@@ -311,6 +311,7 @@ $Text::MusicVol = "Volume musica";
 $Text::FXVol = "Volume effetti";
 $Text::InvX = "Asse visuale X";
 $Text::InvY = "Asse visuale Y";
+$Text::MouseSensitivity = "Sensibilità del mouse";
 $Text::InvOnOff = "Normale\tInvertito";
 $Text::MarbleSkin = "Tipo di biglia";
 

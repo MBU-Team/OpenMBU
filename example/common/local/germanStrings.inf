@@ -311,6 +311,7 @@ $Text::MusicVol = "Musiklautstärke";
 $Text::FXVol = "Effektlautstärke";
 $Text::InvX = "Kamera X-Achse";
 $Text::InvY = "Kamera Y-Achse";
+$Text::MouseSensitivity = "Maus-Empfindlichkeit";
 $Text::InvOnOff = "Normal\tUmgekehrt";
 $Text::MarbleSkin = "Murmeltyp";
 

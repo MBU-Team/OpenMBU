@@ -7827,6 +7827,10 @@ Possible parameters are:
         <args>float v</args>
         <desc>Round v up to the nearest whole number.</desc>
     </function>
+    <function>        <name>mClamp</name>
+        <args>float number, float min, float max</args>
+        <desc>Clamp a value between two other values.</desc>
+    </function>
     <function>        <name>mCos</name>
         <args>float th</args>
         <desc>Returns the cosine of th, which is in radians.</desc>

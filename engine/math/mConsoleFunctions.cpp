@@ -134,4 +134,12 @@ ConsoleFunction(mDegToRad, F32, 2, 2, "(float degrees) Convert a measure in degr
     return(mDegToRad(dAtof(argv[1])));
 }
 
+ConsoleFunction(mClamp, F32, 4, 4, "(float number, float min, float max) Clamp a value between two other values.")
+{
+    F32 value = dAtof(argv[1]);
+    F32 min = dAtof(argv[2]);
+    F32 max = dAtof(argv[3]);
+    return mClampF(value, min, max);
+}
+
 ConsoleFunctionGroupEnd(GeneralMath);

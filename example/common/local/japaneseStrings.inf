@@ -311,6 +311,7 @@ $Text::MusicVol = "音楽のボリューム";
 $Text::FXVol = "効果音ボリューム";
 $Text::InvX = "視点 - X 軸";
 $Text::InvY = "視点 - Y 軸";
+$Text::MouseSensitivity = "マウス感度";
 $Text::InvOnOff = "標準\t反転";
 $Text::MarbleSkin = "デザイン";
 $Text::MarbleOptions = "1\t2\t3\t4\t5\t6\t7\t8";
