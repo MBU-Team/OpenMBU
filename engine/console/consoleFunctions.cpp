@@ -1144,16 +1144,53 @@ ConsoleFunction(isDefined, bool, 2, 2, "isDefined(variable name [, value if not 
 
 //----------------------------------------------------------------
 
-ConsoleFunction(export, void, 2, 4, "export(searchString [, fileName [,append]])")
+ConsoleFunction(getPrefsPath, const char*, 1, 2, "([relativeFileName])")
+{
+    const char* filename = Platform::getPrefsPath(argc > 1 ? argv[1] : NULL);
+    if (filename == NULL || *filename == 0)
+        return "";
+
+    return filename;
+}
+
+ConsoleFunction(execPrefs, bool, 2, 4, "execPrefs(relativeFileName [, nocalls [,journalScript]])")
+{
+    const char* filename = Platform::getPrefsPath(argv[1]);
+    if (filename == NULL || *filename == 0)
+        return false;
+
+    // Scripts do this a lot, so we may as well help them out
+    // FIXME [tom, 11/17/2006] This should use the resource manager in addition to file system check
+    if (!Platform::isFile(filename) && !ResourceManager->find(filename))
+        return true;
+
+    argv[0] = "exec";
+    argv[1] = filename;
+    return dAtob(Con::execute(argc, argv));
+}
+
+ConsoleFunction(export, void, 2, 4, "export(searchString [, relativeFileName [,append]])")
 {
     const char* filename = NULL;
     bool append = (argc == 4) ? dAtob(argv[3]) : false;
 
     if (argc >= 3)
+    {
+#ifdef TORQUE_PLAYER
         if (Con::expandScriptFilename(scriptFilenameBuffer, sizeof(scriptFilenameBuffer), argv[2]))
             filename = scriptFilenameBuffer;
+#else
+        filename = Platform::getPrefsPath(argv[2]);
+        if (filename == NULL || *filename == 0)
+            return;
+
+        gAllowExternalWrite = true;
+#endif
+    }
 
     gEvalState.globalVars.exportVariables(argv[1], filename, append);
+
+    gAllowExternalWrite = false;
 }
 
 ConsoleFunction(deleteVariables, void, 2, 2, "deleteVariables(wildCard)")

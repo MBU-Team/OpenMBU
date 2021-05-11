@@ -738,12 +738,12 @@ function clientAreStatsAllowed()
 
 function clientAreOfflineStatsAllowed()
 {
-   return !isDemoLaunch() && !isPCBuild();
+   return !isDemoLaunch();// && !isPCBuild();
 }
 
 function clientAreAchievementsAllowed()
 {
-   return !isDemoLaunch() && !isPCBuild();
+   return !isDemoLaunch();// && !isPCBuild();
 }
 
 function onMultiplayerStatsLoaded()

@@ -110,11 +110,11 @@ new GuiControl(ConsoleDlg) {
 
 function ConsoleDlg::onWake()
 {
-   %position = $pref::Console::position;
+   %position = $Console::position;
    if(%position $= "")
       %position = ConsoleDlgWindow.position;
    
-   %extent = $pref::Console::extent;
+   %extent = $Console::extent;
    if(getWord(%extent, 0) < getWord(ConsoleDlgWindow.minExtent, 0) ||
       getWord(%extent, 1) < getWord(ConsoleDlgWindow.minExtent, 1))
       %extent = ConsoleDlgWindow.extent;
@@ -125,8 +125,8 @@ function ConsoleDlg::onWake()
 
 function ConsoleDlg::onSleep()
 {
-   $pref::Console::position = ConsoleDlgWindow.position;
-   $pref::Console::extent = ConsoleDlgWindow.extent;
+   $Console::position = ConsoleDlgWindow.position;
+   $Console::extent = ConsoleDlgWindow.extent;
 }
 
 function ConsoleEntry::eval()

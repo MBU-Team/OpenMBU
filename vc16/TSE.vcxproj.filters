@@ -1557,6 +1557,9 @@
     <ClCompile Include="..\engine\gui\containers\guiAutoScrollCtrl.cpp">
       <Filter>Source Files\gui\containers</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\platformWin32\winUser.cpp">
+      <Filter>Source Files\platformWin32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">

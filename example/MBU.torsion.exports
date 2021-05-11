@@ -7469,6 +7469,9 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>exec</name>
         <args>fileName [, nocalls [,journalScript]]</args>
     </function>
+    <function>        <name>execPrefs</name>
+        <args>relativeFileName [, nocalls [,journalScript]]</args>
+    </function>
     <function>        <name>expandEscape</name>
         <args>text</args>
     </function>
@@ -7476,7 +7479,7 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
         <args>string filename</args>
     </function>
     <function>        <name>export</name>
-        <args>searchString [, fileName [,append]]</args>
+        <args>searchString [, relativeFileName [,append]]</args>
     </function>
     <function>        <name>exportCachedFont</name>
         <args>fontName, size, fileName, padding, kerning</args>
@@ -7592,6 +7595,9 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>getPixelShaderVersion</name>
         <desc>Get pixel shader version.</desc>
     </function>
+    <function>        <name>getPrefsPath</name>
+        <args>[relativeFileName]</args>
+    </function>
     <function>        <name>getRandom</name>
         <args>int a=1, int b=0</args>
         <desc>Get a random number between a and b.</desc>
@@ -7648,6 +7654,10 @@ Sim time is time since the game started.</desc>
     </function>
     <function>        <name>getTimeSinceStart</name>
         <args>%scheduleId</args>
+    </function>
+    <function>        <name>getUserDataDirectory</name>
+    </function>
+    <function>        <name>getUserHomeDirectory</name>
     </function>
     <function>        <name>getVersionNumber</name>
         <desc>Get the version of the build, as a string.</desc>

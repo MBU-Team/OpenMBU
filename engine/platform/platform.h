@@ -366,6 +366,8 @@ public:
     // Directory functions.  Dump path returns false iff the directory cannot be
     //  opened.
 public:
+    static StringTableEntry getPrefsPath(const char* file = NULL);
+
     static StringTableEntry getWorkingDirectory();
     static bool dumpPath(const char* in_pBasePath, Vector<FileInfo>& out_rFileVector, S32 recurseDepth = -1);
     static bool dumpDirectories(const char* path, Vector<StringTableEntry>& directoryVector, S32 depth = 1, bool noBasePath = false);
@@ -414,6 +416,11 @@ public:
 
     static const char* getClipboard();
     static bool setClipboard(const char* text);
+
+    // User Specific Functions
+    static StringTableEntry getUserHomeDirectory();
+    static StringTableEntry getUserDataDirectory();
+    static bool getUserIsAdministrator();
 
     static bool stringToFileTime(const char* string, FileTime* time);
     static bool fileTimeToString(FileTime* time, char* string, U32 strLen);

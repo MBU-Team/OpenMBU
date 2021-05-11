@@ -24,6 +24,8 @@
 
 ResManager* ResourceManager = NULL;
 
+bool gAllowExternalWrite = false;
+
 char* ResManager::smExcludedDirectories = ".svn;CVS";
 
 //------------------------------------------------------------------------------
@@ -210,9 +212,12 @@ void ResManager::setFileNameEcho(bool on)
 
 bool ResManager::isValidWriteFileName(const char* fn)
 {
-    // all files must be based off the VFS
-    if (fn[0] == '/' || dStrchr(fn, ':'))
-        return false;
+    if (!gAllowExternalWrite)
+    {
+        // all files must be based off the VFS
+        if (fn[0] == '/' || dStrchr(fn, ':'))
+            return false;
+    }
 
     if (!writeablePath[0])
         return true;

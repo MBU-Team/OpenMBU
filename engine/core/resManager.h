@@ -40,6 +40,8 @@ class FindMatch;
 
 extern ResManager* ResourceManager;
 
+extern bool gAllowExternalWrite;
+
 //------------------------------------------------------------------------------
 class ResourceObject;
 

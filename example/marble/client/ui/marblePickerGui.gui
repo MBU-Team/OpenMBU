@@ -79,8 +79,14 @@ function marblePickerGui::onA(%this)
    commandToServer('DestroyMarblePickerMarble');
    
    // Save the profile
-   %string = CurrentGamerProfile.packProfile();
-   CurrentGamerProfile.saveProfile(%string);
+   if (isPCBuild())
+   {
+      saveUserProfile();
+   } else
+   {
+      %string = CurrentGamerProfile.packProfile();
+      CurrentGamerProfile.saveProfile(%string);
+   }
    
    // Return to selected mission
    GameMissionInfo.setMode( GameMissionInfo.SPMode );

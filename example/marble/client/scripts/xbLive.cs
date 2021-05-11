@@ -916,9 +916,35 @@ function XBGamerProfile::packProfile(%this)
    return "";
 }
 
+function savePCUserProfile()
+{
+   export("$pref*", "prefs.cs");
+   export("$CachedUserTime*", "scores.cs");
+   export("$UserAchievements*", "achievements.cs");
+}
+
+function loadPCUserProfile()
+{
+   execPrefs("prefs.cs");
+   execPrefs("scores.cs");
+   execPrefs("achievements.cs");
+   
+   xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
+   alxSetMasterVolume($pref::Option::FXVolume * 0.01);
+   
+   // Set the new marble biscuit
+   commandToServer('SetMarble', $pref::marbleIndex);
+}
+
+function xbSetMusicVolume(%volume)
+{
+   $pref::Audio::channelVolume[$MusicAudioType] = %volume;
+   alxSetChannelVolume($MusicAudioType, $pref::Audio::channelVolume[$MusicAudioType]);
+}
+
 function saveUserProfile()
 {
-   if (isPCBuild() || isDemoLaunch())
+   if (isDemoLaunch())
       return;
 
    if (!XBLiveIsSignedIn())
@@ -927,6 +953,13 @@ function saveUserProfile()
    %port = XBLiveGetSignInPort();
    
    echo("Saving user profile for port" SPC %port);
+   
+   if (isPCBuild())
+   {
+      savePCUserProfile();
+      return;
+   }
+   
    if (!isObject(CurrentGamerProfile))
    {
       echo("No CurrentGamerProfile, making one");
@@ -958,26 +991,30 @@ function saveUserProfile()
 
 function loadUserProfile()
 {
+   if (!XBLiveIsSignedIn())
+      return;
+   
+   if (!isPCBuild())
+   {
+      if( isObject( CurrentGamerProfile ) && CurrentGamerProfile.isBusy() )
+      {
+         $delUserProfileSchedule = schedule( 1000, 0, "loadUserProfile" );
+         return;
+      }
+      else
+         cancel( $delUserProfileSchedule );
+   }
+   
+   %port = XBLiveGetSignInPort();
+   
+   echo("Loading user profile for port" SPC %port);
+   
    if (isPCBuild())
    {
       loadPCUserProfile();
       return;
    }
-      
-   if (!XBLiveIsSignedIn())
-      return;
    
-   if( isObject( CurrentGamerProfile ) && CurrentGamerProfile.isBusy() )
-   {
-      $delUserProfileSchedule = schedule( 1000, 0, "loadUserProfile" );
-      return;
-   }
-   else
-      cancel( $delUserProfileSchedule );
-   
-   %port = XBLiveGetSignInPort();
-   
-   echo("Loading user profile for port" SPC %port);
    // delete any previous profile object
    if (isObject(CurrentGamerProfile))
       CurrentGamerProfile.delete();
@@ -991,18 +1028,6 @@ function loadUserProfile()
       $loadUserProfileSchedule = schedule( 1000, 0, "loadUserProfile" );
    else
       cancel( $loadUserProfileSchedule );
-}
-
-function loadPCUserProfile()
-{
-   xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
-   alxSetMasterVolume($pref::Option::FXVolume * 0.01);
-}
-
-function xbSetMusicVolume(%volume)
-{
-   $pref::Audio::channelVolume[$MusicAudioType] = %volume;
-   alxSetChannelVolume($MusicAudioType, $pref::Audio::channelVolume[$MusicAudioType]);
 }
 
 function XBGamerProfile::onProfileLoaded(%this, %string)

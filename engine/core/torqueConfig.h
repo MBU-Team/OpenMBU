@@ -31,10 +31,10 @@
 #define TORQUE_SHADER_ENGINE        TORQUE_VERSION
 
 /// What's the name of your game? Used in a variety of places.
-#define TORQUE_GAME_NAME            "Torque Shader Engine Demo"
+#define TORQUE_GAME_NAME            "Marble Blast Ultra" //"Torque Shader Engine Demo"
 
 /// Human readable version string.
-#define TORQUE_GAME_VERSION_STRING  "Torque Demo 1.4 (TGE 1.4)"
+#define TORQUE_GAME_VERSION_STRING  "1.0.0" //"Torque Demo 1.4 (TGE 1.4)"
 
 /// Define me if you want to enable multithreading support.
 #define TORQUE_MULTITHREAD
