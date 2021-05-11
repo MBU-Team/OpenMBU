@@ -342,22 +342,18 @@ ConsoleFunction(alxPlay, S32, 2, 5, "alxPlay(handle) or "
     "alxPlay(profile) or "
     "alxPlay(profile, x,y,z)")
 {
-    if (argc == 2)
-    {
-        AUDIOHANDLE handle = dAtoi(argv[1]);
-        if (handle != 0)
-        {
-            S32 ret = alxPlay(handle);
-            if (ret != NULL_AUDIOHANDLE)
-                return ret;
-        }
-    }
 
     AudioProfile* profile = dynamic_cast<AudioProfile*>(Sim::findObject(argv[1]));
     if (profile == NULL)
     {
-        Con::printf("Unable to locate audio profile '%s'", argv[1]);
-        return NULL_AUDIOHANDLE;
+        AUDIOHANDLE handle = dAtoi(argv[1]);
+        if (handle != 0)
+            return alxPlay(handle);
+        else
+        {
+            Con::printf("Unable to locate audio profile '%s'", argv[1]);
+            return NULL_AUDIOHANDLE;
+        }
     }
 
     Point3F pos(0.f, 0.f, 0.f);
