@@ -86,7 +86,7 @@ void RenderInstManager::initBins()
     mRenderBins.setSize(NumRenderBins);
     dMemset(mRenderBins.address(), 0, mRenderBins.size() * sizeof(RenderElemMgr*));
 
-    mRenderBins[Begin] = new RenderObjectMgr;
+    //mRenderBins[Begin] = new RenderObjectMgr;
     mRenderBins[Sky] = new RenderObjectMgr;
     mRenderBins[SkyShape] = new RenderTranslucentMgr;
     mRenderBins[Interior] = new RenderInteriorMgr;

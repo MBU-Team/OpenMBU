@@ -106,6 +106,11 @@ public:
         RIT_Mesh,
         RIT_Shadow,
         RIT_Sky,
+        RIT_Astrolabe,
+        RIT_Glass,
+        RIT_Refraction,
+        RIT_Marble,
+        RIT_Glow,
         RIT_Object,      // terrain, water, etc. objects that do their own rendering
         RIT_ObjectTranslucent,// self rendering, but sorted with RIT_Translucent
         RIT_Decal,
