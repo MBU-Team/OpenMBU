@@ -15,7 +15,11 @@
 
 DepthSortList BlobShadow::smDepthSortList;
 GFXTexHandle BlobShadow::smGenericShadowTexture = NULL;
+#if defined(MB_ULTRA) && !defined(MB_ONLINE_SHADOW)
+S32 BlobShadow::smGenericShadowDim = 256;
+#else
 S32 BlobShadow::smGenericShadowDim = 32;
+#endif
 U32 BlobShadow::smShadowMask = TerrainObjectType | InteriorObjectType;
 #ifdef MB_ULTRA
 F32 BlobShadow::smGenericRadiusSkew = 0.6f; // shrink radius of shape when it always uses generic shadow...
@@ -97,7 +101,11 @@ void BlobShadow::generateGenericShadowBitmap(S32 dim)
       for (S32 j=0; j<dim; j++)
       {
          tmpF = (F32)((i-center)*(i-center)+(j-center)*(j-center)) * invRadiusSq;
-         U8 val = tmpF>0.99f ? 0 : (U8)(180.0f*(1.0f-tmpF)); // 180 out of 255 max
+#if defined(MB_ULTRA) && !defined(MB_ONLINE_SHADOW)
+         U8 val = tmpF>0.99f ? 0 : (U8)(75.0f*(1.0f/*-tmpF*/)); // 180 out of 255 max
+#else
+         U8 val = tmpF > 0.99f ? 0 : (U8)(180.0f * (1.0f-tmpF)); // 180 out of 255 max
+#endif
          bits[(i*dim*4)+(j*4)+3] = val;
       }
    }
