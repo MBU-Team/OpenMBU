@@ -461,7 +461,7 @@ bool InteriorInstance::onSceneAdd(SceneGraph* pGraph)
         return false;
 
     if (mInteriorRes->getDetailLevel(0)->mZones.size() > 1) {
-        AssertWarn(getNumCurrZones() == 1, "There should be one and only one zone for an interior that manages zones");
+        AssertWarn(getNumCurrZones() == 1 || gSPMode, "There should be one and only one zone for an interior that manages zones");
         mSceneManager->registerZones(this, (mInteriorRes->getDetailLevel(0)->mZones.size() - 1));
     }
 

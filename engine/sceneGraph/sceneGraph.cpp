@@ -727,7 +727,7 @@ void SceneGraph::findZone(const Point3F& p, SceneObject*& owner, U32& zone)
         // Loop, but don't consider the root...
         for (U32 i = 1; i < mZoneManagers.size(); i++)
         {
-            AssertWarn(mZoneManagers[i].obj->getNumCurrZones() == 1 || (i == 0 && mZoneManagers[i].obj->getNumCurrZones() == 0),
+            AssertWarn(mZoneManagers[i].obj->getNumCurrZones() == 1 || (i == 0 && mZoneManagers[i].obj->getNumCurrZones() == 0) || gSPMode,
                 "ZoneManagers are only allowed to belong to one and only one zone!");
             if (mZoneManagers[i].obj->getCurrZone(0) == currZone)
             {
