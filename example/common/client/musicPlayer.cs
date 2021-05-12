@@ -12,7 +12,7 @@ function MusicPlayer::activate(%this)
 {
    %this.isActive = 1;
    
-   if (!%this.playOnActivate || (%this.currTrack != 0 && sfxIsPlaying(%this.currTrack)))
+   if (!%this.playOnActivate || (isObject(%this.currTrack) && %this.currTrack.isPlaying()))
       return;
       
    %this.playNext();
@@ -20,14 +20,14 @@ function MusicPlayer::activate(%this)
 
 function MusicPlayer::isPlaying(%this)
 {
-   return %this.currTrack != 0 && sfxIsPlaying(%this.currTrack);
+   return isObject(%this.currTrack) && %this.currTrack.isPlaying();
 }
 
 function MusicPlayer::stop(%this)
 {
-   if (%this.currTrack != 0 && sfxIsPlaying(%this.currTrack))
+   if (isObject(%this.currTrack) && %this.currTrack.isPlaying())
    {
-      sfxStop(%this.currTrack);
+      %this.currTrack.delete();
    }
 }
 
