@@ -124,6 +124,7 @@ function defineBasicMarbleMaterial(%id, %shader, %bump, %diff, %mapTo, %specular
         "    texture[0] = \"marble/data/shapes/balls/" @ %bump @ "\";\n" @
         "    texture[1] = \"marble/data/shapes/balls/" @ %diff @ "\";\n" @
         "    texture[3] = \"$dynamicCubemap\";\n" @
+        //"    baseTex[0] = \"marble/data/shapes/balls/" @ %diff @ "\";\n" @ 
         "    specular[0] = \"" @ %specular @ "\";\n" @
         "    specularPower[0] = " @ %specPow @ ";\n" @
         "    dynamicCubemap = true;\n" @ 

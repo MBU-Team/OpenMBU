@@ -7,7 +7,8 @@
 #include "gfxD3DDevice.h"
 #include "sceneGraph/sceneGraph.h"
 
-#define INIT_HACK
+// Set to make dynamic cubemaps only update once.
+//#define INIT_HACK
 
 _D3DCUBEMAP_FACES GFXD3DCubemap::faceList[6] =
 {
@@ -288,6 +289,8 @@ void GFXD3DCubemap::updateDynamic(Point3F& pos)
         D3DDevice->Clear(0, NULL, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
         // render scene
+        //getCurrentClientSceneGraph()->renderScene(InteriorObjectType | ItemObjectType | StaticShapeObjectType | EnvironmentObjectType);
+        //getCurrentClientSceneGraph()->renderScene(InteriorObjectType | EnvironmentObjectType);
         getCurrentClientSceneGraph()->renderScene(InteriorObjectType);
     }
 

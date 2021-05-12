@@ -679,14 +679,14 @@ void Sky::renderObject(SceneState* state, RenderInst* ri)
 
 
     // this fixes oblique frustum clip prob on planar reflections
-    if (getCurrentClientSceneGraph()->isReflectPass())
+    /*if (getCurrentClientSceneGraph()->isReflectPass())
     {
         GFX->setProjectionMatrix(getCurrentClientSceneGraph()->getNonClipProjection());
     }
     else
-    {
+    {*/
         GFX->setProjectionMatrix(proj);
-    }
+    //}
 
     GFX->popWorldMatrix();
 
