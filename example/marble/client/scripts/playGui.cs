@@ -23,6 +23,9 @@ function PlayGui::onWake(%this)
       demoMap.push();
    else
       moveMap.push();
+   
+   // Fix triggers getting stuck
+   clearTriggers();
 
    if (ServerConnection.isMultiplayer)
    {

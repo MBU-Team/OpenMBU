@@ -292,8 +292,6 @@ function mousePitch(%val)
 
 function jumpOrStart(%val)
 {
-   //$mvTriggerCount2++;
-   
    if (%val)
 	   $mvTriggerCount2 = 1;
 	else
@@ -346,12 +344,26 @@ function cycleDebugPredTiles()
 
 function mouseFire(%val)
 {
-   $mvTriggerCount0++;
+   if (%val)
+   {
+      $mvTriggerCount0 = 1;
+   }
+   else
+   {
+      $mvTriggerCount0 = 0;
+   }
 }
 
 function altTrigger(%val)
 {
-   $mvTriggerCount1++;
+   if (%val)
+   {
+      $mvTriggerCount1 = 1;
+   }
+   else
+   {
+      $mvTriggerCount1 = 0;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -485,6 +497,12 @@ function respawn(%val)
 {
    if (%val)
       LocalClientConnection.respawnPlayer();
+}
+
+function clearTriggers()
+{
+   for (%i = 0; %i < 6; %i++)   
+      $mvTriggerCount[%i] = 0;
 }
 
 //------------------------------------------------------------------------------
