@@ -8,39 +8,39 @@
 
 // Audio Profiles
 
-datablock AudioProfile(Warzone)
+datablock SFXProfile(Warzone)
 {
    filename    = "~/data/environment/warzone.wav";
    description = AudioLooping2D;
    volume   = 5.0;
 };
 
-datablock AudioProfile(Blackforest)
+datablock SFXProfile(Blackforest)
 {
    filename    = "~/data/environment/blackforest.wav";
    description = AudioLooping2D;
    volume   = 5.0;
 };
 
-datablock AudioProfile(Underwater)
+datablock SFXProfile(Underwater)
 {
    filename    = "~/data/environment/underwater.wav";
    description = AudioLooping2D;
 };
 
-datablock AudioProfile(Highland)
+datablock SFXProfile(Highland)
 {
    filename    = "~/data/environment/highland.wav";
    description = AudioLooping2D;
 };
 
-datablock AudioProfile(Chemical)
+datablock SFXProfile(Chemical)
 {
    filename    = "~/data/environment/chemical.wav";
    description = AudioLooping2D;
 };
 
-datablock AudioProfile(Afrika)
+datablock SFXProfile(Afrika)
 {
    filename    = "~/data/environment/Afrika.wav";
    description = AudioLooping2D;

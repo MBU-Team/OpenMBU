@@ -5,6 +5,7 @@
 
 #include "console/console.h"
 #include "console/consoleTypes.h"
+#include "sfx/sfxSystem.h"
 
 #include "gui/controls/guiGameListMenuCtrl.h"
 
@@ -71,9 +72,9 @@ void GuiGameListMenuCtrl::move(int increment)
 
 RETURN:
 
-    AudioProfile* sfx = mProfile->mSoundButtonOver;
+    SFXProfile* sfx = mProfile->mSoundButtonOver;
     if (sfx)
-        alxPlay(sfx);
+        SFX->playOnce(sfx);
 
     Con::executef(this, 1, "onSelChange");
 }

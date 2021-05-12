@@ -355,6 +355,7 @@ namespace Sim
         InstantiateNamedSet(fxFoliageSet);
         InstantiateNamedSet(reflectiveSet);
         InstantiateNamedSet(MaterialSet);
+        InstantiateNamedSet(SFXSourceSet);
         InstantiateNamedGroup(ActionMapGroup);
         InstantiateNamedGroup(ClientGroup);
         InstantiateNamedGroup(GuiGroup);

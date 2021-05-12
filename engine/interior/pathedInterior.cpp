@@ -17,6 +17,7 @@
 #include "sim/pathManager.h"
 #include "core/frameAllocator.h"
 #include "sceneGraph/sceneGraph.h"
+#include "sfx/sfxSystem.h"
 
 #ifdef MARBLE_BLAST
 #include "game/marble/marble.h"
@@ -35,9 +36,9 @@ PathedInteriorData::PathedInteriorData()
 
 void PathedInteriorData::initPersistFields()
 {
-    addField("StartSound", TypeAudioProfilePtr, Offset(sound[StartSound], PathedInteriorData));
-    addField("SustainSound", TypeAudioProfilePtr, Offset(sound[SustainSound], PathedInteriorData));
-    addField("StopSound", TypeAudioProfilePtr, Offset(sound[StopSound], PathedInteriorData));
+    addField("StartSound", TypeSFXProfilePtr, Offset(sound[StartSound], PathedInteriorData));
+    addField("SustainSound", TypeSFXProfilePtr, Offset(sound[SustainSound], PathedInteriorData));
+    addField("StopSound", TypeSFXProfilePtr, Offset(sound[StopSound], PathedInteriorData));
 
     Parent::initPersistFields();
 }
@@ -58,7 +59,7 @@ void PathedInteriorData::unpackData(BitStream* stream)
     for (S32 i = 0; i < MaxSounds; i++) {
         sound[i] = NULL;
         if (stream->readFlag())
-            sound[i] = (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+            sound[i] = (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
                 DataBlockObjectIdLast);
     }
     Parent::unpackData(stream);
@@ -223,11 +224,8 @@ void PathedInterior::onRemove()
 
     if (isClientObject())
     {
-        if (mSustainHandle)
-        {
-            alxStop(mSustainHandle);
-            mSustainHandle = 0;
-        }
+        SFX_DELETE(mSustainHandle);
+
         if(bool(mInteriorRes) && mLMHandle != 0xFFFFFFFF)
         {
             if (mInterior->getLMHandle() != 0xFFFFFFFF)

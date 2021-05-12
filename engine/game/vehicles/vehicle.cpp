@@ -19,7 +19,7 @@
 #include "game/gameConnection.h"
 #include "ts/tsShapeInstance.h"
 #include "game/fx/particleEmitter.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxSystem.h"
 #include "math/mathIO.h"
 #include "sceneGraph/sceneState.h"
 #include "terrain/terrData.h"
@@ -279,7 +279,7 @@ void VehicleData::unpackData(BitStream* stream)
     for (i = 0; i < Body::MaxSounds; i++) {
         body.sound[i] = NULL;
         if (stream->readFlag())
-            body.sound[i] = (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+            body.sound[i] = (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
                 DataBlockObjectIdLast);
     }
 
@@ -321,7 +321,7 @@ void VehicleData::unpackData(BitStream* stream)
         if (stream->readFlag())
         {
             U32 id = stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast);
-            waterSound[i] = dynamic_cast<AudioProfile*>(Sim::findObject(id));
+            waterSound[i] = dynamic_cast<SFXProfile*>(Sim::findObject(id));
         }
 
     if (stream->readFlag())
@@ -379,8 +379,8 @@ void VehicleData::initPersistFields()
     addField("massBox", TypePoint3F, Offset(massBox, VehicleData));
     addField("bodyRestitution", TypeF32, Offset(body.restitution, VehicleData));
     addField("bodyFriction", TypeF32, Offset(body.friction, VehicleData));
-    addField("softImpactSound", TypeAudioProfilePtr, Offset(body.sound[Body::SoftImpactSound], VehicleData));
-    addField("hardImpactSound", TypeAudioProfilePtr, Offset(body.sound[Body::HardImpactSound], VehicleData));
+    addField("softImpactSound", TypeSFXProfilePtr, Offset(body.sound[Body::SoftImpactSound], VehicleData));
+    addField("hardImpactSound", TypeSFXProfilePtr, Offset(body.sound[Body::HardImpactSound], VehicleData));
 
     addField("minImpactSpeed", TypeF32, Offset(minImpactSpeed, VehicleData));
     addField("softImpactSpeed", TypeF32, Offset(softImpactSpeed, VehicleData));
@@ -416,11 +416,11 @@ void VehicleData::initPersistFields()
     addField("softSplashSoundVelocity", TypeF32, Offset(softSplashSoundVel, VehicleData));
     addField("mediumSplashSoundVelocity", TypeF32, Offset(medSplashSoundVel, VehicleData));
     addField("hardSplashSoundVelocity", TypeF32, Offset(hardSplashSoundVel, VehicleData));
-    addField("exitingWater", TypeAudioProfilePtr, Offset(waterSound[ExitWater], VehicleData));
-    addField("impactWaterEasy", TypeAudioProfilePtr, Offset(waterSound[ImpactSoft], VehicleData));
-    addField("impactWaterMedium", TypeAudioProfilePtr, Offset(waterSound[ImpactMedium], VehicleData));
-    addField("impactWaterHard", TypeAudioProfilePtr, Offset(waterSound[ImpactHard], VehicleData));
-    addField("waterWakeSound", TypeAudioProfilePtr, Offset(waterSound[Wake], VehicleData));
+    addField("exitingWater", TypeSFXProfilePtr, Offset(waterSound[ExitWater], VehicleData));
+    addField("impactWaterEasy", TypeSFXProfilePtr, Offset(waterSound[ImpactSoft], VehicleData));
+    addField("impactWaterMedium", TypeSFXProfilePtr, Offset(waterSound[ImpactMedium], VehicleData));
+    addField("impactWaterHard", TypeSFXProfilePtr, Offset(waterSound[ImpactHard], VehicleData));
+    addField("waterWakeSound", TypeSFXProfilePtr, Offset(waterSound[Wake], VehicleData));
 
     addField("collDamageThresholdVel", TypeF32, Offset(collDamageThresholdVel, VehicleData));
     addField("collDamageMultiplier", TypeF32, Offset(collDamageMultiplier, VehicleData));
@@ -1010,26 +1010,26 @@ void Vehicle::updatePos(F32 dt)
                     impactSound = VehicleData::Body::SoftImpactSound;
 
             if (impactSound != -1 && mDataBlock->body.sound[impactSound] != NULL)
-                alxPlay(mDataBlock->body.sound[impactSound], &getTransform());
+                SFX->playOnce(mDataBlock->body.sound[impactSound], &getTransform());
         }
 
         // Water volume sounds
         F32 vSpeed = getVelocity().len();
         if (!inLiquid && mWaterCoverage >= 0.8f) {
             if (vSpeed >= mDataBlock->hardSplashSoundVel)
-                alxPlay(mDataBlock->waterSound[VehicleData::ImpactHard], &getTransform());
+                SFX->playOnce(mDataBlock->waterSound[VehicleData::ImpactHard], &getTransform());
             else
                 if (vSpeed >= mDataBlock->medSplashSoundVel)
-                    alxPlay(mDataBlock->waterSound[VehicleData::ImpactMedium], &getTransform());
+                    SFX->playOnce(mDataBlock->waterSound[VehicleData::ImpactMedium], &getTransform());
                 else
                     if (vSpeed >= mDataBlock->softSplashSoundVel)
-                        alxPlay(mDataBlock->waterSound[VehicleData::ImpactSoft], &getTransform());
+                        SFX->playOnce(mDataBlock->waterSound[VehicleData::ImpactSoft], &getTransform());
             inLiquid = true;
         }
         else
             if (inLiquid && mWaterCoverage < 0.8f) {
                 if (vSpeed >= mDataBlock->exitSplashSoundVel)
-                    alxPlay(mDataBlock->waterSound[VehicleData::ExitWater], &getTransform());
+                    SFX->playOnce(mDataBlock->waterSound[VehicleData::ExitWater], &getTransform());
                 inLiquid = false;
             }
     }
@@ -1583,10 +1583,7 @@ void Vehicle::updateFroth(F32 dt)
     if (!collidingWithWater(contactPoint))
     {
         if (waterWakeHandle)
-        {
-            alxStop(waterWakeHandle);
-            waterWakeHandle = 0;
-        }
+            waterWakeHandle->stop();
         return;
     }
 
@@ -1596,9 +1593,14 @@ void Vehicle::updateFroth(F32 dt)
     U32 emitRate = (U32)(speed * mDataBlock->splashFreqMod * dt);
 
     U32 i;
-    if (!waterWakeHandle)
-        waterWakeHandle = alxPlay(mDataBlock->waterSound[VehicleData::Wake], &getTransform());
-    alxSourceMatrixF(waterWakeHandle, &getTransform());
+    if (waterWakeHandle)
+    {
+        if (!waterWakeHandle->isPlaying())
+            waterWakeHandle->play();
+
+        waterWakeHandle->setTransform(getTransform());
+        waterWakeHandle->setVelocity(getVelocity());
+    }
 
     for (i = 0; i < VehicleData::VC_NUM_SPLASH_EMITTERS; i++)
     {

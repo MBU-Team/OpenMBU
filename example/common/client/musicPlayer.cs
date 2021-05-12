@@ -12,7 +12,7 @@ function MusicPlayer::activate(%this)
 {
    %this.isActive = 1;
    
-   if (!%this.playOnActivate || (%this.currTrack != 0 && alxIsPlaying(%this.currTrack)))
+   if (!%this.playOnActivate || (%this.currTrack != 0 && sfxIsPlaying(%this.currTrack)))
       return;
       
    %this.playNext();
@@ -20,14 +20,14 @@ function MusicPlayer::activate(%this)
 
 function MusicPlayer::isPlaying(%this)
 {
-   return %this.currTrack != 0 && alxIsPlaying(%this.currTrack);
+   return %this.currTrack != 0 && sfxIsPlaying(%this.currTrack);
 }
 
 function MusicPlayer::stop(%this)
 {
-   if (%this.currTrack != 0 && alxIsPlaying(%this.currTrack))
+   if (%this.currTrack != 0 && sfxIsPlaying(%this.currTrack))
    {
-      alxStop(%this.currTrack);
+      sfxStop(%this.currTrack);
    }
 }
 
@@ -61,5 +61,5 @@ function MusicPlayer::playNext(%this)
    if (%this.currTrackIndex >= %this.getCount())
       %this.currTrackIndex = 0;
    if (%this.currTrackIndex < %this.getCount())
-      %this.currTrack = alxPlay(%this.getObject(%this.currTrackIndex));
+      %this.currTrack = sfxPlay(%this.getObject(%this.currTrackIndex));
 }

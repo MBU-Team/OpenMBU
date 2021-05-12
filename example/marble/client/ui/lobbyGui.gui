@@ -785,7 +785,7 @@ function LobbyGui::onA(%this)
    if (%this.isLoading())
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (XBLiveIsRanked() && XBLiveIsArbRegistered()) 
    {
@@ -833,7 +833,7 @@ function LobbyGui::onB(%this)
    if (%this.isLoading())
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (%this.hosting && ClientGroup.getCount() > 1)
       XMessagePopupDlg.show(0, $Text::ErrorClientsWillDrop, $Text::OK, "LobbyGui.exitGame();", $Text::Cancel, "");
@@ -850,7 +850,7 @@ function LobbyGui::onLeft(%this)
    if (!RootGuiLSButton.visible)
       return;
       
-   alxPlay( AudioButtonOver );
+   sfxPlay( AudioButtonOver );
 
    // Check ownership with cycle:
    GameMissionInfo.selectPreviousMission(true);
@@ -878,7 +878,7 @@ function LobbyGui::onRight(%this)
    if (!RootGuiLSButton.visible)
       return;
 
-   alxPlay( AudioButtonOver );
+   sfxPlay( AudioButtonOver );
      
    // Check ownership with cycle:
    GameMissionInfo.selectNextMission(true);
@@ -909,7 +909,7 @@ function LobbyGui::onRight(%this)
 //   //if (!NavControlsGui.BEnabled())
 //   //   return;
 //      
-//   alxPlay( AudioButtonDown );
+//   sfxPlay( AudioButtonDown );
 //   showGui(LobbyOptionsGui);
 //}
 
@@ -945,7 +945,7 @@ function LobbyGui::onY(%this)
    if (%id == -1)
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    // have we selected ourselves?
    %isSelf = $Player::ClientId $= %id;

@@ -22,7 +22,7 @@ function aboutMenuOptionsGui::onA(%this)
 {
    %idx = aboutMenuOptionsList.getSelectedIndex();
    
-	alxPlay( AudioButtonDown );
+	sfxPlay( AudioButtonDown );
    
    if( %idx == 0 )
       RootGui.setContent( ControlerDisplayGui, %this );

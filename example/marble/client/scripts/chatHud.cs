@@ -39,19 +39,19 @@ function playMessageSound(%message, %voice, %pitch)
    if ((%pitch < 0.5) || (%pitch > 2.0)) {
       %pitch = 1.0;
    }
-   %wavLengthMS = alxGetWaveLen(%wavFile) * %pitch;
+   %wavLengthMS = sfxGetWaveLen(%wavFile) * %pitch;
    if (%wavLengthMS == 0) {
       error("** WAV file \"" @ %wavFile @ "\" is nonexistent or sound is zero-length **");
    }
    else if (%wavLengthMS <= $MaxMessageWavLength) {
       if ($ClientChatHandle[%sender] != 0) {
-         alxStop($ClientChatHandle[%sender]);
+         sfxStop($ClientChatHandle[%sender]);
       }
-      $ClientChatHandle[%sender] = alxCreateSource(AudioMessage, %wavFile);
+      $ClientChatHandle[%sender] = sfxCreateSource(AudioMessage, %wavFile);
       if (%pitch != 1.0) {
-         alxSourcef($ClientChatHandle[%sender], "AL_PITCH", %pitch);
+         sfxSourcef($ClientChatHandle[%sender], "AL_PITCH", %pitch);
       }
-      alxPlay($ClientChatHandle[%sender]);
+      sfxPlay($ClientChatHandle[%sender]);
    }
    else {
       error("** WAV file \"" @ %wavFile @ "\" is too long **");

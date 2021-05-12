@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 // Single shot sounds
 
-datablock AudioDescription(AudioDefault3d)
+datablock SFXDescription(AudioDefault3d)
 {
    volume   = 1.0;
    isLooping= false;
@@ -20,10 +20,10 @@ datablock AudioDescription(AudioDefault3d)
    is3D     = true;
    ReferenceDistance= 20.0;
    MaxDistance= 100.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
-datablock AudioDescription(AudioClose3d)
+datablock SFXDescription(AudioClose3d)
 {
    volume   = 1.0;
    isLooping= false;
@@ -31,10 +31,10 @@ datablock AudioDescription(AudioClose3d)
    is3D     = true;
    ReferenceDistance= 10.0;
    MaxDistance= 60.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
-datablock AudioDescription(AudioClosest3d)
+datablock SFXDescription(AudioClosest3d)
 {
    volume   = 1.0;
    isLooping= false;
@@ -42,14 +42,14 @@ datablock AudioDescription(AudioClosest3d)
    is3D     = true;
    ReferenceDistance= 5.0;
    MaxDistance= 30.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
 
 //-----------------------------------------------------------------------------
 // Looping sounds
 
-datablock AudioDescription(AudioDefaultLooping3d)
+datablock SFXDescription(AudioDefaultLooping3d)
 {
    volume   = 1.0;
    isLooping= true;
@@ -57,10 +57,10 @@ datablock AudioDescription(AudioDefaultLooping3d)
    is3D     = true;
    ReferenceDistance= 20.0;
    MaxDistance= 100.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
-datablock AudioDescription(AudioCloseLooping3d)
+datablock SFXDescription(AudioCloseLooping3d)
 {
    volume   = 1.0;
    isLooping= true;
@@ -68,10 +68,10 @@ datablock AudioDescription(AudioCloseLooping3d)
    is3D     = true;
    ReferenceDistance= 10.0;
    MaxDistance= 50.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
-datablock AudioDescription(AudioClosestLooping3d)
+datablock SFXDescription(AudioClosestLooping3d)
 {
    volume   = 1.0;
    isLooping= true;
@@ -79,10 +79,10 @@ datablock AudioDescription(AudioClosestLooping3d)
    is3D     = true;
    ReferenceDistance= 5.0;
    MaxDistance= 30.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
-datablock AudioDescription(QuieterAudioClosestLooping3d)
+datablock SFXDescription(QuieterAudioClosestLooping3d)
 {
    volume   = 0.5;
    isLooping= true;
@@ -90,10 +90,10 @@ datablock AudioDescription(QuieterAudioClosestLooping3d)
    is3D     = true;
    ReferenceDistance= 5.0;
    MaxDistance= 30.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
-datablock AudioDescription(Quieter3D)
+datablock SFXDescription(Quieter3D)
 {
    volume   = 0.60;
    isLooping= false;
@@ -101,7 +101,7 @@ datablock AudioDescription(Quieter3D)
    is3D     = true;
    ReferenceDistance= 20.0;
    MaxDistance= 100.0;
-   type     = $EffectAudioType;
+   channel     = $EffectAudioType;
 };
 
 //-----------------------------------------------------------------------------
@@ -109,98 +109,98 @@ datablock AudioDescription(Quieter3D)
 //-----------------------------------------------------------------------------
 
 // Used for non-looping environmental sounds (like power on, power off)
-datablock AudioDescription(Audio2D)
+datablock SFXDescription(Audio2D)
 {
    volume = 1.0;
    isLooping = false;
    is3D = false;
-   type = $EffectAudioType;
+   channel = $EffectAudioType;
 };
 
 // Used for Looping Environmental Sounds
-datablock AudioDescription(AudioLooping2D)
+datablock SFXDescription(AudioLooping2D)
 {
    volume = 1.0;
    isLooping = true;
    is3D = false;
-   type = $EffectAudioType;
+   channel = $EffectAudioType;
 };
 
 
 //-----------------------------------------------------------------------------
 // Ready - Set - Get Rolling
 
-datablock AudioProfile(pauseSfx)
+datablock SFXProfile(pauseSfx)
 {
    filename    = "~/data/sound/level_text.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(easterNewSfx)
+datablock SFXProfile(easterNewSfx)
 {
    filename    = "~/data/sound/easter_egg.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(easterNotNewSfx)
+datablock SFXProfile(easterNotNewSfx)
 {
    filename    = "~/data/sound/pu_easter.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(spawnSfx)
+datablock SFXProfile(spawnSfx)
 {
    filename    = "~/data/sound/spawn_alternate.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(pickupSfx)
+datablock SFXProfile(pickupSfx)
 {
    filename    = "~/data/sound/pickup.wav";
    description = AudioClosest3d;
    preload = true;
 };
 
-datablock AudioProfile(HelpDingSfx)
+datablock SFXProfile(HelpDingSfx)
 {
    filename    = "~/data/sound/InfoTutorial.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(ReadyVoiceSfx)
+datablock SFXProfile(ReadyVoiceSfx)
 {
    filename    = "~/data/sound/ready.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(SetVoiceSfx)
+datablock SFXProfile(SetVoiceSfx)
 {
    filename    = "~/data/sound/set.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(CheckpointSfx)
+datablock SFXProfile(CheckpointSfx)
 {
    filename = "~/data/sound/checkpoint.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(GetRollingVoiceSfx)
+datablock SFXProfile(GetRollingVoiceSfx)
 {
    filename    = "~/data/sound/go.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(WonRaceSfx)
+datablock SFXProfile(WonRaceSfx)
 {
    filename    = "~/data/sound/finish.wav";
    description = Audio2D;
@@ -208,21 +208,21 @@ datablock AudioProfile(WonRaceSfx)
    preload = true;
 };
 
-datablock AudioProfile(MissingGemsSfx)
+datablock SFXProfile(MissingGemsSfx)
 {
    filename    = "~/data/sound/missingGems.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(jumpSfx)
+datablock SFXProfile(jumpSfx)
 {
    filename    = "~/data/sound/bounce.wav";
    description = AudioDefault3d;
    preload = true;
 };
 
-datablock AudioProfile(bounceSfx)
+datablock SFXProfile(bounceSfx)
 {
    filename    = "~/data/sound/bounce.wav";
    description = AudioDefault3d;
@@ -232,7 +232,7 @@ datablock AudioProfile(bounceSfx)
 //-----------------------------------------------------------------------------
 // Multiplayer
 
-datablock AudioProfile(PlayerJoinSfx)
+datablock SFXProfile(PlayerJoinSfx)
 {
    filename    = "~/data/sound/spawn_alternate.wav";
    description = Audio2D;
@@ -240,7 +240,7 @@ datablock AudioProfile(PlayerJoinSfx)
    preload = true;
 };
 
-datablock AudioProfile(PlayerDropSfx)
+datablock SFXProfile(PlayerDropSfx)
 {
    filename    = "~/data/sound/InfoTutorial.wav";
    volume = 0.5;
@@ -251,7 +251,7 @@ datablock AudioProfile(PlayerDropSfx)
 //-----------------------------------------------------------------------------
 // Misc
 
-datablock AudioProfile(PenaltyVoiceSfx)
+datablock SFXProfile(PenaltyVoiceSfx)
 {
    filename    = "~/data/sound/penalty.wav";
    description = AudioDefault3d;
@@ -259,14 +259,14 @@ datablock AudioProfile(PenaltyVoiceSfx)
 };
 
 // IGC HACK -pw
-// datablock AudioProfile(OutOfBoundsVoiceSfx)
+// datablock SFXProfile(OutOfBoundsVoiceSfx)
 // {
    // filename    = "~/data/sound/whoosh.wav";
    // description = Audio2D;
    // preload = true;
 // };
 
-datablock AudioProfile(DestroyedVoiceSfx)
+datablock SFXProfile(DestroyedVoiceSfx)
 {
    filename    = "~/data/sound/destroyedVoice.wav";
    description = AudioDefault3d;

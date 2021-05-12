@@ -234,7 +234,7 @@ protected:
     bool  mAllowColorChars;
 
     // Too many chars sound:
-    AudioProfile* mDeniedSound;
+    SFXProfile* mDeniedSound;
 
     //-------------------------------------- Protected interface
 protected:

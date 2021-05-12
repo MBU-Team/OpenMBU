@@ -121,7 +121,7 @@ struct PlayerData : public ShapeBaseData {
         ExitWater,
         MaxSounds
     };
-    AudioProfile* sound[MaxSounds];
+    SFXProfile* sound[MaxSounds];
 
     Point3F boxSize;           ///< Width, depth, height
 
@@ -313,8 +313,8 @@ class Player : public ShapeBase
     U32 mJumpSurfaceLastContact;     ///< How long it's been since the player landed (ticks)
     F32  mWeaponBackFraction;        ///< Amount to slide the weapon back (if it's up against something)
 
-    AUDIOHANDLE mMoveBubbleHandle;   ///< Audio handle for moving bubbles
-    AUDIOHANDLE mWaterBreathHandle;  ///< Audio handle for underwater breath
+    SFXSource* mMoveBubbleHandle;   ///< Audio handle for moving bubbles
+    SFXSource* mWaterBreathHandle;  ///< Audio handle for underwater breath
 
     SimObjectPtr<ShapeBase> mControlObject; ///< Controlling object
 

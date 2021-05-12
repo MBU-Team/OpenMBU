@@ -33,7 +33,7 @@ struct VehicleData : public ShapeBaseData
             HardImpactSound,
             MaxSounds,
         };
-        AudioProfile* sound[MaxSounds];
+        SFXProfile* sound[MaxSounds];
         F32 restitution;
         F32 friction;
     } body;
@@ -57,7 +57,7 @@ struct VehicleData : public ShapeBaseData
         Wake,
         MaxSounds
     };
-    AudioProfile* waterSound[MaxSounds];
+    SFXProfile* waterSound[MaxSounds];
     F32 exitSplashSoundVel;
     F32 softSplashSoundVel;
     F32 medSplashSoundVel;
@@ -156,7 +156,7 @@ protected:
     S32 mPredictionCount;            ///< Number of ticks to predict
     VehicleData* mDataBlock;
     bool inLiquid;
-    AUDIOHANDLE waterWakeHandle;
+    SFXSource* waterWakeHandle;
 
     Point3F mCameraOffset; ///< 3rd person camera
 

@@ -20,7 +20,7 @@ function lbMenuGui::onA(%this)
 {
    %idx = LeaderboardMenu.getSelectedIndex();
    
-	alxPlay( AudioButtonDown );
+	sfxPlay( AudioButtonDown );
 	
    if (!XBLiveIsSignedInSilver())
    {
@@ -41,7 +41,7 @@ function lbMenuGui::onA(%this)
 
 function lbMenuGui::onB(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    RootGui.setContent(%this.backGui);
 }

@@ -148,70 +148,70 @@ datablock ParticleEmitterData(MarbleTrailEmitter)
 // 3 - Super Bounce
 // 4 - Indestructible
 
-datablock AudioProfile(Bounce1Sfx)
+datablock SFXProfile(Bounce1Sfx)
 {
    filename    = "~/data/sound/bouncehard1.wav";
    description = AudioClosest3d;
    preload = true;
 };
 
-datablock AudioProfile(Bounce2Sfx)
+datablock SFXProfile(Bounce2Sfx)
 {
    filename    = "~/data/sound/bouncehard2.wav";
    description = AudioClosest3d;
    preload = true;
 };
 
-datablock AudioProfile(Bounce3Sfx)
+datablock SFXProfile(Bounce3Sfx)
 {
    filename    = "~/data/sound/bouncehard3.wav";
    description = AudioClosest3d;
    preload = true;
 };
 
-datablock AudioProfile(Bounce4Sfx)
+datablock SFXProfile(Bounce4Sfx)
 {
    filename    = "~/data/sound/bouncehard4.wav";
    description = AudioClosest3d;
    preload = true;
 };
 
-datablock AudioProfile(MegaBounce1Sfx)
+datablock SFXProfile(MegaBounce1Sfx)
 {
    filename    = "~/data/sound/mega_bouncehard1.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(MegaBounce2Sfx)
+datablock SFXProfile(MegaBounce2Sfx)
 {
    filename    = "~/data/sound/mega_bouncehard2.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(MegaBounce3Sfx)
+datablock SFXProfile(MegaBounce3Sfx)
 {
    filename    = "~/data/sound/mega_bouncehard3.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(MegaBounce4Sfx)
+datablock SFXProfile(MegaBounce4Sfx)
 {
    filename    = "~/data/sound/mega_bouncehard4.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(JumpSfx)
+datablock SFXProfile(JumpSfx)
 {
    filename    = "~/data/sound/Jump.wav";
    description = AudioClosest3d;
    preload = true;
 };
 
-datablock AudioProfile(RollingHardSfx)
+datablock SFXProfile(RollingHardSfx)
 {
    filename    = "~/data/sound/Rolling_Hard.wav";
    description = AudioClosestLooping3d;
@@ -219,7 +219,7 @@ datablock AudioProfile(RollingHardSfx)
    preload = true;
 };
 
-datablock AudioProfile(RollingMegaSfx)
+datablock SFXProfile(RollingMegaSfx)
 {
    filename    = "~/data/sound/mega_roll.wav";
    description = AudioCloseLooping3d;
@@ -227,7 +227,7 @@ datablock AudioProfile(RollingMegaSfx)
    preload = true;
 };
 
-datablock AudioProfile(RollingIceSfx)
+datablock SFXProfile(RollingIceSfx)
 {
    filename    = "~/data/sound/ice_roll.wav";
    description = AudioClosestLooping3d;
@@ -235,7 +235,7 @@ datablock AudioProfile(RollingIceSfx)
    preload = true;
 };
 
-datablock AudioProfile(SlippingSfx)
+datablock SFXProfile(SlippingSfx)
 {
    filename    = "~/data/sound/Sliding.wav";
    description = AudioClosestLooping3d;

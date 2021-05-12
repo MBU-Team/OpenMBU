@@ -19,7 +19,7 @@
 #include "game/gameConnection.h"
 #include "ts/tsShapeInstance.h"
 #include "game/fx/particleEmitter.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxSystem.h"
 #include "game/missionArea.h"
 
 //----------------------------------------------------------------------------
@@ -147,8 +147,8 @@ void FlyingVehicleData::initPersistFields()
 {
     Parent::initPersistFields();
 
-    addField("jetSound", TypeAudioProfilePtr, Offset(sound[JetSound], FlyingVehicleData));
-    addField("engineSound", TypeAudioProfilePtr, Offset(sound[EngineSound], FlyingVehicleData));
+    addField("jetSound", TypeSFXProfilePtr, Offset(sound[JetSound], FlyingVehicleData));
+    addField("engineSound", TypeSFXProfilePtr, Offset(sound[EngineSound], FlyingVehicleData));
 
     addField("maneuveringForce", TypeF32, Offset(maneuveringForce, FlyingVehicleData));
     addField("horizontalSurfaceForce", TypeF32, Offset(horizontalSurfaceForce, FlyingVehicleData));
@@ -218,7 +218,7 @@ void FlyingVehicleData::unpackData(BitStream* stream)
     for (S32 i = 0; i < MaxSounds; i++) {
         sound[i] = NULL;
         if (stream->readFlag())
-            sound[i] = (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+            sound[i] = (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
                 DataBlockObjectIdLast);
     }
 
@@ -270,10 +270,7 @@ FlyingVehicle::FlyingVehicle()
 
 FlyingVehicle::~FlyingVehicle()
 {
-    if (mJetSound)
-        alxStop(mJetSound);
-    if (mEngineSound)
-        alxStop(mEngineSound);
+    
 }
 
 
@@ -298,17 +295,19 @@ bool FlyingVehicle::onNewDataBlock(GameBaseData* dptr)
         return false;
 
     // Sounds
-    if (mJetSound) {
-        alxStop(mJetSound);
-        mJetSound = 0;
-    }
-    if (mEngineSound) {
-        alxStop(mEngineSound);
-        mEngineSound = 0;
-    }
-    if (isGhost()) {
+    if (isGhost())
+    {
+        // Create the sounds ahead of time.  This reduces runtime
+        // costs and makes the system easier to understand.
+
+        SFX_DELETE(mJetSound);
+        SFX_DELETE(mEngineSound);
+
         if (mDataBlock->sound[FlyingVehicleData::EngineSound])
-            mEngineSound = alxPlay(mDataBlock->sound[FlyingVehicleData::EngineSound], &getTransform());
+            mEngineSound = SFX->createSource(mDataBlock->sound[FlyingVehicleData::EngineSound], &getTransform());
+
+        if (mDataBlock->sound[FlyingVehicleData::JetSound])
+            mJetSound = SFX->createSource(mDataBlock->sound[FlyingVehicleData::JetSound], &getTransform());
     }
 
     // Jet Sequences
@@ -540,9 +539,11 @@ U32 FlyingVehicle::getCollisionMask()
 
 void FlyingVehicle::updateEngineSound(F32 level)
 {
-    if (mEngineSound) {
-        alxSourceMatrixF(mEngineSound, &getTransform());
-        alxSourcef(mEngineSound, AL_GAIN_LINEAR, level);
+    if (mEngineSound)
+    {
+        mEngineSound->setTransform(getTransform());
+        mEngineSound->setVelocity(getVelocity());
+        mEngineSound->setVolume(level);
     }
 }
 
@@ -621,19 +622,18 @@ void FlyingVehicle::updateJet(F32 dt)
         FlyingVehicleData::TrailNode, FlyingVehicleData::MaxTrails);
 
     // Allocate/Deallocate voice on demand.
-    if (!mDataBlock->sound[FlyingVehicleData::JetSound])
+    if (!mJetSound)
         return;
-    if (!mJetting) {
-        if (mJetSound) {
-            alxStop(mJetSound);
-            mJetSound = 0;
-        }
-    }
-    else {
-        if (!mJetSound)
-            mJetSound = alxPlay(mDataBlock->sound[FlyingVehicleData::JetSound], &getTransform());
 
-        alxSourceMatrixF(mJetSound, &getTransform());
+    if (!mJetting)
+        mJetSound->stop();
+    else
+    {
+        if (!mJetSound->isPlaying())
+            mJetSound->play();
+
+        mJetSound->setTransform(getTransform());
+        mJetSound->setVelocity(getVelocity());
     }
 }
 

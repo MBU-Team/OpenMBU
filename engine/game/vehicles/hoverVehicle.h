@@ -29,7 +29,7 @@ public:
         FloatSound,
         MaxSounds
     };
-    AudioProfile* sound[MaxSounds];
+    SFXProfile* sound[MaxSounds];
 
     enum Jets {
         // These enums index into a static name list.
@@ -139,9 +139,9 @@ protected:
     F32  mLeftThrust;
     F32  mRightThrust;
 
-    AUDIOHANDLE mJetSound;
-    AUDIOHANDLE mEngineSound;
-    AUDIOHANDLE mFloatSound;
+    SFXSource* mJetSound;
+    SFXSource* mEngineSound;
+    SFXSource* mFloatSound;
 
     enum ThrustDirection {
         // Enums index into sJetActivationTable

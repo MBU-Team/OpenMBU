@@ -6,13 +6,14 @@
 #include "game/marble/marble.h"
 
 #include "math/mathIO.h"
-#include "audio/audioDataBlock.h"
 #include "game/fx/particleEmitter.h"
 #include "game/gameProcess.h"
 #include "game/item.h"
 #include "game/trigger.h"
 #include "materials/matInstance.h"
 #include "sceneGraph/sceneGraph.h"
+#include "core/bitStream.h"
+#include "sfx/sfxSystem.h"
 
 //----------------------------------------------------------------------------
 
@@ -1037,23 +1038,9 @@ void Marble::onRemove()
 {
     removeFromScene();
 
-    if (mRollHandle)
-    {
-        alxStop(mRollHandle);
-        mRollHandle = NULL;
-    }
-
-    if (mSlipHandle)
-    {
-        alxStop(mSlipHandle);
-        mSlipHandle = NULL;
-    }
-
-    if (mMegaHandle)
-    {
-        alxStop(mMegaHandle);
-        mMegaHandle = NULL;
-    }
+    SFX_DELETE(mRollHandle);
+    SFX_DELETE(mSlipHandle);
+    SFX_DELETE(mMegaHandle);
 
     Parent::onRemove();
 }
@@ -1357,14 +1344,14 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
     {
         Point3F marblePos = mPosition;
 
-        alxSource3f(mRollHandle, AL_POSITION, marblePos.x, marblePos.y, marblePos.z);
-        alxSource3f(mRollHandle, AL_VELOCITY, 0, 0, 0);
-
-        alxSource3f(mSlipHandle, AL_POSITION, marblePos.x, marblePos.y, marblePos.z);
-        alxSource3f(mSlipHandle, AL_VELOCITY, 0, 0, 0);
-
-        alxSource3f(mMegaHandle, AL_POSITION, marblePos.x, marblePos.y, marblePos.z);
-        alxSource3f(mMegaHandle, AL_VELOCITY, 0, 0, 0);
+        mRollHandle->setPosition(marblePos);
+        mRollHandle->setVelocity(VectorF(0, 0, 0));
+        
+        mSlipHandle->setPosition(marblePos);
+        mSlipHandle->setVelocity(VectorF(0, 0, 0));
+        
+        mMegaHandle->setPosition(marblePos);
+        mMegaHandle->setVelocity(VectorF(0, 0, 0));
 
         float scale = mDataBlock->size;
         float megaAmt = (this->mRenderScale.x - scale) / (mDataBlock->megaSize - scale);
@@ -1390,23 +1377,24 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
                 slipVolume = 1.0;
             rollVolume = (1.0 - slipVolume) * rollVolume;
         }
-        alxSourcef(mRollHandle, AL_GAIN_LINEAR, rollVolume * regAmt);
-        alxSourcef(mMegaHandle, AL_GAIN_LINEAR, rollVolume * megaAmt);
-        alxSourcef(mSlipHandle, AL_GAIN_LINEAR, slipVolume);
+        mRollHandle->setVolume(rollVolume * regAmt);
+        mMegaHandle->setVolume(rollVolume * megaAmt);
+        mSlipHandle->setVolume(slipVolume);
         
-        /*if (!mRollHandle)
-            SFXSource::play(mRollHandle);
+        if (!mRollHandle)
+            mRollHandle->play();
 
         if (!mMegaHandle)
-            SFXSource::play(mMegaHandle);
+            mMegaHandle->play();
 
         if (!mSlipHandle)
-            SFXSource::play(mSlipHandle);*/
+            mSlipHandle->play();
 
         float pitch = scale;
         if (scale > 1.0)
             pitch = 1.0;
-        alxSourcef(mRollHandle, AL_PITCH, pitch * 0.75 + 0.75);
+
+        mRollHandle->setPitch(pitch * 0.75 + 0.75);
     }
 }
 
@@ -1448,8 +1436,13 @@ void Marble::playBounceSound(Marble::Contact& contactSurface, F64 contactVel)
 
                 MatrixF mat(true);
                 mat.setColumn(3, getPosition());
-                AUDIOHANDLE handle = alxPlay(mDataBlock->sound[soundIndex], &mat);
-                alxSourcef(handle, AL_GAIN_LINEAR, gain);
+                SFXSource* source = SFX->playOnce(mDataBlock->sound[soundIndex], &mat);
+
+                if (source)
+                {
+                    source->setVolume(gain);
+                    source->play();
+                }
             }
         }
     }
@@ -1763,10 +1756,10 @@ bool Marble::onAdd()
     if (isGhost())
 #endif
     {
-        Point3F pos = Point3F(0, 0, 0);
-        mRollHandle = alxPlay(mDataBlock->sound[0], &getTransform(), &pos);
-        mSlipHandle = alxPlay(mDataBlock->sound[3], &getTransform(), &pos);
-        mMegaHandle = alxPlay(mDataBlock->sound[1], &getTransform(), &pos);
+        Point3F velocity = Point3F(0, 0, 0);
+        mRollHandle = SFX->createSource(mDataBlock->sound[0], &getTransform(), &velocity);
+        mSlipHandle = SFX->createSource(mDataBlock->sound[3], &getTransform(), &velocity);
+        mMegaHandle = SFX->createSource(mDataBlock->sound[1], &getTransform(), &velocity);
 
         this->mVertBuff.set(GFX, 33, GFXBufferTypeStatic);
         this->mPrimBuff.set(GFX, 33, 2, GFXBufferTypeStatic);
@@ -2430,19 +2423,19 @@ void MarbleData::initPersistFields()
     addField("powerUps", TypeGameBaseDataPtr, Offset(powerUps, MarbleData));
     addField("blastRechargeTime", TypeS32, Offset(blastRechargeTime, MarbleData));
     addField("maxNaturalBlastRecharge", TypeS32, Offset(maxNaturalBlastRecharge, MarbleData));
-    addField("RollHardSound", TypeAudioProfilePtr, Offset(sound[0], MarbleData));
-    addField("RollMegaSound", TypeAudioProfilePtr, Offset(sound[1], MarbleData));
-    addField("RollIceSound", TypeAudioProfilePtr, Offset(sound[2], MarbleData));
-    addField("SlipSound", TypeAudioProfilePtr, Offset(sound[3], MarbleData));
-    addField("Bounce1", TypeAudioProfilePtr, Offset(sound[4], MarbleData));
-    addField("Bounce2", TypeAudioProfilePtr, Offset(sound[5], MarbleData));
-    addField("Bounce3", TypeAudioProfilePtr, Offset(sound[6], MarbleData));
-    addField("Bounce4", TypeAudioProfilePtr, Offset(sound[7], MarbleData));
-    addField("MegaBounce1", TypeAudioProfilePtr, Offset(sound[8], MarbleData));
-    addField("MegaBounce2", TypeAudioProfilePtr, Offset(sound[9], MarbleData));
-    addField("MegaBounce3", TypeAudioProfilePtr, Offset(sound[10], MarbleData));
-    addField("MegaBounce4", TypeAudioProfilePtr, Offset(sound[11], MarbleData));
-    addField("JumpSound", TypeAudioProfilePtr, Offset(sound[12], MarbleData));
+    addField("RollHardSound", TypeSFXProfilePtr, Offset(sound[0], MarbleData));
+    addField("RollMegaSound", TypeSFXProfilePtr, Offset(sound[1], MarbleData));
+    addField("RollIceSound", TypeSFXProfilePtr, Offset(sound[2], MarbleData));
+    addField("SlipSound", TypeSFXProfilePtr, Offset(sound[3], MarbleData));
+    addField("Bounce1", TypeSFXProfilePtr, Offset(sound[4], MarbleData));
+    addField("Bounce2", TypeSFXProfilePtr, Offset(sound[5], MarbleData));
+    addField("Bounce3", TypeSFXProfilePtr, Offset(sound[6], MarbleData));
+    addField("Bounce4", TypeSFXProfilePtr, Offset(sound[7], MarbleData));
+    addField("MegaBounce1", TypeSFXProfilePtr, Offset(sound[8], MarbleData));
+    addField("MegaBounce2", TypeSFXProfilePtr, Offset(sound[9], MarbleData));
+    addField("MegaBounce3", TypeSFXProfilePtr, Offset(sound[10], MarbleData));
+    addField("MegaBounce4", TypeSFXProfilePtr, Offset(sound[11], MarbleData));
+    addField("JumpSound", TypeSFXProfilePtr, Offset(sound[12], MarbleData));
     Con::addVariable("Game::endPad", TypeS32, &Marble::smEndPadId);
 
     Parent::initPersistFields();
@@ -2550,7 +2543,7 @@ void MarbleData::unpackData(BitStream* stream)
     for (i = 0; i < MaxSounds; i++) {
         sound[i] = NULL;
         if (stream->readFlag())
-            sound[i] = (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+            sound[i] = (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
                 DataBlockObjectIdLast);
     }
 

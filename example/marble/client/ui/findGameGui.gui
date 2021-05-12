@@ -239,7 +239,7 @@ function FindGameServerList::onSelect(%this, %x, %y)
    // don't play the sound unless the columns are visible 
    // (we might be selecting new rows during QoS polling, which is not a user input)
    if (FindGameColumns.visible)
-      alxPlay( AudioButtonOver );
+      sfxPlay( AudioButtonOver );
    
    // in a GuiTextListCtrl, the %x parameter is thw row Id and %y is the row text
    %rowText = %y;
@@ -801,7 +801,7 @@ function FindGameGui::onA(%this)
    if (!RootGui.AEnabled() || %this.joiningGame)
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    %this.joinGame(FindGameServerList.getSelectedId());
    return true;
 }
@@ -811,7 +811,7 @@ function FindGameGui::onB(%this)
    if (!RootGui.BEnabled() || %this.joiningGame)
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (%this.quickMatch)
       RootGui.setContent(MultiPlayerGui);
@@ -826,7 +826,7 @@ function FindGameGui::onX(%this)
    if (!RootGui.XEnabled() || %this.joiningGame)
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    XBLiveCancelQoSPoll();
    RootGui.setContent(CreateGameGui, %this);
    return true;
@@ -837,7 +837,7 @@ function FindGameGui::onY(%this)
    if (!RootGui.YEnabled() || %this.joiningGame)
       return;
 
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    %index = FindGameServerList.getSelectedId();
    %rowText = XBLiveGetMatchResultsEntry(%index);

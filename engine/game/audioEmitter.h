@@ -1,3 +1,4 @@
+#if 0
 //-----------------------------------------------------------------------------
 // Torque Game Engine
 // Copyright (C) GarageGames.com, Inc.
@@ -146,4 +147,5 @@ public:
 //      DECLARE_CONOBJECT(AudioEmitterToEvent);
 //};
 
+#endif
 #endif

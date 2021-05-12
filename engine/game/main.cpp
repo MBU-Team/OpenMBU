@@ -61,6 +61,7 @@
 #include "game/badWordFilter.h"
 
 #include "lightingSystem/sgFormatManager.h"
+#include "sfx/sfxSystem.h"
 
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
@@ -185,6 +186,7 @@ static bool initLibraries()
     InteriorInstance::init();
     TSShapeInstance::init();
     RedBook::init();
+    SFXSystem::init();
 
     return true;
 }

@@ -5,7 +5,7 @@
 
 #include "platform/platform.h"
 #include "platform/platformVideo.h"
-#include "platform/platformAudio.h"
+#include "sfx/sfxSystem.h"
 #include "platform/platformInput.h"
 #include "core/findMatch.h"
 
@@ -720,26 +720,18 @@ bool clientProcess(U32 timeDelta)
 
     if (GameGetCameraTransform(&mat, &velocity))
     {
-        alxListenerMatrixF(&mat);
-        //      alxListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
-        collisionTest.collide(mat);
+        SFX->getListener().setTransform(mat);
+        SFX->getListener().setVelocity(velocity);
     }
 
     // determine if were lagging
     GameConnection* connection = GameConnection::getConnectionToServer();
     if (connection)
         connection->detectLag();
+    
+    // Let SFX process.
+    SFX->_update();
 
-    // alxUpdate is somewhat expensive and does not need to be updated constantly,
-    // though it does need to be updated in real time
-    static U32 lastAudioUpdate = 0;
-    U32 realTime = Platform::getRealMilliseconds();
-    if ((realTime - lastAudioUpdate) >= AudioUpdatePeriod)
-    {
-        alxUpdate();
-        gAmbientAudioManager.update();
-        lastAudioUpdate = realTime;
-    }
     return ret;
 }
 
@@ -765,9 +757,8 @@ bool spmodeProcess(U32 timeDelta)
 
     if (GameGetCameraTransform(&mat, &velocity))
     {
-        alxListenerMatrixF(&mat);
-        //      alxListener3f(AL_VELOCITY, velocity.x, velocity.y, velocity.z);
-        collisionTest.collide(mat);
+        SFX->getListener().setTransform(mat);
+        SFX->getListener().setVelocity(velocity);
     }
 
     return ret;

@@ -16,7 +16,7 @@
 class ParticleEmitter;
 class ParticleEmitterData;
 class TSThread;
-class AudioProfile;
+class SFXProfile;
 struct DebrisData;
 class ShockwaveData;
 
@@ -41,7 +41,7 @@ public:
     S32 particleDensity;
     F32 particleRadius;
 
-    AudioProfile* soundProfile;
+    SFXProfile* soundProfile;
     ParticleEmitterData* particleEmitter;
     S32                  soundProfileId;
     S32                  particleEmitterId;

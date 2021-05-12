@@ -36,7 +36,7 @@ function mainMenuGui::onA(%this)
    // Update the sign-in state here
    XBLiveUpdateSigninState();
    
-	alxPlay( AudioButtonDown );
+	sfxPlay( AudioButtonDown );
    switch( %idx )
    {
       case 0:

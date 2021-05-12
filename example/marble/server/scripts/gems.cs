@@ -8,7 +8,7 @@
 // Gem base class
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(GotGemSfx)
+datablock SFXProfile(GotGemSfx)
 {
    filename    = "~/data/sound/gem_collect.wav";
    description = Audio2D;
@@ -16,7 +16,7 @@ datablock AudioProfile(GotGemSfx)
    preload = true;
 };
 
-datablock AudioProfile(OpponentGotGemSfx)
+datablock SFXProfile(OpponentGotGemSfx)
 {
    filename    = "~/data/sound/opponent_gem_collect.wav";
    description = AudioClose3d;
@@ -24,7 +24,7 @@ datablock AudioProfile(OpponentGotGemSfx)
    preload = true;
 };
 
-datablock AudioProfile(GotAllGemsSfx)
+datablock SFXProfile(GotAllGemsSfx)
 {
    filename    = "~/data/sound/gem_all.wav";
    description = Audio2D;

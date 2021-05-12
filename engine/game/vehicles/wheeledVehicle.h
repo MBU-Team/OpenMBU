@@ -98,7 +98,7 @@ struct WheeledVehicleData : public VehicleData
         WheelImpactSound,
         MaxSounds,
     };
-    AudioProfile* sound[MaxSounds];
+    SFXProfile* sound[MaxSounds];
 
     ParticleEmitterData* tireEmitter;
 
@@ -148,9 +148,9 @@ class WheeledVehicle : public Vehicle
 
     bool mBraking;
     TSThread* mTailLightThread;
-    AUDIOHANDLE mJetSound;
-    AUDIOHANDLE mEngineSound;
-    AUDIOHANDLE mSquealSound;
+    SFXSource* mJetSound;
+    SFXSource* mEngineSound;
+    SFXSource* mSquealSound;
 
     struct Wheel
     {

@@ -9,7 +9,7 @@
 
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(BumperDing)
+datablock SFXProfile(BumperDing)
 {
    filename    = "~/data/sound/bumperDing1.wav";
    description = AudioDefault3d;

@@ -19,7 +19,7 @@
 #include "collision/clippedPolyList.h"
 #include "collision/earlyOutPolyList.h"
 #include "ts/tsShapeInstance.h"
-#include "audio/audio.h"
+#include "sfx/sfxSystem.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sceneState.h"
 #include "sceneGraph/detailManager.h"
@@ -478,30 +478,30 @@ void PlayerData::initPersistFields()
     addField("footPuffRadius", TypeF32, Offset(footPuffRadius, PlayerData));
     addField("dustEmitter", TypeParticleEmitterDataPtr, Offset(dustEmitter, PlayerData));
 
-    addField("FootSoftSound", TypeAudioProfilePtr, Offset(sound[FootSoft], PlayerData));
-    addField("FootHardSound", TypeAudioProfilePtr, Offset(sound[FootHard], PlayerData));
-    addField("FootMetalSound", TypeAudioProfilePtr, Offset(sound[FootMetal], PlayerData));
-    addField("FootSnowSound", TypeAudioProfilePtr, Offset(sound[FootSnow], PlayerData));
-    addField("FootShallowSound", TypeAudioProfilePtr, Offset(sound[FootShallowSplash], PlayerData));
-    addField("FootWadingSound", TypeAudioProfilePtr, Offset(sound[FootWading], PlayerData));
-    addField("FootUnderwaterSound", TypeAudioProfilePtr, Offset(sound[FootUnderWater], PlayerData));
-    addField("FootBubblesSound", TypeAudioProfilePtr, Offset(sound[FootBubbles], PlayerData));
-    addField("movingBubblesSound", TypeAudioProfilePtr, Offset(sound[MoveBubbles], PlayerData));
-    addField("waterBreathSound", TypeAudioProfilePtr, Offset(sound[WaterBreath], PlayerData));
+    addField("FootSoftSound", TypeSFXProfilePtr, Offset(sound[FootSoft], PlayerData));
+    addField("FootHardSound", TypeSFXProfilePtr, Offset(sound[FootHard], PlayerData));
+    addField("FootMetalSound", TypeSFXProfilePtr, Offset(sound[FootMetal], PlayerData));
+    addField("FootSnowSound", TypeSFXProfilePtr, Offset(sound[FootSnow], PlayerData));
+    addField("FootShallowSound", TypeSFXProfilePtr, Offset(sound[FootShallowSplash], PlayerData));
+    addField("FootWadingSound", TypeSFXProfilePtr, Offset(sound[FootWading], PlayerData));
+    addField("FootUnderwaterSound", TypeSFXProfilePtr, Offset(sound[FootUnderWater], PlayerData));
+    addField("FootBubblesSound", TypeSFXProfilePtr, Offset(sound[FootBubbles], PlayerData));
+    addField("movingBubblesSound", TypeSFXProfilePtr, Offset(sound[MoveBubbles], PlayerData));
+    addField("waterBreathSound", TypeSFXProfilePtr, Offset(sound[WaterBreath], PlayerData));
 
-    addField("impactSoftSound", TypeAudioProfilePtr, Offset(sound[ImpactSoft], PlayerData));
-    addField("impactHardSound", TypeAudioProfilePtr, Offset(sound[ImpactHard], PlayerData));
-    addField("impactMetalSound", TypeAudioProfilePtr, Offset(sound[ImpactMetal], PlayerData));
-    addField("impactSnowSound", TypeAudioProfilePtr, Offset(sound[ImpactSnow], PlayerData));
+    addField("impactSoftSound", TypeSFXProfilePtr, Offset(sound[ImpactSoft], PlayerData));
+    addField("impactHardSound", TypeSFXProfilePtr, Offset(sound[ImpactHard], PlayerData));
+    addField("impactMetalSound", TypeSFXProfilePtr, Offset(sound[ImpactMetal], PlayerData));
+    addField("impactSnowSound", TypeSFXProfilePtr, Offset(sound[ImpactSnow], PlayerData));
 
     addField("mediumSplashSoundVelocity", TypeF32, Offset(medSplashSoundVel, PlayerData));
     addField("hardSplashSoundVelocity", TypeF32, Offset(hardSplashSoundVel, PlayerData));
     addField("exitSplashSoundVelocity", TypeF32, Offset(exitSplashSoundVel, PlayerData));
 
-    addField("impactWaterEasy", TypeAudioProfilePtr, Offset(sound[ImpactWaterEasy], PlayerData));
-    addField("impactWaterMedium", TypeAudioProfilePtr, Offset(sound[ImpactWaterMedium], PlayerData));
-    addField("impactWaterHard", TypeAudioProfilePtr, Offset(sound[ImpactWaterHard], PlayerData));
-    addField("exitingWater", TypeAudioProfilePtr, Offset(sound[ExitWater], PlayerData));
+    addField("impactWaterEasy", TypeSFXProfilePtr, Offset(sound[ImpactWaterEasy], PlayerData));
+    addField("impactWaterMedium", TypeSFXProfilePtr, Offset(sound[ImpactWaterMedium], PlayerData));
+    addField("impactWaterHard", TypeSFXProfilePtr, Offset(sound[ImpactWaterHard], PlayerData));
+    addField("exitingWater", TypeSFXProfilePtr, Offset(sound[ExitWater], PlayerData));
 
     //addField("splash",         TypeSplashDataPtr,      Offset(splash,          PlayerData));
     addField("splashVelocity", TypeF32, Offset(splashVelocity, PlayerData));
@@ -692,7 +692,7 @@ void PlayerData::unpackData(BitStream* stream)
     for (i = 0; i < MaxSounds; i++) {
         sound[i] = NULL;
         if (stream->readFlag())
-            sound[i] = (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+            sound[i] = (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
                 DataBlockObjectIdLast);
     }
 
@@ -1687,7 +1687,7 @@ void Player::updateMove(const Move* move)
         }
         else if (inLiquid && mWaterCoverage < 0.8f) {
             if (getVelocity().len() >= mDataBlock->exitSplashSoundVel && !isMounted())
-                alxPlay(mDataBlock->sound[PlayerData::ExitWater], &getTransform());
+                SFX->playOnce(mDataBlock->sound[PlayerData::ExitWater], &getTransform());
             inLiquid = false;
         }
     }
@@ -3789,32 +3789,32 @@ void Player::playFootstepSound(bool triggeredLeft, S32 sound)
     if (mWaterCoverage == 0.0f) {
         switch (sound) {
         case 0: // Soft
-            alxPlay(mDataBlock->sound[PlayerData::FootSoft], &footMat);
+            SFX->playOnce(mDataBlock->sound[PlayerData::FootSoft], &footMat);
             break;
         case 1: // Hard
-            alxPlay(mDataBlock->sound[PlayerData::FootHard], &footMat);
+            SFX->playOnce(mDataBlock->sound[PlayerData::FootHard], &footMat);
             break;
         case 2: // Metal
-            alxPlay(mDataBlock->sound[PlayerData::FootMetal], &footMat);
+            SFX->playOnce(mDataBlock->sound[PlayerData::FootMetal], &footMat);
             break;
         case 3: // Snow
-            alxPlay(mDataBlock->sound[PlayerData::FootSnow], &footMat);
+            SFX->playOnce(mDataBlock->sound[PlayerData::FootSnow], &footMat);
             break;
         default: //Hard
-            alxPlay(mDataBlock->sound[PlayerData::FootHard], &footMat);
+            SFX->playOnce(mDataBlock->sound[PlayerData::FootHard], &footMat);
             break;
         }
     }
     else {
         if (mWaterCoverage < mDataBlock->footSplashHeight)
-            alxPlay(mDataBlock->sound[PlayerData::FootShallowSplash], &footMat);
+            SFX->playOnce(mDataBlock->sound[PlayerData::FootShallowSplash], &footMat);
         else
             if (mWaterCoverage < 1.0)
-                alxPlay(mDataBlock->sound[PlayerData::FootWading], &footMat);
+                SFX->playOnce(mDataBlock->sound[PlayerData::FootWading], &footMat);
             else
                 if (triggeredLeft) {
-                    alxPlay(mDataBlock->sound[PlayerData::FootUnderWater], &footMat);
-                    alxPlay(mDataBlock->sound[PlayerData::FootBubbles], &footMat);
+                    SFX->playOnce(mDataBlock->sound[PlayerData::FootUnderWater], &footMat);
+                    SFX->playOnce(mDataBlock->sound[PlayerData::FootBubbles], &footMat);
                 }
     }
 }
@@ -3950,33 +3950,36 @@ void Player::updateFroth(F32 dt)
 
 void Player::updateWaterSounds(F32 dt)
 {
-    if (mWaterCoverage >= 1.0f && mDamageState == Enabled) {
+    if (mWaterCoverage < 1.0f || mDamageState != Enabled)
+    {
+        // Stop everything
+        if (mMoveBubbleHandle)
+            mMoveBubbleHandle->stop();
+        if (mWaterBreathHandle)
+            mWaterBreathHandle->stop();
+        return;
+    }
+
+    if (mMoveBubbleHandle)
+    {
         // We're under water and still alive, so let's play something
-        if (mVelocity.len() > 1.0f) {
-            if (!mMoveBubbleHandle)
-                mMoveBubbleHandle = alxPlay(mDataBlock->sound[PlayerData::MoveBubbles], &getTransform());
-            alxSourceMatrixF(mMoveBubbleHandle, &getTransform());
+        if (mVelocity.len() > 1.0f)
+        {
+            if (!mMoveBubbleHandle->isPlaying())
+                mMoveBubbleHandle->play();
+
+            mMoveBubbleHandle->setTransform(getTransform());
         }
         else
-            if (mMoveBubbleHandle) {
-                alxStop(mMoveBubbleHandle);
-                mMoveBubbleHandle = 0;
-            }
-
-        if (!mWaterBreathHandle)
-            mWaterBreathHandle = alxPlay(mDataBlock->sound[PlayerData::WaterBreath], &getTransform());
-        alxSourceMatrixF(mWaterBreathHandle, &getTransform());
+            mMoveBubbleHandle->stop();
     }
-    else {
-        // Stop everything
-        if (mMoveBubbleHandle) {
-            alxStop(mMoveBubbleHandle);
-            mMoveBubbleHandle = 0;
-        }
-        if (mWaterBreathHandle) {
-            alxStop(mWaterBreathHandle);
-            mWaterBreathHandle = 0;
-        }
+
+    if (mWaterBreathHandle)
+    {
+        if (!mWaterBreathHandle->isPlaying())
+            mWaterBreathHandle->play();
+
+        mWaterBreathHandle->setTransform(getTransform());
     }
 }
 

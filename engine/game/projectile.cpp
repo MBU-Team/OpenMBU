@@ -13,7 +13,7 @@
 #include "game/gameProcess.h"
 #include "ts/tsShapeInstance.h"
 #include "game/projectile.h"
-#include "audio/audio.h"
+#include "sfx/sfxSystem.h"
 #include "math/mathUtils.h"
 #include "math/mathIO.h"
 #include "sim/netConnection.h"
@@ -88,7 +88,7 @@ void ProjectileData::initPersistFields()
     addNamedField(projectileShapeName, TypeFilename, ProjectileData);
     addNamedField(scale, TypePoint3F, ProjectileData);
 
-    addNamedField(sound, TypeAudioProfilePtr, ProjectileData);
+    addNamedField(sound, TypeSFXProfilePtr, ProjectileData);
 
     addNamedField(explosion, TypeExplosionDataPtr, ProjectileData);
 
@@ -267,7 +267,7 @@ Projectile::Projectile()
     mCurrTick = 0;
 
     mParticleEmitter = NULL;
-    mSoundHandle = NULL_AUDIOHANDLE;
+    mSoundHandle = NULL;
 
     mProjectileShape = NULL;
     mActivateThread = NULL;
@@ -391,10 +391,9 @@ void Projectile::onRemove()
         mParticleEmitter->deleteWhenEmpty();
         mParticleEmitter = NULL;
     }
-    if (mSoundHandle != NULL_AUDIOHANDLE) {
-        alxStop(mSoundHandle);
-        mSoundHandle = NULL_AUDIOHANDLE;
-    }
+
+    SFX_DELETE(mSoundHandle);
+
     removeFromScene();
     Parent::onRemove();
 }
@@ -523,16 +522,16 @@ void Projectile::updateSound()
     if (!mDataBlock->sound)
         return;
 
-    if (mHidden && mSoundHandle != NULL_AUDIOHANDLE)
+    if (mHidden && mSoundHandle)
+        mSoundHandle->stop();
+
+    else if (!mHidden && mSoundHandle)
     {
-        alxStop(mSoundHandle);
-        mSoundHandle = NULL_AUDIOHANDLE;
-    }
-    else if (!mHidden)
-    {
-        if (mSoundHandle == NULL_AUDIOHANDLE)
-            mSoundHandle = alxPlay(mDataBlock->sound, &getRenderTransform(), &getPosition());
-        alxSourceMatrixF(mSoundHandle, &getRenderTransform());
+        if (mSoundHandle->isPlaying())
+            mSoundHandle->play();
+
+        mSoundHandle->setVelocity(getVelocity());
+        mSoundHandle->setTransform(getRenderTransform());
     }
 }
 

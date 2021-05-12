@@ -11,7 +11,7 @@
 function PlayGui::onWake(%this)
 {
    // Turn off any shell sounds...
-   // alxStop( ... );
+   // sfxStop( ... );
    
    // Load user prefs
    //if( xbIsProfileContentReady( $Input::LockedController ) )
@@ -104,7 +104,7 @@ function PlayGui::onSleep(%this)
       Canvas.popDialog(GamePauseGui);
       
    // Terminate all playing sounds
-   //alxStopAll();
+   sfxStopAll($SimAudioType);
    playShellMusic();
    // pop the keymaps
    moveMap.pop();
@@ -383,7 +383,7 @@ function PlayGui::stopTimer(%this)
 {
    if($BonusSfx !$= "")
    {
-      alxStop($BonusSfx);
+      sfxStop($BonusSfx);
       $BonusSfx = "";
    }
 }
@@ -392,11 +392,11 @@ function PlayGui::updateTimer(%this, %time, %bonusTime)
 {
    if (%bonusTime && $BonusSfx $= "")
    {
-      $BonusSfx = alxPlay(TimeTravelLoopSfx);
+      $BonusSfx = sfxPlay(TimeTravelLoopSfx);
    }
    else if (%bonusTime == 0 && $BonusSfx !$= "")
    {
-      alxStop($BonusSfx);
+      sfxStop($BonusSfx);
       $BonusSfx = "";
    }
 

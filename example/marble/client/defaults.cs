@@ -47,18 +47,63 @@ $pref::OpenGL::force16BitTexture = "0";
 $pref::OpenGL::forcePalettedTexture = "0";
 $pref::OpenGL::maxHardwareLights = 3;
 $pref::VisibleDistanceMod = 1.0;
-$pref::Audio::driver = "OpenAL";
-$pref::Audio::forceMaxDistanceUpdate = 0;
-$pref::Audio::environmentEnabled = 0;
-$pref::Audio::masterVolume   = 0.0;
-$pref::Audio::channelVolume1 = 1.0;
-$pref::Audio::channelVolume2 = 0.7;
-$pref::Audio::channelVolume3 = 0.8;
-$pref::Audio::channelVolume4 = 0.8;
-$pref::Audio::channelVolume5 = 0.8;
-$pref::Audio::channelVolume6 = 0.8;
-$pref::Audio::channelVolume7 = 0.8;
-$pref::Audio::channelVolume8 = 0.8;
+
+/// Causes the system to do a one time autodetect
+/// of an SFX provider and device at startup if the
+/// provider is unset.
+$pref::SFX::autoDetect = true;
+
+/// The sound provider to select at startup.  Typically
+/// this is DirectSound, OpenAL, or XACT.  There is also 
+/// a special Null provider which acts normally, but 
+/// plays no sound.
+$pref::SFX::provider = "";
+
+/// The sound device to select from the provider.  Each
+/// provider may have several different devices.
+$pref::SFX::device = "";
+
+/// If true the device will try to use hardware buffers
+/// and sound mixing.  If not it will use software.
+$pref::SFX::useHardware = false;
+
+/// If you have a software device you have a 
+/// choice of how many software buffers to
+/// allow at any one time.  More buffers cost
+/// more CPU time to process and mix.
+$pref::SFX::maxSoftwareBuffers = 16;
+
+/// This is the playback frequency for the primary 
+/// sound buffer used for mixing.  Although most
+/// providers will reformat on the fly, for best 
+/// quality and performance match your sound files
+/// to this setting.
+$pref::SFX::frequency = 44100;
+
+/// This is the playback bitrate for the primary 
+/// sound buffer used for mixing.  Although most
+/// providers will reformat on the fly, for best 
+/// quality and performance match your sound files
+/// to this setting.
+$pref::SFX::bitrate = 32;
+
+/// The overall system volume at startup.  Note that 
+/// you can only scale volume down, volume does not
+/// get louder than 1.
+$pref::SFX::masterVolume   = 0.0;
+
+/// The startup sound channel volumes.  These are 
+/// used to control the overall volume of different 
+/// classes of sounds.
+$pref::SFX::channelVolume1 = 1.0;
+$pref::SFX::channelVolume2 = 0.7;
+$pref::SFX::channelVolume3 = 0.8;
+$pref::SFX::channelVolume4 = 0.8;
+$pref::SFX::channelVolume5 = 0.8;
+$pref::SFX::channelVolume6 = 0.8;
+$pref::SFX::channelVolume7 = 0.8;
+$pref::SFX::channelVolume8 = 0.8;
+
 $pref::Client::AutoStart = true;
 $pref::Client::AutoStartMission = "marble/data/missions/intermediate/Urban Jungle/urban.mis";
 $pref::Client::AutoStartMissionIndex = 21;

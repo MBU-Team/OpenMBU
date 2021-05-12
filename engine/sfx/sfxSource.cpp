@@ -376,6 +376,12 @@ void SFXSource::setVelocity( const VectorF& velocity )
       mVoice->setVelocity( velocity );      
 }
 
+void SFXSource::setPosition(const Point3F& position)
+{
+    mTransform.setPosition(position);
+    setTransform(mTransform);
+}
+
 void SFXSource::setTransform( const MatrixF& transform )
 {
    mTransform = transform;

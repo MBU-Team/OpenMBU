@@ -8,7 +8,7 @@
 
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(TrapDoorOpenSfx)
+datablock SFXProfile(TrapDoorOpenSfx)
 {
    filename    = "~/data/sound/TrapDoorOpen.wav";
    description = Quieter3D;
@@ -63,7 +63,7 @@ function Trapdoor::close(%this, %obj)
 
 
 //-----------------------------------------------------------------------------
-datablock AudioProfile(DuctFanSfx)
+datablock SFXProfile(DuctFanSfx)
 {
    filename    = "~/data/sound/Fan_loop.wav";
    description = QuieterAudioClosestLooping3d;

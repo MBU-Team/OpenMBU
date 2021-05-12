@@ -5,6 +5,7 @@
 
 #include "console/console.h"
 #include "console/consoleTypes.h"
+#include "sfx/sfxSystem.h"
 
 #include "gui/controls/guiXboxOptionListCtrl.h"
 
@@ -623,7 +624,7 @@ void GuiXboxOptionListCtrl::clear()
 void GuiXboxOptionListCtrl::incOption()
 {
     if (mProfile->mSoundOptionChanged)
-        alxPlay(mProfile->mSoundOptionChanged);
+        SFX->playOnce(mProfile->mSoundOptionChanged);
 
     if (mRowDataWrap[mSelected] || mRowOptionIndex[mSelected] + 1 < getOptionCount(mSelected))
     {
@@ -639,7 +640,7 @@ void GuiXboxOptionListCtrl::incOption()
 void GuiXboxOptionListCtrl::decOption()
 {
     if (mProfile->mSoundOptionChanged)
-        alxPlay(mProfile->mSoundOptionChanged);
+        SFX->playOnce(mProfile->mSoundOptionChanged);
 
     if (mRowDataWrap[mSelected] || mRowOptionIndex[mSelected] - 1 >= 0)
     {

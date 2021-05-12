@@ -43,8 +43,8 @@ class MaterialList;
 class TextureObject;
 class FloorPlan;
 class Convex;
-class AudioProfile;
-class AudioEnvironment;
+class SFXProfile;
+class SFXEnvironment;
 
 //--------------------------------------------------------------------------
 class InteriorInstance : public SceneObject
@@ -181,8 +181,8 @@ private:
     StringTableEntry                     mSkinBase;             ///< Skin for this interior
 
     bool                                 mShowTerrainInside;    ///< Enables or disables terrain showing through the interior
-    AudioProfile* mAudioProfile;         ///< Audio profile
-    AudioEnvironment* mAudioEnvironment;     ///< Audio environment
+    SFXProfile* mAudioProfile;         ///< Audio profile
+    SFXEnvironment* mAudioEnvironment;     ///< Audio environment
     S32                                  mForcedDetailLevel;    ///< Forced LOD, if -1 auto LOD
     U32                                  mCRC;                  ///< CRC for the interior
 
@@ -195,10 +195,10 @@ public:
     LM_HANDLE getLMHandle() { return(mLMHandle); }
 
     /// Returns the audio profile
-    AudioProfile* getAudioProfile() { return(mAudioProfile); }
+    SFXProfile* getAudioProfile() { return(mAudioProfile); }
 
     /// Returns the audio environment
-    AudioEnvironment* getAudioEnvironment() { return(mAudioEnvironment); }
+    SFXEnvironment* getAudioEnvironment() { return(mAudioEnvironment); }
 
     /// This is used to determine just how 'inside' a point is in an interior.
     /// This is used by the environmental audio code for audio properties and the

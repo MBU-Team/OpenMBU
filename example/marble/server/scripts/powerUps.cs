@@ -231,14 +231,14 @@ datablock ParticleEmitterData(MarbleHelicopterEmitter)
 // Superjump powerUp
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(doSuperJumpSfx)
+datablock SFXProfile(doSuperJumpSfx)
 {
    filename    = "~/data/sound/use_superjump.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(PuSuperJumpVoiceSfx)
+datablock SFXProfile(PuSuperJumpVoiceSfx)
 {
    filename    = "~/data/sound/super_jump.wav";
    description = Audio2D;
@@ -273,14 +273,14 @@ datablock ItemData(SuperJumpItem)
 // Superspeed powerUp
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(doSuperSpeedSfx)
+datablock SFXProfile(doSuperSpeedSfx)
 {
    filename    = "~/data/sound/use_speed.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(PuSuperSpeedVoiceSfx)
+datablock SFXProfile(PuSuperSpeedVoiceSfx)
 {
    filename    = "~/data/sound/super_speed.wav";
    description = Audio2D;
@@ -320,7 +320,7 @@ function SuperSpeedItem::onAdd(%this, %obj)
 // Helicopter powerUp
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(PuGyrocopterVoiceSfx)
+datablock SFXProfile(PuGyrocopterVoiceSfx)
 {
    filename    = "~/data/sound/gyrocopter.wav";
    description = Audio2D;
@@ -349,7 +349,7 @@ datablock ItemData(HelicopterItem)
    maxInventory = 1;
 };
 
-datablock AudioProfile(HelicopterLoopSfx)
+datablock SFXProfile(HelicopterLoopSfx)
 {
    filename    = "~/data/sound/Use_Gyrocopter.wav";
    description = AudioClosestLooping3d;
@@ -373,14 +373,14 @@ datablock ShapeBaseImageData(HelicopterImage)
 // Blast marble powerUp
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(doBlastSfx)
+datablock SFXProfile(doBlastSfx)
 {
    filename    = "~/data/sound/use_blast.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(PuBlastVoiceSfx)
+datablock SFXProfile(PuBlastVoiceSfx)
 {
    filename    = "~/data/sound/ultrablast.wav";
    description = Audio2D;
@@ -436,21 +436,21 @@ function BlastItem::onAdd(%this, %obj)
 // Mega marble powerUp
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(DoMegaMarbleSfx)
+datablock SFXProfile(DoMegaMarbleSfx)
 {
    filename    = "~/data/sound/use_mega.wav";
    description = AudioClose3d;
    preload = true;
 };
 
-datablock AudioProfile(PuMegaMarbleVoiceSfx)
+datablock SFXProfile(PuMegaMarbleVoiceSfx)
 {
    filename    = "~/data/sound/mega_marble.wav";
    description = Audio2D;
    preload = true;
 };
 
-datablock AudioProfile(ShrinkMegaMarbleSfx)
+datablock SFXProfile(ShrinkMegaMarbleSfx)
 {
    filename    = "~/data/sound/MegaShrink.wav";
    description = AudioClose3d;
@@ -490,7 +490,7 @@ function MegaMarbleItem::onAdd(%this, %obj)
 // Special non-inventory power ups
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(PuTimeTravelVoiceSfx)
+datablock SFXProfile(PuTimeTravelVoiceSfx)
 {
    filename    = "~/data/sound/time_travel.wav";
    description = Audio2D;
@@ -537,7 +537,7 @@ function TimeTravelItem::onPickup(%this,%obj,%user,%amount)
 
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(PuAntiGravityVoiceSfx)
+datablock SFXProfile(PuAntiGravityVoiceSfx)
 {
    filename    = "~/data/sound/pu_gravity.wav";
    description = Audio2D;
@@ -594,7 +594,7 @@ datablock ItemData(TimeTravelItem_MP : TimeTravelItem)
 //-----------------------------------------------------------------------------
 // Random powerup
 
-datablock AudioProfile(PuRandomVoiceSfx)
+datablock SFXProfile(PuRandomVoiceSfx)
 {
    filename    = "~/data/sound/puRandomVoice.wav";
    description = Audio2D;

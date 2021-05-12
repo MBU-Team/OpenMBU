@@ -107,7 +107,7 @@ function ESRBGui::doMissionCleanup(%this)
 
 function ESRBGui::onA(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    // we now know what controller they are using, require them to be signed in on it
    %port = Canvas.getLastDeviceInst();

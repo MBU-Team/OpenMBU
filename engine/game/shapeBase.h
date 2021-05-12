@@ -12,9 +12,6 @@
 #ifndef _MATERIALLIST_H_
 //#include "dgl/materialList.h"
 #endif
-#ifndef _PLATFORMAUDIO_H_
-#include "platform/platformAudio.h"
-#endif
 #ifndef _MOVEMANAGER_H_
 #include "game/moveManager.h"
 #endif
@@ -50,6 +47,8 @@ class ProjectileData;
 class ExplosionData;
 struct DebrisData;
 class ShapeBase;
+class SFXSource;
+class SFXProfile;
 
 typedef void* Light;
 
@@ -197,7 +196,7 @@ public:
                                       ///  the imageSlot.
         ParticleEmitterData* emitter; ///< A particle emitter; this emitter will emit as long as the gun is in this
                                       ///  this state.
-        AudioProfile* sound;
+        SFXProfile* sound;
         F32 emitterTime;              ///<
         S32 emitterNode;
     };
@@ -236,7 +235,7 @@ public:
     bool                    stateSequenceRandomFlash[MaxStates];
     bool                    stateIgnoreLoadedForReady[MaxStates];
 
-    AudioProfile* stateSound[MaxStates];
+    SFXProfile* stateSound[MaxStates];
     const char* stateScript[MaxStates];
 
     ParticleEmitterData* stateEmitter[MaxStates];
@@ -611,8 +610,8 @@ private:
     struct Sound {
         bool play;                    ///< Are we playing this sound?
         SimTime timeout;              ///< Time until we stop playing this sound.
-        AudioProfile* profile;        ///< Profile on server
-        AUDIOHANDLE sound;            ///< Handle on client
+        SFXProfile* profile;        ///< Profile on server
+        SFXSource* sound;            ///< Handle on client
     };
     Sound mSoundThread[MaxSoundThreads];
     /// @}
@@ -732,7 +731,7 @@ protected:
         /// @{
         SimTime lightStart;     ///< Starting time for light flashes.
         bool animLoopingSound;  ///< Are we playing a looping sound?
-        AUDIOHANDLE animSound;  ///< Handle to the current image sound.
+        SFXSource* animSound;  ///< Handle to the current image sound.
 
         /// Represent the state of a specific particle emitter on the image.
         struct ImageEmitter {
@@ -1145,7 +1144,7 @@ public:
     /// Plays an audio sound from a mounted object
     /// @param   slot    Mount slot ID
     /// @param   profile Audio profile to play
-    void playAudio(U32 slot, AudioProfile* profile);
+    void playAudio(U32 slot, SFXProfile* profile);
 
     /// Stops audio from a mounted object
     /// @param   slot   Mount slot ID

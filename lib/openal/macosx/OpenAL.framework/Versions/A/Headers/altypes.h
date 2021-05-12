@@ -213,13 +213,6 @@ typedef int ALenum;
 #define AL_MAX_DISTANCE                          0x1023
 
 /**
- * Specify the channel mask. (Creative)
- * Type:	 ALuint
- * Range:	 [0 - 255]
- */
-#define AL_CHANNEL_MASK							 0x3000
-
-/**
  * Source state information
  */
 #define AL_SOURCE_STATE                          0x1010
@@ -233,6 +226,13 @@ typedef int ALenum;
  */
 #define AL_BUFFERS_QUEUED                        0x1015
 #define AL_BUFFERS_PROCESSED                     0x1016
+
+/**
+ * Source buffer position information
+ */
+#define AL_SEC_OFFSET                             0x1024
+#define AL_SAMPLE_OFFSET                          0x1025
+#define AL_BYTE_OFFSET                            0x1026
 
 /** Sound buffers: format specifier. */
 #define AL_FORMAT_MONO8                          0x1100
@@ -250,7 +250,6 @@ typedef int ALenum;
 #define AL_BITS                                  0x2002
 #define AL_CHANNELS                              0x2003
 #define AL_SIZE                                  0x2004
-#define AL_DATA                                  0x2005
 
 /**
  * Buffer state.
@@ -330,3 +329,4 @@ typedef int ALenum;
 #endif
 
 #endif
+

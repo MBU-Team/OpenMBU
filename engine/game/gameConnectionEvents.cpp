@@ -10,7 +10,7 @@
 #include "console/simBase.h"
 #include "sim/pathManager.h"
 #include "sceneGraph/sceneGraph.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxSystem.h"
 #include "game/game.h"
 #include "game/gameConnection.h"
 #include "game/shapeBase.h"
@@ -201,7 +201,7 @@ void SimDataBlockEvent::process(NetConnection* cptr)
 //----------------------------------------------------------------------------
 
 
-Sim2DAudioEvent::Sim2DAudioEvent(const AudioProfile* profile)
+Sim2DAudioEvent::Sim2DAudioEvent(const SFXProfile* profile)
 {
     mProfile = profile;
 }
@@ -225,7 +225,7 @@ void Sim2DAudioEvent::unpack(NetConnection*, BitStream* bstream)
 void Sim2DAudioEvent::process(NetConnection*)
 {
     if (mProfile)
-        alxPlay(mProfile);
+        SFX->playOnce(mProfile);
 }
 
 //----------------------------------------------------------------------------
@@ -234,7 +234,7 @@ static F32 SoundPosAccuracy = 0.5;
 static S32 SoundRotBits = 8;
 
 
-Sim3DAudioEvent::Sim3DAudioEvent(const AudioProfile* profile, const MatrixF* mat)
+Sim3DAudioEvent::Sim3DAudioEvent(const SFXProfile* profile, const MatrixF* mat)
 {
     mProfile = profile;
     if (mat)
@@ -247,8 +247,9 @@ void Sim3DAudioEvent::pack(NetConnection* con, BitStream* bstream)
 
     // If the sound has cone parameters, the orientation is
     // transmitted as well.
-    Audio::Description* ad = &mProfile->mDescriptionObject->mDescription;
-    if (bstream->writeFlag(ad->mConeInsideAngle || ad->mConeOutsideAngle)) {
+    SFXDescription* ad = mProfile->getDescription();
+    if (bstream->writeFlag(ad->mConeInsideAngle || ad->mConeOutsideAngle))
+    {
         QuatF q(mTransform);
         q.normalize();
 
@@ -306,6 +307,6 @@ void Sim3DAudioEvent::unpack(NetConnection* con, BitStream* bstream)
 void Sim3DAudioEvent::process(NetConnection*)
 {
     if (mProfile)
-        alxPlay(mProfile, &mTransform);
+        SFX->playOnce(mProfile, &mTransform);
 }
 

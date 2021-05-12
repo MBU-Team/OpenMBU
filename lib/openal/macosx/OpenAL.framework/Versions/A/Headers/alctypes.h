@@ -4,10 +4,11 @@
 /**
  * OpenAL cross platform audio library
  * Copyright (C) 1999-2000 by authors.
+ * Portions Copyright (C) 2004 by Apple Computer Inc.
  * This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
  *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
+ *  version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -61,11 +62,6 @@ typedef void ALCvoid;
 
 /** ALC enumerations. */
 typedef int ALCenum;
-
-
-typedef ALCvoid ALCdevice;
-typedef ALCvoid ALCcontext;
-
 
 /* Bad value. */
 #define ALC_INVALID                              (-1)
@@ -121,6 +117,45 @@ typedef ALCvoid ALCcontext;
  * because there is not enough memory available.
  */
 #define ALC_OUT_OF_MEMORY                        0xA005
+
+
+//*********************************************************************************
+// OSX Specific Properties
+//*********************************************************************************
+
+/**
+ * Convert Data When Loading.  Default false, currently applies only to monophonic sounds
+ */
+#define ALC_CONVERT_DATA_UPON_LOADING         		0xF001
+
+/**
+ * Render Quality.  
+ */
+#define ALC_SPATIAL_RENDERING_QUALITY               0xF002
+	#define ALC_SPATIAL_RENDERING_QUALITY_HIGH      'rqhi'
+	#define ALC_SPATIAL_RENDERING_QUALITY_LOW       'rdlo'
+
+/**
+ * Mixer Output Rate.
+ */
+#define ALC_MIXER_OUTPUT_RATE		         		0xF003
+
+/**
+ *  Maximum Mixer Busses.
+ *  Set this before opening a new OAL device to indicate how many busses on the mixer
+ *  are desired. Get returns either the current devices bus count value, or the value
+ *  that will be used to open a device
+ */
+#define ALC_MIXER_MAXIMUM_BUSSES                    0xF004
+
+/**
+ * Render Channels.  
+ * Allows a user to force OpenAL to render to stereo, regardless of the audio hardware being used
+ */
+#define ALC_RENDER_CHANNEL_COUNT                    0xF005
+	#define ALC_RENDER_CHANNEL_COUNT_STEREO         'rcst'
+	#define ALC_RENDER_CHANNEL_COUNT_MULTICHANNEL   'rcmc'
+
 
 #ifdef __cplusplus
 }

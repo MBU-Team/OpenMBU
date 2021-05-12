@@ -20,7 +20,7 @@
 #include "game/gameConnection.h"
 #include "ts/tsShapeInstance.h"
 #include "game/fx/particleEmitter.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxSystem.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sim/decalManager.h"
 #include "materials/materialPropertyMap.h"
@@ -342,10 +342,10 @@ void WheeledVehicleData::initPersistFields()
 {
     Parent::initPersistFields();
 
-    addField("jetSound", TypeAudioProfilePtr, Offset(sound[JetSound], WheeledVehicleData));
-    addField("engineSound", TypeAudioProfilePtr, Offset(sound[EngineSound], WheeledVehicleData));
-    addField("squealSound", TypeAudioProfilePtr, Offset(sound[SquealSound], WheeledVehicleData));
-    addField("WheelImpactSound", TypeAudioProfilePtr, Offset(sound[WheelImpactSound], WheeledVehicleData));
+    addField("jetSound", TypeSFXProfilePtr, Offset(sound[JetSound], WheeledVehicleData));
+    addField("engineSound", TypeSFXProfilePtr, Offset(sound[EngineSound], WheeledVehicleData));
+    addField("squealSound", TypeSFXProfilePtr, Offset(sound[SquealSound], WheeledVehicleData));
+    addField("WheelImpactSound", TypeSFXProfilePtr, Offset(sound[WheelImpactSound], WheeledVehicleData));
 
     addField("tireEmitter", TypeParticleEmitterDataPtr, Offset(tireEmitter, WheeledVehicleData));
     addField("maxWheelSpeed", TypeF32, Offset(maxWheelSpeed, WheeledVehicleData));
@@ -386,7 +386,7 @@ void WheeledVehicleData::unpackData(BitStream* stream)
 
     for (S32 i = 0; i < MaxSounds; i++)
         sound[i] = stream->readFlag() ?
-        (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+        (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
             DataBlockObjectIdLast) : 0;
 
     stream->read(&maxWheelSpeed);
@@ -462,12 +462,9 @@ void WheeledVehicle::onRemove()
     }
 
     // Stop the sounds
-    if (mJetSound)
-        alxStop(mJetSound);
-    if (mEngineSound)
-        alxStop(mEngineSound);
-    if (mSquealSound)
-        alxStop(mSquealSound);
+    SFX_DELETE(mJetSound);
+    SFX_DELETE(mEngineSound);
+    SFX_DELETE(mSquealSound);
 
     //
     scriptOnRemove();
@@ -565,23 +562,23 @@ bool WheeledVehicle::onNewDataBlock(GameBaseData* dptr)
     else
         mTailLightThread = 0;
 
-    // Stop any existing sounds in case where switching datablocks
-    if (mJetSound) {
-        alxStop(mJetSound);
-        mJetSound = 0;
-    }
-    if (mEngineSound) {
-        alxStop(mEngineSound);
-        mEngineSound = 0;
-    }
-    if (mSquealSound) {
-        alxStop(mSquealSound);
-        mSquealSound = 0;
-    }
-    if (isGhost()) {
-        // Start the engine
+    if (isGhost())
+    {
+        // Create the sounds ahead of time.  This reduces runtime
+        // costs and makes the system easier to understand.
+
+        SFX_DELETE(mEngineSound);
+        SFX_DELETE(mSquealSound);
+        SFX_DELETE(mJetSound);
+
         if (mDataBlock->sound[WheeledVehicleData::EngineSound])
-            mEngineSound = alxPlay(mDataBlock->sound[WheeledVehicleData::EngineSound], &getTransform());
+            mEngineSound = SFX->createSource(mDataBlock->sound[WheeledVehicleData::EngineSound], &getTransform());
+
+        if (mDataBlock->sound[WheeledVehicleData::SquealSound])
+            mSquealSound = SFX->createSource(mDataBlock->sound[WheeledVehicleData::SquealSound], &getTransform());
+
+        if (mDataBlock->sound[WheeledVehicleData::JetSound])
+            mJetSound = SFX->createSource(mDataBlock->sound[WheeledVehicleData::JetSound], &getTransform());
     }
 
     scriptOnNewDataBlock();
@@ -1108,11 +1105,22 @@ void WheeledVehicle::updateWheelParticles(F32 dt)
 */
 void WheeledVehicle::updateEngineSound(F32 level)
 {
-    if (mEngineSound) {
-        alxSourceMatrixF(mEngineSound, &getTransform());
-        alxSourcef(mEngineSound, AL_GAIN_LINEAR, level);
-        alxSourcef(mEngineSound, AL_PITCH, ((level - sIdleEngineVolume) * 1.3));
-    }
+    if (!mEngineSound)
+        return;
+
+    if (!mEngineSound->isPlaying())
+        mEngineSound->play();
+
+    mEngineSound->setTransform(getTransform());
+    mEngineSound->setVelocity(getVelocity());
+    //mEngineSound->setVolume( level );
+
+    // Adjust pitch
+    F32 pitch = ((level - sIdleEngineVolume) * 1.3f);
+    if (pitch < 0.4f)
+        pitch = 0.4f;
+
+    mEngineSound->setPitch(pitch);
 }
 
 
@@ -1122,22 +1130,20 @@ void WheeledVehicle::updateEngineSound(F32 level)
 */
 void WheeledVehicle::updateSquealSound(F32 level)
 {
-    if (!mDataBlock->sound[WheeledVehicleData::SquealSound])
+    if (!mSquealSound)
         return;
-    // Allocate/Deallocate voice on demand.
-    if (level < sMinSquealVolume) {
-        if (mSquealSound) {
-            alxStop(mSquealSound);
-            mSquealSound = 0;
-        }
-    }
-    else {
-        if (!mSquealSound)
-            mSquealSound = alxPlay(mDataBlock->sound[WheeledVehicleData::SquealSound], &getTransform());
 
-        alxSourceMatrixF(mSquealSound, &getTransform());
-        alxSourcef(mSquealSound, AL_GAIN_LINEAR, level);
+    if (level < sMinSquealVolume)
+    {
+        mSquealSound->stop();
+        return;
     }
+
+    if (!mSquealSound->isPlaying())
+        mSquealSound->play();
+
+    mSquealSound->setTransform(getTransform());
+    mSquealSound->setVolume(level);
 }
 
 
@@ -1147,21 +1153,19 @@ void WheeledVehicle::updateSquealSound(F32 level)
 */
 void WheeledVehicle::updateJetSound()
 {
-    if (!mDataBlock->sound[WheeledVehicleData::JetSound])
+    if (!mJetSound)
         return;
 
-    // Allocate/Deallocate voice on demand.
-    if (!mJetting) {
-        if (mJetSound) {
-            alxStop(mJetSound);
-            mJetSound = 0;
-        }
+    if (!mJetting)
+    {
+        mJetSound->stop();
+        return;
     }
-    else {
-        if (!mJetSound)
-            mJetSound = alxPlay(mDataBlock->sound[WheeledVehicleData::JetSound], &getTransform());
-        alxSourceMatrixF(mJetSound, &getTransform());
-    }
+
+    if (!mJetSound->isPlaying())
+        mJetSound->play();
+
+    mJetSound->setTransform(getTransform());
 }
 
 

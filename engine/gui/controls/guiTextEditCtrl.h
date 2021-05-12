@@ -29,7 +29,7 @@ protected:
 
     StringTableEntry mValidateCommand;
     StringTableEntry mEscapeCommand;
-    AudioProfile* mDeniedSound;
+    SFXProfile* mDeniedSound;
 
     // for animating the cursor
     S32      mNumFramesElapsed;

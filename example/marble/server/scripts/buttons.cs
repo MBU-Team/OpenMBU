@@ -7,7 +7,7 @@
 
 //-----------------------------------------------------------------------------
 
-datablock AudioProfile(ButtonClick)
+datablock SFXProfile(ButtonClick)
 {
    filename    = "~/data/sound/ButtonClick.wav";
    description = AudioDefault3d;

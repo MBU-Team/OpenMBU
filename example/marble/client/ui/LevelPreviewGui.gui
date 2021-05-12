@@ -198,7 +198,7 @@ function levelPreviewGui::onA()
    if (!RootGui.AEnabled())
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if( GameMissionInfo.currentMissionLocked() )
    {
@@ -238,7 +238,7 @@ function levelPreviewGui::onX()
 
 //   if( LP_scores_btn.isVisible() )
 //   {
-//      alxPlay( AudioButtonDown );
+//      sfxPlay( AudioButtonDown );
 //      levelScoresGui.updateLeaderboard();
 //      Canvas.setContent( levelScoresGui );
 //   }
@@ -247,7 +247,7 @@ function levelPreviewGui::onX()
 
 function levelPreviewGui::onB(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    RootGui.setContent( difficultySelectGui, %this );
      
    return true;
@@ -255,7 +255,7 @@ function levelPreviewGui::onB(%this)
 
 function levelPreviewGui::onY(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (!RootGui.YEnabled())
       return;
@@ -291,7 +291,7 @@ function levelPreviewGui::setButtons(%this)
 
 function levelPreviewGui::onLeft(%this)
 {
-   alxPlay( AudioButtonOver );
+   sfxPlay( AudioButtonOver );
 
    // Skip ownership check (showing locked icon already):
    GameMissionInfo.selectPreviousMission(false);
@@ -303,7 +303,7 @@ function levelPreviewGui::onLeft(%this)
 
 function levelPreviewGui::onRight(%this)
 {
-   alxPlay( AudioButtonOver );
+   sfxPlay( AudioButtonOver );
      
    // Skip ownership check (showing locked icon already):
    GameMissionInfo.selectNextMission(false);

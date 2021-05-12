@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 #include "marble.h"
+#include "sfx/sfxSystem.h"
 
 //----------------------------------------------------------------------------
 
@@ -99,7 +100,7 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
                 {
                     MatrixF mat(true);
                     mat.setColumn(3, getPosition());
-                    alxPlay(mDataBlock->sound[MarbleData::Jump], &mat);
+                    SFX->playOnce(mDataBlock->sound[MarbleData::Jump], &mat);
                 }
             }
         }

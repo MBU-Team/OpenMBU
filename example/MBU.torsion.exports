@@ -168,219 +168,6 @@
             <desc>int lightMapSize</desc>
         </field>
     </class>
-    <class>        <name>AudioDescription</name>
-        <base>SimDataBlock</base>
-        <field>            <name>coneInsideAngle</name>
-            <desc>int coneInsideAngle</desc>
-        </field>
-        <field>            <name>coneOutsideAngle</name>
-            <desc>int coneOutsideAngle</desc>
-        </field>
-        <field>            <name>coneOutsideVolume</name>
-            <desc>float coneOutsideVolume</desc>
-        </field>
-        <field>            <name>coneVector</name>
-            <desc>Point3F coneVector</desc>
-        </field>
-        <field>            <name>environmentLevel</name>
-            <desc>float environmentLevel</desc>
-        </field>
-        <field>            <name>is3D</name>
-            <desc>bool is3D</desc>
-        </field>
-        <field>            <name>isLooping</name>
-            <desc>bool isLooping</desc>
-        </field>
-        <field>            <name>isStreaming</name>
-            <desc>bool isStreaming</desc>
-        </field>
-        <field>            <name>loopCount</name>
-            <desc>int loopCount</desc>
-        </field>
-        <field>            <name>maxDistance</name>
-            <desc>float maxDistance</desc>
-        </field>
-        <field>            <name>maxLoopGap</name>
-            <desc>int maxLoopGap</desc>
-        </field>
-        <field>            <name>minLoopGap</name>
-            <desc>int minLoopGap</desc>
-        </field>
-        <field>            <name>ReferenceDistance</name>
-            <desc>float ReferenceDistance</desc>
-        </field>
-        <field>            <name>type</name>
-            <desc>int type</desc>
-        </field>
-        <field>            <name>volume</name>
-            <desc>float volume</desc>
-        </field>
-    </class>
-    <class>        <name>AudioEmitter</name>
-        <base>SceneObject</base>
-        <field>            <name>coneInsideAngle</name>
-            <desc>int coneInsideAngle</desc>
-        </field>
-        <field>            <name>coneOutsideAngle</name>
-            <desc>int coneOutsideAngle</desc>
-        </field>
-        <field>            <name>coneOutsideVolume</name>
-            <desc>float coneOutsideVolume</desc>
-        </field>
-        <field>            <name>coneVector</name>
-            <desc>Point3F coneVector</desc>
-        </field>
-        <field>            <name>description</name>
-            <desc>AudioDescription description</desc>
-        </field>
-        <field>            <name>fileName</name>
-            <desc>filename fileName</desc>
-        </field>
-        <field>            <name>is3D</name>
-            <desc>bool is3D</desc>
-        </field>
-        <field>            <name>isLooping</name>
-            <desc>bool isLooping</desc>
-        </field>
-        <field>            <name>loopCount</name>
-            <desc>int loopCount</desc>
-        </field>
-        <field>            <name>maxDistance</name>
-            <desc>float maxDistance</desc>
-        </field>
-        <field>            <name>maxLoopGap</name>
-            <desc>int maxLoopGap</desc>
-        </field>
-        <field>            <name>minLoopGap</name>
-            <desc>int minLoopGap</desc>
-        </field>
-        <field>            <name>outsideAmbient</name>
-            <desc>bool outsideAmbient</desc>
-        </field>
-        <field>            <name>Profile</name>
-            <desc>AudioProfile Profile</desc>
-        </field>
-        <field>            <name>ReferenceDistance</name>
-            <desc>float ReferenceDistance</desc>
-        </field>
-        <field>            <name>type</name>
-            <desc>int type</desc>
-        </field>
-        <field>            <name>useProfileDescription</name>
-            <desc>bool useProfileDescription</desc>
-        </field>
-        <field>            <name>volume</name>
-            <desc>float volume</desc>
-        </field>
-    </class>
-    <class>        <name>AudioEnvironment</name>
-        <base>SimDataBlock</base>
-        <field>            <name>airAbsorption</name>
-            <desc>float airAbsorption</desc>
-        </field>
-        <field>            <name>damping</name>
-            <desc>float damping</desc>
-        </field>
-        <field>            <name>decayHFRatio</name>
-            <desc>float decayHFRatio</desc>
-        </field>
-        <field>            <name>decayTime</name>
-            <desc>float decayTime</desc>
-        </field>
-        <field>            <name>effectVolume</name>
-            <desc>float effectVolume</desc>
-        </field>
-        <field>            <name>environmentDiffusion</name>
-            <desc>float environmentDiffusion</desc>
-        </field>
-        <field>            <name>environmentSize</name>
-            <desc>float environmentSize</desc>
-        </field>
-        <field>            <name>flags</name>
-            <desc>int flags</desc>
-        </field>
-        <field>            <name>reflections</name>
-            <desc>int reflections</desc>
-        </field>
-        <field>            <name>reflectionsDelay</name>
-            <desc>float reflectionsDelay</desc>
-        </field>
-        <field>            <name>reverb</name>
-            <desc>int reverb</desc>
-        </field>
-        <field>            <name>reverbDelay</name>
-            <desc>float reverbDelay</desc>
-        </field>
-        <field>            <name>room</name>
-            <desc>enumval room</desc>
-        </field>
-        <field>            <name>roomHF</name>
-            <desc>int roomHF</desc>
-        </field>
-        <field>            <name>roomRolloffFactor</name>
-            <desc>float roomRolloffFactor</desc>
-        </field>
-        <field>            <name>roomVolume</name>
-            <desc>int roomVolume</desc>
-        </field>
-        <field>            <name>useRoom</name>
-            <desc>bool useRoom</desc>
-        </field>
-    </class>
-    <class>        <name>AudioProfile</name>
-        <base>SimDataBlock</base>
-        <field>            <name>description</name>
-            <desc>AudioDescription description</desc>
-        </field>
-        <field>            <name>environment</name>
-            <desc>AudioSampleEnvironment environment</desc>
-        </field>
-        <field>            <name>fileName</name>
-            <desc>filename fileName</desc>
-        </field>
-        <field>            <name>preload</name>
-            <desc>bool preload</desc>
-        </field>
-    </class>
-    <class>        <name>AudioSampleEnvironment</name>
-        <base>SimDataBlock</base>
-        <field>            <name>airAbsorption</name>
-            <desc>float airAbsorption</desc>
-        </field>
-        <field>            <name>direct</name>
-            <desc>int direct</desc>
-        </field>
-        <field>            <name>directHF</name>
-            <desc>int directHF</desc>
-        </field>
-        <field>            <name>flags</name>
-            <desc>int flags</desc>
-        </field>
-        <field>            <name>obstruction</name>
-            <desc>float obstruction</desc>
-        </field>
-        <field>            <name>obstructionLFRatio</name>
-            <desc>float obstructionLFRatio</desc>
-        </field>
-        <field>            <name>occlusion</name>
-            <desc>float occlusion</desc>
-        </field>
-        <field>            <name>occlusionLFRatio</name>
-            <desc>float occlusionLFRatio</desc>
-        </field>
-        <field>            <name>occlusionRoomRatio</name>
-            <desc>float occlusionRoomRatio</desc>
-        </field>
-        <field>            <name>outsideVolumeHF</name>
-            <desc>int outsideVolumeHF</desc>
-        </field>
-        <field>            <name>room</name>
-            <desc>int room</desc>
-        </field>
-        <field>            <name>roomRolloff</name>
-            <desc>float roomRolloff</desc>
-        </field>
-    </class>
     <class>        <name>BanList</name>
         <base>SimObject</base>
         <method>            <name>add</name>
@@ -855,7 +642,7 @@
             <desc>Point3F sizes</desc>
         </field>
         <field>            <name>soundProfile</name>
-            <desc>AudioProfile soundProfile</desc>
+            <desc>SFXProfile soundProfile</desc>
         </field>
         <field>            <name>subExplosion</name>
             <desc>ExplosionData subExplosion</desc>
@@ -921,7 +708,7 @@
             <desc>ParticleEmitterData downJetEmitter</desc>
         </field>
         <field>            <name>engineSound</name>
-            <desc>AudioProfile engineSound</desc>
+            <desc>SFXProfile engineSound</desc>
         </field>
         <field>            <name>forwardJetEmitter</name>
             <desc>ParticleEmitterData forwardJetEmitter</desc>
@@ -933,7 +720,7 @@
             <desc>float hoverHeight</desc>
         </field>
         <field>            <name>jetSound</name>
-            <desc>AudioProfile jetSound</desc>
+            <desc>SFXProfile jetSound</desc>
         </field>
         <field>            <name>maneuveringForce</name>
             <desc>float maneuveringForce</desc>
@@ -1658,10 +1445,10 @@
             <desc>List all of the classes that this connection knows about, and what their IDs are. Useful for debugging network problems.</desc>
         </method>
         <method>            <name>play2D</name>
-            <args>AudioProfile ap</args>
+            <args>SFXProfile ap</args>
         </method>
         <method>            <name>play3D</name>
-            <args>AudioProfile ap, Transform pos</args>
+            <args>SFXProfile ap, Transform pos</args>
         </method>
         <method>            <name>playDemo</name>
             <args>string demoFileName</args>
@@ -2193,13 +1980,13 @@
             <desc>int shadow</desc>
         </field>
         <field>            <name>soundButtonDown</name>
-            <desc>AudioProfile soundButtonDown</desc>
+            <desc>SFXProfile soundButtonDown</desc>
         </field>
         <field>            <name>soundButtonOver</name>
-            <desc>AudioProfile soundButtonOver</desc>
+            <desc>SFXProfile soundButtonOver</desc>
         </field>
         <field>            <name>soundOptionChanged</name>
-            <desc>AudioProfile soundOptionChanged</desc>
+            <desc>SFXProfile soundOptionChanged</desc>
         </field>
         <field>            <name>tab</name>
             <desc>bool tab</desc>
@@ -2630,7 +2417,7 @@
             <desc>bool allowColorChars</desc>
         </field>
         <field>            <name>deniedSound</name>
-            <desc>AudioProfile deniedSound</desc>
+            <desc>SFXProfile deniedSound</desc>
         </field>
         <field>            <name>lineSpacing</name>
             <desc>int lineSpacing</desc>
@@ -2941,7 +2728,7 @@ More of a helper function than anything.   If console access to the field list i
             <args> newPos </args>
         </method>
         <field>            <name>deniedSound</name>
-            <desc>AudioProfile deniedSound</desc>
+            <desc>SFXProfile deniedSound</desc>
         </field>
         <field>            <name>escapeCommand</name>
             <desc>string escapeCommand</desc>
@@ -3341,7 +3128,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>Point3F dustTrailOffset</desc>
         </field>
         <field>            <name>engineSound</name>
-            <desc>AudioProfile engineSound</desc>
+            <desc>SFXProfile engineSound</desc>
         </field>
         <field>            <name>floatingGravMag</name>
             <desc>float floatingGravMag</desc>
@@ -3350,7 +3137,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float floatingThrustFactor</desc>
         </field>
         <field>            <name>floatSound</name>
-            <desc>AudioProfile floatSound</desc>
+            <desc>SFXProfile floatSound</desc>
         </field>
         <field>            <name>forwardJetEmitter</name>
             <desc>ParticleEmitterData forwardJetEmitter</desc>
@@ -3359,7 +3146,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float gyroDrag</desc>
         </field>
         <field>            <name>jetSound</name>
-            <desc>AudioProfile jetSound</desc>
+            <desc>SFXProfile jetSound</desc>
         </field>
         <field>            <name>mainThrustForce</name>
             <desc>float mainThrustForce</desc>
@@ -3430,11 +3217,11 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>setSkinBase</name>
             <args>string basename</args>
         </method>
-        <field>            <name>AudioEnvironment</name>
-            <desc>AudioEnvironment AudioEnvironment</desc>
+        <field>            <name>audioEnvironment</name>
+            <desc>SFXEnvironment audioEnvironment</desc>
         </field>
-        <field>            <name>AudioProfile</name>
-            <desc>AudioProfile AudioProfile</desc>
+        <field>            <name>audioProfile</name>
+            <desc>SFXProfile audioProfile</desc>
         </field>
         <field>            <name>interiorFile</name>
             <desc>filename interiorFile</desc>
@@ -3646,16 +3433,16 @@ More of a helper function than anything.   If console access to the field list i
             <desc>int blastRechargeTime</desc>
         </field>
         <field>            <name>Bounce1</name>
-            <desc>AudioProfile Bounce1</desc>
+            <desc>SFXProfile Bounce1</desc>
         </field>
         <field>            <name>Bounce2</name>
-            <desc>AudioProfile Bounce2</desc>
+            <desc>SFXProfile Bounce2</desc>
         </field>
         <field>            <name>Bounce3</name>
-            <desc>AudioProfile Bounce3</desc>
+            <desc>SFXProfile Bounce3</desc>
         </field>
         <field>            <name>Bounce4</name>
-            <desc>AudioProfile Bounce4</desc>
+            <desc>SFXProfile Bounce4</desc>
         </field>
         <field>            <name>bounceEmitter</name>
             <desc>ParticleEmitterData bounceEmitter</desc>
@@ -3685,7 +3472,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float jumpImpulse</desc>
         </field>
         <field>            <name>JumpSound</name>
-            <desc>AudioProfile JumpSound</desc>
+            <desc>SFXProfile JumpSound</desc>
         </field>
         <field>            <name>kineticFriction</name>
             <desc>float kineticFriction</desc>
@@ -3703,16 +3490,16 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float maxRollVelocity</desc>
         </field>
         <field>            <name>MegaBounce1</name>
-            <desc>AudioProfile MegaBounce1</desc>
+            <desc>SFXProfile MegaBounce1</desc>
         </field>
         <field>            <name>MegaBounce2</name>
-            <desc>AudioProfile MegaBounce2</desc>
+            <desc>SFXProfile MegaBounce2</desc>
         </field>
         <field>            <name>MegaBounce3</name>
-            <desc>AudioProfile MegaBounce3</desc>
+            <desc>SFXProfile MegaBounce3</desc>
         </field>
         <field>            <name>MegaBounce4</name>
-            <desc>AudioProfile MegaBounce4</desc>
+            <desc>SFXProfile MegaBounce4</desc>
         </field>
         <field>            <name>megaSize</name>
             <desc>float megaSize</desc>
@@ -3733,19 +3520,19 @@ More of a helper function than anything.   If console access to the field list i
             <desc>GameBaseData powerUps</desc>
         </field>
         <field>            <name>RollHardSound</name>
-            <desc>AudioProfile RollHardSound</desc>
+            <desc>SFXProfile RollHardSound</desc>
         </field>
         <field>            <name>RollIceSound</name>
-            <desc>AudioProfile RollIceSound</desc>
+            <desc>SFXProfile RollIceSound</desc>
         </field>
         <field>            <name>RollMegaSound</name>
-            <desc>AudioProfile RollMegaSound</desc>
+            <desc>SFXProfile RollMegaSound</desc>
         </field>
         <field>            <name>size</name>
             <desc>float size</desc>
         </field>
         <field>            <name>SlipSound</name>
-            <desc>AudioProfile SlipSound</desc>
+            <desc>SFXProfile SlipSound</desc>
         </field>
         <field>            <name>staticFriction</name>
             <desc>float staticFriction</desc>
@@ -4270,13 +4057,13 @@ More of a helper function than anything.   If console access to the field list i
     <class>        <name>PathedInteriorData</name>
         <base>GameBaseData</base>
         <field>            <name>StartSound</name>
-            <desc>AudioProfile StartSound</desc>
+            <desc>SFXProfile StartSound</desc>
         </field>
         <field>            <name>StopSound</name>
-            <desc>AudioProfile StopSound</desc>
+            <desc>SFXProfile StopSound</desc>
         </field>
         <field>            <name>SustainSound</name>
-            <desc>AudioProfile SustainSound</desc>
+            <desc>SFXProfile SustainSound</desc>
         </field>
     </class>
     <class>        <name>PathManagerEvent</name>
@@ -4361,19 +4148,19 @@ More of a helper function than anything.   If console access to the field list i
             <desc>ParticleEmitterData dustEmitter</desc>
         </field>
         <field>            <name>exitingWater</name>
-            <desc>AudioProfile exitingWater</desc>
+            <desc>SFXProfile exitingWater</desc>
         </field>
         <field>            <name>exitSplashSoundVelocity</name>
             <desc>float exitSplashSoundVelocity</desc>
         </field>
         <field>            <name>FootBubblesSound</name>
-            <desc>AudioProfile FootBubblesSound</desc>
+            <desc>SFXProfile FootBubblesSound</desc>
         </field>
         <field>            <name>FootHardSound</name>
-            <desc>AudioProfile FootHardSound</desc>
+            <desc>SFXProfile FootHardSound</desc>
         </field>
         <field>            <name>FootMetalSound</name>
-            <desc>AudioProfile FootMetalSound</desc>
+            <desc>SFXProfile FootMetalSound</desc>
         </field>
         <field>            <name>footPuffEmitter</name>
             <desc>ParticleEmitterData footPuffEmitter</desc>
@@ -4385,22 +4172,22 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float footPuffRadius</desc>
         </field>
         <field>            <name>FootShallowSound</name>
-            <desc>AudioProfile FootShallowSound</desc>
+            <desc>SFXProfile FootShallowSound</desc>
         </field>
         <field>            <name>FootSnowSound</name>
-            <desc>AudioProfile FootSnowSound</desc>
+            <desc>SFXProfile FootSnowSound</desc>
         </field>
         <field>            <name>FootSoftSound</name>
-            <desc>AudioProfile FootSoftSound</desc>
+            <desc>SFXProfile FootSoftSound</desc>
         </field>
         <field>            <name>footstepSplashHeight</name>
             <desc>float footstepSplashHeight</desc>
         </field>
         <field>            <name>FootUnderwaterSound</name>
-            <desc>AudioProfile FootUnderwaterSound</desc>
+            <desc>SFXProfile FootUnderwaterSound</desc>
         </field>
         <field>            <name>FootWadingSound</name>
-            <desc>AudioProfile FootWadingSound</desc>
+            <desc>SFXProfile FootWadingSound</desc>
         </field>
         <field>            <name>groundImpactMinSpeed</name>
             <desc>float groundImpactMinSpeed</desc>
@@ -4430,25 +4217,25 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float horizResistSpeed</desc>
         </field>
         <field>            <name>impactHardSound</name>
-            <desc>AudioProfile impactHardSound</desc>
+            <desc>SFXProfile impactHardSound</desc>
         </field>
         <field>            <name>impactMetalSound</name>
-            <desc>AudioProfile impactMetalSound</desc>
+            <desc>SFXProfile impactMetalSound</desc>
         </field>
         <field>            <name>impactSnowSound</name>
-            <desc>AudioProfile impactSnowSound</desc>
+            <desc>SFXProfile impactSnowSound</desc>
         </field>
         <field>            <name>impactSoftSound</name>
-            <desc>AudioProfile impactSoftSound</desc>
+            <desc>SFXProfile impactSoftSound</desc>
         </field>
         <field>            <name>impactWaterEasy</name>
-            <desc>AudioProfile impactWaterEasy</desc>
+            <desc>SFXProfile impactWaterEasy</desc>
         </field>
         <field>            <name>impactWaterHard</name>
-            <desc>AudioProfile impactWaterHard</desc>
+            <desc>SFXProfile impactWaterHard</desc>
         </field>
         <field>            <name>impactWaterMedium</name>
-            <desc>AudioProfile impactWaterMedium</desc>
+            <desc>SFXProfile impactWaterMedium</desc>
         </field>
         <field>            <name>jumpDelay</name>
             <desc>int jumpDelay</desc>
@@ -4514,7 +4301,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float minRunEnergy</desc>
         </field>
         <field>            <name>movingBubblesSound</name>
-            <desc>AudioProfile movingBubblesSound</desc>
+            <desc>SFXProfile movingBubblesSound</desc>
         </field>
         <field>            <name>pickupRadius</name>
             <desc>float pickupRadius</desc>
@@ -4562,7 +4349,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float upResistSpeed</desc>
         </field>
         <field>            <name>waterBreathSound</name>
-            <desc>AudioProfile waterBreathSound</desc>
+            <desc>SFXProfile waterBreathSound</desc>
         </field>
     </class>
     <class>        <name>PowerUpData</name>
@@ -4721,7 +4508,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>filename dropTexture</desc>
         </field>
         <field>            <name>soundProfile</name>
-            <desc>AudioProfile soundProfile</desc>
+            <desc>SFXProfile soundProfile</desc>
         </field>
         <field>            <name>splashesPerSide</name>
             <desc>int splashesPerSide</desc>
@@ -4796,7 +4583,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>Point3F scale</desc>
         </field>
         <field>            <name>sound</name>
-            <desc>AudioProfile sound</desc>
+            <desc>SFXProfile sound</desc>
         </field>
         <field>            <name>velInheritFactor</name>
             <desc>float velInheritFactor</desc>
@@ -4876,6 +4663,93 @@ More of a helper function than anything.   If console access to the field list i
         </field>
     </class>
     <class>        <name>SetMissionCRCEvent</name>
+    </class>
+    <class>        <name>SFXDescription</name>
+        <base>SimDataBlock</base>
+        <field>            <name>channel</name>
+            <desc>int channel</desc>
+        </field>
+        <field>            <name>coneInsideAngle</name>
+            <desc>int coneInsideAngle</desc>
+        </field>
+        <field>            <name>coneOutsideAngle</name>
+            <desc>int coneOutsideAngle</desc>
+        </field>
+        <field>            <name>coneOutsideVolume</name>
+            <desc>float coneOutsideVolume</desc>
+        </field>
+        <field>            <name>coneVector</name>
+            <desc>Point3F coneVector</desc>
+        </field>
+        <field>            <name>is3D</name>
+            <desc>bool is3D</desc>
+        </field>
+        <field>            <name>isLooping</name>
+            <desc>bool isLooping</desc>
+        </field>
+        <field>            <name>isStreaming</name>
+            <desc>bool isStreaming</desc>
+        </field>
+        <field>            <name>maxDistance</name>
+            <desc>float maxDistance</desc>
+        </field>
+        <field>            <name>referenceDistance</name>
+            <desc>float referenceDistance</desc>
+        </field>
+        <field>            <name>volume</name>
+            <desc>float volume</desc>
+        </field>
+    </class>
+    <class>        <name>SFXEnvironment</name>
+        <base>SimDataBlock</base>
+    </class>
+    <class>        <name>SFXProfile</name>
+        <base>SimDataBlock</base>
+        <field>            <name>description</name>
+            <desc>SFXDescription description</desc>
+        </field>
+        <field>            <name>fileName</name>
+            <desc>filename fileName</desc>
+        </field>
+        <field>            <name>preload</name>
+            <desc>bool preload</desc>
+        </field>
+    </class>
+    <class>        <name>SFXSource</name>
+        <base>SimObject</base>
+        <method>            <name>getChannel</name>
+            <desc>Returns the volume channel.</desc>
+        </method>
+        <method>            <name>isPaused</name>
+            <desc>Returns true if the source is paused or false if not.</desc>
+        </method>
+        <method>            <name>isPlaying</name>
+            <desc>Returns true if the source is playing or false if not.</desc>
+        </method>
+        <method>            <name>pause</name>
+            <desc>Pauses playback of the source.</desc>
+        </method>
+        <method>            <name>play</name>
+            <desc>Starts playback of the source.</desc>
+        </method>
+        <method>            <name>setCallback</name>
+            <args> string callbackFunction </args>
+            <desc>Sets the  the pitch of the source.</desc>
+        </method>
+        <method>            <name>setPitch</name>
+            <args> F32 pitch </args>
+            <desc>Scales the pitch of the source.</desc>
+        </method>
+        <method>            <name>setTransform</name>
+            <args> xform </args>
+        </method>
+        <method>            <name>setVolume</name>
+            <args> F32 volume </args>
+            <desc>Sets the playback volume of the source.</desc>
+        </method>
+        <method>            <name>stop</name>
+            <desc>Ends playback of the source.</desc>
+        </method>
     </class>
     <class>        <name>sgDecalProjector</name>
         <base>GameBase</base>
@@ -5136,7 +5010,7 @@ More of a helper function than anything.   If console access to the field list i
             <args>int slot</args>
         </method>
         <method>            <name>playAudio</name>
-            <args>int slot, AudioProfile ap</args>
+            <args>int slot, SFXProfile profile</args>
         </method>
         <method>            <name>playThread</name>
             <args>int slot, string sequenceName</args>
@@ -5497,7 +5371,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>bool stateSequenceRandomFlash</desc>
         </field>
         <field>            <name>stateSound</name>
-            <desc>AudioProfile stateSound</desc>
+            <desc>SFXProfile stateSound</desc>
         </field>
         <field>            <name>stateSpinThread</name>
             <desc>enumval stateSpinThread</desc>
@@ -6675,13 +6549,13 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float dustHeight</desc>
         </field>
         <field>            <name>exitingWater</name>
-            <desc>AudioProfile exitingWater</desc>
+            <desc>SFXProfile exitingWater</desc>
         </field>
         <field>            <name>exitSplashSoundVelocity</name>
             <desc>float exitSplashSoundVelocity</desc>
         </field>
         <field>            <name>hardImpactSound</name>
-            <desc>AudioProfile hardImpactSound</desc>
+            <desc>SFXProfile hardImpactSound</desc>
         </field>
         <field>            <name>hardImpactSpeed</name>
             <desc>float hardImpactSpeed</desc>
@@ -6690,13 +6564,13 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float hardSplashSoundVelocity</desc>
         </field>
         <field>            <name>impactWaterEasy</name>
-            <desc>AudioProfile impactWaterEasy</desc>
+            <desc>SFXProfile impactWaterEasy</desc>
         </field>
         <field>            <name>impactWaterHard</name>
-            <desc>AudioProfile impactWaterHard</desc>
+            <desc>SFXProfile impactWaterHard</desc>
         </field>
         <field>            <name>impactWaterMedium</name>
-            <desc>AudioProfile impactWaterMedium</desc>
+            <desc>SFXProfile impactWaterMedium</desc>
         </field>
         <field>            <name>integration</name>
             <desc>int integration</desc>
@@ -6738,7 +6612,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float numDmgEmitterAreas</desc>
         </field>
         <field>            <name>softImpactSound</name>
-            <desc>AudioProfile softImpactSound</desc>
+            <desc>SFXProfile softImpactSound</desc>
         </field>
         <field>            <name>softImpactSpeed</name>
             <desc>float softImpactSpeed</desc>
@@ -6759,7 +6633,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float triggerDustHeight</desc>
         </field>
         <field>            <name>waterWakeSound</name>
-            <desc>AudioProfile waterWakeSound</desc>
+            <desc>SFXProfile waterWakeSound</desc>
         </field>
     </class>
     <class>        <name>VolumeLight</name>
@@ -6869,25 +6743,25 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float engineBrake</desc>
         </field>
         <field>            <name>engineSound</name>
-            <desc>AudioProfile engineSound</desc>
+            <desc>SFXProfile engineSound</desc>
         </field>
         <field>            <name>engineTorque</name>
             <desc>float engineTorque</desc>
         </field>
         <field>            <name>jetSound</name>
-            <desc>AudioProfile jetSound</desc>
+            <desc>SFXProfile jetSound</desc>
         </field>
         <field>            <name>maxWheelSpeed</name>
             <desc>float maxWheelSpeed</desc>
         </field>
         <field>            <name>squealSound</name>
-            <desc>AudioProfile squealSound</desc>
+            <desc>SFXProfile squealSound</desc>
         </field>
         <field>            <name>tireEmitter</name>
             <desc>ParticleEmitterData tireEmitter</desc>
         </field>
         <field>            <name>WheelImpactSound</name>
-            <desc>AudioProfile WheelImpactSound</desc>
+            <desc>SFXProfile WheelImpactSound</desc>
         </field>
     </class>
     <class>        <name>WheeledVehicleSpring</name>
@@ -7160,84 +7034,8 @@ More of a helper function than anything.   If console access to the field list i
         <args>...</args>
         <desc>Make a new AIConnection, and pass arguments to the onConnect script callback.</desc>
     </function>
-    <function>        <name>alGetListener3f</name>
-        <args>Alenum</args>
-    </function>
-    <function>        <name>alGetListeneri</name>
-        <args>Alenum</args>
-    </function>
-    <function>        <name>alGetString</name>
-        <args>string item</args>
-        <desc>This wraps alGetString().</desc>
-    </function>
-    <function>        <name>alListener3f</name>
-        <args>ALenum, "x y z"</args>
-        <desc>or alListener3f(ALenum, x, y, z)</desc>
-    </function>
     <function>        <name>allowConnections</name>
         <args>bool</args>
-    </function>
-    <function>        <name>alxCreateSource</name>
-        <args>profile</args>
-        <desc>or (profile, x,y,z) or (description, filename) or (description, filename, x,y,z)</desc>
-    </function>
-    <function>        <name>alxGetChannelVolume</name>
-        <args>int channel_id</args>
-        <desc>@param  channel_id  ID of channel to fetch volume from.
-@return Volume of channel.</desc>
-    </function>
-    <function>        <name>alxGetListenerf</name>
-        <args>Alenum</args>
-    </function>
-    <function>        <name>alxGetSource3f</name>
-        <args>handle, ALenum</args>
-    </function>
-    <function>        <name>alxGetSourcef</name>
-        <args>handle, ALenum</args>
-    </function>
-    <function>        <name>alxGetSourcei</name>
-        <args>handle, ALenum</args>
-    </function>
-    <function>        <name>alxGetStreamDuration</name>
-        <args>handle</args>
-    </function>
-    <function>        <name>alxGetStreamPosition</name>
-        <args>handle</args>
-    </function>
-    <function>        <name>alxGetWaveLen</name>
-        <args>string filename</args>
-        <desc>@param filename File to determine length of.
-@returns Length in milliseconds.</desc>
-    </function>
-    <function>        <name>alxIsPlaying</name>
-        <args>handle</args>
-    </function>
-    <function>        <name>alxPlay</name>
-        <args>handle</args>
-        <desc>or alxPlay(profile) or alxPlay(profile, x,y,z)</desc>
-    </function>
-    <function>        <name>alxSetChannelVolume</name>
-        <args>int channel_id, float volume</args>
-        <desc>@param channel_id  ID of channel to set volume on.
-@param volume      New volume of channel, from 0.0f-1.0f</desc>
-    </function>
-    <function>        <name>alxSetMasterVolume</name>
-        <args>float volume</args>
-    </function>
-    <function>        <name>alxSource3f</name>
-        <args>handle, ALenum, x, y, z</args>
-        <desc>@note You can replace the last three parameters with a string, "x y z"</desc>
-    </function>
-    <function>        <name>alxSourcef</name>
-        <args>handle, ALenum, value</args>
-    </function>
-    <function>        <name>alxSourcei</name>
-        <args>handle, ALenum, value</args>
-    </function>
-    <function>        <name>alxStop</name>
-        <args>int handle</args>
-    </function>
-    <function>        <name>alxStopAll</name>
     </function>
     <function>        <name>atlasConvertTextureTOC</name>
         <args>inFile, outFile, format</args>
@@ -7903,15 +7701,6 @@ Possible parameters are:
     <function>        <name>NextToken</name>
         <desc>nextToken(str,token,delim)</desc>
     </function>
-    <function>        <name>OpenALInitDriver</name>
-        <desc>Initializes the OpenAL driver.
-
-@note You must call this before any sounds will work!</desc>
-    </function>
-    <function>        <name>OpenALRegisterExtensions</name>
-    </function>
-    <function>        <name>OpenALShutdownDriver</name>
-    </function>
     <function>        <name>panoramaScreenShot</name>
         <args>string file, string format</args>
         <desc>Take a panoramic screenshot.
@@ -8105,10 +7894,6 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
         <args>int port</args>
         <desc>Set the network port for the game to use.</desc>
     </function>
-    <function>        <name>setPowerAudioProfiles</name>
-        <args> AudioProfile powerUp, AudioProfile powerDown</args>
-        <desc>Set the ambient audio manager's power up/down profiles.</desc>
-    </function>
     <function>        <name>setRandomSeed</name>
         <args>int seed=-1</args>
         <desc>Set the current random seed. If no seed is provided, then the current time in ms is used.</desc>
@@ -8142,6 +7927,71 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     <function>        <name>setZoomSpeed</name>
         <args>speed</args>
         <desc>- Set the zoom speed of the camera, in ms per 90deg FOV change.</desc>
+    </function>
+    <function>        <name>sfxCreateDevice</name>
+        <args> string provider, string device, bool useHardware, S32 maxBuffers </args>
+        <desc>Initializes the requested device.  This must be called successfully before any sounds will be heard.
+@param provider The provider name.
+@param device The device name.
+@param useHardware A boolean which toggles the use of hardware processing when available.
+@param maxBuffers The maximum buffers for this device to use or -1 for the device to pick its own reasonable default.</desc>
+    </function>
+    <function>        <name>sfxCreateSource</name>
+        <args>profile</args>
+        <desc>sfxCreateSource(profile, x,y,z)
+sfxCreateSource(description, filename)
+sfxCreateSource(description, filename, x,y,z)
+
+Creates a new paused sound source using a profile or a description and filename.  The return value is the source which must be released by delete().</desc>
+    </function>
+    <function>        <name>sfxDeleteDevice</name>
+        <desc>Destroys the currently initialized device.  Sounds will still play, but not be heard.</desc>
+    </function>
+    <function>        <name>sfxGetAvailableDevices</name>
+        <desc>Returns a list of available devices in the form:
+
+provider1 [tab] device1 [tab] hasHardware1 [tab] maxBuffers1 [nl] provider2 ... etc.</desc>
+    </function>
+    <function>        <name>sfxGetChannelVolume</name>
+        <args>S32 channel</args>
+        <desc>@param channel The channel index to fetch the volume from.
+@return The volume of the channel.</desc>
+    </function>
+    <function>        <name>sfxGetDeviceInfo</name>
+        <desc>Returns a newline delimited string containing information on the current device.</desc>
+    </function>
+    <function>        <name>sfxGetMasterVolume</name>
+        <desc>@return The sound system master volume.</desc>
+    </function>
+    <function>        <name>sfxPlay</name>
+        <args> source </args>
+        <desc>sfxPlay( profile, &lt;x, y, z&gt; )</desc>
+    </function>
+    <function>        <name>sfxPlayOnce</name>
+        <args>profile</args>
+        <desc>sfxPlayOnce(profile, x,y,z)
+sfxPlayOnce(description, filename)
+sfxPlayOnce(description, filename, x,y,z)
+
+Creates a new sound source using a profile or a description and filename and plays it once.  Once playback is finished the source is deleted.  The return value is the temporary source id.</desc>
+    </function>
+    <function>        <name>sfxSetChannelVolume</name>
+        <args>S32 channel, F32 volume</args>
+        <desc>@param channel The channel index to set volume on.
+@param volume New 0 to 1 channel volume.</desc>
+    </function>
+    <function>        <name>sfxSetMasterVolume</name>
+        <args>F32 volume</args>
+        <desc>@param volume The new 0 to 1 sound system master volume.</desc>
+    </function>
+    <function>        <name>sfxStop</name>
+        <args>S32 id</args>
+        <desc>: stop a source, equivalent to id.stop()</desc>
+    </function>
+    <function>        <name>sfxStopAll</name>
+        <args>S32 channel = -1</args>
+        <desc>@param channel The optional channel index of which sources to stop.
+@return The volume of the channel.</desc>
     </function>
     <function>        <name>sgLightingModelCount</name>
         <desc>Get the number of Lighting Pack Lighting Models.</desc>

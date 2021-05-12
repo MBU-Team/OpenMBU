@@ -252,58 +252,6 @@
     <ClCompile Include="..\engine\atlas\runtime\atlasInstanceGeomTOC.cpp" />
     <ClCompile Include="..\engine\atlas\runtime\atlasInstanceTexTOC.cpp" />
     <ClCompile Include="..\engine\atlas\runtime\atlasInstanceTOC.cpp" />
-    <ClCompile Include="..\engine\audio\audio.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioBuffer.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioDataBlock.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioFunctions.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioStreamSourceFactory.cpp" />
-    <ClCompile Include="..\engine\audio\oggMixedStreamSource.cpp" />
-    <ClCompile Include="..\engine\audio\vorbisStreamSource.cpp" />
-    <ClCompile Include="..\engine\audio\wavStreamSource.cpp" />
     <ClCompile Include="..\engine\collision\abstractPolyList.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -2614,18 +2562,6 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\engine\platformWin32\winOpenAL.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">Disabled</Optimization>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">EnableFastChecks</BasicRuntimeChecks>
-      <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">true</BrowseInformation>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Optimized|Win32'">CompileAsCpp</CompileAs>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-    </ClCompile>
     <ClCompile Include="..\engine\platformWin32\winProcessControl.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -2925,6 +2861,16 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\sfx\null\sfxNullBuffer.cpp" />
+    <ClCompile Include="..\engine\sfx\null\sfxNullDevice.cpp" />
+    <ClCompile Include="..\engine\sfx\null\sfxNullProvider.cpp" />
+    <ClCompile Include="..\engine\sfx\null\sfxNullVoice.cpp" />
+    <ClCompile Include="..\engine\sfx\openal\aldlist.cpp" />
+    <ClCompile Include="..\engine\sfx\openal\sfxALBuffer.cpp" />
+    <ClCompile Include="..\engine\sfx\openal\sfxALDevice.cpp" />
+    <ClCompile Include="..\engine\sfx\openal\sfxALProvider.cpp" />
+    <ClCompile Include="..\engine\sfx\openal\sfxALVoice.cpp" />
+    <ClCompile Include="..\engine\sfx\openal\win32\LoadOAL.cpp" />
     <ClCompile Include="..\engine\sfx\sfxDescription.cpp" />
     <ClCompile Include="..\engine\sfx\sfxDevice.cpp" />
     <ClCompile Include="..\engine\sfx\sfxEnvironment.cpp" />
@@ -3599,14 +3545,6 @@
     <ClInclude Include="..\engine\atlas\runtime\atlasInstanceGeomTOC.h" />
     <ClInclude Include="..\engine\atlas\runtime\atlasInstanceTexTOC.h" />
     <ClInclude Include="..\engine\atlas\runtime\atlasInstanceTOC.h" />
-    <ClInclude Include="..\engine\audio\audio.h" />
-    <ClInclude Include="..\engine\audio\audioBuffer.h" />
-    <ClInclude Include="..\engine\audio\audioDataBlock.h" />
-    <ClInclude Include="..\engine\audio\audioStreamSource.h" />
-    <ClInclude Include="..\engine\audio\audioStreamSourceFactory.h" />
-    <ClInclude Include="..\engine\audio\oggMixedStreamSource.h" />
-    <ClInclude Include="..\engine\audio\vorbisStreamSource.h" />
-    <ClInclude Include="..\engine\audio\wavStreamSource.h" />
     <ClInclude Include="..\engine\collision\abstractPolyList.h" />
     <ClInclude Include="..\engine\collision\boxConvex.h" />
     <ClInclude Include="..\engine\collision\clippedPolyList.h" />
@@ -3916,9 +3854,7 @@
     <ClInclude Include="..\engine\platform\event.h" />
     <ClInclude Include="..\engine\platform\gameInterface.h" />
     <ClInclude Include="..\engine\platform\platform.h" />
-    <ClInclude Include="..\engine\platform\platformAL.h" />
     <ClInclude Include="..\engine\platform\platformAssert.h" />
-    <ClInclude Include="..\engine\platform\platformAudio.h" />
     <ClInclude Include="..\engine\platform\platformFont.h" />
     <ClInclude Include="..\engine\platform\platformInput.h" />
     <ClInclude Include="..\engine\platform\platformMutex.h" />
@@ -3948,6 +3884,15 @@
     <ClInclude Include="..\engine\scenegraph\sgUtil.h" />
     <ClInclude Include="..\engine\scenegraph\shadowVolumeBSP.h" />
     <ClInclude Include="..\engine\scenegraph\windingClipper.h" />
+    <ClInclude Include="..\engine\sfx\null\sfxNullBuffer.h" />
+    <ClInclude Include="..\engine\sfx\null\sfxNullDevice.h" />
+    <ClInclude Include="..\engine\sfx\null\sfxNullVoice.h" />
+    <ClInclude Include="..\engine\sfx\openal\aldlist.h" />
+    <ClInclude Include="..\engine\sfx\openal\LoadOAL.h" />
+    <ClInclude Include="..\engine\sfx\openal\sfxALBuffer.h" />
+    <ClInclude Include="..\engine\sfx\openal\sfxALCaps.h" />
+    <ClInclude Include="..\engine\sfx\openal\sfxALDevice.h" />
+    <ClInclude Include="..\engine\sfx\openal\sfxALVoice.h" />
     <ClInclude Include="..\engine\sfx\sfxBuffer.h" />
     <ClInclude Include="..\engine\sfx\sfxDescription.h" />
     <ClInclude Include="..\engine\sfx\sfxDevice.h" />

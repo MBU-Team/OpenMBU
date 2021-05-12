@@ -251,7 +251,7 @@ function LobbyPopupDlg::doIt(%this)
 
 function LobbyPopupDlg::onA(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (LobbyPopupMenu.getRowCount() == 0)
    {
@@ -272,7 +272,7 @@ function LobbyPopupDlg::onA(%this)
 
 function LobbyPopupDlg::onB(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (LobbyPopupMenu.getRowCount() == 0)
    {

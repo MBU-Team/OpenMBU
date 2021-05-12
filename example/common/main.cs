@@ -175,7 +175,7 @@ function onStart()
 
 function onExit()
 {
-   OpenALShutdown();
+   sfxShutdown();
    Parent::onExit();
 }
 

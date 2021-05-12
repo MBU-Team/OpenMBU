@@ -19,7 +19,8 @@
 #include "interior/forceField.h"
 #include "sceneGraph/lightManager.h"
 #include "collision/convex.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxProfile.h"
+#include "sfx/sfxEnvironment.h"
 #include "core/frameAllocator.h"
 #include "sim/netConnection.h"
 #include "platform/profiler.h"
@@ -226,8 +227,8 @@ void InteriorInstance::destroy()
 
 //--------------------------------------------------------------------------
 // Inspection
-static AudioProfile* saveAudioProfile = 0;
-static AudioEnvironment* saveAudioEnvironment = 0;
+static SFXProfile* saveAudioProfile = 0;
+static SFXEnvironment* saveAudioEnvironment = 0;
 void InteriorInstance::inspectPreApply()
 {
     saveAudioProfile = mAudioProfile;
@@ -255,8 +256,8 @@ void InteriorInstance::initPersistFields()
     endGroup("Media");
 
     addGroup("Audio");
-    addField("audioProfile", TypeAudioProfilePtr, Offset(mAudioProfile, InteriorInstance));
-    addField("audioEnvironment", TypeAudioEnvironmentPtr, Offset(mAudioEnvironment, InteriorInstance));
+    addField("audioProfile", TypeSFXProfilePtr, Offset(mAudioProfile, InteriorInstance));
+    addField("audioEnvironment", TypeSFXEnvironmentPtr, Offset(mAudioEnvironment, InteriorInstance));
     endGroup("Audio");
 
     addGroup("Misc");
@@ -1129,7 +1130,7 @@ void InteriorInstance::unpackUpdate(NetConnection* c, BitStream* stream)
         if (stream->readFlag())
         {
             U32 profileId = stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast);
-            mAudioProfile = dynamic_cast<AudioProfile*>(Sim::findObject(profileId));
+            mAudioProfile = dynamic_cast<SFXProfile*>(Sim::findObject(profileId));
         }
         else
             mAudioProfile = 0;
@@ -1138,7 +1139,7 @@ void InteriorInstance::unpackUpdate(NetConnection* c, BitStream* stream)
         if (stream->readFlag())
         {
             U32 profileId = stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast);
-            mAudioEnvironment = dynamic_cast<AudioEnvironment*>(Sim::findObject(profileId));
+            mAudioEnvironment = dynamic_cast<SFXEnvironment*>(Sim::findObject(profileId));
         }
         else
             mAudioEnvironment = 0;
@@ -1168,7 +1169,7 @@ void InteriorInstance::unpackUpdate(NetConnection* c, BitStream* stream)
             if (stream->readFlag())
             {
                 U32 profileId = stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast);
-                mAudioProfile = dynamic_cast<AudioProfile*>(Sim::findObject(profileId));
+                mAudioProfile = dynamic_cast<SFXProfile*>(Sim::findObject(profileId));
             }
             else
                 mAudioProfile = 0;
@@ -1177,7 +1178,7 @@ void InteriorInstance::unpackUpdate(NetConnection* c, BitStream* stream)
             if (stream->readFlag())
             {
                 U32 profileId = stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast);
-                mAudioEnvironment = dynamic_cast<AudioEnvironment*>(Sim::findObject(profileId));
+                mAudioEnvironment = dynamic_cast<SFXEnvironment*>(Sim::findObject(profileId));
             }
             else
                 mAudioEnvironment = 0;

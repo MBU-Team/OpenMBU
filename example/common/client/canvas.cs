@@ -46,7 +46,7 @@ function initCanvas(%windowName)
    exec("./materials.cs");
 
    // Init the audio system
-   OpenALInit();
+   sfxStartup();
 }
 
 function resetCanvas()

@@ -180,9 +180,9 @@ private:
     bool mUseFullMarbleTime;
     U32 mMode;
     U32 mModeTimer;
-    AUDIOHANDLE mRollHandle;
-    AUDIOHANDLE mSlipHandle;
-    AUDIOHANDLE mMegaHandle;
+    SFXSource* mRollHandle;
+    SFXSource* mSlipHandle;
+    SFXSource* mMegaHandle;
     F32 mRadius;
     QuatF mGravityFrame;
     QuatF mGravityRenderFrame;
@@ -373,7 +373,7 @@ private:
         MaxSounds,
     };
 
-    AudioProfile* sound[13];
+    SFXProfile* sound[13];
     F32 maxRollVelocity;
     F32 minVelocityBounceSoft;
     F32 minVelocityBounceHard;

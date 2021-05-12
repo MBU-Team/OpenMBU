@@ -39,10 +39,10 @@ public:
 class Sim2DAudioEvent : public NetEvent
 {
 private:
-    const AudioProfile* mProfile;
+    const SFXProfile* mProfile;
 
 public:
-    Sim2DAudioEvent(const AudioProfile* profile = NULL);
+    Sim2DAudioEvent(const SFXProfile* profile = NULL);
     void pack(NetConnection*, BitStream* bstream);
     void write(NetConnection*, BitStream* bstream);
     void unpack(NetConnection*, BitStream* bstream);
@@ -53,11 +53,11 @@ public:
 class Sim3DAudioEvent : public NetEvent
 {
 private:
-    const AudioProfile* mProfile;
+    const SFXProfile* mProfile;
     MatrixF mTransform;
 
 public:
-    Sim3DAudioEvent(const AudioProfile* profile = NULL, const MatrixF* mat = NULL);
+    Sim3DAudioEvent(const SFXProfile* profile = NULL, const MatrixF* mat = NULL);
     void pack(NetConnection*, BitStream* bstream);
     void write(NetConnection*, BitStream* bstream);
     void unpack(NetConnection*, BitStream* bstream);

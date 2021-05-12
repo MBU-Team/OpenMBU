@@ -9,7 +9,6 @@
 #include "console/consoleInternal.h"
 #include "console/consoleTypes.h"
 #include "game/fx/particleEmitter.h"
-#include "audio/audioDataBlock.h"
 #include "game/shapeBase.h"
 #include "game/projectile.h"
 #include "game/gameConnection.h"
@@ -17,6 +16,7 @@
 #include "game/debris.h"
 #include "math/mathUtils.h"
 #include "sim/netObject.h"
+#include "sfx/sfxSystem.h"
 
 //----------------------------------------------------------------------------
 
@@ -413,7 +413,7 @@ void ShapeBaseImageData::initPersistFields()
     addField("stateRecoil", TypeEnum, Offset(stateRecoil, ShapeBaseImageData), MaxStates, &EnumRecoilState);
     addField("stateSequence", TypeString, Offset(stateSequence, ShapeBaseImageData), MaxStates);
     addField("stateSequenceRandomFlash", TypeBool, Offset(stateSequenceRandomFlash, ShapeBaseImageData), MaxStates);
-    addField("stateSound", TypeAudioProfilePtr, Offset(stateSound, ShapeBaseImageData), MaxStates);
+    addField("stateSound", TypeSFXProfilePtr, Offset(stateSound, ShapeBaseImageData), MaxStates);
     addField("stateScript", TypeCaseString, Offset(stateScript, ShapeBaseImageData), MaxStates);
     addField("stateEmitter", TypeParticleEmitterDataPtr, Offset(stateEmitter, ShapeBaseImageData), MaxStates);
     addField("stateEmitterTime", TypeF32, Offset(stateEmitterTime, ShapeBaseImageData), MaxStates);
@@ -636,7 +636,7 @@ void ShapeBaseImageData::unpackData(BitStream* stream)
             }
             else
                 s.emitter = 0;
-            s.sound = stream->readFlag() ? (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+            s.sound = stream->readFlag() ? (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
                 DataBlockObjectIdLast) : 0;
         }
     }
@@ -719,8 +719,7 @@ ShapeBase::MountedImage::~MountedImage()
     delete shapeInstance;
 
     // stop sound
-    if (animLoopingSound && (animSound != NULL_AUDIOHANDLE))
-        alxStop(animSound);
+    SFX_DELETE(animSound);
 
     for (S32 i = 0; i < MaxImageEmitters; i++)
         if (bool(emitter[i].emitter))
@@ -1394,10 +1393,7 @@ void ShapeBase::resetImageSlot(U32 imageSlot)
     MountedImage& image = mMountedImageList[imageSlot];
     delete image.shapeInstance;
     image.shapeInstance = 0;
-    if (image.animSound) {
-        alxStop(image.animSound);
-        image.animSound = 0;
-    }
+    SFX_DELETE(image.animSound);
     for (S32 i = 0; i < MaxImageEmitters; i++) {
         MountedImage::ImageEmitter& em = image.emitter[i];
         if (bool(em.emitter)) {
@@ -1525,10 +1521,7 @@ void ShapeBase::setImageState(U32 imageSlot, U32 newState, bool force)
     ShapeBaseImageData::StateData& stateData = *image.state;
 
     // Stop any looping sounds or animations use in the last state.
-    if (image.animSound && image.animLoopingSound) {
-        alxStop(image.animSound);
-        image.animSound = 0;
-    }
+    SFX_DELETE(image.animSound);
 
     // Mount pending images
     if (image.nextImage != InvalidImagePtr && stateData.allowImageChange) {
@@ -1588,11 +1581,15 @@ void ShapeBase::setImageState(U32 imageSlot, U32 newState, bool force)
 
     // Play sound
     if (stateData.sound && (isGhost() || gSPMode)) {
-        Point3F vel = getVelocity();
-        image.animSound = alxPlay(stateData.sound, &getRenderTransform(), &vel);
-        ALint value = 0;
-        alxGetSourcei(image.animSound, AL_LOOPING, &value);
-        image.animLoopingSound = (value == AL_TRUE);
+        const Point3F& velocity = getVelocity();
+        image.animSound = SFX->createSource(stateData.sound, &getRenderTransform(), &velocity);
+
+        // If we have the source... play it.
+        if (image.animSound)
+        {
+            image.animLoopingSound = image.animSound->isLooping();
+            image.animSound->play();
+        }
     }
 
     // Play animation
@@ -1771,7 +1768,10 @@ void ShapeBase::updateImageAnimation(U32 imageSlot, F32 dt)
 
     // Update any playing sound.
     if (image.animSound)
-        alxSourceMatrixF(image.animSound, &getRenderTransform());
+    {
+        image.animSound->setTransform(getRenderTransform());
+        // TODO: Add velocity here?
+    }
 
     // Particle emission
     for (S32 i = 0; i < MaxImageEmitters; i++) {

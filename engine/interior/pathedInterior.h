@@ -12,12 +12,13 @@
 #include "game/gameBase.h"
 #include "core/resManager.h"
 #include "interior/interiorRes.h"
-#include "audio/audio.h"
 
 class PathManager;
 class InteriorInstance;
 class EditGeometry;
 class EditInteriorResource;
+class SFXProfile;
+class SFXSource;
 
 struct PathedInteriorData : public GameBaseData {
     typedef GameBaseData Parent;
@@ -28,7 +29,7 @@ public:
         StopSound,
         MaxSounds
     };
-    AudioProfile* sound[MaxSounds];
+    SFXProfile* sound[MaxSounds];
     static void initPersistFields();
     virtual void packData(BitStream* stream);
     virtual void unpackData(BitStream* stream);
@@ -85,7 +86,7 @@ protected:
     static PathedInterior* mClientPathedInteriors;
     static PathedInterior* mServerPathedInteriors;
 
-    AUDIOHANDLE mSustainHandle;
+    SFXSource* mSustainHandle;
 
     StringTableEntry           mInteriorResName;
     S32                        mInteriorResIndex;

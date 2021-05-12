@@ -135,7 +135,7 @@ function XMessagePopupDlg::onAReleased(%this)
 {
    if (XMessagePopupABtn.visible && %this.adown)
    {      
-      alxPlay( AudioButtonDown );
+      sfxPlay( AudioButtonDown );
       %callback = %this.stackData[%this.stack].A_callback;
       %this.hide();
       if (%callback !$= "")
@@ -153,7 +153,7 @@ function XMessagePopupDlg::onBReleased(%this)
 {
    if (XMessagePopupBBtn.visible && %this.bdown)
    {
-      alxPlay( AudioButtonDown );
+      sfxPlay( AudioButtonDown );
       %callback = %this.stackData[%this.stack].B_callback;
       %this.hide();
       if (%callback !$= "")

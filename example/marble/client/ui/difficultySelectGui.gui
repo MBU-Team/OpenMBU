@@ -19,7 +19,7 @@ new GuiControl(DifficultySelectGui) {
 //--- OBJECT WRITE END ---
 function DifficultySelectGui::onA(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (!%this.menuEnabled)
       return true;
@@ -45,7 +45,7 @@ function DifficultySelectGui::onA(%this)
 
 function DifficultySelectGui::onB(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    RootGui.setContent(MainMenuGui);
    return true;
 }

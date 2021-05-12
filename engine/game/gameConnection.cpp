@@ -11,7 +11,7 @@
 #include "sim/pathManager.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sceneLighting.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxProfile.h"
 #include "game/game.h"
 #include "game/shapeBase.h"
 #include "game/gameConnection.h"
@@ -1349,30 +1349,33 @@ void GameConnection::packetDropped(PacketNotify* note)
 
 //----------------------------------------------------------------------------
 
-void GameConnection::play2D(const AudioProfile* profile)
+void GameConnection::play2D(const SFXProfile* profile)
 {
     postNetEvent(new Sim2DAudioEvent(profile));
 }
 
-void GameConnection::play3D(const AudioProfile* profile, const MatrixF* transform)
+void GameConnection::play3D(const SFXProfile* profile, const MatrixF* transform)
 {
-    if (transform)
+    if (!transform)
+        play2D(profile);
+
+    else if (!mControlObject)
+        postNetEvent(new Sim3DAudioEvent(profile, transform));
+
+    else
     {
-        if (mControlObject)
-        {
-            // Only post the event if it's within audible range
-            // of the control object.
-            Point3F ear, pos;
-            transform->getColumn(3, &pos);
-            mControlObject->getTransform().getColumn(3, &ear);
-            if ((ear - pos).len() < profile->mDescriptionObject->mDescription.mMaxDistance)
-                postNetEvent(new Sim3DAudioEvent(profile, transform));
-        }
-        else
+        // TODO: Maybe improve this to account for the duration
+        // of the sound effect and if the control object can get
+        // into hearing range within time?
+
+        // Only post the event if it's within audible range
+        // of the control object.
+        Point3F ear, pos;
+        transform->getColumn(3, &pos);
+        mControlObject->getTransform().getColumn(3, &ear);
+        if ((ear - pos).len() < profile->getDescription()->mMaxDistance)
             postNetEvent(new Sim3DAudioEvent(profile, transform));
     }
-    else
-        play2D(profile);
 }
 
 void GameConnection::doneScopingScene()
@@ -1577,18 +1580,18 @@ ConsoleMethod(GameConnection, isAIControlled, bool, 2, 2, "")
     return object->isAIControlled();
 }
 
-ConsoleMethod(GameConnection, play2D, bool, 3, 3, "(AudioProfile ap)")
+ConsoleMethod(GameConnection, play2D, bool, 3, 3, "(SFXProfile ap)")
 {
-    AudioProfile* profile;
+    SFXProfile* profile;
     if (!Sim::findObject(argv[2], profile))
         return false;
     object->play2D(profile);
     return true;
 }
 
-ConsoleMethod(GameConnection, play3D, bool, 4, 4, "(AudioProfile ap, Transform pos)")
+ConsoleMethod(GameConnection, play3D, bool, 4, 4, "(SFXProfile ap, Transform pos)")
 {
-    AudioProfile* profile;
+    SFXProfile* profile;
     if (!Sim::findObject(argv[2], profile))
         return false;
 

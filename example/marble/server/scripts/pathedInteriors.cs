@@ -2,7 +2,7 @@
 //* Moving platforms data blocks
 //******************************************************************************
 
-datablock AudioProfile(MovingBlockSustainSfx)
+datablock SFXProfile(MovingBlockSustainSfx)
 {
    filename = "~/data/sound/MovingBlockLoop.wav";
    description = AudioClosestLooping3d;

@@ -14,7 +14,7 @@
 #include "console/consoleTypes.h"
 #include "terrain/terrData.h"
 #include "sceneGraph/sceneGraph.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxSystem.h"
 #include "game/fx/particleEmitter.h"
 #include "math/mathIO.h"
 #include "materials/materialPropertyMap.h"
@@ -144,9 +144,9 @@ void HoverVehicleData::initPersistFields()
     addField("rollForce", TypeF32, Offset(rollForce, HoverVehicleData));
     addField("pitchForce", TypeF32, Offset(pitchForce, HoverVehicleData));
 
-    addField("jetSound", TypeAudioProfilePtr, Offset(sound[JetSound], HoverVehicleData));
-    addField("engineSound", TypeAudioProfilePtr, Offset(sound[EngineSound], HoverVehicleData));
-    addField("floatSound", TypeAudioProfilePtr, Offset(sound[FloatSound], HoverVehicleData));
+    addField("jetSound", TypeSFXProfilePtr, Offset(sound[JetSound], HoverVehicleData));
+    addField("engineSound", TypeSFXProfilePtr, Offset(sound[EngineSound], HoverVehicleData));
+    addField("floatSound", TypeSFXProfilePtr, Offset(sound[FloatSound], HoverVehicleData));
 
     addField("dustTrailEmitter", TypeParticleEmitterDataPtr, Offset(dustTrailEmitter, HoverVehicleData));
     addField("dustTrailOffset", TypePoint3F, Offset(dustTrailOffset, HoverVehicleData));
@@ -295,7 +295,7 @@ void HoverVehicleData::unpackData(BitStream* stream)
 
     for (S32 i = 0; i < MaxSounds; i++)
         sound[i] = stream->readFlag() ?
-        (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+        (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
             DataBlockObjectIdLast) : 0;
 
     for (S32 j = 0; j < MaxJetEmitters; j++) {
@@ -329,9 +329,9 @@ HoverVehicle::HoverVehicle()
     mLeftThrust = 0;
     mRightThrust = 0;
 
-    mJetSound = NULL_AUDIOHANDLE;
-    mEngineSound = NULL_AUDIOHANDLE;
-    mFloatSound = NULL_AUDIOHANDLE;
+    mJetSound = NULL;
+    mEngineSound = NULL;
+    mFloatSound = NULL;
 
     mDustTrailEmitter = NULL;
 
@@ -393,16 +393,12 @@ bool HoverVehicle::onAdd()
 
 void HoverVehicle::onRemove()
 {
+    SFX_DELETE(mJetSound);
+    SFX_DELETE(mEngineSound);
+    SFX_DELETE(mFloatSound);
+
     scriptOnRemove();
     removeFromScene();
-
-    if (mJetSound != NULL_AUDIOHANDLE)
-        alxStop(mJetSound);
-    if (mEngineSound != NULL_AUDIOHANDLE)
-        alxStop(mEngineSound);
-    if (mFloatSound != NULL_AUDIOHANDLE)
-        alxStop(mFloatSound);
-
     Parent::onRemove();
 }
 
@@ -427,46 +423,47 @@ void HoverVehicle::advanceTime(F32 dt)
     Parent::advanceTime(dt);
 
     // Update jetsound...
-    if (mJetting) {
-        if (mJetSound == NULL_AUDIOHANDLE && mDataBlock->sound[HoverVehicleData::JetSound] != NULL)
-            mJetSound = alxPlay(mDataBlock->sound[HoverVehicleData::JetSound], &getTransform());
+    if (mJetSound)
+    {
+        if (mJetting)
+        {
+            if (!mJetSound->isPlaying())
+                mJetSound->play();
 
-        if (mJetSound != NULL_AUDIOHANDLE)
-            alxSourceMatrixF(mJetSound, &getTransform());
-    }
-    else {
-        if (mJetSound != NULL_AUDIOHANDLE) {
-            alxStop(mJetSound);
-            mJetSound = NULL_AUDIOHANDLE;
+            mJetSound->setTransform(getTransform());
         }
+        else
+            mJetSound->stop();
     }
 
     // Update engine sound...
-    if (mEngineSound == NULL_AUDIOHANDLE && mDataBlock->sound[HoverVehicleData::EngineSound] != NULL)
-        mEngineSound = alxPlay(mDataBlock->sound[HoverVehicleData::EngineSound], &getTransform());
-    if (mEngineSound != NULL_AUDIOHANDLE) {
-        alxSourceMatrixF(mEngineSound, &getTransform());
+    if (mEngineSound)
+    {
+        if (!mEngineSound->isPlaying())
+            mEngineSound->play();
+
+        mEngineSound->setTransform(getTransform());
 
         F32 denom = mDataBlock->mainThrustForce + mDataBlock->strafeThrustForce;
         F32 factor = getMin(mThrustLevel, denom) / denom;
         F32 vol = 0.25 + factor * 0.75;
-        alxSourcef(mEngineSound, AL_GAIN_LINEAR, vol);
+        mEngineSound->setVolume(vol);
     }
 
     // Are we floating?  If so, start the floating sound...
-    if (mFloating) {
-        if (mFloatSound == NULL_AUDIOHANDLE && mDataBlock->sound[HoverVehicleData::FloatSound] != NULL)
-            mFloatSound = alxPlay(mDataBlock->sound[HoverVehicleData::FloatSound], &getTransform());
+    if (mFloatSound)
+    {
+        if (mFloating)
+        {
+            if (!mFloatSound->isPlaying())
+                mFloatSound->play();
 
-        if (mFloatSound != NULL_AUDIOHANDLE)
-            alxSourceMatrixF(mFloatSound, &getTransform());
-    }
-    else {
-        if (mFloatSound != NULL_AUDIOHANDLE) {
-            alxStop(mFloatSound);
-            mFloatSound = NULL_AUDIOHANDLE;
+            mFloatSound->setTransform(getTransform());
         }
+        else
+            mFloatSound->stop();
     }
+
     updateJet(dt);
     updateDustTrail(dt);
 }

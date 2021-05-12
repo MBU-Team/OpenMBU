@@ -12,8 +12,8 @@
 #ifndef _TSSHAPE_H_
 #include "ts/tsShape.h"
 #endif
-#ifndef _PLATFORMAUDIO_H_
-#include "platform/platformAudio.h"
+#ifndef _SFXSOURCE_H_
+#include "sfx/sfxSource.h"
 #endif
 
 #include "game/fx/particleEmitter.h"
@@ -70,7 +70,7 @@ public:
 
     ExplosionData* explosion;
     S32 explosionId;
-    AudioProfile* sound;                // Projectile Sound
+    SFXProfile* sound;                // Projectile Sound
     S32 soundId;                        // Projectile Sound ID
 
     // variables set on preload:
@@ -117,7 +117,7 @@ protected:
 
     ParticleEmitter* mParticleEmitter;
 
-    AUDIOHANDLE mSoundHandle;
+    SFXSource* mSoundHandle;
 
     Point3F  mCurrPosition;
     Point3F  mCurrVelocity;

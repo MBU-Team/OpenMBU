@@ -2,7 +2,7 @@
 // Torque Game Engine
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
-
+#if 0
 #ifndef _AMBIENTAUDIOMANAGER_H_
 #define _AMBIENTAUDIOMANAGER_H_
 
@@ -56,4 +56,5 @@ public:
 
 extern AmbientAudioManager gAmbientAudioManager;
 
+#endif
 #endif

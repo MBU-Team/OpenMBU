@@ -5,7 +5,7 @@
 
 #include "platform/platform.h"
 #include "core/dnet.h"
-#include "audio/audio.h"
+#include "sfx/sfxSystem.h"
 #include "game/gameConnection.h"
 #include "game/moveManager.h"
 #include "console/consoleTypes.h"
@@ -2090,7 +2090,7 @@ F32 ShapeBase::getMass() const
 
 //----------------------------------------------------------------------------
 
-void ShapeBase::playAudio(U32 slot, AudioProfile* profile)
+void ShapeBase::playAudio(U32 slot, SFXProfile* profile)
 {
     AssertFatal(slot < MaxSoundThreads, "ShapeBase::playSound: Incorrect argument");
     Sound& st = mSoundThread[slot];
@@ -2127,21 +2127,27 @@ void ShapeBase::updateServerAudio()
 
 void ShapeBase::updateAudioState(Sound& st)
 {
-    if (st.sound) {
-        alxStop(st.sound);
-        st.sound = 0;
-    }
-    if (st.play && st.profile) {
-        if (isGhost()) {
+    SFX_DELETE(st.sound);
+
+    if (st.play && st.profile)
+    {
+        if (isGhost())
+        {
             if (Sim::findObject(SimObjectId(st.profile), st.profile))
-                st.sound = alxPlay(st.profile, &getTransform());
+            {
+                st.sound = SFX->createSource(st.profile, &getTransform());
+                if (st.sound)
+                    st.sound->play();
+            }
             else
                 st.play = false;
         }
-        else {
+        else
+        {
             // Non-looping sounds timeout on the server
-            st.timeout = st.profile->mDescriptionObject->mDescription.mIsLooping ? 0 :
-                Sim::getCurrentTime() + sAudioTimeout;
+            st.timeout = 0;
+            if (!st.profile->getDescription()->mIsLooping)
+                st.timeout = Sim::getCurrentTime() + sAudioTimeout;
         }
     }
     else
@@ -2151,8 +2157,11 @@ void ShapeBase::updateAudioState(Sound& st)
 void ShapeBase::updateAudioPos()
 {
     for (int i = 0; i < MaxSoundThreads; i++)
-        if (AUDIOHANDLE sh = mSoundThread[i].sound)
-            alxSourceMatrixF(sh, &getTransform());
+    {
+        SFXSource* source = mSoundThread[i].sound;
+        if (source)
+            source->setTransform(getTransform());
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -3183,14 +3192,20 @@ void ShapeBase::unpackUpdate(NetConnection* con, BitStream* stream)
         }
     }
 
-    if (stream->readFlag()) {
-        for (S32 i = 0; i < MaxSoundThreads; i++) {
-            if (stream->readFlag()) {
+    if (stream->readFlag())
+    {
+        for (S32 i = 0; i < MaxSoundThreads; i++)
+        {
+            if (stream->readFlag())
+            {
                 Sound& st = mSoundThread[i];
-                if ((st.play = stream->readFlag()) == true) {
-                    st.profile = (AudioProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
+                st.play = stream->readFlag();
+                if (st.play)
+                {
+                    st.profile = (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
                         DataBlockObjectIdLast);
                 }
+
                 if (isProperlyAdded())
                     updateAudioState(st);
             }
@@ -3617,11 +3632,11 @@ Material* ShapeBase::getMaterial(U32 material)
 }
 
 //----------------------------------------------------------------------------
-ConsoleMethod(ShapeBase, playAudio, bool, 4, 4, "(int slot, AudioProfile ap)")
+ConsoleMethod(ShapeBase, playAudio, bool, 4, 4, "(int slot, SFXProfile profile)")
 {
     U32 slot = dAtoi(argv[2]);
     if (slot >= 0 && slot < ShapeBase::MaxScriptThreads) {
-        AudioProfile* profile;
+        SFXProfile* profile;
         if (Sim::findObject(argv[3], profile)) {
             object->playAudio(slot, profile);
             return true;

@@ -2,7 +2,7 @@
 //* Conveyor data blocks
 //******************************************************************************
 
-datablock AudioProfile(PlatformLowering)
+datablock SFXProfile(PlatformLowering)
 {
    filename    = "~/data/sound/PlatformLowering.wav";
    description = AudioDefaultLooping3d;

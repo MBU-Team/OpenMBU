@@ -15,17 +15,12 @@
 #ifndef _SIMBASE_H_
 #include "console/simBase.h"
 #endif
-#ifndef _PLATFORMAUDIO_H_
-#include "platform/platformAudio.h"
-#endif
-#ifndef _AUDIODATABLOCK_H_
-#include "audio/audioDataBlock.h"
-#endif
 
 
 #include "gfx/gfxDevice.h"
 
 class GBitmap;
+class SFXProfile;
 
 /// Represents a single GUI event.
 ///
@@ -155,9 +150,9 @@ public:
     Point2I mIconPosition;
 
     // sound members
-    AudioProfile* mSoundButtonDown;
-    AudioProfile* mSoundButtonOver;
-    AudioProfile* mSoundOptionChanged;
+    SFXProfile* mSoundButtonDown;
+    SFXProfile* mSoundButtonOver;
+    SFXProfile* mSoundOptionChanged;
 
 public:
     DECLARE_CONOBJECT(GuiControlProfile);

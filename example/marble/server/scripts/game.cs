@@ -271,10 +271,10 @@ function pauseGame()
    // we always store a variable indicating when they have requested a game pause (the UI keys off this)
    $gamePauseWanted = true;
    stopDemoTimer(); 
-   alxPauseAll();
+   sfxPauseAll();
    //if(xbHasPlaybackControl())
    //   pauseMusic();
-   alxPlay(PauseSfx);
+   sfxPlay(PauseSfx);
    if ($Server::ServerType $= "SinglePlayer" && $Game::Running)
    {
       // we only actually halt the game events in single player games
@@ -290,7 +290,7 @@ function resumeGame()
 {
    $gamePaused = false;
    $gamePauseWanted = false;
-   alxUnpauseAll();
+   sfxUnpauseAll();
    //if(xbHasPlaybackControl())
    //   unpauseMusic();
    // restart demo timer if necessary

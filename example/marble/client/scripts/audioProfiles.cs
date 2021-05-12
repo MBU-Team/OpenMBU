@@ -3,76 +3,74 @@
 //
 // Copyright (c) 2001 GarageGames.Com
 //-----------------------------------------------------------------------------
-// Channel assignments (channel 0 is unused in-game).
-$GuiAudioType     = 1;
-$SimAudioType     = 1;
-$MessageAudioType = 1;
-$EffectAudioType = 1;
-$MusicAudioType = 2;
-$MusicVolume = 1;
 
-new AudioDescription(AudioGui)
+if (!$AudioChannelTypesDefined)
+{
+    error("Audio channel types are not defined, all sounds will use same channel");
+}
+
+new SFXDescription(AudioGui)
 {
    volume   = 1.0;
    isLooping= false;
    is3D     = false;
-   type     = $GuiAudioType;
+   channel     = $GuiAudioType;
 };
-new AudioDescription(AudioMessage)
+new SFXDescription(AudioMessage)
 {
    volume   = 1.0;
    isLooping= false;
    is3D     = false;
-   type     = $MessageAudioType;
+   channel     = $MessageAudioType;
 };
-new AudioDescription(ClientAudioLooping2D)
+new SFXDescription(ClientAudioLooping2D)
 {
    volume = 1.0;
    isLooping = true;
    is3D = false;
-   type = $EffectAudioType;
+   channel = $EffectAudioType;
 };
-new AudioProfile(TimeTravelLoopSfx)
+new SFXProfile(TimeTravelLoopSfx)
 {
    filename    = "~/data/sound/TimeTravelActive.wav";
    description = ClientAudioLooping2d;
    preload = true;
 };
-new AudioProfile(AudioButtonDown)
+new SFXProfile(AudioButtonDown)
 {
    filename = "~/data/sound/ButtonPress.wav";
    description = "AudioGui";
 	preload = true;
 };
-new AudioProfile(AudioButtonOver)
+new SFXProfile(AudioButtonOver)
 {
    filename = "~/data/sound/buttonOver.wav";
    description = "AudioGui";
    preload = true;
 };
 
-new AudioProfile(OptionsGuiTestSound)
+new SFXProfile(OptionsGuiTestSound)
 {
    filename = "~/data/sound/buttonOver.wav";
    description = "AudioGui";
    preload = true;
 };
 
-new AudioDescription(AudioMusic)
+new SFXDescription(AudioMusic)
 {
    volume   = 1.0;
    isLooping = true;
    isStreaming = true;
    is3D     = false;
-   type     = $MusicAudioType;
+   channel     = $MusicAudioType;
 };
 
-new AudioDescription(TimTranceDescription : AudioMusic)
+new SFXDescription(TimTranceDescription : AudioMusic)
 {
    volume = 0.75;
 };
 
-new AudioProfile(TimTranceSfx)
+new SFXProfile(TimTranceSfx)
 {
    fileName = "~/data/sound/music/Tim_Trance.ogg";
    description = "TimTranceDescription";

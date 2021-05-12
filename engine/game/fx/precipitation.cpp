@@ -15,6 +15,7 @@
 #include "core/bitStream.h"
 #include "platform/profiler.h"
 #include "renderInstance/renderInstMgr.h"
+#include "sfx/sfxSystem.h"
 
 static const U32 dropHitMask = AtlasObjectType |
 TerrainObjectType |
@@ -52,7 +53,7 @@ void PrecipitationData::initPersistFields()
 {
     Parent::initPersistFields();
 
-    addField("soundProfile", TypeAudioProfilePtr, Offset(soundProfile, PrecipitationData));
+    addField("soundProfile", TypeSFXProfilePtr, Offset(soundProfile, PrecipitationData));
 
     addField("dropTexture", TypeFilename, Offset(mDropName, PrecipitationData));
     addField("dropShader", TypeString, Offset(mDropShaderName, PrecipitationData));
@@ -304,9 +305,6 @@ bool Precipitation::onAdd()
 
     if (isClientObject())
     {
-        if (mDataBlock->soundProfile)
-            mAudioHandle = alxPlay(mDataBlock->soundProfile, &getTransform());
-
         fillDropList();
         initRenderObjects();
         initMaterials();
@@ -322,9 +320,7 @@ void Precipitation::onRemove()
     removeFromScene();
     Parent::onRemove();
 
-    if (mAudioHandle)
-        alxStop(mAudioHandle);
-    mAudioHandle = NULL;
+    SFX_DELETE(mAudioHandle);
 
     if (isClientObject())
         killDropList();
@@ -338,8 +334,14 @@ bool Precipitation::onNewDataBlock(GameBaseData* dptr)
 
     if (isClientObject() || gSPMode)
     {
+        SFX_DELETE(mAudioHandle);
+
         if (mDataBlock->soundProfile)
-            mAudioHandle = alxPlay(mDataBlock->soundProfile, &getTransform());
+        {
+            mAudioHandle = SFX->createSource(mDataBlock->soundProfile, &getTransform());
+            if (mAudioHandle)
+                mAudioHandle->play();
+        }
 
         initMaterials();
     }
@@ -1239,9 +1241,6 @@ bool Precipitation::prepRenderImage(SceneState* state, const U32 stateKey,
         ri->type = RenderInstManager::RIT_Foliage;
         gRenderInstManager.addInst(ri);
     }
-
-    if (!mAudioHandle && mDataBlock->soundProfile)
-        mAudioHandle = alxPlay(mDataBlock->soundProfile, &getTransform());
 
     return false;
 }

@@ -367,7 +367,7 @@ function CreateGameGui::onX(%this)
    if (!RootGui.XEnabled())
       return;
    
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    %this.doUpsell();
    return true;
@@ -388,7 +388,7 @@ function CreateGameGui::onA(%this)
       return; 
    }
    
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if( GameMissionInfo.currentMissionLocked() )
    {
@@ -417,7 +417,7 @@ function CreateGameGui::onB(%this)
       return; 
    }
    
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    if (%this.backGui)
       RootGui.setContent(%this.backGui);
    else
@@ -434,7 +434,7 @@ function CreateGameGui::onY(%this)
       return; 
    }
 
-   //alxPlay( AudioButtonDown );
+   //sfxPlay( AudioButtonDown );
    // tell SignInControlsGui to do its thing.  Unfortunately the event handling architecture prevents it from having
    // an event handler of its own.
    //SignInControlsGui.process(%this);
@@ -470,7 +470,7 @@ function cgg_reload()
 //   if (RootGui.isCenterTextVisible())
 //      return;
 //      
-//   alxPlay( AudioButtonOver );
+//   sfxPlay( AudioButtonOver );
 //   
 //   onMissionTriggerPressed(%this, CreateGameOptionList, 1, 1);
 //}
@@ -480,7 +480,7 @@ function cgg_reload()
 //   if (RootGui.isCenterTextVisible())
 //      return;
 //      
-//   alxPlay( AudioButtonOver );
+//   sfxPlay( AudioButtonOver );
 //   
 //   onMissionTriggerPressed(%this, CreateGameOptionList, 1, -1);
 //}

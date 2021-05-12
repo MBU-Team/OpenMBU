@@ -50,7 +50,7 @@ function connErrorGui::hide(%this)
 
 function connErrorGui::onA(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
   
    if (isObject($disconnectGui))
       RootGui.setContent($disconnectGui);
@@ -73,7 +73,7 @@ function connErrorGui::onCheatComplete(%this)
   error("ON CHEAT COMPLETE");
   
   // fx
-  alxPlay(OptionsGuiTestSound);
+  sfxPlay(OptionsGuiTestSound);
   
   // logic
   %this.setText(%this.message SPC %this.errorInfo);

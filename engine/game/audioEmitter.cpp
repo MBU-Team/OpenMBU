@@ -1,3 +1,4 @@
+#if 0
 //-----------------------------------------------------------------------------
 // Torque Game Engine
 // Copyright (C) GarageGames.com, Inc.
@@ -880,3 +881,4 @@ void AudioEmitter::initPersistFields()
 //   emitter->mOwnedByClient = true;
 //   emitter->unpackData(conn, bstream);
 //   emitter->registerOb
+#endif

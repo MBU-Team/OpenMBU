@@ -28,7 +28,7 @@ enum GameConnectionConstants
     DataBlockQueueCount = 16
 };
 
-class AudioProfile;
+class SFXProfile;
 class MatrixF;
 class MatrixF;
 class Point3F;
@@ -312,8 +312,8 @@ public:
     /// @name Sound
     /// @{
 
-    void play2D(const AudioProfile* profile);
-    void play3D(const AudioProfile* profile, const MatrixF* transform);
+    void play2D(const SFXProfile* profile);
+    void play3D(const SFXProfile* profile, const MatrixF* transform);
     /// @}
 
     /// @name Misc.

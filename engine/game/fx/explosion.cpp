@@ -7,8 +7,7 @@
 
 #include "console/consoleTypes.h"
 #include "console/typeValidators.h"
-#include "platform/platformAudio.h"
-#include "audio/audioDataBlock.h"
+#include "sfx/sfxSystem.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sceneState.h"
 #include "core/bitStream.h"
@@ -155,7 +154,7 @@ void ExplosionData::initPersistFields()
     Parent::initPersistFields();
 
     addField("explosionShape", TypeFilename, Offset(dtsFileName, ExplosionData));
-    addField("soundProfile", TypeAudioProfilePtr, Offset(soundProfile, ExplosionData));
+    addField("soundProfile", TypeSFXProfilePtr, Offset(soundProfile, ExplosionData));
     addField("faceViewer", TypeBool, Offset(faceViewer, ExplosionData));
     addField("particleEmitter", TypeParticleEmitterDataPtr, Offset(particleEmitter, ExplosionData));
     addField("particleDensity", TypeS32, Offset(particleDensity, ExplosionData));
@@ -1021,7 +1020,7 @@ bool Explosion::explode()
     }
 
     if (mDataBlock->soundProfile)
-        alxPlay(mDataBlock->soundProfile, &getTransform());
+        SFX->playOnce(mDataBlock->soundProfile, &getTransform());
 
     if (mDataBlock->particleEmitter) {
         ParticleEmitter* emitter = new ParticleEmitter;

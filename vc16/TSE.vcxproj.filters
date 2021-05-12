@@ -4,9 +4,6 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{2a3130d9-479d-4f23-9c08-1594f1b8f455}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\audio">
-      <UniqueIdentifier>{1c1cba06-bb47-4f3c-a844-f54f51355d50}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\collision">
       <UniqueIdentifier>{85cd80b2-94b8-4d12-b915-aea3d16968e4}</UniqueIdentifier>
     </Filter>
@@ -133,32 +130,17 @@
     <Filter Include="Source Files\sfx\vorbis">
       <UniqueIdentifier>{f015b735-1d42-41d9-8d27-94610f164a95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\sfx\null">
+      <UniqueIdentifier>{a2a10d69-307e-40ae-a067-1c6a1a74b77f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sfx\openal">
+      <UniqueIdentifier>{f43b713f-3499-467f-9fb1-37a89c30d1f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sfx\openal\win32">
+      <UniqueIdentifier>{7bcab923-5736-4dea-bdca-132b82ec46d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\engine\audio\audio.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioBuffer.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioDataBlock.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioFunctions.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\audioStreamSourceFactory.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\oggMixedStreamSource.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\vorbisStreamSource.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\wavStreamSource.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\collision\abstractPolyList.cpp">
       <Filter>Source Files\collision</Filter>
     </ClCompile>
@@ -1233,9 +1215,6 @@
     <ClCompile Include="..\engine\platformWin32\winNet.cpp">
       <Filter>Source Files\platformWin32</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\platformWin32\winOpenAL.cpp">
-      <Filter>Source Files\platformWin32</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\platformWin32\winProcessControl.cpp">
       <Filter>Source Files\platformWin32</Filter>
     </ClCompile>
@@ -1599,32 +1578,38 @@
     <ClCompile Include="..\engine\sfx\vorbis\vorbisStream.cpp">
       <Filter>Source Files\sfx\vorbis</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\sfx\null\sfxNullBuffer.cpp">
+      <Filter>Source Files\sfx\null</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\null\sfxNullDevice.cpp">
+      <Filter>Source Files\sfx\null</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\null\sfxNullProvider.cpp">
+      <Filter>Source Files\sfx\null</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\null\sfxNullVoice.cpp">
+      <Filter>Source Files\sfx\null</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\openal\aldlist.cpp">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\openal\sfxALBuffer.cpp">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\openal\sfxALDevice.cpp">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\openal\sfxALProvider.cpp">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\openal\sfxALVoice.cpp">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\openal\win32\LoadOAL.cpp">
+      <Filter>Source Files\sfx\openal\win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\engine\audio\audio.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\audioBuffer.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\audioDataBlock.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\audioStreamSource.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\audioStreamSourceFactory.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\oggMixedStreamSource.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\vorbisStreamSource.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\wavStreamSource.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\collision\abstractPolyList.h">
       <Filter>Source Files\collision</Filter>
     </ClInclude>
@@ -2423,13 +2408,7 @@
     <ClInclude Include="..\engine\platform\platform.h">
       <Filter>Source Files\platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\platform\platformAL.h">
-      <Filter>Source Files\platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\platform\platformAssert.h">
-      <Filter>Source Files\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\platform\platformAudio.h">
       <Filter>Source Files\platform</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\platform\platformFont.h">
@@ -2959,6 +2938,33 @@
     </ClInclude>
     <ClInclude Include="..\engine\util\tSignal.h">
       <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\null\sfxNullBuffer.h">
+      <Filter>Source Files\sfx\null</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\null\sfxNullDevice.h">
+      <Filter>Source Files\sfx\null</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\null\sfxNullVoice.h">
+      <Filter>Source Files\sfx\null</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\openal\aldlist.h">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\openal\LoadOAL.h">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\openal\sfxALBuffer.h">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\openal\sfxALCaps.h">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\openal\sfxALDevice.h">
+      <Filter>Source Files\sfx\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\openal\sfxALVoice.h">
+      <Filter>Source Files\sfx\openal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

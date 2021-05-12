@@ -11,6 +11,7 @@
 #include "gui/core/guiDefaultControlRender.h"
 #include "gfx/gfxDevice.h"
 #include "core/frameAllocator.h"
+#include "sfx/sfxSystem.h"
 
 IMPLEMENT_CONOBJECT(GuiTextEditCtrl);
 
@@ -49,7 +50,7 @@ GuiTextEditCtrl::GuiTextEditCtrl()
     mValidateCommand = StringTable->insert("");
     mEscapeCommand = StringTable->insert("");
     mPasswordMask = StringTable->insert("*");
-    mDeniedSound = dynamic_cast<AudioProfile*>(Sim::findObject("InputDeniedSound"));
+    mDeniedSound = dynamic_cast<SFXProfile*>(Sim::findObject("InputDeniedSound"));
 
     mEditCursor = NULL;
 }
@@ -75,7 +76,7 @@ void GuiTextEditCtrl::initPersistFields()
     addField("historySize", TypeS32, Offset(mHistorySize, GuiTextEditCtrl));
     addField("password", TypeBool, Offset(mPasswordText, GuiTextEditCtrl));
     addField("tabComplete", TypeBool, Offset(mTabComplete, GuiTextEditCtrl));
-    addField("deniedSound", TypeAudioProfilePtr, Offset(mDeniedSound, GuiTextEditCtrl));
+    addField("deniedSound", TypeSFXProfilePtr, Offset(mDeniedSound, GuiTextEditCtrl));
     addField("sinkAllKeyEvents", TypeBool, Offset(mSinkAllKeyEvents, GuiTextEditCtrl));
     addField("password", TypeBool, Offset(mPasswordText, GuiTextEditCtrl));
     addField("passwordMask", TypeString, Offset(mPasswordMask, GuiTextEditCtrl));
@@ -1270,10 +1271,7 @@ bool GuiTextEditCtrl::hasText()
 void GuiTextEditCtrl::playDeniedSound()
 {
     if (mDeniedSound)
-    {
-        AUDIOHANDLE handle = alxCreateSource(mDeniedSound);
-        alxPlay(handle);
-    }
+        SFX->playOnce(mDeniedSound);
 }
 
 bool GuiTextEditCtrl::initCursors()

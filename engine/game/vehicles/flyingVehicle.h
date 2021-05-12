@@ -28,7 +28,7 @@ struct FlyingVehicleData : public VehicleData {
         EngineSound,
         MaxSounds,
     };
-    AudioProfile* sound[MaxSounds];
+    SFXProfile* sound[MaxSounds];
 
     enum Jets {
         // These enums index into a static name list.
@@ -104,8 +104,8 @@ class FlyingVehicle : public Vehicle
 
     FlyingVehicleData* mDataBlock;
 
-    AUDIOHANDLE mJetSound;
-    AUDIOHANDLE mEngineSound;
+    SFXSource* mJetSound;
+    SFXSource* mEngineSound;
 
     enum NetMaskBits {
         InitMask = BIT(0),

@@ -118,7 +118,7 @@ function GameEndGui::onB( %this )
 
 function GameEndGui::onY(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (!RootGui.YEnabled())
       return;

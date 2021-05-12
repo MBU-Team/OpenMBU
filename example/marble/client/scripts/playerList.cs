@@ -131,7 +131,7 @@ function handleClientJoin(%msgType, %msgString, %clientName, %joinData, %isMe)
    {
       // spew about new player
       echo(detag(%clientName) SPC "joined the game");
-      alxPlay(PlayerJoinSfx);
+      sfxPlay(PlayerJoinSfx);
       %msg = avar($Text::Msg::PlayerJoin, detag(%clientName));
       addChatLine(%msg);
    }
@@ -169,7 +169,7 @@ function handleClientDrop(%msgType, %msgString, %clientName, %clientId, %xbLiveI
    {
       // spew about dropping player
       echo(detag(%clientName) SPC "left the game");
-      alxPlay(PlayerDropSfx);
+      sfxPlay(PlayerDropSfx);
       %msg = avar($Text::Msg::PlayerDrop, detag(%clientName));
       addChatLine(%msg);
    }

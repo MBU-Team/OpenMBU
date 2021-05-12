@@ -252,7 +252,7 @@ function UpsellGui::onA(%this)
    if (!RootGui.AEnabled())
       return;
 
-   alxPlay( AudioButtonDown );      
+   sfxPlay( AudioButtonDown );      
    if (%this._isQuitting)
    {
       quit();
@@ -280,7 +280,7 @@ function UpsellGui::onX( %this )
    if (!RootGui.XEnabled())
       return;
       
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
         
    clientShowMarketplaceUI();
    return true;
@@ -303,7 +303,7 @@ function UpsellGui::onB( %this )
       
    if (%this._isQuitting)
    {
-      alxPlay( AudioButtonDown );
+      sfxPlay( AudioButtonDown );
       RootGui.setContent(ESRBGui);
       return true;
    }

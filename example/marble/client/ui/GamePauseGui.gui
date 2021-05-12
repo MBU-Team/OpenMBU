@@ -72,7 +72,7 @@ function GamePauseGui::onSleep(%this)
 
 function GamePauseGui::onA()
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    %idx = PauseMenu.getSelectedData();
    
@@ -224,7 +224,7 @@ function checkProfileWrite( %fxn, %callCt )
 
 function GamePauseGui::onB()
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    Canvas.popDialog( GamePauseGui );
    setHudVisible( true );
    resumeGame();
@@ -234,7 +234,7 @@ function GamePauseGui::onB()
 
 function GamePauseGui::onX()
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    RootGui.setContent(ControlerDisplayGui, PlayGui);
    
    return true;

@@ -22,7 +22,7 @@ function HelpAndOptionsGui::onA(%this)
 {
    %idx = HelpAndOptionsList.getSelectedIndex();
    
-	alxPlay( AudioButtonDown );
+	sfxPlay( AudioButtonDown );
    
    //if( ServerConnection.gameState !$= "wait" && ServerConnection.gameState !$= "" )
    //   %idx += 1;

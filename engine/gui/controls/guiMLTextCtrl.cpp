@@ -10,6 +10,7 @@
 #include "gfx/gfxDevice.h"
 #include "core/frameAllocator.h"
 #include "core/unicode.h"
+#include "sfx/sfxSystem.h"
 
 IMPLEMENT_CONOBJECT(GuiMLTextCtrl);
 
@@ -99,7 +100,7 @@ GuiMLTextCtrl::GuiMLTextCtrl()
     mActive = true;
     mAlpha = 1.0;
 
-    mDeniedSound = dynamic_cast<AudioProfile*>(Sim::findObject("InputDeniedSound"));
+    mDeniedSound = dynamic_cast<SFXProfile*>(Sim::findObject("InputDeniedSound"));
 }
 
 //--------------------------------------------------------------------------
@@ -120,7 +121,7 @@ void GuiMLTextCtrl::initPersistFields()
     addField("lineSpacing", TypeS32, Offset(mLineSpacingPixels, GuiMLTextCtrl));
     addField("allowColorChars", TypeBool, Offset(mAllowColorChars, GuiMLTextCtrl));
     addField("maxChars", TypeS32, Offset(mMaxBufferSize, GuiMLTextCtrl));
-    addField("deniedSound", TypeAudioProfilePtr, Offset(mDeniedSound, GuiMLTextCtrl));
+    addField("deniedSound", TypeSFXProfilePtr, Offset(mDeniedSound, GuiMLTextCtrl));
     addField("text", TypeCaseString, Offset(mInitialText, GuiMLTextCtrl));
 }
 
@@ -739,10 +740,8 @@ void GuiMLTextCtrl::insertChars(const char* inputChars,
     {
         // Play the "Denied" sound:
         if (numInputChars > 0 && mDeniedSound)
-        {
-            AUDIOHANDLE handle = alxCreateSource(mDeniedSound);
-            alxPlay(handle);
-        }
+            SFX->playOnce(mDeniedSound);
+
         return;
     }
 

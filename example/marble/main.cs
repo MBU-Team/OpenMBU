@@ -557,7 +557,7 @@ function finishTestMem()
                             // memory off our radar -- at the risk of missing a leak --
                             // but requires us to exit when this function is done.
 
-   alxStopAll(); // stopping sounds should be handled by server destruction
+   sfxStopAll($SimAudioType); // stopping sounds should be handled by server destruction
                  // that it isn't properly (tons of sfx leaks if this line not
                  // included) indicates we may have a problem here.
                  

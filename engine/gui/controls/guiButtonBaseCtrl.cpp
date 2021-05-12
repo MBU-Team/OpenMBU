@@ -10,6 +10,7 @@
 #include "gui/core/guiCanvas.h"
 #include "gui/controls/guiButtonBaseCtrl.h"
 #include "i18n/lang.h"
+#include "sfx/sfxSystem.h"
 
 IMPLEMENT_CONOBJECT(GuiButtonBaseCtrl);
 
@@ -154,11 +155,7 @@ void GuiButtonBaseCtrl::onMouseDown(const GuiEvent& event)
         setFirstResponder();
 
     if (mProfile->mSoundButtonDown)
-    {
-        F32 pan = (F32(event.mousePoint.x) / F32(Canvas->mBounds.extent.x) * 2.0f - 1.0f) * 0.8f;
-        AUDIOHANDLE handle = alxCreateSource(mProfile->mSoundButtonDown);
-        alxPlay(handle);
-    }
+        SFX->playOnce(mProfile->mSoundButtonDown);
 
     //lock the mouse
     mouseLock();
@@ -179,11 +176,8 @@ void GuiButtonBaseCtrl::onMouseEnter(const GuiEvent& event)
     else
     {
         if (mActive && mProfile->mSoundButtonOver)
-        {
-            F32 pan = (F32(event.mousePoint.x) / F32(Canvas->mBounds.extent.x) * 2.0f - 1.0f) * 0.8f;
-            AUDIOHANDLE handle = alxCreateSource(mProfile->mSoundButtonOver);
-            alxPlay(handle);
-        }
+            SFX->playOnce(mProfile->mSoundButtonOver);
+
         mMouseOver = true;
     }
 }
@@ -225,11 +219,8 @@ bool GuiButtonBaseCtrl::onKeyDown(const GuiEvent& event)
         && event.modifier == 0)
     {
         if (mProfile->mSoundButtonDown)
-        {
-            F32 pan = (F32(event.mousePoint.x) / F32(Canvas->mBounds.extent.x) * 2.0f - 1.0f) * 0.8f;
-            AUDIOHANDLE handle = alxCreateSource(mProfile->mSoundButtonDown);
-            alxPlay(handle);
-        }
+            SFX->playOnce(mProfile->mSoundButtonDown);
+
         return true;
     }
     //otherwise, pass the event to it's parent

@@ -22,7 +22,6 @@
 
 #include "console/console.h"
 #include "console/consoleTypes.h"
-#include "platform/platformAudio.h"
 #include "gui/core/guiCanvas.h"
 #include "gui/core/guiDefaultControlRender.h"
 #include "gui/controls/guiBitmapButtonCtrl.h"

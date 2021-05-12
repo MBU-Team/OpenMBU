@@ -11,7 +11,6 @@
 #include "game/shapeBase.h"
 #include "core/bitStream.h"
 #include "sim/pathManager.h"
-#include "audio/audio.h"
 #include "game/game.h"
 #include "sceneGraph/sceneGraph.h"
 #include "game/gameConnectionEvents.h"

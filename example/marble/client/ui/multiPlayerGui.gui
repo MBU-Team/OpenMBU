@@ -18,7 +18,7 @@ new GuiControl(MultiPlayerGui) {
 //--- OBJECT WRITE END ---
 function MultiPlayerGui::onA(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    if (!%this.menuEnabled)
       return true;
@@ -63,14 +63,14 @@ function MultiPlayerGui::onA(%this)
 
 function MultiPlayerGui::onB(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    %this.exit(false);
    return true;
 }
 
 function MultiPlayerGui::onY(%this)
 {  
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    %newModeRanked = !$Client::MatchMode;
    
@@ -92,7 +92,7 @@ function MultiPlayerGui::onY(%this)
 
 function MultiPlayerGui::onWhite(%this)
 {
-   //alxPlay( AudioButtonDown );
+   //sfxPlay( AudioButtonDown );
    
    //showGui(OptionsGui, %this);
    

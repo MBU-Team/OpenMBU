@@ -105,7 +105,7 @@ function OptimatchGui::setFilters(%this)
 
 function OptimatchGui::onA(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    %this.setFilters();
       
@@ -115,7 +115,7 @@ function OptimatchGui::onA(%this)
 
 function OptimatchGui::onB(%this)
 {
-   alxPlay( AudioButtonDown );
+   sfxPlay( AudioButtonDown );
    
    %this.setFilters();
    

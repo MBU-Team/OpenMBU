@@ -5,6 +5,7 @@
 
 #include "console/consoleTypes.h"
 #include "console/console.h"
+#include "sfx/sfxSystem.h"
 
 // We need to get some kind of abstraction here with the character
 // sheet stuff -pw
@@ -257,9 +258,9 @@ void GuiControlProfile::initPersistFields()
 
     addField("shadow", TypeS32, Offset(mShadow, GuiControlProfile));
 
-    addField("soundButtonDown", TypeAudioProfilePtr, Offset(mSoundButtonDown, GuiControlProfile));
-    addField("soundButtonOver", TypeAudioProfilePtr, Offset(mSoundButtonOver, GuiControlProfile));
-    addField("soundOptionChanged", TypeAudioProfilePtr, Offset(mSoundOptionChanged, GuiControlProfile));
+    addField("soundButtonDown", TypeSFXProfilePtr, Offset(mSoundButtonDown, GuiControlProfile));
+    addField("soundButtonOver", TypeSFXProfilePtr, Offset(mSoundButtonOver, GuiControlProfile));
+    addField("soundOptionChanged", TypeSFXProfilePtr, Offset(mSoundOptionChanged, GuiControlProfile));
 
     addField("rowHeight", TypeS32, Offset(mRowHeight, GuiControlProfile));
     addField("iconPosition", TypePoint2I, Offset(mIconPosition, GuiControlProfile));

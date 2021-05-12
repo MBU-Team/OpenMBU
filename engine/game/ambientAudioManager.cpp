@@ -2,7 +2,7 @@
 // Torque Game Engine
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
-
+#if 0
 #include "game/ambientAudioManager.h"
 #include "interior/interiorInstance.h"
 #include "game/gameConnection.h"
@@ -256,3 +256,4 @@ void AmbientAudioManager::updateEmitter(AudioEmitter* emitter)
     if (emitter->mOutsideAmbient && (emitter->mAudioHandle != NULL_AUDIOHANDLE))
         alxSourcef(emitter->mAudioHandle, AL_GAIN_LINEAR, emitter->mDescription.mVolume * mOutsideScale);
 }
+#endif

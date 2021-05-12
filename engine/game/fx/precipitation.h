@@ -8,8 +8,10 @@
 
 #include "gfx/GFXDevice.h"
 #include "game/gameBase.h"
-#include "audio/audioDataBlock.h"
 #include "materials/shaderData.h"
+
+class SFXProfile;
+class SFXSource;
 
 //--------------------------------------------------------------------------
 /// Precipitation datablock.
@@ -18,7 +20,7 @@ class PrecipitationData : public GameBaseData
     typedef GameBaseData Parent;
 
 public:
-    AudioProfile* soundProfile;
+    SFXProfile* soundProfile;
     S32           soundProfileId;    ///< Ambient sound 
 
     StringTableEntry mDropName;         ///< Texture filename for drop particles
@@ -93,7 +95,7 @@ protected:
     Point2F* mTexCoords;     ///< texture coords for rain texture
     Point2F* mSplashCoords;  ///< texture coordinates for splash texture
 
-    AUDIOHANDLE mAudioHandle;     ///< Ambient sound handle
+    SFXSource* mAudioHandle;     ///< Ambient sound handle
 
     ShaderData* mDropShader;     ///< The shader used for raindrops
     GFXTexHandle mDropHandle;     ///< Texture handle for raindrop
