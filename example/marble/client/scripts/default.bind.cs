@@ -493,11 +493,11 @@ function pauseOrEscape()
 	}
 }
 
-function respawn(%val)
-{
-   if (%val)
-      LocalClientConnection.respawnPlayer();
-}
+//function respawn(%val)
+//{
+   //if (%val)
+      //LocalClientConnection.respawnPlayer();
+//}
 
 function clearTriggers()
 {
@@ -569,7 +569,7 @@ if (isPCBuild())
    moveMap.bind( xinput, btn_y, spawnStupidMarble );
    
    
-   moveMap.bind(keyboard, r, respawn);
+   //moveMap.bind(keyboard, r, respawn);
 
    if (strstr(getGamepadName(), "Logitech") != -1)
    {
