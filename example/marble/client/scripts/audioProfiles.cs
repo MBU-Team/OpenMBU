@@ -60,7 +60,7 @@ new SFXDescription(AudioMusic)
 {
    volume   = 1.0;
    isLooping = true;
-   isStreaming = true;
+   //isStreaming = true;
    is3D     = false;
    channel     = $MusicAudioType;
 };
@@ -74,7 +74,8 @@ new SFXProfile(TimTranceSfx)
 {
    fileName = "~/data/sound/music/Tim_Trance.ogg";
    description = "TimTranceDescription";
-   preload = false;
+   //preload = false;
+   preload = true;
 };
 
 if (isObject(MusicPlayer))
