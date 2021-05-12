@@ -139,6 +139,9 @@
     <Filter Include="Source Files\sfx\openal\win32">
       <UniqueIdentifier>{7bcab923-5736-4dea-bdca-132b82ec46d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\sfx\dsound">
+      <UniqueIdentifier>{ba7f8562-4539-4eb8-9503-602b3793c5da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\collision\abstractPolyList.cpp">
@@ -1608,6 +1611,21 @@
     <ClCompile Include="..\engine\sfx\openal\win32\LoadOAL.cpp">
       <Filter>Source Files\sfx\openal\win32</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSBuffer.cpp">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSDevice.cpp">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSProvider.cpp">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSVoice.cpp">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\platformWin32\winDlibrary.cpp">
+      <Filter>Source Files\platformWin32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\collision\abstractPolyList.h">
@@ -2965,6 +2983,24 @@
     </ClInclude>
     <ClInclude Include="..\engine\sfx\openal\sfxALVoice.h">
       <Filter>Source Files\sfx\openal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\dsound\dsFunctions.h">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\dsound\sfxDSBuffer.h">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\dsound\sfxDSDevice.h">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\dsound\sfxDSVoice.h">
+      <Filter>Source Files\sfx\dsound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\util\safeRelease.h">
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\platform\platformDlibrary.h">
+      <Filter>Source Files\platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

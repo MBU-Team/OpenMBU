@@ -19,7 +19,7 @@
 #include "sfx/sfxResource.h"
 #include "core/tDictionary.h"
 
-#include "fmod/inc/fmod.h"
+#include "fmod.h"
 
 #include "platform/platformDlibrary.h"
 

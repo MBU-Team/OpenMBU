@@ -13,7 +13,7 @@
    #include "sfx/sfxResource.h"
 #endif
 #ifndef _FMOD_H
-   #include "fmod/inc/fmod.h"
+   #include "fmod.h"
 #endif
 
 class SFXProfile;

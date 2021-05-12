@@ -85,7 +85,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>../lib/vorbis/include;../lib/zlib;../lib/lungif;../lib/lpng;../lib/ljpeg;../lib/lmng;../lib/openal/win32;../lib/libqslim;../engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib/vorbis/include;../lib/zlib;../lib/lungif;../lib/lpng;../lib/ljpeg;../lib/lmng;../lib/openal/win32;../lib/fmod/inc;../lib/libqslim;../engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TORQUE_DEBUG;D3D_DEBUG_INFO;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -106,7 +106,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ljpeg_DEBUG.lib;lpng_DEBUG.lib;lungif_DEBUG.lib;lmng_DEBUG.lib;zlib_DEBUG.lib;d3d9.lib;dxerr.lib;d3dx9.lib;COMCTL32.LIB;COMDLG32.LIB;USER32.LIB;ADVAPI32.LIB;GDI32.LIB;WINMM.LIB;WSOCK32.LIB;vfw32.lib;../lib/vorbis/win32/ogg_static.lib;../lib/vorbis/win32/vorbis_static_mt.lib;imm32.lib;version.lib;libqslim_DEBUG.lib;ole32.lib;oleaut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ljpeg_DEBUG.lib;lpng_DEBUG.lib;lungif_DEBUG.lib;lmng_DEBUG.lib;zlib_DEBUG.lib;d3d9.lib;dxerr.lib;d3dx9.lib;COMCTL32.LIB;COMDLG32.LIB;USER32.LIB;ADVAPI32.LIB;GDI32.LIB;WINMM.LIB;WSOCK32.LIB;vfw32.lib;../lib/vorbis/win32/ogg_static.lib;../lib/vorbis/win32/vorbis_static_mt.lib;../lib/fmod/lib/fmodex_vc.lib;imm32.lib;version.lib;libqslim_DEBUG.lib;ole32.lib;oleaut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../example/TSE_DEBUG.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../lib/out.VC16.win32.debug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -127,7 +127,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>../lib/libqslim;../lib/vorbis/include;../lib/zlib;../lib/lungif;../lib/lpng;../lib/ljpeg;../lib/lmng;../lib/openal/win32;../engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib/libqslim;../lib/vorbis/include;../lib/zlib;../lib/lungif;../lib/lpng;../lib/ljpeg;../lib/lmng;../lib/openal/win32;../lib/fmod/inc;../engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TORQUE_RELEASE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -148,7 +148,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ljpeg.lib;lpng.lib;lungif.lib;lmng.lib;zlib.lib;d3d9.lib;dxerr.lib;d3dx9.lib;COMCTL32.LIB;COMDLG32.LIB;USER32.LIB;ADVAPI32.LIB;GDI32.LIB;WINMM.LIB;WSOCK32.LIB;vfw32.lib;../lib/vorbis/win32/ogg_static.lib;../lib/vorbis/win32/vorbis_static_mt.lib;imm32.lib;version.lib;libqslim.lib;ole32.lib;oleaut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ljpeg.lib;lpng.lib;lungif.lib;lmng.lib;zlib.lib;d3d9.lib;dxerr.lib;d3dx9.lib;COMCTL32.LIB;COMDLG32.LIB;USER32.LIB;ADVAPI32.LIB;GDI32.LIB;WINMM.LIB;WSOCK32.LIB;vfw32.lib;../lib/vorbis/win32/ogg_static.lib;../lib/vorbis/win32/vorbis_static_mt.lib;../lib/fmod/lib/fmodex_vc.lib;imm32.lib;version.lib;libqslim.lib;ole32.lib;oleaut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../example/TSE.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../lib/out.VC16.win32.release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -168,7 +168,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>../lib/vorbis/include;../lib/zlib;../lib/lungif;../lib/lpng;../lib/ljpeg;../lib/lmng;../lib/openal/win32;../lib/libqslim;../engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib/vorbis/include;../lib/zlib;../lib/lungif;../lib/lpng;../lib/ljpeg;../lib/lmng;../lib/openal/win32;../lib/fmod/inc;../lib/libqslim;../engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TORQUE_RELEASE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -191,7 +191,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ljpeg.lib;lpng.lib;lungif.lib;lmng.lib;zlib.lib;d3d9.lib;dxerr.lib;d3dx9.lib;COMCTL32.LIB;COMDLG32.LIB;USER32.LIB;ADVAPI32.LIB;GDI32.LIB;WINMM.LIB;WSOCK32.LIB;vfw32.lib;../lib/vorbis/win32/ogg_static.lib;../lib/vorbis/win32/vorbis_static_mt.lib;imm32.lib;version.lib;libqslim.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ljpeg.lib;lpng.lib;lungif.lib;lmng.lib;zlib.lib;d3d9.lib;dxerr.lib;d3dx9.lib;COMCTL32.LIB;COMDLG32.LIB;USER32.LIB;ADVAPI32.LIB;GDI32.LIB;WINMM.LIB;WSOCK32.LIB;vfw32.lib;../lib/vorbis/win32/ogg_static.lib;../lib/vorbis/win32/vorbis_static_mt.lib;../lib/fmod/lib/fmodex_vc.lib;imm32.lib;version.lib;libqslim.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../example/TSE_Optimized.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../lib/out.VC16.win32.release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -2465,6 +2465,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\platformWin32\winDlibrary.cpp" />
     <ClCompile Include="..\engine\platformWin32\winFileio.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -2861,6 +2862,10 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSBuffer.cpp" />
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSDevice.cpp" />
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSProvider.cpp" />
+    <ClCompile Include="..\engine\sfx\dsound\sfxDSVoice.cpp" />
     <ClCompile Include="..\engine\sfx\null\sfxNullBuffer.cpp" />
     <ClCompile Include="..\engine\sfx\null\sfxNullDevice.cpp" />
     <ClCompile Include="..\engine\sfx\null\sfxNullProvider.cpp" />
@@ -3855,6 +3860,7 @@
     <ClInclude Include="..\engine\platform\gameInterface.h" />
     <ClInclude Include="..\engine\platform\platform.h" />
     <ClInclude Include="..\engine\platform\platformAssert.h" />
+    <ClInclude Include="..\engine\platform\platformDlibrary.h" />
     <ClInclude Include="..\engine\platform\platformFont.h" />
     <ClInclude Include="..\engine\platform\platformInput.h" />
     <ClInclude Include="..\engine\platform\platformMutex.h" />
@@ -3884,6 +3890,10 @@
     <ClInclude Include="..\engine\scenegraph\sgUtil.h" />
     <ClInclude Include="..\engine\scenegraph\shadowVolumeBSP.h" />
     <ClInclude Include="..\engine\scenegraph\windingClipper.h" />
+    <ClInclude Include="..\engine\sfx\dsound\dsFunctions.h" />
+    <ClInclude Include="..\engine\sfx\dsound\sfxDSBuffer.h" />
+    <ClInclude Include="..\engine\sfx\dsound\sfxDSDevice.h" />
+    <ClInclude Include="..\engine\sfx\dsound\sfxDSVoice.h" />
     <ClInclude Include="..\engine\sfx\null\sfxNullBuffer.h" />
     <ClInclude Include="..\engine\sfx\null\sfxNullDevice.h" />
     <ClInclude Include="..\engine\sfx\null\sfxNullVoice.h" />
@@ -3954,6 +3964,7 @@
     <ClInclude Include="..\engine\util\quadTreeTracer.h" />
     <ClInclude Include="..\engine\util\rectClipper.h" />
     <ClInclude Include="..\engine\util\safeDelete.h" />
+    <ClInclude Include="..\engine\util\safeRelease.h" />
     <ClInclude Include="..\engine\util\triBoxCheck.h" />
     <ClInclude Include="..\engine\util\tSignal.h" />
     <ClInclude Include="..\example\shaders\shdrConsts.h" />

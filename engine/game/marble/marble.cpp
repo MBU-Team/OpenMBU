@@ -1381,13 +1381,13 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
         mMegaHandle->setVolume(rollVolume * megaAmt);
         mSlipHandle->setVolume(slipVolume);
         
-        if (!mRollHandle)
+        if (!mRollHandle->isPlaying())
             mRollHandle->play();
 
-        if (!mMegaHandle)
+        if (!mMegaHandle->isPlaying())
             mMegaHandle->play();
 
-        if (!mSlipHandle)
+        if (!mSlipHandle->isPlaying())
             mSlipHandle->play();
 
         float pitch = scale;

@@ -35,6 +35,7 @@ function initClient()
    echo("\n--------- Initializing FPS: Client ---------");
    exec("./myprefs.cs"); 
    exec("./prefs.cs"); 
+   execPrefs("prefs.cs"); 
    
    // Make sure this variable reflects the correct state.
    $Server::Dedicated = false;

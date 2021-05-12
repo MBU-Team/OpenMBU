@@ -26,10 +26,6 @@ inline void D3DAssert(HRESULT hr, const char* info)
 
 }
 
-#ifndef SAFE_RELEASE
-#define SAFE_RELEASE(a) if( (a) != NULL ) (a)->Release(); (a) = NULL;
-#endif
-
 // Adjust these pools to your app's needs.  Be aware dynamic vertices are much more
 // expensive than static vertices.
 #define MAX_DYNAMIC_VERTS   (8192*2)
@@ -43,6 +39,7 @@ inline void D3DAssert(HRESULT hr, const char* info)
 #include "gfx/D3D/gfxD3DCubemap.h"
 #include "gfx/D3D/gfxD3DTypes.h"
 #include "gfx/gfxInit.h"
+#include "util/safeRelease.h"
 
 class GFXD3DDevice : public GFXDevice
 {

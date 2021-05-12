@@ -28,7 +28,7 @@ SFXDSDevice::SFXDSDevice( SFXProvider* provider, DSoundFNTable *dsFnTbl, GUID* g
       return;
    }
 
-   hr = mDSound->SetCooperativeLevel( getWin32WindowHandle(), DSSCL_PRIORITY );
+   hr = mDSound->SetCooperativeLevel( winState.appWindow, DSSCL_PRIORITY );
    if ( FAILED( hr ) )
    {
       // TODO: Deal with it!

@@ -15,7 +15,7 @@
 
 #include "sfx/sfxResource.h"
 
-#include "fmod/inc/fmod.h"
+#include "fmod.h"
 
 class SFXSource;
 class SFXFMODBuffer;
