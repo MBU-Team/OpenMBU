@@ -302,7 +302,6 @@
     </ClCompile>
     <ClCompile Include="..\engine\audio\audioStreamSourceFactory.cpp" />
     <ClCompile Include="..\engine\audio\oggMixedStreamSource.cpp" />
-    <ClCompile Include="..\engine\audio\vorbisStream.cpp" />
     <ClCompile Include="..\engine\audio\vorbisStreamSource.cpp" />
     <ClCompile Include="..\engine\audio\wavStreamSource.cpp" />
     <ClCompile Include="..\engine\collision\abstractPolyList.cpp">
@@ -2926,6 +2925,18 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxDescription.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxDevice.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxEnvironment.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxListener.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxProfile.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxProvider.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxResource.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxSource.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxSystem.cpp" />
+    <ClCompile Include="..\engine\sfx\sfxWavResource.cpp" />
+    <ClCompile Include="..\engine\sfx\vorbis\sfxOggResource.cpp" />
+    <ClCompile Include="..\engine\sfx\vorbis\vorbisStream.cpp" />
     <ClCompile Include="..\engine\shaderGen\bump.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
@@ -3594,7 +3605,6 @@
     <ClInclude Include="..\engine\audio\audioStreamSource.h" />
     <ClInclude Include="..\engine\audio\audioStreamSourceFactory.h" />
     <ClInclude Include="..\engine\audio\oggMixedStreamSource.h" />
-    <ClInclude Include="..\engine\audio\vorbisStream.h" />
     <ClInclude Include="..\engine\audio\vorbisStreamSource.h" />
     <ClInclude Include="..\engine\audio\wavStreamSource.h" />
     <ClInclude Include="..\engine\collision\abstractPolyList.h" />
@@ -3938,6 +3948,21 @@
     <ClInclude Include="..\engine\scenegraph\sgUtil.h" />
     <ClInclude Include="..\engine\scenegraph\shadowVolumeBSP.h" />
     <ClInclude Include="..\engine\scenegraph\windingClipper.h" />
+    <ClInclude Include="..\engine\sfx\sfxBuffer.h" />
+    <ClInclude Include="..\engine\sfx\sfxDescription.h" />
+    <ClInclude Include="..\engine\sfx\sfxDevice.h" />
+    <ClInclude Include="..\engine\sfx\sfxEnvironment.h" />
+    <ClInclude Include="..\engine\sfx\sfxListener.h" />
+    <ClInclude Include="..\engine\sfx\sfxProfile.h" />
+    <ClInclude Include="..\engine\sfx\sfxProvider.h" />
+    <ClInclude Include="..\engine\sfx\sfxResource.h" />
+    <ClInclude Include="..\engine\sfx\sfxSource.h" />
+    <ClInclude Include="..\engine\sfx\sfxStatus.h" />
+    <ClInclude Include="..\engine\sfx\sfxSystem.h" />
+    <ClInclude Include="..\engine\sfx\sfxVoice.h" />
+    <ClInclude Include="..\engine\sfx\sfxWavResource.h" />
+    <ClInclude Include="..\engine\sfx\vorbis\sfxOggResource.h" />
+    <ClInclude Include="..\engine\sfx\vorbis\vorbisStream.h" />
     <ClInclude Include="..\engine\shaderGen\bump.h" />
     <ClInclude Include="..\engine\shaderGen\featureMgr.h" />
     <ClInclude Include="..\engine\shaderGen\langElement.h" />
@@ -3985,6 +4010,7 @@
     <ClInclude Include="..\engine\util\rectClipper.h" />
     <ClInclude Include="..\engine\util\safeDelete.h" />
     <ClInclude Include="..\engine\util\triBoxCheck.h" />
+    <ClInclude Include="..\engine\util\tSignal.h" />
     <ClInclude Include="..\example\shaders\shdrConsts.h" />
   </ItemGroup>
   <ItemGroup>

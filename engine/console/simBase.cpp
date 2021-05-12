@@ -22,6 +22,7 @@ namespace Sim
         ImplementNamedSet(fxFoliageSet)
         ImplementNamedSet(reflectiveSet)
         ImplementNamedSet(MaterialSet)
+        ImplementNamedSet(SFXSourceSet)
         ImplementNamedGroup(ActionMapGroup)
         ImplementNamedGroup(ClientGroup)
         ImplementNamedGroup(GuiGroup)

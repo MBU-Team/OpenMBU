@@ -127,6 +127,12 @@
     <Filter Include="Source Files\xblive">
       <UniqueIdentifier>{3c3f4611-be98-451c-a103-e727d56a5b03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\sfx">
+      <UniqueIdentifier>{670604ce-480b-4c4d-b2d3-5d1554e86baf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sfx\vorbis">
+      <UniqueIdentifier>{f015b735-1d42-41d9-8d27-94610f164a95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\audio\audio.cpp">
@@ -145,9 +151,6 @@
       <Filter>Source Files\audio</Filter>
     </ClCompile>
     <ClCompile Include="..\engine\audio\oggMixedStreamSource.cpp">
-      <Filter>Source Files\audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\audio\vorbisStream.cpp">
       <Filter>Source Files\audio</Filter>
     </ClCompile>
     <ClCompile Include="..\engine\audio\vorbisStreamSource.cpp">
@@ -1560,6 +1563,42 @@
     <ClCompile Include="..\engine\platformWin32\winUser.cpp">
       <Filter>Source Files\platformWin32</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxDescription.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxDevice.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxEnvironment.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxListener.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxProfile.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxProvider.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxResource.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxSource.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxSystem.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\sfxWavResource.cpp">
+      <Filter>Source Files\sfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\vorbis\sfxOggResource.cpp">
+      <Filter>Source Files\sfx\vorbis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\sfx\vorbis\vorbisStream.cpp">
+      <Filter>Source Files\sfx\vorbis</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\audio\audio.h">
@@ -1578,9 +1617,6 @@
       <Filter>Source Files\audio</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\audio\oggMixedStreamSource.h">
-      <Filter>Source Files\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\audio\vorbisStream.h">
       <Filter>Source Files\audio</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\audio\vorbisStreamSource.h">
@@ -2875,6 +2911,54 @@
     </ClInclude>
     <ClInclude Include="..\engine\gui\containers\guiAutoScrollCtrl.h">
       <Filter>Source Files\gui\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxWavResource.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxBuffer.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxDescription.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxDevice.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxEnvironment.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxListener.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxProfile.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxProvider.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxResource.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxSource.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxStatus.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxSystem.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\sfxVoice.h">
+      <Filter>Source Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\vorbis\sfxOggResource.h">
+      <Filter>Source Files\sfx\vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\sfx\vorbis\vorbisStream.h">
+      <Filter>Source Files\sfx\vorbis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\util\tSignal.h">
+      <Filter>Source Files\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

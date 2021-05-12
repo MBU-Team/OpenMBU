@@ -149,9 +149,27 @@ if(gProfiler) gProfiler->hashPush(& pdata##name##obj )
 
 #define PROFILE_END() if(gProfiler) gProfiler->hashPop()
 
+#define PROFILE_END_NAMED(name) if(gProfiler) gProfiler->hashPop(& pdata##name##obj)
+
+class ScopedProfiler {
+public:
+    ScopedProfiler(ProfilerRootData* data) {
+        if (gProfiler) gProfiler->hashPush(data);
+   }
+    ~ScopedProfiler() {
+        if (gProfiler) gProfiler->hashPop();
+    }
+};
+
+#define PROFILE_SCOPE(name) \
+   static ProfilerRootData pdata##name##obj (#name); \
+   ScopedProfiler scopedProfiler##name##obj(&pdata##name##obj);
+
 #else
 #define PROFILE_START(x)
 #define PROFILE_END()
+#define PROFILE_SCOPE(x)
+#define PROFILE_END_NAMED(x)
 #endif
 
 #endif

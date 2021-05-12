@@ -12,7 +12,7 @@
 #include "audio/audioStreamSource.h"
 #endif
 
-#include "audio/vorbisStream.h"
+#include "sfx/vorbis/vorbisStream.h"
 
 class VorbisStreamSource : public AudioStreamSource
 {

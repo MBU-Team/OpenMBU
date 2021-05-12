@@ -18,7 +18,7 @@
 
 // MLH - don't need oggbvorbis in tools
 #ifndef TORQUE_NO_OGGVORBIS
-#include "audio/vorbisStream.h"
+#include "sfx/vorbis/vorbisStream.h"
 #endif
 
 //--------------------------------------------------------------------------

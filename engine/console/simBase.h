@@ -1287,6 +1287,7 @@ namespace Sim
         DeclareNamedSet(fxFoliageSet)
         DeclareNamedSet(reflectiveSet)
         DeclareNamedSet(MaterialSet)
+        DeclareNamedSet(SFXSourceSet);
 
         DeclareNamedGroup(ActionMapGroup)
         DeclareNamedGroup(ClientGroup)

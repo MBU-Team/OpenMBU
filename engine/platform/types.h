@@ -22,6 +22,8 @@ typedef unsigned int       U32;     ///< Compiler independent Unsigned 32-bit in
 typedef float              F32;     ///< Compiler independent 32-bit float
 typedef double             F64;     ///< Compiler independent 64-bit float
 
+struct EmptyType {};             ///< "Null" type used by templates
+
 
 //------------------------------------------------------------------------------
 //------------------------------------- String Types
