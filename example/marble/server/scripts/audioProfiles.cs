@@ -215,12 +215,12 @@ datablock SFXProfile(MissingGemsSfx)
    preload = true;
 };
 
-datablock SFXProfile(jumpSfx)
-{
-   filename    = "~/data/sound/bounce.wav";
-   description = AudioDefault3d;
-   preload = true;
-};
+//datablock SFXProfile(jumpSfx)
+//{
+   //filename    = "~/data/sound/bounce.wav";
+   //description = AudioDefault3d;
+   //preload = true;
+//};
 
 datablock SFXProfile(bounceSfx)
 {
