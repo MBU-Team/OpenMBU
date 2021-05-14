@@ -568,9 +568,3 @@ SplashLoadingProfile.fillColor = "100 200 50";
 
 $updateProgressSchedule = schedule(100, 0, updateProgress);
 SplashLoadingProfile.fillColor = "50 100 200";
-
-// Temp for testing
-function a()
-{
-   return GameMissionInfo.getCurrentMissionGroup().getObject(GameMissionInfo.getCurrentIndex()).missionGroup;
-}
