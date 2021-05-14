@@ -74,6 +74,8 @@ void GuiBitmapCtrl::inspectPostApply()
 
 void GuiBitmapCtrl::setBitmap(const char* name, bool resize)
 {
+    PROFILE_START(GuiBitmapCtrl_SetBitmap);
+
     mBitmapName = StringTable->insert(name);
     if (*mBitmapName)
     {
@@ -92,6 +94,8 @@ void GuiBitmapCtrl::setBitmap(const char* name, bool resize)
         mTextureObject = NULL;
 
     setUpdate();
+
+    PROFILE_END();
 }
 
 

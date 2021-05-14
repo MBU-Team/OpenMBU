@@ -10,6 +10,7 @@
 #include "core/resManager.h"
 #include "platform/platform.h"
 #include "math/mRect.h"
+#include "platform/profiler.h"
 
 #include "console/console.h"
 
@@ -455,6 +456,8 @@ void (*bitmapExtrudePaletted)(const void* srcMip, void* mip, U32 srcHeight, U32 
 //--------------------------------------------------------------------------
 void GBitmap::extrudeMipLevels(bool clearBorders)
 {
+    PROFILE_START(GBitmap_extrudeMipLevels);
+
     if (numMipLevels == 1)
         allocateBitmap(getWidth(), getHeight(), true, getFormat());
 
@@ -518,6 +521,8 @@ void GBitmap::extrudeMipLevels(bool clearBorders)
             }
         }
     }
+
+    PROFILE_END();
 }
 
 //--------------------------------------------------------------------------

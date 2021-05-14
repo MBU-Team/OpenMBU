@@ -353,6 +353,7 @@ void GuiControl::childResized(GuiControl* child)
 
 void GuiControl::parentResized(const Point2I& oldParentExtent, const Point2I& newParentExtent)
 {
+    PROFILE_START(GuiControl_parentResized);
     Point2I newPosition = getPosition();
     Point2I newExtent = getExtent();
 
@@ -453,6 +454,7 @@ void GuiControl::parentResized(const Point2I& oldParentExtent, const Point2I& ne
         newExtent.y = newParentExtent.y;
     }
     resize(newPosition, newExtent);
+    PROFILE_END();
 }
 
 //----------------------------------------------------------------

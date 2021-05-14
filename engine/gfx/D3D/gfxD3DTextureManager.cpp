@@ -71,6 +71,7 @@ void GFXD3DTextureManager::innerCreateTexture(GFXD3DTextureObject* retTex,
     U32 numMipLevels,
     bool forceMips)
 {
+    PROFILE_START(GFXD3DTextureManager_innerCreateTexture);
     // Some relevant helper information...
     bool supportsAutoMips = GFX->getCardProfiler()->queryProfile("autoMipMapLevel", true);
 
@@ -217,6 +218,8 @@ void GFXD3DTextureManager::innerCreateTexture(GFXD3DTextureObject* retTex,
     }
 
     retTex->mFormat = format;
+
+    PROFILE_END();
 }
 
 //-----------------------------------------------------------------------------
@@ -242,6 +245,7 @@ GFXTextureObject* GFXD3DTextureManager::_createTexture(U32 height,
 //-----------------------------------------------------------------------------
 bool GFXD3DTextureManager::_loadTexture(GFXTextureObject* aTexture, GBitmap* pDL)
 {
+    PROFILE_START(GFXD3DTextureManager_loadTexture);
     GFXD3DTextureObject* texture = static_cast<GFXD3DTextureObject*>(aTexture);
 
     // Check with profiler to see if we can do automatic mipmap generation.
@@ -289,6 +293,8 @@ bool GFXD3DTextureManager::_loadTexture(GFXTextureObject* aTexture, GBitmap* pDL
         surf->Release();
         ++i;
     }
+
+    PROFILE_END();
 
     return true;
 }
@@ -414,6 +420,7 @@ bool GFXD3DTextureManager::_freeTexture(GFXTextureObject* texture, bool zombify)
 //-----------------------------------------------------------------------------
 U32 GFXD3DTextureManager::_getTotalVideoMemory()
 {
+    PROFILE_START(GFXD3DTextureManager_getTotalVideoMemory);
     int mem;
     NVDXDiagWrapper::DWORD numDevices;
 
@@ -428,7 +435,10 @@ U32 GFXD3DTextureManager::_getTotalVideoMemory()
     delete wang;
 
     // It returns megs so scale up...
-    return mem * 1024 * 1024;
+    U32 ret = mem * 1024 * 1024;
+
+    PROFILE_END();
+    return ret;
 }
 
 /// Load a texture from a proper DDSFile instance.

@@ -50,6 +50,8 @@ See the DXDiagNVUtil.h file for additional comments
 #endif
 
 #include "DxDiagNVUtil.h"
+#include "platform/types.h"
+#include "platform/profiler.h"
 
 namespace NVDXDiagWrapper
 {
@@ -145,6 +147,7 @@ namespace NVDXDiagWrapper
 
     HRESULT	DXDiagNVUtil::GetNumDisplayDevices(DWORD* out_pdwNumAdapters)
     {
+        PROFILE_START(DXDiagNVUtil_GetNumDisplayDevices);
         HRESULT hr = S_OK;
         MSGVARNAME_AND_FAIL_IF_NULL(m_pDxDiagRoot);
         MSGVARNAME_AND_FAIL_IF_NULL(out_pdwNumAdapters);
@@ -157,6 +160,7 @@ namespace NVDXDiagWrapper
         MSG_AND_BREAK_IF(FAILED(hr), "GetNumDisplayDevices() Couldn't get number of child containers!\n");
 
         SAFE_RELEASE(pChild);
+        PROFILE_END();
         return(hr);
     }
 
@@ -303,6 +307,7 @@ namespace NVDXDiagWrapper
 
     HRESULT DXDiagNVUtil::GetDisplayDeviceMemoryInMB(DWORD dwDevice, int* pDisplayMemory)
     {
+        PROFILE_START(DXDiagNVUtil_GetDisplayDeviceMemoryInMB);
         HRESULT hr = S_OK;
         FAIL_IF_NULL(pDisplayMemory);
         *pDisplayMemory = 0;
@@ -318,10 +323,12 @@ namespace NVDXDiagWrapper
         if (num_fields != 1)
         {
             FMsg("GetDisplayDeviceMemoryInMB error scanning memory string description!\n");
+            PROFILE_END();
             return(E_FAIL);
         }
 
         *pDisplayMemory = nMem;
+        PROFILE_END();
         return(hr);
     }
 
@@ -569,6 +576,7 @@ namespace NVDXDiagWrapper
 
     HRESULT DXDiagNVUtil::GetChildContainer(LPCWSTR name0, IDxDiagContainer** ppChild)
     {
+        PROFILE_START(DXDiagNVUtil_GetChildContainer);
         // you must release *ppChild on your own when you're done with it
         HRESULT hr = S_OK;
         MSGVARNAME_AND_FAIL_IF_NULL(m_pDxDiagRoot);
@@ -579,6 +587,7 @@ namespace NVDXDiagWrapper
         RET_VAL_IF_FAILED(hr);
         FAIL_IF_NULL(*ppChild);
 
+        PROFILE_END();
         return(hr);
     }
 
@@ -819,12 +828,14 @@ namespace NVDXDiagWrapper
 
     HRESULT DXDiagNVUtil::InitIDxDiagContainer()
     {
+        PROFILE_START(DXDiagNVUtil_InitIDxDiagContainer);
         // Call FreeIDxDiagContainer() to clean up things done here
         HRESULT hr;
 
         if (m_pDxDiagRoot != NULL)
         {
             FMsg("DXDiagNVUtil::InitIDxDiagContainer already initialized!\n");
+            PROFILE_END();
             return(S_OK);
         }
 
@@ -860,6 +871,7 @@ namespace NVDXDiagWrapper
                     FMsg("Couldn't GetRootContainer from DxDiagProvider!\n");
                     assert(false);
                     FreeIDxDiagContainer();
+                    PROFILE_END();
                     return(hr);
                 }
             }
@@ -868,6 +880,7 @@ namespace NVDXDiagWrapper
                 FMsg("Couldn't Initialize DxDiagProvider!\n");
                 assert(false);
                 FreeIDxDiagContainer();
+                PROFILE_END();
                 return(hr);
             }
         }
@@ -876,15 +889,18 @@ namespace NVDXDiagWrapper
             FMsg("Couldn't initialize COM!\n");
             assert(false);
             FreeIDxDiagContainer();
+            PROFILE_END();
             return(hr);
         }
 
+        PROFILE_END();
         return(hr);
     }
 
 
     HRESULT DXDiagNVUtil::FreeIDxDiagContainer()
     {
+        PROFILE_START(DXDiagNVUtil_FreeIDxDiagContainer);
         HRESULT hr = S_OK;
         SAFE_RELEASE(m_pDxDiagProvider);
         SAFE_RELEASE(m_pDxDiagRoot);
@@ -895,6 +911,7 @@ namespace NVDXDiagWrapper
             m_bCleanupCOM = false;
         }
 
+        PROFILE_END();
         return(hr);
     }
 

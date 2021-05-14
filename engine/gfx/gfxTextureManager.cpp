@@ -61,11 +61,19 @@ GFXTextureManager::~GFXTextureManager()
 //-----------------------------------------------------------------------------
 void GFXTextureManager::validateTextureMemory()
 {
+    PROFILE_START(GFXTextureManager_validateTextureMemory);
+
     if (mValidTextureQualityInfo)
+    {
+        PROFILE_END();
         return;
+    }
 
     if (getTotalVideoMemory() == 0)
+    {
+        PROFILE_END();
         return;
+    }
 
     // Let the user know what texture strategy we're using...
     Con::printf("Texture Manager");
@@ -102,6 +110,8 @@ void GFXTextureManager::validateTextureMemory()
     Con::printf("   - Quality mode: %s%s", qualityMode, (force ? " (forced)" : ""));
 
     mValidTextureQualityInfo = true;
+
+    PROFILE_END();
 }
 
 U32 GFXTextureManager::getBitmapScalePower(GFXTextureProfile* profile)
@@ -204,6 +214,7 @@ void GFXTextureManager::resurrect()
 
 GFXTextureObject* GFXTextureManager::createTexture(GBitmap* bmp, GFXTextureProfile* profile, bool deleteBmp)
 {
+    PROFILE_START(GFXTextureManager_createTexture2);
     AssertWarn(bmp, "NULL GBitmap passed to GFXTextureManager::createTexture.");
 
     // Check the cache first...
@@ -215,6 +226,7 @@ GFXTextureObject* GFXTextureManager::createTexture(GBitmap* bmp, GFXTextureProfi
         // Con::errorf("Cached texture '%s'", (fileName ? fileName : "unknown"));
         if (deleteBmp)
             delete bmp;
+        PROFILE_END();
         return cacheHit;
     }
 
@@ -264,6 +276,7 @@ GFXTextureObject* GFXTextureManager::createTexture(GBitmap* bmp, GFXTextureProfi
     if (!ret)
     {
         Con::errorf("GFXTextureManager - failed to create texture (1) for '%s'", (fileName ? fileName : "unknown"));
+        PROFILE_END();
         return NULL;
     }
 
@@ -271,6 +284,7 @@ GFXTextureObject* GFXTextureManager::createTexture(GBitmap* bmp, GFXTextureProfi
     if (!_loadTexture(ret, realBmp))
     {
         Con::errorf("GFXTextureManager - failed to load GBitmap for '%s'", (fileName ? fileName : "unknown"));
+        PROFILE_END();
         return NULL;
     }
 
@@ -305,6 +319,8 @@ GFXTextureObject* GFXTextureManager::createTexture(GBitmap* bmp, GFXTextureProfi
 
     if (gEnableDatablockCanvasRepaint)
         Canvas->paint();
+
+    PROFILE_END();
 
     // Return the new texture!
     return ret;
@@ -382,6 +398,7 @@ GFXTextureObject* GFXTextureManager::createTexture(DDSFile* dds, GFXTextureProfi
 
 GFXTextureObject* GFXTextureManager::createTexture(const char* filename, GFXTextureProfile* profile)
 {
+    PROFILE_START(GFXTextureManager_createTexture);
     // hack to load .dds files until proper support is in
     if (dStrstr(filename, ".dds"))
     {
@@ -391,6 +408,7 @@ GFXTextureObject* GFXTextureManager::createTexture(const char* filename, GFXText
         linkTexture(obj);
 
         // Return the new texture!
+        PROFILE_END();
         return obj;
 
     }
@@ -402,7 +420,10 @@ GFXTextureObject* GFXTextureManager::createTexture(const char* filename, GFXText
         StringTableEntry fileName = ro->getFullPath();
         GFXTextureObject* cacheHit = hashFind(fileName);
         if (cacheHit)
+        {
+            PROFILE_END();
             return cacheHit;
+        }
     }
 
     // Find and load the texture.
@@ -411,10 +432,15 @@ GFXTextureObject* GFXTextureManager::createTexture(const char* filename, GFXText
     if (!bmp)
     {
         //      Con::errorf("GFXTextureManager::createTexture - failed to load bitmap '%s'", filename);
+
+        PROFILE_END();
         return NULL;
     }
 
-    return createTexture(bmp, profile, true);
+    GFXTextureObject* ret = createTexture(bmp, profile, true);
+    
+    PROFILE_END();
+    return ret;
 }
 
 GFXTextureObject* GFXTextureManager::createTexture(U32 width, U32 height, void* pixels, GFXFormat format, GFXTextureProfile* profile)
@@ -525,6 +551,7 @@ void GFXTextureManager::hashRemove(GFXTextureObject* object)
 
 GFXTextureObject* GFXTextureManager::hashFind(StringTableEntry name)
 {
+    PROFILE_START(GFXTextureManager_hashFind);
     U32 key = StringTable->hashString(name) % mHashCount;
     GFXTextureObject* walk = mHashTable[key];
     for (; walk; walk = walk->mHashNext)
@@ -534,6 +561,7 @@ GFXTextureObject* GFXTextureManager::hashFind(StringTableEntry name)
             break;
         }
     }
+    PROFILE_END();
     return walk;
 }
 
@@ -615,6 +643,8 @@ void GFXTextureManager::refreshTexture(GFXTextureObject* texture)
 //-----------------------------------------------------------------------------
 void GFXTextureManager::linkTexture(GFXTextureObject* obj)
 {
+    PROFILE_START(GFXTextureManager_linkTexture);
+
     //    - info for the profile...
     GFXTextureProfile::updateStatsForCreation(obj);
 
@@ -633,6 +663,7 @@ void GFXTextureManager::linkTexture(GFXTextureObject* obj)
     obj->mPrev = mListTail;
     mListTail = obj;
 
+    PROFILE_END();
 }
 
 //-----------------------------------------------------------------------------
