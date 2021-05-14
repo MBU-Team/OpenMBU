@@ -1489,6 +1489,15 @@ void GuiCanvas::updateReflections()
     PROFILE_END();
 }
 
+void GuiCanvas::RefreshAndRepaint()
+{
+    if (gEnableDatablockCanvasRepaint)
+    {
+        Canvas->paint();
+        Platform::process();
+    }
+}
+
 
 
 

@@ -84,9 +84,8 @@ bool GameBaseData::preload(bool server, char errorBuffer[256])
     if (!Parent::preload(server, errorBuffer))
         return false;
     packed = false;
-
-    if (gEnableDatablockCanvasRepaint)
-        Canvas->paint();
+    
+    Canvas->RefreshAndRepaint();
 
     return true;
 }

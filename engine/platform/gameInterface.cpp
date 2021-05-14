@@ -8,6 +8,7 @@
 #include "platform/gameInterface.h"
 #include "core/fileStream.h"
 #include "console/console.h"
+#include "gui/core/guiCanvas.h"
 
 GameInterface* Game = NULL;
 
@@ -51,7 +52,7 @@ void GameInterface::processEvent(Event* event)
 
 #ifdef TORQUE_DEBUG
     sReentrantCount++;
-    AssertFatal(sReentrantCount == 1, "Error! ProcessEvent is NOT reentrant.");
+    AssertFatal(sReentrantCount == 1 || gEnableDatablockCanvasRepaint, "Error! ProcessEvent is NOT reentrant.");
 #endif
 
     switch (event->type)

@@ -306,6 +306,8 @@ public:
     /// @}
 
     void setDefaultFirstResponder();
+
+    void RefreshAndRepaint();
 };
 
 extern GuiCanvas* Canvas;

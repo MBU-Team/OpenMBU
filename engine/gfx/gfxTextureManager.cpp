@@ -317,8 +317,7 @@ GFXTextureObject* GFXTextureManager::createTexture(GBitmap* bmp, GFXTextureProfi
     if (deleteBmp)
         delete bmp;
 
-    if (gEnableDatablockCanvasRepaint)
-        Canvas->paint();
+    Canvas->RefreshAndRepaint();
 
     PROFILE_END();
 
