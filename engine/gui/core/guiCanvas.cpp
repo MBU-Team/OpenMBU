@@ -1322,10 +1322,10 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
         GFX->setClipRect(updateUnion);
 
         //temp draw the mouse
-        if (cursorON && mShowCursor && !mouseCursor)
+        /*if (cursorON && mShowCursor && !mouseCursor)
         {
             GFX->drawRectFill(RectI(cursorPt.x, cursorPt.y, cursorPt.x + 2, cursorPt.y + 2), ColorI(255, 0, 0));
-        }
+        }*/
 
         //DEBUG
         //draw the help ctrl
