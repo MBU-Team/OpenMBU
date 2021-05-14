@@ -1166,7 +1166,9 @@ void GuiCanvas::paint()
         renderFrame(false);
 }
 
-ColorI gCanvasClearColor(255, 0, 255); ///< For GFX->clear
+//ColorI gCanvasClearColor(255, 0, 255); // TSE ///< For GFX->clear
+ColorI gCanvasClearColor(42, 139, 190); // MBU Blue ///< For GFX->clear
+//ColorI gCanvasClearColor(0, 0, 0); // Black ///< For GFX->clear
 
 void GuiCanvas::renderFrame(bool preRenderOnly)
 {
