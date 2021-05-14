@@ -363,6 +363,25 @@ function initVideo()
    $pref::Video::fullScreen = "0";
 
    $canvasCreated = createCanvas("Marble Blast Ultra!");
+   
+   // We need to set up Gamma Ramp here so that the splash screens are affected.
+   
+   //-----------------------------------------------------------------------------
+   // Gamma Buffer Datablock
+   //-----------------------------------------------------------------------------
+   new ShaderData( GammaShader )
+   {
+      DXVertexShaderFile 	= "shaders/gammaV.hlsl";
+      DXPixelShaderFile 	= "shaders/gammaP.hlsl";
+      pixVersion = 2.0;
+   };
+
+   new GammaBuffer(GammaBufferData)
+   {
+      shader = GammaShader;
+      bitmap = "marble/data/gammaRamp";
+   };
+   //-----------------------------------------------------------------------------
 
    new GuiControlProfile (SplashLoadingProfile)
    {
