@@ -6,7 +6,7 @@
 #include "platform/platform.h"
 #include "platform/profiler.h"
 #include "core/stringTable.h"
-#include <stdlib.h> // gotta use malloc and free directly
+//#include <stdlib.h> // gotta use malloc and free directly
 #include "console/console.h"
 #include "core/tVector.h"
 #include "core/fileStream.h"
@@ -417,7 +417,7 @@ static S32 QSORT_CALLBACK rootDataCompare(const void* s1, const void* s2)
 static void profilerDataDumpRecurse(ProfilerData* data, char* buffer, U32 bufferLen, F64 totalTime)
 {
     // dump out this one:
-    Con::printf("%7.3f %7.3f %8d %s%s",
+    Con::printf("%10.3f %10.3f %8d %s%s",
         100 * data->mTotalTime / totalTime,
         100 * (data->mTotalTime - data->mSubTime) / totalTime,
         data->mInvokeCount,
@@ -455,7 +455,7 @@ static void profilerDataDumpRecurse(ProfilerData* data, char* buffer, U32 buffer
 static void profilerDataDumpRecurseFile(ProfilerData* data, char* buffer, U32 bufferLen, F64 totalTime, FileStream& fws)
 {
     char pbuffer[256];
-    dSprintf(pbuffer, 255, "%7.3f %7.3f %8d %s%s\n",
+    dSprintf(pbuffer, 255, "%10.3f %10.3f %8d %s%s\n",
         100 * data->mTotalTime / totalTime,
         100 * (data->mTotalTime - data->mSubTime) / totalTime,
         data->mInvokeCount,
@@ -512,10 +512,10 @@ void Profiler::dump()
     {
         Con::printf("Profiler Data Dump:");
         Con::printf("Ordered by non-sub total time -");
-        Con::printf("%%NSTime  %% Time  Invoke #  Name");
+        Con::printf("   %%NSTime     %% Time Invoke # Name");
         for (U32 i = 0; i < rootVector.size(); i++)
         {
-            Con::printf("%7.3f %7.3f %8d %s",
+            Con::printf("%10.3f %10.3f %8d %s",
                 100 * (rootVector[i]->mTotalTime - rootVector[i]->mSubTime) / totalTime,
                 100 * rootVector[i]->mTotalTime / totalTime,
                 rootVector[i]->mTotalInvokeCount,
@@ -526,7 +526,7 @@ void Profiler::dump()
         }
         Con::printf("");
         Con::printf("Ordered by stack trace total time -");
-        Con::printf("%% Time  %% NSTime  Invoke #  Name");
+        Con::printf("    %% Time   %% NSTime Invoke # Name");
 
         U32 depth = 0;
         mCurrentProfilerData->mTotalTime = endHighResolutionTimer(mCurrentProfilerData->mStartTime);
@@ -548,12 +548,12 @@ void Profiler::dump()
         fws.write(dStrlen(buffer), buffer);
         dStrcpy(buffer, "Ordered by non-sub total time -\n");
         fws.write(dStrlen(buffer), buffer);
-        dStrcpy(buffer, "%%NSTime  %% Time  Invoke #  Name\n");
+        dStrcpy(buffer, "   %%NSTime     %% Time Invoke # Name");
         fws.write(dStrlen(buffer), buffer);
 
         for (U32 i = 0; i < rootVector.size(); i++)
         {
-            dSprintf(buffer, 1023, "%7.3f %7.3f %8d %s\n",
+            dSprintf(buffer, 1023, "%10.3f %10.3f %8d %s\n",
                 100 * (rootVector[i]->mTotalTime - rootVector[i]->mSubTime) / totalTime,
                 100 * rootVector[i]->mTotalTime / totalTime,
                 rootVector[i]->mTotalInvokeCount,
@@ -566,7 +566,7 @@ void Profiler::dump()
         }
         dStrcpy(buffer, "\nOrdered by non-sub total time -\n");
         fws.write(dStrlen(buffer), buffer);
-        dStrcpy(buffer, "%%NSTime  %% Time  Invoke #  Name\n");
+        dStrcpy(buffer, "   %%NSTime     %% Time Invoke # Name");
         fws.write(dStrlen(buffer), buffer);
 
         U32 depth = 0;
