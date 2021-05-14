@@ -461,6 +461,9 @@ void GuiControl::onRender(Point2I offset, const RectI& updateRect)
 {
     RectI ctrlRect(offset, mBounds.extent);
 
+    // MBU X360 has this extra line
+    //GFX->setZEnable(false);
+
     //if opaque, fill the update rect with the fill color
     if (mProfile->mOpaque)
         GFX->drawRectFill(ctrlRect, mProfile->mFillColor);
