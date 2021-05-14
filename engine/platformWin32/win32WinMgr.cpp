@@ -100,7 +100,7 @@ void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y
     RectI newRect = getCenteredWindowRect(width, height, fullscreen);
 
     mStyle = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-    mStyle |= WS_OVERLAPPED | WS_THICKFRAME | WS_CAPTION;
+    mStyle |= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;
 
     mExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
