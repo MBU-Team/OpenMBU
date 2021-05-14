@@ -755,6 +755,8 @@ static bool ProcessMessages()
 //--------------------------------------
 void Platform::process()
 {
+    updateCursorVisibility();
+
     DInputManager* mgr = dynamic_cast<DInputManager*>(Input::getManager());
     if (!mgr || !mgr->isMouseActive())
     {
@@ -1071,8 +1073,6 @@ S32 PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, S32)
 //--------------------------------------
 void TimeManager::process()
 {
-    updateCursorVisibility();
-
     TimeEvent event;
     event.elapsedTime = gTimer.getElapsedMS();
 
