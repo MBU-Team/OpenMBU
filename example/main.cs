@@ -341,6 +341,10 @@ if( !$logModeSpecified )
       setLogMode(6);
 }
 
+// Set the mod path which dictates which directories will be visible
+// to the scripts and the resource engine.
+setModPaths($userMods);
+
 function initVideo()
 {
    $pref::Video::displayDevice = "D3D";
@@ -413,6 +417,7 @@ function initVideo()
       vertSizing = "height";
       position = "0 0";
       extent = "640 480";
+      bitmap = "marble/client/ui/EngineSplashBG.jpg";
 
       new GuiControl ()
       {
@@ -429,6 +434,7 @@ function initVideo()
             position = "64 40";
             extent = "512 393";
             minExtent = "8 8";
+            bitmap = "marble/client/ui/GG_Logo.png";
          };
          new GuiBitmapCtrl (SplashTSELogoBitmapGui)
          {
@@ -438,6 +444,7 @@ function initVideo()
             position = "100 72";
             extent = "435 352";
             minExtent = "8 8";
+            bitmap = "marble/client/ui/EngineSplash.png";
          };
          new GuiProgressCtrl (SplashLoadingProgress)
          {
@@ -465,42 +472,20 @@ function initVideo()
          };
       };
    };
-
+   
    Canvas.setContent(SplashLoadingGui);
    SplashLoadingProgress.setVisible(false);
    SplashDecompressionProgress.setVisible(false);
    SplashAddingProgress.setVisible(false);
-   SplashGGLogoBitmapGui.setVisible(false);
+   SplashGGLogoBitmapGui.setVisible(true);
    SplashTSELogoBitmapGui.setVisible(false);
    Canvas.repaint();
 }
 
-function loaderSetEngineLogo()
-{
-   SplashGGLogoBitmapGui.setVisible(false);
-   SplashTSELogoBitmapGui.setVisible(true);
-   SplashTSELogoBitmapGui.setBitmap("marble/client/ui/EngineSplash.png");
-}
-
-function updateProgress()
-{
-   if(!$LoaderBitmapSet && isResourceBGLoaded("marble/client/ui/EngineSplash.png"))
-   {
-      SplashLoadingGui.setBitmap("marble/client/ui/EngineSplashBG.jpg");
-      SplashGGLogoBitmapGui.setBitmap("marble/client/ui/GG_Logo.png");
-      SplashGGLogoBitmapGui.setVisible(true);
-      $LoaderBitmapSet = true;
-      schedule(5000, 0, loaderSetEngineLogo);
-   }
-   $updateProgressSchedule = schedule(100, 0, updateProgress);
-   SplashLoadingProgress.setValue($BKLoader::loadPct);
-   SplashDecompressionProgress.setValue($BKLoader::decompressPct);
-   SplashAddingProgress.setValue($BKLoader::addPct);
-}
-
+// Execute startup scripts for each mod, starting at base and working up
 function loadDir(%dir)
 {
-   //setModPaths(pushback($userMods, %dir, ";"));
+   setModPaths(pushback($userMods, %dir, ";"));
    exec(%dir @ "/main.cs");
 }
 
@@ -515,14 +500,13 @@ function loadMods(%modPath)
       $modcount--;
    }
 }
-
+   
 function continueStartup()
 {
    // Get the first mod on the list, which will be the last to be applied... this
    // does not modify the list.
    nextToken($userMods, currentMod, ";");
 
-   // Execute startup scripts for each mod, starting at base and working up
    echo("--------- Loading MODS ---------");
    loadMods($userMods);
    echo("");
@@ -554,31 +538,15 @@ function continueStartup()
    }
 }
 
-function onZipLoaded(%zipName, %success)
+function loaderSetEngineLogo()
 {
-   SplashLoadingProfile.fillColor = %zipColor[$zipLoadedCount];
-   cancel($updateProgressSchedule);
-   echo("loaded zip - success == " @ %success);
-   if(!%success)
-   {
-      echo("Recursing mod paths.");
-      %modDirs = "marble;common;shaders";
-      
-      // If this is a PC, non-dedicated build, load creator for the artists -pw
-      if( !( $Game::argc > 1 && $Game::argv[1] $= "-dedicated" ) && $platform !$= "xenon" && $platform !$= "xbox" )
-         %modDirs = "creator;" @ %modDirs;
-         
-      setModPaths(%modDirs);
-   }
-   continueStartup();
+   SplashGGLogoBitmapGui.setVisible(false);
+   SplashTSELogoBitmapGui.setVisible(true);
+   SplashTSELogoBitmapGui.setBitmap("marble/client/ui/EngineSplash.png");
+   
+   schedule(1000, 0, continueStartup);
 }
 
 initVideo();
 
-// Set the mod path which dictates which directories will be visible
-// to the scripts and the resource engine.
-loadZip("marble.bza");
-SplashLoadingProfile.fillColor = "100 200 50";
-
-$updateProgressSchedule = schedule(100, 0, updateProgress);
-SplashLoadingProfile.fillColor = "50 100 200";
+schedule(3000, 0, loaderSetEngineLogo);
