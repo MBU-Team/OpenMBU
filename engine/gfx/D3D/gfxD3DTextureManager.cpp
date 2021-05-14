@@ -421,7 +421,7 @@ bool GFXD3DTextureManager::_freeTexture(GFXTextureObject* texture, bool zombify)
 U32 GFXD3DTextureManager::_getTotalVideoMemory()
 {
     PROFILE_START(GFXD3DTextureManager_getTotalVideoMemory);
-    int mem;
+    /*int mem;
     NVDXDiagWrapper::DWORD numDevices;
 
     // WANG == wise and nifty gnome.
@@ -435,7 +435,18 @@ U32 GFXD3DTextureManager::_getTotalVideoMemory()
     delete wang;
 
     // It returns megs so scale up...
-    U32 ret = mem * 1024 * 1024;
+    U32 ret = mem * 1024 * 1024;*/
+
+    // The above code is very very slow.
+
+    // CodeReview: There is no DirectX API call to query the total video memory.
+   // This will get the available texture memory, but not the total.
+   // Oh, Microsoft... [5/10/2007 Pat]
+#ifndef TORQUE_OS_XENON
+    U32 ret = mD3DDevice->GetAvailableTextureMem();
+#else
+    U32 ret = 512 * 1024;
+#endif
 
     PROFILE_END();
     return ret;
