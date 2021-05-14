@@ -320,6 +320,20 @@ function displayHelp() {
 
 //--------------------------------------------------------------------------
 
+function startProfile()
+{
+   echo("Starting profile session...");
+   profilerDump();
+   profilerEnable(true);
+}
+
+function stopProfile()
+{
+   echo("Ending profile session...");
+   profilerDump();
+   profilerEnable(false);
+}
+
 // Default to a new logfile each session.
 if( !$logModeSpecified )
 {
