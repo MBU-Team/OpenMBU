@@ -125,4 +125,13 @@ void SFXALDevice::update( const SFXListener& listener )
    mOpenAL.alListenerfv( AL_POSITION, (F32 *)pos );
    mOpenAL.alListenerfv( AL_VELOCITY, (F32 *)velocity );
    mOpenAL.alListenerfv( AL_ORIENTATION, (F32 *)&tupple[0] );
+   
+   // In OpenAL if you have sources that you don't want to have a doppler effect,
+   // you have to set the source's velocity values to the same as the listener.
+   for (S32 i = 0; i < mVoices.size(); i++)
+   {
+      if (mVoices[i]->is3D())
+         mVoices[i]->setVelocity(velocity);
+   }
+
 }

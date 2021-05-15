@@ -46,7 +46,8 @@ SFXALVoice::SFXALVoice( const OPENALFNTABLE &oalft,
    :  mOpenAL( oalft ),
       mIsPlaying( false ), 
       mBufferName( bufferName ), 
-      mSourceName( sourceName )
+      mSourceName( sourceName ),
+      mIs3D(buffer->mIs3d)
 {
    AL_SANITY_CHECK();
 }

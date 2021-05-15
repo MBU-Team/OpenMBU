@@ -34,6 +34,8 @@ class SFXALVoice : public SFXVoice
 
       ALuint mSourceName;
 
+      bool mIs3D;
+
       const OPENALFNTABLE &mOpenAL;
 
    public:
@@ -61,6 +63,8 @@ class SFXALVoice : public SFXVoice
       void setVolume( F32 volume );
 
       void setPitch( F32 pitch );
+
+      bool is3D() { return mIs3D; }
 };
 
 
