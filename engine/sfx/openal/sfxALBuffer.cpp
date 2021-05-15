@@ -55,7 +55,7 @@ bool SFXALBuffer::createVoice(   ALuint *bufferName,
       *bufferFormat = mResource->getSampleBits() == 16 ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8;
 
    // Is this 3d?
-   mOpenAL.alSourcei( *sourceName, AL_SOURCE_RELATIVE, ( mIs3d ? AL_TRUE : AL_FALSE ) );
+   mOpenAL.alSourcei( *sourceName, AL_SOURCE_RELATIVE, ( mIs3d ? AL_FALSE : AL_TRUE ) );
 
    AssertFatal( mOpenAL.alIsBuffer( *bufferName ), "AL Buffer Sanity Check Failed!" ); \
    AssertFatal( mOpenAL.alIsSource( *sourceName ), "AL Source Sanity Check Failed!" );

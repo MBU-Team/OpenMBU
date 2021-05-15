@@ -35,17 +35,6 @@ SFXALVoice* SFXALVoice::create( SFXALBuffer *buffer )
                                        bufferName,
                                        sourceName );
 
-
-
-   // Is this 3d?
-  // Okay, this looks odd, but bear with me for a moment.  AL_SOURCE_RELATIVE does NOT indicate
-  // whether or not the volume of the sound should change depending on the position of the listener.
-  // OpenAL assumes that the volume will ALWAYS depend on the position of the listener.  What AL_SOURCE_RELATIVE
-  // does do is dictate if the position of THIS SOURCE is relative to the listener.  If AL_SOURCE_RELATIVE is AL_TRUE
-  // and the source's position is 0, 0, 0, then the source is directly on top of the listener at all times, which is what
-  // we want for non-3d sounds.
-   voice->mOpenAL.alSourcei(sourceName, AL_SOURCE_RELATIVE, (buffer->mIs3d ? AL_FALSE : AL_TRUE));
-
    return voice;
 }
 
