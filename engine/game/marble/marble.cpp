@@ -1391,10 +1391,10 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
             mSlipHandle->play();
 
         float pitch = scale;
-        if (scale > 1.0)
-            pitch = 1.0;
+        if (scale > 1.0f)
+            pitch = 1.0f;
 
-        mRollHandle->setPitch(pitch * 0.75 + 0.75);
+        mRollHandle->setPitch(pitch * 0.75f + 0.75f);
     }
 }
 
