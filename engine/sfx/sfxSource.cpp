@@ -65,16 +65,16 @@ SFXSource* SFXSource::_create( const SFXProfile *profile )
    //const Resource<SFXResource> &resource = profile->getResource();
    SFXSource *source = NULL;
 
-   if ( desc->mIsStreaming )
-   {
-      // TODO: This is where we would build a streaming
-      // source object.
+   //if ( desc->mIsStreaming )
+   //{
+   //   // TODO: This is where we would build a streaming
+   //   // source object.
 
-      Con::errorf( "SFXSource::_create() - Stream sources are unsupported!" );
-      return NULL;
-   }
-   else
-   {
+   //   Con::errorf( "SFXSource::_create() - Stream sources are unsupported!" );
+   //   return NULL;
+   //}
+   //else
+   //{
       /*
       // Grab the buffer.
       SFXBuffer *buffer = profile->getBuffer();
@@ -99,7 +99,7 @@ SFXSource* SFXSource::_create( const SFXProfile *profile )
       */
 
       source = new SFXSource( profile );
-   }
+   //}
 
    // The source is a console object... register it.
    source->registerObject();

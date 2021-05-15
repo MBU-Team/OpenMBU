@@ -409,7 +409,7 @@ void SFXSystem::_assignVoices()
       SFXSourceVector::iterator hijack = mSources.end() - 1;
       for ( ; hijack != iter; hijack-- )
       {
-         if ( (*hijack)->hasVoice() )
+         if ( (*hijack)->hasVoice() && !(*hijack)->mIsStreaming )
          {
             (*hijack)->_freeVoice( mDevice );
             break;

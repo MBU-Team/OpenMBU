@@ -60,7 +60,7 @@ new SFXDescription(AudioMusic)
 {
    volume   = 1.0;
    isLooping = true;
-   //isStreaming = true;
+   isStreaming = true;
    is3D     = false;
    channel     = $MusicAudioType;
 };
