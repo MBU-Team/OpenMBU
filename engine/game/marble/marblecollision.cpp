@@ -387,6 +387,7 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 
                 F64 speedSq = velocity.lenSquared();
 
+				// Build a quadratic equation to solve for the collision time
                 Point3D posVertDiff = position - thisVert;
                 F64 halfCornerB = mDot(posVertDiff, velocity);
                 F64 cornerB = halfCornerB + halfCornerB;
@@ -395,12 +396,17 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 
                 F64 cornerDiscriminant = cornerB * cornerB - (posVertDiff.lenSquared() - radSq) * fourA;
 
+                // If it's quadratic and has a solution ...
                 if (speedSq != 0.0 && cornerDiscriminant >= 0.0)
                 {
                     F64 oneOver2A = 0.5 / speedSq;
                     F64 cornerDiscriminantSqrt = mSqrtD(cornerDiscriminant);
-                    F64 cornerCollisionTime = (cornerDiscriminantSqrt - cornerB) * oneOver2A;
+					
+					// Solve using the quadratic formula
+					F64 cornerCollisionTime = (cornerDiscriminantSqrt - cornerB) * oneOver2A;
                     F64 cornerCollisionTime2 = (-cornerB - cornerDiscriminantSqrt) * oneOver2A;
+					
+					// Make sure the 2 times are in ascending order
                     if (cornerCollisionTime2 < cornerCollisionTime)
                     {
                         F64 temp = cornerCollisionTime2;
@@ -408,13 +414,17 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
                         cornerCollisionTime = temp;
                     }
 
+					// If the collision doesn't happen on this time step, ignore this corner
                     if (cornerCollisionTime2 > 0.0001 && finalT > cornerCollisionTime)
                     {
+						// Adjust to make sure very small negative times are counted as zero
                         if (cornerCollisionTime <= 0.0 && cornerCollisionTime > -0.0001)
                             cornerCollisionTime = 0.0;
 
+						// Check if the collision hasn't already happened
                         if (cornerCollisionTime >= 0.0)
                         {
+                            // Resolve it and continue
                             finalT = cornerCollisionTime;
                             contactPoly = poly;
                             finalPosition = velocity * cornerCollisionTime + position;
@@ -422,12 +432,15 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
                         }
                     }
                 }
-
+				
+				// We still need to check the other corner ...
+				// Build one last quadratic equation to solve for the collision time
                 Point3D lastVertDiff = position - lastVert;
                 F64 lastCornerHalfB = mDot(lastVertDiff, velocity);
                 F64 lastCornerB = lastCornerHalfB + lastCornerHalfB;
                 F64 lastCornerDiscriminant = lastCornerB * lastCornerB - (lastVertDiff.lenSquared() - radSq) * fourA;
 
+				// If it's not quadratic or has no solution, then skip this corner
                 if (speedSq == 0.0 || lastCornerDiscriminant < 0.0)
                 {
                     lastVert = thisVert;
@@ -436,8 +449,12 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 
                 F64 lastCornerOneOver2A = 0.5 / speedSq;
                 F64 lastCornerDiscriminantSqrt = mSqrtD(lastCornerDiscriminant);
+				
+				// Solve using the quadratic formula
                 F64 lastCornerCollisionTime = (lastCornerDiscriminantSqrt - lastCornerB) * lastCornerOneOver2A;
                 F64 lastCornerCollisionTime2 = (-lastCornerB - lastCornerDiscriminantSqrt) * lastCornerOneOver2A;
+				
+				// Make sure the 2 times are in ascending order
                 if (lastCornerCollisionTime2 < lastCornerCollisionTime)
                 {
                     F64 temp = lastCornerCollisionTime2;
@@ -445,21 +462,25 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
                     lastCornerCollisionTime = temp;
                 }
 
+				// If the collision doesn't happen on this time step, ignore this corner
                 if (lastCornerCollisionTime2 <= 0.0001 || finalT <= lastCornerCollisionTime)
                 {
                     lastVert = thisVert;
                     continue;
                 }
 
+				// Adjust to make sure very small negative times are counted as zero
                 if (lastCornerCollisionTime <= 0.0 && lastCornerCollisionTime > -0.0001)
                     lastCornerCollisionTime = 0.0;
 
+				// Check if the collision hasn't already happened
                 if (lastCornerCollisionTime < 0.0)
                 {
                     lastVert = thisVert;
                     continue;
                 }
 
+				// Resolve it and continue
                 finalT = lastCornerCollisionTime;
                 finalPosition = velocity * lastCornerCollisionTime + position;
                 lastContactPos = lastVert;
