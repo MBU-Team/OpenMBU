@@ -536,6 +536,7 @@ moveMap.bind(keyboard, "alt c", toggleCamera);
 //moveMap.bind( keyboard, F4, stopRecordingDemo );
 //moveMap.bindCmd( keyboard, o, "", "pauseToggle(0);" );
 //moveMap.bindCmd( keyboard, p, "", "pauseToggle(1);" );
+moveMap.bindCmd( keyboard, y, "togglePlayerListLength();", "" );
 
 // mouse
 moveMap.bind( mouse, button0, mouseFire );
