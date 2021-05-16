@@ -354,13 +354,19 @@ function initVideo()
    $pref::Video::appliedPref = 0;
    $pref::Video::disableVerticalSync = 1;
    $pref::Video::monitorNum = 0;
+   $pref::Video::fullScreen = "0";
+
    if (!$vidAlreadySet)
    {
-      $pref::Video::resolution = "800 600 32";
-      $pref::Video::windowedRes = "1280 720";
-      $pref::Video::wideScreen = false;
+      // We need to load video prefs
+      execPrefs("prefs.cs");   
+      
+      if ($pref::Video::resolution $= "")
+         $pref::Video::resolution = "800 600 32";
+         
+      if ($pref::Video::windowedRes $= "")
+         $pref::Video::windowedRes = "1280 720";
    }
-   $pref::Video::fullScreen = "0";
 
    $canvasCreated = createCanvas("Marble Blast Ultra!");
    
