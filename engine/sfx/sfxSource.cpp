@@ -31,6 +31,7 @@ SFXSource::SFXSource( const SFXProfile *profile )
       mVoice( NULL ),
       mPlayTime( 0 ),
       mPauseTime( 0 ),
+      mIsStreaming( false ),
 
       // This sucks... but it works.
       mProfile( const_cast<SFXProfile*>( profile ) ),
@@ -49,6 +50,7 @@ SFXSource::SFXSource( const SFXProfile *profile )
    mConeOutsideVolume = desc->mConeOutsideVolume;
    mConeVector = desc->mConeVector;
    mChannel = desc->mChannel;
+   mIsStreaming = desc->mIsStreaming;
 }
 
 SFXSource* SFXSource::_create( const SFXProfile *profile )
