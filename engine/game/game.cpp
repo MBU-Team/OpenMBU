@@ -829,7 +829,11 @@ bool GameProcessCameraQuery(CameraQuery* query)
         else
             query->farPlane = 1000.0f;
 
+#ifdef MB_ULTRA
+        query->nearPlane = 0.1f;
+#else
         query->nearPlane = query->farPlane / 5000.0f;
+#endif
 
         F32 cameraFov;
         if (!connection->getControlCameraFov(&cameraFov))

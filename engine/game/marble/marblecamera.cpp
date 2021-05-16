@@ -20,16 +20,17 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
     F64 time = timeStep;
     F64 totalTime = timeStep;
 
-    bool moveSuccess = false;
+    bool hitSomething = false;
     U32 i = 0;
     for (bool flag = timeStep > 0.0f; flag && i < maxIterations; flag = totalTime > 0.0f)
     {
         if (testMove(velocity, position, time, 0.25, sCameraCollisionMask, true))
         {
-            moveSuccess = true;
+            hitSomething = true;
             
             velocity -= mLastContact.normal * mDot(mLastContact.normal, velocity);
         }
+
         ++i;
 
         totalTime -= time;
@@ -42,7 +43,7 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
 
     result = position;
 
-    if (totalTime >= 0.000001 || (maxIterations <= 1 && moveSuccess))
+    if (totalTime >= 0.000001 || (maxIterations <= 1 && hitSomething))
         return false;
 
     return true;
@@ -354,11 +355,10 @@ bool Marble::isCameraClear(Point3F start, Point3F end)
 {
     if (!moveCamera(start, end, start, 1, 1.0f))
         return false;
-
-    start.z = 0.25f;
-
+       
+    F32 radius = 0.25f;
     Point3D ep = end;
-    findContacts(sCameraCollisionMask, &ep, &start.z);
+    findContacts(sCameraCollisionMask, &ep, &radius);
 
     return mContacts.empty();
 }
@@ -524,17 +524,15 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
         position += mEffect.lastCamFocus * 0.9750000238418579;
     }
 
-    double radius = mRadius + 0.25;
+    F64 verticalOffset = mRadius + 0.25;
     mEffect.lastCamFocus = position;
 
-    startCam = camUpDir * radius + position;
-
-    float camDist = mDataBlock->cameraDistance;
-
-    Point3F endPos(startCam.x - forwardDir.x * camDist, startCam.y - forwardDir.y * camDist, startCam.z - forwardDir.z * camDist);
+    startCam = camUpDir * verticalOffset + position;
+    
+    Point3F endPos = startCam - forwardDir * mDataBlock->cameraDistance;
     if (!Marble::smEndPad.isNull() && (mMode & StoppingMode) != 0)
     {
-        float effectTime;
+        F32 effectTime;
         if (mEffect.effectTime >= 2.0f)
             effectTime = 1.0f;
         else
@@ -561,8 +559,8 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     testBox.max.setMax(position);
     resetObjectsAndPolys(sCameraCollisionMask, testBox);
     RayInfo coll;
-    position = endPos;
-    /*if (mCameraInit && isCameraClear(mLastCamPos, endPos) && !mContainer->castRay(mLastCamPos, endPos, sCameraCollisionMask, &coll))
+
+    if (mCameraInit && isCameraClear(mLastCamPos, endPos) && !mContainer->castRay(mLastCamPos, endPos, sCameraCollisionMask, &coll))
     {
         position = endPos;
     }
@@ -573,11 +571,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
             preStartPos = position;
 
         moveCamera(preStartPos, endPos, position, 4, 1.0f);
-    }*/
-
-    // TODO: Figure out why the above camera clipping code isn't working.
-    // as a temporary work around always call moveCamera. This doesn't work as well as the above code should.
-    moveCamera(startCam, endPos, position, 4, 1.0f);
+    }
 
     resetPlatformsForCamera();
 

@@ -492,7 +492,10 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
         if (marbleCollisionTime <= finalT)
             mLastContact.normal = marbleCollisionNormal;
         else
+        {
             mLastContact.normal = finalPosition - lastContactPos;
+            mLastContact.normal.normalize();
+        }
 
         if (material == NULL)
         {
