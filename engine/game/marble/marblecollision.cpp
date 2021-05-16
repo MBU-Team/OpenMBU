@@ -242,231 +242,230 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
     // Marble on Platform collision
     if (!polyList.mPolyList.empty())
     {
-        Point3D velAddition;
-        Point3F vert;
-        PlaneD plane;
-
         ConcretePolyList::Poly* poly;
 
         for (S32 index = 0; index < polyList.mPolyList.size(); index++)
         {
             poly = &polyList.mPolyList[index];
 
-            plane = poly->plane;
+            PlaneD polyPlane = poly->plane;
 
-            if (plane.y * velocityDir.y + plane.x * velocityDir.x + plane.z * velocityDir.z > -0.001 ||
-                plane.y * finalPosition.y + plane.x * finalPosition.x + plane.z * finalPosition.z + plane.d > radius)
+            // If we're going the wrong direction or not going to touch the plane, ignore...
+            if (mDot(polyPlane, velocityDir) > -0.001 || mDot(polyPlane, finalPosition) + polyPlane.d > radius)
                 continue;
 
-            F64 timeVar = (radius - (plane.x * position.x + plane.y * position.y + plane.z * position.z + plane.d))
-                / (plane.y * velocity.y + plane.x * velocity.x + plane.z * velocity.z);
+            // Time until collision with the plane
+            F64 collisionTime = (radius - (mDot(polyPlane, position) + polyPlane.d)) / mDot(polyPlane, velocity);
 
-            if (!(timeVar < 0.0 || finalT < timeVar))
+            // Are we going to touch the plane during this time step?
+            if (collisionTime >= 0.0 && finalT >= collisionTime)
             {
-                U32 vertIndex = polyList.mIndexList[poly->vertexCount - 1 + poly->vertexStart];
-                vert = polyList.mVertexList[vertIndex];
+                U32 lastVertIndex = polyList.mIndexList[poly->vertexCount - 1 + poly->vertexStart];
+                Point3F lastVert = polyList.mVertexList[lastVertIndex];
 
-                velAddition = velocity * timeVar + position;
+                Point3D collisionPos = velocity * collisionTime + position;
 
-                bool hasVertices = poly->vertexCount != 0;
+                bool isOnEdge;
 
-                if (hasVertices)
+                if (poly->vertexCount != 0)
                 {
-                    U32 i = 0;
-                    do
+                    U32 i;
+                    for (i = 0; i < poly->vertexCount; i++)
                     {
-                        Point3F newVert = polyList.mVertexList[polyList.mIndexList[i + poly->vertexStart]];
-                        if (newVert != vert)
+                        Point3F thisVert = polyList.mVertexList[polyList.mIndexList[i + poly->vertexStart]];
+                        if (thisVert != lastVert)
                         {
-                            PlaneD pl(Point3D(newVert + plane), newVert, vert);
-                            vert = newVert;
-                            if (pl.x * velAddition.x + pl.y * velAddition.y + pl.z * velAddition.z + pl.d < 0.0)
+                            PlaneD edgePlane(thisVert + polyPlane, thisVert, lastVert);
+                            lastVert = thisVert;
+
+                            // if we are on the far side of the edge
+                            if (mDot(edgePlane, collisionPos) + edgePlane.d < 0.0)
                                 break;
                         }
+                    }
 
-                        i++;
-                    } while (i < poly->vertexCount);
-
-                    hasVertices = i != poly->vertexCount;
+                    isOnEdge = i != poly->vertexCount;
                 }
 
-                if (!hasVertices)
+                // If we're inside the poly, just get the position
+                if (!isOnEdge)
                 {
-                    finalT = timeVar;
-                    finalPosition = velAddition;
-                    lastContactPos = plane.project(velAddition);
+                    finalT = collisionTime;
+                    finalPosition = collisionPos;
+                    lastContactPos = polyPlane.project(collisionPos);
                     contactPoly = poly;
                     continue;
                 }
             }
 
-            Point3F nextVert = polyList.mVertexList[polyList.mIndexList[poly->vertexCount - 1 + poly->vertexStart]];
+            // We *might* be colliding with an edge
+
+            Point3F lastVert = polyList.mVertexList[polyList.mIndexList[poly->vertexCount - 1 + poly->vertexStart]];
 
             if (poly->vertexCount == 0)
                 continue;
-
-            F64 lastZ;
-
-            Point3D theVert;
-            Point3D velTimePosVert;
-            Point3D thePosThing;
-            Point3D theVelocity;
-            Point3D vertDiff;
-            Point3D posDiff;
 
             F64 radSq = radius * radius;
 
             for (S32 iter = 0; iter < poly->vertexCount; iter++)
             {
-                theVert = polyList.mVertexList[polyList.mIndexList[iter + poly->vertexStart]];
+                Point3D thisVert = polyList.mVertexList[polyList.mIndexList[iter + poly->vertexStart]];
 
-                vertDiff = nextVert - theVert;
+                Point3D vertDiff = lastVert - thisVert;
+                Point3D posDiff = position - thisVert;
+                
+                Point3D velRejection = mCross(vertDiff, velocity);
+                Point3D posRejection = mCross(vertDiff, posDiff);
 
-                posDiff = position - theVert;
+                // Build a quadratic equation to solve for the collision time
+                F64 a = velRejection.lenSquared();
+                F64 halfB = mDot(posRejection, velRejection);
+                F64 b = halfB + halfB;
 
-                mCross(vertDiff, velocity, &theVelocity);
+                F64 discriminant = b * b - (posRejection.lenSquared() - vertDiff.lenSquared() * radSq) * (a * 4.0);
 
-                mCross(vertDiff, posDiff, &thePosThing);
-
-                F64 theVelLen = theVelocity.lenSquared();
-                F64 dotVel = mDot(thePosThing, theVelocity);
-                F64 dotVelSq = dotVel + dotVel;
-
-                F64 someNum = dotVelSq * dotVelSq - (thePosThing.lenSquared() - vertDiff.lenSquared() * radSq)
-                    * (theVelLen * 4.0);
-
-                if (theVelLen == 0.0 || someNum < 0.0)
+                // If it's not quadratic or has no solution, ignore this edge.
+                if (a == 0.0 || discriminant < 0.0)
                 {
-                    nextVert = theVert;
+                    lastVert = thisVert;
                     continue;
                 }
 
-                F64 what = 0.5 / theVelLen;
-                F64 someNumSqrt = mSqrtD(someNum);
+                F64 oneOverTwoA = 0.5 / a;
+                F64 discriminantSqrt = mSqrtD(discriminant);
 
-                F64 t1 = (someNumSqrt - dotVelSq) * what;
-                F64 t2 = (-dotVelSq - someNumSqrt) * what;
-                if (t2 < t1)
+                // Solve using the quadratic formula
+                F64 edgeCollisionTime = (discriminantSqrt - b) * oneOverTwoA;
+                F64 edgeCollisionTime2 = (-b - discriminantSqrt) * oneOverTwoA;
+
+                // Make sure the 2 times are in ascending order
+                if (edgeCollisionTime2 < edgeCollisionTime)
                 {
-                    F64 temp = t2;
-                    t2 = t1;
-                    t1 = temp;
+                    F64 temp = edgeCollisionTime2;
+                    edgeCollisionTime2 = edgeCollisionTime;
+                    edgeCollisionTime = temp;
                 }
 
-                if (t2 <= 0.0001 || finalT <= t1)
+                // If the collision doesn't happen on this time step, ignore this edge.
+                if (edgeCollisionTime2 <= 0.0001 || finalT <= edgeCollisionTime)
                 {
-                    nextVert = theVert;
+                    lastVert = thisVert;
                     continue;
                 }
-                if (!(t1 < 0.0))
+
+                // Check if the collision hasn't already happened
+                if (edgeCollisionTime >= 0.0)
                 {
-                    F64 vertDiffLen = vertDiff.len();
+                    F64 edgeLen = vertDiff.len();
 
-                    velTimePosVert = velocity * t1 + position - theVert;
+                    Point3D relativeCollisionPos = velocity * edgeCollisionTime + position - thisVert;
 
-                    F64 theVar = mDot(velTimePosVert, vertDiff) / vertDiffLen;
+                    F64 distanceAlongEdge = mDot(relativeCollisionPos, vertDiff) / edgeLen;
 
-                    if (-radius > theVar || vertDiffLen + radius < theVar)
+                    // If the collision happens outside the boundaries of the edge, ignore this edge.
+                    if (-radius > distanceAlongEdge || edgeLen + radius < distanceAlongEdge)
                     {
-                        nextVert = theVert;
+                        lastVert = thisVert;
                         continue;
                     }
-                    if (!(theVar < 0.0))
+
+                    // If the collision is within the edge, resolve the collision and continue.
+                    if (distanceAlongEdge >= 0.0 && distanceAlongEdge <= edgeLen)
                     {
-                        if (!(theVar > vertDiffLen))
+                        finalT = edgeCollisionTime;
+                        finalPosition = velocity * edgeCollisionTime + position;
+
+                        lastContactPos = vertDiff * (distanceAlongEdge / edgeLen) + thisVert;
+                        contactPoly = poly;
+
+                        lastVert = thisVert;
+                        continue;
+                    }
+                }
+
+                // This is what happens when we collide with a corner
+
+                F64 speedSq = velocity.lenSquared();
+
+                Point3D posVertDiff = position - thisVert;
+                F64 halfCornerB = mDot(posVertDiff, velocity);
+                F64 cornerB = halfCornerB + halfCornerB;
+
+                F64 fourA = speedSq * 4.0;
+
+                F64 cornerDiscriminant = cornerB * cornerB - (posVertDiff.lenSquared() - radSq) * fourA;
+
+                if (speedSq != 0.0 && cornerDiscriminant >= 0.0)
+                {
+                    F64 oneOver2A = 0.5 / speedSq;
+                    F64 cornerDiscriminantSqrt = mSqrtD(cornerDiscriminant);
+                    F64 cornerCollisionTime = (cornerDiscriminantSqrt - cornerB) * oneOver2A;
+                    F64 cornerCollisionTime2 = (-cornerB - cornerDiscriminantSqrt) * oneOver2A;
+                    if (cornerCollisionTime2 < cornerCollisionTime)
+                    {
+                        F64 temp = cornerCollisionTime2;
+                        cornerCollisionTime2 = cornerCollisionTime;
+                        cornerCollisionTime = temp;
+                    }
+
+                    if (cornerCollisionTime2 > 0.0001 && finalT > cornerCollisionTime)
+                    {
+                        if (cornerCollisionTime <= 0.0 && cornerCollisionTime > -0.0001)
+                            cornerCollisionTime = 0.0;
+
+                        if (cornerCollisionTime >= 0.0)
                         {
-                            finalT = t1;
-                            finalPosition = velocity * t1 + position;
-
-                            lastContactPos = vertDiff * (theVar / vertDiffLen) + theVert;
+                            finalT = cornerCollisionTime;
                             contactPoly = poly;
-
-                            nextVert = theVert;
-                            continue;
+                            finalPosition = velocity * cornerCollisionTime + position;
+                            lastContactPos = thisVert;
                         }
                     }
                 }
 
-                F64 wow = velocity.lenSquared();
+                Point3D lastVertDiff = position - lastVert;
+                F64 lastCornerHalfB = mDot(lastVertDiff, velocity);
+                F64 lastCornerB = lastCornerHalfB + lastCornerHalfB;
+                F64 lastCornerDiscriminant = lastCornerB * lastCornerB - (lastVertDiff.lenSquared() - radSq) * fourA;
 
-                Point3D posVertDiff = position - theVert;
-                F64 posVertDiffDot = mDot(posVertDiff, velocity);
-                F64 posVertDiffDotSq = posVertDiffDot + posVertDiffDot;
-
-                F64 tx = wow * 4.0;
-
-                F64 var12 = posVertDiffDotSq * posVertDiffDotSq - (posVertDiff.lenSquared() - radSq) * tx;
-
-                if (wow != 0.0 && var12 >= 0.0)
+                if (speedSq == 0.0 || lastCornerDiscriminant < 0.0)
                 {
-                    F64 var13 = 0.5 / wow;
-                    F64 var12Sqrt = mSqrtD(var12);
-                    F64 var14 = -posVertDiffDotSq - var12Sqrt;
-                    F64 var1 = (var12Sqrt - posVertDiffDotSq) * var13;
-                    F64 var2 = var14 * var13;
-                    if (var2 < var1)
-                    {
-                        F64 temp = var2;
-                        var2 = var1;
-                        var1 = temp;
-                    }
-                    if (var2 > 0.0001 && finalT > var1)
-                    {
-                        if (var1 <= 0.0 && var1 > -0.0001)
-                            var1 = 0.0;
-
-                        if (var1 >= 0.0)
-                        {
-                            finalT = var1;
-                            contactPoly = poly;
-                            finalPosition = velocity * var1 + position;
-                            lastContactPos = theVert;
-                        }
-                    }
-                }
-
-                Point3D var3 = position - nextVert;
-                F64 var4 = mDot(var3, velocity);
-                F64 var5 = var4 + var4;
-                F64 var6 = var5 * var5 - (var3.lenSquared() - radSq) * tx;
-
-                if (wow == 0.0 || var6 < 0.0)
-                {
-                    nextVert = theVert;
+                    lastVert = thisVert;
                     continue;
                 }
 
-                F64 var7 = 0.5 / wow;
-                F64 var8 = mSqrtD(var6);
-                F64 var9 = -var5 - var8;
-                F64 var10 = (var8 - var5) * var7;
-                F64 var11 = var9 * var7;
-                if (var11 < var10)
+                F64 lastCornerOneOver2A = 0.5 / speedSq;
+                F64 lastCornerDiscriminantSqrt = mSqrtD(lastCornerDiscriminant);
+                F64 lastCornerCollisionTime = (lastCornerDiscriminantSqrt - lastCornerB) * lastCornerOneOver2A;
+                F64 lastCornerCollisionTime2 = (-lastCornerB - lastCornerDiscriminantSqrt) * lastCornerOneOver2A;
+                if (lastCornerCollisionTime2 < lastCornerCollisionTime)
                 {
-                    F64 temp = var11;
-                    var11 = var10;
-                    var10 = temp;
+                    F64 temp = lastCornerCollisionTime2;
+                    lastCornerCollisionTime2 = lastCornerCollisionTime;
+                    lastCornerCollisionTime = temp;
                 }
 
-                if (var11 <= 0.0001 || finalT <= var10)
+                if (lastCornerCollisionTime2 <= 0.0001 || finalT <= lastCornerCollisionTime)
                 {
-                    nextVert = theVert;
-                    continue;
-                }
-                if (var10 <= 0.0 && var10 > -0.0001)
-                    var10 = 0.0;
-                if (var10 < 0.0)
-                {
-                    nextVert = theVert;
+                    lastVert = thisVert;
                     continue;
                 }
 
-                finalT = var10;
-                finalPosition = velocity * var10 + position;
-                lastContactPos = nextVert;
+                if (lastCornerCollisionTime <= 0.0 && lastCornerCollisionTime > -0.0001)
+                    lastCornerCollisionTime = 0.0;
+
+                if (lastCornerCollisionTime < 0.0)
+                {
+                    lastVert = thisVert;
+                    continue;
+                }
+
+                finalT = lastCornerCollisionTime;
+                finalPosition = velocity * lastCornerCollisionTime + position;
+                lastContactPos = lastVert;
                 contactPoly = poly;
 
-                nextVert = theVert;
+                lastVert = thisVert;
             }
         }
     }
@@ -478,6 +477,7 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
     {
         Material* material;
 
+        // Did we collide with a poly as opposed to a marble?
         if (marbleCollisionTime > finalT && contactPoly != NULL && contactPoly->material != -1)
         {
             material = contactPoly->object->getMaterial(contactPoly->material);
@@ -489,10 +489,13 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
         }
 
         mLastContact.position = lastContactPos;
+
+        // Did we collide with a marble?
         if (marbleCollisionTime <= finalT)
             mLastContact.normal = marbleCollisionNormal;
         else
         {
+            // or a poly?
             mLastContact.normal = finalPosition - lastContactPos;
             mLastContact.normal.normalize();
         }
