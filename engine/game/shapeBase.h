@@ -633,6 +633,7 @@ private:
         bool atEnd;       ///< Are we at the end of this thread?
         bool forward;     ///< Are we playing the thread forward? (else backwards)
         float timeScale;
+        U32 id;
     };
     Thread mScriptThread[MaxScriptThreads];
 

@@ -750,6 +750,7 @@ ShapeBase::ShapeBase()
         mScriptThread[i].state = Thread::Stop;
         mScriptThread[i].atEnd = false;
         mScriptThread[i].forward = true;
+        mScriptThread[i].id = 0;
     }
 
     for (i = 0; i < MaxTriggerKeys; i++)
@@ -2177,6 +2178,7 @@ bool ShapeBase::setThreadSequence(U32 slot, S32 seq, bool reset, F32 timeScale)
         st.sequence = seq;
         if (reset) {
             st.state = Thread::Play;
+            st.id++;
             st.timeScale = timeScale;
             st.atEnd = false;
             st.forward = true;
@@ -3062,6 +3064,7 @@ U32 ShapeBase::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
             Thread& st = mScriptThread[i];
             if (stream->writeFlag(st.sequence != -1 && (mask & (ThreadMaskN << i)))) {
                 stream->writeInt(st.sequence, ThreadSequenceBits);
+                stream->writeInt(st.id, 4);
                 stream->writeInt(st.state, 2);
                 stream->writeFlag(st.forward);
                 stream->writeFlag(st.atEnd);
@@ -3180,14 +3183,16 @@ void ShapeBase::unpackUpdate(NetConnection* con, BitStream* stream)
         for (S32 i = 0; i < MaxScriptThreads; i++) {
             if (stream->readFlag()) {
                 Thread& st = mScriptThread[i];
+                U32 oldID = st.id;
                 U32 seq = stream->readInt(ThreadSequenceBits);
+                st.id = stream->readInt(4);
                 st.state = stream->readInt(2);
                 st.forward = stream->readFlag();
                 st.atEnd = stream->readFlag();
-                if (st.sequence != seq)
-                    setThreadSequence(i, seq, false);
-                else
+                if (st.sequence == seq && st.id == oldID)
                     updateThread(st);
+                else
+                    setThreadSequence(i, seq, false);
             }
         }
     }
@@ -3678,7 +3683,12 @@ ConsoleMethod(ShapeBase, playThread, bool, 3, 6, "(int slot, string sequenceName
             {
                 S32 seq = object->getShape()->findSequence(argv[3]);
                 if (seq != -1 && object->setThreadSequence(slot, seq))
-                    return true;
+                {
+                    if (argc != 5)
+                        return true;
+
+                    return object->setTimeScale(slot, dAtof(argv[4]));
+                }
             }
         }
 
