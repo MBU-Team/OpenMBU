@@ -390,6 +390,9 @@ function onStart()
 
 function onExit()
 {
+   echo ("Exporting prefs");
+   export("$pref::*", "prefs.cs");   
+   
    Parent::onExit();
 }
 
