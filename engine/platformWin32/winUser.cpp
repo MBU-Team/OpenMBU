@@ -14,7 +14,21 @@ typedef long SHANDLE_PTR;
 
 #define CSIDL_PROFILE 0x0028
 
-const char* Platform::getUserDataDirectory()
+StringTableEntry Platform::getUserName(int charLimit)
+{
+    AssertFatal(charLimit <= 1024, "Platform::getUserName: out of range character limit");
+    char szBuffer[1024];
+    DWORD len = 1023;
+    GetUserNameA(szBuffer, &len);
+    if (charLimit > 1023)
+        charLimit = 1023;
+    szBuffer[charLimit] = '\0';
+
+    return StringTable->insert(szBuffer);
+}
+
+
+StringTableEntry Platform::getUserDataDirectory()
 {
     char szBuffer[512];
     if (!SHGetSpecialFolderPathA(NULL, LPSTR(szBuffer), CSIDL_APPDATA, true))
@@ -31,7 +45,7 @@ const char* Platform::getUserDataDirectory()
     return StringTable->insert(szBuffer);
 }
 
-const char* Platform::getUserHomeDirectory()
+StringTableEntry Platform::getUserHomeDirectory()
 {
     char szBuffer[512];
     if (!SHGetSpecialFolderPathA(NULL, LPSTR(szBuffer), CSIDL_PERSONAL, false))

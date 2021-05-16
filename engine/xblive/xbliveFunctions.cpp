@@ -1,7 +1,6 @@
 #include "platform/platform.h"
 #include "console/console.h"
 #include "console/consoleInternal.h"
-#include <Windows.h> // TEMP:
 
 ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 {
@@ -91,18 +90,14 @@ ConsoleFunction(XBLiveIsSignedInGold, bool, 1, 1, "()")
 ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
 {
     argc;
-    char* ret = Con::getReturnBuffer(1024);
 
-    // TEMP: Get windows user name
-    char buff[16];
-    DWORD len = 15;
-    GetUserNameA(buff, &len);
-    buff[15] = '\0';
-
-    dSprintf(ret, 1024, "%s", buff);
-
+    // Default to the name Alex, as that is the default username in MBO
+    //char* ret = Con::getReturnBuffer(1024);
     //dSprintf(ret, 1024, "%s", "Alex");
-    return ret;
+    //return ret;
+
+    // Use platform username until we set up a login system.
+    return Platform::getUserName(15); // X360 only supported at max 15 characters.
 }
 
 ConsoleFunction(XBLiveGetUserId, S32, 1, 1, "()")

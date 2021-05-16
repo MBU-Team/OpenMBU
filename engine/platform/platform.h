@@ -418,6 +418,7 @@ public:
     static bool setClipboard(const char* text);
 
     // User Specific Functions
+    static StringTableEntry getUserName(int charLimit = 1023);
     static StringTableEntry getUserHomeDirectory();
     static StringTableEntry getUserDataDirectory();
     static bool getUserIsAdministrator();
