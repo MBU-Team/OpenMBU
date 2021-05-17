@@ -100,7 +100,11 @@ void Win32WinMgr::resizeWindow(const U32 width, const U32 height, bool fullscree
 {
 
     RectI newRect = getCenteredWindowRect(width, height, fullscreen, borderless);
-
+    
+    mIntendedWidth = width;
+    mIntendedHeight = height;
+    mActualWidth = newRect.extent.x;
+    mActualHeight = newRect.extent.y;
 
     ShowWindow(winState.appWindow, SW_HIDE);
 
