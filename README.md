@@ -1,7 +1,7 @@
 # OpenMBU
 A reverse engineered version of Marble Blast Ultra that is based on Torque Shader Engine 0.9 (MS4).
 
-#Requirements
+# Requirements
 - [DirectX 9 Runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=8109)
 
 # Contributors
