@@ -6,7 +6,7 @@
 
 // Channel assignments (channel 0 is unused in-game).
 $GuiAudioType     = 1;
-$SimAudioType     = 3;
+$SimAudioType     = 1;
 $MessageAudioType = 1;
 $EffectAudioType = 1;
 $MusicAudioType = 2;

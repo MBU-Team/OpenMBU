@@ -90,7 +90,7 @@ $pref::SFX::bitrate = 32;
 /// The overall system volume at startup.  Note that 
 /// you can only scale volume down, volume does not
 /// get louder than 1.
-$pref::SFX::masterVolume   = 0.0;
+$pref::SFX::masterVolume   = 1.0;
 
 /// The startup sound channel volumes.  These are 
 /// used to control the overall volume of different 

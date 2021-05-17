@@ -77,7 +77,7 @@ function inputAndSoundOptionsList::onOptionChange(%this, %increase)
       case 3:
          // fx
          $pref::Option::FXVolume = %val * 5;
-         sfxSetMasterVolume($pref::Option::FXVolume * 0.01);
+         xbSetFXVolume($pref::Option::FXVolume * 0.01);
          sfxPlay(OptionsGuiTestSound);
       case 4:
          // mouse sensitivity

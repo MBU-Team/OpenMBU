@@ -788,7 +788,7 @@ function XBGamerProfile::unpackProfile(%this, %string)
 //   }
 
    xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
-   sfxSetMasterVolume($pref::Option::FXVolume * 0.01);
+   xbSetFXVolume($pref::Option::FXVolume * 0.01);
 }
 
 //function onXBLiveAllSPStatsLoaded()
@@ -930,7 +930,7 @@ function loadPCUserProfile()
    execPrefs("achievements.cs");
    
    xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
-   sfxSetMasterVolume($pref::Option::FXVolume * 0.01);
+   xbSetFXVolume($pref::Option::FXVolume * 0.01);
    
    // Set the new marble biscuit
    commandToServer('SetMarble', $pref::marbleIndex);
@@ -940,6 +940,12 @@ function xbSetMusicVolume(%volume)
 {
    $pref::SFX::channelVolume[$MusicAudioType] = %volume;
    sfxSetChannelVolume($MusicAudioType, $pref::SFX::channelVolume[$MusicAudioType]);
+}
+
+function xbSetFXVolume(%volume)
+{
+   $pref::SFX::channelVolume[$SimAudioType] = %volume;
+   sfxSetChannelVolume($SimAudioType, $pref::SFX::channelVolume[$SimAudioType]);
 }
 
 function saveUserProfile()
