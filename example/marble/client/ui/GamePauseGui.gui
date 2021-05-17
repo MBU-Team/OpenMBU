@@ -9,21 +9,42 @@ new GuiControl(GamePauseGui) {
    visible = "1";
       resumingGame = "1";
       helpTag = "0";
-
-   new GuiXboxListCtrl(PauseMenu) {
-      profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
-	   horizSizing = "left";
-	   vertSizing = "height";
-		position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+      
+   new GuiControl(PauseCenterCtrl) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "width";
+      vertSizing = "height";
+      position = "0 0";
       extent = "640 480";
+      minExtent = "8 8";
+      visible = "1";
+
+      new GuiXboxListCtrl(PauseMenu) {
+         profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+         horizSizing = "left";
+         vertSizing = "height";
+         position = isWidescreen()? "60 -25" : "290 -30"; // will autocenter vertically
+         extent = "640 480";
+      };
    };
-   
 };
 //--- OBJECT WRITE END ---
 
 function GamePauseGui::onWake(%this)
 {
    $GamePauseGuiActive = true;
+   
+   // resize to screen resolution
+   %width = getWord(getResolution(), 0);
+   %height = getWord(getResolution(), 1);
+   %this.resize(0, 0, %width, %height);
+
+   %w = getWord($Shell::Resolution,0);
+   %h = getWord($Shell::Resolution,1);
+   %offsetX = getWord($Shell::Offset,0);
+   %offsetY = getWord($Shell::Offset,1);
+   %this.add(PauseCenterCtrl);
+   PauseCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    
    PauseMenu.clear();
 	PauseMenu.addRow($Text::Resume, "0", 0, 2);
