@@ -522,7 +522,7 @@ ConsoleFunction(setVideoMode, void, 5, 6, "setVideoMode(width, height, bit depth
         
     GFX->setVideoMode(vm);
 
-    if (vm.fullScreen)
+    if (vm.fullScreen || vm.borderless)
     {
         char tempBuf[15];
         dSprintf(tempBuf, sizeof(tempBuf), "%d %d %d", vm.resolution.x, vm.resolution.y, vm.bitDepth);

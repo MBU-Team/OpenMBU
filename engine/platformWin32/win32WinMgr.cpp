@@ -101,8 +101,24 @@ void Win32WinMgr::resizeWindow(const U32 width, const U32 height, bool fullscree
 
     RectI newRect = getCenteredWindowRect(width, height, fullscreen, borderless);
 
+
+    ShowWindow(winState.appWindow, SW_HIDE);
+
+    if (borderless)
+    {
+        SetWindowLong(winState.appWindow, GWL_STYLE, 0);
+        SetWindowLong(winState.appWindow, GWL_EXSTYLE, 0);
+    }
+    else
+    {
+        SetWindowLong(winState.appWindow, GWL_STYLE, mStyle);
+        SetWindowLong(winState.appWindow, GWL_EXSTYLE, mExStyle);
+    }
+    mBorderless = borderless;
     SetWindowPos(winState.appWindow, HWND_NOTOPMOST, newRect.point.x, newRect.point.y,
         newRect.extent.x, newRect.extent.y, NULL);
+
+    ShowWindow(winState.appWindow, SW_SHOWDEFAULT);
 }
 
 //--------------------------------------
@@ -155,7 +171,10 @@ void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y
     AssertFatal(result, "Could not create window");
 
     if (borderless)
+    {
         SetWindowLong(winState.appWindow, GWL_STYLE, 0);
+        SetWindowLong(winState.appWindow, GWL_EXSTYLE, 0);
+    }
 
     ShowWindow(winState.appWindow, SW_SHOWDEFAULT);
     UpdateWindow(winState.appWindow); // Repaint for good measure
