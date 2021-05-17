@@ -313,6 +313,11 @@ $Text::InvX = "Axe caméra X";
 $Text::InvY = "Axe caméra Y";
 $Text::MouseSensitivity = "Sensibilité de la souris";
 $Text::InvOnOff = "Normal\tInversé";
+$Text::VideoOptions = "Options vidéo";
+$Text::FullscreenResolution = "Résolution plein écran";
+$Text::WindowedResolution = "Résolution fenêtrée";
+$Text::DisplayMode = "Mode d'affichage";
+$Text::DisplayModeOptions = "Fenêtré\tPlein écran sans bordure\tPlein écran exclusif";
 $Text::MarbleSkin = "Type de bille";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
@@ -386,6 +391,7 @@ $Text::ErrorDemoUpgrade     = "Déverrouillez la version complète pour disputer
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure        = "Voulez-vous vraiment exclure ce joueur ?";
 $Text::ErrorNoSwitchMarble  = "Vous ne pouvez pas changer de bille en cours de jeu.";
+$Text::ErrorNoChangeRes     = "Vous ne pouvez pas modifier les résolutions en cours de partie.";
 
 
 ;-------------------------------------------------------------------------------
@@ -393,6 +399,7 @@ $Text::ErrorNoSwitchMarble  = "Vous ne pouvez pas changer de bille en cours de j
 ;-------------------------------------------------------------------------------
 $Text::HOMarble = "Aspect de la bille";
 $Text::HOOptions = "Options audio et vidéo";
+$Text::HOVideoOptions = "Options vidéo";
 $Text::HOInstructions = "Comment jouer";
 $Text::HOCredits = "Crédits";
 

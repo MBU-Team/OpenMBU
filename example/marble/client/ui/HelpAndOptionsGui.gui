@@ -33,6 +33,12 @@ function HelpAndOptionsGui::onA(%this)
       XMessagePopupDlg.show(0, $Text::ErrorNoSwitchMarble, $Text::OK);
       return true;
    }
+   
+   if( %idx == 2 && (ServerConnection.gameState !$= "wait" && ServerConnection.gameState !$= "") )
+   {
+      XMessagePopupDlg.show(0, $Text::ErrorNoChangeRes, $Text::OK);
+      return true;
+   }
       
    switch( %idx )
    {
@@ -41,8 +47,10 @@ function HelpAndOptionsGui::onA(%this)
       case 1: 
          RootGui.setContent(inputAndSoundOptionsGui, %this.backGui);
       case 2: 
+         RootGui.setContent(videoOptionsGui, %this.backGui);
+      case 3: 
          RootGui.setContent(aboutMenuOptionsGui, %this.backGui);
-      case 3:
+      case 4:
          RootGui.setContent(helpGui, %this.backGui, 5);
    }
     
@@ -61,6 +69,7 @@ function HelpAndOptionsGui::show(%this, %backGui)
    
    HelpAndOptionsList.addRow($Text::HOMarble, "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOOptions, "", 0, 8);
+   HelpAndOptionsList.addRow($Text::HOVideoOptions, "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOInstructions, "", 0, 12);
    HelpAndOptionsList.addRow($Text::HOCredits, "", 0, 12);
   

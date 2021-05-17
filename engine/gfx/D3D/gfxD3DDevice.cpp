@@ -141,6 +141,16 @@ void GFXD3DDevice::enumerateVideoModes()
             toAdd.resolution = Point2I(mode.Width, mode.Height);
             toAdd.borderless = false;
 
+            bool skipRes = false;
+            for (U32 k = 0; k < mVideoModes.size(); k++)
+            {
+                if (toAdd.bitDepth == mVideoModes[k].bitDepth && toAdd.resolution == mVideoModes[k].resolution)
+                    skipRes = true;
+            }
+
+            if (skipRes)
+                continue;
+
             mVideoModes.push_back(toAdd);
         }
     }

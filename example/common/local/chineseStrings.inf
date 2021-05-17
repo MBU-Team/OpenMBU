@@ -313,6 +313,11 @@ $Text::InvX="視角 X 軸";
 $Text::InvY="視角 Y 軸";
 $Text::MouseSensitivity = "鼠標靈敏度";
 $Text::InvOnOff="正常\t反轉";
+$Text::VideoOptions = "視頻選項";
+$Text::FullscreenResolution = "全屏分辨率";
+$Text::WindowedResolution = "窗口分辨率";
+$Text::DisplayMode = "顯示模式";
+$Text::DisplayModeOptions = "開窗的\t無邊框全屏\t獨家全屏";
 $Text::MarbleSkin="彈珠類型";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
@@ -386,6 +391,7 @@ $Text::ErrorDemoUpgrade="升級到完整版才能玩本遊戲！";
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure="你確定要踢除這個玩家？";
 $Text::ErrorNoSwitchMarble="遊戲進行中無法更換彈珠。";
+$Text::ErrorNoChangeRes     = "你可能不會在遊戲的同時改變分辨率。";
 
 
 ;-------------------------------------------------------------------------------
@@ -393,6 +399,7 @@ $Text::ErrorNoSwitchMarble="遊戲進行中無法更換彈珠。";
 ;-------------------------------------------------------------------------------
 $Text::HOMarble="彈珠外觀";
 $Text::HOOptions="輸入及聲音選項";
+$Text::HOVideoOptions = "視頻選項";
 $Text::HOInstructions="如何玩";
 $Text::HOCredits="製作群";
 

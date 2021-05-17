@@ -313,6 +313,11 @@ $Text::InvX = "Eje X de la cámara";
 $Text::InvY = "Eje Y de la cámara";
 $Text::MouseSensitivity = "Sensibilidad del ratón";
 $Text::InvOnOff = "Normal\tInvertido";
+$Text::VideoOptions = "Opciones de video";
+$Text::FullscreenResolution = "Resolución de pantalla completa";
+$Text::WindowedResolution = "Resolución de ventana";
+$Text::DisplayMode = "Modo de visualización";
+$Text::DisplayModeOptions = "Ventana\tPantalla completa sin bordes\tPantalla completa exclusiva";
 $Text::MarbleSkin = "Tipo de bola";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
@@ -386,6 +391,7 @@ $Text::ErrorDemoUpgrade     = "¡Desbloquea la versión completa para jugar en e
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure        = "¿Seguro que quieres expulsar a este jugador?";
 $Text::ErrorNoSwitchMarble  = "No puedes cambiar de pelota durante una partida.";
+$Text::ErrorNoChangeRes     = "No puedes cambiar las resoluciones mientras estás en un juego.";
 
 
 ;-------------------------------------------------------------------------------
@@ -393,6 +399,7 @@ $Text::ErrorNoSwitchMarble  = "No puedes cambiar de pelota durante una partida."
 ;-------------------------------------------------------------------------------
 $Text::HOMarble = "Aspecto de la pelota";
 $Text::HOOptions = "Opc. sonido y control";
+$Text::HOVideoOptions = "Opciones de video";
 $Text::HOInstructions = "Cómo jugar";
 $Text::HOCredits = "Créditos";
 

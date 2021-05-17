@@ -313,6 +313,11 @@ $Text::InvX = "視点 - X 軸";
 $Text::InvY = "視点 - Y 軸";
 $Text::MouseSensitivity = "マウス感度";
 $Text::InvOnOff = "標準\t反転";
+$Text::VideoOptions = "ビデオオプション";
+$Text::FullscreenResolution = "フルスクリーン解像度";
+$Text::WindowedResolution = "ウィンドウ解像度";
+$Text::DisplayMode = "ディスプレイモード";
+$Text::DisplayModeOptions = "窓付き\tボーダレスフルスクリーン\t独占フルスクリーン";
 $Text::MarbleSkin = "デザイン";
 $Text::MarbleOptions = "1\t2\t3\t4\t5\t6\t7\t8";
 ;$Text::MarbleColor = "Marble Color";
@@ -385,6 +390,7 @@ $Text::ErrorDemoUpgrade     = "完全版を購入して、このマッチをプ�
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure        = "このプレイヤーを退出させてよろしいですか？";
 $Text::ErrorNoSwitchMarble  = "ゲーム中はマーブルのデザインを変更できません。";
+$Text::ErrorNoChangeRes     = "ゲーム中に解像度を変更することはできません。";
 
 
 ;-------------------------------------------------------------------------------
@@ -392,6 +398,7 @@ $Text::ErrorNoSwitchMarble  = "ゲーム中はマーブルのデザインを変�
 ;-------------------------------------------------------------------------------
 $Text::HOMarble = "マーブルのデザイン";
 $Text::HOOptions = "視点と音の設定";
+$Text::HOVideoOptions = "ビデオオプション";
 $Text::HOInstructions = "プレイ方法";
 $Text::HOCredits = "クレジット";
 

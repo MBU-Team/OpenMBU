@@ -120,6 +120,7 @@ function initClient()
    exec("./ui/HelpAndOptionsGui.gui");
    exec("./ui/ESRBGui.gui");
    exec("./ui/inputAndSoundOptionsGui.gui");
+   exec("./ui/videoOptionsGui.gui");
    exec("./ui/marblePickerGui.gui");
    exec("./ui/aboutMenuOptionsGui.gui");
    exec("./ui/helpGui.gui");

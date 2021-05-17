@@ -313,6 +313,11 @@ $Text::InvX = "카메라 수평 이동";
 $Text::InvY = "카메라 수직 이동";
 $Text::MouseSensitivity = "마우스 감도";
 $Text::InvOnOff = "일반\t반전";
+$Text::VideoOptions = "비디오 옵션";
+$Text::FullscreenResolution = "전체 화면 해상도";
+$Text::WindowedResolution = "창 해상도";
+$Text::DisplayMode = "디스플레이 모드";
+$Text::DisplayModeOptions = "창\t경계선없는 전체 화면\t독점 전체 화면";
 $Text::MarbleSkin = "마블공 종류";
 $Text::MarbleOptions = "1번\t2번\t3번\t4번\t5번\t6번\t7번\t8번";
 ;$Text::MarbleColor = "Marble Color";
@@ -385,6 +390,7 @@ $Text::ErrorDemoUpgrade     = "이 매치를 하려면 정식 버전을 구입�
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure        = "이 플레이어를 강제 퇴장시키겠습니까?";
 $Text::ErrorNoSwitchMarble  = "게임 중에는 마블공 종류를 바꿀 수 없습니다.";
+$Text::ErrorNoChangeRes     = "게임 중에는 해상도를 변경할 수 없습니다.";
 
 
 ;-------------------------------------------------------------------------------
@@ -392,6 +398,7 @@ $Text::ErrorNoSwitchMarble  = "게임 중에는 마블공 종류를 바꿀 수 �
 ;-------------------------------------------------------------------------------
 $Text::HOMarble = "마블공 모양";
 $Text::HOOptions = "컨트롤 및 사운드 옵션";
+$Text::HOVideoOptions = "비디오 옵션";
 $Text::HOInstructions = "게임 방법";
 $Text::HOCredits = "제작진";
 

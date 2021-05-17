@@ -313,6 +313,11 @@ $Text::InvX = "Kamera X-Achse";
 $Text::InvY = "Kamera Y-Achse";
 $Text::MouseSensitivity = "Maus-Empfindlichkeit";
 $Text::InvOnOff = "Normal\tUmgekehrt";
+$Text::VideoOptions = "Videooptionen";
+$Text::FullscreenResolution = "Vollbildauflösung";
+$Text::WindowedResolution = "Fensterauflösung";
+$Text::DisplayMode = "Anzeigemodus";
+$Text::DisplayModeOptions = "Fenster\tRandlos Vollbild\texklusive Vollbild";
 $Text::MarbleSkin = "Murmeltyp";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
@@ -386,6 +391,7 @@ $Text::ErrorDemoUpgrade     = "Schalten Sie die Vollversion frei, um dieses Spie
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure        = "Möchten Sie diesen Spieler wirklich hinauswerfen?";
 $Text::ErrorNoSwitchMarble  = "Sie können Ihre Murmel während des Spiels nicht wechseln.";
+$Text::ErrorNoChangeRes     = "Sie dürfen die Auflösungen während eines Spiels nicht ändern.";
 
 
 ;-------------------------------------------------------------------------------
@@ -393,6 +399,7 @@ $Text::ErrorNoSwitchMarble  = "Sie können Ihre Murmel während des Spiels nicht
 ;-------------------------------------------------------------------------------
 $Text::HOMarble = "Murmelaussehen";
 $Text::HOOptions = " Eingabe-/Sound-Optionen";
+$Text::HOVideoOptions = "Videooptionen";
 $Text::HOInstructions = "So wird gespielt";
 $Text::HOCredits = "Mitwirkende";
 

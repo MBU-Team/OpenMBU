@@ -467,9 +467,14 @@ ConsoleFunction(getResolution, const char*, 1, 1, "Returns screen resolution in 
     return buf;
 }
 
-ConsoleFunction(getResolutionList, const char*, 1, 1, "Returns a tab-seperated list of possible resolutions.")
+ConsoleFunction(getResolutionList, const char*, 1, 2, "getResolutionList([minimumRes]) Returns a tab-seperated list of possible resolutions.")
 {
     const Vector<GFXVideoMode>* const modelist = GFX->getVideoModeList();
+
+    S32 minWidth = 0;
+    S32 minHeight = 0;
+    if (argc > 1)
+        dSscanf(argv[1], "%d %d", &minWidth, &minHeight);
 
     U32 k;
     U32 stringLen = 0;
@@ -477,6 +482,11 @@ ConsoleFunction(getResolutionList, const char*, 1, 1, "Returns a tab-seperated l
     {
         AssertFatal((*modelist)[k].resolution.x < 10000 && (*modelist)[k].resolution.y < 10000,
             "My brain hurts with resolutions above 10k pixels. :(");
+
+        if (minWidth > 0 && (*modelist)[k].resolution.x < minWidth)
+            continue;
+        if (minHeight > 0 && (*modelist)[k].resolution.y < minHeight)
+            continue;
 
         if ((*modelist)[k].resolution.x >= 1000)
             stringLen += 5;//4 digits + space
@@ -495,6 +505,11 @@ ConsoleFunction(getResolutionList, const char*, 1, 1, "Returns a tab-seperated l
     returnString[0] = '\0';  //have to null out the first byte so that we don't concatenate onto something that's already there
     for (k = 0; k < (*modelist).size(); k++)
     {
+        if (minWidth > 0 && (*modelist)[k].resolution.x < minWidth)
+            continue;
+        if (minHeight > 0 && (*modelist)[k].resolution.y < minHeight)
+            continue;
+
         if (SFXBBCOPY_SIZE > (*modelist)[k].resolution.x ||
             SFXBBCOPY_SIZE > (*modelist)[k].resolution.y)
         {
@@ -509,13 +524,13 @@ ConsoleFunction(getResolutionList, const char*, 1, 1, "Returns a tab-seperated l
     return returnString;
 }
 
-ConsoleFunction(setVideoMode, void, 5, 6, "setVideoMode(width, height, bit depth, fullscreen)")
+ConsoleFunction(setVideoMode, void, 5, 5, "setVideoMode(width, height, bit depth, fullscreen)")
 {
     GFXVideoMode vm = GFX->getVideoMode();
     vm.resolution = Point2I(dAtoi(argv[1]), dAtoi(argv[2]));
     vm.bitDepth = dAtoi(argv[3]);
 
-    int fsType = dAtoi(argv[4]);
+    const S32 fsType = dAtoi(argv[4]);
 
     vm.fullScreen = fsType == 1;
     vm.borderless = fsType == 2;
@@ -534,6 +549,59 @@ ConsoleFunction(setVideoMode, void, 5, 6, "setVideoMode(width, height, bit depth
         dSprintf(tempBuf, sizeof(tempBuf), "%d %d", vm.resolution.x, vm.resolution.y);
         Con::setVariable("$pref::Video::windowedRes", tempBuf);
     }
+}
+
+ConsoleFunction(updateVideoMode, void, 1, 1, "updateVideoMode()")
+{
+    GFXVideoMode vm = GFX->getVideoMode();
+
+    const S32 fsType = Con::getIntVariable("$pref::Video::fullScreen");
+
+    U32 w = 0, h = 0, d = 0;
+    if (fsType > 0)
+    {
+        const char* fsRes = Con::getVariable("$pref::Video::resolution");
+        const S32 fsResLen = dStrlen(fsRes);
+
+        if (fsResLen)
+            dSscanf(fsRes, "%d %d %d", &w, &h, &d);
+        else
+        {
+            w = 800;
+            h = 600;
+            d = 32;
+        }
+    } else
+    {
+        const char* winRes = Con::getVariable("$pref::Video::windowedRes");
+        const S32 winResLen = dStrlen(winRes);
+        if (winResLen)
+        {
+            dSscanf(winRes, "%d %d", &w, &h);
+            d = 32;
+        } else {
+            const char* fsRes = Con::getVariable("$pref::Video::resolution");
+            const S32 fsResLen = dStrlen(fsRes);
+
+            if (fsResLen)
+                dSscanf(fsRes, "%d %d %d", &w, &h, &d);
+            else
+            {
+                w = 800;
+                h = 600;
+                d = 32;
+            }
+        }
+    }
+
+    vm.resolution.x = w;
+    vm.resolution.y = h;
+    vm.bitDepth = d;
+
+    vm.fullScreen = fsType == 1;
+    vm.borderless = fsType == 2;
+
+    GFX->setVideoMode(vm);
 }
 
 ConsoleFunction(toggleFullScreen, void, 1, 1, "toggles between windowed and fullscreen mode. toggleFullscreen()")

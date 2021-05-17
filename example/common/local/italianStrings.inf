@@ -313,6 +313,11 @@ $Text::InvX = "Asse visuale X";
 $Text::InvY = "Asse visuale Y";
 $Text::MouseSensitivity = "Sensibilità del mouse";
 $Text::InvOnOff = "Normale\tInvertito";
+$Text::VideoOptions = "Opzioni video";
+$Text::FullscreenResolution = "Risoluzione a schermo intero";
+$Text::WindowedResolution = "Risoluzione in finestra";
+$Text::DisplayMode = "Modalità display";
+$Text::DisplayModeOptions = "Finestrato\tSenza bordo a tutto schermo\tSchermo intero esclusivo";
 $Text::MarbleSkin = "Tipo di biglia";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
@@ -386,6 +391,7 @@ $Text::ErrorDemoUpgrade     = "Sblocca la versione completa per giocare in quest
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure        = "Confermi di voler espellere questo giocatore?";
 $Text::ErrorNoSwitchMarble  = "Non puoi cambiare biglia durante la partita.";
+$Text::ErrorNoChangeRes     = "Non puoi modificare le risoluzioni durante un gioco.";
 
 
 ;-------------------------------------------------------------------------------
@@ -393,6 +399,7 @@ $Text::ErrorNoSwitchMarble  = "Non puoi cambiare biglia durante la partita.";
 ;-------------------------------------------------------------------------------
 $Text::HOMarble = "Aspetto della biglia";
 $Text::HOOptions = "Opzioni comandi e audio";
+$Text::HOVideoOptions = "Opzioni video";
 $Text::HOInstructions = "Come giocare";
 $Text::HOCredits = "Riconoscimenti";
 

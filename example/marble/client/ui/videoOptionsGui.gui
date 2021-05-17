@@ -1,0 +1,186 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(videoOptionsGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+   new GuiXboxOptionListCtrl(videoOptionsList) {
+      profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallProfile";
+      position = isWidescreen()? "380 211" : "132 100";
+      extent = isWidescreen()? "815 400" : "510 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = "center";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "50 50" : "45 55";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+      
+      // data is dynamically added to this option list in the show() function
+   };
+};
+//--- OBJECT WRITE END ---
+
+function videoOptionsGui::show(%this, %backGui)
+{   
+	if (%backGui !$= "")
+      %this.backGui = %backGui;
+      
+   videoOptionsList.clear();
+   
+   $Option::initialRes = $pref::Video::resolution;
+   $Option::initialWindowedRes = $pref::Video::windowedRes;
+   $Option::initialDisplayMode = $pref::Video::fullScreen;
+   
+   $Option::resList = getResolutionList("1280 720");
+   
+   // Filter out Bit Depth for Windowed Resolutions
+   $Option::windowedResList = "";
+   for (%i = 0; %i < getFieldCount($Option::resList); %i++)
+   {
+      %res = getField($Option::resList, %i);
+      
+      %finalRes = getWord(%res, 0) @ " " @ getWord(%res, 1);
+      
+      %skip = false;
+      for (%j = 0; %j < getFieldCount($Option::windowedResList); %j++)
+      {
+         if (getField($Option::windowedResList, %j) $= %finalRes)
+         {
+            %skip = true;
+            break;
+         }
+      }
+      
+      if (%skip)
+         continue;
+      
+      if (%i == 0)
+         $Option::windowedResList = %finalRes;
+      else
+         $Option::windowedResList = $Option::windowedResList TAB %finalRes;
+   }
+      
+   // Format Fullscreen Resolutions (incl. Bit Depth)
+   $Option::formattedResList = "";
+   for (%i = 0; %i < getFieldCount($Option::resList); %i++)
+   {
+      %res = getField($Option::resList, %i);
+      
+      %finalRes = getWord(%res, 0) @ "x" @ getWord(%res, 1) @ "x" @ getWord(%res, 2);
+      
+      if (%i == 0)
+         $Option::formattedResList = %finalRes;
+      else
+         $Option::formattedResList = $Option::formattedResList TAB %finalRes;
+   }
+   
+   // Format Windowed Resolutions (excl. Bit Depth)
+   $Option::formattedWindowedResList = "";
+   for (%i = 0; %i < getFieldCount($Option::windowedResList); %i++)
+   {
+      %res = getField($Option::windowedResList, %i);
+      
+      %finalRes = getWord(%res, 0) @ "x" @ getWord(%res, 1);
+      
+      if (%i == 0)
+         $Option::formattedWindowedResList = %finalRes;
+      else
+         $Option::formattedWindowedResList = $Option::formattedWindowedResList TAB %finalRes;
+   }
+  
+   videoOptionsList.addRow($Text::FullscreenResolution, $Option::formattedResList, 8); // fullscreen res
+   videoOptionsList.addRow($Text::WindowedResolution, $Option::formattedWindowedResList, 8); // windowed res
+   
+   // Block Exclusive Fullscreen for now as it's buggy
+   videoOptionsList.addRow($Text::DisplayMode, getFields($Text::DisplayModeOptions, 0, 1), 8); // display mode
+   //videoOptionsList.addRow($Text::DisplayMode, $Text::DisplayModeOptions, 8); // display mode
+
+   for (%i = 0; %i < getFieldCount($Option::resList); %i++)
+   {
+      if (getField($Option::resList, %i) !$= $pref::Video::resolution)
+         continue;
+         
+      $Option::resolution = %i;
+      break;
+   }
+   
+   for (%i = 0; %i < getFieldCount($Option::windowedResList); %i++)
+   {
+      if (getWords(getField($Option::windowedResList, %i), 0, 1) !$= $pref::Video::windowedRes)
+         continue;
+         
+      $Option::windowedRes = %i;
+      break;
+   }
+
+   $Option::fullScreen = $pref::Video::fullScreen;
+   if ($Option::fullScreen == 1)
+      $Option::fullScreen = 2;
+   else if ($Option::fullScreen == 2)
+      $Option::fullScreen = 1;
+
+   videoOptionsList.setOptionIndex(0, $Option::resolution);
+   videoOptionsList.setOptionIndex(1, $Option::windowedRes);
+   videoOptionsList.setOptionIndex(2, $Option::fullScreen);
+
+   RootGui.setA( $Text::OK );
+   RootGui.setTitle( $Text::About1Title );
+}
+
+function videoOptionsList::onOptionChange(%this, %increase)
+{
+   %row = %this.getSelectedIndex();
+   %val = %this.getOptionIndex(%row); 
+   
+   echo(%val);
+   
+   switch (%row)
+   {
+      case 0:
+         // fullscreen res
+         %res = getField($Option::resList, %val);
+         $pref::Video::resolution = %res;
+         echo("Fullscreen Res = " @ $pref::Video::resolution);
+      case 1:
+         // windowed res
+         %res = getWords(getField($Option::windowedResList, %val), 0, 1);
+         $pref::Video::windowedRes = %res;
+         echo("Windowed Res = " @ $pref::Video::windowedRes);
+      case 2:
+         // display mode
+         if (%val == 1)
+            %val = 2;
+         else if (%val == 2)
+            %val = 1;
+            
+         $pref::Video::fullScreen = %val;
+         echo("Display Mode = " @ $pref::Video::fullScreen);
+   }  
+}
+
+function videoOptionsGui::onA(%this)
+{
+   %videoChanged = false;
+   if ($pref::Video::resolution !$= $Option::initialRes)
+      %videoChanged = true;
+   if ($pref::Video::windowedRes !$= $Option::initialWindowedRes)
+      %videoChanged = true;
+   if ($pref::Video::fullScreen !$= $Option::initialDisplayMode)
+      %videoChanged = true;
+   
+   if (%videoChanged)
+   {
+      updateVideoMode();
+      fixSizing();
+   }
+   
+   RootGui.setContent(HelpAndOptionsGui, %this.backGui);
+   saveUserProfile();
+}

@@ -313,6 +313,11 @@ $Text::InvX = "Camera X-Axis";
 $Text::InvY = "Camera Y-Axis";
 $Text::MouseSensitivity = "Mouse Sensitivity";
 $Text::InvOnOff = "Normal\tInverted";
+$Text::VideoOptions = "Opções de Vídeo";
+$Text::FullscreenResolution = "Resolução de tela inteira";
+$Text::WindowedResolution = "Resolução em janela";
+$Text::DisplayMode = "Modo de exibição";
+$Text::DisplayModeOptions = "Windowed\tTela inteira sem borda\tTela inteira exclusiva";
 $Text::MarbleSkin = "Marble Type";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
@@ -386,6 +391,7 @@ $Text::ErrorDemoUpgrade     = "Unlock the full version to play in this match!";
 ;$Text::ErrorDemoReject      = "Full version players can not play in demo sessions."; // using $Text::ErrorCannotConnect, should never happen anyway
 $Text::ErrorKickSure        = "Are you sure you want to kick this player?";
 $Text::ErrorNoSwitchMarble  = "You may not switch your marble while in a game.";
+$Text::ErrorNoChangeRes     = "Você não pode alterar resoluções, enquanto em um jogo.";
 
 
 ;-------------------------------------------------------------------------------
@@ -393,6 +399,7 @@ $Text::ErrorNoSwitchMarble  = "You may not switch your marble while in a game.";
 ;-------------------------------------------------------------------------------
 $Text::HOMarble = "Marble Appearance";
 $Text::HOOptions = "Input and Sound Options";
+$Text::HOVideoOptions = "Opções de Vídeo";
 $Text::HOInstructions = "How to Play";
 $Text::HOCredits = "Credits";
 

@@ -7421,6 +7421,7 @@ Real time is platform defined; typically time since the computer booted.</desc>
         <desc>Returns screen resolution in form "width height bitdepth fullscreen"</desc>
     </function>
     <function>        <name>getResolutionList</name>
+        <args>[minimumRes]</args>
         <desc>Returns a tab-seperated list of possible resolutions.</desc>
     </function>
     <function>        <name>getScheduleDuration</name>
@@ -8150,6 +8151,8 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>trim</name>
         <args>string</args>
+    </function>
+    <function>        <name>updateVideoMode</name>
     </function>
     <function>        <name>ValidateMemory</name>
     </function>
