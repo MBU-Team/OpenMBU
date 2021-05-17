@@ -509,12 +509,17 @@ ConsoleFunction(getResolutionList, const char*, 1, 1, "Returns a tab-seperated l
     return returnString;
 }
 
-ConsoleFunction(setVideoMode, void, 5, 5, "setVideoMode(width, height, bit depth, fullscreen)")
+ConsoleFunction(setVideoMode, void, 5, 6, "setVideoMode(width, height, bit depth, fullscreen)")
 {
     GFXVideoMode vm = GFX->getVideoMode();
     vm.resolution = Point2I(dAtoi(argv[1]), dAtoi(argv[2]));
     vm.bitDepth = dAtoi(argv[3]);
-    vm.fullScreen = dAtoi(argv[4]);
+
+    int fsType = dAtoi(argv[4]);
+
+    vm.fullScreen = fsType == 1;
+    vm.borderless = fsType == 2;
+        
     GFX->setVideoMode(vm);
 
     if (vm.fullScreen)

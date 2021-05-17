@@ -513,7 +513,7 @@ function clearTriggers()
 
 // keyboard
 GlobalActionMap.bind(keyboard, "tilde", toggleConsole);
-GlobalActionMap.bindCmd(keyboard, "alt enter", "", "toggleFullScreen();");
+//GlobalActionMap.bindCmd(keyboard, "alt enter", "", "toggleFullScreen();");
 GlobalActionMap.bind(keyboard, "F9", cycleDebugRenderMode);
 GlobalActionMap.bindCmd(keyboard, "escape", "", "pauseOrEscape();");
 GlobalActionMap.bindCmd(keyboard, "ctrl 1", "", "setVideoMode(640,480,32,0);");

@@ -252,8 +252,8 @@ bool Video::setDevice(const char* renderName, U32 width, U32 height, U32 bpp, bo
                 U32 w, h, d;
 
                 dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
-
-                return setDevice("D3D", w, h, d, Con::getBoolVariable("$pref::Video::fullScreen", true));
+                
+                return setDevice("D3D", w, h, d, Con::getIntVariable("$pref::Video::fullScreen", 1) == 1);
             }
             else
             {
@@ -269,8 +269,8 @@ bool Video::setDevice(const char* renderName, U32 width, U32 height, U32 bpp, bo
                 U32 w, h, d;
 
                 dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
-
-                return setDevice("OpenGL", w, h, d, Con::getBoolVariable("$pref::Video::fullScreen", true));
+                
+                return setDevice("OpenGL", w, h, d, Con::getIntVariable("$pref::Video::fullScreen", 1) == 1);
             }
             else
             {
@@ -287,8 +287,8 @@ bool Video::setDevice(const char* renderName, U32 width, U32 height, U32 bpp, bo
 
             dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
             Con::setBoolVariable("$pref::Video::appliedPref", true);
-
-            return setDevice("D3D", w, h, d, Con::getBoolVariable("$pref::Video::fullScreen", true));
+            
+            return setDevice("D3D", w, h, d, Con::getIntVariable("$pref::Video::fullScreen", 1) == 1);
         }
         else
             Con::setBoolVariable("$pref::Video::appliedPref", true);

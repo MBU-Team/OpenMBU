@@ -120,6 +120,11 @@ function parseArgs()
          case "-fullscreen":
             $pref::Video::fullScreen = 1;
             $argUsed[%i]++;
+            
+         //--------------------
+         case "-borderless":
+            $pref::Video::fullScreen = 2;
+            $argUsed[%i]++;
 
          //--------------------
          case "-windowed":

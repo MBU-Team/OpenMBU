@@ -51,20 +51,33 @@ Win32WinMgr::~Win32WinMgr()
 }
 
 //--------------------------------------
-RectI Win32WinMgr::getCenteredWindowRect(const U32 width, const U32 height, bool fullscreen)
+RectI Win32WinMgr::getCenteredWindowRect(const U32 width, const U32 height, bool fullscreen, bool borderless)
 {
     DWORD	dwExStyle;
     DWORD dwStyle;
 
     dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-    dwStyle = WS_OVERLAPPEDWINDOW;
+    //dwStyle = WS_OVERLAPPEDWINDOW;
 
+    if (borderless)
+        dwStyle = 0;
+    else
+        dwStyle |= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;
 
     RECT windowRect;
-    windowRect.left = 0;
-    windowRect.top = 0;
-    windowRect.right = width;
-    windowRect.bottom = height;
+
+    if (borderless)
+    {
+        //windowRect.right = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+        //windowRect.bottom = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
+        GetWindowRect(GetDesktopWindow(), &windowRect);
+    } else {
+        windowRect.left = 0;
+        windowRect.top = 0;
+        windowRect.right = width;
+        windowRect.bottom = height;
+    }
 
     AdjustWindowRectEx(&windowRect, dwStyle, false, dwExStyle);
     RectI newRect;
@@ -73,7 +86,7 @@ RectI Win32WinMgr::getCenteredWindowRect(const U32 width, const U32 height, bool
     newRect.extent.y = windowRect.bottom - windowRect.top;
 
     //don't "center" the screen if it's in fullscreen - we're gonna take up the entire thing!
-    if (!fullscreen)
+    if (!fullscreen && !borderless)
     {
         newRect.point.x += (winState.desktopWidth - newRect.extent.x) / 2;
         newRect.point.y += (winState.desktopHeight - newRect.extent.y) / 2;
@@ -83,26 +96,33 @@ RectI Win32WinMgr::getCenteredWindowRect(const U32 width, const U32 height, bool
 }
 
 //--------------------------------------
-void Win32WinMgr::resizeWindow(const U32 width, const U32 height, bool fullscreen)
+void Win32WinMgr::resizeWindow(const U32 width, const U32 height, bool fullscreen, bool borderless)
 {
 
-    RectI newRect = getCenteredWindowRect(width, height, fullscreen);
+    RectI newRect = getCenteredWindowRect(width, height, fullscreen, borderless);
 
     SetWindowPos(winState.appWindow, HWND_NOTOPMOST, newRect.point.x, newRect.point.y,
         newRect.extent.x, newRect.extent.y, NULL);
 }
 
 //--------------------------------------
-void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y, const U32 width, const U32 height, const U32 frequency, bool fullscreen)
+void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y, const U32 width, const U32 height, const U32 frequency, bool fullscreen, bool borderless)
 {
     destroyWindow();
 
-    RectI newRect = getCenteredWindowRect(width, height, fullscreen);
+    RectI newRect = getCenteredWindowRect(width, height, fullscreen, borderless);
 
     mStyle = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    
     mStyle |= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;
 
-    mExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+    //if (borderless)
+    //    mStyle ^= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;
+
+    //if (borderless)
+    //    mExStyle = 0;
+    //else
+        mExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 
 #ifdef UNICODE
     UTF16 winTitle[64];
@@ -111,6 +131,11 @@ void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y
     const char* winTitle = windowTitle;
 #endif
 
+    mIntendedWidth = width;
+    mIntendedHeight = height;
+    mActualWidth = newRect.extent.x;
+    mActualHeight = newRect.extent.y;
+    mBorderless = borderless;
 
     bool result = winState.appWindow = CreateWindowEx(
         mExStyle,
@@ -128,6 +153,9 @@ void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y
 
 
     AssertFatal(result, "Could not create window");
+
+    if (borderless)
+        SetWindowLong(winState.appWindow, GWL_STYLE, 0);
 
     ShowWindow(winState.appWindow, SW_SHOWDEFAULT);
     UpdateWindow(winState.appWindow); // Repaint for good measure

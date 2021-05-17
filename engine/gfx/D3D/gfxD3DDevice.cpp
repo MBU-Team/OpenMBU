@@ -139,6 +139,7 @@ void GFXD3DDevice::enumerateVideoModes()
             toAdd.fullScreen = false;
             toAdd.refreshRate = mode.RefreshRate;
             toAdd.resolution = Point2I(mode.Width, mode.Height);
+            toAdd.borderless = false;
 
             mVideoModes.push_back(toAdd);
         }
@@ -156,7 +157,7 @@ void GFXD3DDevice::setVideoMode(const GFXVideoMode& mode)
     D3DPRESENT_PARAMETERS d3dpp = setupPresentParams(mode);
     reset(d3dpp);
 
-    Platform::setWindowSize(mode.resolution.x, mode.resolution.y, mode.fullScreen);
+    Platform::setWindowSize(mode.resolution.x, mode.resolution.y, mode.fullScreen, mode.borderless);
 
     // Setup default states
     initStates();

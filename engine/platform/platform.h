@@ -319,7 +319,7 @@ struct Platform
     static bool excludeOtherInstances(const char* string);
 
     static const Point2I& getWindowSize();
-    static void setWindowSize(U32 newWidth, U32 newHeight, bool fullScreen);
+    static void setWindowSize(U32 newWidth, U32 newHeight, bool fullScreen, bool borderless);
     static float getRandom();
     static void AlertOK(const char* windowTitle, const char* message);
     static bool AlertOKCancel(const char* windowTitle, const char* message);

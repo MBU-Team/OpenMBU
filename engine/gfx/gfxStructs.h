@@ -64,10 +64,13 @@ struct GFXVideoMode
     U32 bitDepth;
     U32 refreshRate;
     bool fullScreen;
+    bool borderless;
 
     inline bool operator == (GFXVideoMode& otherMode) const
     {
         if (otherMode.fullScreen != fullScreen)
+            return false;
+        if (otherMode.borderless != borderless)
             return false;
         if (otherMode.resolution != resolution)
             return false;

@@ -623,7 +623,8 @@ static LRESULT PASCAL WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
             }
             Input::deactivate();
         }
-        setMouseClipping();
+        if (windowLocked)
+            setMouseClipping();
         break;
 
     case WM_MOVE:
@@ -680,8 +681,20 @@ static void OurDispatchMessages()
                 if (!windowLocked)
                 {
                     MouseMoveEvent event;
-                    S16 xPos = LOWORD(lParam);
-                    S16 yPos = HIWORD(lParam);
+                    S32 xPos = LOWORD(lParam);
+                    S32 yPos = HIWORD(lParam);
+
+                    if (Win32Window->mBorderless)
+                    {
+                        F32 intendedWidth = Win32Window->mIntendedWidth;
+                        F32 intendedHeight = Win32Window->mIntendedHeight;
+                        F32 actualWidth = Win32Window->mActualWidth;
+                        F32 actualHeight = Win32Window->mActualHeight;
+
+                        xPos = (S32)((F32)xPos * intendedWidth / actualWidth);
+                        yPos = (S32)((F32)yPos * intendedHeight / actualHeight);
+                    }
+
 
                     event.xPos = xPos;  // horizontal position of cursor
                     event.yPos = yPos;  // vertical position of cursor
@@ -821,9 +834,9 @@ void setModifierKeys(S32 modKeys)
 
 
 //--------------------------------------
-void Platform::setWindowSize(U32 newWidth, U32 newHeight, bool fullScreen)
+void Platform::setWindowSize(U32 newWidth, U32 newHeight, bool fullScreen, bool borderless)
 {
-    Win32Window->resizeWindow(newWidth, newHeight, fullScreen);
+    Win32Window->resizeWindow(newWidth, newHeight, fullScreen, borderless);
 }
 
 
@@ -983,11 +996,11 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     //on load, find the closest one to that (most likely the exact one)
     GFXVideoMode vm;
 
-    bool fullscreen = Con::getBoolVariable("$pref::Video::fullScreen", 1);
+    int fullscreenType = Con::getIntVariable("$pref::Video::fullScreen", 0);
 
     U32 w = 0, h = 0, d = 0;
 
-    if (fullscreen)
+    if (fullscreenType > 0)
         dSscanf(Con::getVariable("$pref::Video::resolution"), "%d %d %d", &w, &h, &d);
     else
     {
@@ -1008,13 +1021,14 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     vm.resolution.x = w;
     vm.resolution.y = h;
     vm.bitDepth = d;
-    vm.fullScreen = fullscreen;
+    vm.fullScreen = fullscreenType == 1;
+    vm.borderless = fullscreenType == 2;
     vm.refreshRate = 60; //HACK
 
     //TODO find a better way to handle Win32WinMgr...
     // create the window
     Win32Window = new Win32WinMgr(GFX->getDeviceIndex(), WindowProc);
-    Win32Window->createWindow(name, 0, 0, vm.resolution.x, vm.resolution.y, vm.refreshRate, vm.fullScreen);
+    Win32Window->createWindow(name, 0, 0, vm.resolution.x, vm.resolution.y, vm.refreshRate, vm.fullScreen, vm.borderless);
 
     // YaHOOOOOO multiple windows!
     const Vector<GFXDevice*>* deviceVector = GFX->getDeviceVector();
