@@ -294,6 +294,31 @@ function initCanvasSize()
    $PlayGui::safeHorMargin  = 1 + (%width * 0.15)/2;
 }
 
+function fixSizing()
+{
+   initCanvasSize();
+
+   // resize to screen resolution
+   %width = getWord(getResolution(), 0);
+   %height = getWord(getResolution(), 1);
+   RootGui.resize(0, 0, %width, %height);
+   GamePauseGui.resize(0, 0, %width, %height);
+   
+   %w = getWord($Shell::Resolution,0);
+   %h = getWord($Shell::Resolution,1);
+   %offsetX = getWord($Shell::Offset,0);
+   %offsetY = getWord($Shell::Offset,1);
+   
+   RootCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
+   PauseCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
+   
+   if (PlayGui.isAwake() && !GamePauseGuiActive)
+   {
+      // TODO: Figure out why doing this sometimes causes BlastBar to offset from bitmap
+      RootGui.setContent(PlayGui);
+   }
+}
+
 function makeFonts()
 {
    populateFontCacheRange("Arial", 12, 1, 255);
