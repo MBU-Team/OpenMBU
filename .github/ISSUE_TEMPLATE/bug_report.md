@@ -8,9 +8,10 @@ assignees: ''
 ---
 
 <!--
-# If your question wasn't answered there or you need help, proceed here:
+# If you have a question or need help, proceed here:
 # OpenMBU Discord (#help) - https://discord.gg/c8hQSs5W
-#
+# Otherwise make a bug report
+$
 # Try to create a very concise title that's straight to the point
 -->
 
