@@ -3,8 +3,7 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#define IDI_ICON1                       103
-#define IDI_ICON2                       107
+#define IDI_ICON1                       101
 
 // Next default values for new objects
 //

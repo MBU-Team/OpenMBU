@@ -3968,7 +3968,6 @@
     <ClInclude Include="..\engine\util\triBoxCheck.h" />
     <ClInclude Include="..\engine\util\tSignal.h" />
     <ClInclude Include="..\example\shaders\shdrConsts.h" />
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\engine\.editorconfig" />
@@ -4043,10 +4042,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TSE.rc" />
+    <Image Include="..\engine\game\icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon.ico" />
+    <ResourceCompile Include="..\engine\game\TSE.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

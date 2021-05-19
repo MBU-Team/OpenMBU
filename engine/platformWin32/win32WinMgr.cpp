@@ -7,6 +7,7 @@
 #include "console/console.h"
 #include "platformWin32/win32WinMgr.h"
 #include "core/unicode.h"
+#include "game/resource.h"
 
 
 //------------------------------------------------------------------
@@ -28,9 +29,23 @@ Win32WinMgr::Win32WinMgr(U32 uniqueIDNum, WNDPROC winProc)
 
     winState.appWindow = NULL;
 
-    WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, winProc, 0L, 0L,
-                       GetModuleHandle(NULL), NULL, NULL, NULL, NULL,
-                       buff, NULL };
+    HINSTANCE hInst = GetModuleHandle(NULL);
+    HICON hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
+
+    WNDCLASSEX wc = {
+        sizeof(WNDCLASSEX),
+        CS_CLASSDC,
+        winProc,
+        0L,
+        0L,
+        hInst,
+        hIcon,
+        NULL,
+        NULL,
+        NULL,
+        buff,
+        hIcon
+    };
 
     winState.wc = wc;
 
@@ -62,7 +77,7 @@ RectI Win32WinMgr::getCenteredWindowRect(const U32 width, const U32 height, bool
     if (borderless)
         dwStyle = 0;
     else
-        dwStyle |= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;
+        dwStyle |= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;// | WS_SYSMENU;
 
     RECT windowRect;
 
@@ -134,10 +149,10 @@ void Win32WinMgr::createWindow(const char* windowTitle, const U32 x, const U32 y
 
     mStyle = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     
-    mStyle |= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;
+    mStyle |= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;// | WS_SYSMENU;
 
     //if (borderless)
-    //    mStyle ^= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;
+    //    mStyle ^= WS_OVERLAPPED/* | WS_THICKFRAME*/ | WS_CAPTION;// | WS_SYSMENU;
 
     //if (borderless)
     //    mExStyle = 0;

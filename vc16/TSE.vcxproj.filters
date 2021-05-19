@@ -3002,7 +3002,6 @@
     <ClInclude Include="..\engine\platform\platformDlibrary.h">
       <Filter>Source Files\platform</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\engine\.editorconfig" />
@@ -3022,9 +3021,13 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TSE.rc" />
+    <Image Include="..\engine\game\icon.ico">
+      <Filter>Source Files\game</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon.ico" />
+    <ResourceCompile Include="..\engine\game\TSE.rc">
+      <Filter>Source Files\game</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
