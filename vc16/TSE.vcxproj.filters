@@ -3002,6 +3002,7 @@
     <ClInclude Include="..\engine\platform\platformDlibrary.h">
       <Filter>Source Files\platform</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\engine\.editorconfig" />
@@ -3019,5 +3020,11 @@
     <CustomBuild Include="..\engine\platform\platformCPUInfo.asm">
       <Filter>Source Files\platform</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TSE.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
 </Project>
