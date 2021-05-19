@@ -188,6 +188,9 @@ static void InitInput()
 //**********************************************************************************************
 static bool cursorInWindow()
 {
+    if (Win32Window == NULL)
+        return false;
+
     RECT cRect;
     GetClientRect(winState.appWindow, &cRect);
 
