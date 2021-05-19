@@ -16,3 +16,4 @@ shaderV*.hlsl
 *.torsion.opt
 *.uft
 *.aps
+*.pdb
