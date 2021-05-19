@@ -142,6 +142,9 @@
     <Filter Include="Source Files\sfx\dsound">
       <UniqueIdentifier>{ba7f8562-4539-4eb8-9503-602b3793c5da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\resources">
+      <UniqueIdentifier>{ca0b6c87-96e1-4ae0-a6db-550f0d9fc950}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\collision\abstractPolyList.cpp">
@@ -1970,9 +1973,6 @@
     <ClInclude Include="..\engine\game\projectile.h">
       <Filter>Source Files\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\game\resource.h">
-      <Filter>Source Files\game</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\game\rigid.h">
       <Filter>Source Files\game</Filter>
     </ClInclude>
@@ -3002,6 +3002,9 @@
     <ClInclude Include="..\engine\platform\platformDlibrary.h">
       <Filter>Source Files\platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\engine\resources\resource.h">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\engine\.editorconfig" />
@@ -3021,13 +3024,13 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\engine\game\icon.ico">
-      <Filter>Source Files\game</Filter>
-    </Image>
+    <ResourceCompile Include="..\engine\resources\TSE.rc">
+      <Filter>Source Files\resources</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\engine\game\TSE.rc">
-      <Filter>Source Files\game</Filter>
-    </ResourceCompile>
+    <Image Include="..\engine\resources\icon.ico">
+      <Filter>Source Files\resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

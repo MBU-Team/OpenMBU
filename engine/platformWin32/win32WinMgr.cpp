@@ -7,7 +7,7 @@
 #include "console/console.h"
 #include "platformWin32/win32WinMgr.h"
 #include "core/unicode.h"
-#include "game/resource.h"
+#include "resources/resource.h"
 
 
 //------------------------------------------------------------------

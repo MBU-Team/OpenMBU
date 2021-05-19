@@ -13,7 +13,6 @@
 #include "console/console.h"
 #include "math/mRandom.h"
 #include "core/fileStream.h"
-#include "game/resource.h"
 #include "d3d9.h"
 #include "gfx/gfxInit.h"
 #include "gfx/gfxDevice.h"

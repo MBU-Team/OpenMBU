@@ -3680,7 +3680,6 @@
     <ClInclude Include="..\engine\game\physicalZone.h" />
     <ClInclude Include="..\engine\game\player.h" />
     <ClInclude Include="..\engine\game\projectile.h" />
-    <ClInclude Include="..\engine\game\resource.h" />
     <ClInclude Include="..\engine\game\rigid.h" />
     <ClInclude Include="..\engine\game\shadow.h" />
     <ClInclude Include="..\engine\game\shapeBase.h" />
@@ -3881,6 +3880,7 @@
     <ClInclude Include="..\engine\renderInstance\renderObjectMgr.h" />
     <ClInclude Include="..\engine\renderInstance\renderRefractMgr.h" />
     <ClInclude Include="..\engine\renderInstance\renderTranslucentMgr.h" />
+    <ClInclude Include="..\engine\resources\resource.h" />
     <ClInclude Include="..\engine\scenegraph\detailManager.h" />
     <ClInclude Include="..\engine\sceneGraph\lightManager.h" />
     <ClInclude Include="..\engine\scenegraph\sceneGraph.h" />
@@ -4042,10 +4042,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\engine\game\icon.ico" />
+    <ResourceCompile Include="..\engine\resources\TSE.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\engine\game\TSE.rc" />
+    <Image Include="..\engine\resources\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
