@@ -58,8 +58,22 @@ void RenderGlowMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
 //-----------------------------------------------------------------------------
 void RenderGlowMgr::render()
 {
+#ifdef _XBOX
+    return; // HACK -patw
+#endif
+
+   // Early out if nothing to draw.
+    if (mElementList.empty())
+        return;
+
+    // CodeReview - This is pretty hackish. - AlexS 4/19/07
+    if (GFX->getPixelShaderVersion() < 0.001f)
+        return;
+
     GlowBuffer* glowBuffer = getCurrentClientSceneGraph()->getGlowBuff();
-    if (!glowBuffer || glowBuffer->isDisabled() | !mElementList.size()) return;
+    if (!glowBuffer || glowBuffer->isDisabled() || mElementList.empty()) return;
+
+    PROFILE_START(RenderGlowMgrRender);
 
     RectI vp = GFX->getViewport();
 
@@ -91,6 +105,13 @@ void RenderGlowMgr::render()
     for (U32 j = 0; j < binSize; )
     {
         RenderInst* ri = mElementList[j].inst;
+
+        // temp fix - these shouldn't submit glow ri's...
+        if (ri->dynamicLight)
+        {
+            j++;
+            continue;
+        }
 
         setupSGData(ri, sgData);
         MatInstance* mat = ri->matInst;
@@ -179,4 +200,6 @@ void RenderGlowMgr::render()
     glowBuffer->copyToScreen(vp);
 
     GFX->popWorldMatrix();
+
+    PROFILE_END();
 }

@@ -53,6 +53,11 @@ void RenderRefractMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
 //-----------------------------------------------------------------------------
 void RenderRefractMgr::render()
 {
+    // Early out if nothing to draw.
+    if (!mElementList.size())
+        return;
+
+    PROFILE_START(RenderRefractMgrRender);
 
     GFX->pushWorldMatrix();
 
@@ -171,4 +176,6 @@ void RenderRefractMgr::render()
 
 
     GFX->popWorldMatrix();
+
+    PROFILE_END();
 }

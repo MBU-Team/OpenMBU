@@ -62,6 +62,11 @@ void RenderTranslucentMgr::addElement(RenderInst* inst)
 //-----------------------------------------------------------------------------
 void RenderTranslucentMgr::render()
 {
+    // Early out if nothing to draw.
+    if (mElementList.empty())
+        return;
+
+    PROFILE_START(RenderTranslucentMgrRender);
 
     GFX->pushWorldMatrix();
 
@@ -307,4 +312,6 @@ void RenderTranslucentMgr::render()
     GFX->setAlphaBlendEnable(false);
 
     GFX->popWorldMatrix();
+
+    PROFILE_END();
 }

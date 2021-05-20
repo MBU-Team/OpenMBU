@@ -310,7 +310,7 @@ void RenderInstManager::render()
     GFX->pushWorldMatrix();
     MatrixF proj = GFX->getProjectionMatrix();
 
-    if (mRenderBins.size())
+    if (!mRenderBins.empty())
     {
         for (U32 i = 0; i < NumRenderBins; i++)
         {
