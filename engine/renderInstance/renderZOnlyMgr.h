@@ -2,28 +2,23 @@
 // Torque Shader Engine
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
-#ifndef _RENDER_INTERIOR_MGR_H_
-#define _RENDER_INTERIOR_MGR_H_
+#ifndef _RENDER_ZONLY_MGR_H_
+#define _RENDER_ZONLY_MGR_H_
 
 #include "renderElemMgr.h"
 
 //**************************************************************************
-// RenderInteriorMgr
+// RenderGlowMgr
 //**************************************************************************
-class RenderInteriorMgr : public RenderElemMgr
+class RenderZOnlyMgr : public RenderElemMgr
 {
 private:
     ShaderData* mBlankShader;
 
-    void setupSGData(RenderInst* ri, SceneGraphData& data);
-    void renderZpass();
-
 public:
-    RenderInteriorMgr();
-    ~RenderInteriorMgr();
+    RenderZOnlyMgr();
 
     virtual void render();
-    virtual void addElement(RenderInst* inst);
 };
 
 

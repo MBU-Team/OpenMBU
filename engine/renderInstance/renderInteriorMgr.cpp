@@ -12,6 +12,18 @@
 //**************************************************************************
 // RenderInteriorMgr
 //**************************************************************************
+RenderInteriorMgr::RenderInteriorMgr()
+{
+    mBlankShader = NULL;
+}
+
+RenderInteriorMgr::~RenderInteriorMgr()
+{
+    if (mBlankShader)
+        delete mBlankShader;
+}
+
+
 
 //-----------------------------------------------------------------------------
 // setup scenegraph data
@@ -98,6 +110,9 @@ void RenderInteriorMgr::render()
     {
         GFX->setCullMode(GFXCullCCW);
     }
+
+    if (GFX->useZPass())
+        renderZpass();
 
     for (U32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
     {
@@ -293,3 +308,54 @@ void RenderInteriorMgr::render()
 
     GFX->popWorldMatrix();
 }
+
+void RenderInteriorMgr::renderZpass()
+{
+    if (!this->mBlankShader)
+    {
+        mBlankShader = (ShaderData*)Sim::findObject("BlankShader");
+        if (!mBlankShader)
+            Con::warnf("Can't find blank shader");
+    }
+
+    if (!mBlankShader || !mBlankShader->shader)
+        return;
+
+    GFX->enableColorWrites(false, false, false, false);
+
+    mBlankShader->shader->process();
+
+    GFXVertexBuffer* lastVB = NULL;
+    GFXPrimitiveBuffer* lastPB = NULL;
+
+    for (S32 i = 0; i < mElementList.size(); i++)
+    {
+        RenderInst* inst = mElementList[i].inst;
+        GFX->setVertexShaderConstF(0, (float*)inst->worldXform, 4);
+        if (lastVB != inst->vertBuff->getPointer())
+        {
+            GFX->setVertexBuffer(*inst->vertBuff);
+            lastVB = inst->vertBuff->getPointer();
+        }
+
+        if (lastPB != inst->primBuff->getPointer())
+        {
+            GFX->setPrimitiveBuffer(*inst->primBuff);
+            lastPB = inst->primBuff->getPointer();
+        }
+
+        GFXPrimitive* prim = inst->prim;
+        if (prim)
+        {
+            GFX->drawIndexedPrimitive(prim->type, prim->minIndex, prim->numVertices, prim->startIndex, prim->numPrimitives);
+            lastVB = NULL;
+            lastPB = NULL;
+        } else
+        {
+            GFX->drawPrimitive(inst->primBuffIndex);
+        }
+    }
+
+    GFX->enableColorWrites(true, true, true, true);
+}
+

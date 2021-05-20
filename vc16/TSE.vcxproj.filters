@@ -1629,6 +1629,9 @@
     <ClCompile Include="..\engine\platformWin32\winDlibrary.cpp">
       <Filter>Source Files\platformWin32</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\renderInstance\renderZOnlyMgr.cpp">
+      <Filter>Source Files\renderInstance</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\collision\abstractPolyList.h">
@@ -3004,6 +3007,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\resources\resource.h">
       <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\renderInstance\renderZOnlyMgr.h">
+      <Filter>Source Files\renderInstance</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -20,6 +20,8 @@
 Vector<GFXDevice*> GFXDevice::smGFXDevice;
 S32 GFXDevice::smActiveDeviceIndex = -1;
 
+bool GFXDevice::smUseZPass = true;
+
 
 //-----------------------------------------------------------------------------
 
@@ -82,7 +84,7 @@ GFXDevice::GFXDevice()
 // Static method
 void GFXDevice::create()
 {
-    // nothing right now
+    Con::addVariable("pref::video::useZPass", TypeBool, &GFXDevice::smUseZPass);
 }
 
 //-----------------------------------------------------------------------------

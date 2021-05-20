@@ -22,6 +22,7 @@ class SceneGraphData;
 class ShaderData;
 class Sky;
 class RenderElemMgr;
+class RenderZOnlyMgr;
 
 //**************************************************************************
 // Render Instance
@@ -158,6 +159,7 @@ private:
     ShaderData* mBlankShader;
     MatInstance* mWarningMat;
     Point3F mCamPos;
+    RenderZOnlyMgr* mZOnlyBin;
 
     void initBins();
     void uninitBins();
@@ -187,7 +189,7 @@ public:
     void clear();  // clear instances, matrices
     void sort();
     void render();
-    void renderToZBuff();
+    void renderToZBuff(GFXTextureObject* target);
     void renderGlow();
 
     void setCamPos(Point3F& camPos) { mCamPos = camPos; }

@@ -164,11 +164,15 @@ private:
     static Vector<GFXDevice*> smGFXDevice; ///< Global GFXDevice vector
     static S32 smActiveDeviceIndex;         ///< Active GFX Device index, signed so -1 can be uninitalized
 
+    static bool smUseZPass;
+
     /// @}
 
 public:
     static void create();
     static void destroy();
+
+    static bool useZPass() { return smUseZPass; }
 
     static const Vector<GFXDevice*>* getDeviceVector() { return &smGFXDevice; };
     static GFXDevice* get();

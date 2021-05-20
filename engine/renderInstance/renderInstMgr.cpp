@@ -18,6 +18,7 @@
 #include "renderRefractMgr.h"
 #include "renderTranslucentMgr.h"
 #include "renderGlowMgr.h"
+#include "renderZOnlyMgr.h"
 
 #define POOL_GROW_SIZE 2048
 #define HIGH_NUM ((U32(-1)/2) - 1)
@@ -102,7 +103,7 @@ void RenderInstManager::initBins()
     mRenderBins[TranslucentPreGlow] = new RenderTranslucentMgr;
     mRenderBins[Glow] = new RenderGlowMgr;
 
-    // maybe add renderZOnlyMgr from MBO?
+    mZOnlyBin = new RenderZOnlyMgr;
 }
 
 //-----------------------------------------------------------------------------
@@ -117,6 +118,12 @@ void RenderInstManager::uninitBins()
             delete mRenderBins[i];
             mRenderBins[i] = NULL;
         }
+    }
+
+    if (mZOnlyBin)
+    {
+        delete mZOnlyBin;
+        mZOnlyBin = NULL;
     }
 }
 
@@ -154,6 +161,7 @@ void RenderInstManager::addInst(RenderInst* inst)
         {
         case RIT_Interior:
             mRenderBins[Interior]->addElement(inst);
+            mZOnlyBin->addElement(inst);
             break;
 
         case RIT_InteriorDynamicLighting:
@@ -178,6 +186,7 @@ void RenderInstManager::addInst(RenderInst* inst)
 
         case RIT_Mesh:
             mRenderBins[Mesh]->addElement(inst);
+            mZOnlyBin->addElement(inst);
             break;
 
         case RIT_Foliage:
@@ -246,6 +255,8 @@ void RenderInstManager::sort()
         }
     }
 
+    mZOnlyBin->sort();
+
     PROFILE_END();
 }
 
@@ -268,6 +279,8 @@ void RenderInstManager::clear()
             }
         }
     }
+
+    mZOnlyBin->clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -310,6 +323,14 @@ void RenderInstManager::render()
 
     GFX->popWorldMatrix();
     GFX->setProjectionMatrix(proj);
+}
+
+void RenderInstManager::renderToZBuff(GFXTextureObject* target)
+{
+    GFX->pushActiveRenderSurfaces();
+    GFX->setActiveRenderSurface(target);
+    mZOnlyBin->render();
+    GFX->popActiveRenderSurfaces();
 }
 
 
