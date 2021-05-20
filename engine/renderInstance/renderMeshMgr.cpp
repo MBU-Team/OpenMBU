@@ -3,6 +3,8 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 #include "renderMeshMgr.h"
+
+#include "gfx/gfxTransformSaver.h"
 #include "materials/sceneData.h"
 #include "sceneGraph/sceneGraph.h"
 #include "materials/matInstance.h"
@@ -54,10 +56,14 @@ void RenderMeshMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
 //-----------------------------------------------------------------------------
 void RenderMeshMgr::render()
 {
+    // Early out if nothing to draw.
+    if (!mElementList.size())
+        return;
 
-    GFX->pushWorldMatrix();
+    PROFILE_START(RenderMeshMgrRender);
 
-
+    // Automagically save & restore our viewport and transforms.
+    GFXTransformSaver saver;
 
     // set render states
     if (getCurrentClientSceneGraph()->isReflectPass())
@@ -226,6 +232,7 @@ void RenderMeshMgr::render()
 
     }
 
+    GFX->setLightingEnable(false);
 
-    GFX->popWorldMatrix();
+    PROFILE_END();
 }
