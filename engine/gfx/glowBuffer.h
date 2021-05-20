@@ -32,11 +32,14 @@ private:
     //--------------------------------------------------------------
     // Data
     //--------------------------------------------------------------
-    ShaderData* mBlurShader;
-    const char* mBlurShaderName;
+    ShaderData*         mBlurShader;
+    const char*         mBlurShaderName;
     GFXTexHandle        mSurface[3];
     S32                 mCallbackHandle;
     bool                mDisabled;
+    Point4F             mKernel;
+    Point4F             mPixelOffsets;
+    S32                 mMaxGlowPasses;
 
     GFXVertexBufferHandle<GFXVertexPT> mVertBuff;
 

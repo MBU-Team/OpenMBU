@@ -25,7 +25,10 @@ GlowBuffer::GlowBuffer()
     mBlurShader = NULL;
     mBlurShaderName = NULL;
     mCallbackHandle = -1;
+    mKernel = Point4F(0.175f, 0.275f, 0.375f, 0.475f);
     mDisabled = false;
+    mMaxGlowPasses = 4;
+    mPixelOffsets = Point4F(3.5f, 2.5f, 1.5f, 0.5f);
 }
 
 //--------------------------------------------------------------------------
@@ -36,7 +39,9 @@ void GlowBuffer::initPersistFields()
     Parent::initPersistFields();
 
     addField("shader", TypeString, Offset(mBlurShaderName, GlowBuffer));
-
+    addField("kernel", TypePoint4F, Offset(mKernel, GlowBuffer));
+    addField("pixelOffsets", TypePoint4F, Offset(mPixelOffsets, GlowBuffer));
+    addField("maxGlowPasses", TypeS32, Offset(mMaxGlowPasses, GlowBuffer));
 }
 
 //--------------------------------------------------------------------------
@@ -160,6 +165,9 @@ void GlowBuffer::setupRenderStates()
     {
         GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
         GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
+        GFX->setTextureStageMagFilter(i, GFXTextureFilterLinear);
+        GFX->setTextureStageMinFilter(i, GFXTextureFilterLinear);
+        GFX->setTextureStageMipFilter(i, GFXTextureFilterLinear);
     }
 
     GFX->disableShaders();
@@ -209,56 +217,67 @@ void GlowBuffer::blur()
 
     mBlurShader->shader->process();
 
-    // PASS 1
-    //-------------------------------
-    setupPixelOffsets(Point4F(3.5, 2.5, 1.5, 0.5), true);
+    Point4F pixelOffsets = mPixelOffsets;
 
-    GFX->setTexture(0, mSurface[0]);
-    GFX->setTexture(1, mSurface[0]);
-    GFX->setTexture(2, mSurface[0]);
-    GFX->setTexture(3, mSurface[0]);
+    if (mMaxGlowPasses > 0)
+    {
+        // PASS 1
+        //-------------------------------
+        setupPixelOffsets(pixelOffsets, true);
 
-    GFX->setActiveRenderSurface(mSurface[1]);
-    GFX->drawPrimitive(GFXTriangleFan, 0, 2);
+        GFX->setTexture(0, mSurface[0]);
+        GFX->setTexture(1, mSurface[0]);
+        GFX->setTexture(2, mSurface[0]);
+        GFX->setTexture(3, mSurface[0]);
 
+        GFX->setActiveRenderSurface(mSurface[1]);
+        GFX->drawPrimitive(GFXTriangleFan, 0, 2);
 
-    // PASS 2
-    //-------------------------------
-    setupPixelOffsets(Point4F(-3.5, -2.5, -1.5, -0.5), true);
+        if (mMaxGlowPasses > 1)
+        {
+            // PASS 2
+            //-------------------------------
+            setupPixelOffsets(pixelOffsets * -1.0f, true);
 
-    GFX->setTexture(0, mSurface[1]);
-    GFX->setTexture(1, mSurface[1]);
-    GFX->setTexture(2, mSurface[1]);
-    GFX->setTexture(3, mSurface[1]);
+            GFX->setTexture(0, mSurface[1]);
+            GFX->setTexture(1, mSurface[1]);
+            GFX->setTexture(2, mSurface[1]);
+            GFX->setTexture(3, mSurface[1]);
 
-    GFX->setActiveRenderSurface(mSurface[0]);
-    GFX->drawPrimitive(GFXTriangleFan, 0, 2);
+            GFX->setActiveRenderSurface(mSurface[0]);
+            GFX->drawPrimitive(GFXTriangleFan, 0, 2);
 
+            if (mMaxGlowPasses > 2)
+            {
+                // PASS 3
+                //-------------------------------
+                setupPixelOffsets(pixelOffsets * -1.0f, false);
 
-    // PASS 3
-    //-------------------------------
-    setupPixelOffsets(Point4F(3.5, 2.5, 1.5, 0.5), false);
+                GFX->setTexture(0, mSurface[0]);
+                GFX->setTexture(1, mSurface[0]);
+                GFX->setTexture(2, mSurface[0]);
+                GFX->setTexture(3, mSurface[0]);
 
-    GFX->setTexture(0, mSurface[0]);
-    GFX->setTexture(1, mSurface[0]);
-    GFX->setTexture(2, mSurface[0]);
-    GFX->setTexture(3, mSurface[0]);
+                GFX->setActiveRenderSurface(mSurface[1]);
+                GFX->drawPrimitive(GFXTriangleFan, 0, 2);
 
-    GFX->setActiveRenderSurface(mSurface[1]);
-    GFX->drawPrimitive(GFXTriangleFan, 0, 2);
+                if (mMaxGlowPasses > 3)
+                {
+                    // PASS 4
+                    //-------------------------------
+                    setupPixelOffsets(pixelOffsets * -1.0f, false);
 
+                    GFX->setTexture(0, mSurface[1]);
+                    GFX->setTexture(1, mSurface[1]);
+                    GFX->setTexture(2, mSurface[1]);
+                    GFX->setTexture(3, mSurface[1]);
 
-    // PASS 4
-    //-------------------------------
-    setupPixelOffsets(Point4F(-3.5, -2.5, -1.5, -0.5), false);
-
-    GFX->setTexture(0, mSurface[1]);
-    GFX->setTexture(1, mSurface[1]);
-    GFX->setTexture(2, mSurface[1]);
-    GFX->setTexture(3, mSurface[1]);
-
-    GFX->setActiveRenderSurface(mSurface[0]);
-    GFX->drawPrimitive(GFXTriangleFan, 0, 2);
+                    GFX->setActiveRenderSurface(mSurface[0]);
+                    GFX->drawPrimitive(GFXTriangleFan, 0, 2);
+                }
+            }
+        }
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -273,17 +292,14 @@ void GlowBuffer::copyToScreen(RectI& viewport)
 
     PROFILE_START(Glow);
 
-    GFXVertexBuffer* glowVB = NULL;
-
     // setup
     GFX->pushActiveRenderSurfaces();
 
-    MatrixF proj = setupOrthoProjection();
     setupRenderStates();
+    MatrixF proj = setupOrthoProjection();
 
     // set blur kernel
-    Point4F kernel(0.175, 0.275, 0.375, 0.475);
-    GFX->setPixelShaderConstF(0, (float*)kernel, 1);
+    GFX->setPixelShaderConstF(0, (float*)mKernel, 1);
 
     // draw from full-size glow buffer to smaller buffer for 4 pass shader work
     GFX->setTexture(0, mSurface[2]);
@@ -303,11 +319,15 @@ void GlowBuffer::copyToScreen(RectI& viewport)
     // blend final result to back buffer
     GFX->disableShaders();
     GFX->setTexture(0, mSurface[0]);
+    GFX->setTexture(1, NULL);
+    GFX->setTexture(2, NULL);
+    GFX->setTexture(3, NULL);
+    GFX->setTexture(4, NULL);
 
     GFX->setAlphaBlendEnable(Con::getBoolVariable("$translucentGlow", true));
     GFX->setSrcBlend(GFXBlendOne);
     GFX->setDestBlend(GFXBlendOne);
-    GFX->setAlphaTestEnable(true);
+    GFX->setAlphaTestEnable(false);
     GFX->setAlphaRef(1);
     GFX->setAlphaFunc(GFXCmpGreaterEqual);
 
