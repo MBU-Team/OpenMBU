@@ -9,7 +9,7 @@ A reverse engineered version of Marble Blast Ultra that is based on Torque Shade
 
 # Releases
 - Stable
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/MBU-Team/OpenMBU?label=Stable%20Release)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/MBU-Team/OpenMBU?label=Stable%20Release)](https://github.com/MBU-Team/OpenMBU/releases)
 - Pre-Release
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/MBU-Team/OpenMBU?include_prereleases&label=Pre-Release)
 
