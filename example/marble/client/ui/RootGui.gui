@@ -230,6 +230,19 @@ new GuiControl(RootCenterCtrl) {
             text = "";
             maxLength = "255";
          };
+         new GuiButtonBaseCtrl(RootGuiButtonA)
+         {
+            Profile = "GuiDefaultProfile";
+            HorizSizing = "right";
+            VertSizing = "bottom";
+            position = "0 4";
+            Extent = isWidescreen() ? "235 27" : "225 27";
+            MinExtent = "8 2";
+            Visible = 1;
+            wrap = 0;
+            buttonType = "pushButton";
+            Command = "RootGui.contentGui.onA();";
+         };
       };
       new GuiControl(RootGuiBButton) {
          profile = "GuiDefaultProfile";
@@ -263,6 +276,19 @@ new GuiControl(RootCenterCtrl) {
             visible = "1";
             text = "";
             maxLength = "255";
+         };
+         new GuiButtonBaseCtrl(RootGuiButtonB)
+         {
+            Profile = "GuiDefaultProfile";
+            HorizSizing = "right";
+            VertSizing = "bottom";
+            position = "0 4";
+            Extent = "225 27";
+            MinExtent = "8 2";
+            Visible = 1;
+            wrap = 0;
+            buttonType = "pushButton";
+            Command = "RootGui.contentGui.onB();";
          };
       };
       new GuiControl(RootGuiYButton) {
@@ -298,6 +324,19 @@ new GuiControl(RootCenterCtrl) {
             text = "";
             maxLength = "255";
          };
+         new GuiButtonBaseCtrl(RootGuiButtonY)
+         {
+            Profile = "GuiDefaultProfile";
+            HorizSizing = "right";
+            VertSizing = "bottom";
+            position = "0 4";
+            Extent = "225 27";
+            MinExtent = "8 2";
+            Visible = 1;
+            wrap = 0;
+            buttonType = "pushButton";
+            Command = "RootGui.contentGui.onY();";
+         };
       };
       new GuiControl(RootGuiXButton) {
          profile = "GuiDefaultProfile";
@@ -331,6 +370,19 @@ new GuiControl(RootCenterCtrl) {
             visible = "1";
             text = "";
             maxLength = "255";
+         };
+         new GuiButtonBaseCtrl(RootGuiButtonX)
+         {
+            Profile = "GuiDefaultProfile";
+            HorizSizing = "right";
+            VertSizing = "bottom";
+            position = "0 4";
+            Extent = "225 27";
+            MinExtent = "8 2";
+            Visible = 1;
+            wrap = 0;
+            buttonType = "pushButton";
+            Command = "RootGui.contentGui.onX();";
          };
       };
       new GuiControl(RootGuiLSButton) {

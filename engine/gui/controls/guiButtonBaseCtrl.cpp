@@ -24,6 +24,7 @@ GuiButtonBaseCtrl::GuiButtonBaseCtrl()
     mStateOn = false;
     mRadioGroup = -1;
     mButtonType = ButtonTypePush;
+    mUseMouseEvents = false;
 }
 
 bool GuiButtonBaseCtrl::onWake()
@@ -84,6 +85,7 @@ void GuiButtonBaseCtrl::initPersistFields()
     addField("textID", TypeString, Offset(mButtonTextID, GuiButtonBaseCtrl));
     addField("groupNum", TypeS32, Offset(mRadioGroup, GuiButtonBaseCtrl));
     addField("buttonType", TypeEnum, Offset(mButtonType, GuiButtonBaseCtrl), 1, &gButtonTypeTable);
+    addField("useMouseEvents", TypeBool, Offset(mUseMouseEvents, GuiButtonBaseCtrl));
     endGroup("Misc");		// MM: Added Group Footer.
 }
 
@@ -168,6 +170,10 @@ void GuiButtonBaseCtrl::onMouseDown(const GuiEvent& event)
 void GuiButtonBaseCtrl::onMouseEnter(const GuiEvent& event)
 {
     setUpdate();
+
+    if (mUseMouseEvents)
+        Con::executef(this, 1, "onMouseEnter");
+
     if (isMouseLocked())
     {
         mDepressed = true;
@@ -185,6 +191,10 @@ void GuiButtonBaseCtrl::onMouseEnter(const GuiEvent& event)
 void GuiButtonBaseCtrl::onMouseLeave(const GuiEvent&)
 {
     setUpdate();
+    
+    if (mUseMouseEvents)
+        Con::executef(this, 1, "onMouseLeave");
+
     if (isMouseLocked())
         mDepressed = false;
     mMouseOver = false;
@@ -289,6 +299,10 @@ void GuiButtonBaseCtrl::onAction()
         messageSiblings(mRadioGroup);
     }
     setUpdate();
+
+    // Provide and onClick script callback.
+    if (isMethod("onClick"))
+        Con::executef(this, 1, "onClick");
     Parent::onAction();
 }
 

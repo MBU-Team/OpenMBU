@@ -28,6 +28,7 @@ protected:
     bool mStateOn;
     S32 mButtonType;
     S32 mRadioGroup;
+    bool mUseMouseEvents;
 public:
     enum {
         ButtonTypePush,
