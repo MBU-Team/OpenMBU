@@ -482,7 +482,9 @@ function pauseOrEscape()
 		RootGui.setContent(PlayGui);
 	} else if (PlayGui.isAwake())
 	{
-		if (!GamePauseGui.isAwake())
+		if (GamePauseGui.isAwake())
+		   GamePauseGui.onB();
+      else
 		   pauseToggle(0);
 		// otherwise wait for them to make the selection...
 	}
