@@ -941,7 +941,7 @@ void Marble::bounceEmitter(F32 speed, const Point3F& normal)
             if (mDataBlock->minBounceSpeed <= speed)
             {
                 ParticleEmitter* emitter = new ParticleEmitter;
-                emitter->setDataBlock(mDataBlock->bounceEmitter);
+                emitter->onNewDataBlock(mDataBlock->bounceEmitter);
                 emitter->registerObject();
                 
                 emitter->emitParticles(mPosition - mRadius * normal, false, normal, mVelocity, getMin(speed * 100.0f, 2500.0f));
@@ -1319,7 +1319,7 @@ void Marble::trailEmitter(U32 timeDelta)
     if (!mTrailEmitter)
     {
         mTrailEmitter = new ParticleEmitter;
-        mTrailEmitter->setDataBlock(mDataBlock->trailEmitter);
+        mTrailEmitter->onNewDataBlock(mDataBlock->trailEmitter);
         mTrailEmitter->registerObject();
 
         if (!mTrailEmitter)
@@ -1333,7 +1333,9 @@ void Marble::trailEmitter(U32 timeDelta)
     m_point3F_normalize(normal);
 
     Point3F pos = mLastRenderPos;
-    pos += mRadius * gRandGen.randF() * 2 - 1.0f;
+    pos.x += mRadius * ((gRandGen.randF() * 2) - 1.0f);
+    pos.y += mRadius * ((gRandGen.randF() * 2) - 1.0f);
+    pos.z += mRadius * ((gRandGen.randF() * 2) - 1.0f);
 
     mTrailEmitter->emitParticles(pos, true, normal, mVelocity, timeDelta);
 }
