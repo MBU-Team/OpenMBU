@@ -67,6 +67,7 @@ new GuiControl(PlayerListGui) {
          clipColumnText = "0";
          centerBmpsVert = true;
 	      centerBmpsHoriz = false;
+	      alternatingRows = true;
       };
       
       new GuiTextListCtrl(ShortPlayerList) {
@@ -88,6 +89,7 @@ new GuiControl(PlayerListGui) {
          rowHeightOffset = "0";
          centerBmpsVert = true;
 	      centerBmpsHoriz = false;
+	      alternatingRows = true;
       };
 	};
 };

@@ -65,7 +65,7 @@ GuiTextListCtrl::GuiTextListCtrl()
     mRowHeightOffset = 0;
     mCenterBmpsVert = true;
     mCenterBmpsHoriz = true;
-    mAlternatingRows = true;
+    mAlternatingRows = false;
 }
 
 void GuiTextListCtrl::initPersistFields()
@@ -82,6 +82,7 @@ void GuiTextListCtrl::initPersistFields()
     addField("rowHeightOffset", TypeS32, Offset(mRowHeightOffset, GuiTextListCtrl));
     addField("centerBmpsVert", TypeBool, Offset(mCenterBmpsVert, GuiTextListCtrl));
     addField("centerBmpsHoriz", TypeBool, Offset(mCenterBmpsHoriz, GuiTextListCtrl));
+    addField("alternatingRows", TypeBool, Offset(mAlternatingRows, GuiTextListCtrl));
 }
 
 ConsoleMethod(GuiTextListCtrl, getSelectedId, S32, 2, 2, "Get the ID of the currently selected item.")

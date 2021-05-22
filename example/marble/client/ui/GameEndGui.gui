@@ -49,6 +49,7 @@ new GuiControl(GameEndGui) {
 	      iconPath = "marble/client/ui/xbox/";
 	      centerBmpsVert = true;
 	      centerBmpsHoriz = true;
+	      alternatingRows = true;
 	   };     
 	   new GuiBitmapCtrl(GE_staticon) {
 	      profile = "GuiDefaultProfile";

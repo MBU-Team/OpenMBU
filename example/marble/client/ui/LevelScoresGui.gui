@@ -136,6 +136,7 @@ new GuiBitmapCtrl(LevelScoresGui) {
          centerBmpsVert = "1";
          centerBmpsHoriz = "1";
             noDuplicates = "false";
+	      alternatingRows = true;
       };
       new GuiBitmapCtrl(LS_downarrow) {
          profile = "GuiDefaultProfile";

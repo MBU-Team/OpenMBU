@@ -1524,6 +1524,15 @@
     </class>
     <class>        <name>GlowBuffer</name>
         <base>SimObject</base>
+        <field>            <name>kernel</name>
+            <desc>Point4F kernel</desc>
+        </field>
+        <field>            <name>maxGlowPasses</name>
+            <desc>int maxGlowPasses</desc>
+        </field>
+        <field>            <name>pixelOffsets</name>
+            <desc>Point4F pixelOffsets</desc>
+        </field>
         <field>            <name>shader</name>
             <desc>string shader</desc>
         </field>
@@ -2841,6 +2850,9 @@ More of a helper function than anything.   If console access to the field list i
             <args>int columnID, bool increasing=false</args>
             <desc>Perform a numerical sort on the values in the specified column.</desc>
         </method>
+        <field>            <name>alternatingRows</name>
+            <desc>bool alternatingRows</desc>
+        </field>
         <field>            <name>autoResize</name>
             <desc>bool autoResize</desc>
         </field>

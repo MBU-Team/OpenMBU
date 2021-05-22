@@ -87,6 +87,7 @@ new GuiControl(LobbyGui)
 	      voidIcon = "void";
 	      centerBmpsVert = true;
 	      centerBmpsHoriz = true;
+	      alternatingRows = true;
 	   };
    
 	   new GuiMLTextCtrl(LobbyMessage) {

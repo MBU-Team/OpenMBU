@@ -9,7 +9,7 @@
     </Mods>
     <ScannerExts>cs; gui</ScannerExts>
     <Configs>        <Config>            <Name>Debug</Name>
-            <Executable>TSE_DEBUG.exe</Executable>
+            <Executable>MBU_DEBUG.exe</Executable>
             <Arguments></Arguments>
             <HasExports>true</HasExports>
             <Precompile>true</Precompile>
@@ -17,7 +17,7 @@
             <UseSetModPaths>false</UseSetModPaths>
         </Config>
         <Config>            <Name>Release</Name>
-            <Executable>TSE.exe</Executable>
+            <Executable>MBU.exe</Executable>
             <Arguments></Arguments>
             <HasExports>false</HasExports>
             <Precompile>true</Precompile>
