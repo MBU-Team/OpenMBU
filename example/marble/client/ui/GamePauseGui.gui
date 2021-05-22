@@ -34,6 +34,9 @@ function GamePauseGui::onWake(%this)
 {
    $GamePauseGuiActive = true;
    
+   // Fix inputs getting stuck
+   clearInputs();
+   
    // resize to screen resolution
    %width = getWord(getResolution(), 0);
    %height = getWord(getResolution(), 1);

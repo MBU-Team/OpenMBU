@@ -24,8 +24,8 @@ function PlayGui::onWake(%this)
    else
       moveMap.push();
    
-   // Fix triggers getting stuck
-   clearTriggers();
+   // Fix inputs getting stuck
+   clearInputs();
 
    if (ServerConnection.isMultiplayer)
    {
@@ -112,12 +112,9 @@ function PlayGui::onSleep(%this)
    // pop the keymaps
    moveMap.pop();
    demoMap.pop();
-   $mvYawRightSpeed = 0;
-   $mvYawLeftSpeed = 0;
-   $mvPitchUpSpeed = 0;
-   $mvPitchDownSpeed = 0;
-   $mvXAxis_L = 0;
-   $mvYAxis_L = 0;
+   
+   // Fix inputs getting stuck
+   clearInputs();
 }
 
 //-----------------------------------------------------------------------------

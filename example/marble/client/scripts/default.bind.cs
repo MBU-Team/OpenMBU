@@ -499,8 +499,23 @@ function pauseOrEscape()
       //LocalClientConnection.respawnPlayer();
 //}
 
-function clearTriggers()
+function clearInputs()
 {
+   $mvLeftAction = 0;
+   $mvRightAction = 0;
+   $mvForwardAction = 0;
+   $mvBackwardAction = 0;
+   $mvUpAction = 0;
+   $mvDownAction = 0;
+   $mvYawRightSpeed = 0;
+   $mvYawLeftSpeed = 0;
+   $mvPitchUpSpeed = 0;
+   $mvPitchDownSpeed = 0;
+   $mvXAxis_L = 0;
+   $mvYAxis_L = 0;   
+   $mvYaw = 0;
+   $mvPitch = 0;
+   
    for (%i = 0; %i < 6; %i++)   
       $mvTriggerCount[%i] = 0;
 }
