@@ -396,6 +396,12 @@ ConsoleFunction(getWordCount, S32, 2, 2, "getWordCount(text)")
     return getUnitCount(argv[1], " \t\n");
 }
 
+ConsoleFunction(findWord, S32, 3, 3, "findWord(text, word)")
+{
+    argc;
+    return findUnit(argv[1], argv[2], " \t\n");
+}
+
 //--------------------------------------
 ConsoleFunction(getField, const char*, 3, 3, "getField(text, index)")
 {
@@ -429,6 +435,12 @@ ConsoleFunction(getFieldCount, S32, 2, 2, "getFieldCount(text)")
 {
     argc;
     return getUnitCount(argv[1], "\t\n");
+}
+
+ConsoleFunction(findField, S32, 3, 3, "findField(text, field)")
+{
+    argc;
+    return findUnit(argv[1], argv[2], "\t\n");
 }
 
 //--------------------------------------

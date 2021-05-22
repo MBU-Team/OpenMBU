@@ -1660,6 +1660,9 @@
         <field>            <name>textID</name>
             <desc>string textID</desc>
         </field>
+        <field>            <name>useMouseEvents</name>
+            <desc>bool useMouseEvents</desc>
+        </field>
     </class>
     <class>        <name>GuiButtonCtrl</name>
         <base>GuiButtonBaseCtrl</base>
@@ -7310,6 +7313,9 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>filterString</name>
         <args>baseString,replacementChars</args>
     </function>
+    <function>        <name>findField</name>
+        <args>text, field</args>
+    </function>
     <function>        <name>findFirstFile</name>
         <args>string pattern</args>
         <desc>Returns the first file in the directory system matching the given pattern.</desc>
@@ -7317,6 +7323,9 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>findNextFile</name>
         <args>string pattern</args>
         <desc>Returns the next file matching a search begun in findFirstFile.</desc>
+    </function>
+    <function>        <name>findWord</name>
+        <args>text, word</args>
     </function>
     <function>        <name>firstWord</name>
         <args>text</args>

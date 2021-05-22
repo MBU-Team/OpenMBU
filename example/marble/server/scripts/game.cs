@@ -271,7 +271,8 @@ function pauseGame()
    // we always store a variable indicating when they have requested a game pause (the UI keys off this)
    $gamePauseWanted = true;
    stopDemoTimer(); 
-   sfxPauseAll();
+   //sfxPauseAll();
+   sfxPause($SimAudioType);
    //if(xbHasPlaybackControl())
    //   pauseMusic();
    sfxPlay(PauseSfx);
@@ -290,7 +291,8 @@ function resumeGame()
 {
    $gamePaused = false;
    $gamePauseWanted = false;
-   sfxUnpauseAll();
+   //sfxUnpauseAll();
+   sfxResume();
    //if(xbHasPlaybackControl())
    //   unpauseMusic();
    // restart demo timer if necessary

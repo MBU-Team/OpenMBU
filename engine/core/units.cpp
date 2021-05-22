@@ -158,3 +158,16 @@ const char* removeUnit(const char* string, U32 index, const char* set)
     dStrcat(ret, string);
     return ret;
 }
+
+U32 findUnit(const char* string, const char* find, const char* set)
+{
+    U32 count = getUnitCount(string, set);
+    for (U32 i = 0; i < count; i++)
+    {
+        const char* s = getUnit(string, i, set);
+        if (dStrcmp(find, s) == 0)
+            return i;
+    }
+
+    return -1;
+}

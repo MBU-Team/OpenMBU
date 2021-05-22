@@ -13,5 +13,6 @@ extern const char* getUnits(const char* string, S32 startIndex, S32 endIndex, co
 extern U32 getUnitCount(const char* string, const char* set);
 extern const char* setUnit(const char* string, U32 index, const char* replace, const char* set);
 extern const char* removeUnit(const char* string, U32 index, const char* set);
+extern U32 findUnit(const char* string, const char* find, const char* set);
 
 #endif // _COREUNITS_H_
