@@ -1659,12 +1659,12 @@ void Marble::advanceTime(F32 dt)
         {
             if (mDataBlock->powerUps->emitter[i])
             {
-                if (mPowerUpState->active)
+                if (mPowerUpState[i].active)
                 {
                     if (mPowerUpState[i].emitter.isNull())
                     {
                         mPowerUpState[i].emitter = new ParticleEmitter;
-                        mPowerUpState[i].emitter->setDataBlock(mDataBlock->powerUps->emitter[i]);
+                        mPowerUpState[i].emitter->onNewDataBlock(mDataBlock->powerUps->emitter[i]);
                         mPowerUpState[i].emitter->registerObject();
                     }
                 } else
