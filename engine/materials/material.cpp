@@ -416,13 +416,18 @@ void Material::setBlendState(Material::BlendOp blendOp)
         GFX->setDestBlend(GFXBlendOne);
         break;
     }
+    case AddAlpha:
+    {
+        GFX->setSrcBlend(GFXBlendSrcAlpha);
+        GFX->setDestBlend(GFXBlendOne);
+        break;
+    }
     case Mul:
     {
         GFX->setSrcBlend(GFXBlendDestColor);
         GFX->setDestBlend(GFXBlendZero);
         break;
     }
-
     case LerpAlpha:
     {
         GFX->setSrcBlend(GFXBlendSrcAlpha);
@@ -431,6 +436,9 @@ void Material::setBlendState(Material::BlendOp blendOp)
     }
 
     default:
+        // default to LerpAlpha
+        GFX->setSrcBlend(GFXBlendSrcAlpha);
+        GFX->setDestBlend(GFXBlendInvSrcAlpha);
         break;
     }
 
