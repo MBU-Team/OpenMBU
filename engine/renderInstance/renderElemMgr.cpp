@@ -162,13 +162,13 @@ S32 FN_CDECL RenderElemMgr::cmpKeyFunc(const void* p1, const void* p2)
     if (mse1->inst && mse1->inst->matInst &&
         mse2->inst && mse2->inst->matInst)
     {
-        S32 testA = S32(mse1->inst->matInst->isDynamicLightingMaterial()) -
-            S32(mse2->inst->matInst->isDynamicLightingMaterial());
+        S32 testA = S32(mse2->inst->matInst->isDynamicLightingMaterial()) -
+            S32(mse1->inst->matInst->isDynamicLightingMaterial());
         if (testA != 0)
             return testA;
     }
 
-    S32 test1 = S32(mse1->key) - S32(mse2->key);
+    S32 test1 = S32(mse2->key) - S32(mse1->key);
 
-    return (test1 == 0) ? S32(mse1->key2) - S32(mse2->key2) : test1;
+    return (test1 == 0) ? S32(mse2->key2) - S32(mse1->key2) : test1;
 }

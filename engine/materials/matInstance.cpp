@@ -58,6 +58,7 @@ void MatInstance::construct()
     mMaxStages = 1;
 
     mMatInstList.push_back(this);
+    mSortWeight = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -934,6 +935,11 @@ bool MatInstance::hasCubemap()
     return false;
 }
 
+// Currently, mSortWeight will be set by derived class to get the ordering right if needed
+S32 MatInstance::compare(MatInstance* mat)
+{
+    return mSortWeight - mat->mSortWeight;
+}
 
 //------------------------------------------------------------------------------
 // Console functions

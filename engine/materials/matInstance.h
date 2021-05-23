@@ -62,6 +62,7 @@ private:
     U32               mMaxStages;
     S32               mCullMode;
     bool              mHasGlow;
+    U32               mSortWeight;
 
     Vector <RenderPassData> mPasses;
 
@@ -145,6 +146,9 @@ public:
     }
 
     void setTextureStages(SceneGraphData& sgData, U32 pass);
+
+    // Compares this MatInstance to mat
+    virtual S32 compare(MatInstance* mat);
 
     /// Create a material instance by reference to a Material.
     MatInstance(Material& mat);

@@ -105,6 +105,16 @@ void RenderTranslucentMgr::render()
 
         U32 matListEnd = j;
 
+        // set culling
+        if (!mat || mat->getMaterial()->doubleSided)
+        {
+            GFX->setCullMode(GFXCullNone);
+        }
+        else
+        {
+            GFX->setCullMode(GFXCullCCW);
+        }
+
         // render these separately...
         if (ri->type == RenderInstManager::RIT_ObjectTranslucent)
         {
@@ -130,6 +140,7 @@ void RenderTranslucentMgr::render()
         // handle particles
         if (ri->particles)
         {
+            GFX->setCullMode(GFXCullNone);
             GFX->setTextureStageColorOp(0, GFXTOPModulate);
             GFX->setTextureStageColorOp(1, GFXTOPDisable);
             GFX->setZWriteEnable(false);
@@ -200,6 +211,7 @@ void RenderTranslucentMgr::render()
 
         setupSGData(ri, sgData);
 
+        GFX->setZWriteEnable(false);
         bool firstmatpass = true;
         while (mat->setupPass(sgData))
         {
@@ -209,42 +221,30 @@ void RenderTranslucentMgr::render()
             for (a = j; a < binSize; a++)
             {
                 RenderInst* passRI = mElementList[a].inst;
-
-                if (mat != passRI->matInst)
-                {
+                
+                // if new matInst is null or different, break
+                if (newPassNeeded(mat, passRI))
                     break;
-                }
-
 
                 // z sorting and stuff is not working in this mgr...
                 // lighting on hold until this gets fixed...
-                /*// don't break the material multipass rendering...
-                if(firstmatpass)
+                // don't break the material multipass rendering...
+                if (firstmatpass)
                 {
-                    if(passRI->primitiveFirstPass)
+                    if (passRI->primitiveFirstPass)
                     {
-                        bool &firstpass = *passRI->primitiveFirstPass;
-                        if(firstpass)
-                        {
-                            GFX->setAlphaBlendEnable(false);
-                            GFX->setSrcBlend(GFXBlendOne);
-                            GFX->setDestBlend(GFXBlendZero);
-                            firstpass = false;
-                        }
-                        else
+                        bool& firstpass = *passRI->primitiveFirstPass;
+                        if (!firstpass)
                         {
                             GFX->setAlphaBlendEnable(true);
                             GFX->setSrcBlend(GFXBlendOne);
                             GFX->setDestBlend(GFXBlendOne);
                         }
+                        firstpass = false;
                     }
-                    else
-                    {
-                        GFX->setAlphaBlendEnable(false);
-                        GFX->setSrcBlend(GFXBlendOne);
-                        GFX->setDestBlend(GFXBlendZero);
-                    }
-                }*/
+                }
+
+                setupSGData(passRI, sgData);
 
                 setupLights(passRI, sgData);
 
