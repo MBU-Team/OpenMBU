@@ -136,25 +136,38 @@ void RenderInstManager::addInst(RenderInst* inst)
         gRenderInstManager.init();
 
     AssertISV(mInitialized, "RenderInstManager not initialized - call console function 'initRenderInstManager()'");
+    AssertFatal(inst != NULL, "doh, null instance");
+
+    PROFILE_START(RenderInstManager_addInst);
+
+    PROFILE_START(RenderInstManager_selectBin0);
+
+    Material* instMat = NULL;
+    if (inst->matInst != NULL)
+        instMat = inst->matInst->getMaterial();
 
     bool hasGlow = true;
     if (!inst->matInst || !inst->matInst->hasGlow() || getCurrentClientSceneGraph()->isReflectPass() || inst->obj)
         hasGlow = false;
 
-    if (inst->matInst && inst->matInst->getMaterial() && inst->matInst->getMaterial()->renderBin)
+    // handle special cases that don't require insertion into multiple bins
+    if (inst->matInst && instMat && instMat->renderBin)
     {
-        mRenderBins[inst->matInst->getMaterial()->renderBin]->addElement(inst);
+        PROFILE_END();
+        AssertFatal(instMat->renderBin >= 0 && instMat->renderBin < NumRenderBins, "doh, invalid bin, check the renderBin property for this material");
+        mRenderBins[instMat->renderBin]->addElement(inst);
+    }
+    else if (inst->translucent || (instMat && instMat->translucent) || (inst->visibility < 1.0f))
+    {
+        PROFILE_END();
+        if (!hasGlow)
+            mRenderBins[Translucent]->addElement(inst);
     }
     else
     {
+        PROFILE_END();
 
-        // handle special cases that don't require insertion into multiple bins
-        if (inst->translucent || (inst->matInst && inst->matInst->getMaterial()->translucent) || (inst->visibility < 1.0f))
-        {
-            if (!hasGlow)
-                mRenderBins[Translucent]->addElement(inst);
-            goto END_ADDINST;
-        }
+        PROFILE_START(RenderInstManager_selectBin1);
 
         // handle standard cases
         switch (inst->type)
@@ -201,14 +214,18 @@ void RenderInstManager::addInst(RenderInst* inst)
             mRenderBins[MiscObject]->addElement(inst);
             break;
         }
+        PROFILE_END();
     }
 
-END_ADDINST:
+    PROFILE_START(RenderInstMgr_specialBin);
 
     // handle extra insertions
     if (inst->matInst)
     {
+        PROFILE_START(RenderInstMgr_custDynCast); // wonder if this will actually be non zero on the profiler...
         CustomMaterial* custMat = dynamic_cast<CustomMaterial*>(inst->matInst->getMaterial());
+        PROFILE_END();
+
         if (custMat && custMat->refract)
         {
             mRenderBins[Refraction]->addElement(inst);
@@ -221,6 +238,10 @@ END_ADDINST:
             mRenderBins[Glow]->addElement(inst);
         }
     }
+
+    PROFILE_END();
+
+    PROFILE_END();
 }
 
 
