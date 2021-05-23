@@ -171,12 +171,3 @@ function sfxResume( %pauseSet )
    // to clear his own if he passed one.
    %pauseSet.clear();
 }
-
-function listPausedSounds()
-{
-   for (%i=0; %i < SFXPausedSet.getCount(); %i++)
-   {
-       %src = SFXPausedSet.getObject(%i);
-       echo("Playing: " @ %src.isPlaying() @ ", Paused: " @ %src.isPaused());
-   }
-}
