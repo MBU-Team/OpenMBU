@@ -38,7 +38,7 @@ void RenderTranslucentMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
     data.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
     data.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
 
-
+    data.visibility = ri->visibility;
 }
 
 //-----------------------------------------------------------------------------

@@ -48,6 +48,7 @@ void RenderMeshMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
         data.normLightmap = *ri->normLightmap;
     }
 
+    data.visibility = ri->visibility;
 }
 
 

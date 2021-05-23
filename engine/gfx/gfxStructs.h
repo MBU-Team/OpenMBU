@@ -113,6 +113,8 @@ struct GFXShaderFeatureData
         // Refraction,
         PixSpecular,
         VertSpecular,
+        Translucent,      // Not a feature with shader code behind it, but needed for pixSpecular.
+        Visibility,
         Fog,              // keep fog last feature
         NumFeatures,
     };

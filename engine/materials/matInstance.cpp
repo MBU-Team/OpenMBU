@@ -140,6 +140,11 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             }
         }
 
+        if (i == GFXShaderFeatureData::Translucent)
+        {
+            fd.features[i] = mMaterial->translucent;
+        }
+
         // if normal/bump mapping disabled, continue
         if (Con::getBoolVariable("$pref::Video::disableNormalmapping", false) &&
             (i == GFXShaderFeatureData::BumpMap || i == GFXShaderFeatureData::LightNormMap))
@@ -247,6 +252,12 @@ void MatInstance::determineFeatures(U32 stageNum, GFXShaderFeatureData& fd)
             ((mMaterial->mCubemapData && mMaterial->mCubemapData->cubemap) || mMaterial->dynamicCubemap) &&
             (!isDynamicLightingMaterial() || (LightInfo::sgAllowCubeMapping(dynamicLightingFeatures))) &&
             !Con::getBoolVariable("$pref::Video::disableCubemapping", false))
+        {
+            fd.features[i] = true;
+        }
+
+        // Visibility
+        if (i == GFXShaderFeatureData::Visibility)
         {
             fd.features[i] = true;
         }
@@ -629,7 +640,7 @@ bool MatInstance::setupPass(SceneGraphData& sgData)
         GFX->setAlphaBlendEnable(false);
     }
 
-    if (mMaterial->translucent)
+    if (mMaterial->translucent || sgData.visibility < 1.0f)
     {
         GFX->setAlphaBlendEnable(true);
         mMaterial->setBlendState(mMaterial->translucentBlendOp);

@@ -350,8 +350,18 @@ void PixelSpecular::processPix(Vector<ShaderComponent*>& componentList,
         }
     }
 
+    //final = new GenOp("@ * @.w", final, eyePos);
+
     // add to color
     meta->addStatement(new GenOp("   @;\r\n", assignColor(final, true)));
+    if ((fd.features[GFXShaderFeatureData::Visibility]) && (!fd.materialFeatures[GFXShaderFeatureData::Translucent]))
+    {
+        Var* color = (Var*)LangElement::find("col");
+        if (color)
+        {
+            meta->addStatement(new GenOp("   @.a = 1.0;\r\n", color));
+        }
+    }
 
     output = meta;
 }

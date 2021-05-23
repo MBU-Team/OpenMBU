@@ -306,6 +306,10 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
 {
     if (vertsPerFrame <= 0) return;
 
+    F32 meshVisibility = mVisibility;
+    if (meshVisibility < 0.0001f)
+        return;
+
     RenderInst* coreRI = gRenderInstManager.allocInst();
     coreRI->type = RenderInstManager::RIT_Mesh;
     coreRI->calcSortPoint(smObject, smSceneState->getCameraPosition());
@@ -333,6 +337,8 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
 
     coreRI->vertBuff = &getVertexBuffer();
     coreRI->primBuff = &mPB;
+
+    coreRI->visibility = meshVisibility;
 
     //-----------------------------------------------------------------
     LightManager* lm = getCurrentClientSceneGraph()->getLightManager();
@@ -1312,6 +1318,10 @@ void TSMesh::setMaterial(S32 matIndex, TSMaterialList* materials)
 
 void TSMesh::setFade(F32 fadeValue)
 {
+    mVisibility = fadeValue;
+
+    TSShapeInstance::smRenderData.vertexAlpha.vis = fadeValue;
+    TSShapeInstance::smRenderData.fadeSet = true;
     /*
        TSShapeInstance::smRenderData.vertexAlpha.vis = fadeValue;
        if (TSShapeInstance::smRenderData.vertexAlpha.set())
@@ -1326,8 +1336,9 @@ void TSMesh::setFade(F32 fadeValue)
 
 void TSMesh::clearFade()
 {
+    setFade(1.0f);
     //   setFade(1.0f);
-    //   TSShapeInstance::smRenderData.fadeSet = false;
+       TSShapeInstance::smRenderData.fadeSet = false;
 }
 
 //-----------------------------------------------------

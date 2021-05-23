@@ -64,6 +64,8 @@ void FeatureMgr::init()
     mFeatures[GFXShaderFeatureData::CubeMap] = new ReflectCubeFeat;
     mFeatures[GFXShaderFeatureData::PixSpecular] = new PixelSpecular;
     mFeatures[GFXShaderFeatureData::VertSpecular] = NULL;
+    mFeatures[GFXShaderFeatureData::Translucent] = new ShaderFeature;
+    mFeatures[GFXShaderFeatureData::Visibility] = new VisibilityFeat;
     mFeatures[GFXShaderFeatureData::Fog] = new FogFeat;
 
 

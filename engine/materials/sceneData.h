@@ -42,6 +42,8 @@ struct SceneGraphData
     MatrixF        objTrans;
     VertexData* vertData;
     GFXCubemap* cubemap;
+    F32 visibility;
+
     bool           glowPass;
     bool           refractPass;
 
@@ -53,6 +55,7 @@ struct SceneGraphData
         : lightmap(), normLightmap(), fogTex()
     {
         dMemset(this, 0, sizeof(SceneGraphData));
+        visibility = 1.0f;
     }
 
 };

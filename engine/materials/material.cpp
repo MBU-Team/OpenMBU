@@ -400,6 +400,9 @@ void Material::setShaderConstants(const SceneGraphData& sgData, U32 stageNum)
  //   F32 scale = 2.0;
  //   GFX->setVertexShaderConstF( VC_DETAIL_SCALE, &scale, 1 );
 
+   // Visibility
+    F32 visibility = sgData.visibility;
+    GFX->setPixelShaderConstF(PC_VISIBILITY, &visibility, 1);
 }
 
 //--------------------------------------------------------------------------

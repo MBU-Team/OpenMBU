@@ -149,7 +149,7 @@ void RenderInstManager::addInst(RenderInst* inst)
     {
 
         // handle special cases that don't require insertion into multiple bins
-        if (inst->translucent || (inst->matInst && inst->matInst->getMaterial()->translucent))
+        if (inst->translucent || (inst->matInst && inst->matInst->getMaterial()->translucent) || (inst->visibility < 1.0f))
         {
             if (!hasGlow)
                 mRenderBins[Translucent]->addElement(inst);

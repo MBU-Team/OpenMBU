@@ -1105,3 +1105,47 @@ void FogFeat::setTexData(Material::StageData& stageDat,
 
 }
 
+//----------------------------------------------------------------------------
+// Process pixel shader feature
+//----------------------------------------------------------------------------
+void VisibilityFeat::processPix(Vector<ShaderComponent*>& componentList, GFXShaderFeatureData& fd)
+{
+    // create visibility var
+    Var* visibility = new Var;
+    visibility->setType("float");
+    visibility->setName("visibility");
+    visibility->uniform = true;
+    visibility->constNum = PC_VISIBILITY;
+
+    // search for color var
+    Var* color = (Var*)LangElement::find("col");
+
+    // Looks like its going to be a multiline statement
+    MultiLine* meta = new MultiLine;
+
+    if (!color)
+    {
+        // create color var
+        color = new Var;
+        color->setType("fragout");
+        color->setName("col");
+        color->setStructName("OUT");
+
+        // link it to ConnectData.shading
+        ConnectorStruct* connectComp = dynamic_cast<ConnectorStruct*>(componentList[C_CONNECTOR]);
+        Var* inColor = connectComp->getElement(RT_COLOR);
+        inColor->setName("shading");
+        inColor->setStructName("IN");
+        inColor->setType("float4");
+
+        meta->addStatement(new GenOp("   @ = @;\r\n", color, inColor));
+    }
+
+    meta->addStatement(new GenOp("   @.a *= @;\r\n", color, visibility));
+
+    // Debugging
+    //meta->addStatement( new GenOp( "   @ = float4( @, @, @, 1.0 );\r\n", color, visibility, visibility, visibility ) );
+    //meta->addStatement( new GenOp( "   return OUT;\r\n" ) );
+
+    output = meta;
+}

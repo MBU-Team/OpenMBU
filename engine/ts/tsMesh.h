@@ -77,6 +77,7 @@ protected:
     Box3F mBounds;
     Point3F mCenter;
     F32 mRadius;
+    F32 mVisibility;
     bool mDynamic;
 
     static F32 overrideFadeVal;
@@ -186,8 +187,8 @@ public:
     static void initDetailMapMaterials();
     static void resetDetailMapMaterials();
     static void setMaterial(S32 matIndex, TSMaterialList*);
-    static void setFade(F32 fadeValue);
-    static void clearFade();
+    void setFade(F32 fadeValue);
+    void clearFade();
     static void setOverrideFade(F32 fadeValue) { overrideFadeVal = fadeValue; }
     static F32  getOverrideFade() { return overrideFadeVal; }
     /// @}
@@ -290,6 +291,7 @@ public:
         //      mVB = NULL;
         //      mPB = NULL;
         mDynamic = false;
+        mVisibility = 1.0f;
     }
     virtual ~TSMesh();
 };

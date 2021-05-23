@@ -56,6 +56,7 @@ struct RenderInst
     bool  particles;
     U8    transFlags;
     bool  reflective;
+    F32   visibility;
 
     // mesh related
     S32   mountedObjIdx;  // for debug rendering on ShapeBase objects
@@ -84,6 +85,7 @@ struct RenderInst
     void clear()
     {
         dMemset(this, 0, sizeof(RenderInst));
+        visibility = 1.0f;
     }
 
     void calcSortPoint(SceneObject* obj, const Point3F& camPosition);
