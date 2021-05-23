@@ -34,6 +34,9 @@ class SFXALVoice : public SFXVoice
 
       ALuint mSourceName;
 
+      /// Buggy OAL jumps around when pausing.  Save playback cursor here.
+      F32 mResumeAtSampleOffset;
+
       bool mIs3D;
 
       const OPENALFNTABLE &mOpenAL;

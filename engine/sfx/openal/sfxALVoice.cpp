@@ -44,6 +44,7 @@ SFXALVoice::SFXALVoice( const OPENALFNTABLE &oalft,
                         ALuint sourceName )
 
    :  mOpenAL( oalft ),
+      mResumeAtSampleOffset(-1.0f),
       mIsPlaying( false ), 
       mBufferName( bufferName ), 
       mSourceName( sourceName ),
@@ -61,7 +62,7 @@ SFXALVoice::~SFXALVoice()
 void SFXALVoice::setPosition( U32 pos )
 {
    AL_SANITY_CHECK();
-   mOpenAL.alSourcei( mSourceName, AL_BYTE_OFFSET, pos );
+   mOpenAL.alSourcei( mSourceName, AL_SAMPLE_OFFSET, pos );
 }
 
 void SFXALVoice::setMinMaxDistance( F32 min, F32 max )
@@ -96,6 +97,15 @@ void SFXALVoice::play( bool looping )
    mOpenAL.alSourcei( mSourceName, AL_LOOPING, ( looping ? AL_TRUE : AL_FALSE ) );
    mOpenAL.alSourcePlay( mSourceName );
 
+   // Adjust play cursor for buggy OAL when resuming playback.  Do this after alSourcePlay
+   // as it is the play function that will cause the cursor to jump.
+
+   if (mResumeAtSampleOffset != -1.0f)
+   {
+       mOpenAL.alSourcef(mSourceName, AL_SAMPLE_OFFSET, mResumeAtSampleOffset);
+       mResumeAtSampleOffset = -1.0f;
+   }
+
    // Test this
    ALint state;
    mOpenAL.alGetSourcei( mSourceName, AL_SOURCE_STATE, &state );
@@ -106,6 +116,11 @@ void SFXALVoice::pause()
    AL_SANITY_CHECK();
 
    mOpenAL.alSourcePause( mSourceName );
+
+   //WORKAROUND: Another workaround for the buggy OAL.  Resuming playback of a paused source will cause the 
+   // play cursor to jump.  Save the cursor so we can manually move it into position in _play().  Sigh.
+
+   mOpenAL.alGetSourcef(mSourceName, AL_SAMPLE_OFFSET, &mResumeAtSampleOffset);
 }
 
 void SFXALVoice::stop()
@@ -113,6 +128,8 @@ void SFXALVoice::stop()
    AL_SANITY_CHECK();
 
    mOpenAL.alSourceStop( mSourceName );
+   
+   mResumeAtSampleOffset = -1.0f;
 }
 
 void SFXALVoice::setVelocity( const VectorF& velocity )

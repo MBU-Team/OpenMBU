@@ -162,10 +162,21 @@ function sfxResume( %pauseSet )
    for ( %i = 0; %i < %count; %i++ )
    {
       %source = %pauseSet.getObject( %i );
-      %source.play();
+      // Make sure the sound is actually paused, otherwise the sound will replay!
+      if (%source.isPaused())
+         %source.play();
    }
 
    // Clear our pause set... the caller is left
    // to clear his own if he passed one.
    %pauseSet.clear();
+}
+
+function listPausedSounds()
+{
+   for (%i=0; %i < SFXPausedSet.getCount(); %i++)
+   {
+       %src = SFXPausedSet.getObject(%i);
+       echo("Playing: " @ %src.isPlaying() @ ", Paused: " @ %src.isPaused());
+   }
 }
