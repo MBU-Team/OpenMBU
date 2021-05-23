@@ -1959,7 +1959,7 @@ void SceneObject::uninstallLights()
 // - if an interior, which contains this object, moves then this value will be incorrect
 bool SceneObject::getLightingAmbientColor(ColorF* col)
 {
-    //#if YOU_ARE_INSANE
+#if YOU_ARE_INSANE
     AssertFatal(col != NULL, "SceneObject::getLightingAmbientColor: invalid color ptr");
 
     const F32 cRayLength = 100.f;             // down/up
@@ -2115,9 +2115,10 @@ bool SceneObject::getLightingAmbientColor(ColorF* col)
     }
 
     return(false);
-    //#endif
-    //   *col = ColorF(1.0, 1.0, 1.0);
-    //   return true;
+#else
+    *col = ColorF(1.0, 1.0, 1.0);
+    return true;
+#endif
 }
 Point3F SceneObject::getVelocity() const
 {

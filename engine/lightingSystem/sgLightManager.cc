@@ -350,10 +350,13 @@ void LightManager::sgSetupLights(SceneObject* obj)
             if (outside)
                 light.mDirection = sun->mDirection;
             if (obj->receiveLMLighting)
-                light.mColor = ambientColor * 0.8;
+                light.mColor = ambientColor;// * 0.8f;
             else
                 light.mColor = sun->mColor;
             light.mAmbient = sun->mAmbient;
+            //light.mAmbient.red = sun->mAmbient.red * 0.346f;
+            //light.mAmbient.green = sun->mAmbient.green * 0.588f;
+            //light.mAmbient.blue = sun->mAmbient.blue * 0.070f;
         }
         else if (obj->receiveLMLighting)
         {
