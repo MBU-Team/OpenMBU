@@ -77,6 +77,15 @@ bool CustomMaterial::onAdd()
 
     mShaderData = static_cast<ShaderData*>(Sim::findObject(mShaderDataName));
 
+    // TEMP: Disable this until we can figure out the z-fighting and brightness issues with this.
+    // Allow translucent objects to be seen behind each other
+    /*for (S32 i = 0; i < MAX_PASSES; i++)
+    {
+        CustomMaterial* mat = pass[i];
+        if (mat && mat->translucent)
+            subPassTranslucent = true;
+    }*/
+
     return true;
 }
 
@@ -489,7 +498,7 @@ bool CustomMaterial::setupPass(SceneGraphData& sgData)
     }
 
 
-    if (translucent)
+    if (isTranslucent())
     {
         GFX->setAlphaBlendEnable(true);
         setBlendState(translucentBlendOp);
@@ -510,6 +519,12 @@ bool CustomMaterial::setupPass(SceneGraphData& sgData)
     }
 
     setupSubPass(sgData);
+
+    /*if (!setNextRefractPass(sgData.refractPass))
+    {
+        cleanup();
+        return false;
+    }*/
 
     return true;
 }

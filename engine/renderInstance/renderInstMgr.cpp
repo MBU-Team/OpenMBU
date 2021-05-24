@@ -157,7 +157,7 @@ void RenderInstManager::addInst(RenderInst* inst)
         AssertFatal(instMat->renderBin >= 0 && instMat->renderBin < NumRenderBins, "doh, invalid bin, check the renderBin property for this material");
         mRenderBins[instMat->renderBin]->addElement(inst);
     }
-    else if (inst->translucent || (instMat && instMat->translucent) || (inst->visibility < 1.0f))
+    else if (inst->translucent || (instMat && instMat->isTranslucent()) || (inst->visibility < 1.0f))
     {
         PROFILE_END();
         if (!hasGlow)

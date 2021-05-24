@@ -101,6 +101,7 @@ Material::Material()
     doubleSided = false;
 
     translucent = false;
+    subPassTranslucent = false;
     translucentBlendOp = LerpAlpha;
     translucentZWrite = false;
 

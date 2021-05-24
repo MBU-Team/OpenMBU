@@ -159,6 +159,7 @@ public:
     bool              dynamicCubemap;
 
     bool              translucent;
+    bool              subPassTranslucent;
     BlendOp           translucentBlendOp;
     bool              translucentZWrite;
 
@@ -220,6 +221,7 @@ public:
     virtual void setStageData();
 
     MatType getType() { return mType; }
+    bool isTranslucent() { return translucent || subPassTranslucent; }
 
     DECLARE_CONOBJECT(Material);
 };
