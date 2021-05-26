@@ -145,6 +145,9 @@
     <Filter Include="Source Files\resources">
       <UniqueIdentifier>{ca0b6c87-96e1-4ae0-a6db-550f0d9fc950}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\discord">
+      <UniqueIdentifier>{b5a76111-d98e-452a-bdd4-cf57d874b4b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\collision\abstractPolyList.cpp">
@@ -1632,6 +1635,48 @@
     <ClCompile Include="..\engine\renderInstance\renderZOnlyMgr.cpp">
       <Filter>Source Files\renderInstance</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\achievement_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\activity_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\application_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\core.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\image_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\lobby_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\network_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\overlay_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\relationship_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\storage_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\store_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\types.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\user_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\voice_manager.cpp">
+      <Filter>Source Files\discord</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\collision\abstractPolyList.h">
@@ -3010,6 +3055,57 @@
     </ClInclude>
     <ClInclude Include="..\engine\renderInstance\renderZOnlyMgr.h">
       <Filter>Source Files\renderInstance</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\achievement_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\activity_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\application_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\core.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\discord.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\event.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\ffi.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\image_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\lobby_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\network_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\overlay_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\relationship_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\storage_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\store_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\types.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\user_manager.h">
+      <Filter>Source Files\discord</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\erikm\Downloads\discord_game_sdk\cpp\voice_manager.h">
+      <Filter>Source Files\discord</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

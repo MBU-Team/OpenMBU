@@ -63,6 +63,8 @@
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
 
+#include <discord/discord.h>
+
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
 DemoNetInterface GameNetInterface;
@@ -131,6 +133,7 @@ extern void processConnectedReceiveEvent(ConnectedReceiveEvent* event);
 extern void processConnectedNotifyEvent(ConnectedNotifyEvent* event);
 extern void processConnectedAcceptEvent(ConnectedAcceptEvent* event);
 extern void ShowInit();
+void InitDiscord();
 
 /// Initalizes the components of the game like the TextureManager, ResourceManager
 /// console...etc.
@@ -187,6 +190,7 @@ static bool initLibraries()
     TSShapeInstance::init();
     RedBook::init();
     SFXSystem::init();
+    InitDiscord();
 
     return true;
 }
@@ -223,6 +227,63 @@ static void shutdownLibraries()
 
     PlatformAssert::destroy();
     Net::shutdown();
+}
+
+struct DiscordState {
+    discord::User currentUser;
+
+    //std::unique_ptr<discord::Core> core;
+
+};
+
+void InitDiscord() {
+
+    //DiscordState state{};
+
+    //discord::Core* core{};
+
+    //auto result = discord::Core::Create(846933806711046144, DiscordCreateFlags_Default, &core);
+
+   // core->UserManager().OnCurrentUserUpdate.Connect([&state]() {
+
+
+    //    });
+
+    /*DiscordEventHandlers handlers;
+    memset(&handlers, 0, sizeof(handlers));
+    handlers.ready = handleDiscordReady;
+    handlers.errored = handleDiscordError;
+    handlers.disconnected = handleDiscordDisconnected;
+    handlers.joinGame = handleDiscordJoinGame;
+    handlers.spectateGame = handleDiscordSpectateGame;
+    handlers.joinRequest = handleDiscordJoinRequest;
+
+    // Discord_Initialize(const char* applicationId, DiscordEventHandlers* handlers, int autoRegister, const char* optionalSteamId)
+    Discord_Initialize("846933806711046144", &handlers, 1);**/
+}
+
+static void handleDiscordReady(){
+
+}
+
+static void handleDiscordError(){
+
+}
+
+static void handleDiscordDisconnected(){
+
+}
+
+static void handleDiscordJoinGame(){
+
+}
+
+static void handleDiscordSpectateGame(){
+
+}
+
+static void handleDiscordJoinRequest(){
+
 }
 
 ConsoleFunction(setModPaths, void, 2, 2, "(string paths)"
@@ -477,6 +538,7 @@ bool gShuttingDown = false;
 /// Main loop of the game
 int DemoGame::main(int argc, const char** argv)
 {
+
     //   if (argc == 1) {
     //      static const char* argvFake[] = { "dtest.exe", "-jload", "test.jrn" };
     //      argc = 3;
