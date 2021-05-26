@@ -146,3 +146,32 @@ ConsoleFunction(ContentQuery, const char*, 1, 2, "([contentCategory])")
 
     return result;
 }
+
+ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "()")
+{
+    argc;
+    int gameMode = -1;
+    if (argc > 2)
+        gameMode = dAtoi(argv[2]);
+
+    switch (gameMode)
+    {
+        case 0:
+        // Menu
+            Con::printf(" (DISCORD RICH PRESENCE) Menu Mode Set");
+        break;
+        case 1:
+        // SinglePlayer
+            Con::printf(" (DISCORD RICH PRESENCE) SinglePlayer Mode Set");
+        break;
+        case 2:
+            Con::printf(" (DISCORD RICH PRESENCE) MultiPlayer Mode Set");
+        // MultiPlayer
+        break;
+        default:
+            Con::printf(" (DISCORD RICH PRESENCE) Unknown Mode");
+        // Default Action
+        break;
+    }
+    //Con::printf(" >> Testing Discord Rich Presence");
+}
