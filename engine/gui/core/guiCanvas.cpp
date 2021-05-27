@@ -554,9 +554,9 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
         if (event->objType == SI_BUTTON || event->objType == SI_POV)
         {
             if (event->action == SI_MAKE)
-                responder->onGamepadButtonPressed(event->objInst);
+                retval = responder->onGamepadButtonPressed(event->objInst);
             else if (event->action == SI_BREAK)
-                responder->onGamepadButtonReleased(event->objInst);
+                retval = responder->onGamepadButtonReleased(event->objInst);
 
             gLastEventTime = Sim::getCurrentTime();
             
