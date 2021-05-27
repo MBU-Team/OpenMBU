@@ -17,3 +17,4 @@ shaderV*.hlsl
 *.uft
 *.aps
 *.pdb
+*.ilk
