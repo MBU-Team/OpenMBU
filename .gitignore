@@ -20,3 +20,4 @@ shaderV*.hlsl
 *.ilk
 build/
 .idea
+*.manifest
