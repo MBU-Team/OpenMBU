@@ -50,11 +50,11 @@ public:
     F64* functionFloats;
 
     U32 codeSize;
-    U32* code;
+    dsize_t* code;
 
     U32 refCount;
     U32 lineBreakPairCount;
-    U32* lineBreakPairs;
+    dsize_t* lineBreakPairs;
     U32 breakListSize;
     U32* breakList;
     CodeBlock* nextFile;

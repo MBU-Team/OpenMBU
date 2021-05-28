@@ -55,19 +55,19 @@ namespace Compiler
 
     //------------------------------------------------------------
 
-    U32 evalSTEtoU32(StringTableEntry ste, U32)
+    dsize_t evalSTEtoU32(StringTableEntry ste, U32)
     {
-        return *((U32*)&ste);
+        return *((dsize_t*)&ste);
     }
 
-    U32 compileSTEtoU32(StringTableEntry ste, U32 ip)
+    dsize_t compileSTEtoU32(StringTableEntry ste, U32 ip)
     {
         if (ste)
             getIdentTable().add(ste, ip);
         return 0;
     }
 
-    U32(*STEtoU32)(StringTableEntry ste, U32 ip) = evalSTEtoU32;
+    dsize_t(*STEtoU32)(StringTableEntry ste, U32 ip) = evalSTEtoU32;
 
     //------------------------------------------------------------
 

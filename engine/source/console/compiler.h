@@ -129,7 +129,7 @@ namespace Compiler
 
     F64 consoleStringToNumber(const char* str, StringTableEntry file = 0, U32 line = 0);
     U32 precompileBlock(StmtNode* block, U32 loopCount);
-    U32 compileBlock(StmtNode* block, U32* codeStream, U32 ip, U32 continuePoint, U32 breakPoint);
+    U32 compileBlock(StmtNode* block, dsize_t* codeStream, U32 ip, U32 continuePoint, U32 breakPoint);
 
     //------------------------------------------------------------
 
@@ -193,15 +193,15 @@ namespace Compiler
 
     //------------------------------------------------------------
 
-    inline StringTableEntry U32toSTE(U32 u)
+    inline StringTableEntry U32toSTE(dsize_t u)
     {
         return *((StringTableEntry*)&u);
     }
 
-    extern U32(*STEtoU32)(StringTableEntry ste, U32 ip);
+    extern dsize_t(*STEtoU32)(StringTableEntry ste, U32 ip);
 
-    U32 evalSTEtoU32(StringTableEntry ste, U32);
-    U32 compileSTEtoU32(StringTableEntry ste, U32 ip);
+    dsize_t evalSTEtoU32(StringTableEntry ste, U32);
+    dsize_t compileSTEtoU32(StringTableEntry ste, U32 ip);
 
     CompilerStringTable* getCurrentStringTable();
     CompilerStringTable& getGlobalStringTable();

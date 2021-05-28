@@ -851,15 +851,15 @@ void TSShape::assembleShape()
     if (smReadVersion > 15)
     {
         // straight forward read one at a time
-        ptr32 = alloc.allocShape32(numMeshes + numSkins * numDetails); // leave room for skins on old shapes
+        TSMesh **ptrmesh = (TSMesh**)alloc.allocShape32((numMeshes + numSkins*numDetails) * (sizeof(TSMesh*) / 4));
         S32 curObject = 0, curDecal = 0; // for tracking skipped meshes
         for (i = 0; i < numMeshes; i++)
         {
             bool skip = checkSkip(i, curObject, curDecal, skipDL); // skip this mesh?
             S32 meshType = alloc.get32();
             TSMesh* mesh = TSMesh::assembleMesh(meshType, skip);
-            if (ptr32)
-                ptr32[i] = skip ? 0 : (S32)mesh;
+            if (ptrmesh)
+                ptrmesh[i] = skip ? 0 : mesh;
 
             // fill in location of verts, tverts, and normals for detail levels
             if (mesh && meshType != TSMesh::DecalMeshType)
@@ -882,12 +882,12 @@ void TSShape::assembleShape()
                 }
             }
         }
-        meshes.set(ptr32, numMeshes);
+        meshes.set(ptrmesh, numMeshes);
     }
     else
     {
         // use meshIndexList to contruct mesh list...
-        ptr32 = alloc.allocShape32(meshIndexListSize + numSkins * numDetails);
+        TSMesh **ptrmesh = (TSMesh**)alloc.allocShape32((numMeshes + numSkins*numDetails) * (sizeof(TSMesh*) / 4));
         S32 next = 0;
         S32 curObject = 0, curDecal = 0; // for tracking skipped meshes
         for (i = 0; i < meshIndexListSize; i++)
@@ -898,8 +898,8 @@ void TSShape::assembleShape()
                 AssertFatal(meshIndexList[i] == next, "TSShape::read: assertion failed on obsolete shape");
                 S32 meshType = alloc.get32();
                 TSMesh* mesh = TSMesh::assembleMesh(meshType, skip);
-                if (ptr32)
-                    ptr32[i] = skip ? 0 : (S32)mesh;
+                if (ptrmesh)
+                    ptrmesh[i] = skip ? 0 : mesh;
                 next = meshIndexList[i] + 1;
 
                 // fill in location of verts, tverts, and normals for detail levels
@@ -923,10 +923,10 @@ void TSShape::assembleShape()
                     }
                 }
             }
-            else if (ptr32)
-                ptr32[i] = 0; // no mesh
+            else if (ptrmesh)
+                ptrmesh[i] = 0; // no mesh
         }
-        meshes.set(ptr32, meshIndexListSize);
+        meshes.set(ptrmesh, meshIndexListSize);
     }
 
     alloc.checkGuard();

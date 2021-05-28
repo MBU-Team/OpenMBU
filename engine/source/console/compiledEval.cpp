@@ -930,7 +930,7 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
             }
             // Now, rewrite our code a bit (ie, avoid future lookups) and fall
             // through to OP_CALLFUNC
-            code[ip + 1] = *((U32*)&nsEntry);
+            code[ip + 1] = *((dsize_t*)&nsEntry);
             code[ip - 1] = OP_CALLFUNC;
 
         case OP_CALLFUNC:
