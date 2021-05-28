@@ -43,9 +43,9 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4244")
 
     if( TORQUE_CPU_X64 )
-        link_directories($ENV{DXSDK_DIR}/Lib/x64)
+        link_directories("${libDir}/directx9/Lib/x64")
     else()
-        link_directories($ENV{DXSDK_DIR}/Lib/x86)
+        link_directories("${libDir}/directx9/Lib/x86")
     endif()
 	
 	addLib(d3d9)
@@ -306,7 +306,7 @@ endif()
 
 # external things
 if(WIN32)
-    set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INCLUDE_DIRECTORIES $ENV{DXSDK_DIR}/Include)
+    set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY INCLUDE_DIRECTORIES "${libDir}/directx9/Include")
 endif()
 
 if(MSVC)
