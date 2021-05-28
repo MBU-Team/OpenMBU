@@ -77,9 +77,9 @@ static const F32 F32_MAX = F32(3.402823466e+38F);                 ///< Constant 
 
 //--------------------------------------
 // Enable Asserts in all debug builds -- AFTER compiler types include.
-#if defined(TORQUE_DEBUG)
-#define TORQUE_ENABLE_ASSERTS
-#endif
+//#if defined(TORQUE_DEBUG)
+//#define TORQUE_ENABLE_ASSERTS
+//#endif
 
 
 //-------------------------------------- A couple of all-around useful inlines and
