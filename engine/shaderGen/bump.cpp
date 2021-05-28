@@ -7,7 +7,7 @@
 #include "platform/platformVideo.h"
 #include "gfx/gfxDevice.h"
 #include "materials/matInstance.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 
 //****************************************************************************
 // Bumpmap

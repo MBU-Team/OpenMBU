@@ -19,7 +19,7 @@
 #include "materials/materialList.h"
 #include "materials/shaderData.h"
 // Needed for PC_USERDEF1, is there a better spot to get this?
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "renderInstance/renderInstMgr.h"
 
 static U8 interiorDebugColors[14][3] = {

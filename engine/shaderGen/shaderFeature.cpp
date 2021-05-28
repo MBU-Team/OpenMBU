@@ -5,7 +5,7 @@
 #include "shaderFeature.h"
 #include "langElement.h"
 #include "shaderOp.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "gfx/gfxDevice.h"
 #include "materials/matInstance.h"
 

@@ -5,7 +5,7 @@
 #include "matInstance.h"
 #include "materials/customMaterial.h"
 #include "gfx/gfxDevice.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "shaderGen/featureMgr.h"
 #include "gfx/cubemapData.h"
 #include "gfx/gfxCubemap.h"

@@ -2,8 +2,6 @@
 out.*.*/
 *.user
 *.log
-example/*.exe
-example/*.ilk
 game/*.exe
 game/*.ilk
 *.dso

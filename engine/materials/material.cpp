@@ -5,7 +5,7 @@
 #include "material.h"
 #include "console/consoleTypes.h"
 #include "core/bitStream.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "sceneData.h"
 #include "gfx/gfxDevice.h"
 #include "gfx/cubemapData.h"

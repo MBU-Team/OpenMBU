@@ -2,7 +2,7 @@
 #define _GFX_GFXTRANSFORMSAVER_H_
 
 #include "gfx/gfxDevice.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 
 /// Helper class to store viewport and matrix stack state, and restore it
 /// later.

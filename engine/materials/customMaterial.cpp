@@ -9,7 +9,7 @@
 #include "materials/shaderData.h"
 #include "gfx/cubemapData.h"
 #include "gfx/gfxCubemap.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "materialPropertyMap.h"
 
 

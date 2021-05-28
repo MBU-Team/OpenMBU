@@ -9,7 +9,7 @@
 #include "shaderGen/shaderFeature.h"
 #include "shaderGen/shaderOp.h"
 #include "materials/matInstance.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 
 
 class ExposureFeatureX2 : public ShaderFeature

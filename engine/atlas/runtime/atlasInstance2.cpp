@@ -21,7 +21,7 @@
 #include "atlas/runtime/atlasClipMapBlenderCache.h"
 #include "atlas/runtime/atlasClipMap.h"
 #include "atlas/runtime/atlasClipMapBatcher.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 
 IMPLEMENT_CO_NETOBJECT_V1(AtlasInstance2);
 S32 AtlasInstance2::smRayCollisionDebugLevel = AtlasInstance2::RayCollisionDebugToTriangles;

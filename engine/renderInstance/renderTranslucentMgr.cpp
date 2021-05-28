@@ -6,7 +6,7 @@
 #include "materials/sceneData.h"
 #include "sceneGraph/sceneGraph.h"
 #include "materials/matInstance.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 
 #define HIGH_NUM ((U32(-1)/2) - 1)
 

@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 #include "renderElemMgr.h"
 #include "materials/matInstance.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 
 //-----------------------------------------------------------------------------
 // RenderElemMgr

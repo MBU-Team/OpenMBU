@@ -19,7 +19,7 @@
 #include "gfx/D3D/gfxD3DVertexBuffer.h"
 #include "gfx/D3D/screenShotD3D.h"
 #include "gfx/d3d/gfxD3DEnumTranslate.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "core/unicode.h"
 #include "gfx/d3d/gfxD3DShader.h"
 

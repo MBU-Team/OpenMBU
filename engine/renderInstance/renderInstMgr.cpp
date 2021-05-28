@@ -5,7 +5,7 @@
 #include "renderInstMgr.h"
 #include "materials/sceneData.h"
 #include "materials/matInstance.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "materials/customMaterial.h"
 #include "sceneGraph/sceneGraph.h"
 #include "gfx/primbuilder.h"

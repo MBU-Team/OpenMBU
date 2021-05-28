@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 #include "pixSpecular.h"
 #include "shaderOp.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "gfx/gfxStructs.h"
 
 //****************************************************************************

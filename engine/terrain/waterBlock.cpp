@@ -12,7 +12,7 @@
 #include "console/consoleTypes.h"
 #include "gui/core/guiTSControl.h"
 #include "gfx/primBuilder.h"
-#include "../../example/shaders/shdrConsts.h"
+#include "../../game/shaders/shdrConsts.h"
 #include "renderInstance/renderInstMgr.h"
 
 #define BLEND_TEX_SIZE 256
