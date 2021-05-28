@@ -821,8 +821,8 @@
         <field>            <name>LightSync</name>
             <desc>bool LightSync</desc>
         </field>
-        <field>            <name>lightTime</name>
-            <desc>float lightTime</desc>
+        <field>            <name>LightTime</name>
+            <desc>float LightTime</desc>
         </field>
         <field>            <name>MaxHeight</name>
             <desc>float MaxHeight</desc>
@@ -1838,8 +1838,8 @@
         <field>            <name>Modal</name>
             <desc>@deprecated This member is deprecated, which means that its value is always undefined.</desc>
         </field>
-        <field>            <name>Position</name>
-            <desc>Point2I Position</desc>
+        <field>            <name>position</name>
+            <desc>Point2I position</desc>
         </field>
         <field>            <name>Profile</name>
             <desc>GuiProfile Profile</desc>
@@ -3323,8 +3323,8 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>lightRadius</name>
             <desc>float lightRadius</desc>
         </field>
-        <field>            <name>lightTime</name>
-            <desc>int lightTime</desc>
+        <field>            <name>LightTime</name>
+            <desc>int LightTime</desc>
         </field>
         <field>            <name>lightType</name>
             <desc>enumval lightType</desc>
@@ -3756,8 +3756,8 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>setArea</name>
             <args>int x, int y, int width, int height</args>
         </method>
-        <field>            <name>area</name>
-            <desc>RectI area</desc>
+        <field>            <name>Area</name>
+            <desc>RectI Area</desc>
         </field>
         <field>            <name>flightCeiling</name>
             <desc>float flightCeiling</desc>
@@ -4643,8 +4643,8 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>hidden</name>
             <desc>bool hidden</desc>
         </field>
-        <field>            <name>Position</name>
-            <desc>MatrixPosition Position</desc>
+        <field>            <name>position</name>
+            <desc>MatrixPosition position</desc>
         </field>
         <field>            <name>reanderShadow</name>
             <desc>bool reanderShadow</desc>
@@ -5304,8 +5304,8 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>lightRadius</name>
             <desc>float lightRadius</desc>
         </field>
-        <field>            <name>lightTime</name>
-            <desc>int lightTime</desc>
+        <field>            <name>LightTime</name>
+            <desc>int LightTime</desc>
         </field>
         <field>            <name>lightType</name>
             <desc>enumval lightType</desc>
