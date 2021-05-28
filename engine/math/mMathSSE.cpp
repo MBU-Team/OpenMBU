@@ -7,17 +7,7 @@
 #include "math/mPlane.h"
 #include "math/mMatrix.h"
 
-
-// if we set our flag, we always try to build the inlined asm.
-// EXCEPT if we're in an old version of Codewarrior that can't handle SSE code.
-#if defined(TORQUE_SUPPORTS_NASM)
-#define ADD_SSE_FN
-extern "C"
-{
-    void SSE_MatrixF_x_MatrixF(const F32* matA, const F32* matB, F32* result);
-}
-
-#elif defined(TORQUE_SUPPORTS_VC_INLINE_X86_ASM)
+#if defined(TORQUE_SUPPORTS_VC_INLINE_X86_ASM)
 #define ADD_SSE_FN
 // inlined version here.
 void SSE_MatrixF_x_MatrixF(const F32* matA, const F32* matB, F32* result)
@@ -100,6 +90,14 @@ void SSE_MatrixF_x_MatrixF(const F32* matA, const F32* matB, F32* result)
         addps       xmm2, xmm7
         movups[eax + 30h], xmm2
     }
+}
+// if we set our flag, we always try to build the inlined asm.
+// EXCEPT if we're in an old version of Codewarrior that can't handle SSE code.
+#elif defined(TORQUE_SUPPORTS_NASM)
+#define ADD_SSE_FN
+extern "C"
+{
+    void SSE_MatrixF_x_MatrixF(const F32* matA, const F32* matB, F32* result);
 }
 #endif
 

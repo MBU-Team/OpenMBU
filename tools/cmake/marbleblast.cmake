@@ -47,6 +47,10 @@ if(WIN32)
     else()
         link_directories($ENV{DXSDK_DIR}/Lib/x86)
     endif()
+	
+	addLib(d3d9)
+	addLib(d3dx9)
+	addLib(dxerr)
 endif()
 
 # build types
@@ -80,7 +84,7 @@ addPath("${srcDir}/game/net")
 addPath("${srcDir}/game/vehicles")
 addPath("${srcDir}/gfx")
 if (WIN32)
-	addPath("${srcDor}/gfx/D3D")
+	addPath("${srcDir}/gfx/D3D")
 endif()
 addPath("${srcDir}/gui")
 addPath("${srcDir}/gui/containers")
@@ -115,6 +119,8 @@ addPath("${srcDir}/xblive")
 # modular paths
 ###############################################################################
 
+set(TORQUE_SFX_OPENAL ON)
+
 # OpenAL
 if(TORQUE_SFX_OPENAL AND NOT TORQUE_DEDICATED)
     addPath("${srcDir}/sfx/openal")
@@ -126,9 +132,12 @@ if(TORQUE_SFX_OPENAL AND NOT TORQUE_DEDICATED)
     endif()
 endif()
 
+set(TORQUE_SFX_VORBIS ON)
+
 # Vorbis
 if(TORQUE_SFX_VORBIS)
     addInclude(${libDir}/libvorbis/include)
+    addInclude(${libDir}/libogg/include)
     addDef(TORQUE_OGGVORBIS)
     addLib(libvorbis)
     addLib(libogg)

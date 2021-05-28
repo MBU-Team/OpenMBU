@@ -17,6 +17,14 @@ set(cmakeDir      "${CMAKE_SOURCE_DIR}/tools/cmake")
 mark_as_advanced(CMAKE_INSTALL_PREFIX)
 mark_as_advanced(CMAKE_CONFIGURATION_TYPES)
 
+#if (WIN32)
+#	set(CMAKE_ASM_NASM_COMPILER "${CMAKE_SOURCE_DIR}/bin/nasm/nasmw.exe")
+#endif()
+#enable_language(ASM_NASM)
+#set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <SOURCE> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT>" FORCE)
+#SET(ASM_OPTIONS "-x assembler-with-cpp")
+#SET(CMAKE_ASM_FLAGS "${CFLAGS} ${ASM_OPTIONS}" )
+
 # finds and adds sources files in a folder
 macro(addPath dir)
     set(tmp_files "")
@@ -33,9 +41,14 @@ macro(addPath dir)
              ${dir}/*.c
              ${dir}/*.cc
              ${dir}/*.h
+             ${dir}/*.cxx
              ${mac_files}
              #${dir}/*.asm
              )
+	#file(${glob_config} asm_files ${dir}/*.asm)
+    #foreach(entry ${asm_files})
+	#	set_property(SOURCE ${entry} APPEND PROPERTY COMPILE_OPTIONS ${ASM_OPTIONS})
+	#endforeach()
     foreach(entry ${BLACKLIST})
  		list(REMOVE_ITEM tmp_files ${dir}/${entry})
  	endforeach()
@@ -236,13 +249,13 @@ macro(generateFiltersSpecial relDir)
         # Get the path of the file relative to ${DIRECTORY},
         # then alter it (not compulsory)
         file(RELATIVE_PATH SRCGR ${relDir} ${f})
-        set(SRCGR "torque3d/${SRCGR}")
+        set(SRCGR "torque/${SRCGR}")
         # Extract the folder, ie remove the filename part
         string(REGEX REPLACE "(.*)(/[^/]*)$" "\\1" SRCGR ${SRCGR})
         # do not have any ../ dirs
         string(REPLACE "../" "" SRCGR ${SRCGR})
-        IF("${SRCGR}" MATCHES "^torque3d/My Projects/.*$")
-            string(REPLACE "torque3d/My Projects/${PROJECT_NAME}/" "" SRCGR ${SRCGR})
+        IF("${SRCGR}" MATCHES "^torque/My Projects/.*$")
+            string(REPLACE "torque/My Projects/${PROJECT_NAME}/" "" SRCGR ${SRCGR})
             string(REPLACE "/source" "" SRCGR ${SRCGR})
         endif()
         # Source_group expects \\ (double antislash), not / (slash)
@@ -328,17 +341,17 @@ set(TORQUE_STATIC ON)
 #option(TORQUE_STATIC "enables or disable static" OFF)
 
 if(WIN32)
-    set(TORQUE_CXX_FLAGS_EXECUTABLES "/wd4018 /wd4100 /wd4121 /wd4127 /wd4130 /wd4244 /wd4245 /wd4389 /wd4511 /wd4512 /wd4800 /wd4995 " CACHE TYPE STRING)
+    set(TORQUE_CXX_FLAGS_EXECUTABLES "/wd4018 /wd4100 /wd4121 /wd4127 /wd4130 /wd4244 /wd4245 /wd4389 /wd4511 /wd4512 /wd4800 /wd4995 " CACHE STRING STRING)
     mark_as_advanced(TORQUE_CXX_FLAGS_EXECUTABLES)
 
-    set(TORQUE_CXX_FLAGS_LIBS "/W0" CACHE TYPE STRING)
+    set(TORQUE_CXX_FLAGS_LIBS "/W0" CACHE STRING STRING)
     mark_as_advanced(TORQUE_CXX_FLAGS_LIBS)
 
     set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /O2 /Ob2 /Oi /Ot /Oy /GT /Zi /W4 /nologo /GF /EHsc /GS- /Gy- /Qpar- /fp:precise /fp:except- /GR /Zc:wchar_t-" )
     if( TORQUE_CPU_X32 )
        set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "${TORQUE_CXX_FLAGS_COMMON_DEFAULT} /arch:SSE2")
     endif()
-    set(TORQUE_CXX_FLAGS_COMMON ${TORQUE_CXX_FLAGS_COMMON_DEFAULT} CACHE TYPE STRING)
+    set(TORQUE_CXX_FLAGS_COMMON ${TORQUE_CXX_FLAGS_COMMON_DEFAULT} CACHE STRING STRING)
 
     mark_as_advanced(TORQUE_CXX_FLAGS_COMMON)
 

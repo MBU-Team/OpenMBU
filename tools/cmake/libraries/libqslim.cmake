@@ -22,4 +22,23 @@
 
 project(libqslim)
 
+#addFile("${libDir}/libqslim/geom3d.cxx")
+#addFile("${libDir}/libqslim/geom4d.cxx")
+#addFile("${libDir}/libqslim/mat2.cxx")
+#addFile("${libDir}/libqslim/mat3.cxx")
+#addFile("${libDir}/libqslim/mat4.cxx")
+#addFile("${libDir}/libqslim/mixmops.cxx")
+#addFile("${libDir}/libqslim/mixmsg.cxx")
+#addFile("${libDir}/libqslim/MxBlockModel.cxx")
+#addFile("${libDir}/libqslim/MxHeap.cxx")
+#addFile("${libDir}/libqslim/MxMat3-jacobi.cxx")
+#addFile("${libDir}/libqslim/MxMat4-jacobi.cxx")
+#addFile("${libDir}/libqslim/MxMatrix.cxx")
+#addFile("${libDir}/libqslim/MxQMetric.cxx")
+#addFile("${libDir}/libqslim/MxQMetric3.cxx")
+#addFile("${libDir}/libqslim/MxQSlim.cxx")
+#addFile("${libDir}/libqslim/MxStdModel.cxx")
+#addFile("${libDir}/libqslim/MxStdSlim.cxx")
+#addFile("${libDir}/libqslim/quat.cxx")
+
 finishLibrary("${libDir}/libqslim")

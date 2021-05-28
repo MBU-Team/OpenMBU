@@ -4,6 +4,8 @@ out.*.*/
 *.log
 example/*.exe
 example/*.ilk
+game/*.exe
+game/*.ilk
 *.dso
 prefs.cs
 banlist.cs
@@ -18,3 +20,4 @@ shaderV*.hlsl
 *.aps
 *.pdb
 *.ilk
+build/

@@ -40,7 +40,7 @@
 #define TORQUE_MULTITHREAD
 
 /// Define me to enable unicode support.
-#define TORQUE_UNICODE
+//#define TORQUE_UNICODE
 
 /// Define me to enable Torque HiFi support
 #define TORQUE_HIFI_NET

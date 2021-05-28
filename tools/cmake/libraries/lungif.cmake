@@ -20,9 +20,9 @@
 # IN THE SOFTWARE.
 # -----------------------------------------------------------------------------
 
-project(lmng)
+project(lungif)
 
-addInclude("${libDir}/ljpeg")
-addInclude("${libDir}/zlib")
+addDef(_GBA_NO_FILEIO)
 
-finishLibrary("${libDir}/lmng")
+
+finishLibrary("${libDir}/${PROJECT_NAME}")

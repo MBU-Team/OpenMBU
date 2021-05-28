@@ -43,11 +43,8 @@ void Processor::init()
     U32   properties = 0;
     U32   processor = 0;
 
-#if defined(TORQUE_SUPPORTS_NASM)
 
-    detectX86CPUInfo(vendor, &processor, &properties);
-
-#elif defined(TORQUE_SUPPORTS_VC_INLINE_X86_ASM)
+#if defined(TORQUE_SUPPORTS_VC_INLINE_X86_ASM)
     __asm
     {
         //--------------------------------------
@@ -102,6 +99,8 @@ void Processor::init()
             pop      edx
             pop      ebx
     }
+#elif defined(TORQUE_SUPPORTS_NASM)
+    detectX86CPUInfo(vendor, &processor, &properties);
 #endif
 
     SetProcessorInfo(Platform::SystemInfo.processor, vendor, processor, properties);
