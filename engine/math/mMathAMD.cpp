@@ -1,6 +1,23 @@
 //-----------------------------------------------------------------------------
-// Torque Game Engine
-// Copyright (C) GarageGames.com, Inc.
+// Copyright (c) 2012 GarageGames, LLC
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
 #include "math/mMathFn.h"
@@ -187,49 +204,6 @@ extern "C"
 }
 
 #endif
-
-
-#if 0
-/* this isn't currently used/implemented.
-void Athlon_MatrixF_x_VectorF(const F32 *matrix, const F32 *vector, F32 *result)
-{
-   __asm {
-      femms
-      mov         eax,result
-      mov         ecx,vector
-      mov         edx,matrix
-
-      // Here's what we're doing:
-      // result[0] = M[0] * v[0]    +  M[1] * v[1]    +  M[2] * v[2];
-      // result[1] = M[4] * v[0]    +  M[5] * v[1]    +  M[6] * v[2];
-      // result[2] = M[8] * v[0]    +  M[9] * v[1]    +  M[10]* v[2];
-
-      movq        mm0,[ecx]         //     y   |  x
-      movd        mm1,[ecx+8]       //     0   |  z
-      movd        mm4,[edx+8]       //     0   | m_13
-      movq        mm3,mm0           //     y   |  x
-      movd        mm2,[edx+40]      //     0   | m_33 (M[10])
-      punpckldq   mm0,mm0           //     x   |  x
-      punpckldq   mm4,[edx+20]      //    m_31 | m_23
-      pfmul       mm0,[edx]         //     x * m_12 | x * m_11
-      punpckhdq   mm3,mm3           //     y   |  y
-      pfmul       mm2,mm1           //     0   |  z * m_33
-      punpckldq   mm1,mm1           //     z   |  z
-      pfmul       mm4,[ecx]         //    y * m_31 | x * m_23
-      pfmul       mm3,[edx+12]      //    y * m_22 | y * m_21
-      pfmul       mm1,[edx+24]      //    z * m_32 | z * m_32
-      pfacc       mm4,mm4           //     ?   | y * m_31 + x * m_23
-      pfadd       mm3,mm0           //     x * m_12 + y * m_22 | x * m_11 + y * m_21
-      pfadd       mm4,mm2           //     ?   | y * m_31 + x * m_23 + z * m_33
-      pfadd       mm3,mm1           //     x * m_12 + y * m_22 + z * m_32 | x * m_11 + y * m_21 + z * m_32
-      movd        [eax+8],mm4       //    r_z
-      movq        [eax],mm3         //    r_y  | r_x
-      femms
-   }
-}
-*/
-#endif
-
 
 void mInstall_AMD_Math()
 {
