@@ -19,3 +19,4 @@ shaderV*.hlsl
 *.pdb
 *.ilk
 build/
+.idea
