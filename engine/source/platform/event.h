@@ -360,7 +360,7 @@ enum JoystickCodes {
     SI_RPOV2 = 0x217
 };
 
-#ifdef TORQUE_OS_WIN32          // XInput support for Windows (Xbox 360 Controllers) -- jason_cahill
+#if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)          // XInput support for Windows (Xbox 360 Controllers) -- jason_cahill
 enum XInputCodes {
     XI_CONNECT = 0x300,
     XI_THUMBLX = 0x301,
@@ -396,7 +396,7 @@ enum InputDeviceTypes
     MouseDeviceType,
     KeyboardDeviceType,
     JoystickDeviceType,
-#ifdef TORQUE_OS_WIN32          // XInput support for Windows (Xbox 360 Controllers) -- jason_cahill
+#if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)          // XInput support for Windows (Xbox 360 Controllers) -- jason_cahill
     XInputDeviceType,
 #endif
 };

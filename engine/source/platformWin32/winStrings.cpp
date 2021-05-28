@@ -326,7 +326,7 @@ S32 dVprintf(const char* format, void* arglist)
     return (len);
 }
 
-S32 dSprintf(char* buffer, U32 bufferSize, const char* format, ...)
+S32 dSprintf(char* buffer, dsize_t bufferSize, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -341,7 +341,7 @@ S32 dSprintf(char* buffer, U32 bufferSize, const char* format, ...)
 }
 
 
-S32 dVsprintf(char* buffer, U32 bufferSize, const char* format, void* arglist)
+S32 dVsprintf(char* buffer, dsize_t bufferSize, const char* format, void* arglist)
 {
 #if defined(TORQUE_COMPILER_CODEWARRIOR)
     S32 len = vsnprintf(buffer, bufferSize, format, (char*)arglist);

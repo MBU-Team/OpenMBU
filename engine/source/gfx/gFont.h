@@ -28,7 +28,7 @@
 
 extern ResourceInstance* constructFont(Stream& stream);
 
-GFX_DeclareTextureProfile(GFXFontTextureProfile);
+/*GFX_DeclareTextureProfile(GFXFontTextureProfile);
 
 class GOldFont : public ResourceInstance
 {
@@ -154,6 +154,6 @@ inline U32 GOldFont::getCharHeight(const U8 in_charIndex) const
 {
     const CharInfo& rChar = getCharInfo(in_charIndex);
     return rChar.height;
-}
+}*/
 
 #endif //_GOLDFONT_H_

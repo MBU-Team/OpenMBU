@@ -8,7 +8,7 @@
 
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-extern S32 HashPointer(StringTableEntry e);
+extern U32 HashPointer(StringTableEntry e);
 
 SimNameDictionary::SimNameDictionary()
 {

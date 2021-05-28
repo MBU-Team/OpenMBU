@@ -75,7 +75,7 @@ static bool initLibraries()
    ResourceManager->registerExtension(".gif", constructBitmapGIF);
    ResourceManager->registerExtension(".dbm", constructBitmapDBM);
    ResourceManager->registerExtension(".bmp", constructBitmapBMP);
-   ResourceManager->registerExtension(".gft", constructFont);
+   //ResourceManager->registerExtension(".gft", constructFont);
    ResourceManager->registerExtension(".dif", constructInteriorDIF);
    ResourceManager->registerExtension(".map", constructInteriorMAP);
 

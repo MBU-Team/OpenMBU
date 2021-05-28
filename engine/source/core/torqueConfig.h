@@ -143,7 +143,7 @@
 ///
 /// When the TMM is off, its tools for detecting memory leaks are not 
 /// available.
-//#define TORQUE_DISABLE_MEMORY_MANAGER
+#define TORQUE_DISABLE_MEMORY_MANAGER
 
 /// Define me if you want to enable debug guards in the memory manager.
 ///
@@ -155,7 +155,7 @@
 /// memory corruption issues quickly.
 ///
 /// Debug guard requires the Torque Memory manager.
-#define TORQUE_DEBUG_GUARD
+//#define TORQUE_DEBUG_GUARD
 
 /// Define to enable multiple binds per console function in an actionmap.  
 /// With this, you can bind multiple keys to the same "jump()" function 

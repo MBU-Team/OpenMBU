@@ -164,7 +164,7 @@ static bool initLibraries()
     ResourceManager->registerExtension(".jng", constructBitmapMNG);
     //   ResourceManager->registerExtension(".gft", constructFont);
     ResourceManager->registerExtension(".chu", constructAtlasChunkFile);
-    ResourceManager->registerExtension(".gf2", constructFont);
+    //ResourceManager->registerExtension(".gf2", constructFont);
     ResourceManager->registerExtension(".uft", constructNewFont);
     ResourceManager->registerExtension(".dif", constructInteriorDIF);
     ResourceManager->registerExtension(".ter", constructTerrainFile);

@@ -41,7 +41,7 @@ static U32 charsetMap[] =
 
 void createFontInit(void);
 void createFontShutdown(void);
-void CopyCharToBitmap(GBitmap* pDstBMP, HDC hSrcHDC, const RectI& r);
+//void CopyCharToBitmap(GBitmap* pDstBMP, HDC hSrcHDC, const RectI& r);
 
 void createFontInit()
 {
@@ -55,7 +55,7 @@ void createFontShutdown()
     DeleteObject(fontHDC);
 }
 
-void CopyCharToBitmap(GBitmap* pDstBMP, HDC hSrcHDC, const RectI& r)
+/*void CopyCharToBitmap(GBitmap* pDstBMP, HDC hSrcHDC, const RectI& r)
 {
     for (S32 i = r.point.y; i < r.point.y + r.extent.y; i++)
     {
@@ -68,9 +68,9 @@ void CopyCharToBitmap(GBitmap* pDstBMP, HDC hSrcHDC, const RectI& r)
                 *pDstBMP->getAddress(j, i) = 0;
         }
     }
-}
+}*/
 
-GOldFont* createFont(const char* name, dsize_t size, U32 charset /* = TGE_ANSI_CHARSET */)
+/*GOldFont* createFont(const char* name, dsize_t size, U32 charset *//* = TGE_ANSI_CHARSET *//*)
 {
     if (!name)
         return NULL;
@@ -178,7 +178,7 @@ GOldFont* createFont(const char* name, dsize_t size, U32 charset /* = TGE_ANSI_C
         Con::errorf(ConsoleLogEntry::General, "Error creating font: %s %d", name, size);
 
     return retFont;
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////////
 // WinFont class

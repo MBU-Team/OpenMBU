@@ -23,13 +23,13 @@ typedef struct
     Stream* stream;
 } mngstuff;
 
-static mng_ptr mngMallocFn(mng_uint32 size)
+static mng_ptr mngMallocFn(mng_size_t size)
 {
     mng_ptr data = dMalloc(size);
     return dMemset(data, 0, size);
 }
 
-static void mngFreeFn(mng_ptr p, mng_uint32 size)
+static void mngFreeFn(mng_ptr p, mng_size_t size)
 {
     dFree(p);
 }

@@ -7,7 +7,7 @@
 #include "console/console.h"
 #include "core/stringTable.h"
 
-typedef long SHANDLE_PTR;
+//typedef long SHANDLE_PTR;
 #include <shlobj.h>
 #include <windows.h>
 #include <lmcons.h>

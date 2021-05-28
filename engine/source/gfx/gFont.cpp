@@ -9,7 +9,7 @@
 #include "gfx/gfxDevice.h"
 #include "console/console.h"
 
-S32 GOldFont::smSheetIdCount = 0;
+/*S32 GOldFont::smSheetIdCount = 0;
 static U32 smPadding = 0;
 
 //GFX_ImplementTextureProfile(GFXFontTextureProfile,
@@ -559,3 +559,4 @@ bool GOldFont::write(Stream& stream) const
 
     return (stream.getStatus() == Stream::Ok);
 }
+*/
