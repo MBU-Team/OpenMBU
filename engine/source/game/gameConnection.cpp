@@ -995,7 +995,7 @@ void GameConnection::readPacket(BitStream* bstream)
         totalCatchup = mLastClientMove - mFirstMoveIndex;
 
         getCurrentClientProcessList()->ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
-        getCurrentClientProcessList()->forceHifiReset(tickDiff != 0);
+        //getCurrentClientProcessList()->forceHifiReset(tickDiff != 0);
 
         mDamageFlash = 0;
         mWhiteOut = 0;
