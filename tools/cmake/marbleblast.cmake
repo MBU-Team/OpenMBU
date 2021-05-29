@@ -14,7 +14,7 @@ if(UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_FLAG32} -Wundef -msse -pipe -Wfatal-errors ${TORQUE_ADDITIONAL_LINKER_FLAGS} -Wl,-rpath,'$$ORIGIN'")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CXX_FLAG32} -Wundef -msse -pipe -Wfatal-errors ${TORQUE_ADDITIONAL_LINKER_FLAGS} -Wl,-rpath,'$$ORIGIN'")
 
-   endif()    
+   endif()
 
 	# for asm files
 	SET (CMAKE_ASM_NASM_OBJECT_FORMAT "elf")
@@ -47,7 +47,7 @@ if(WIN32)
     else()
         link_directories("${libDir}/directx9/Lib/x86")
     endif()
-	
+
 	addLib(d3d9)
 	addLib(d3dx9)
 	addLib(dxerr)
@@ -126,7 +126,7 @@ if(TORQUE_SFX_OPENAL AND NOT TORQUE_DEDICATED)
     addPath("${srcDir}/sfx/openal")
     if(WIN32)
 	   addInclude("${libDir}/openal/win32")
-       addPath("${srcDir}/sfx/openal/win32")		 
+       addPath("${srcDir}/sfx/openal/win32")
     elseif(UNIX)
        addPath("${srcDir}/sfx/openal/posix")
     endif()
@@ -156,7 +156,7 @@ if(WIN32)
     addPath("${srcDir}/platformWin32")
     addPath("${srcDir}/resources")
     # add windows rc file for the icon
-    addFile("${srcDir}/resources/TSE.rc")
+    # addFile("${srcDir}/resources/TSE.rc")
 endif()
 
 if(APPLE)
@@ -207,11 +207,11 @@ if(APPLE)
       CONFIGURE_FILE("${cmakeDir}/torque.icns" "${srcDir}/resources/mac/torque.icns" COPYONLY)
   endif()
   #plist
-  if(NOT EXISTS "$${srcDir}/resources/mac/Info.plist")
+  if(NOT EXISTS "${srcDir}/resources/mac/Info.plist")
       CONFIGURE_FILE("${cmakeDir}/Info.plist.in" "${srcDir}/resources/mac/Info.plist" COPYONLY)
   endif()
   #target properties for mac
-  set_target_properties("${PROJECT_NAME}" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "$${srcDir}/resources/mac/Info.plist")
+  set_target_properties("${PROJECT_NAME}" PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${srcDir}/resources/mac/Info.plist")
 else()
   if(NOT EXISTS "${srcDir}/resources/icon.ico")
       CONFIGURE_FILE("${cmakeDir}/icon.ico" "${srcDir}/resources/icon.ico" COPYONLY)
@@ -232,7 +232,7 @@ addLib(libqslim)
 
 if(WIN32)
     # copy pasted from T3D build system, some might not be needed
-    set(TORQUE_EXTERNAL_LIBS "COMCTL32.LIB;COMDLG32.LIB;USER32.LIB;ADVAPI32.LIB;GDI32.LIB;WINMM.LIB;WS2_32.LIB;vfw32.lib;Imm32.lib;ole32.lib;shell32.lib;oleaut32.lib;version.lib" CACHE STRING "external libs to link against")
+    set(TORQUE_EXTERNAL_LIBS "COMCTL32;COMDLG32;USER32;ADVAPI32;GDI32;WINMM;WS2_32;vfw32.lib;Imm32.lib;ole32.lib;shell32.lib;oleaut32.lib;version.lib" CACHE STRING "external libs to link against")
     mark_as_advanced(TORQUE_EXTERNAL_LIBS)
     addLib("${TORQUE_EXTERNAL_LIBS}")
 

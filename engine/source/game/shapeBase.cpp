@@ -2675,7 +2675,8 @@ void ShapeBase::updateReflection()
 {
     if (mDynamicCubemap)
     {
-        mDynamicCubemap->updateDynamic(getPosition());
+        Point3F pos = getPosition();
+        mDynamicCubemap->updateDynamic(pos);
     }
 }
 

@@ -37,9 +37,9 @@ public:
         Knot* prev;
         Knot* next;
 
-        Knot::Knot() {};
-        Knot::Knot(const Knot& k);
-        Knot::Knot(const Point3F& p, const QuatF& r, F32 s, Knot::Type type = NORMAL, Knot::Path path = SPLINE);
+        Knot() {};
+        Knot(const Knot& k);
+        Knot(const Point3F& p, const QuatF& r, F32 s, Knot::Type type = NORMAL, Knot::Path path = SPLINE);
     };
 
 

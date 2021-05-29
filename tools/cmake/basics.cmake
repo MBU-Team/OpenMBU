@@ -325,7 +325,7 @@ macro(finishExecutable)
     endif()
 
     if (APPLE)
-      set(ICON_FILE "${projectSrcDir}/torque.icns")
+      set(ICON_FILE "${srcDir}/resources/mac/torque.icns")
         set_source_files_properties(${ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
         add_executable("${PROJECT_NAME}" MACOSX_BUNDLE ${ICON_FILE} ${${PROJECT_NAME}_files})
     else()
@@ -347,8 +347,8 @@ if(WIN32)
     set(TORQUE_CXX_FLAGS_LIBS "/W0" CACHE STRING STRING)
     mark_as_advanced(TORQUE_CXX_FLAGS_LIBS)
 
-    #set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /O2 /Ob2 /Oi /Ot /Oy /GT /Zi /W4 /nologo /GF /EHsc /GS- /Gy- /Qpar- /fp:precise /fp:except- /GR /Zc:wchar_t-" )
-	set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /Oi /Ot /Oy /GT /Zi /nologo /GF /EHsc /GS- /Gy- /Qpar- /fp:precise /fp:except- /GR /Zc:wchar_t-" )
+    #set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /O2 /Ob2 /Oi /Ot /Oy /GT /Zi /W4 /nologo /GF /EHsc /GS- /Gy- /Qpar /fp:precise /fp:except- /GR /Zc:wchar_t-" )
+	set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /Oi /Ot /Oy /GT /Zi /nologo /GF /EHsc /GS- /Gy- /Qpar /fp:precise /fp:except- /GR /Zc:wchar_t-" )
     if( TORQUE_CPU_X32 )
        set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "${TORQUE_CXX_FLAGS_COMMON_DEFAULT} /arch:SSE2")
     endif()
@@ -358,7 +358,7 @@ if(WIN32)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORQUE_CXX_FLAGS_COMMON}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE")
+    # set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE")
     #set(STATIC_LIBRARY_FLAGS "/OPT:NOREF")
 
     # Force static runtime libraries

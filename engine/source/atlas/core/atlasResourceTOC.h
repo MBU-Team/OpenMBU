@@ -422,7 +422,7 @@ void AtlasResourceTOC<StubType>::cbOnChunkReadComplete(dsize_t stubIdx, AtlasChu
         return;
     }
 
-    //Con::printf("AtlasResourceTOC<StubType>::cbOnChunkReadComplete - loaded stub (%d@%d,%d)",stub->level, stub->pos.x, stub->pos.y); 
+    //Con::printf("AtlasResourceTOC<StubType>::cbOnChunkReadComplete - loaded stub (%d@%d,%d)",stub->level, stub->pos.x, stub->pos.y);
 
     // BJGTODO - find way to defer process() call until needed.
     instateLoadedChunk(stub, (StubType::ChunkType*)chunk);
@@ -635,7 +635,7 @@ void AtlasResourceTOC<StubType>::generate(RectI invalidationRegion)
                 }
 
                 // Generate new chunk...
-                StubType::ChunkType* newagc = (StubType::ChunkType*)constructNewChunk();
+                typename StubType::ChunkType* newagc = (StubType::ChunkType*)constructNewChunk();
                 newagc->generate((AtlasChunk**)agc);
 
                 // Store it.

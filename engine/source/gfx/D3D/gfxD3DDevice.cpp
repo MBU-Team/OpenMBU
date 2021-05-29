@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 // Torque Shader Engine
-// 
+//
 // Copyright (c) 2003 GarageGames.Com
 //-----------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@
 #include "core/unicode.h"
 #include "gfx/d3d/gfxD3DShader.h"
 
-// Include this after the 
+// Include this after the
 #include "platformWin32/dxVersionChecker.h"
 
 // Gross hack to let the diag utility know that we only need stubs
@@ -90,7 +90,7 @@ GFXD3DDevice::~GFXD3DDevice()
         GFXD3DVertexBuffer* walk = mVBListHead;
         GFXD3DVertexBuffer* temp = NULL;
 
-        //while( walk != NULL ) 
+        //while( walk != NULL )
         //{
         //   temp = walk;
         //   walk = walk->next;
@@ -160,7 +160,7 @@ void GFXD3DDevice::enumerateVideoModes()
 
 void GFXD3DDevice::setVideoMode(const GFXVideoMode& mode)
 {
-    // set this before the reset - some modules like the GlowBuffer need to 
+    // set this before the reset - some modules like the GlowBuffer need to
     // resize screen buffers to the new video mode ( during reset() )
     mVideoMode = mode;
 
@@ -1032,7 +1032,7 @@ void GFXD3DDevice::releaseDefaultPoolResources()
     // Forcibly clean up the pools
     for (U32 i = 0; i < mVolatileVBList.size(); i++)
     {
-        // Con::printf("Trying to release vb with COM refcount of %d and internal refcount of %d", mVolatileVBList[i]->vb->AddRef() - 1, mVolatileVBList[i]->mRefCount);  
+        // Con::printf("Trying to release vb with COM refcount of %d and internal refcount of %d", mVolatileVBList[i]->vb->AddRef() - 1, mVolatileVBList[i]->mRefCount);
         // mVolatileVBList[i]->vb->Release();
 
         mVolatileVBList[i]->vb->Release();
@@ -1490,7 +1490,7 @@ GFXVertexBuffer* GFXD3DDevice::allocVertexBuffer(U32 numVerts, U32 vertFlags, U3
         // Get volatile stuff from a pool...
         AssertFatal(numVerts < MAX_DYNAMIC_VERTS, "Cannot allocate that many verts in a volatile vertex buffer, increase MAX_DYNAMIC_VERTS! -- BJG");
 
-        // This is all we need here, everything else lives in the lock method on the 
+        // This is all we need here, everything else lives in the lock method on the
         // buffer... -- BJG
 
     }
@@ -1588,7 +1588,7 @@ void GFXD3DDevice::copyBBToSfxBuff()
 void GFXD3DDevice::init(const GFXVideoMode& mode)
 {
 #ifdef TORQUE_SHIPPING
-    // Check DX Version here, bomb if we don't have the minimum. 
+    // Check DX Version here, bomb if we don't have the minimum.
     // Check platformWin32/dxVersionChecker.cpp for more information/configuration.
     AssertISV(checkDXVersion(), "Minimum DirectX version required to run this application not found. Quitting.");
 #endif
@@ -1652,7 +1652,7 @@ void GFXD3DDevice::init(const GFXVideoMode& mode)
     // Setup default states
     initStates();
 
-    //-------- Output init info ---------   
+    //-------- Output init info ---------
     D3DCAPS9 caps;
     mD3DDevice->GetDeviceCaps(&caps);
 
@@ -1746,7 +1746,7 @@ void GFXD3DDevice::reset(D3DPRESENT_PARAMETERS& d3dpp)
     // First release all the stuff we allocated from D3DPOOL_DEFAULT
     releaseDefaultPoolResources();
 
-    // reset device   
+    // reset device
     Con::printf("--- Resetting D3D Device ---");
     HRESULT hres = S_OK;
     hres = mD3DDevice->Reset(&d3dpp);

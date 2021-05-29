@@ -111,7 +111,7 @@ public:
     bool writeText(Stream& stream);
 
     void mapMaterials();
-    Material* MaterialList::getMappedMaterial(U32 index);
+    Material* getMappedMaterial(U32 index);
     MatInstance* getMaterialInst(U32 texIndex);
     void setMaterialInst(MatInstance* matInst, U32 texIndex);
 

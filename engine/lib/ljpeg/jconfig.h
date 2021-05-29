@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
-// 
-// 
-// 
+//
+//
+//
 //--------------------------------------------------------------------------
 
 
@@ -15,7 +15,7 @@
 #endif
 
 #if (defined(__MWERKS__) && defined(macintosh)) || defined(__APPLE__)
-   #include "jconfig.cw.mac.h"
+   #include "jconfig.gcc.linux.h"
    #define JCONFIG_INCLUDED
 #endif
 

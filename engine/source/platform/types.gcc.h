@@ -65,10 +65,10 @@ typedef unsigned long long  U64;
 #elif defined(__APPLE__)
 #  define TORQUE_OS_MAC
 #  define TORQUE_OS_MAC_OSX
-#  include "platform/types.ppc.h"
+#  include "platform/types.posix.h"
 // for the moment:
 #  include "platformMacCarb/macCarb_common_prefix.h"
-#else 
+#else
 #  error "GCC: Unsupported Operating System"
 #endif
 
@@ -83,6 +83,11 @@ typedef unsigned long long  U64;
 #elif defined(__ppc__)
 #  define TORQUE_CPU_STRING "PowerPC"
 #  define TORQUE_CPU_PPC
+#  define TORQUE_BIG_ENDIAN
+
+#elif defined(__x86_64__)
+#  define TORQUE_CPU_STRING "Intel x86_64"
+#  define TORQUE_CPU_X64
 #  define TORQUE_BIG_ENDIAN
 
 #else

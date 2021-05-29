@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Torque Game Engine 
+// Torque Game Engine
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@
 /// This class is used to store geometry from a PolyList query.
 ///
 /// It allows you to render this data, as well.
-/// 
+///
 /// @see AbstractPolyList
 class OptimizedPolyList : public AbstractPolyList
 {
@@ -34,7 +34,7 @@ public:
 
         U32 triangleLightingStartIndex;
 
-        Poly::Poly() { plane = -1; vertexCount = 0; material = -1; };
+        Poly() { plane = -1; vertexCount = 0; material = -1; };
     };
 
     struct FullPoly

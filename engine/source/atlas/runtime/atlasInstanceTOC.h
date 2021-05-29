@@ -149,7 +149,7 @@ public:
 
     virtual void requestLoad(StubType* stub, U32 reason, F32 priority)
     {
-        ResourceTOCType::StubType* s = getResourceStub(stub);
+        typename ResourceTOCType::StubType* s = getResourceStub(stub);
         s->mRequests.request(this, priority, reason);
 
         // Notify the resource TOC so it can queue/unqueue it for load.
@@ -158,7 +158,7 @@ public:
 
     virtual void cancelLoadRequest(StubType* stub, U32 reason)
     {
-        ResourceTOCType::StubType* s = getResourceStub(stub);
+        typename ResourceTOCType::StubType* s = getResourceStub(stub);
         s->mRequests.cancel(this, reason);
 
         // Notify the resource TOC so it can queue/unqueue it for load.

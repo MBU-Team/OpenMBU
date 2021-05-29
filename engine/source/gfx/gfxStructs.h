@@ -146,7 +146,7 @@ template<class T> inline U32 getGFXVertFlags(T* vertexPtr) { return 0; }
 
 #define DEFINE_VERT(name,flags) struct name; \
             template<> inline U32 getGFXVertFlags(name *ptr) { return flags; }\
-            struct name 
+            struct name
 
 
 // Vertex types
@@ -259,6 +259,8 @@ DEFINE_VERT(GFXVertexPNTTBN,
 
 
 //-----------------------------------------------------------------------------
+
+class GFXDevice;
 
 struct GFXPrimitive
 {

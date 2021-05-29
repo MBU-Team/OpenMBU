@@ -93,7 +93,7 @@ public:
     {
         set(theDevice, numVerts, bufferType);
     }
-    void set(GFXDevice* theDevice, U32 numVerts = 0, GFXBufferType t = TypeVolatile)
+    void set(GFXDevice* theDevice, U32 numVerts = 0, GFXBufferType t = GFXBufferTypeVolatile)
     {
         GFXVertexBufferHandleBase::set(theDevice, numVerts, getGFXVertFlags((T*)NULL), sizeof(T), t);
     }

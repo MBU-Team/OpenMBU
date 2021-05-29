@@ -735,7 +735,7 @@ template <class T> class VectorSet : public Vector<T>
 public:
     void insert(T dat)
     {
-        if (find(begin(), end(), dat) == end())
+        if (find(this->begin(), this->end(), dat) == this->end())
             push_back(dat);
     }
 };

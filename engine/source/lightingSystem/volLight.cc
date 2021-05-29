@@ -16,7 +16,7 @@
 #include "platform/gameInterface.h"
 
 
-void sgPopulateVertBuffer(GFXVertexPCT& vert, Point3F& point, Point2F& tcoord, ColorF& color)
+void sgPopulateVertBuffer(GFXVertexPCT& vert, const Point3F& point, const Point2F& tcoord, const ColorF& color)
 {
     vert.point = point;
     vert.texCoord = tcoord;

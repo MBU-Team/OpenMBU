@@ -128,7 +128,7 @@ public:
         F32 visible;
 
         // skin meshes store their vertices in this buffer instead of the one from TSMesh object.
-        // this is so that multiple skin meshes can be inserted into the render instance manager 
+        // this is so that multiple skin meshes can be inserted into the render instance manager
         // for later rendering.  the problem this solves is that if the skin mesh vb was used,
         // the animations of that skin for all instances (i.e. players) would be linked together
         // when rendering.
@@ -567,7 +567,7 @@ public:
     GBitmap* snapshot(U32 width, U32 height, bool mip, MatrixF& cameraPos, S32 dl, F32 intraDL, bool hiQuality);
     static GBitmap* snapshot(TSShape*, U32 width, U32 height, bool mipmap, MatrixF& cameraMatrix, S32 dl, F32 intraDL = 0.0f, bool hiQuality = false);
 
-    GBitmap* TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, MatrixF& cameraMatrix, bool hiQuality);
+    GBitmap* snapshot_softblend(U32 width, U32 height, bool mip, MatrixF& cameraMatrix, bool hiQuality);
 
     void animate();
     void animate(S32 dl);
