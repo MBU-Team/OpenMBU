@@ -535,6 +535,7 @@ void GameBase::ageTickCache(S32 numToAge, S32 len)
     //AssertFatal(mTickCacheHead->numEntry>=numToAge,"Too few entries!");
     //AssertFatal(mTickCacheHead->numEntry>numToAge,"Too few entries!");
 
+    // TODO: this is not a proper fix for hifi crashes, figure it out later
     if (!mTickCacheHead || mTickCacheHead->numEntry < numToAge)
         return;
 

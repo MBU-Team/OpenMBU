@@ -995,6 +995,8 @@ void GameConnection::readPacket(BitStream* bstream)
         totalCatchup = mLastClientMove - mFirstMoveIndex;
 
         getCurrentClientProcessList()->ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
+
+        // TODO: disabling this is not a proper fix for hifi crashes, figure it out later
         //getCurrentClientProcessList()->forceHifiReset(tickDiff != 0);
 
         mDamageFlash = 0;
