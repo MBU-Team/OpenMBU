@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #ifndef _SGOBJECTSHADOWS_H_
@@ -57,8 +57,8 @@ private:
     //void sgUpdateShadow(sgShadowProjector *shadow);
     //void sgUpdateShadows();
     void sgClearMap();
-    U32 sgLightToHash(LightInfo* light) { return U32(light); }
-    LightInfo* sgHashToLight(U32 hash) { return (LightInfo*)hash; }
+    dsize_t sgLightToHash(LightInfo* light) { return dsize_t(light); }
+    LightInfo* sgHashToLight(dsize_t hash) { return (LightInfo*)hash; }
 
 public:
     sgObjectShadows();
