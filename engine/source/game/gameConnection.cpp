@@ -42,7 +42,7 @@ GameConnection::GameConnection()
     mControlObject = NULL;
     mCameraObject = NULL;
 
-    mTotalServerTicks = -1;
+    mTotalServerTicks = ServerTicksUninitialized;
     mAvgMoveQueueSize = 3.0f;
     mSmoothMoveAvg = 0.15f;
     mMoveListSizeSlack = 1.0f;
@@ -358,7 +358,7 @@ S32 GameConnection::getServerTicks(U32 serverTickNum)
 
 bool GameConnection::serverTicksInitialized()
 {
-    return mTotalServerTicks != -1;
+    return mTotalServerTicks != ServerTicksUninitialized;
 }
 
 void GameConnection::updateClientServerTickDiff(S32& tickDiff)
@@ -922,7 +922,7 @@ void GameConnection::readPacket(BitStream* bstream)
     stringBuf[0] = 0;
     bstream->setStringBuffer(stringBuf);
 
-    S32 totalCatchup = 0;
+    U32 totalCatchup = 0;
 
     bstream->clearCompressionPoint();
     if (isConnectionToServer())
@@ -952,7 +952,7 @@ void GameConnection::readPacket(BitStream* bstream)
             mLastMoveAck = mFirstMoveIndex;
         if (mLastMoveAck > mLastClientMove)
         {
-            ourTicks += mLastClientMove - mLastMoveAck;
+            ourTicks -= mLastMoveAck - mLastClientMove;
             mLastClientMove = mLastMoveAck;
         }
         while (mFirstMoveIndex < mLastMoveAck)
@@ -968,7 +968,7 @@ void GameConnection::readPacket(BitStream* bstream)
             }
         }
 
-        U32 serverTickNum = bstream->readInt(10);
+        U32 serverTickNum = bstream->readInt(TotalTicksBits);
         S32 serverTicks = getServerTicks(serverTickNum);
         S32 tickDiff = serverTicks - ourTicks;
 
@@ -1207,7 +1207,7 @@ void GameConnection::writePacket(BitStream* bstream, PacketNotify* note)
 
         bstream->writeInt(mLastMoveAck - mMoveList.size(), 32);
 
-        bstream->writeInt(getCurrentServerProcessList()->getTotalTicks() & 0x3FF, 10);
+        bstream->writeInt(getCurrentServerProcessList()->getTotalTicks() & TotalTicksMask, TotalTicksBits);
 
         // get the ghost index of the control object, and write out
         // all the damage flash & white out

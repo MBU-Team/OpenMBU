@@ -198,7 +198,7 @@ IMPLEMENT_CO_NETOBJECT_V1(Item);
 Item::Item()
 {
 #ifdef MB_ULTRA
-    mTypeMask |= ItemObjectType;// | GameBaseHiFiObjectType; // TODO: Uncomment when HiFi is fixed
+    mTypeMask |= ItemObjectType | GameBaseHiFiObjectType;
     mNetFlags.set(HiFiPassive);
     setModStaticFields(true);
 #else

@@ -224,10 +224,13 @@ void ConnectionProtocol::processRawPacket(BitStream* pstream)
     }
     keepAlive(); // notification that the connection is ok
 
-    if (mLastSeqRecvd != pkSequenceNumber && pkPacketType == DataPacket)
-        handlePacket(pstream);
-
-    mLastSeqRecvd = pkSequenceNumber;
+    // note: handlePacket() may delete the connection if an error occurs.
+    if(mLastSeqRecvd != pkSequenceNumber)
+    {
+        mLastSeqRecvd = pkSequenceNumber;
+        if(pkPacketType == DataPacket)
+            handlePacket(pstream);
+    }
 }
 
 bool ConnectionProtocol::windowFull()

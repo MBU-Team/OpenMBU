@@ -612,7 +612,9 @@ void NetConnection::checkPacketSend(bool force)
         stream->writeInt(mMaxRate.packetSize, 10);
         mMaxRate.changed = false;
     }
-    U32 start = stream->getCurPos();
+#ifdef TORQUE_DEBUG_NET
+        U32 start = stream->getCurPos();
+#endif
     DEBUG_LOG(("PKLOG %d START", getId()));
     writePacket(stream, note);
     DEBUG_LOG(("PKLOG %d END - %d", getId(), stream->getCurPos() - start));

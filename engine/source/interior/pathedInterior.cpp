@@ -84,7 +84,7 @@ PathedInterior::PathedInterior()
 {
 #ifdef MB_ULTRA
     mNetFlags.set(TickLast | HiFiPassive | Ghostable);
-    mTypeMask = InteriorObjectType;// | GameBaseHiFiObjectType; // TODO: Uncomment when HiFi is fixed
+    mTypeMask = InteriorObjectType | GameBaseHiFiObjectType;
 #else
     mNetFlags.set(Ghostable);
     mTypeMask = InteriorObjectType;
