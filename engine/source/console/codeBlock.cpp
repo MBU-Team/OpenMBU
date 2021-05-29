@@ -352,13 +352,19 @@ bool CodeBlock::read(StringTableEntry fileName, Stream& st)
         U8 b;
         st.read(&b);
         if (b == 0xFF)
-            st.read((U32*)&code[i]);
+        {
+            code[i] = 0;
+            st.read((U32 *) &code[i]);
+        }
         else
             code[i] = b;
     }
 
     for (i = codeSize; i < totSize; i++)
-        st.read((U32*)&code[i]);
+    {
+        code[i] = 0;
+        st.read((U32 *) &code[i]);
+    }
 
     lineBreakPairs = code + codeSize;
 
