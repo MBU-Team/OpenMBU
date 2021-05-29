@@ -1284,7 +1284,7 @@ ConsoleMethod(Terraformer, previewScaled, void, 4, 4, "(GuiTerrPreviewCtrl desti
     GuiTerrPreviewCtrl* dcc;
     Sim::findObject(argv[2], dcc);
 
-    const GBitmap* bmp = object->getScaledGreyscale(dAtoi(argv[3]));
+    //const GBitmap* bmp = object->getScaledGreyscale(dAtoi(argv[3]));
 
     //   dcc->setBitmap(TextureHandle("tfImage", bmp, true));
 }
@@ -1295,7 +1295,7 @@ ConsoleMethod(Terraformer, preview, void, 4, 4, "(GuiTerrPreviewCtrl destination
     GuiTerrPreviewCtrl* bmc;
     Sim::findObject(argv[2], bmc);
 
-    const GBitmap* bmp = object->getGreyscale(dAtoi(argv[3]));
+    //const GBitmap* bmp = object->getGreyscale(dAtoi(argv[3]));
 
     //   bmc->setBitmap(TextureHandle("tfImage", bmp, true));
 }

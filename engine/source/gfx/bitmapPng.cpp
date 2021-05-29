@@ -115,12 +115,14 @@ bool GBitmap::readPNG(Stream& io_rStream, bool useMemoryManager /* = false */)
         pngFatalErrorFn,
         pngWarningFn,
         NULL,
-        useMemoryManager ? pngRealMallocFn : pngMallocFn,
-        useMemoryManager ? pngRealFreeFn : pngFreeFn);
+        //useMemoryManager ? pngRealMallocFn : pngMallocFn,
+        //useMemoryManager ? pngRealFreeFn : pngFreeFn);
+        pngRealMallocFn,
+        pngRealFreeFn);
 
     if (png_ptr == NULL)
     {
-        if (!useMemoryManager)
+        //if (!useMemoryManager)
             FrameAllocator::setWaterMark(prevWaterMark);
         return false;
     }
@@ -132,7 +134,7 @@ bool GBitmap::readPNG(Stream& io_rStream, bool useMemoryManager /* = false */)
             (png_infopp)NULL,
             (png_infopp)NULL);
 
-        if (!useMemoryManager)
+        //if (!useMemoryManager)
             FrameAllocator::setWaterMark(prevWaterMark);
 
         return false;
@@ -145,7 +147,7 @@ bool GBitmap::readPNG(Stream& io_rStream, bool useMemoryManager /* = false */)
             &info_ptr,
             (png_infopp)NULL);
 
-        if (!useMemoryManager)
+        //if (!useMemoryManager)
             FrameAllocator::setWaterMark(prevWaterMark);
 
         return false;
@@ -266,7 +268,7 @@ bool GBitmap::readPNG(Stream& io_rStream, bool useMemoryManager /* = false */)
     //
     // actually, all of that was handled by allocateBitmap, so we're outta here
     //
-    if (!useMemoryManager)
+    //if (!useMemoryManager)
         FrameAllocator::setWaterMark(prevWaterMark);
 
     return true;
