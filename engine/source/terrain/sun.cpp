@@ -79,6 +79,14 @@ void Sun::onRemove()
      //   gClientSceneGraph->getLightManager()->sgUnregisterGlobalLight(&mLight);
 }
 
+struct SunLight
+{
+    Point3F     mPos;
+    VectorF     mDirection;
+    ColorF      mColor;
+    ColorF      mAmbient;
+};
+
 void Sun::registerLights(LightManager* lightManager, bool relight)
 {
     mRegisteredLight = mLight;
@@ -92,12 +100,17 @@ void Sun::registerLights(LightManager* lightManager, bool relight)
 #ifdef MB_ULTRA_PREVIEWS
     // This code is not here on MBU x360 but it achieves the same result.
     // It likely works on x360 just because it uses the old TSE 0.1 render system.
-    static LightInfo previewSun = mRegisteredLight;
+    static SunLight previewSun = {mRegisteredLight.mPos, mRegisteredLight.mDirection, mRegisteredLight.mColor, mRegisteredLight.mAmbient};
 
     if (gSPMode)
-        previewSun = mRegisteredLight;
+        previewSun = {mRegisteredLight.mPos, mRegisteredLight.mDirection, mRegisteredLight.mColor, mRegisteredLight.mAmbient};
     else
-        mRegisteredLight = previewSun;
+    {
+        mRegisteredLight.mPos = previewSun.mPos;
+        mRegisteredLight.mDirection = previewSun.mDirection;
+        mRegisteredLight.mColor = previewSun.mColor;
+        mRegisteredLight.mAmbient = previewSun.mAmbient;
+    }
 #endif
 
     if (relight)

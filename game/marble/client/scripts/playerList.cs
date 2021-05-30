@@ -265,6 +265,8 @@ function handleUpdateLobbyStatus(%msgType, %msgString, %inLobby)
    if (!$Client::connectedMultiplayer)
       // don't care
       return;
+      
+   registerLights();
 
    %wasInLobby = ServerConnection.inLobby;
    ServerConnection.inLobby = %inLobby;
