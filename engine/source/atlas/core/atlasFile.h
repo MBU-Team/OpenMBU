@@ -53,8 +53,8 @@ struct AtlasReadNote
 
     ~AtlasReadNote()
     {
-        toc = (AtlasTOC*)U32(-1);
-        chunk = (AtlasChunk*)U32(-1);
+        toc = (AtlasTOC*)(-1);
+        chunk = (AtlasChunk*)(-1);
         SAFE_DELETE(adio);
     }
 

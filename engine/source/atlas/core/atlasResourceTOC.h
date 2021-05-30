@@ -123,11 +123,11 @@ template<class StubType>
 class AtlasResourceTOC : public AtlasBaseTOC<StubType>
 {
 protected:
-    virtual void cbOnChunkWriteComplete(U32 key, AtlasDeferredIO* adio);
-    virtual void cbOnStubWriteComplete(U32 key, AtlasDeferredIO* adio);
+    virtual void cbOnChunkWriteComplete(dsize_t key, AtlasDeferredIO* adio);
+    virtual void cbOnStubWriteComplete(dsize_t key, AtlasDeferredIO* adio);
 
-    virtual void cbOnChunkReadComplete(U32 key, AtlasChunk* adio);
-    virtual void cbOnChunkReadStarted(U32 stubIdx);
+    virtual void cbOnChunkReadComplete(dsize_t key, AtlasChunk* adio);
+    virtual void cbOnChunkReadStarted(dsize_t stubIdx);
 
     virtual void cbPopulateChunkReadNote(AtlasReadNote* arn);
     virtual void queueChunkUpdate(StubType* t);
@@ -171,7 +171,7 @@ public:
     virtual void instateNewChunk(StubType* stub, ChunkType* chunk, bool blockTillSerialized = false);
 
     /// Internal callback to indicate to the AtlasFile that we have a pending deserialize.
-    virtual void cbPostBackToAtlasFile(U32 key, AtlasDeferredIO* adio);
+    virtual void cbPostBackToAtlasFile(dsize_t key, AtlasDeferredIO* adio);
 
     /// Regenerate all the chunks that overlap with the invalidated region.
     virtual void generate(RectI invalidationRegion);
@@ -369,7 +369,7 @@ void AtlasResourceTOC<StubType>::cancelLoadRequest(StubType* stub, U32 reason)
 }
 
 template<class StubType>
-void AtlasResourceTOC<StubType>::cbPostBackToAtlasFile(U32 key, AtlasDeferredIO* adio)
+void AtlasResourceTOC<StubType>::cbPostBackToAtlasFile(dsize_t key, AtlasDeferredIO* adio)
 {
     mFile->queuePendingDeserialize((AtlasReadNote*)key);
 }
@@ -385,18 +385,18 @@ void AtlasResourceTOC<StubType>::cbPopulateChunkReadNote(AtlasReadNote* arn)
     // Prep the read.
     arn->adio = new AtlasDeferredIO(AtlasDeferredIO::DeferredRead);
     arn->adio->setReadBuffer(s.offset, s.length);
-    arn->adio->setCallback(this, &AtlasTOC::cbPostBackToAtlasFile, (U32)arn);
+    arn->adio->setCallback(this, &AtlasTOC::cbPostBackToAtlasFile, (dsize_t)arn);
 }
 
 template<class StubType>
-void AtlasResourceTOC<StubType>::cbOnChunkReadStarted(U32 stubIdx)
+void AtlasResourceTOC<StubType>::cbOnChunkReadStarted(dsize_t stubIdx)
 {
     // It's in-flight so let's mark it as such and take it off the queues.
     mStubs[stubIdx].mState = StubType::Loading;
 }
 
 template<class StubType>
-void AtlasResourceTOC<StubType>::cbOnChunkReadComplete(U32 stubIdx, AtlasChunk* chunk)
+void AtlasResourceTOC<StubType>::cbOnChunkReadComplete(dsize_t stubIdx, AtlasChunk* chunk)
 {
     // If there are no load requests we have to discard.
     StubType* stub = mStubs + stubIdx;
@@ -429,7 +429,7 @@ void AtlasResourceTOC<StubType>::cbOnChunkReadComplete(U32 stubIdx, AtlasChunk* 
 }
 
 template<class StubType>
-void AtlasResourceTOC<StubType>::cbOnChunkWriteComplete(U32 key, AtlasDeferredIO* adio)
+void AtlasResourceTOC<StubType>::cbOnChunkWriteComplete(dsize_t key, AtlasDeferredIO* adio)
 {
     // Updated the chunk, so let's queue up a stub update, too.
     AssertFatal(adio->offset, "AtlasResourceTOC<StubType>::cbOnChunkWriteComplete - got a zero offset!");
@@ -445,7 +445,7 @@ void AtlasResourceTOC<StubType>::cbOnChunkWriteComplete(U32 key, AtlasDeferredIO
 }
 
 template<class StubType>
-void AtlasResourceTOC<StubType>::cbOnStubWriteComplete(U32 key, AtlasDeferredIO* adio)
+void AtlasResourceTOC<StubType>::cbOnStubWriteComplete(dsize_t key, AtlasDeferredIO* adio)
 {
     // Do anything?
     // Guess not - BJG

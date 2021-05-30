@@ -68,11 +68,11 @@ struct AtlasDeferredIO
     /// One or more flags from ADIOFlags.
     BitSet32 flags;
 
-    typedef void (AtlasTOC::* CallbackPtr)(U32 key, AtlasDeferredIO* adio);
+    typedef void (AtlasTOC::* CallbackPtr)(dsize_t key, AtlasDeferredIO* adio);
 
     /// You may specify a value to pass to the callback (besides a pointer
     /// to this ADIO).
-    U32 callbackKeyA;
+    dsize_t callbackKeyA;
 
     /// What TOC to do this callback on.
     AtlasTOC* cbObj;
@@ -119,7 +119,7 @@ struct AtlasDeferredIO
 
     /// Specify a callback on a TOC. Automatically sets the appropriate
     /// flags and members.
-    void setCallback(AtlasTOC* toc, CallbackPtr cb, U32 key)
+    void setCallback(AtlasTOC* toc, CallbackPtr cb, dsize_t key)
     {
         flags.set(DoCallback);
         cbObj = toc;

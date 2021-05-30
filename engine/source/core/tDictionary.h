@@ -11,19 +11,19 @@
 
 namespace DictHash
 {
-    inline U32 hash(U32 data)
+    inline dsize_t hash(dsize_t data)
     {
         return data;
     }
 
-    inline U32 hash(const char* data)
+    inline dsize_t hash(const char* data)
     {
         return StringTable->hashString(data);
     }
 
-    inline U32 hash(const void* data)
+    inline dsize_t hash(const void* data)
     {
-        return (U32)data;
+        return (dsize_t)data;
     }
 
     U32 nextPrime(U32);
@@ -74,7 +74,7 @@ private:
     S32 mTableSize;                     ///< Hash table size
     U32 mSize;                          ///< Number of keys in the table
 
-    U32 _hash(const Key& key) const;
+    dsize_t _hash(const Key& key) const;
     U32 _index(const Key& key) const;
     Node* _next(U32 index) const;
     void _resize(U32 size);
@@ -208,7 +208,7 @@ template<typename Key, typename Value> HashTable<Key, Value>::~HashTable()
 //-----------------------------------------------------------------------------
 
 template<typename Key, typename Value>
-inline U32 HashTable<Key, Value>::_hash(const Key& key) const
+inline dsize_t HashTable<Key, Value>::_hash(const Key& key) const
 {
     return DictHash::hash(key);
 }

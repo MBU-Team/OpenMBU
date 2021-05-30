@@ -98,12 +98,12 @@ public:
     /// specified in leaf level tiles.
     virtual void generate(RectI invalidationRegion) {}
 
-    virtual void cbOnChunkWriteComplete(U32 key, AtlasDeferredIO* adio) {};
-    virtual void cbOnStubWriteComplete(U32 key, AtlasDeferredIO* adio) {};
-    virtual void cbPostBackToAtlasFile(U32 key, AtlasDeferredIO* adio) {};
+    virtual void cbOnChunkWriteComplete(dsize_t key, AtlasDeferredIO* adio) {};
+    virtual void cbOnStubWriteComplete(dsize_t key, AtlasDeferredIO* adio) {};
+    virtual void cbPostBackToAtlasFile(dsize_t key, AtlasDeferredIO* adio) {};
 
-    virtual void cbOnChunkReadComplete(U32 stubIdx, AtlasChunk* chunk) {};
-    virtual void cbOnChunkReadStarted(U32 stubIdx) {};
+    virtual void cbOnChunkReadComplete(dsize_t stubIdx, AtlasChunk* chunk) {};
+    virtual void cbOnChunkReadStarted(dsize_t stubIdx) {};
     virtual void cbPopulateChunkReadNote(AtlasReadNote* arn) {};
 
     /// Used to dump the load request status of the specified stub.

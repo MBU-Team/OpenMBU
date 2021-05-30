@@ -173,7 +173,7 @@ void CameraSpline::renderTimeMap()
     vb.set(GFX, mTimeMap.size(), GFXBufferTypeVolatile);
     vb.lock();
 
-    MRandomLCG random(1376312589 * (U32)this);
+    MRandomLCG random(1376312589 * (dsize_t)this);
     int index = 0;
     for (Vector<TimeMap>::iterator itr = mTimeMap.begin(); itr != mTimeMap.end(); itr++)
     {
