@@ -24,7 +24,7 @@
 #include "platform/platformDlibrary.h"
 
 // This doesn't appear to exist in some contexts, so let's just add it.
-#ifdef TORQUE_OS_WIN32
+#if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)
 #ifndef WINAPI
 #define WINAPI __stdcall
 #endif

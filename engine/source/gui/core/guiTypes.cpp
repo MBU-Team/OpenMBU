@@ -9,7 +9,7 @@
 
 // We need to get some kind of abstraction here with the character
 // sheet stuff -pw
-#ifdef TORQUE_OS_WIN32
+#if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)
 #  include "platformWin32/platformWin32.h"
 #else
 #  pragma error("Woah, other OS's not supported yet!")

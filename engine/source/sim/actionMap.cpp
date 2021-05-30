@@ -737,7 +737,7 @@ bool ActionMap::getDeviceTypeAndInstance(const char* pDeviceName, U32& deviceTyp
         deviceType = JoystickDeviceType;
         offset = dStrlen("joystick");
     }
-#ifdef TORQUE_OS_WIN32
+#if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)
     else if (dStrnicmp(pDeviceName, "xinput", dStrlen("xinput")) == 0)
     {
         deviceType = XInputDeviceType;
@@ -779,7 +779,7 @@ bool ActionMap::getDeviceName(const U32 deviceType, const U32 deviceInstance, ch
         dSprintf(buffer, 16, "joystick%d", deviceInstance);
         break;
 
-#ifdef TORQUE_OS_WIN32
+#if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)
     case XInputDeviceType:
         dSprintf(buffer, 16, "xinput%d", deviceInstance);
         break;
@@ -1196,7 +1196,7 @@ bool ActionMap::processAction(const InputEvent* pEvent)
             return true;
         }
         else if (pEvent->deviceType == JoystickDeviceType
-#ifdef TORQUE_OS_WIN32
+                 #if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)
             || pEvent->deviceType == XInputDeviceType
 #endif
             )
@@ -1670,7 +1670,7 @@ CodeMapping gVirtualMap[] =
     { "lpov2",         SI_POV,    SI_LPOV2       },
     { "rpov2",         SI_POV,    SI_RPOV2       },
 
- #ifdef TORQUE_OS_WIN32
+#if defined(TORQUE_OS_WIN32) || defined(TORQUE_OS_WIN64)
     //-------------------------------------- XINPUT EVENTS -- jason_cahill
     // Controller connect / disconnect:
     { "connect",       SI_BUTTON, XI_CONNECT     },
