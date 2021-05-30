@@ -39,7 +39,12 @@ function onPhase1Complete()
 //----------------------------------------------------------------------------
 function onMissionDownloadPhase2()
 {
-
+   if ($Client::connectedMultiplayer && !$Server::Hosting && !isObject(MissionCleanup))
+   {
+      // Mission cleanup group
+      new SimGroup( MissionCleanup );
+      //$instantGroup = MissionCleanup;
+   }
 }
 
 function onPhase2Progress(%progress)
