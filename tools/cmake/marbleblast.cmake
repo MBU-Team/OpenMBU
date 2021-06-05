@@ -156,7 +156,7 @@ if(WIN32)
     addPath("${srcDir}/platformWin32")
     addPath("${srcDir}/resources")
     # add windows rc file for the icon
-    # addFile("${srcDir}/resources/TSE.rc")
+    addFile("${srcDir}/resources/TSE.rc")
 endif()
 
 if(APPLE)
