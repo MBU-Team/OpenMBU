@@ -276,6 +276,7 @@ class SFXSystem
 #define SFX_DELETE( source )  \
    if ( source )              \
    {                          \
+      source->setPitch(1.0f); \
       source->deleteObject(); \
       source = NULL;          \
    }                          \
