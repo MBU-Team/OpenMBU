@@ -45,6 +45,9 @@
 /// Define me to enable Torque HiFi support
 #define TORQUE_HIFI_NET
 
+/// Define me for a temporary HiFi fix
+#define TORQUE_HIFI_TEMP_FIX // TODO: Fix properly and remove this
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 

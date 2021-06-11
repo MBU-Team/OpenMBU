@@ -432,9 +432,6 @@ void GameBase::clearProcessAfter()
 
 void GameBase::beginTickCacheList()
 {
-    /*if (mTickCacheHead)
-        mTickCacheHead->next = mTickCacheHead->oldest;*/
-
     // get ready iterate from oldest to newest entry
     if (mTickCacheHead)
         mTickCacheHead->next = mTickCacheHead->oldest;
@@ -443,23 +440,6 @@ void GameBase::beginTickCacheList()
 
 TickCacheEntry* GameBase::incTickCacheList(bool addIfNeeded)
 {
-    /*if (mTickCacheHead && mTickCacheHead->next)
-    {
-        TickCacheEntry* result = mTickCacheHead->next;
-        mTickCacheHead->next = result->next;
-
-        return result;
-    }
-
-    if (addIfNeeded)
-    {
-        addTickCacheEntry();
-
-        return mTickCacheHead->newest;
-    }
-
-    return NULL;*/
-
     // continue iterating through cache, returning current entry
     // we'll add new entries if need be
     TickCacheEntry * ret = NULL;
@@ -478,35 +458,6 @@ TickCacheEntry* GameBase::incTickCacheList(bool addIfNeeded)
 
 TickCacheEntry* GameBase::addTickCacheEntry()
 {
-    /*if (!mTickCacheHead)
-    {
-        mTickCacheHead = TickCacheHead::alloc();
-        mTickCacheHead->next = NULL;
-        mTickCacheHead->oldest = NULL;
-        mTickCacheHead->newest = NULL;
-        mTickCacheHead->numEntry = 0;
-    }
-
-    AssertISV(mTickCacheHead, "GameBase::addTickCacheEntry: tick cache head is null, this doesn't make sense, memory corruption?")
-
-    TickCacheEntry* entry;
-    if (mTickCacheHead->newest)
-    {
-        mTickCacheHead->newest->next = TickCacheEntry::alloc();
-        entry = mTickCacheHead->newest->next;
-    } else
-    {
-        mTickCacheHead->oldest = TickCacheEntry::alloc();
-        entry = mTickCacheHead->oldest;
-    }
-
-    mTickCacheHead->newest = entry;
-    mTickCacheHead->newest->next = NULL;
-    mTickCacheHead->newest->move = NULL;
-    mTickCacheHead->numEntry++;
-
-    return mTickCacheHead->newest;*/
-
     // Add a new entry, creating head if needed
     if (!mTickCacheHead)
     {
@@ -531,13 +482,15 @@ TickCacheEntry* GameBase::addTickCacheEntry()
 
 void GameBase::ageTickCache(S32 numToAge, S32 len)
 {
-    //AssertFatal(mTickCacheHead,"No tick cache head");
-    //AssertFatal(mTickCacheHead->numEntry>=numToAge,"Too few entries!");
-    //AssertFatal(mTickCacheHead->numEntry>numToAge,"Too few entries!");
-
+#ifdef TORQUE_HIFI_TEMP_FIX
     // TODO: this is not a proper fix for hifi crashes, figure it out later
     if (!mTickCacheHead || mTickCacheHead->numEntry < numToAge)
         return;
+#else
+    AssertFatal(mTickCacheHead,"No tick cache head");
+    AssertFatal(mTickCacheHead->numEntry>=numToAge,"Too few entries!");
+    AssertFatal(mTickCacheHead->numEntry>numToAge,"Too few entries!");
+#endif
 
     while (numToAge--)
         dropOldest();
@@ -545,42 +498,10 @@ void GameBase::ageTickCache(S32 numToAge, S32 len)
         dropNextOldest();
     while (mTickCacheHead->numEntry<len)
         addTickCacheEntry();
-
-    /*while (numToAge)
-    {
-        --numToAge;
-        dropOldest();
-    }
-
-    AssertISV(mTickCacheHead, "GameBase::ageTickCache: tick cache head is null!")
-
-    while (mTickCacheHead->numEntry > len)
-        dropNextOldest();
-    while (mTickCacheHead->numEntry < len)
-        addTickCacheEntry();*/
 }
 
 void GameBase::setTickCacheSize(int len)
 {
-    /*TickCacheHead* head;
-
-    while (true)
-    {
-        head = mTickCacheHead;
-        if (head)
-        {
-            if (head->numEntry >= len)
-                break;
-        }
-        addTickCacheEntry();
-    }
-
-    while (head && head->numEntry > len)
-    {
-        dropOldest();
-        head = mTickCacheHead;
-    }*/
-
     // grow cache to len size, adding to newest side of the list
     while (!mTickCacheHead || mTickCacheHead->numEntry < len)
         addTickCacheEntry();
@@ -591,19 +512,6 @@ void GameBase::setTickCacheSize(int len)
 
 void GameBase::dropOldest()
 {
-    /*AssertISV(mTickCacheHead, "GameBase::dropOldest: tick cache head is null!")
-    AssertISV(mTickCacheHead->oldest, "GameBase::dropOldest: mTickCacheHead->oldest is null!")
-    TickCacheEntry* lastOldest = mTickCacheHead->oldest;
-    mTickCacheHead->oldest = mTickCacheHead->oldest->next;
-    if (lastOldest->move)
-        TickCacheEntry::freeMove(lastOldest->move);
-    TickCacheEntry::free(lastOldest);
-
-    mTickCacheHead->numEntry--;
-
-    if (mTickCacheHead->numEntry < 2)
-        mTickCacheHead->newest = mTickCacheHead->oldest;*/
-
     AssertFatal(mTickCacheHead->oldest,"Popping off too many tick cache entries");
     TickCacheEntry * oldest = mTickCacheHead->oldest;
     mTickCacheHead->oldest = oldest->next;
@@ -617,19 +525,6 @@ void GameBase::dropOldest()
 
 void GameBase::dropNextOldest()
 {
-    /*AssertISV(mTickCacheHead, "GameBase::dropNextOldest: tick cache head is null!")
-    AssertISV(mTickCacheHead->oldest, "GameBase::dropNextOldest: mTickCacheHead->oldest is null!")
-    TickCacheEntry* lastOldest = mTickCacheHead->oldest->next;
-    (*lastOldest).next = lastOldest->next;
-    if (lastOldest->move)
-        TickCacheEntry::freeMove(lastOldest->move);
-    TickCacheEntry::free(lastOldest);
-
-    mTickCacheHead->numEntry--;
-
-    if (mTickCacheHead->numEntry == 1)
-        mTickCacheHead->newest = mTickCacheHead->oldest;*/
-
     AssertFatal(mTickCacheHead->oldest && mTickCacheHead->numEntry>1,"Popping off too many tick cache entries");
     TickCacheEntry * oldest = mTickCacheHead->oldest;
     TickCacheEntry * nextoldest = mTickCacheHead->oldest->next;
