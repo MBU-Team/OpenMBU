@@ -509,7 +509,30 @@ void PathedInterior::interpolateTick(F32 delta)
 
 void PathedInterior::doSustainSound()
 {
-    // TODO: Implement doSustainSound
+    if (mCurrentVelocity.len() == 0.0f || mStopTime < 32.0f)
+    {
+        SFX_DELETE(mSustainHandle);
+    } else if (mDataBlock->sound[PathedInteriorData::SustainSound])
+    {
+        if (isGhost())
+        {
+            Point3F pos;
+            mExtrudedBox.getCenter(&pos);
+
+            MatrixF transform = getTransform();
+            transform.setPosition(pos);
+
+            if (!mSustainHandle)
+                mSustainHandle = SFX->createSource(mDataBlock->sound[PathedInteriorData::SustainSound], &transform, &mCurrentVelocity);
+
+            if (mSustainHandle)
+            {
+                mSustainHandle->play();
+                mSustainHandle->setTransform(transform);
+                mSustainHandle->setVelocity(mCurrentVelocity);
+            }
+        }
+    }
 }
 
 void PathedInterior::setStopped()
