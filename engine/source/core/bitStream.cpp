@@ -556,20 +556,91 @@ void BitStream::readCompressedPoint(Point3F* p, F32 scale)
 }
 
 #ifdef MB_ULTRA
-void BitStream::writeCompressedPointRP(const Point3F& p, U32 numDists, const F32* dists, F32 err)
+U32 BitStream::writeCompressedPointRP(const Point3F& p, U32 numDists, const F32* dists, F32 err)
 {
-    // TODO: Implement writeCompressedPointRP
+    U32 ret;
 
-    // TEMP: For now do this
-    writeCompressedPoint(p);
+    Point3F vec = mCompressPoint;
+    F32 len = vec.len();
+    if (err <= len)
+        vec *= 1.0f / len;
+    else
+        vec = Point3F(0.0f, 0.0f, 1.0f);
+
+    S32 zBits = getBinLog2(getNextPow2(1 - (*dists * -2.0f / err)));
+    S32 angleBits = getBinLog2(getNextPow2(*dists * M_2PI_F / err));
+    writeNormalVector(vec, angleBits, zBits);
+    S32 v11 = angleBits + zBits + 1;
+    U32 num = 0;
+    U32 bits;
+    for (bits = v11; num < numDists; ++num)
+    {
+        if (dists[num] > len)
+            break;
+    }
+    writeRangedU32(num, 0, numDists);
+    U32 bitCount = getBinLog2(getNextPow2(numDists + 1)) + bits;
+    if (num >= numDists)
+    {
+        write(len);
+        ret = bitCount + 32;
+    } else {
+        F32 errBin;
+        if (num)
+            errBin = dists[num - 1] * err / *dists;
+        else
+            errBin = err;
+
+        F32 minBin;
+        if (num)
+            minBin = dists[num - 1];
+        else
+            minBin = 0.0f;
+
+        S32 extraBitCount = getBinLog2(getNextPow2((dists[num] - minBin) / errBin));
+        F32 minBina = (len - minBin) / (dists[num] - minBin);
+        writeFloat(minBina, extraBitCount);
+        ret = extraBitCount + bitCount;
+    }
+
+    return ret;
 }
 
-void BitStream::readCompressedPointRP(Point3F* p, U32 numDists, const F32* dists, F32 err)
+U32 BitStream::readCompressedPointRP(Point3F* p, U32 numDists, const F32* dists, F32 err)
 {
-    // TODO: Implement readCompressedPointRP
+    U32 ret;
 
-    // TEMP: For now do this
-    readCompressedPoint(p);
+    S32 zBits = getBinLog2(getNextPow2(1 - (*dists * -2.0f / err)));
+    S32 angleBits = getBinLog2(getNextPow2(*dists * M_2PI_F / err));
+    readNormalVector(p, angleBits, zBits);
+    U32 num = readRangedU32(0, numDists);
+    U32 bitCount = angleBits + getBinLog2(getNextPow2(numDists + 1)) + zBits + 1;
+    if (num >= numDists)
+    {
+        read(&err);
+        ret = bitCount + 32;
+    } else {
+        F32 errBin;
+        if (num)
+            errBin = dists[num - 1] * err / *dists;
+        else
+            errBin = err;
+
+        if (num)
+            err = dists[num - 1];
+        else
+            err = 0.0f;
+
+        S32 extraBitCount = getBinLog2(getNextPow2((dists[num] - err) / errBin));
+        F32 errBina = readFloat(extraBitCount);
+        ret = extraBitCount + bitCount;
+        err = (dists[num] - err) * errBina + err;
+    }
+
+    *p *= err;
+    *p += mCompressPoint;
+
+    return ret;
 }
 #endif
 

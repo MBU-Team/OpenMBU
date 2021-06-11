@@ -135,8 +135,8 @@ public:
     void readCompressedPoint(Point3F* p, F32 scale = 0.01f);
 
 #ifdef MB_ULTRA
-    void writeCompressedPointRP(const Point3F& p, U32 numDists, const F32* dists, F32 err);
-    void readCompressedPointRP(Point3F* p, U32 numDists, const F32* dists, F32 err);
+    U32 writeCompressedPointRP(const Point3F& p, U32 numDists, const F32* dists, F32 err);
+    U32 readCompressedPointRP(Point3F* p, U32 numDists, const F32* dists, F32 err);
 #endif
 
     // Uses the above method to reduce the precision of a normal vector so the server can
