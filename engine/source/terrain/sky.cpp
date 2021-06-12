@@ -648,7 +648,7 @@ void Sky::renderObject(SceneState* state, RenderInst* ri)
     //  since we want an identity projection matrix here...
     MatrixF proj = GFX->getProjectionMatrix();
 
-    state->setupObjectProjection(this);
+    //state->setupObjectProjection(this);
 
     GFX->setProjectionMatrix(MatrixF(true));
 
@@ -691,7 +691,7 @@ void Sky::renderObject(SceneState* state, RenderInst* ri)
     GFX->popWorldMatrix();
 
     // On input.  Finalize the projection matrix...
-    state->setupObjectProjection(this);
+    //state->setupObjectProjection(this);
 
     GFX->pushWorldMatrix();
 
@@ -975,7 +975,13 @@ void Sky::renderSkyBox(F32 lowerBanHeight, F32 alphaBanUpper)
         if ((lowerBanHeight != mSpherePt.z || (side == 4 && alphaBanUpper < 1.0f)) && mSkyHandle[side])
         {
             GFX->setAlphaBlendEnable(false);
-            GFX->setTexture(0, mSkyHandle[side]);
+            if (mSkyTexturesOn && smSkyOn)
+            {
+                GFX->setTexture(0, mSkyHandle[side]);
+            } else {
+                GFX->setTexture(0, NULL);
+                PrimBuild::color3i(U8(mRealSkyColor.red), U8(mRealSkyColor.green), U8(mRealSkyColor.blue));
+            }
             GFX->setTextureStageMagFilter(0, GFXTextureFilterLinear);
             GFX->setTextureStageMinFilter(0, GFXTextureFilterLinear);
             GFX->setTextureStageColorOp(0, GFXTOPModulate);
