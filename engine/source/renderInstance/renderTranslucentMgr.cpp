@@ -40,7 +40,12 @@ void RenderTranslucentMgr::addElement(RenderInst* inst)
        // sort by distance
     elem.key = (gRenderInstManager.getCamPos() - inst->sortPoint).lenSquared() * 2500.0;
     elem.key = HIGH_NUM - elem.key;
-    elem.key2 = (U32)inst->matInst;
+    // we want key2 to sort by Material, but if if the matInst is null, we can't.
+    // in that case, use the "miscTex" for the secondary key
+    if (inst->matInst == NULL)
+        elem.key2 = (U32) inst->miscTex;
+    else
+        elem.key2 = (U32) inst->matInst->getMaterial();
 }
 
 //-----------------------------------------------------------------------------

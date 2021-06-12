@@ -175,7 +175,7 @@ void SceneState::setupZoneProjection(const U32 zone)
 
 void SceneState::setupObjectProjection(const SceneObject* obj)
 {
-    RectI viewport;
+    /*RectI viewport;
     F64   frustum[4] = { 1e10, -1e10, 1e10, -1e10 };
 
     bool init = false;
@@ -200,7 +200,7 @@ void SceneState::setupObjectProjection(const SceneObject* obj)
         }
         pWalk = pWalk->nextInObj;
     }
-    AssertFatal(init, "Error, at least one zone must be rendered here!");
+    AssertFatal(init, "Error, at least one zone must be rendered here!");*/
 
     /*
        glMatrixMode(GL_PROJECTION);
@@ -223,7 +223,7 @@ void SceneState::setupObjectProjection(const SceneObject* obj)
 
 void SceneState::setupBaseProjection()
 {
-    const ZoneState& rState = getBaseZoneState();
+    //const ZoneState& rState = getBaseZoneState();
 
     /*
        glMatrixMode(GL_PROJECTION);

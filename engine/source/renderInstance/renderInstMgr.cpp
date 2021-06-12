@@ -104,6 +104,16 @@ void RenderInstManager::initBins()
     mRenderBins[Glow] = new RenderGlowMgr;
 
     mZOnlyBin = new RenderZOnlyMgr;
+
+    mRenderRenderBin.setSize(NumRenderBins);
+    for (S32 i = 0; i < NumRenderBins; i++)
+    {
+        mRenderRenderBin[i] = true;
+        char varName[256];
+        dSprintf(varName, 256, "RIMrender%d", i);
+        if (Con::getBoolVariable(varName, true))
+            Con::addVariable(varName, TypeBool, &mRenderRenderBin[i]);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -335,7 +345,7 @@ void RenderInstManager::render()
     {
         for (U32 i = 0; i < NumRenderBins; i++)
         {
-            if (mRenderBins[i])
+            if (mRenderBins[i] && mRenderRenderBin[i])
             {
                 mRenderBins[i]->render();
             }

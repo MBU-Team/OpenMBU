@@ -153,6 +153,7 @@ private:
     Chunker< RenderInst >      mRIAllocator;
     Chunker< MatrixF >         mXformAllocator;
     Vector< RenderElemMgr* >  mRenderBins;
+    Vector<bool> mRenderRenderBin;
 
     // for lighting passes...
     Chunker<bool>         mPrimitiveFirstPassAllocator;
