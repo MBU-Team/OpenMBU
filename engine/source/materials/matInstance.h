@@ -145,7 +145,6 @@ public:
         return NULL;
     }
 
-    void setTextureStages(SceneGraphData& sgData, U32 pass);
 
     // Compares this MatInstance to mat
     virtual S32 compare(MatInstance* mat);
@@ -161,6 +160,15 @@ public:
     static void reInitInstances();
 
     bool setupPass(SceneGraphData& sgData);
+
+    void setObjectXForm(MatrixF xform);
+    void setWorldXForm(MatrixF xform);
+    void setLightInfo(SceneGraphData& sgData);
+    void setEyePosition(MatrixF objTrans, Point3F position);
+    void setBuffers(GFXVertexBufferHandleBase* vertBuffer, GFXPrimitiveBufferHandle* primBuffer);
+    void setTextureStages(SceneGraphData& sgData, U32 pass);
+    void setLightingBlendFunc();
+
     void init(SceneGraphData& dat, GFXVertexFlags vertFlags);
     void reInit();
     Material* getMaterial() { return mMaterial; }

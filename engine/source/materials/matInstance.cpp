@@ -567,6 +567,146 @@ void MatInstance::setTextureStages(SceneGraphData& sgData, U32 pass)
     }
 }
 
+void MatInstance::setObjectXForm(MatrixF xform)
+{
+    // Set cubemap stuff here (it's convenient!)
+    if( hasCubemap() || mMaterial->dynamicCubemap)
+    {
+        MatrixF cubeTrans = xform;
+        cubeTrans.setPosition( Point3F( 0.0, 0.0, 0.0 ) );
+        cubeTrans.transpose();
+        GFX->setVertexShaderConstF( VC_CUBE_TRANS, (float*)&cubeTrans, 3 );
+    }
+    xform.transpose();
+    GFX->setVertexShaderConstF( VC_OBJ_TRANS, (float*)&xform, 4 );
+}
+
+void MatInstance::setWorldXForm(MatrixF xform)
+{
+    GFX->setVertexShaderConstF(0, (float*)xform, 4);
+}
+
+void MatInstance::setLightInfo(SceneGraphData& sgData)
+{
+    U32 stagenum = getCurStageNum();
+
+    MatrixF objTrans = sgData.objTrans;
+    objTrans.inverse();
+
+    if (Material::isDebugLightingEnabled())
+    {
+        // clean up later...
+        dMemcpy(&sgData.light, Material::getDebugLight(), sizeof(sgData.light));
+        dMemcpy(&sgData.lightSecondary, Material::getDebugLight(), sizeof(sgData.lightSecondary));
+    }
+
+
+    // fill in primary light
+    //-------------------------
+    Point3F lightPos = sgData.light.mPos;
+    Point3F lightDir = sgData.light.mDirection;
+    objTrans.mulP(lightPos);
+    objTrans.mulV(lightDir);
+    lightDir.normalizeSafe();
+
+    Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, sgData.light.sgTempModelInfo[0]);
+    GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
+    GFX->setVertexShaderConstF(VC_LIGHT_DIR1, (float*)&lightDir, 1);
+    GFX->setVertexShaderConstF(VC_LIGHT_DIFFUSE1, (float*)&sgData.light.mColor, 1);
+    GFX->setPixelShaderConstF(PC_AMBIENT_COLOR, (float*)&sgData.light.mAmbient, 1);
+
+    if (getMaterial())
+    {
+        if (!getMaterial()->emissive[stagenum])
+            GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&sgData.light.mColor, 1);
+        else
+        {
+            ColorF selfillum = LightManager::sgGetSelfIlluminationColor(getMaterial()->diffuse[stagenum]);
+            GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&selfillum, 1);
+        }
+    }
+    else
+    {
+        GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&sgData.light.mColor, 1);
+    }
+
+    MatrixF lightingmat = sgData.light.sgLightingTransform;
+    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);
+
+
+    // fill in secondary light
+    //-------------------------
+    lightPos = sgData.lightSecondary.mPos;
+    lightDir = sgData.lightSecondary.mDirection;
+    objTrans.mulP(lightPos);
+    objTrans.mulV(lightDir);
+
+    Point4F lightPosModel2(lightPos.x, lightPos.y, lightPos.z, sgData.lightSecondary.sgTempModelInfo[0]);
+    GFX->setVertexShaderConstF(VC_LIGHT_POS2, (float*)&lightPosModel2, 1);
+    GFX->setPixelShaderConstF(PC_DIFF_COLOR2, (float*)&sgData.lightSecondary.mColor, 1);
+
+    const MatrixF lightingmat2 = sgData.lightSecondary.sgLightingTransform;
+    GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat2, 4);
+
+    if (Material::isDebugLightingEnabled())
+        return;
+
+    // need to reassign the textures...
+    RenderPassData* pass = getPass(getCurPass());
+    if (!pass)
+        return;
+
+    for (U32 i = 0; i < pass->numTex; i++)
+    {
+        if (pass->texFlags[i] == Material::DynamicLight)
+        {
+            GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
+            GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
+            GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
+            GFX->setTexture(i, sgData.dynamicLight);
+        }
+
+        if (pass->texFlags[i] == Material::DynamicLightSecondary)
+        {
+            GFX->setTextureStageAddressModeU(i, GFXAddressClamp);
+            GFX->setTextureStageAddressModeV(i, GFXAddressClamp);
+            GFX->setTextureStageAddressModeW(i, GFXAddressClamp);
+            GFX->setTexture(i, sgData.dynamicLightSecondary);
+        }
+    }
+}
+
+void MatInstance::setEyePosition(MatrixF objTrans, Point3F position)
+{
+    // Set cubemap stuff here (it's convenient!)
+    if(hasCubemap() || mMaterial->dynamicCubemap)
+    {
+        Point3F cubeEyePos = position - objTrans.getPosition();
+        GFX->setVertexShaderConstF( VC_CUBE_EYE_POS, (float*)&cubeEyePos, 1 );
+    }
+    objTrans.inverse();
+    objTrans.mulP( position );
+    position.convolveInverse(objTrans.getScale());
+    GFX->setVertexShaderConstF( VC_EYE_POS, (float*)&position, 1 );
+}
+
+void MatInstance::setBuffers(GFXVertexBufferHandleBase* vertBuffer, GFXPrimitiveBufferHandle* primBuffer)
+{
+    GFX->setVertexBuffer( *vertBuffer );
+    GFX->setPrimitiveBuffer( *primBuffer );
+}
+
+void MatInstance::setLightingBlendFunc()
+{
+    if (Material::isDebugLightingEnabled())
+        return;
+
+    // don't break the material multipass rendering...
+    GFX->setAlphaBlendEnable(true);
+    GFX->setSrcBlend(GFXBlendSrcAlpha);
+    GFX->setDestBlend(GFXBlendOne);
+}
+
 //----------------------------------------------------------------------------
 // Filter glow passes - this function filters out passes that do not glow.
 //    Returns true if there are no more glow passes, false otherwise.

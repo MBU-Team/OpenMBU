@@ -24,6 +24,7 @@ public:
 protected:
     Vector< MainSortElem > mElementList;
 
+    virtual void setupSGData( RenderInst *ri, SceneGraphData &data );
     bool newPassNeeded(MatInstance* currMatInst, RenderInst* ri);
 public:
     RenderElemMgr();
@@ -32,8 +33,6 @@ public:
     virtual void sort();
     virtual void render() {};
     virtual void clear();
-
-    virtual void setupLights(RenderInst* inst, SceneGraphData& data);
 
     static S32 FN_CDECL cmpKeyFunc(const void* p1, const void* p2);
 

@@ -16,6 +16,7 @@ private:
     void setupSGData(RenderInst* ri, SceneGraphData& data);
 
 public:
+    typedef RenderElemMgr Parent;
     virtual void render();
 };
 

@@ -19,6 +19,8 @@ private:
     void renderZpass();
 
 public:
+    typedef RenderElemMgr Parent;
+
     RenderInteriorMgr();
     ~RenderInteriorMgr();
 

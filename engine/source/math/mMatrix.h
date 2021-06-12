@@ -71,6 +71,7 @@ public:
     MatrixF& affineInverse();
     MatrixF& transpose();                        ///< Swap rows and columns.
     MatrixF& scale(const Point3F& p);            ///< M * Matrix(p) -> M
+    Point3F getScale() const;                    ///< Return scale assuming scale was applied via mat.scale(s).
 
     EulerF toEuler() const;
 
@@ -284,6 +285,15 @@ inline MatrixF& MatrixF::scale(const Point3F& p)
 {
     m_matF_scale(m, p);
     return *this;
+}
+
+inline Point3F MatrixF::getScale() const
+{
+    Point3F scale;
+    scale.x = mSqrt(m[0]*m[0] + m[4] * m[4] + m[8] * m[8]);
+    scale.y = mSqrt(m[1]*m[1] + m[5] * m[5] + m[9] * m[9]);
+    scale.z = mSqrt(m[2]*m[2] + m[6] * m[6] + m[10] * m[10]);
+    return scale;
 }
 
 inline void MatrixF::normalize()

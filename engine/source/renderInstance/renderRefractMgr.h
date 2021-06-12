@@ -12,9 +12,6 @@
 //**************************************************************************
 class RenderRefractMgr : public RenderElemMgr
 {
-private:
-    void setupSGData(RenderInst* ri, SceneGraphData& data);
-
 public:
     virtual void render();
 };

@@ -32,43 +32,8 @@ RenderInteriorMgr::~RenderInteriorMgr()
 //-----------------------------------------------------------------------------
 void RenderInteriorMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
 {
-    dMemset(&data, 0, sizeof(SceneGraphData));
-
-    // do this here for the init, but also in setupLights...
-    dMemcpy(&data.light, &ri->light, sizeof(ri->light));
-    dMemcpy(&data.lightSecondary, &ri->lightSecondary, sizeof(ri->lightSecondary));
-    data.dynamicLight = ri->dynamicLight;
-    data.dynamicLightSecondary = ri->dynamicLightSecondary;
-
-    //const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
-    //VectorF sunVector = sunlight->mDirection;
-
-    //data.light.mDirection.set(sunVector);
-    //data.light.mPos.set(sunVector * -10000.0);
-    //data.light.mColor = sunlight->mColor;
-    //data.light.mAmbient = sunlight->mColor;// + sunlight->mAmbient;
-
-    data.camPos = gRenderInstManager.getCamPos();
-    data.objTrans = *ri->objXform;
-    data.backBuffTex = *ri->backBuffTex;
-    data.cubemap = ri->cubemap;
-
-    data.useFog = true;
-    data.fogTex = getCurrentClientSceneGraph()->getFogTexture();
-    data.fogHeightOffset = getCurrentClientSceneGraph()->getFogHeightOffset();
-    data.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
-    data.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
-
-    if (ri->lightmap)
-    {
-        data.lightmap = *ri->lightmap;
-    }
-    if (ri->normLightmap)
-    {
-        data.normLightmap = *ri->normLightmap;
-    }
-
-    data.visibility = ri->visibility;
+    Parent::setupSGData(ri, data);
+    ri->miscTex = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -146,14 +111,10 @@ void RenderInteriorMgr::render()
 
     U32 binSize = mElementList.size();
 
-
-    GFXVertexBuffer* lastVB = NULL;
-    GFXPrimitiveBuffer* lastPB = NULL;
-
     GFXTextureObject* lastLM = NULL;
     GFXTextureObject* lastLNM = NULL;
 
-    U32 changeCount = 0, changeVB = 0, changePB = 0;
+    U32 changeCount = 0;
 
     for (U32 j = 0; j < mElementList.size(); )
     {
@@ -173,9 +134,13 @@ void RenderInteriorMgr::render()
             {
                 RenderInst* passRI = mElementList[a].inst;
 
+                // no dynamics if glowing...
+                RenderPassData *passData = mat->getPass(mat->getCurPass());
+                if (passData && passData->glow && passRI->dynamicLight)
+                    continue;
+
                 // commented out the reflective check as it is what causes the interior flickering for v4. MBO used debug interior rendering, but that's not ideal.
-                if (mat != passRI->matInst ||
-                    (a != j))// && passRI->reflective))  // if reflective, we want to reset textures in case this piece of geometry uses different reflect texture
+                if (newPassNeeded(mat, passRI) || (a != j))// && passRI->reflective))  // if reflective, we want to reset textures in case this piece of geometry uses different reflect texture
                 {
                     lastLM = NULL;  // pointer no longer valid after setupPass() call
                     lastLNM = NULL;
@@ -184,75 +149,19 @@ void RenderInteriorMgr::render()
 
                 if (passRI->type == RenderInstManager::RIT_InteriorDynamicLighting || Material::isDebugLightingEnabled())
                 {
-                    if (!Material::isDebugLightingEnabled())
-                    {
-                        // don't break the material multipass rendering...
-                        GFX->setAlphaBlendEnable(true);
-                        GFX->setSrcBlend(GFXBlendSrcAlpha);
-                        GFX->setDestBlend(GFXBlendOne);
-                    }
+                    mat->setLightingBlendFunc();
 
-                    setupLights(passRI, sgData);
+                    setupSGData(passRI, sgData);
+                    sgData.matIsInited = true;
+                    mat->setLightInfo(sgData);
                 }
-
-                /*if (passRI->type != RenderInstManager::RIT_InteriorDynamicLighting)
-                {
-                    const LightInfo* sunlight = getCurrentClientSceneGraph()->getLightManager()->sgGetSpecialLight(LightManager::sgSunLightType);
-                    VectorF sunVector = sunlight->mDirection;
-
-                    passRI->light.mDirection.set(sunVector);
-                    passRI->light.mPos.set(sunVector * -10000.0);
-                    passRI->light.mColor = sunlight->mColor;
-                    passRI->light.mAmbient = sunlight->mAmbient;
-
-                    passRI->lightSecondary = passRI->light;
-                    setupLights(passRI, sgData);
-                }*/
 
                 // fill in shader constants that change per draw
                 //-----------------------------------------------
-                GFX->setVertexShaderConstF(0, (float*)passRI->worldXform, 4);
-
-                // set object transform
-                MatrixF objTrans = *passRI->objXform;
-                objTrans.transpose();
-                GFX->setVertexShaderConstF(VC_OBJ_TRANS, (float*)&objTrans, 4);
-                objTrans.transpose();
-                objTrans.inverse();
-
-                // fill in eye data
-                Point3F eyePos = gRenderInstManager.getCamPos();
-                objTrans.mulP(eyePos);
-                GFX->setVertexShaderConstF(VC_EYE_POS, (float*)&eyePos, 1);
-
-                // fill in cubemap data
-                if (mat->hasCubemap())
-                {
-                    Point3F cubeEyePos = gRenderInstManager.getCamPos() - passRI->objXform->getPosition();
-                    GFX->setVertexShaderConstF(VC_CUBE_EYE_POS, (float*)&cubeEyePos, 1);
-
-                    MatrixF cubeTrans = *passRI->objXform;
-                    cubeTrans.setPosition(Point3F(0.0, 0.0, 0.0));
-                    cubeTrans.transpose();
-                    GFX->setVertexShaderConstF(VC_CUBE_TRANS, (float*)&cubeTrans, 3);
-                }
-
-                // set buffers
-                if (passRI->primBuff)
-                {
-                    if (lastVB != passRI->vertBuff->getPointer())
-                    {
-                        changeVB++;
-                        GFX->setVertexBuffer(*passRI->vertBuff);
-                        lastVB = passRI->vertBuff->getPointer();
-                    }
-                    if (lastPB != passRI->primBuff->getPointer())
-                    {
-                        changePB++;
-                        GFX->setPrimitiveBuffer(*passRI->primBuff);
-                        lastPB = passRI->primBuff->getPointer();
-                    }
-                }
+                mat->setWorldXForm(*passRI->worldXform);
+                mat->setObjectXForm(*passRI->objXform);
+                mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
+                mat->setBuffers(passRI->vertBuff, passRI->primBuff);
 
                 // This section of code is dangerous, it overwrites the
                 // lightmap values in sgData.  This could be a problem when multiple
@@ -290,16 +199,12 @@ void RenderInteriorMgr::render()
                 }
                 //-------------------------------------
 
-
-                   // draw it
+                // draw it
                 if (passRI->prim)
                 {
                     GFXPrimitive* prim = passRI->prim;
                     GFX->drawIndexedPrimitive(prim->type, prim->minIndex, prim->numVertices,
                         prim->startIndex, prim->numPrimitives);
-
-                    lastVB = NULL;
-                    lastPB = NULL;
                 }
                 else
                 {

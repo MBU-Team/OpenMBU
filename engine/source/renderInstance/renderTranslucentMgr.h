@@ -17,6 +17,8 @@ private:
     void addElement(RenderInst* inst);
 
 public:
+    typedef RenderElemMgr Parent;
+
     virtual void render();
 };
 

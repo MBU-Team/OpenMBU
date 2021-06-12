@@ -16,43 +16,6 @@
 //**************************************************************************
 
 //-----------------------------------------------------------------------------
-// setup scenegraph data
-//-----------------------------------------------------------------------------
-void RenderMeshMgr::setupSGData(RenderInst* ri, SceneGraphData& data)
-{
-    dMemset(&data, 0, sizeof(SceneGraphData));
-
-    // do this here for the init, but also in setupLights...
-    dMemcpy(&data.light, &ri->light, sizeof(ri->light));
-    dMemcpy(&data.lightSecondary, &ri->lightSecondary, sizeof(ri->lightSecondary));
-    data.dynamicLight = ri->dynamicLight;
-    data.dynamicLightSecondary = ri->dynamicLightSecondary;
-
-    data.camPos = gRenderInstManager.getCamPos();
-    data.objTrans = *ri->objXform;
-    data.backBuffTex = *ri->backBuffTex;
-    data.cubemap = ri->cubemap;
-
-    data.useFog = true;
-    data.fogTex = getCurrentClientSceneGraph()->getFogTexture();
-    data.fogHeightOffset = getCurrentClientSceneGraph()->getFogHeightOffset();
-    data.fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
-    data.visDist = getCurrentClientSceneGraph()->getVisibleDistanceMod();
-
-    if (ri->lightmap)
-    {
-        data.lightmap = *ri->lightmap;
-    }
-    if (ri->normLightmap)
-    {
-        data.normLightmap = *ri->normLightmap;
-    }
-
-    data.visibility = ri->visibility;
-}
-
-
-//-----------------------------------------------------------------------------
 // render
 //-----------------------------------------------------------------------------
 void RenderMeshMgr::render()
@@ -88,8 +51,6 @@ void RenderMeshMgr::render()
 
 
     // init loop data
-    GFXVertexBuffer* lastVB = NULL;
-    GFXPrimitiveBuffer* lastPB = NULL;
     SceneGraphData sgData;
     U32 binSize = mElementList.size();
 
@@ -118,9 +79,6 @@ void RenderMeshMgr::render()
 
             GFX->popWorldMatrix();
 
-            lastVB = NULL;    // no longer valid, null it
-            lastPB = NULL;    // no longer valid, null it
-
             j++;
             continue;
         }
@@ -139,10 +97,13 @@ void RenderMeshMgr::render()
             {
                 RenderInst* passRI = mElementList[a].inst;
 
-                if (mat != passRI->matInst)
-                {
+                if (newPassNeeded(mat, passRI))
                     break;
-                }
+
+                // no dynamics if glowing...
+                RenderPassData *passdata = mat->getPass(mat->getCurPass());
+                if(passdata && passdata->glow && passRI->dynamicLight)
+                    continue;
 
                 // don't break the material multipass rendering...
                 if (firstmatpass)
@@ -161,11 +122,7 @@ void RenderMeshMgr::render()
                         {
                             AssertFatal((passRI->light.mType != LightInfo::Vector), "Not good");
                             AssertFatal((passRI->light.mType != LightInfo::Ambient), "Not good");
-                            GFX->setAlphaBlendEnable(true);
-                            GFX->setSrcBlend(GFXBlendSrcAlpha);
-                            //GFX->setSrcBlend(GFXBlendOne);
-                            GFX->setDestBlend(GFXBlendOne);
-                            //continue;
+                            mat->setLightingBlendFunc();
                         }
                     }
                     else
@@ -176,49 +133,13 @@ void RenderMeshMgr::render()
                     }
                 }
 
-                setupLights(passRI, sgData);
-
-
-                // fill in shader constants that change per draw
-                //-----------------------------------------------
-                GFX->setVertexShaderConstF(0, (float*)passRI->worldXform, 4);
-
-                // set object transform
-                MatrixF objTrans = *passRI->objXform;
-                objTrans.transpose();
-                GFX->setVertexShaderConstF(VC_OBJ_TRANS, (float*)&objTrans, 4);
-                objTrans.transpose();
-                objTrans.inverse();
-
-                // fill in eye data
-                Point3F eyePos = gRenderInstManager.getCamPos();
-                objTrans.mulP(eyePos);
-                GFX->setVertexShaderConstF(VC_EYE_POS, (float*)&eyePos, 1);
-
-
-                // fill in cubemap data
-                if (mat->hasCubemap())
-                {
-                    Point3F cubeEyePos = gRenderInstManager.getCamPos() - passRI->objXform->getPosition();
-                    GFX->setVertexShaderConstF(VC_CUBE_EYE_POS, (float*)&cubeEyePos, 1);
-
-                    MatrixF cubeTrans = *passRI->objXform;
-                    cubeTrans.setPosition(Point3F(0.0, 0.0, 0.0));
-                    cubeTrans.transpose();
-                    GFX->setVertexShaderConstF(VC_CUBE_TRANS, (float*)&cubeTrans, 3);
-                }
-
-                // set buffers if changed
-                if (lastVB != passRI->vertBuff->getPointer())
-                {
-                    GFX->setVertexBuffer(*passRI->vertBuff);
-                    lastVB = passRI->vertBuff->getPointer();
-                }
-                if (lastPB != passRI->primBuff->getPointer())
-                {
-                    GFX->setPrimitiveBuffer(*passRI->primBuff);
-                    lastPB = passRI->primBuff->getPointer();
-                }
+                mat->setWorldXForm(*passRI->worldXform);
+                mat->setObjectXForm(*passRI->objXform);
+                setupSGData(passRI, sgData);
+                sgData.matIsInited = true;
+                mat->setLightInfo(sgData);
+                mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
+                mat->setBuffers(passRI->vertBuff, passRI->primBuff);
 
                 // draw it
                 GFX->drawPrimitive(passRI->primBuffIndex);
@@ -230,7 +151,6 @@ void RenderMeshMgr::render()
 
         // force increment if none happened, otherwise go to end of batch
         j = (j == matListEnd) ? j + 1 : matListEnd;
-
     }
 
     GFX->setLightingEnable(false);

@@ -5,6 +5,7 @@
 #ifndef _SCENEDATA_H_
 #define _SCENEDATA_H_
 
+#include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/lightManager.h"
 
 struct VertexData;
@@ -30,6 +31,7 @@ struct SceneGraphData
     LightInfo   light;
     LightInfo   lightSecondary;
     bool        useLightDir;   // use light dir instead of position - used for sunlight outdoors
+    bool        matIsInited;   // Set to true in the RenderInstanceMgr's after the MatInstance->setupPass call.
 
     // fog   
     F32         fogHeightOffset;
@@ -54,8 +56,23 @@ struct SceneGraphData
     SceneGraphData()
         : lightmap(), normLightmap(), fogTex()
     {
-        dMemset(this, 0, sizeof(SceneGraphData));
+        reset();
+    }
+
+    inline void reset()
+    {
+        dMemset( this, 0, sizeof( SceneGraphData ) );
         visibility = 1.0f;
+    }
+
+    inline void setFogParams()
+    {
+        // Fogging...
+        useFog            = true;
+        fogTex            = getCurrentClientSceneGraph()->getFogTexture();
+        fogHeightOffset   = getCurrentClientSceneGraph()->getFogHeightOffset();
+        visDist           = getCurrentClientSceneGraph()->getVisibleDistanceMod();
+        fogInvHeightRange = getCurrentClientSceneGraph()->getFogInvHeightRange();
     }
 
 };
