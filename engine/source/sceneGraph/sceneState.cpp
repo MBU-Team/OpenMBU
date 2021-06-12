@@ -378,7 +378,7 @@ bool checkFogBandBoxVisible(F32 dist, F32 haze, F32 low, F32 high, Vector<SceneS
 bool SceneState::isBoxFogVisible(F32 dist, F32 top, F32 bottom)
 {
     F32 camZ = mCamPosition.z;
-    if (getCurrentClientSceneGraph()->isReflectPass())
+    if (mFlipCull)
     {
         camZ = getCurrentClientSceneGraph()->mNormCamPos.z;
     }
@@ -445,7 +445,7 @@ void SceneState::setupFog()
     mPosFogBands.clear();
 
     F32 camZ = mCamPosition.z;
-    if (getCurrentClientSceneGraph()->isReflectPass())
+    if (mFlipCull)
     {
         camZ = getCurrentClientSceneGraph()->mNormCamPos.z;
     }
