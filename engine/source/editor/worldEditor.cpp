@@ -1312,13 +1312,14 @@ void WorldEditor::calcAxisInfo()
             mAxisGizmoVector[i] = axisVector[i];
 
     // get the projected size...
-    SceneObject* obj = getControlObject();
+    /*SceneObject* obj = getControlObject();
     if (!obj)
         return;
 
     //
     Point3F camPos;
-    obj->getTransform().getColumn(3, &camPos);
+    obj->getTransform().getColumn(3, &camPos);*/
+    Point3F camPos = smCamPos;
 
     // assumes a 90deg FOV
     Point3F dir = mAxisGizmoCenter - camPos;
@@ -1331,13 +1332,14 @@ bool WorldEditor::collideAxisGizmo(const Gui3DMouseEvent& event)
         return(false);
 
     // get the projected size...
-    SceneObject* obj = getControlObject();
+    /*SceneObject* obj = getControlObject();
     if (!obj)
         return(false);
 
     //
     Point3F camPos;
-    obj->getTransform().getColumn(3, &camPos);
+    obj->getTransform().getColumn(3, &camPos);*/
+    Point3F camPos = smCamPos;
 
     // assumes a 90deg FOV
     Point3F dir = mAxisGizmoCenter - camPos;
