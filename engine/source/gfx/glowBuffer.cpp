@@ -7,6 +7,7 @@
 #include "gfx/gfxDevice.h"
 #include "primBuilder.h"
 #include "core/bitStream.h"
+#include "sceneGraph/sceneGraph.h"
 
 #define GLOW_BUFF_SIZE 256
 
@@ -479,6 +480,15 @@ void GlowBuffer::copyToScreen(RectI& viewport)
 //--------------------------------------------------------------------------
 void GlowBuffer::setAsRenderTarget()
 {
+    // Make sure we have a final display target of the same size as the view
+    // we're rendering.
+    Point2I goalResolution = getCurrentClientSceneGraph()->getDisplayTargetResolution();
+    if(mSurface[2].isNull() || goalResolution != Point2I(mSurface[2].getWidth(), mSurface[2].getHeight()))
+    {
+        Con::printf("GlowBuffer (%x) - Resizing glow texture to be %dx%dpx", this, goalResolution.x, goalResolution.y);
+        mSurface[2].set( goalResolution.x, goalResolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1 );
+    }
+
     GFX->setActiveRenderSurface(mSurface[2]);
     GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
 }
@@ -498,8 +508,8 @@ void GlowBuffer::texManagerCallback(GFXTexCallbackCode code, void* userData)
 
     if (code == GFXResurrect)
     {
-        GFXVideoMode vm = GFX->getVideoMode();
-        glowBuff->mSurface[2].set(vm.resolution.x, vm.resolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetProfile, 1);
+        Point2I res = getCurrentClientSceneGraph()->getDisplayTargetResolution();
+        glowBuff->mSurface[2].set(res.x, res.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1);
         return;
     }
 

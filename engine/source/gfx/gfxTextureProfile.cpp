@@ -12,6 +12,10 @@ GFX_ImplementTextureProfile(GFXDefaultRenderTargetProfile,
     GFXTextureProfile::DiffuseMap,
     GFXTextureProfile::PreserveSize | GFXTextureProfile::NoMipmap | GFXTextureProfile::RenderTarget,
     GFXTextureProfile::None);
+GFX_ImplementTextureProfile(GFXDefaultRenderTargetZBufferProfile,
+    GFXTextureProfile::DiffuseMap,
+    GFXTextureProfile::PreserveSize | GFXTextureProfile::NoMipmap | GFXTextureProfile::RenderTarget | GFXTextureProfile::RenderTargetZBuffer,
+    GFXTextureProfile::None);
 GFX_ImplementTextureProfile(GFXDefaultStaticDiffuseProfile,
     GFXTextureProfile::DiffuseMap,
     GFXTextureProfile::Static,

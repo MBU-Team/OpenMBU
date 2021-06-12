@@ -19,6 +19,7 @@
 #include "math/mathUtils.h"
 #include "gfx/d3d/gfxD3DEnumTranslate.h"
 #include "core/unicode.h"
+#include "gfxD3DDevice.h"
 
 // Gross hack to let the diag utility know that we only need stubs
 #define DUMMYDEF
@@ -30,25 +31,25 @@
 U32 GFXD3DTextureObject::mTexCount = 0;
 #endif
 
-#ifdef TORQUE_DEBUG
-#include "dxerr.h"
-#endif
-
-inline void D3DAssert(HRESULT hr, const char* info)
-{
-#if defined( TORQUE_DEBUG )
-    if (FAILED(hr))
-    {
-#ifdef UNICODE
-        UTF16 tehInfo[256];
-        convertUTF8toUTF16((const UTF8*)info, tehInfo, sizeof(tehInfo));
-#else
-        const char* tehInfo = info;
-#endif
-        DXTrace(__FILE__, __LINE__, hr, tehInfo, true);
-    }
-#endif
-}
+//#ifdef TORQUE_DEBUG
+//#include "dxerr.h"
+//#endif
+//
+//inline void D3DAssert(HRESULT hr, const char* info)
+//{
+//#if defined( TORQUE_DEBUG )
+//    if (FAILED(hr))
+//    {
+//#ifdef UNICODE
+//        UTF16 tehInfo[256];
+//        convertUTF8toUTF16((const UTF8*)info, tehInfo, sizeof(tehInfo));
+//#else
+//        const char* tehInfo = info;
+//#endif
+//        DXTrace(__FILE__, __LINE__, hr, tehInfo, true);
+//    }
+//#endif
+//}
 
 //-----------------------------------------------------------------------------
 // Constructor
@@ -72,6 +73,9 @@ void GFXD3DTextureManager::innerCreateTexture(GFXD3DTextureObject* retTex,
     bool forceMips)
 {
     PROFILE_START(GFXD3DTextureManager_innerCreateTexture);
+
+    GFXD3DDevice* d3d = static_cast<GFXD3DDevice*>(GFX);
+
     // Some relevant helper information...
     bool supportsAutoMips = GFX->getCardProfiler()->queryProfile("autoMipMapLevel", true);
 
@@ -174,11 +178,6 @@ void GFXD3DTextureManager::innerCreateTexture(GFXD3DTextureObject* retTex,
         {
             D3DAssert(mD3DDevice->CreateDepthStencilSurface(width, height, GFXD3DTextureFormat[format],
                 D3DMULTISAMPLE_NONE, 0, TRUE, retTex->getSurfacePtr(), NULL), "Failed to create Z surface");
-
-            // Get the actual size of the texture...
-            D3DSURFACE_DESC probeDesc;
-            D3DAssert(retTex->getSurface()->GetDesc(&probeDesc), "Failed to get surface description");
-            retTex->mTextureSize.set(probeDesc.Width, probeDesc.Height, 0);
         }
         else
         {
@@ -207,14 +206,30 @@ void GFXD3DTextureManager::innerCreateTexture(GFXD3DTextureObject* retTex,
                 );
             }
 
-            // Get the actual size of the texture...
-            D3DSURFACE_DESC probeDesc;
-            D3DAssert(retTex->get2DTex()->GetLevelDesc(0, &probeDesc), "Failed to get surface description");
-            retTex->mTextureSize.set(probeDesc.Width, probeDesc.Height, 0);
+            // If this is a render target, and it needs z support, we're going to need to create an actual RenderTarget.
+            // Check the caps though, if we can't stretchrect between textures, use the old RT method.  (Which hopefully means
+            // that they can't force AA on us as well.)
+            if (retTex->mProfile->isRenderTargetZBuffer())
+            {
+                D3DAssert(mD3DDevice->CreateRenderTarget(width, height, d3dTextureFormat,
+                                                          D3DMULTISAMPLE_NONE, 0, false, retTex->getSurfacePtr(), NULL),
+                           "GFXD3D9TextureManager::_createTexture - unable to create render target");
+            }
 
             // All done!
             retTex->mMipLevels = retTex->get2DTex()->GetLevelCount();
         }
+
+        // Get the actual size of the texture...
+        D3DSURFACE_DESC probeDesc;
+        ZeroMemory(&probeDesc, sizeof probeDesc);
+
+        if( retTex->get2DTex() != NULL )
+            D3DAssert( retTex->get2DTex()->GetLevelDesc( 0, &probeDesc ), "Failed to get surface description");
+        else if( retTex->getSurface() != NULL )
+            D3DAssert( retTex->getSurface()->GetDesc( &probeDesc ), "Failed to get surface description");
+
+        retTex->mTextureSize.set(probeDesc.Width, probeDesc.Height, 0);
     }
 
     retTex->mFormat = format;

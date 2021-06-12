@@ -749,11 +749,11 @@ public:
     virtual void setClipRect(const RectI& rect) = 0;
     virtual const RectI& getClipRect() const = 0;
 
-    void setFrustum(F32 left, F32 right, F32 bottom, F32 top, F32 nearPlane, F32 farPlane);
+    void setFrustum(F32 left, F32 right, F32 bottom, F32 top, F32 nearPlane, F32 farPlane, bool bRotate = true);
     void getFrustum(F32* left, F32* right, F32* bottom, F32* top, F32* nearPlane, F32* farPlane);
 
     void setFrustum(F32 FOV, F32 aspectRatio, F32 nearPlane, F32 farPlane);
-    void setOrtho(F32 left, F32 right, F32 bottom, F32 top, F32 nearPlane, F32 farPlane);
+    void setOrtho(F32 left, F32 right, F32 bottom, F32 top, F32 nearPlane, F32 farPlane, bool doRotate = false);
 
     /// should this even be in GFX layer? -bramage
     F32 projectRadius(F32 dist, F32 radius);

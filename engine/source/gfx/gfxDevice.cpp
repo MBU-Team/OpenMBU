@@ -1340,7 +1340,8 @@ void GFXDevice::setFrustum(F32 left,
     F32 bottom,
     F32 top,
     F32 nearPlane,
-    F32 farPlane)
+    F32 farPlane,
+    bool bRotate)
 {
     // store values
     fLeft = left;
@@ -1381,10 +1382,11 @@ void GFXDevice::setFrustum(F32 left,
 
     projection.transpose();
 
-    MatrixF rotMat(EulerF((M_PI / 2.0), 0.0, 0.0));
-
-    projection.mul(rotMat);
-
+    if (bRotate)
+    {
+        static MatrixF rotMat(EulerF((M_PI / 2.0), 0.0, 0.0));
+        projection.mul(rotMat);
+    }
     setProjectionMatrix(projection);
 }
 
@@ -1428,7 +1430,8 @@ void GFXDevice::setOrtho(F32 left,
     F32 bottom,
     F32 top,
     F32 nearPlane,
-    F32 farPlane)
+    F32 farPlane,
+    bool doRotate)
 {
     // store values
     fLeft = left;
@@ -1471,9 +1474,10 @@ void GFXDevice::setOrtho(F32 left,
 
     projection.transpose();
 
-    MatrixF rotMat(EulerF((M_PI / 2.0), 0.0, 0.0));
+    static MatrixF rotMat(EulerF((M_PI / 2.0), 0.0, 0.0));
 
-    projection.mul(rotMat);
+    if (doRotate)
+        projection.mul(rotMat);
 
     setProjectionMatrix(projection);
 }

@@ -226,6 +226,7 @@ void GFXD3DCubemap::updateDynamic(Point3F& pos)
     MatrixF rotMat(EulerF((M_PI / 2.0), 0.0, 0.0));
 
     matProj.mul(rotMat);
+    GFX->setFrustum((M_PI / 2.0), 1.0f, 0.1f, 1000.0f);
     GFX->setProjectionMatrix(matProj);
 
     getCurrentClientSceneGraph()->setReflectPass(true);

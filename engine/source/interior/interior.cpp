@@ -424,15 +424,21 @@ bool Interior::prepRender(SceneState* state,
         sgStoredFrustum[5] = state->getFarPlane();
     }
 
-
+    //Getting mirrors working, 2/15/2008
+    /*
     MatrixF proj = GFX->getProjectionMatrix();
 
     GFX->setFrustum(sgStoredFrustum[0], sgStoredFrustum[1],
         sgStoredFrustum[2], sgStoredFrustum[3],
         sgStoredFrustum[4], sgStoredFrustum[5]);
+    */
+
     sgProjMatrix = GFX->getProjectionMatrix();
 
+    //More getting mirrors working, 2/15/2008
+    /*
     GFX->setProjectionMatrix(proj);
+    */
 
     MatrixF finalModelView = GFX->getWorldMatrix();
     finalModelView.mul(OSToWS);

@@ -61,6 +61,7 @@ public:
         NoPadding = BIT(6),  ///< Do not pad this texture if it's non pow2.
         KeepBitmap = BIT(7),  ///< Always keep a copy of this texture's bitmap. (Potentially in addition to the API managed copy?)
         ZTarget = BIT(8),  ///< This texture will be used as a Z target.
+        RenderTargetZBuffer = BIT(9), ///< This render target that needs a zbuffer as well, this is in addition to RenderTarget flag above (zbuffer comes separately, used for CreateRenderTarget path in D3D)
     };
 
     enum Compression
@@ -118,6 +119,11 @@ public:
         return testFlag(RenderTarget);
     }
 
+    inline bool isRenderTargetZBuffer()
+    {
+        return (testFlag(RenderTargetZBuffer) && testFlag(RenderTarget));
+    }
+
     inline bool isZTarget()
     {
         return testFlag(ZTarget);
@@ -142,6 +148,8 @@ public:
 
 // Texture we can render to.
 GFX_DeclareTextureProfile(GFXDefaultRenderTargetProfile);
+// Texture we can render to (with z buffer support)
+GFX_DeclareTextureProfile(GFXDefaultRenderTargetZBufferProfile);
 // Standard diffuse texture that stays in system memory.
 GFX_DeclareTextureProfile(GFXDefaultPersistentProfile);
 // Generic diffusemap. This works in most cases.

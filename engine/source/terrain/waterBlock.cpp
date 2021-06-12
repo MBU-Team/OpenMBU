@@ -821,9 +821,9 @@ void WaterBlock::updateReflection()
 
 
     // set up projection - must match that of main camera
-    GFXVideoMode mode = GFX->getVideoMode();
+    Point2I resolution = gClientSceneGraph->getDisplayTargetResolution();
     GFX->setFrustum(mRadToDeg(query.fov),
-        F32(mode.resolution.x) / F32(mode.resolution.y),
+        F32(resolution.x) / F32(resolution.y),
         query.nearPlane, query.farPlane);
 
     // store "normal" camera position before changing over to reflected position

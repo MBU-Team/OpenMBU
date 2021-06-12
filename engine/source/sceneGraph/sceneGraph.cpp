@@ -61,6 +61,8 @@ SceneGraph::SceneGraph(bool isClient)
     mReflectPass = false;
 
     mHeightOffset = 0.0;
+
+    mDisplayTargetResolution.set(0,0);
 }
 
 SceneGraph::~SceneGraph()
@@ -996,3 +998,12 @@ void SceneGraph::removeFromWaterList(SceneObject* obj)
     }
 }
 
+void SceneGraph::setDisplayTargetResolution( const Point2I &size )
+{
+    mDisplayTargetResolution = size;
+}
+
+const Point2I & SceneGraph::getDisplayTargetResolution() const
+{
+    return mDisplayTargetResolution;
+}

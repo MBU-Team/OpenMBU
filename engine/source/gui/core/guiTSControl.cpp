@@ -119,29 +119,36 @@ void GuiTSCtrl::onRender(Point2I offset, const RectI& updateRect)
     GFX->setFrustum(left, right, bottom, top,
         mLastCameraQuery.nearPlane, mLastCameraQuery.farPlane);
 
+    // We're going to be displaying this render at size of this control in
+    // pixels - let the scene know so that it can calculate e.g. reflections
+    // correctly for that final display result.
+    getCurrentClientSceneGraph()->setDisplayTargetResolution(getExtent());
+
     getCurrentClientSceneGraph()->setVisibleDistance(mLastCameraQuery.farPlane);
 
-    MatrixF invCamera = mLastCameraQuery.cameraMatrix;
-    invCamera.inverse();
-    GFX->setWorldMatrix(invCamera);
+    // prepare the DRL system...
+    drlSystem.sgPrepSystem(updateRect.point, updateRect.extent);
+
+    // Set the GFX world matrix to the world-to-camera transform, but don't
+    // change the cameraMatrix in mLastCameraQuery. This is because
+    // mLastCameraQuery.cameraMatrix is supposed to contain the camera-to-world
+    // transform. In-place invert would save a copy but mess up any GUIs that
+    // depend on that value.
+    MatrixF worldToCamera = mLastCameraQuery.cameraMatrix;
+    worldToCamera.inverse();
+    GFX->setWorldMatrix( worldToCamera );
 
     mSaveProjection = GFX->getProjectionMatrix();
     mSaveModelview = GFX->getWorldMatrix();
 
     mSaveViewport = updateRect;
 
-
-    // prepare the DRL system...
-    drlSystem.sgPrepSystem(updateRect.point, updateRect.extent);
-
     renderWorld(updateRect);
 
     if (gDebugDraw) gDebugDraw->render();
 
-
     // render DRL system...
     drlSystem.sgRenderSystem();
-
 
     // screen fx...
     //sgDRLTest.sgPrepChain(mBounds.extent.x, mBounds.extent.y);

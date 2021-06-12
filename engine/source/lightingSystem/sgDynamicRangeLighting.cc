@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "gfx/gfxDevice.h"
@@ -9,6 +9,7 @@
 #include "console/consoleTypes.h"
 #include "lightingSystem/sgDynamicRangeLighting.h"
 #include "lightingSystem/sgFormatManager.h"
+#include "sceneGraph/sceneGraph.h"
 
 
 IMPLEMENT_CONOBJECT(sgGuiTexTestCtrl);
@@ -93,7 +94,7 @@ void sgDRLSurfaceChain::sgPrepChain(const Point2I& offset, const Point2I& extent
     // this doesn't affect chain...
     sgOffset = offset;
     sgExtent = extent;
-    Point2I cursize = GFX->getVideoMode().resolution;
+    Point2I cursize = getCurrentClientSceneGraph()->getDisplayTargetResolution();
 
     if (sgSurfaceSize.size() > 0)
     {

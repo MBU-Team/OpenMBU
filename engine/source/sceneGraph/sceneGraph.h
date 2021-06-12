@@ -202,9 +202,27 @@ protected:
     Vector<SceneObjectRef*> mRefPoolBlocks;
     static const U32        csmRefPoolBlockSize;
 
-
+    /// @see setDisplayTargetResolution
+    Point2I mDisplayTargetResolution;
 
 public:
+
+    /// @name dtr Display Target Resolution
+    ///
+    /// Some rendering must be targeted at a specific display resolution.
+    /// This display resolution is distinct from the current RT's size
+    /// (such as when rendering a reflection to a texture, for instance)
+    /// so we store the size at which we're going to display the results of
+    /// the current render.
+    ///
+    /// @{
+
+    ///
+    void setDisplayTargetResolution(const Point2I &size);
+    const Point2I &getDisplayTargetResolution() const;
+
+    /// @}
+
     LightManager* getLightManager();
 
     F32 getFogHeightOffset() { return mHeightOffset; }
