@@ -24,6 +24,7 @@ NetObject::NetObject()
     mPrevDirtyList = NULL;
     mNextDirtyList = NULL;
     mDirtyMaskBits = 0;
+    mSPModeObject = false;
 }
 
 NetObject::~NetObject()
@@ -205,6 +206,9 @@ bool NetObject::onAdd()
     if (mNetFlags.test(ScopeAlways))
         setScopeAlways();
 
+    if (gSPMode)
+        mSPModeObject = true;
+
     return Parent::onAdd();
 }
 
@@ -267,4 +271,9 @@ void NetObject::initPersistFields()
 ConsoleMethod(NetObject, getGhostID, S32, 2, 2, "")
 {
     return object->getNetIndex();
+}
+
+ConsoleMethod(NetObject, isSPModeObject, bool, 2, 2, "")
+{
+    return object->isSPModeObject();
 }

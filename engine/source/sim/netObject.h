@@ -267,6 +267,8 @@ protected:
 
     GhostInfo* mFirstObjectRef;      ///< Head of a linked list storing GhostInfos referencing this NetObject.
 
+    bool mSPModeObject; ///< Is this object part of the preview system
+
 public:
     NetObject();
     ~NetObject();
@@ -360,6 +362,8 @@ public:
     bool isScopeable() const;     ///< Is this object subject to scoping?
     bool isGhostable() const;     ///< Is this object ghostable?
     bool isGhostAlways() const;   ///< Should this object always be ghosted?
+
+    bool isSPModeObject() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -399,6 +403,11 @@ inline bool NetObject::isGhostAlways() const
     AssertFatal(mNetFlags.test(Ghostable) || mNetFlags.test(ScopeAlways) == false,
         "That's strange, a ScopeAlways non-ghostable object?  Something wrong here");
     return mNetFlags.test(Ghostable) && mNetFlags.test(ScopeAlways);
+}
+
+inline bool NetObject::isSPModeObject() const
+{
+    return mSPModeObject;
 }
 
 #endif
