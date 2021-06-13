@@ -207,7 +207,10 @@ bool NetObject::onAdd()
         setScopeAlways();
 
     if (gSPMode)
+    {
         mSPModeObject = true;
+        gSPModeSet->addObject(this);
+    }
 
     return Parent::onAdd();
 }
@@ -216,6 +219,9 @@ void NetObject::onRemove()
 {
     while (mFirstObjectRef)
         mFirstObjectRef->connection->detachObject(mFirstObjectRef);
+
+    if (mSPModeObject)
+        gSPModeSet->removeObject(this);
 
     Parent::onRemove();
 }

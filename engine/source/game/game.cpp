@@ -50,6 +50,7 @@ F32 gMovementSpeed = 1;
 
 bool gSPMode = false;
 bool gRenderPreview = false;
+SimSet* gSPModeSet;
 
 //--------------------------------------------------------------------------
 ConsoleFunctionGroupBegin(GameFunctions, "General game functionality.");

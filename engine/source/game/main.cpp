@@ -419,6 +419,10 @@ bool initGame(int argc, const char** argv)
     gClientContainer.addObject(gDecalManager);
     gClientSceneGraph->addObjectToScene(gDecalManager);
 
+    gSPModeSet = new SimSet();
+    gSPModeSet->registerObject("SPModeSet");
+    Sim::getRootGroup()->addObject(gSPModeSet);
+
     DebugDrawer::init();
 
     DetailManager::init();
