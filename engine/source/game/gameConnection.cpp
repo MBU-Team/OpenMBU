@@ -887,12 +887,17 @@ void GameConnection::ghostPreRead(NetObject* nobj, bool newGhost)
 {
     if ((nobj->getType() & GameBaseHiFiObjectType) != 0 && !newGhost)
     {
-        GameBase* obj = (GameBase*)nobj;
+        AssertFatal(dynamic_cast<GameBase*>(nobj),"Should be a gamebase");
+        GameBase* obj = static_cast<GameBase*>(nobj);
+
+        // set next cache entry to start
         obj->beginTickCacheList();
-        TickCacheEntry* entry = obj->incTickCacheList(false);
-        if (entry)
+
+        // reset to old state because we are about to unpack (and then tick forward)
+        TickCacheEntry* tce = obj->incTickCacheList(false);
+        if (tce)
         {
-            BitStream bs(entry->packetData, TickCacheEntry::MaxPacketSize);
+            BitStream bs(tce->packetData, TickCacheEntry::MaxPacketSize);
             obj->readPacketData(this, &bs);
         }
     }
@@ -902,15 +907,19 @@ void GameConnection::ghostReadExtra(NetObject* nobj, BitStream* bstream, bool ne
 {
     if ((nobj->getType() & GameBaseHiFiObjectType) != 0)
     {
-        GameBase* obj = (GameBase*)nobj;
+        AssertFatal(dynamic_cast<GameBase*>(nobj),"Should be a gamebase");
+        GameBase* obj = static_cast<GameBase*>(nobj);
 
+        // mark ghost so that it updates correctly
         obj->setGhostUpdated(true);
         obj->setNewGhost(newGhost);
+
+        // set next cache entry to start
         obj->beginTickCacheList();
 
-        TickCacheEntry* entry = obj->incTickCacheList(true);
-
-        BitStream bs(entry->packetData, TickCacheEntry::MaxPacketSize);
+        // save state for future update
+        TickCacheEntry* tce = obj->incTickCacheList(true);
+        BitStream bs(tce->packetData, TickCacheEntry::MaxPacketSize);
         obj->writePacketData(this, &bs);
     }
 }

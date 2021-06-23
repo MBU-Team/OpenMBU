@@ -283,49 +283,25 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
     if (!tickCount || mLastTick == targetTick)
     {
 LABEL_19:
-        if (mSkipAdvanceObjectsMs)
+        if (!mSkipAdvanceObjectsMs)
         {
-            mSkipAdvanceObjectsMs -= timeDelta;
-        } else
-        {
-            ProcessObject* next = mHead.mProcessLink.next;
-            ProcessObject* pNext = next;
             mLastDelta = (float)(-(targetTime + 1) & 0x1F) * 0.03125f;
             AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
-            if (next != &mHead)
+            for ( ProcessObject *pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next )
             {
-                while(true)
-                {
-                    GameBase* gb = getGameBase(next);
-                    if (gb->mProcessTick)
-                    {
-                        gb->interpolateTick(mLastDelta);
-                        next = pNext;
-                    }
-
-                    pNext = next->mProcessLink.next;
-                    if (pNext == &mHead)
-                        break;
-                    next = next->mProcessLink.next;
-                }
+                GameBase* gb = getGameBase(pobj);
+                if ( gb->mProcessTick)
+                    gb->interpolateTick( mLastDelta );
             }
 
             F32 dt = F32(timeDelta) / 1000;
-            ProcessObject* next2 = mHead.mProcessLink.next;
-            ProcessObject* pNext2 = next2;
-            if (next2 != &mHead)
+            for ( ProcessObject *pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
             {
-                while (true)
-                {
-                    GameBase* gb = getGameBase(next2);
-                    gb->advanceTime(dt);
-
-                    pNext2 = pNext2->mProcessLink.next;
-                    if (pNext2 == &mHead)
-                        break;
-                    next2 = pNext2;
-                }
+                GameBase* gb = getGameBase(pobj);
+                gb->advanceTime( dt );
             }
+        } else {
+            mSkipAdvanceObjectsMs -= timeDelta;
         }
 
         mLastTime = targetTime;
