@@ -196,7 +196,12 @@ void Sky::setVisibility()
         mRealSkyColor.green = S32(mSolidFillColor.green * 255.0f);
         mRealSkyColor.blue = S32(mSolidFillColor.blue * 255.0f);
 
+#ifdef MB_ULTRA
+        // Force high fog render distance so that astrolabe and clouds looks right
+        mSceneManager->setFogDistance(1000000);
+#else
         mSceneManager->setFogDistance(mFogDistance);
+#endif
         mSceneManager->setVisibleDistance(mVisibleDistance);
         mSceneManager->setFogVolumes(mNumFogVolumes, mFogVolumes);
     }
