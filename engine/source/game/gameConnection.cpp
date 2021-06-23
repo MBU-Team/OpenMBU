@@ -163,7 +163,7 @@ void GameConnection::onConnectionEstablished(bool isInitiator)
         setSendingEvents(true);
         setTranslatesStrings(true);
         Sim::getClientGroup()->addObject(this);
-        mTotalServerTicks = -1;
+        mTotalServerTicks = ServerTicksUninitialized;
 
         const char* argv[MaxConnectArgs + 2];
         argv[0] = "onConnect";
@@ -184,7 +184,7 @@ void GameConnection::onDisconnect(const char* reason)
     {
         Con::printf("Connection with server lost.");
         Con::executef(this, 2, "onConnectionDropped", reason);
-        mTotalServerTicks = -1;
+        mTotalServerTicks = ServerTicksUninitialized;
     }
     else
     {
