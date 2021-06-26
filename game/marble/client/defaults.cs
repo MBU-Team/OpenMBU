@@ -8,7 +8,7 @@
 // is not loaded on a client, then the master must be defined. 
 //$pref::Master[0] = "2:v12master.dyndns.org:28002";
 $pref::highScoreName = "Alex";
-$pref::Player::Name = "Alex";
+$pref::Player::Name = XBLiveGetUserName();
 $pref::Player::defaultFov = 90;
 $pref::Player::zoomSpeed = 0;
 $pref::Net::LagThreshold = 400;

@@ -1,7 +1,7 @@
 if (isPCBuild())
 {
    // one time setup for these vars
-   $Player::Name = XBLiveGetUserName();
+   $Player::Name = $pref::Player::Name;
    $Player::XBLiveId = XBLiveGetUserId();
 }
 
@@ -446,7 +446,7 @@ function clientUpdatePlayerInfo()
    if (XBLiveIsSignedIn()) // defaults to player on the sign in port
    {
       // update $Player variables
-      $Player::Name = XBLiveGetUserName();
+      $Player::Name = $pref::Player::Name;
       $Player::XBLiveId = XBLiveGetUserId();
       if ($Player::Name $= "" || $Player::XBLiveId $= "")
       {

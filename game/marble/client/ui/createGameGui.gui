@@ -323,7 +323,7 @@ function CreateGameGui::createGame(%this)
    //$Game::Duration = $pref::Server::TimeLimit * 60;
    //$Server::StayMission = true;        
    $Server::ReturnToLobby = true;
-   $pref::Server::Name = XBLiveGetUserName();
+   $pref::Server::Name = $pref::Player::Name;
    
    //MissionSequence.buildMissionSequence();
    //MissionSequence.setCurrentMission($Server::PostLobbyMissionFile);
