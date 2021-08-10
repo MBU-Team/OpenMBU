@@ -958,9 +958,12 @@ void GameConnection::readPacket(BitStream* bstream)
         Con::printf("post move ack %i, first move %i, last move %i", mLastMoveAck, mFirstMoveIndex, mLastClientMove);
 #endif
 
+        // This is how many times we've ticked since last ack -- before adjustments below
         U32 ourTicks = mLastMoveAck - mFirstMoveIndex;
+
         if (mLastMoveAck < mFirstMoveIndex)
             mLastMoveAck = mFirstMoveIndex;
+
         if (mLastMoveAck > mLastClientMove)
         {
             ourTicks -= mLastMoveAck - mLastClientMove;
