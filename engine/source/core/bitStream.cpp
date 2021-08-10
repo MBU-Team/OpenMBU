@@ -560,7 +560,7 @@ U32 BitStream::writeCompressedPointRP(const Point3F& p, U32 numDists, const F32*
 {
     U32 ret;
 
-    Point3F vec = mCompressPoint;
+    Point3F vec = p - mCompressPoint;
     F32 len = vec.len();
     if (err <= len)
         vec *= 1.0f / len;
