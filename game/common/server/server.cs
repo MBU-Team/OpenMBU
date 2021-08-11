@@ -30,6 +30,9 @@ function createServer(%serverType, %mission)
    $Server::PrivatePlayerCount = 0;
    $Server::ServerType = %serverType;
    $Server::ArbRegTimeout = 10000;
+   
+   // Enable quick load here, as there can only be the host at this point
+   $Host::QuickLoad = true;  
 
    if (!$EnableFMS)
    {

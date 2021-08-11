@@ -206,6 +206,9 @@ function levelPreviewGui::onA()
    }
    else
    {
+      // Enable quick load for single player as we don't have to worry about other clients
+      $Host::QuickLoad = true;      
+      
       // Spawn the player and start the game
       if ($EnableFMS)
       {

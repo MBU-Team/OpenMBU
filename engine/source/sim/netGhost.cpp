@@ -893,7 +893,7 @@ void NetConnection::activateGhosting()
     sendConnectionMessage(GhostAlwaysStarting, mGhostingSequence, ghostAlwaysSet->size());
 
     // If this is the connection to the local client...
-    if (getLocalClientConnection() == this)
+    if (getLocalClientConnection() == this && Con::getBoolVariable("$Host::QuickLoad"))
     {
         // Get a pointer to the local client.
         NetConnection* pClient = NetConnection::getConnectionToServer();
