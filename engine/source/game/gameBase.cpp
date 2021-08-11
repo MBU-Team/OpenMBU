@@ -198,7 +198,7 @@ bool GameBase::onAdd()
         return false;
 
     if (gSPMode)
-        mTypeMask &= ~GameBaseObjectType;
+        mTypeMask &= ~GameBaseHiFiObjectType;
 
     return true;
 }
@@ -482,15 +482,9 @@ TickCacheEntry* GameBase::addTickCacheEntry()
 
 void GameBase::ageTickCache(S32 numToAge, S32 len)
 {
-#ifdef TORQUE_HIFI_TEMP_FIX
-    // TODO: this is not a proper fix for hifi crashes, figure it out later
-    if (!mTickCacheHead || mTickCacheHead->numEntry < numToAge)
-        return;
-#else
     AssertFatal(mTickCacheHead,"No tick cache head");
     AssertFatal(mTickCacheHead->numEntry>=numToAge,"Too few entries!");
     AssertFatal(mTickCacheHead->numEntry>numToAge,"Too few entries!");
-#endif
 
     while (numToAge--)
         dropOldest();

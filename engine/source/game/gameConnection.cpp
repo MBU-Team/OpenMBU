@@ -347,10 +347,8 @@ S32 GameConnection::getServerTicks(U32 serverTickNum)
             serverTicks -= MaxTickCount;
         else if (-serverTicks > HalfMaxTickCount)
             serverTicks += MaxTickCount;
-#ifndef TORQUE_HIFI_TEMP_FIX
         // TEMP: This assert keeps getting hit when using preview mode, disabling until we can find out why.
-        AssertFatal(serverTicks >= 0, "Server can't tick backwards!!!");
-#endif
+        //AssertFatal(serverTicks >= 0, "Server can't tick backwards!!!");
         if (serverTicks < 0)
             serverTicks = 0;
     }
@@ -1009,11 +1007,7 @@ void GameConnection::readPacket(BitStream* bstream)
         totalCatchup = mLastClientMove - mFirstMoveIndex;
 
         getCurrentClientProcessList()->ageTickCache(ourTicks + (tickDiff > 0 ? tickDiff : 0), totalCatchup + 1);
-
-#ifndef TORQUE_HIFI_TEMP_FIX
-        // TODO: disabling this is not a proper fix for hifi crashes, figure it out later
         getCurrentClientProcessList()->forceHifiReset(tickDiff != 0);
-#endif
 
         mDamageFlash = 0;
         mWhiteOut = 0;
