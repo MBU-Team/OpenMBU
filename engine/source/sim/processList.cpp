@@ -365,15 +365,10 @@ bool ProcessList::advanceSPModeTime(SimTime timeDelta)
             con->collectMove(mLastTick);
         advanceObjects();
         if (con)
-        {
-            U32 lastMove = con->mLastSentMove;
-            U32 moveCount = lastMove - con->mFirstMoveIndex;
-            if (con->mMoveList.size() > moveCount)
-                con->mLastSentMove++;
-        }
+            con->incLastSentMove();
     }
 
-    mLastDelta = (float)(-(targetTime + 1) & 0x1F) * 0.03125f;
+    mLastDelta = ((float)(-(targetTime + 1) % TickMs)) * 0.03125f;
     AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
 
     for (ProcessObject* obj = mHead.mProcessLink.next; obj != &mHead;
