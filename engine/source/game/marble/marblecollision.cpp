@@ -739,17 +739,17 @@ void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pit
     box.max = mPosition + mObjBox.max + 0.5f;
 
     Point3F deltaVelocity = mVelocity * dt;
-    if (deltaVelocity.x > 0.0f)
+    if (deltaVelocity.x >= 0.0f)
         box.max.x += deltaVelocity.x;
     else
         box.min.x += deltaVelocity.x;
 
-    if (deltaVelocity.y > 0.0f)
+    if (deltaVelocity.y >= 0.0f)
         box.max.y += deltaVelocity.y;
     else
         box.min.y += deltaVelocity.y;
 
-    if (deltaVelocity.z > 0.0f)
+    if (deltaVelocity.z >= 0.0f)
         box.max.z += deltaVelocity.z;
     else
         box.min.z += deltaVelocity.z;
@@ -775,7 +775,7 @@ void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pit
 
                 if (!isContacting)
                 {
-                    Point3F vel = it->getVelocity();
+                    Point3F vel = mVelocity - it->getVelocity();
                     Point3F boxCenter;
                     itBox.getCenter(&boxCenter);
 
@@ -783,7 +783,9 @@ void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pit
                     SphereF sphere(boxCenter, diff.len());
                     polyList.clear();
                     it->buildPolyList(&polyList, itBox, sphere);
-                    testMove(mVelocity - vel, mPosition, dt, mRadius, 0, false);
+
+                    Point3D position = mPosition;
+                    testMove(vel, position, dt, mRadius, 0, false);
                 }
             }
         }
