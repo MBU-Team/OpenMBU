@@ -783,8 +783,7 @@ LABEL_16:
                     SphereF sphere(boxCenter, diff.len());
                     polyList.clear();
                     it->buildPolyList(&polyList, itBox, sphere);
-                    Point3D position = mPosition;
-                    testMove(mVelocity, position, dt, mRadius, 0, false);
+                    testMove(mVelocity - vel, mPosition, dt, mRadius, 0, false);
                 }
             }
             i++;
