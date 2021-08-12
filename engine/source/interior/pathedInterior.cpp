@@ -501,7 +501,7 @@ void PathedInterior::processTick(const Move* move)
 void PathedInterior::interpolateTick(F32 delta)
 {
     MatrixF mat = getTransform();
-    Point3F newPoint = mCurrentVelocity / TickMs;
+    Point3F newPoint = mCurrentVelocity * TickSec;
     newPoint = mat.getPosition() - (newPoint * delta);
     mat.setPosition(newPoint);
     setRenderTransform(mat);
