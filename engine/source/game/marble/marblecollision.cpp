@@ -756,25 +756,25 @@ void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pit
 
     if (!pitrVec.empty())
     {
-        S32 i = 0;
-        do
+        for (S32 i = 0; i < pitrVec.size(); i++)
         {
             PathedInterior* it = pitrVec[i];
+
             Box3F itBox = it->getExtrudedBox();
             if (itBox.isOverlapped(box))
             {
-                if (!mContacts.empty())
+                bool isContacting = false;
+                for (S32 j = 0; j < mContacts.size(); j++)
                 {
-                    S32 j = 0;
-                    while (mContacts[j].object != it)
-                    {
-                        j++;
-                        if (j >= mContacts.size())
-                            goto LABEL_16;
-                    }
-                } else
+                    if (mContacts[j].object != it)
+                        continue;
+
+                    isContacting = true;
+                    break;
+                }
+
+                if (!isContacting)
                 {
-LABEL_16:
                     Point3F vel = it->getVelocity();
                     Point3F boxCenter;
                     itBox.getCenter(&boxCenter);
@@ -786,8 +786,7 @@ LABEL_16:
                     testMove(mVelocity - vel, mPosition, dt, mRadius, 0, false);
                 }
             }
-            i++;
-        } while(i < pitrVec.size());
+        }
     }
 }
 
