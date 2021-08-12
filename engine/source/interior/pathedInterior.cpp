@@ -28,8 +28,6 @@ IMPLEMENT_CO_DATABLOCK_V1(PathedInteriorData);
 
 //--------------------------------------------------------------------------
 
-static U32 sNextNetUpdateInit = 0;
-
 PathedInteriorData::PathedInteriorData()
 {
     for (U32 i = 0; i < MaxSounds; i++)
@@ -102,9 +100,14 @@ PathedInterior::PathedInterior()
 
     mNextPathedInterior = NULL;
 
-    U32 oldNextNetUpdateInit = sNextNetUpdateInit;
-    sNextNetUpdateInit += UpdateTicksInc;
-    mNextNetUpdate = oldNextNetUpdateInit % UpdateTicks;
+    // The following code was used on both MBU(X360) and MBO(PC)
+    // While MBO wasn't affected for some reason that we have yet to figure out,
+    // Removing this fixes the de-sync with moving platforms.
+    //static U32 sNextNetUpdateInit = 0;
+    //mNextNetUpdate = sNextNetUpdateInit % UpdateTicks;
+    //sNextNetUpdateInit = sNextNetUpdateInit + 5;
+
+    mNextNetUpdate = 0;
 
     mBaseTransform = MatrixF(true);
 }
