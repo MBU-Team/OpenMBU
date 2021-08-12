@@ -499,8 +499,8 @@ bool Trigger::testObject(GameBase* enter)
         Point3F gravityDir = marble->getGravityDir(&result);
 
         Point3F up = -gravityDir;
-        Point3F extents = mWorldBox.max + mWorldBox.min * 0.5f;
-        Point3F enterExtents = wbox.max + wbox.min * 0.5f;
+        Point3F extents = (mWorldBox.max + mWorldBox.min) * 0.5f;
+        Point3F enterExtents = (wbox.max + wbox.min) * 0.5f;
         Point3F diffExtents = enterExtents - extents;
 
         F32 upAmount = mDot(up, diffExtents);
