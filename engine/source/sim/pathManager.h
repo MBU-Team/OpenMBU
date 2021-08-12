@@ -66,7 +66,7 @@ public:
     //-------------------------------------- Path querying
 public:
     bool isValidPath(const U32 id) const;
-    void getPathPosition(const U32 id, const F64 msPosition, Point3F& rPosition, QuatF& rotation);
+    void getPathPosition(const U32 id, const F64 msPosition, Point3F& rPosition, QuatF* rotation = NULL);
     U32  getPathTotalTime(const U32 id) const;
     U32  getPathNumWaypoints(const U32 id) const;
     U32  getWaypointTime(const U32 id, const U32 wayPoint) const;

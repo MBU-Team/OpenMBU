@@ -356,9 +356,7 @@ void PathedInterior::resolvePathKey()
         Point3F pathPos(0.0, 0.0, 0.0);
         Point3F initialPos(0.0, 0.0, 0.0);
         mBaseTransform.getColumn(3, &initialPos);
-        QuatF rotation;
-        rotation.identity();
-        getPathManager()->getPathPosition(mPathKey, 0, pathPos, rotation);
+        getPathManager()->getPathPosition(mPathKey, 0, pathPos);
         mOffset = initialPos - pathPos;
     }
 }
@@ -582,9 +580,7 @@ void PathedInterior::computeNextPathStep(F64 timeDelta)
         Point3F newPoint(0.0, 0.0, 0.0);
         MatrixF mat = getTransform();
         mat.getColumn(3, &curPoint);
-        QuatF rotation;
-        rotation.identity();
-        getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint, rotation);
+        getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint);
         newPoint += mOffset;
 
         Point3F displaceDelta = newPoint - curPoint;
@@ -752,11 +748,8 @@ void PathedInterior::setPathPosition(S32 newPosition)
 
     MatrixF mat = getTransform();
 
-    QuatF rotation;
-    rotation.identity();
-
     Point3F newPoint;
-    getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint, rotation);
+    getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint);
 
     newPoint += mOffset;
     mat.setPosition(newPoint);
