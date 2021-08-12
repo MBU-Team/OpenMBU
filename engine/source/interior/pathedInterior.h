@@ -55,6 +55,12 @@ public:
         NextFreeMask = Parent::NextFreeMask << 2,
     };
 
+    enum
+    {
+        UpdateTicks = 32,
+        UpdateTicksInc = 5,
+    };
+
     struct TickState
     {
         F64 pathPosition;

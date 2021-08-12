@@ -28,6 +28,8 @@ IMPLEMENT_CO_DATABLOCK_V1(PathedInteriorData);
 
 //--------------------------------------------------------------------------
 
+static U32 sNextNetUpdateInit;
+
 PathedInteriorData::PathedInteriorData()
 {
     for (U32 i = 0; i < MaxSounds; i++)
@@ -100,9 +102,9 @@ PathedInterior::PathedInterior()
 
     mNextPathedInterior = NULL;
 
-    static U32 sNextNetUpdateInit = 0;
-    sNextNetUpdateInit += 5;
-    mNextNetUpdate = sNextNetUpdateInit & 31;
+    U32 oldNextNetUpdateInit = sNextNetUpdateInit;
+    sNextNetUpdateInit += UpdateTicksInc;
+    mNextNetUpdate = oldNextNetUpdateInit % UpdateTicks;
 
     mBaseTransform = MatrixF(true);
 }
@@ -354,8 +356,7 @@ void PathedInterior::resolvePathKey()
     {
         mPathKey = getPathKey();
         Point3F pathPos(0.0, 0.0, 0.0);
-        Point3F initialPos(0.0, 0.0, 0.0);
-        mBaseTransform.getColumn(3, &initialPos);
+        Point3F initialPos = mBaseTransform.getPosition();
         getPathManager()->getPathPosition(mPathKey, 0, pathPos);
         mOffset = initialPos - pathPos;
     }
@@ -489,7 +490,7 @@ void PathedInterior::processTick(const Move* move)
     if (!oldNetUpdate)
     {
         setMaskBits(NewPositionMask);
-        mNextNetUpdate = TickMs;
+        mNextNetUpdate = UpdateTicks;
     }
     doSustainSound();
     mCurrentVelocity *= getMin((F32)mStopTime, (F32)TickMs) / (F32)TickMask;
@@ -507,7 +508,7 @@ void PathedInterior::interpolateTick(F32 delta)
 
 void PathedInterior::doSustainSound()
 {
-    if (mCurrentVelocity.len() == 0.0f || mStopTime < 32.0f)
+    if (mCurrentVelocity.len() == 0.0f || mStopTime < TickMs)
     {
         SFX_DELETE(mSustainHandle);
     } else if (mDataBlock->sound[PathedInteriorData::SustainSound])
