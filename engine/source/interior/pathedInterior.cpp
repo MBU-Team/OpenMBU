@@ -92,7 +92,7 @@ PathedInterior::PathedInterior()
 
     mCurrentPosition = 0;
     mTargetPosition = 0;
-    mPathKey = 0xFFFFFFFF;
+    mPathKey = Path::NoPathIndex;
     mAdvanceTime = 0.0;
     mStopTime = 1000.0;
     mSustainHandle = 0;
@@ -350,7 +350,7 @@ void PathedInterior::renderObject(SceneState* state)
 
 void PathedInterior::resolvePathKey()
 {
-    if (mPathKey == 0xFFFFFFFF)
+    if (mPathKey == Path::NoPathIndex)
     {
         mPathKey = getPathKey();
         Point3F pathPos(0.0, 0.0, 0.0);
@@ -544,7 +544,7 @@ void PathedInterior::computeNextPathStep(F64 timeDelta)
 {
     mAdvanceTime = 0.0;
 
-    if (mPathKey == -1)
+    if (mPathKey == Path::NoPathIndex)
         resolvePathKey();
 
     if (mCurrentPosition == mTargetPosition)

@@ -17,7 +17,7 @@ class Path : public SimGroup
     typedef SimGroup Parent;
 
 public:
-    enum {
+    enum : U32 {
         NoPathIndex = 0xFFFFFFFF
     };
 
