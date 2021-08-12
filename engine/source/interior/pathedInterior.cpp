@@ -28,7 +28,7 @@ IMPLEMENT_CO_DATABLOCK_V1(PathedInteriorData);
 
 //--------------------------------------------------------------------------
 
-static U32 sNextNetUpdateInit;
+static U32 sNextNetUpdateInit = 0;
 
 PathedInteriorData::PathedInteriorData()
 {
@@ -412,8 +412,8 @@ void PathedInterior::unpackUpdate(NetConnection* con, BitStream* stream)
 {
     Parent::unpackUpdate(con, stream);
 
-    MatrixF tempXForm;
-    Point3F tempScale;
+    //MatrixF tempXForm;
+    //Point3F tempScale;
 
     if (stream->readFlag())
     {
