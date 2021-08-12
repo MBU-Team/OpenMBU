@@ -769,7 +769,7 @@ void PathedInterior::setTargetPosition(S32 newPosition)
     if (mTargetPosition != newPosition)
     {
         mTargetPosition = newPosition;
-        setMaskBits(NewTargetMask);
+        setMaskBits(NewPositionMask | NewTargetMask);
     }
 }
 
