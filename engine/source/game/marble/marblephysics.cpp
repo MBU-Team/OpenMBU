@@ -461,6 +461,12 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             }
         }
 
+#ifdef MB_TestPhysicsStuck
+        // TEMP: Just to test if physics get stuck
+        AssertISV(itersIn != 20, "Possibly stuck in physics loop... (20 iterations)");
+        AssertISV(itersIn < 1000, "Stuck in physics loop! (>=1000 iterations)");
+#endif
+
 #ifdef MB_PHYSICS_SWITCHABLE
     // Both with variable
     } while ((Marble::smTrapLaunch) ? (!done) : (!done && itersIn < 20));

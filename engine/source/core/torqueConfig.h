@@ -71,6 +71,9 @@
 // TEMP: Define me for a temporary fix for moving platform jitter
 #define MBU_TEMP_MP_DESYNC_FIX
 
+// TEMP: Define me to test if physics loop is getting stuck
+//#define MB_TestPhysicsStuck
+
 // Define me to enable MarbleBlastUltra Preview System
 #define MB_ULTRA_PREVIEWS
 
