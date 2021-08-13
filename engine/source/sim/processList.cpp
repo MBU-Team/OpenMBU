@@ -475,7 +475,7 @@ void ProcessList::advanceObjects()
             obj->processTick(NULL);
         }
 LABEL_16:
-        if (obj && (obj->isGhost() || gSPMode) && (obj->getType() & GameBaseHiFiObjectType) != 0)
+        if (!obj.isNull() && (obj->isGhost() || gSPMode) && (obj->getType() & GameBaseHiFiObjectType) != 0)
         {
             GameConnection* serverCon = GameConnection::getConnectionToServer();
 
