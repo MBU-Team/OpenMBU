@@ -68,6 +68,9 @@
 // Define me to use MBO physics (does nothing if MB_PHYSICS_SWITCHABLE is defined
 //#define MBO_PHYSICS
 
+// TEMP: Define me for a temporary fix for moving platform jitter
+#define MBU_TEMP_MP_DESYNC_FIX
+
 // Define me to enable MarbleBlastUltra Preview System
 #define MB_ULTRA_PREVIEWS
 

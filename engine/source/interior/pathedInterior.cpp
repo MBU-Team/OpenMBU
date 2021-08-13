@@ -100,14 +100,18 @@ PathedInterior::PathedInterior()
 
     mNextPathedInterior = NULL;
 
+#ifndef MBU_TEMP_MP_DESYNC_FIX
+    // TEMP: Temporary fix for Moving Platform jittering.
     // The following code was used on both MBU(X360) and MBO(PC)
     // While MBO wasn't affected for some reason that we have yet to figure out,
     // Removing this fixes the de-sync with moving platforms.
-    //static U32 sNextNetUpdateInit = 0;
-    //mNextNetUpdate = sNextNetUpdateInit % UpdateTicks;
-    //sNextNetUpdateInit = sNextNetUpdateInit + 5;
-
+    static U32 sNextNetUpdateInit;
+    U32 netUpdateInit = sNextNetUpdateInit;
+    sNextNetUpdateInit += UpdateTicksInc;
+    mNextNetUpdate = netUpdateInit % UpdateTicks;
+#else
     mNextNetUpdate = 0;
+#endif
 
     mBaseTransform = MatrixF(true);
 }
