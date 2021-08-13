@@ -313,43 +313,34 @@ U32 GameConnection::getMoveList(Move** movePtr, U32* numMoves)
     {
         // On the server we keep our own move list.
         *numMoves = mMoveList.size();
-
-        mAvgMoveQueueSize *= (1.0f - mSmoothMoveAvg);
+        mAvgMoveQueueSize *= (1.0f-mSmoothMoveAvg);
         mAvgMoveQueueSize += mSmoothMoveAvg * F32(*numMoves);
 
+    #ifdef TORQUE_DEBUG_NET_MOVES
+        Con::printf("moves remaining: %i, running avg: %f",*numMoves,mAvgMoveQueueSize);
+    #endif
 
-#ifdef TORQUE_DEBUG_NET_MOVES
-        Con::printf("moves remaining: %i, running avg: %f", *numMoves, mAvgMoveQueueSize);
-#endif
-
-        if (mTargetMoveListSize - mMoveListSizeSlack <= mAvgMoveQueueSize || *numMoves >= mTargetMoveListSize)
-            goto LABEL_7;
-
-        if (*numMoves)
+        if (mAvgMoveQueueSize<mTargetMoveListSize-mMoveListSizeSlack && *numMoves<mTargetMoveListSize && *numMoves)
         {
-            *numMoves = 0;
-            F32 num = mMoveListSizeSlack + mAvgMoveQueueSize + 0.5f;
-            mAvgMoveQueueSize = num != 0 ? num : 0;
+            *numMoves=0;
+            mAvgMoveQueueSize = (F32)getMax(U32(mAvgMoveQueueSize + mMoveListSizeSlack + 0.5f),*numMoves);
 
-#ifdef TORQUE_DEBUG_NET_MOVES
+    #ifdef TORQUE_DEBUG_NET_MOVES
             Con::printf("too few moves on server, padding with null move");
-#endif
-
-LABEL_7:
-            if (*numMoves)
-                *numMoves = 1;
+    #endif
         }
+        if (*numMoves)
+            *numMoves=1;
 
-        if (mMoveList.size() > mMaxMoveListSize || mTargetMoveListSize + mMoveListSizeSlack < mAvgMoveQueueSize &&
-            mMoveList.size() > mTargetMoveListSize)
+        if ( mMoveList.size()>mMaxMoveListSize || (mAvgMoveQueueSize>mTargetMoveListSize+mMoveListSizeSlack && mMoveList.size()>mTargetMoveListSize) )
         {
-            U32 drop = mMoveList.size() - mTargetMoveListSize;
+            U32 drop = mMoveList.size()-mTargetMoveListSize;
             clearMoves(drop);
             mAvgMoveQueueSize = (F32)mTargetMoveListSize;
 
-#ifdef TORQUE_DEBUG_NET_MOVES
-            Con::printf("too many moves on server, dropping moves (%i)", drop);
-#endif
+    #ifdef TORQUE_DEBUG_NET_MOVES
+            Con::printf("too many moves on server, dropping moves (%i)",drop);
+    #endif
         }
 
         *movePtr = mMoveList.begin();
