@@ -871,6 +871,8 @@ ConsoleFunction(getDesktopResolution, const char*, 1, 1, "getDesktopResolution()
 //--------------------------------------
 void Platform::init()
 {
+    SetProcessAffinityMask( GetCurrentProcess(), 1 );
+
     Con::printf("Initializing platform...");
     // Set the platform variable for the scripts
     Con::setVariable("$platform", "windows");
