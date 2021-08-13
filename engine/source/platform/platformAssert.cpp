@@ -39,13 +39,13 @@ void PlatformAssert::destroy()
 
 
 //--------------------------------------
-bool PlatformAssert::displayMessageBox(const char* title, const char* message, bool retry)
+int PlatformAssert::displayMessageBox(const char* title, const char* message, bool retry)
 {
     if (retry)
-        return Platform::AlertRetry(title, message);
+        return Platform::AlertAbortRetryIgnore(title, message);
 
     Platform::AlertOK(title, message);
-    return false;
+    return ALERT_RESPONSE_OK;
 }
 
 static char* typeName[] = { "Unknown", "Fatal-ISV", "Fatal", "Warning" };
@@ -80,14 +80,19 @@ bool PlatformAssert::process(Type         assertType,
 
 #ifdef TORQUE_DEBUG
         // In debug versions, allow a retry even for ISVs...
-        bool retry = displayMessageBox(buffer, message, true);
+        int retry = displayMessageBox(buffer, message, true);
 #else
-        bool retry = displayMessageBox(buffer, message, ((assertType == Fatal) ? true : false));
+        int retry = displayMessageBox(buffer, message, ((assertType == Fatal) ? true : false));
 #endif
-        if (retry)
+        if (retry == ALERT_RESPONSE_RETRY)
             Platform::debugBreak();
-        else
+        else if (retry == ALERT_RESPONSE_ABORT || retry == ALERT_RESPONSE_CANCEL)
             Platform::forceShutdown(1);
+        else
+        {
+            processing = false;
+            return false;
+        }
     }
     processing = false;
 

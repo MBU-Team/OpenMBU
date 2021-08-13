@@ -303,6 +303,15 @@ enum LangType
 };
 #endif
 
+enum AlertResponse
+{
+    ALERT_RESPONSE_OK,
+    ALERT_RESPONSE_CANCEL,
+    ALERT_RESPONSE_ABORT,
+    ALERT_RESPONSE_RETRY,
+    ALERT_RESPONSE_IGNORE
+};
+
 struct Platform
 {
     static void sleep(U32 ms);
@@ -324,6 +333,7 @@ struct Platform
     static void AlertOK(const char* windowTitle, const char* message);
     static bool AlertOKCancel(const char* windowTitle, const char* message);
     static bool AlertRetry(const char* windowTitle, const char* message);
+    static int AlertAbortRetryIgnore(const char* windowTitle, const char* message);
 
     struct LocalTime
     {

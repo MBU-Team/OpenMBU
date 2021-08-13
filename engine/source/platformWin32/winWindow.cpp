@@ -170,6 +170,21 @@ bool Platform::AlertRetry(const char* windowTitle, const char* message)
     return (MessageBoxA(NULL, message, windowTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TASKMODAL | MB_RETRYCANCEL) == IDRETRY);
 }
 
+int Platform::AlertAbortRetryIgnore(const char* windowTitle, const char* message)
+{
+    setCursorVisible(true);
+    int result = MessageBoxA(NULL, message, windowTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TASKMODAL | MB_ABORTRETRYIGNORE);
+    switch (result)
+    {
+        case IDABORT:
+            return ALERT_RESPONSE_ABORT;
+        case IDRETRY:
+            return ALERT_RESPONSE_RETRY;
+        case IDIGNORE:
+            return ALERT_RESPONSE_IGNORE;
+    }
+}
+
 //--------------------------------------
 static void InitInput()
 {

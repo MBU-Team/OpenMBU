@@ -24,7 +24,7 @@ private:
     static PlatformAssert* platformAssert;
     bool processing;
 
-    virtual bool displayMessageBox(const char* title, const char* message, bool retry);
+    virtual int displayMessageBox(const char* title, const char* message, bool retry);
     virtual bool process(Type         assertType,
         const char* filename,
         U32          lineNumber,
