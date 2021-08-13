@@ -736,6 +736,11 @@ void NetConnection::objectInScope(NetObject* obj)
         if (walk->obj != obj)
             continue;
         walk->flags |= GhostInfo::InScope;
+
+        // Make sure scope always if reflected on the ghostinfo too
+        if (obj->mNetFlags.test(NetObject::ScopeAlways))
+            walk->flags |= GhostInfo::ScopeAlways;
+
         return;
     }
 
@@ -1047,6 +1052,9 @@ void NetConnection::loadNextGhostAlwaysObject(bool hadNewFiles)
 
     while (mGhostAlwaysSaveList.size())
     {
+        if (isLocalConnection())
+            hadNewFiles = false;
+
         // only check for new files if this is the first load, or if new
         // files were downloaded from the server.
         if (hadNewFiles)
