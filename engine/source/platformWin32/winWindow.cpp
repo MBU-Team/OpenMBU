@@ -183,6 +183,8 @@ int Platform::AlertAbortRetryIgnore(const char* windowTitle, const char* message
         case IDIGNORE:
             return ALERT_RESPONSE_IGNORE;
     }
+
+    return ALERT_RESPONSE_IGNORE;
 }
 
 //--------------------------------------
