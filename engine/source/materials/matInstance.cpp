@@ -287,6 +287,8 @@ void MatInstance::init(SceneGraphData& dat, GFXVertexFlags vertFlags)
     mSGData = dat;
     mVertFlags = vertFlags;
 
+    if (mMaterial == nullptr)
+        return;
     mMaterial->setStageData();
 
     if (!mProcessedMaterial)

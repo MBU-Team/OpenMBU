@@ -323,7 +323,7 @@ void LightManager::sgSetupLights(SceneObject* obj)
         LightInfo& light = obj->mLightingInfo.smAmbientLight;
         light.mType = LightInfo::Ambient;
         light.mDirection = VectorF(0.0, 0.0, -1.0);
-        light.sgCastsShadows = sun->sgCastsShadows;
+        light.sgCastsShadows = sun ? sun->sgCastsShadows : false;
 
         // players, vehicles, ...
         if (obj->overrideOptions)
@@ -331,7 +331,7 @@ void LightManager::sgSetupLights(SceneObject* obj)
             if (outside)
             {
                 light.mType = LightInfo::Vector;
-                light.mDirection = sun->mDirection;
+                light.mDirection = sun ? sun->mDirection : Point3F(0.f, 0.707f, -0.707f);
             }
             //else
             //{

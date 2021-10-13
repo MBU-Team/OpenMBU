@@ -83,7 +83,7 @@ void GlowBuffer::init()
         return;
     }
 
-    if (GFXDevice::devicePresent() && mCallbackHandle == -1)
+    if (GFXDevice::devicePresent() && mCallbackHandle != -1)
     {
         GFX->registerTexCallback(texManagerCallback, (void*)this, mCallbackHandle);
     }
