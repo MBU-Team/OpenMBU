@@ -462,10 +462,40 @@ ConsoleFunction(getResolution, const char*, 1, 1, "Returns screen resolution in 
 {
     Point2I size = GFX->getVideoMode().resolution;
     S32 bitdepth = GFX->getVideoMode().bitDepth;
-    S32 fullscreen = GFX->getVideoMode().fullScreen;
+    bool fullscreen = GFX->getVideoMode().fullScreen;
+    bool borderless = GFX->getVideoMode().borderless;
+
+    S32 mode = 0;
+    if (fullscreen)
+        mode = 1;
+    else if (borderless)
+        mode = 2;
 
     char* buf = Con::getReturnBuffer(256);
-    dSprintf(buf, 256, "%d %d %d %d", size.x, size.y, bitdepth, fullscreen);
+    dSprintf(buf, 256, "%d %d %d %d", size.x, size.y, bitdepth, mode);
+    return buf;
+}
+
+ConsoleFunction(getScreenMode, S32, 1, 1, "getScreenMode() Returns full screen mode (0 = windowed, 1 = fullscreen, 2 = borderless)")
+{
+    bool fullscreen = GFX->getVideoMode().fullScreen;
+    bool borderless = GFX->getVideoMode().borderless;
+
+    S32 mode = 0;
+    if (fullscreen)
+        mode = 1;
+    else if (borderless)
+        mode = 2;
+
+    return mode;
+}
+
+ConsoleFunction(getDisplayDeviceName, const char*, 1, 1, "getDisplayDeviceName() Returns the name of the current display device")
+{
+    const char* deviceName = "D3D"; // Only dx9 is currently supported
+
+    char* buf = Con::getReturnBuffer(256);
+    dSprintf(buf, 256, "%s", deviceName);
     return buf;
 }
 
