@@ -2498,8 +2498,7 @@ void MarbleData::packData(BitStream* stream)
     S32 i;
     for (i = 0; i < MaxSounds; i++)
         if (stream->writeFlag(sound[i]))
-            stream->writeRangedU32(packed ? SimObjectId(sound[i]) :
-                sound[i]->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
+            stream->writeRangedU32(sound[i]->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
 
     if (stream->writeFlag(mDecalData != NULL))
         stream->writeRangedU32(mDecalData->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
@@ -2545,8 +2544,10 @@ void MarbleData::unpackData(BitStream* stream)
     for (i = 0; i < MaxSounds; i++) {
         sound[i] = NULL;
         if (stream->readFlag())
-            sound[i] = (SFXProfile*)stream->readRangedU32(DataBlockObjectIdFirst,
-                DataBlockObjectIdLast);
+        {
+            U32 id = stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast);
+            sound[i] = dynamic_cast<SFXProfile*>(Sim::findObject(id));
+        }
     }
 
     if (stream->readFlag())
