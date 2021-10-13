@@ -17,6 +17,7 @@
 class WinConsole
 {
     bool winConsoleEnabled;
+    bool winShowWindow;
 
     HANDLE stdOut;
     HANDLE stdIn;
@@ -37,7 +38,7 @@ public:
     ~WinConsole();
 
     void process();
-    void enable(bool);
+    void enable(bool, bool);
     void processConsoleLine(const char* consoleLine);
     static void create();
     static void destroy();

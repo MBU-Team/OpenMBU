@@ -17,10 +17,15 @@ namespace Con
     extern bool alwaysUseDebugOutput;
 }
 
-ConsoleFunction(enableWinConsole, void, 2, 2, "enableWinConsole(bool);")
+ConsoleFunction(enableWinConsole, void, 2, 3, "enableWinConsole(enable, [showWindow])")
 {
     argc;
-    WindowsConsole->enable(dAtob(argv[1]));
+
+    bool showWindow = true;
+    if (argc > 2)
+        showWindow = dAtob(argv[2]);
+
+    WindowsConsole->enable(dAtob(argv[1]), showWindow);
 }
 
 void WinConsole::create()
@@ -34,28 +39,35 @@ void WinConsole::destroy()
     WindowsConsole = NULL;
 }
 
-void WinConsole::enable(bool enabled)
+void WinConsole::enable(bool enabled, bool showWindow)
 {
     winConsoleEnabled = enabled;
+    winShowWindow = showWindow;
     if (winConsoleEnabled)
     {
-        AllocConsole();
-        const char* title = Con::getVariable("Con::WindowTitle");
-        if (title && *title)
+        if (winShowWindow)
         {
+            AllocConsole();
+            const char *title = Con::getVariable("Con::WindowTitle");
+            if (title && *title)
+            {
 #ifdef UNICODE
-            UTF16 buf[512];
-            convertUTF8toUTF16((UTF8*)title, buf, sizeof(buf));
-            SetConsoleTitle(buf);
+                UTF16 buf[512];
+                convertUTF8toUTF16((UTF8 *) title, buf, sizeof(buf));
+                SetConsoleTitle(buf);
 #else
-            SetConsoleTitle(title);
+                SetConsoleTitle(title);
 #endif
-        }
-        stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-        stdIn = GetStdHandle(STD_INPUT_HANDLE);
-        stdErr = GetStdHandle(STD_ERROR_HANDLE);
+            }
+            stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+            stdIn = GetStdHandle(STD_INPUT_HANDLE);
+            stdErr = GetStdHandle(STD_ERROR_HANDLE);
 
-        printf("%s", Con::getVariable("Con::Prompt"));
+            printf("%s", Con::getVariable("Con::Prompt"));
+        } else {
+            stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+            stdErr = GetStdHandle(STD_ERROR_HANDLE);
+        }
     }
 }
 
@@ -129,7 +141,7 @@ void WinConsole::processConsoleLine(const char* consoleLine)
     if (winConsoleEnabled)
     {
         inbuf[inpos] = 0;
-        if (lineOutput)
+        if (lineOutput || !winShowWindow)
             printf("%s\n", consoleLine);
         else
             printf("%c%s\n%s%s", '\r', consoleLine, Con::getVariable("Con::Prompt"), inbuf);
