@@ -41,7 +41,7 @@ typedef unsigned long long  U64;
 #  define TORQUE_SUPPORTS_GCC_INLINE_X86_ASM
 #  include "platform/types.win32.h"
 
-#elif defined(linux)
+#elif defined(LINUX)
 #  define TORQUE_OS_STRING "Linux"
 #  define TORQUE_OS_LINUX
 #  define TORQUE_SUPPORTS_NASM

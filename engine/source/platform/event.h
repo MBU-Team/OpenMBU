@@ -13,11 +13,7 @@
 /// Calculates the location in memory of a given member x of class cls from the
 /// start of the class.
 #ifndef Offset
-#if defined(TORQUE_COMPILER_GCC) && (__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1))
-#define Offset(m,T) ((int)(&((T *)1)->m) - 1)
-#else
-#define Offset(x, cls) ((dsize_t)((const char *)&(((cls *)0)->x)-(const char *)0))
-#endif
+#define Offset(x, cls) offsetof(cls, x)
 #endif
 
 typedef int NetConnectionId;
