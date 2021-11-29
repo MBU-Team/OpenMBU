@@ -145,7 +145,7 @@ static bool initLibraries()
     // asserts should be created FIRST
     PlatformAssert::create();
 
-    FrameAllocator::init(3 << 20);      // 3 meg frame allocator buffer
+    FrameAllocator::init(TORQUE_FRAME_SIZE);      // See comments in torqueConfig.h
 
  //   // Cryptographic pool next
  //   CryptRandomPool::init();

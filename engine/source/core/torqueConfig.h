@@ -176,6 +176,24 @@
 /// default.
 //#define TORQUE_NO_OGGVORBIS
 
+/// This #define is used by the FrameAllocator to align starting addresses to
+/// be byte aligned to this value. This is important on the 360 and possibly
+/// on other platforms as well. Use this #define anywhere alignment is needed.
+///
+/// NOTE: Do not change this value per-platform unless you have a very good
+/// reason for doing so. It has the potential to cause inconsistencies in
+/// memory which is allocated and expected to be contiguous.
+///
+///@ TODO: Make sure that everywhere this should be used, it is being used.
+#define TORQUE_BYTE_ALIGNMENT 4
+
+/// This #define is used by the FrameAllocator to set the size of the frame.
+///
+/// It was previously set to 3MB but I've increased it to 16MB due to the
+/// FrameAllocator being used as temporary storage for bitmaps in the D3D9
+/// texture manager.
+#define TORQUE_FRAME_SIZE     16 << 20
+
 /// Define if you want nVIDIA's NVPerfHUD to work with TSE
 //#define TORQUE_NVPERFHUD
 

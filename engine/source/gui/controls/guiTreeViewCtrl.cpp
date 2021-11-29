@@ -1076,13 +1076,13 @@ bool GuiTreeViewCtrl::buildIconTable(const char* icons)
     drawText[textLen] = '\0';
 
     U32 numIcons = 0;
-    char* buf = (char*)txtBuff.alloc(sizeof(char) * 64);
+    char* buf = (char*)txtBuff.alloc(sizeof(char) * 256);
     char* token = dStrtok(drawText, ":");
 
     // Count the number of icons and store them.
     while (token && numIcons < MaxIcons)
     {
-        dSprintf(buf, sizeof(buf), "%s", token);
+        dSprintf(buf, sizeof(char) * 256, "%s", token);
         mIconTable[numIcons] = GFXTexHandle(buf, &GFXDefaultPersistentProfile);
         token = dStrtok(NULL, ":");
         numIcons++;

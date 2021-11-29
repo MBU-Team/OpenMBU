@@ -71,6 +71,13 @@ void* FrameAllocator::alloc(const U32 allocSize)
     AssertFatal(smBuffer != NULL, "Error, no buffer!");
     AssertFatal(smWaterMark + allocSize <= smHighWaterMark, "Error alloc too large, increase frame size!");
 
+    // Keep all frame allocator allocations aligned to DWORD boundries on the 360
+    // Add 3, mask out the lower 3 bits.
+    smWaterMark = ( smWaterMark + ( TORQUE_BYTE_ALIGNMENT - 1 ) ) & (~( TORQUE_BYTE_ALIGNMENT - 1 ));
+
+    // Sanity check.
+    AssertFatal( !( smWaterMark & ( TORQUE_BYTE_ALIGNMENT - 1 ) ), "Frame allocation is not on a 4-byte boundry." );
+
     U8* p = &smBuffer[smWaterMark];
     smWaterMark += allocSize;
 

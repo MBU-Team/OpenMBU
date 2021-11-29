@@ -331,12 +331,10 @@ S32 dSprintf(char* buffer, dsize_t bufferSize, const char* format, ...)
     va_list args;
     va_start(args, format);
 
-#if defined(TORQUE_COMPILER_CODEWARRIOR)
     S32 len = vsnprintf(buffer, bufferSize, format, args);
-#else
-    bufferSize;
-    S32 len = vsnprintf(buffer, bufferSize, format, args);
-#endif
+
+    AssertFatal( len < bufferSize, "dSprintf wrote to more memory than the specified buffer size" );
+
     return (len);
 }
 
