@@ -72,7 +72,7 @@ new GuiControl(XMessagePopupDlg) {
 		            visible = "1";
 		            bitmap = "./xbox/pad_button_a";
 		            wrap = "0";
-		            onMouseUp = "XMessagePopup.onA();";
+		            onMouseUp = "XMessagePopupDlg.onA(); XMessagePopupDlg.onAReleased();";
 		         };
 		         new GuiTextCtrl(XMessagePopupABtnTxt) {
 		            profile = "TextAButtonProfile";
@@ -85,19 +85,6 @@ new GuiControl(XMessagePopupDlg) {
 		            text = "";
 		            maxLength = "255";
 		         };
-               new GuiButtonBaseCtrl(XMessagePopupButtonA)
-               {
-                  Profile = "GuiDefaultProfile";
-                  HorizSizing = "right";
-                  VertSizing = "bottom";
-                  position = "0 5";
-                  Extent = "320 35";
-                  MinExtent = "8 2";
-                  Visible = 1;
-                  wrap = 0;
-                  buttonType = "pushButton";
-                  Command = "XMessagePopupDlg.onA(); XMessagePopupDlg.onAReleased();";
-               };
 		      };
 		      new GuiControl(XMessagePopupBBtn) {
 		         profile = "GuiDefaultProfile";
@@ -119,7 +106,7 @@ new GuiControl(XMessagePopupDlg) {
 		            visible = "1";
 		            bitmap = "./xbox/pad_smallbutton_b";
 		            wrap = "0";
-		            onMouseUp = "XMessagePopup.onB();";
+		            onMouseUp = "XMessagePopupDlg.onB(); XMessagePopupDlg.onBReleased();";
 		         };
 		         new GuiTextCtrl(XMessagePopupBBtnTxt) {
 		            profile = "TextBButtonProfile";
@@ -132,19 +119,6 @@ new GuiControl(XMessagePopupDlg) {
 		            text = "";
 		            maxLength = "255";
 		         };
-               new GuiButtonBaseCtrl(XMessagePopupButtonB)
-               {
-                  Profile = "GuiDefaultProfile";
-                  HorizSizing = "right";
-                  VertSizing = "bottom";
-                  position = "0 4";
-                  Extent = "455 27";
-                  MinExtent = "8 2";
-                  Visible = 1;
-                  wrap = 0;
-                  buttonType = "pushButton";
-                  Command = "XMessagePopupDlg.onB(); XMessagePopupDlg.onBReleased();";
-               };
 		      };
 			};
 		};

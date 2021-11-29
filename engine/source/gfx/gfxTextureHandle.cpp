@@ -133,3 +133,8 @@ void GFXTexHandle::refresh()
     GFX->mTextureManager->reloadTexture(getPointer());
 }
 
+void GFXTexHandle::free()
+{
+    RefObjectRef::set( NULL );
+}
+

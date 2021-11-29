@@ -745,6 +745,8 @@ void GuiCanvas::rootMouseDown(const GuiEvent& event)
             GuiControl* ctrl = static_cast<GuiControl*>(*i);
             GuiControl* controlHit = ctrl->findHitControl(event.mousePoint);
 
+            //Con::printf("GuiCanvas::rootMouseDown: ctrl = %s, controlHit = %s", ctrl->getName(), controlHit ? controlHit->getName() : "NULL");
+
             //see if the controlHit is a modeless dialog...
             if ((!controlHit->mActive) && (!controlHit->mProfile->mModal))
                 continue;
@@ -795,6 +797,9 @@ void GuiCanvas::rootMouseUp(const GuiEvent& event)
     else
     {
         findMouseControl(event);
+
+        //Con::printf("GuiCanvas::rootMouseUp: mMouseControl = %s", mMouseControl ? mMouseControl->getName() : "NULL");
+
         if (bool(mMouseControl))
             mMouseControl->onMouseUp(event);
     }

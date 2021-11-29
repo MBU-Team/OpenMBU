@@ -230,19 +230,6 @@ new GuiControl(RootCenterCtrl) {
             text = "";
             maxLength = "255";
          };
-         new GuiButtonBaseCtrl(RootGuiButtonA)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = isWidescreen() ? "235 27" : "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onA();";
-         };
       };
       new GuiControl(RootGuiBButton) {
          profile = "GuiDefaultProfile";
@@ -276,19 +263,6 @@ new GuiControl(RootCenterCtrl) {
             visible = "1";
             text = "";
             maxLength = "255";
-         };
-         new GuiButtonBaseCtrl(RootGuiButtonB)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onB();";
          };
       };
       new GuiControl(RootGuiYButton) {
@@ -324,19 +298,6 @@ new GuiControl(RootCenterCtrl) {
             text = "";
             maxLength = "255";
          };
-         new GuiButtonBaseCtrl(RootGuiButtonY)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onY();";
-         };
       };
       new GuiControl(RootGuiXButton) {
          profile = "GuiDefaultProfile";
@@ -370,19 +331,6 @@ new GuiControl(RootCenterCtrl) {
             visible = "1";
             text = "";
             maxLength = "255";
-         };
-         new GuiButtonBaseCtrl(RootGuiButtonX)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onX();";
          };
       };
       new GuiControl(RootGuiLSButton) {
@@ -547,7 +495,7 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
    %this.eventControl = %this.contentGui;
    
    // move the nav bar to the end.  this is only done so that its mouse on up commands work
-   %this.pushToBack(RootGuiBottomNavBar);
+   RootCenterCtrl.pushToBack(RootGuiBottomNavBar);
    
    // propogate nocursor attribute to RootGui
    %this.noCursor = %this.contentGui.noCursor;

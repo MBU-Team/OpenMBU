@@ -18,6 +18,7 @@ private:
 
 protected:
     StringTableEntry mBitmapName;
+    StringTableEntry mOnMouseUpCommand;
     GFXTexHandle mTextureObject;
     Point2I startPoint;
     bool mWrap;
@@ -36,6 +37,7 @@ public:
     void setBitmap(GFXTexHandle handle, bool resize = false);
     S32 getWidth() const { return(mTextureObject->getWidth()); }
     S32 getHeight() const { return(mTextureObject->getHeight()); }
+    void onMouseUp(const GuiEvent &event) override;
 
     void onRender(Point2I offset, const RectI& updateRect);
     void setValue(S32 x, S32 y);

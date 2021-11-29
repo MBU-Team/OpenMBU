@@ -17,6 +17,7 @@ GuiBitmapCtrl::GuiBitmapCtrl(void)
     startPoint.set(0, 0);
     mWrap = false;
     mTextureObject = NULL;
+    mOnMouseUpCommand = StringTable->insert("");
 }
 
 
@@ -26,6 +27,7 @@ void GuiBitmapCtrl::initPersistFields()
     addGroup("Misc");
     addField("bitmap", TypeFilename, Offset(mBitmapName, GuiBitmapCtrl));
     addField("wrap", TypeBool, Offset(mWrap, GuiBitmapCtrl));
+    addField("onMouseUp", TypeString, Offset(mOnMouseUpCommand, GuiBitmapCtrl));
     endGroup("Misc");
 }
 
@@ -172,4 +174,10 @@ void GuiBitmapCtrl::setValue(S32 x, S32 y)
     while (y < 0)
         y += 256;
     startPoint.y = y % 256;
+}
+
+void GuiBitmapCtrl::onMouseUp(const GuiEvent &event)
+{
+    if (mOnMouseUpCommand[0])
+        Con::evaluate(mOnMouseUpCommand, false);
 }
