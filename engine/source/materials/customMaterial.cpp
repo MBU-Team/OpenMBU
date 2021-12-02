@@ -79,12 +79,12 @@ bool CustomMaterial::onAdd()
 
     // TEMP: Disable this until we can figure out the z-fighting and brightness issues with this.
     // Allow translucent objects to be seen behind each other
-    /*for (S32 i = 0; i < MAX_PASSES; i++)
+    for (S32 i = 0; i < MAX_PASSES; i++)
     {
         CustomMaterial* mat = pass[i];
         if (mat && mat->translucent)
             subPassTranslucent = true;
-    }*/
+    }
 
     return true;
 }
