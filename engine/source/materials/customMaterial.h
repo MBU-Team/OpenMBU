@@ -5,9 +5,9 @@
 #ifndef _CUSTOMMATERIAL_H_
 #define _CUSTOMMATERIAL_H_
 
-#ifndef _GAMEBASE_H_
-#include "game/gameBase.h"
-#endif
+//#ifndef _GAMEBASE_H_
+//#include "game/gameBase.h"
+//#endif
 
 #ifndef _MATERIAL_H_
 #include "materials/material.h"
@@ -40,9 +40,10 @@ public:
     StringTableEntry  texFilename[MAX_TEX_PER_PASS];
     GFXTexHandle      tex[MAX_TEX_PER_PASS];
     CustomMaterial* pass[MAX_PASSES];
-    CustomMaterial* fallback;
+    Material* fallback;
 
     CustomMaterial* dynamicLightingMaterial;
+    CustomMaterial* dynamicLightingMaskMaterial;
 
     U8             startDataMarker;  // used for pack/unpackData
 
@@ -53,7 +54,6 @@ public:
 
 protected:
     U32            mMaxTex;
-    ShaderData* mShaderData;
     const char* mShaderDataName;
     S32            mCurPass;
     S32            mCullMode;
@@ -64,12 +64,6 @@ protected:
     //----------------- procedures ----------------------
     bool onAdd();
     void onRemove();
-    MatrixF setupTexAnim(AnimType animType, Point2F& scrollDir,
-        F32 scrollSpeed, U32 texUnit);
-    void cleanup();
-    void setMultipassProjection();
-    void setupStages(SceneGraphData& sgData);
-    bool setNextRefractPass(bool);
 
     virtual void mapMaterial();
 
@@ -79,21 +73,7 @@ public:
 
     static void initPersistFields();
     static void updateTime();
-
-    void setLightmaps(SceneGraphData& sgData);
-
-    void setupSubPass(SceneGraphData& sgData);
-    bool setFallbackVersion(SceneGraphData& sgData);
-
-    virtual void setShaderConstants(const SceneGraphData& sgData, U32 stageNum);
-
-    //----------------------------------------------------------------------
-    // Sets up next rendering pass.  Will increment through passes until it
-    // runs out.  Returns false if interated through all passes.
-    //----------------------------------------------------------------------
-    virtual bool setupPass(SceneGraphData& sgData);
-
-    virtual void setStageData();
+    ShaderData* mShaderData;
 
     DECLARE_CONOBJECT(CustomMaterial);
 };

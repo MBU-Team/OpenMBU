@@ -17,6 +17,8 @@
 #include "materials/shaderData.h"
 #endif
 
+#include "sceneGraph/lightInfo.h"
+
 class MatInstance;
 class SceneGraphData;
 class ShaderData;

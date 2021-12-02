@@ -7,6 +7,7 @@
 
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/lightManager.h"
+#include "sceneGraph/lightInfo.h"
 
 struct VertexData;
 class GFXTexHandle;
@@ -44,10 +45,9 @@ struct SceneGraphData
     MatrixF        objTrans;
     VertexData* vertData;
     GFXCubemap* cubemap;
-    F32 visibility;
-
     bool           glowPass;
     bool           refractPass;
+    F32 visibility;
 
 
     //-----------------------------------------------------------------------
@@ -63,6 +63,12 @@ struct SceneGraphData
     {
         dMemset( this, 0, sizeof( SceneGraphData ) );
         visibility = 1.0f;
+    }
+
+    inline void setDefaultLights()
+    {
+        light = *getCurrentClientSceneGraph()->getLightManager()->getDefaultLight();
+        lightSecondary = light;
     }
 
     inline void setFogParams()

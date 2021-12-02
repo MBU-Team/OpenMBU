@@ -200,9 +200,9 @@ void Interior::debugRender(const ZoneVisDeterminer& zoneVis, SceneGraphData& sgD
 void Interior::preDebugRender()
 {
     // Set up our rendering states.
-    if (mDebugShader && mDebugShader->shader)
+    if (mDebugShader && mDebugShader->getShader())
     {
-        mDebugShader->shader->process();
+        mDebugShader->getShader()->process();
         GFX->setTexture(0, mBlankTexture);
         GFX->setTextureStageColorOp(0, GFXTOPModulate);
         GFX->setTextureStageColorOp(1, GFXTOPDisable);

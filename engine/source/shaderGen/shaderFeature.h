@@ -354,5 +354,14 @@ public:
     virtual Material::BlendOp getBlendOp() { return Material::None; }
 };
 
+//**************************************************************************
+/// ColorMultiply
+//**************************************************************************
+class ColorMultiplyFeat : public ShaderFeature
+{
+public:
+    virtual void processPix( Vector<ShaderComponent*> &componentList, GFXShaderFeatureData &fd );
+    virtual Material::BlendOp getBlendOp(){ return Material::None; }
+};
 
 #endif _SHADERFEATURE_H_

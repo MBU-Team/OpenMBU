@@ -554,6 +554,9 @@ public:
     /// Destroys shader
     virtual void destroyShader(GFXShader* shader) {};
 
+    // This is called by MatInstance::reinitInstances to cause the shaders to be regenerated.
+    virtual void flushProceduralShaders() {} // TEMP: Will be implemented when we update graphics to TGEA 1.7.1 version.
+
     /// @}
 
     //-----------------------------------------------------------------------------

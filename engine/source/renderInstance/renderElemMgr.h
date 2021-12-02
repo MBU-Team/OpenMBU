@@ -49,7 +49,7 @@ inline bool RenderElemMgr::newPassNeeded(MatInstance* currMatInst, RenderInst* r
     //  1.  There's no Material Instance (old ff object?)
     //  2.  If the material differ
     //  3.  If the material instance types are different.
-    return ((ri->matInst == NULL) || (ri->matInst != currMatInst) || (currMatInst->compare(ri->matInst) != 0));
+    return ((ri->matInst == NULL) || (ri->matInst->getMaterial() != currMatInst->getMaterial()) || (currMatInst->compare(ri->matInst) != 0));
 }
 
 

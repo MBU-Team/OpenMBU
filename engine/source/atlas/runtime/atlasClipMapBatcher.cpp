@@ -226,7 +226,7 @@ void AtlasClipMapBatcher::renderFog()
     }
 
     // Set up the fog shader and texture.
-    GFX->setShader(sd->shader);
+    GFX->setShader(sd->getShader());
 
     Point4F fogConst(
         getCurrentClientSceneGraph()->getFogHeightOffset(),

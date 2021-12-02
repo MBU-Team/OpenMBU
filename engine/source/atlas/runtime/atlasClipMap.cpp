@@ -160,7 +160,7 @@ void AtlasClipMap::initClipStack()
             continue;
         }
 
-        mShaders[i - 1] = shader->shader;
+        mShaders[i - 1] = shader->getShader();
     }
 
     // Grab a callback from the texture manager to deal with zombification.

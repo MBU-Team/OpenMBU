@@ -195,7 +195,7 @@ void RenderInteriorMgr::render()
 
                 if (dirty && (passRI->type != RenderInstManager::RIT_InteriorDynamicLighting))
                 {
-                    mat->setLightmaps(sgData);
+                    mat->setTextureStages( sgData );
                 }
                 //-------------------------------------
 
@@ -235,12 +235,12 @@ void RenderInteriorMgr::renderZpass()
             Con::warnf("Can't find blank shader");
     }
 
-    if (!mBlankShader || !mBlankShader->shader)
+    if (!mBlankShader || !mBlankShader->getShader())
         return;
 
     GFX->enableColorWrites(false, false, false, false);
 
-    mBlankShader->shader->process();
+    mBlankShader->getShader()->process();
 
     GFXVertexBuffer* lastVB = NULL;
     GFXPrimitiveBuffer* lastPB = NULL;
