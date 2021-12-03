@@ -37,10 +37,14 @@ void RenderTranslucentMgr::addElement(RenderInst* inst)
     elem.inst = inst;
     //   elem.key = elem.key2 = 0;
 
-       // sort by distance
-    elem.key = (gRenderInstManager.getCamPos() - inst->sortPoint).lenSquared() * 2500.0;
-    elem.key = HIGH_NUM - elem.key;
-    // we want key2 to sort by Material, but if if the matInst is null, we can't.
+    // sort by distance
+    //elem.key = HIGH_NUM - U64((gRenderInstManager.getCamPos() - inst->sortPoint).lenSquared() * 2500.0);
+
+    // sort by distance (the multiply is there to prevent us from losing information when converting to a U32)
+    F32 camDist = (gRenderInstManager.getCamPos() - inst->sortPoint).len();
+    elem.key = *((U32*)&camDist);
+
+    // we want key2 to sort by Material, but if the matInst is null, we can't.
     // in that case, use the "miscTex" for the secondary key
     if (inst->matInst == NULL)
         elem.key2 = (U32) inst->miscTex;
@@ -210,20 +214,20 @@ void RenderTranslucentMgr::render()
                 // Z sorting and stuff is still not working in this mgr...
 
                 // don't break the material multipass rendering...
-                if (firstmatpass)
-                {
-                    if (passRI->primitiveFirstPass)
-                    {
-                        bool& firstpass = *passRI->primitiveFirstPass;
-                        if (!firstpass)
-                        {
-                            GFX->setAlphaBlendEnable(true);
-                            GFX->setSrcBlend(GFXBlendOne);
-                            GFX->setDestBlend(GFXBlendOne);
-                        }
-                        firstpass = false;
-                    }
-                }
+//                if (firstmatpass)
+//                {
+//                    if (passRI->primitiveFirstPass)
+//                    {
+//                        bool& firstpass = *passRI->primitiveFirstPass;
+//                        if (!firstpass)
+//                        {
+//                            GFX->setAlphaBlendEnable(true);
+//                            GFX->setSrcBlend(GFXBlendOne);
+//                            GFX->setDestBlend(GFXBlendOne);
+//                        }
+//                        firstpass = false;
+//                    }
+//                }
 
                 setupSGData(passRI, sgData);
                 sgData.matIsInited = true;

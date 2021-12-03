@@ -128,7 +128,6 @@ public:
     enum RenderBinTypes
     {
         Begin = 0,
-        Refraction,
         Sky,
         SkyShape,
         Interior,
@@ -137,6 +136,7 @@ public:
         MiscObject,
         Shadow,
         Decal,
+        Refraction,
         Water,
         TranslucentPreGlow,
         Glow,

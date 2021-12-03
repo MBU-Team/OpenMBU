@@ -27,7 +27,7 @@ void RenderElemMgr::addElement(RenderInst* inst)
     // sort by material
     if (inst->matInst)
     {
-        elem.key = (U32)inst->matInst;
+        elem.key = (U32)inst->matInst->getMaterial();
     }
 
     // sort by vertex buffer
@@ -71,9 +71,9 @@ S32 FN_CDECL RenderElemMgr::cmpKeyFunc(const void* p1, const void* p2)
             return testA;
     }
 
-    S32 test1 = S32(mse1->key) - S32(mse2->key);
+    S32 test1 = S32(mse2->key) - S32(mse1->key);
 
-    return (test1 == 0) ? S32(mse1->key2) - S32(mse2->key2) : test1;
+    return (test1 == 0) ? S32(mse2->key2) - S32(mse1->key2) : test1;
 }
 
 void RenderElemMgr::setupSGData( RenderInst *ri, SceneGraphData &data )
