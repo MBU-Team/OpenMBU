@@ -3,11 +3,12 @@
 #include "platform/platform.h"
 #include "console/console.h"
 #include "gfx/D3D/gfxD3DDevice.h"
+#include <fstream>
 
 //****************************************************************************
 // GFX D3D Shader
 //****************************************************************************
-#define ASSERT_ON_BAD_SHADER
+//#define ASSERT_ON_BAD_SHADER
 //#define PRINT_SHADER_WARNINGS
 
 //----------------------------------------------------------------------------
@@ -85,6 +86,42 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
     LPD3DXBUFFER code;
     LPD3DXBUFFER errorBuff;
 
+    std::string newVertFile = vertFile;
+    newVertFile += "x";
+
+    goto compile;
+
+    load:
+
+    if (dStrstr((const char*)newVertFile.c_str(), ".hlslx"))
+    {
+        Con::printf("Loading Cached Vertex Shader: %s", newVertFile.c_str());
+
+        std::fstream inFile(newVertFile.c_str(), std::ios::in | std::ios::binary);
+        if (!inFile.is_open())
+        {
+            Con::errorf("GFXD3DShader::initVertShader - Could not open file %s", vertFile);
+            return;
+        }
+
+        // Get file size
+        inFile.seekg(0, std::ios::end);
+        U32 fileSize = (U32)inFile.tellg();
+        inFile.seekg(0, std::ios::beg);
+
+        // Read file into buffer
+        char* fileBuffer = new char[fileSize];
+        inFile.read(fileBuffer, fileSize);
+        inFile.close();
+
+        // create the shader
+        res = mD3DDevice->CreateVertexShader((DWORD*)fileBuffer, &vertShader);
+        D3DAssert(res, "Unable to create vertex shader");
+
+        return;
+    }
+
+    compile:
 
     // compile HLSL shader
     if (dStrstr((const char*)vertFile, ".hlsl"))
@@ -109,6 +146,7 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
             if (res != D3D_OK)
             {
                 Con::errorf(ConsoleLogEntry::General, (const char*)errorBuff->GetBufferPointer());
+                goto load;
             }
             else
             {
@@ -120,6 +158,7 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
         else if (!code)
         {
             Con::errorf("GFXD3DShader::initVertShader - no compiled code produced; possibly missing file '%s'?", vertFile);
+            goto load;
         }
 
         if (res != D3D_OK)
@@ -127,7 +166,9 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
             Con::errorf(ConsoleLogEntry::General, "GFXD3DShader::initVertShader - unable to compile shader!");
 #ifdef ASSERT_ON_BAD_SHADER
             AssertFatal(false, avar("Unable to compile vertex shader '%s'", vertFile));
-#endif      
+#endif
+
+            goto load;
         }
     }
 
@@ -148,11 +189,24 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
 #ifdef ASSERT_ON_BAD_SHADER
             AssertFatal(false, "Unable to assemble vertex shader");
 #endif
+
+            goto load;
         }
     }
 
     if (code)
     {
+        Con::printf("Caching Vertex Shader: %s", vertFile);
+        void* data = code->GetBufferPointer();
+        U32 len = code->GetBufferSize();
+        std::fstream fout((std::string(vertFile) + "x").c_str(), std::ios::out | std::ios::binary);
+
+        if (fout.is_open())
+        {
+            fout.write((const char*)data, len);
+            fout.close();
+        }
+
         // create the shader
         res = mD3DDevice->CreateVertexShader((DWORD*)code->GetBufferPointer(), &vertShader);
         D3DAssert(res, "Unable to create vertex shader");
@@ -180,6 +234,43 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
     HRESULT res;
     LPD3DXBUFFER code;
     LPD3DXBUFFER errorBuff;
+
+    std::string newPixFile = pixFile;
+    newPixFile += "x";
+
+    goto compile;
+
+    load:
+
+    if (dStrstr((const char*)newPixFile.c_str(), ".hlslx"))
+    {
+        Con::printf("Loading Cached Pixel Shader: %s", newPixFile.c_str());
+
+        std::fstream inFile(newPixFile.c_str(), std::ios::in | std::ios::binary);
+        if (!inFile.is_open())
+        {
+            Con::errorf("GFXD3DShader::initPixShader - Could not open file %s", pixFile);
+            return;
+        }
+
+        // Get file size
+        inFile.seekg(0, std::ios::end);
+        U32 fileSize = (U32)inFile.tellg();
+        inFile.seekg(0, std::ios::beg);
+
+        // Read file into buffer
+        char* fileBuffer = new char[fileSize];
+        inFile.read(fileBuffer, fileSize);
+        inFile.close();
+
+        // create the shader
+        res = mD3DDevice->CreatePixelShader((DWORD*)fileBuffer, &pixShader);
+        D3DAssert(res, "Unable to create pixel shader");
+
+        return;
+    }
+
+    compile:
 
     // compile HLSL shader
     if (dStrstr((const char*)pixFile, ".hlsl"))
@@ -215,6 +306,8 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
         else if (!code)
         {
             Con::errorf("GFXD3DShader::initPixShader - no compiled code produced; possibly missing file '%s'?", pixFile);
+
+            goto load;
         }
 
         if (res != D3D_OK)
@@ -222,6 +315,8 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
 #ifdef ASSERT_ON_BAD_SHADER
             AssertFatal(false, avar("Unable to compile pixel shader '%s'", pixFile));
 #endif
+
+            goto load;
         }
     }
 
@@ -242,11 +337,24 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
 #ifdef ASSERT_ON_BAD_SHADER
             AssertFatal(false, "Unable to assemble pixel shader");
 #endif
+
+            goto load;
         }
     }
 
     if (code)
     {
+        Con::printf("Caching Pixel Shader: %s", pixFile);
+        void* data = code->GetBufferPointer();
+        U32 len = code->GetBufferSize();
+        std::fstream fout((std::string(pixFile) + "x").c_str(), std::ios::out | std::ios::binary);
+
+        if (fout.is_open())
+        {
+            fout.write((const char*)data, len);
+            fout.close();
+        }
+
         // create the shader
         res = mD3DDevice->CreatePixelShader((DWORD*)code->GetBufferPointer(), &pixShader);
         D3DAssert(res, "Unable to create pixel shader");
