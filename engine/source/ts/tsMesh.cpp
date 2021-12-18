@@ -312,7 +312,17 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
 
     RenderInst* coreRI = gRenderInstManager.allocInst();
     coreRI->type = RenderInstManager::RIT_Mesh;
-    coreRI->calcSortPoint(smObject, smSceneState->getCameraPosition());
+    if (smSceneState)
+    {
+        // Calculate our sort point manually.
+        MatrixF objToWorld = GFX->getWorldMatrix();
+        Box3F rBox = mBounds;
+        objToWorld.mul(rBox);
+        //coreRI->sortPoint = rBox.getClosestPoint(smSceneState->getCameraPosition());
+        rBox.getCenter(&coreRI->sortPoint);
+    } else {
+        coreRI->sortPoint.set(0,0,0);
+    }
 
     // setup transforms
     MatrixF objTrans = GFX->getWorldMatrix();

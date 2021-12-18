@@ -27,7 +27,7 @@ void RenderElemMgr::addElement(RenderInst* inst)
     // sort by material
     if (inst->matInst)
     {
-        elem.key = (U32)inst->matInst;
+        elem.key = (U32)inst->matInst->getMaterial();
     }
 
     // sort by vertex buffer
