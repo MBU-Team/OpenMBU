@@ -71,6 +71,9 @@
 // Define me to use MBO physics (does nothing if MB_PHYSICS_SWITCHABLE is defined)
 //#define MBO_PHYSICS
 
+// Define me to use MBG physics
+//#define MBG_PHYSICS
+
 // TEMP: Define me for a temporary fix for moving platform jitter
 #define MBU_TEMP_MP_DESYNC_FIX
 

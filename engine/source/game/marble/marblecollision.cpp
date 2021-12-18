@@ -626,6 +626,9 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 			Point3D lastVertex(polyList.mVertexList[polyList.mIndexList[poly->vertexStart + poly->vertexCount - 1]]);
 
 			Point3D contactVert = plane.project(*pos);
+#ifdef MBG_PHYSICS
+            Point3D finalContact = contactVert;
+#endif
 			F64 separation = mSqrtD(rad * rad - distance * distance);
 
 			for (int j = 0; j < poly->vertexCount; j++) {
@@ -639,13 +642,25 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 
 						if (PlaneD(vertPlane + vertex, vertex, vertex + plane).distToPlane(contactVert) >= 0.0) {
 							if (PlaneD(lastVertex - vertPlane, lastVertex, lastVertex + plane).distToPlane(contactVert) >= 0.0) {
+#ifdef MBG_PHYSICS
+                                finalContact = vertPlane.project(contactVert);
+#else
 								contactVert = vertPlane.project(contactVert);
+#endif
 								break;
 							}
+#ifdef MBG_PHYSICS
+                            finalContact = lastVertex;
+#else
 							contactVert = lastVertex;
+#endif
 						}
 						else {
-							contactVert = vertex;
+#ifdef MBG_PHYSICS
+							finalContact = vertex;
+#else
+                            contactVert = vertex;
+#endif
 						}
 					}
 					lastVertex = vertex;
@@ -665,7 +680,11 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 			}
 
 			U32 materialId = poly->material;
+#ifdef MBG_PHYSICS
+            Point3D delta = *pos - finalContact;
+#else
 			Point3D delta = *pos - contactVert;
+#endif
 			F64 contactDistance = delta.len();
 			if ((F64)rad + 0.0001 < contactDistance) {
 				continue;
@@ -688,7 +707,11 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 
 			contact.restitution = restitution;
 			contact.normal = normal;
+#ifdef MBG_PHYSICS
+            contact.position = finalContact;
+#else
 			contact.position = contactVert;
+#endif
 			contact.surfaceVelocity = surfaceVelocity;
 			contact.object = poly->object;
 			contact.contactDistance = contactDistance;
