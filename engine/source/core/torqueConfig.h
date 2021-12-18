@@ -65,7 +65,7 @@
 // Define me to allow switching physics systems in script
 //#define MB_PHYSICS_SWITCHABLE
 
-// Define me to use MBO physics (does nothing if MB_PHYSICS_SWITCHABLE is defined
+// Define me to use MBO physics (does nothing if MB_PHYSICS_SWITCHABLE is defined)
 //#define MBO_PHYSICS
 
 // TEMP: Define me for a temporary fix for moving platform jitter
