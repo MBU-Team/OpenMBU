@@ -45,6 +45,9 @@
 /// Define me to enable Torque HiFi support
 #define TORQUE_HIFI_NET
 
+/// Define me to enable shader caching support (Unfinished and really only needed for some versions of Wine or Proton)
+//#define TORQUE_SHADER_CACHING
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 

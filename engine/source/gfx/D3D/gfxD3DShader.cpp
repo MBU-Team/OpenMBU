@@ -3,11 +3,18 @@
 #include "platform/platform.h"
 #include "console/console.h"
 #include "gfx/D3D/gfxD3DDevice.h"
+
+#ifdef TORQUE_SHADER_CACHING
 #include <fstream>
+#endif
 
 //****************************************************************************
 // GFX D3D Shader
 //****************************************************************************
+
+#ifndef TORQUE_SHADER_CACHING
+#define ASSERT_ON_BAD_SHADER
+#endif
 //#define ASSERT_ON_BAD_SHADER
 //#define PRINT_SHADER_WARNINGS
 
@@ -86,6 +93,7 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
     LPD3DXBUFFER code;
     LPD3DXBUFFER errorBuff;
 
+#ifdef TORQUE_SHADER_CACHING
     std::string newVertFile = vertFile;
     newVertFile += "x";
 
@@ -122,6 +130,7 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
     }
 
     compile:
+#endif
 
     // compile HLSL shader
     if (dStrstr((const char*)vertFile, ".hlsl"))
@@ -146,7 +155,9 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
             if (res != D3D_OK)
             {
                 Con::errorf(ConsoleLogEntry::General, (const char*)errorBuff->GetBufferPointer());
+#ifdef TORQUE_SHADER_CACHING
                 goto load;
+#endif
             }
             else
             {
@@ -158,7 +169,9 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
         else if (!code)
         {
             Con::errorf("GFXD3DShader::initVertShader - no compiled code produced; possibly missing file '%s'?", vertFile);
+#ifdef TORQUE_SHADER_CACHING
             goto load;
+#endif
         }
 
         if (res != D3D_OK)
@@ -168,7 +181,9 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
             AssertFatal(false, avar("Unable to compile vertex shader '%s'", vertFile));
 #endif
 
+#ifdef TORQUE_SHADER_CACHING
             goto load;
+#endif
         }
     }
 
@@ -190,12 +205,15 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
             AssertFatal(false, "Unable to assemble vertex shader");
 #endif
 
+#ifdef TORQUE_SHADER_CACHING
             goto load;
+#endif
         }
     }
 
     if (code)
     {
+#ifdef TORQUE_SHADER_CACHING
         Con::printf("Caching Vertex Shader: %s", vertFile);
         void* data = code->GetBufferPointer();
         U32 len = code->GetBufferSize();
@@ -206,6 +224,7 @@ void GFXD3DShader::initVertShader(char* vertFile, char* vertTarget)
             fout.write((const char*)data, len);
             fout.close();
         }
+#endif
 
         // create the shader
         res = mD3DDevice->CreateVertexShader((DWORD*)code->GetBufferPointer(), &vertShader);
@@ -235,6 +254,7 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
     LPD3DXBUFFER code;
     LPD3DXBUFFER errorBuff;
 
+#ifdef TORQUE_SHADER_CACHING
     std::string newPixFile = pixFile;
     newPixFile += "x";
 
@@ -271,6 +291,7 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
     }
 
     compile:
+#endif
 
     // compile HLSL shader
     if (dStrstr((const char*)pixFile, ".hlsl"))
@@ -307,7 +328,9 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
         {
             Con::errorf("GFXD3DShader::initPixShader - no compiled code produced; possibly missing file '%s'?", pixFile);
 
+#ifdef TORQUE_SHADER_CACHING
             goto load;
+#endif
         }
 
         if (res != D3D_OK)
@@ -316,7 +339,9 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
             AssertFatal(false, avar("Unable to compile pixel shader '%s'", pixFile));
 #endif
 
+#ifdef TORQUE_SHADER_CACHING
             goto load;
+#endif
         }
     }
 
@@ -338,12 +363,15 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
             AssertFatal(false, "Unable to assemble pixel shader");
 #endif
 
+#ifdef TORQUE_SHADER_CACHING
             goto load;
+#endif
         }
     }
 
     if (code)
     {
+#ifdef TORQUE_SHADER_CACHING
         Con::printf("Caching Pixel Shader: %s", pixFile);
         void* data = code->GetBufferPointer();
         U32 len = code->GetBufferSize();
@@ -354,6 +382,7 @@ void GFXD3DShader::initPixShader(char* pixFile, char* pixTarget)
             fout.write((const char*)data, len);
             fout.close();
         }
+#endif
 
         // create the shader
         res = mD3DDevice->CreatePixelShader((DWORD*)code->GetBufferPointer(), &pixShader);
