@@ -74,6 +74,9 @@
 // Define me to use MBG physics
 //#define MBG_PHYSICS
 
+// Define me to use a framerate-independant finish pad animation
+#define MBU_FINISH_PAD_FIX
+
 // TEMP: Define me for a temporary fix for moving platform jitter
 #define MBU_TEMP_MP_DESYNC_FIX
 
