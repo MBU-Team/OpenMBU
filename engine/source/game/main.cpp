@@ -293,6 +293,11 @@ static U32 gFrameSkip = 0;
 static U32 gFrameCount = 0;
 static bool gGamePaused = false;
 
+#ifdef MBU_FINISH_PAD_FIX
+// TODO: Figure out how to remove this global variable and access dt from Marble::getCameraTransform
+F32 gTimeDelta = 0.0f;
+#endif // MBU_FINISH_PAD_FIX
+
 // Executes an entry script; can be controlled by command-line options.
 bool runEntryScript(int argc, const char** argv)
 {
@@ -730,6 +735,11 @@ void DemoGame::processTimeEvent(TimeEvent* event)
         timeDelta = gTimeAdvance;
     else
         timeDelta = (U32)(elapsedTime * gTimeScale);
+
+#ifdef MBU_FINISH_PAD_FIX
+    // TODO: Figure out how to remove this global variable and access dt from Marble::getCameraTransform
+    gTimeDelta = F32(timeDelta) / 1000.0f;
+#endif // MBU_FINISH_PAD_FIX
 
     Platform::advanceTime(elapsedTime);
     bool tickPass;
