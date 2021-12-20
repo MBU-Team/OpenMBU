@@ -1541,15 +1541,27 @@ LABEL_7:
 
         Point3F offset = mLastRenderPos - around;
 
+#ifdef MBU_FINISH_PAD_FIX
+        *pLastRenderVel *= 1 - 0.05f * (60.0f * dt);
+#else
         *pLastRenderVel *= 0.949999988079071f;
+#endif // MBU_FINISH_PAD_FIX
 
         Point3F thing2 = forceEffect * 0.2000000029802322f;
 
+#ifdef MBU_FINISH_PAD_FIX
+        *pLastRenderVel += thing2 * (60.0f * dt);
+#else
         *pLastRenderVel += thing2;
+#endif // MBU_FINISH_PAD_FIX
 
         F32 dist = offset.len();
 
+#ifdef MBU_FINISH_PAD_FIX
+        *pLastRenderVel -= offset * 0.3499999940395355f * (60.0f * dt);
+#else
         *pLastRenderVel -= offset * 0.3499999940395355f;
+#endif // MBU_FINISH_PAD_FIX
 
         if (dist > 1.5f)
         {
@@ -1558,7 +1570,11 @@ LABEL_7:
             F32 outforce = mDot(outward, *pLastRenderVel);
             if (outforce > 0.0f)
             {
+#ifdef MBU_FINISH_PAD_FIX
+                *pLastRenderVel -= unk * outforce * 0.75f * (60.0f * dt);
+#else
                 *pLastRenderVel -= unk * outforce * 0.75f;
+#endif // MBU_FINISH_PAD_FIX
 
                 Point3F noodles = offset * outforce * 0.5f;
                 noodles = *pLastRenderVel - noodles;
@@ -1572,7 +1588,11 @@ LABEL_7:
                     m_point3F_normalize(noodles);
                 }
 
+#ifdef MBU_FINISH_PAD_FIX
+                *pLastRenderVel += noodles * outforce * 0.25f * (60.0f * dt);
+#else
                 *pLastRenderVel += noodles * outforce * 0.25f;
+#endif // MBU_FINISH_PAD_FIX
             }
         }
 
@@ -1612,7 +1632,11 @@ LABEL_7:
             Point3F newAround = normal * 1.5f;
             newAround *= mDot(*pLastRenderVel, normal);
 
+#ifdef MBU_FINISH_PAD_FIX
+            *pLastRenderVel -= newAround * (60.0f * dt);
+#else
             *pLastRenderVel -= newAround;
+#endif // MBU_FINISH_PAD_FIX
 
         } while (i < 4);
 
