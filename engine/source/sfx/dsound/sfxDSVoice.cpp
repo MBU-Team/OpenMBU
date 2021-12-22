@@ -66,6 +66,7 @@ SFXDSVoice::SFXDSVoice( SFXDSBuffer *buffer,
 
 SFXDSVoice::~SFXDSVoice()
 {
+   setPitch(1.0f);
    SAFE_RELEASE( mDSBuffer3D );
    mBuffer->releaseVoice( &mDSBuffer );
 
