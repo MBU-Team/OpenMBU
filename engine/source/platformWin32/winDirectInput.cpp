@@ -981,6 +981,12 @@ void DInputManager::processXInput(void)
                 }
             }
 
+            // don't go beyond 32767 (if it was 32768)
+            mXInputStateNew[i].state.Gamepad.sThumbLX = getMax(mXInputStateNew[i].state.Gamepad.sThumbLX, (short) -32767);
+            mXInputStateNew[i].state.Gamepad.sThumbLY = getMax(mXInputStateNew[i].state.Gamepad.sThumbLY, (short) -32767);
+            mXInputStateNew[i].state.Gamepad.sThumbRX = getMax(mXInputStateNew[i].state.Gamepad.sThumbRX, (short) -32767);
+            mXInputStateNew[i].state.Gamepad.sThumbRY = getMax(mXInputStateNew[i].state.Gamepad.sThumbRY, (short) -32767);
+
             // this controller was connected or disconnected
             bool bJustConnected = ((mXInputStateOld[i].bConnected != mXInputStateNew[i].bConnected) && (mXInputStateNew[i].bConnected));
             fireXInputConnectEvent(i, (mXInputStateOld[i].bConnected != mXInputStateNew[i].bConnected), mXInputStateNew[i].bConnected);
@@ -990,12 +996,12 @@ void DInputManager::processXInput(void)
                 continue;
 
             // == LEFT THUMBSTICK ==
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLX != mXInputStateOld[i].state.Gamepad.sThumbLX), SI_MOVE, XI_THUMBLX, (mXInputStateNew[i].state.Gamepad.sThumbLX / 32768.0f));
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLY != mXInputStateOld[i].state.Gamepad.sThumbLY), SI_MOVE, XI_THUMBLY, (mXInputStateNew[i].state.Gamepad.sThumbLY / -32768.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLX != mXInputStateOld[i].state.Gamepad.sThumbLX), SI_MOVE, XI_THUMBLX, (mXInputStateNew[i].state.Gamepad.sThumbLX / 32767.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbLY != mXInputStateOld[i].state.Gamepad.sThumbLY), SI_MOVE, XI_THUMBLY, (mXInputStateNew[i].state.Gamepad.sThumbLY / -32767.0f));
 
             // == RIGHT THUMBSTICK ==
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRX != mXInputStateOld[i].state.Gamepad.sThumbRX), SI_MOVE, XI_THUMBRX, (mXInputStateNew[i].state.Gamepad.sThumbRX / 32768.0f));
-            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRY != mXInputStateOld[i].state.Gamepad.sThumbRY), SI_MOVE, XI_THUMBRY, (mXInputStateNew[i].state.Gamepad.sThumbRY / -32768.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRX != mXInputStateOld[i].state.Gamepad.sThumbRX), SI_MOVE, XI_THUMBRX, (mXInputStateNew[i].state.Gamepad.sThumbRX / 32767.0f));
+            fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.sThumbRY != mXInputStateOld[i].state.Gamepad.sThumbRY), SI_MOVE, XI_THUMBRY, (mXInputStateNew[i].state.Gamepad.sThumbRY / -32767.0f));
 
             // == LEFT & RIGHT REAR TRIGGERS ==
             fireXInputMoveEvent(i, (bJustConnected) || (mXInputStateNew[i].state.Gamepad.bLeftTrigger != mXInputStateOld[i].state.Gamepad.bLeftTrigger), SI_MOVE, XI_LEFT_TRIGGER, (mXInputStateNew[i].state.Gamepad.bLeftTrigger / 255.0f));
