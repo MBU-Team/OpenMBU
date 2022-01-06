@@ -13,6 +13,7 @@ A reverse engineered version of Marble Blast Ultra that is based on Torque Shade
 # Contributors
 - [HumanGamer](https://github.com/HumanGamer)
 - [NeoLightning](https://github.com/neolightning)
+- [Thearst3rd](https://github.com/thearst3rd)
 
 # License
 You may use this to make mods, but your mods must be released for free.
