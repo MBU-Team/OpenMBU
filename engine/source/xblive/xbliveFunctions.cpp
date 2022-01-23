@@ -97,7 +97,13 @@ ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
     //return ret;
 
     // Use platform username until we set up a login system.
-    return Platform::getUserName(15); // X360 only supported at max 15 characters.
+    //return Platform::getUserName(15); // X360 only supported at max 15 characters.
+
+    char *ret = Con::getReturnBuffer(16);
+    const char *name = Con::getVariable("$pref::Player::Name");
+    dStrncpy(ret, name, 15);
+    ret[15] = '\0';
+    return ret;
 }
 
 ConsoleFunction(XBLiveGetUserId, S32, 1, 1, "()")
