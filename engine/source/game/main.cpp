@@ -63,6 +63,8 @@
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
 
+#include "levelgeometry/LevelModelResource.h"
+
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
 DemoNetInterface GameNetInterface;
@@ -172,6 +174,8 @@ static bool initLibraries()
     //   ResourceManager->registerExtension(".dml", constructMaterialList);
     ResourceManager->registerExtension(".map", constructInteriorMAP);
     ResourceManager->registerExtension(".atlas", constructAtlasFileResource);
+
+    ResourceManager->registerExtension(".lmd", constructLevelModelLMD);
 
 
     Con::init();
