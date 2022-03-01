@@ -62,6 +62,9 @@
 
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
+#ifdef TORQUE_OS_WIN
+#include "autosplitter/consolesplitter.h"
+#endif // TORQUE_OS_WIN
 
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
@@ -188,6 +191,10 @@ static bool initLibraries()
     RedBook::init();
     SFXSystem::init();
 
+#ifdef TORQUE_OS_WIN
+    Autosplitter::init();
+#endif // TORQUE_OS_WIN
+
     return true;
 }
 
@@ -199,6 +206,10 @@ static void shutdownLibraries()
     // Purge any resources on the timeout list...
     if (ResourceManager)
         ResourceManager->purge();
+
+#ifdef TORQUE_OS_WIN
+    Autosplitter::destroy();
+#endif // TORQUE_OS_WIN
 
     RedBook::destroy();
     TSShapeInstance::destroy();
