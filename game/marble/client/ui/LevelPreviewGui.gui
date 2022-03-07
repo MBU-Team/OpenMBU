@@ -219,6 +219,9 @@ function levelPreviewGui::onA()
          
          // Create a new server
          loadMission(GameMissionInfo.getCurrentMission().file, true);
+         
+         // Tell autosplitter to start
+         sendAutosplitterData("start" SPC GameMissionInfo.getCurrentMission().level);
       }
       else
       {

@@ -1,11 +1,12 @@
 #ifndef _CONSOLESPLITTER_H_
 #define _CONSOLESPLITTER_H_
 
-#include <Windows.h>
+#include <iostream>
+#include <fstream>
 
 #include "console/console.h"
 
-constexpr const char *AUTOSPLITTER_PIPE_NAME = "\\\\.\\pipe\\mbuautosplitter";
+constexpr const char *AUTOSPLITTER_FILE_NAME = "autosplitter.txt";
 constexpr U32 AUTOSPLITTER_BUF_SIZE = 512;
 
 class Autosplitter
@@ -15,13 +16,14 @@ public:
     static void destroy();
     static Autosplitter *get();
     bool isActive() { return mActive; }
-    bool sendData(const char *data);
+    void sendData(const char *data);
 private:
     Autosplitter();
     ~Autosplitter();
     static Autosplitter *smInstance;
     bool mActive;
-    HANDLE mPipe;
+    std::string mFilename;
+    std::fstream mFile;
 };
 
 #endif // _CONSOLESPLITTER_H_
