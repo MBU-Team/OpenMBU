@@ -193,6 +193,7 @@ function startGame()
       return;
    }
    echo("Starting game");
+   sendAutosplitterData("loading finished");
 
    $Game::Running = true;
    $Game::Qualified = false;
