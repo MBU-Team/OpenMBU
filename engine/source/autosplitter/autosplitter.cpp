@@ -1,6 +1,6 @@
 #include <cstdio> 
 
-#include "consolesplitter.h"
+#include "autosplitter.h"
 #include "platform/platform.h"
 
 

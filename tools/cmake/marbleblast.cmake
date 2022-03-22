@@ -71,9 +71,7 @@ endif()
 # Always enabled paths first
 ###############################################################################
 addPath("${srcDir}/") # must come first :)
-if (WIN32)
-    addPath("${srcDir}/autosplitter")
-endif()
+addPath("${srcDir}/autosplitter")
 addPath("${srcDir}/collision")
 addPath("${srcDir}/console")
 addPath("${srcDir}/core")

@@ -1,5 +1,5 @@
-#ifndef _CONSOLESPLITTER_H_
-#define _CONSOLESPLITTER_H_
+#ifndef _AUTOSPLITTER_H_
+#define _AUTOSPLITTER_H_
 
 #include <iostream>
 #include <fstream>
@@ -26,4 +26,4 @@ private:
     std::fstream mFile;
 };
 
-#endif // _CONSOLESPLITTER_H_
+#endif // _AUTOSPLITTER_H_
