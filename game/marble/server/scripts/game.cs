@@ -193,7 +193,6 @@ function startGame()
       return;
    }
    echo("Starting game");
-   sendAutosplitterData("loading finished");
 
    $Game::Running = true;
    $Game::Qualified = false;
@@ -1842,6 +1841,8 @@ function setStartState(%client)
       %client.player.setMarbleTime($timeKeeper.player.getMarbleTime());
 
    %client.player.setMode(Start);
+
+   sendAutosplitterData("loading finished");
 }
 
 // This is used to inform all of the clients that the

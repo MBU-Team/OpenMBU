@@ -222,6 +222,7 @@ function levelPreviewGui::onA()
          
          // Tell autosplitter to start
          sendAutosplitterData("start" SPC GameMissionInfo.getCurrentMission().level);
+         sendAutosplitterData("loading started");
       }
       else
       {

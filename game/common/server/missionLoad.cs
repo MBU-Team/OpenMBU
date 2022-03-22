@@ -22,8 +22,6 @@ function loadMission( %missionName, %isFirstMission )
    echo("*** LOADING MISSION: " @ %missionName);
    echo("*** Stage 1 load");
    
-   sendAutosplitterData("loading started");
-   
    // Reset all of these
    clearCenterPrintAll();
    clearBottomPrintAll();
