@@ -52,8 +52,6 @@ function clientCmdGameStart()
 
    // Map Pack Achievement code:
    $UserAchievements::MPGotABlueGem = 0;
-
-   sendAutosplitterData("loading finished");
 }
 
 function clientCmdGameEnd()
