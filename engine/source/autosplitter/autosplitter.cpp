@@ -20,6 +20,7 @@ void Autosplitter::destroy()
         return;
 
     delete smInstance;
+    smInstance = nullptr;
 }
 
 Autosplitter *Autosplitter::get()

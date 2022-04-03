@@ -21,7 +21,7 @@ function loadMission( %missionName, %isFirstMission )
    endMission();
    echo("*** LOADING MISSION: " @ %missionName);
    echo("*** Stage 1 load");
-   
+
    // Reset all of these
    clearCenterPrintAll();
    clearBottomPrintAll();
