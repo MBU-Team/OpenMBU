@@ -370,6 +370,10 @@ void Interior::prepBatchRender(InteriorInstance* intInst, SceneState* state)
     // render zones
     for (U32 i = 0; i < mZones.size(); i++)
     {
+        // No need to try to render zones without any surfaces
+        if (mZones[i].surfaceCount == 0)
+            continue;
+
         if (zoneVis.isZoneVisible(i) == false && !getCurrentClientSceneGraph()->isReflectPass())
         {
             continue;
