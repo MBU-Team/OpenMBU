@@ -653,7 +653,7 @@ void Sky::renderObject(SceneState* state, RenderInst* ri)
     //  since we want an identity projection matrix here...
     MatrixF proj = GFX->getProjectionMatrix();
 
-    //state->setupObjectProjection(this);
+    state->setupObjectProjection(this);
 
     GFX->setProjectionMatrix(MatrixF(true));
 
@@ -696,7 +696,7 @@ void Sky::renderObject(SceneState* state, RenderInst* ri)
     GFX->popWorldMatrix();
 
     // On input.  Finalize the projection matrix...
-    //state->setupObjectProjection(this);
+    state->setupObjectProjection(this);
 
     GFX->pushWorldMatrix();
 
@@ -964,7 +964,9 @@ void Sky::renderSkyBox(F32 lowerBanHeight, F32 alphaBanUpper)
     Point2F texCoords[4];
 
     GFX->setBaseRenderState();
+#ifndef MB_FLIP_SKY
     GFX->setZEnable(false);
+#endif
     GFX->setZWriteEnable(false);
     GFX->setCullMode(GFXCullNone);
     PrimBuild::color4f(1, 1, 1, 1);

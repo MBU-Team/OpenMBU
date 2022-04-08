@@ -80,6 +80,9 @@
 // TEMP: Define me for a temporary fix for moving platform jitter
 #define MBU_TEMP_MP_DESYNC_FIX
 
+// Re-order the sky rendering like MBO does (WIP)
+//#define MB_FLIP_SKY
+
 // Define me to enable MarbleBlastUltra Preview System
 #define MB_ULTRA_PREVIEWS
 

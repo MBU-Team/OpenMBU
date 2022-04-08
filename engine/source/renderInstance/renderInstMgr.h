@@ -128,11 +128,17 @@ public:
     enum RenderBinTypes
     {
         Begin = 0,
+#ifndef MB_FLIP_SKY
         Sky,
         SkyShape,
+#endif
         Interior,
         InteriorDynamicLighting,
         Mesh,
+#ifdef MB_FLIP_SKY
+        Sky,
+        SkyShape,
+#endif
         MiscObject,
         Shadow,
         Decal,
