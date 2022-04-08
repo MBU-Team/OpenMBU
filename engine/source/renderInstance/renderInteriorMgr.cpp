@@ -49,7 +49,7 @@ void RenderInteriorMgr::addElement(RenderInst* inst)
     // sort by material and matInst
     if (inst->matInst)
     {
-        elem.key = (U32)inst->matInst;
+        elem.key = (U32)inst->matInst->getMaterial();
     }
 
     // sort by vertex buffer
