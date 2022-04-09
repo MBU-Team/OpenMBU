@@ -156,6 +156,8 @@ GFX_DeclareTextureProfile(GFXDefaultPersistentProfile);
 GFX_DeclareTextureProfile(GFXDefaultStaticDiffuseProfile);
 // Texture that resides in system memory - used to copy data to
 GFX_DeclareTextureProfile(GFXSystemMemProfile);
+// Depth buffer texture
+GFX_DeclareTextureProfile(GFXDefaultZTargetProfile);
 
 
 #endif

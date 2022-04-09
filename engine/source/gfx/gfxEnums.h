@@ -152,6 +152,7 @@ enum GFXFormat
     GFXFormatR10G10B10A2,
     GFXFormatD32,
     GFXFormatD24X8,
+    GFXFormatD24S8,
 
     // 64 bit texture formats...
     GFXFormatR16G16B16A16,// first in group...

@@ -91,6 +91,7 @@ void GFXD3DEnumTranslate::init()
     GFXD3DTextureFormat[GFXFormatR10G10B10A2] = D3DFMT_A2R10G10B10;
     GFXD3DTextureFormat[GFXFormatD32] = D3DFMT_D32;
     GFXD3DTextureFormat[GFXFormatD24X8] = D3DFMT_D24X8;
+    GFXD3DTextureFormat[GFXFormatD24S8] = D3DFMT_D24S8;
     GFXD3DTextureFormat[GFXFormatD16] = D3DFMT_D16;
     VALIDATE_LOOKUPTABLE(GFXD3DTextureFormat, GFXFormat);
     //------------------------------------------------------------------------------
