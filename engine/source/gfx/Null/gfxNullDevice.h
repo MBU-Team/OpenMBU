@@ -138,7 +138,7 @@ public:
 
    virtual F32 getPixelShaderVersion() const override { return 0.0f; };
    virtual void setPixelShaderVersion( F32 version ) override { };
-   virtual U32 getNumSamplers() const override { return 0; };
+   virtual U32 getNumSamplers() const override { return TEXTURE_STAGE_COUNT; };
 
    virtual GFXShader * createShader( const char *vertFile, const char *pixFile, F32 pixVersion ) override { return NULL; };
    virtual GFXShader * createShader( GFXShaderFeatureData &featureData, GFXVertexFlags vertFlags ) override { return NULL; };

@@ -1047,7 +1047,7 @@ public:
     static F32  sWhiteoutDec;
     static F32  sDamageFlashDec;
 
-    GFXCubemap* mDynamicCubemap;
+    GFXCubemapHandle mDynamicCubemap;
 
     /// @name Initialization
     /// @{

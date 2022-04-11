@@ -813,11 +813,11 @@ ShapeBase::~ShapeBase()
         sFreeTimeoutList = cur;
     }
 
-    if (mDynamicCubemap)
+    /*if (mDynamicCubemap)
     {
         delete mDynamicCubemap;
         mDynamicCubemap = NULL;
-    }
+    }*/
 }
 
 
@@ -2676,7 +2676,7 @@ void ShapeBase::renderShadow(SceneState* state, RenderInst* ri)
 //----------------------------------------------------------------------------
 void ShapeBase::updateReflection()
 {
-    if (mDynamicCubemap)
+    if (mDynamicCubemap.isValid())
     {
         Point3F pos = getPosition();
         mDynamicCubemap->updateDynamic(pos);

@@ -9,6 +9,18 @@
 
 #include "util/fourcc.h"
 
+// These are for the enum translation. It will help with porting to other platforms
+// and API's.
+#define GFX_UNSUPPORTED_VAL 0xDEADBEEF
+#define GFX_UNINIT_VAL 0xDECAFBAD
+
+// Adjust these pools to your app's needs.  Be aware dynamic vertices are much more
+// expensive than static vertices. These are in gfxEnums because they should be
+// consistant across all APIs/platforms so that the dynamic buffer performance
+// and behavior is also consistant. -patw
+#define MAX_DYNAMIC_VERTS   (8192*2)
+#define MAX_DYNAMIC_INDICES (8192*4)
+
 enum GFXBufferType
 {
     GFXBufferTypeStatic,   ///< Static vertex buffers are created and filled one time.
@@ -85,6 +97,7 @@ enum GFXTextureOp
     GFXTOPBumpEnvMap,
     GFXTOPBumpEnvMapLuminance,
     GFXTOPDotProduct3,
+    GFXTOPLERP,
     GFXTOP_COUNT
 };
 
@@ -147,6 +160,7 @@ enum GFXFormat
     // 32 bit texture formats...
     GFXFormatR8G8B8A8,// first in group...
     GFXFormatR8G8B8X8,
+    GFXFormatR8G8B8X8_LE,
     GFXFormatR16G16,
     GFXFormatR16G16F,
     GFXFormatR10G10B10A2,

@@ -20,9 +20,9 @@
 
 Vector<GFXDevice*> GFXDevice::smGFXDevice;
 S32 GFXDevice::smActiveDeviceIndex = -1;
-
 bool GFXDevice::smUseZPass = true;
 GFXDevice::DeviceEventSignal* GFXDevice::smSignalGFXDeviceEvent = NULL;
+S32 GFXDevice::smSfxBackBufferSize = 64;
 
 
 //-----------------------------------------------------------------------------
@@ -79,6 +79,9 @@ GFXDevice::GFXDevice()
     {
         mTextureDirty[i] = false;
         mCurrentTexture[i] = NULL;
+        mNewTexture[i] = NULL;
+        mCurrentCubemap[i] = NULL;
+        mNewCubemap[i] = NULL;
         mTexType[i] = GFXTDT_Normal;
     }
 
@@ -88,6 +91,11 @@ GFXDevice::GFXDevice()
 
     // misc
     mAllowRender = true;
+
+    mInitialized = false;
+
+    mDeviceSwizzle32 = NULL;
+    mDeviceSwizzle24 = NULL;
 
     mResourceListHead = NULL;
 }
@@ -102,6 +110,7 @@ void GFXDevice::deviceInited()
 // Static method
 void GFXDevice::create()
 {
+    Con::addVariable("pref::Video::sfxBackBufferSize", TypeS32, &GFXDevice::smSfxBackBufferSize);
     Con::addVariable("pref::video::useZPass", TypeBool, &GFXDevice::smUseZPass);
 }
 
@@ -204,10 +213,9 @@ GFXDevice::~GFXDevice()
     for (U32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
     {
         mCurrentTexture[i] = NULL;
-        // TODO: This part may be important
-        //mNewTexture[i] = NULL;
-        //mCurrentCubemap[i] = NULL;
-        //mNewCubemap[i] = NULL;
+        mNewTexture[i] = NULL;
+        mCurrentCubemap[i] = NULL;
+        mNewCubemap[i] = NULL;
     }
 
     // Check for resource leaks
@@ -291,21 +299,28 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
         if (mCurrentPrimitiveBuffer.isValid()) // This could be NULL when the device is initalizing
             mCurrentPrimitiveBuffer->prepare();
 
-        for (U32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
+        for(U32 i = 0; i < getNumSamplers(); i++)
         {
-            if (mCurrentTexture[i] == NULL)
+            switch (mTexType[i])
             {
-                setTextureInternal(i, NULL);
-                continue;
-            }
-
-            if (mTexType[i] == GFXTDT_Normal)
-            {
-                setTextureInternal(i, (GFXTextureObject*)mCurrentTexture[i]);
-            }
-            else
-            {
-                ((GFXCubemap*)mCurrentTexture[i])->setToTexUnit(i);
+                case GFXTDT_Normal :
+                {
+                    mCurrentTexture[i] = mNewTexture[i];
+                    setTextureInternal(i, mCurrentTexture[i]);
+                }
+                    break;
+                case GFXTDT_Cube :
+                {
+                    mCurrentCubemap[i] = mNewCubemap[i];
+                    if (mCurrentCubemap[i])
+                        mCurrentCubemap[i]->setToTexUnit(i);
+                    else
+                        setTextureInternal(i, NULL);
+                }
+                    break;
+                default:
+                AssertFatal(false, "Unknown texture type!");
+                    break;
             }
         }
 
@@ -384,29 +399,37 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
         mPrimitiveBufferDirty = false;
     }
 
-    if (mTexturesDirty)
+    // NOTE: it is important that textures are set before texture states since
+    // some devices (e.g., OpenGL) set certain states on the texture.
+    if( mTexturesDirty )
     {
         mTexturesDirty = false;
-        for (U32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
+        for(U32 i = 0; i < getNumSamplers(); i++)
         {
-            if (!mTextureDirty[i])
+            if(!mTextureDirty[i])
                 continue;
-
             mTextureDirty[i] = false;
 
-            if (mCurrentTexture[i] == NULL)
+            switch (mTexType[i])
             {
-                setTextureInternal(i, NULL);
-                continue;
-            }
-
-            if (mTexType[i] == GFXTDT_Normal)
-            {
-                setTextureInternal(i, (GFXTextureObject*)mCurrentTexture[i]);
-            }
-            else
-            {
-                ((GFXCubemap*)mCurrentTexture[i])->setToTexUnit(i);
+                case GFXTDT_Normal :
+                {
+                    mCurrentTexture[i] = mNewTexture[i];
+                    setTextureInternal(i, mCurrentTexture[i]);
+                }
+                    break;
+                case GFXTDT_Cube :
+                {
+                    mCurrentCubemap[i] = mNewCubemap[i];
+                    if (mCurrentCubemap[i])
+                        mCurrentCubemap[i]->setToTexUnit(i);
+                    else
+                        setTextureInternal(i, NULL);
+                }
+                    break;
+                default:
+                AssertFatal(false, "Unknown texture type!");
+                    break;
             }
         }
     }
@@ -1629,34 +1652,53 @@ void GFXDevice::setBaseRenderState()
 //-----------------------------------------------------------------------------
 void GFXDevice::setTexture(U32 stage, GFXTextureObject* texture)
 {
-    AssertFatal(stage < TEXTURE_STAGE_COUNT, "GFXDevice::setTexture - out of range stage!");
+    AssertFatal(stage < getNumSamplers(), "GFXDevice::setTexture - out of range stage!");
 
-    if (!mTextureDirty[stage])
+    if( mCurrentTexture[stage].getPointer() == texture )
+    {
+        mTextureDirty[stage] = false;
+        return;
+    }
+
+    if( !mTextureDirty[stage] )
     {
         mStateDirty = true;
         mTexturesDirty = true;
         mTextureDirty[stage] = true;
     }
-    mCurrentTexture[stage] = texture;
+    mNewTexture[stage] = texture;
     mTexType[stage] = GFXTDT_Normal;
 
+    // Clear out the cubemaps
+    mNewCubemap[stage] = NULL;
+    mCurrentCubemap[stage] = NULL;
 }
 
 //-----------------------------------------------------------------------------
 // Set cube texture
 //-----------------------------------------------------------------------------
-void GFXDevice::setCubeTexture(U32 stage, GFXCubemap* texture)
+void GFXDevice::setCubeTexture( U32 stage, GFXCubemap *texture )
 {
-    AssertFatal(stage < TEXTURE_STAGE_COUNT, "GFXDevice::setTexture - out of range stage!");
+    AssertFatal(stage < getNumSamplers(), "GFXDevice::setTexture - out of range stage!");
 
-    if (!mTextureDirty[stage])
+    if( mCurrentCubemap[stage].getPointer() == texture )
+    {
+        mTextureDirty[stage] = false;
+        return;
+    }
+
+    if( !mTextureDirty[stage] )
     {
         mStateDirty = true;
         mTexturesDirty = true;
         mTextureDirty[stage] = true;
     }
-    mCurrentTexture[stage] = texture;
+    mNewCubemap[stage] = texture;
     mTexType[stage] = GFXTDT_Cube;
+
+    // Clear out the normal textures
+    mNewTexture[stage] = NULL;
+    mCurrentTexture[stage] = NULL;
 }
 
 //-----------------------------------------------------------------------------

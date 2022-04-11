@@ -21,11 +21,13 @@
 #include "gfx/gfxTarget.h"
 #include "gfx/gfxStructs.h"
 #include "gfx/gfxAdapter.h"
+#include "gfx/gfxCubemap.h"
 #include "core/refBase.h"
 #include "gfx/gfxTextureObject.h"
 #include "gfx/gfxTextureManager.h"
 #include "gfx/gfxTextureHandle.h"
 #include "gfx/gfxStateFrame.h"
+#include "util/swizzle.h"
 
 #include "core/unicode.h"
 #include "core/frameAllocator.h"
@@ -232,6 +234,10 @@ protected:
     /// Set if we're in a mode where we want rendering to occur.
     bool mAllowRender;
 
+    /// This will allow querying to see if a device is initialized and ready to
+    /// have operations performed on it.
+    bool mInitialized;
+
     /// This is called before this, or any other device, is deleted in the global destroy()
     /// method. It allows the device to clean up anything while everything is still valid.
     virtual void preDestroy() = 0;
@@ -398,7 +404,11 @@ protected:
         GFXTDT_Cube
     };
 
-    void* mCurrentTexture[TEXTURE_STAGE_COUNT];
+    GFXTexHandle mCurrentTexture[TEXTURE_STAGE_COUNT];
+    GFXTexHandle mNewTexture[TEXTURE_STAGE_COUNT];
+    GFXCubemapHandle mCurrentCubemap[TEXTURE_STAGE_COUNT];
+    GFXCubemapHandle mNewCubemap[TEXTURE_STAGE_COUNT];
+
     TexDirtyType   mTexType[TEXTURE_STAGE_COUNT];
     bool           mTextureDirty[TEXTURE_STAGE_COUNT];
     bool           mTexturesDirty;
@@ -414,6 +424,11 @@ protected:
     GFXVertexColor mColorStackValue;
     /// @}
 
+    /// @see getDeviceSwizzle32
+    Swizzle<U8, 4> *mDeviceSwizzle32;
+
+    /// @see getDeviceSwizzle24
+    Swizzle<U8, 3> *mDeviceSwizzle24;
 
     //-----------------------------------------------------------------------------
 
@@ -535,6 +550,7 @@ protected:
 protected:
     GFXTexHandle mSfxBackBuffer;
     bool         mUseSfxBackBuffer;
+    static S32   smSfxBackBufferSize;
 
 
 
@@ -578,6 +594,18 @@ public:
     }
 
     ///@}
+
+    /// Swizzle to convert 32bpp bitmaps from RGBA to the native device format.
+    const Swizzle<U8, 4> *getDeviceSwizzle32() const
+    {
+        return mDeviceSwizzle32;
+    }
+
+    /// Swizzle to convert 24bpp bitmaps from RGB to the native device format.
+    const Swizzle<U8, 3> *getDeviceSwizzle24() const
+    {
+        return mDeviceSwizzle24;
+    }
 
     /// @name Render Target functions
     /// @{

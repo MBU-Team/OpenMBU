@@ -1186,6 +1186,9 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
 
     PROFILE_START(CanvasPreRender);
 
+    // Set our window as the current render target so we can see outputs.
+    GFX->setActiveRenderTarget(Platform::getWindowGFXTarget());
+
     //We always want to render to the back buffer now
     //if(mRenderFront)
     //   glDrawBuffer(GL_FRONT);

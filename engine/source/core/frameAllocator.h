@@ -229,6 +229,21 @@ public:
 
     operator T() { return *mMemory; }
     operator const T() const { return *mMemory; }
+
+    T& operator[](U64 i)             { return mMemory[i]; }
+    const T& operator[](U64 i) const { return mMemory[i]; }
+
+    T& operator[](U32 i)             { return mMemory[i]; }
+    const T& operator[](U32 i) const { return mMemory[i]; }
+
+    T& operator[](S64 i)              { return operator[](U64(i)); }
+    const T& operator[](S64 i ) const { return operator[](U64(i)); }
+
+    T& operator[](S32 i)              { return operator[](U32(i)); }
+    const T& operator[](S32 i ) const { return operator[](U32(i)); }
+
+    T& operator[](U16 i)              { return operator[](U32(i)); }
+    const T& operator[](U16 i ) const { return operator[](U32(i)); }
 };
 
 #endif  // _H_FRAMEALLOCATOR_

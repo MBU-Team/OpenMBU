@@ -15,6 +15,8 @@
 //------------------------------------------------------------------
 Win32WinMgr::Win32WinMgr(U32 uniqueIDNum, WNDPROC winProc)
 {
+    winState.windowManager = this;
+
     char* buffer = new char[64];
     dSprintf(buffer, 64, "%s_%d", "Torque2", uniqueIDNum);
 

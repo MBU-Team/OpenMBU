@@ -42,6 +42,11 @@ static void backslash(char* str)
     }
 }
 
+StringTableEntry Platform::createPlatformFriendlyFilename( const char *filename )
+{
+    return StringTable->insert( filename );
+}
+
 //-----------------------------------------------------------------------------
 bool dFileDelete(const char* name)
 {

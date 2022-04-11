@@ -547,7 +547,8 @@ void MatInstance::setTextureStages(SceneGraphData& sgData, U32 pass)
             break;
 
         case Material::Cube:
-            GFX->setCubeTexture(i, mPasses[pass].cubeMap);
+            // TEMP: Remove due to crash
+            //GFX->setCubeTexture(i, mPasses[pass].cubeMap);
             break;
 
         case Material::SGCube:

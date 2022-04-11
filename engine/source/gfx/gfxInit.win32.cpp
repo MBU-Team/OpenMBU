@@ -9,7 +9,7 @@
 #include "gfx/gfxInit.h"
 
 // Platform specific API includes
-//#include "gfx/D3D9/pc/gfxPCD3D9Device.h" // TEMP: re-add
+#include "gfx/D3D9/pc/gfxPCD3D9Device.h"
 #include "gfx/Null/gfxNullDevice.h"
 
 #include "platformWin32/platformWin32.h"
@@ -30,7 +30,7 @@ void GFXInit::enumerateAdapters()
         return;
     }
 
-    //GFXPCD3D9Device::enumerateAdapters( GFXInit::smAdapters ); // TEMP: re-add
+    GFXPCD3D9Device::enumerateAdapters( GFXInit::smAdapters );
     GFXNullDevice::enumerateAdapters( GFXInit::smAdapters );
     //enumerateD3D8Adapters( GFXInit::smAdapters );
 }
@@ -43,10 +43,10 @@ GFXDevice *GFXInit::createDevice( GFXAdapter *adapter )
     Con::printf("Attempting to create GFX device: %s", adapter->getName());
     switch (adapter->mType)
     {
-        // TEMP: re-add
-//        case Direct3D9 :
-//            temp = GFXPCD3D9Device::createInstance( adapter->mIndex );
-//            break;
+        case Direct3D9 :
+            temp = GFXPCD3D9Device::createInstance( adapter->mIndex );
+            break;
+          // TODO: add D3D8 support
 //        case Direct3D8:
 //            createD3D8Instance( &temp, adapter->mIndex );
 //            break;

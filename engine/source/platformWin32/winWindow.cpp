@@ -90,6 +90,10 @@ Win32PlatState::Win32PlatState()
     desktopWidth = NULL;
     desktopHeight = NULL;
     currentTime = NULL;
+
+    windowManager = NULL;
+
+    videoMode = NULL;
 }
 
 
@@ -1054,6 +1058,8 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     vm.borderless = fullscreenType == 2;
     vm.refreshRate = 60; //HACK
 
+    winState.videoMode = new GFXVideoMode(vm);
+
     //TODO find a better way to handle Win32WinMgr...
     // create the window
     Win32Window = new Win32WinMgr(GFX->getDeviceIndex(), WindowProc);
@@ -1070,7 +1076,7 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
 
     winState.processId = GetCurrentProcessId();
 
-    GFX->allocWindowTarget();//Win32Window);
+    mTarget = GFX->allocWindowTarget();//Win32Window);
     if(mTarget.isValid())
         mTarget->resetMode();
 }

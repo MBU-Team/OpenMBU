@@ -87,7 +87,7 @@ GFXVideoMode::GFXVideoMode()
     refreshRate = 60;
     //wideScreen = false;
     resolution.set(800,600);
-    //antialiasLevel = 0;
+    antialiasLevel = 0;
 }
 
 void GFXVideoMode::parseFromString( const char *str )
@@ -108,7 +108,7 @@ void GFXVideoMode::parseFromString( const char *str )
     PARSE_ELEM(S32, fullScreen,   dAtob, NULL,    " \0")
     PARSE_ELEM(S32, bitDepth,     dAtoi, NULL,    " \0")
     PARSE_ELEM(S32, refreshRate,  dAtoi, NULL,    " \0")
-    //PARSE_ELEM(S32, antialiasLevel, dAtoi, NULL,    " \0")
+    PARSE_ELEM(S32, antialiasLevel, dAtoi, NULL,    " \0")
 
 #undef PARSE_ELEM
 
@@ -117,5 +117,6 @@ void GFXVideoMode::parseFromString( const char *str )
 
 const char * GFXVideoMode::toString()
 {
-    return avar("%d %d %s %d %d %d", resolution.x, resolution.y, (fullScreen ? "true" : "false"), bitDepth,  refreshRate);//, antialiasLevel);
+    // TODO: Should we include borderless?
+    return avar("%d %d %s %d %d %d", resolution.x, resolution.y, (fullScreen ? "true" : "false"), bitDepth,  refreshRate, antialiasLevel);
 }

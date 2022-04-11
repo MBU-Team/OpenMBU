@@ -322,6 +322,7 @@ struct Platform
     static void shutdown();
     static void process();
     static bool doCDCheck();
+    static StringTableEntry createPlatformFriendlyFilename(const char *filename);
     static GFXWindowTarget* getWindowGFXTarget();
     static void initWindow(const Point2I& initialSize, const char* name);
     static void enableKeyboardTranslation(void);

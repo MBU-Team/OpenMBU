@@ -48,6 +48,8 @@
 
 #define NOMINMAX
 
+class Win32WinMgr;
+struct GFXVideoMode;
 
 struct Win32PlatState
 {
@@ -69,6 +71,9 @@ struct Win32PlatState
     S32 desktopWidth;
     S32 desktopHeight;
     U32 currentTime;
+
+    Win32WinMgr* windowManager;
+    GFXVideoMode* videoMode;
 
     Win32PlatState();
 };
