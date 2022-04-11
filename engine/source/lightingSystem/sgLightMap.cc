@@ -1,13 +1,15 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "math/mBox.h"
 #include "math/mathUtils.h"
 #include "sceneGraph/sceneGraph.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "atlas/runtime/atlasInstance2.h"
+#endif
 #include "platform/profiler.h"
 #include "interior/interior.h"
 #include "interior/interiorInstance.h"
@@ -747,6 +749,7 @@ void sgPlanarLightMap::sgMergeLighting(GBitmap* lightmap, GBitmap* normalmap, U3
 
 //----------------------------------------------
 
+#ifdef TORQUE_TERRAIN
 void sgTerrainLightMap::sgCalculateLighting(LightInfo* light)
 {
     // setup zone info...
@@ -1192,4 +1195,4 @@ void sgAtlasLightMap::sgMergeLighting(GBitmap* lightmap, U32 xoffset, U32 yoffse
         }
     }
 }
-
+#endif

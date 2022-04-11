@@ -3,6 +3,7 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
+/*
 #include "sceneGraph/sceneLighting.h"
 #include "interior/interiorInstance.h"
 #include "interior/interiorRes.h"
@@ -15,7 +16,7 @@
 #include "gui/core/guiCanvas.h"
 #include "core/zipSubStream.h"
 #include "game/gameConnection.h"
-/*
+
 namespace {
 
    static void findObjectsCallback(SceneObject* obj, void *val)

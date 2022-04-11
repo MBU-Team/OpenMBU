@@ -9,6 +9,7 @@
 #include "sfx/sfxProfile.h"
 #include "util/safeRelease.h"
 
+#pragma comment( lib, "dxguid.lib" )
 
 SFXDSBuffer* SFXDSBuffer::create(   IDirectSound8 *dsound, 
                                     SFXProfile *profile,

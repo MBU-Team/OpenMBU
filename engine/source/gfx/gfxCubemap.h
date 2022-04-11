@@ -13,7 +13,7 @@
 //**************************************************************************
 // Cube map
 //**************************************************************************
-class GFXCubemap
+class GFXCubemap : public RefBase, public GFXResource
 {
     friend class GFXDevice;
 private:
@@ -26,9 +26,16 @@ public:
 
 
     // pos is the position to generate cubemap from
-    virtual void updateDynamic(Point3F& pos) = 0;
+    virtual void updateDynamic(const Point3F& pos) = 0;
 
     virtual ~GFXCubemap() {}
+
+    // GFXResource interface
+    virtual void describeSelf(char* buffer, U32 sizeOfBuffer)
+    {
+        // We've got nothing
+        buffer[0] = NULL;
+    }
 };
 
 

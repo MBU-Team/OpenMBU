@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "gfx/gfxDevice.h"
@@ -9,8 +9,9 @@
 #include "game/shapeBase.h"
 #include "sceneGraph/sceneGraph.h"
 #include "interior/interiorInstance.h"
+#ifdef TORQUE_TERRAIN
 #include "atlas/runtime/atlasInstance2.h"
-
+#endif
 #include "lightingSystem/sgLighting.h"
 #include "lightingSystem/sgLightingModel.h"
 #include "lightingSystem/sgObjectBasedProjector.h"
@@ -470,10 +471,14 @@ void sgShadowProjector::sgRenderShadowBuffer()
 {
     RectI originalview = GFX->getViewport();
 
-    GFX->pushActiveRenderSurfaces();
-    GFX->pushActiveZSurface();
-    GFX->setActiveRenderSurface(sgShadowLODObject.sgShadowTexture);
-    GFX->setActiveZSurface(sgShadowSharedZBuffer::sgGetZBuffer());
+    GFX->pushActiveRenderTarget();
+    if (mShadowBufferTarget.isNull())
+    {
+        mShadowBufferTarget = GFX->allocRenderToTextureTarget();
+    }
+    mShadowBufferTarget->attachTexture(GFXTextureTarget::Color0, sgShadowLODObject.sgShadowTexture );
+    mShadowBufferTarget->attachTexture(GFXTextureTarget::DepthStencil, sgShadowSharedZBuffer::sgGetZBuffer() );
+    GFX->setActiveRenderTarget( mShadowBufferTarget );
 
     if (sgAllowSelfShadowing())
         GFX->clear(GFXClearTarget | GFXClearZBuffer, ColorI(255, 255, 255, 255), 1.0f, 0);
@@ -537,8 +542,7 @@ void sgShadowProjector::sgRenderShadowBuffer()
     }
 
     GFX->popWorldMatrix();
-    GFX->popActiveZSurface();
-    GFX->popActiveRenderSurfaces();
+    GFX->popActiveRenderTarget();
 
     GFX->setViewport(originalview);
 }

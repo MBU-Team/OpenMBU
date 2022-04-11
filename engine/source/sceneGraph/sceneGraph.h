@@ -39,7 +39,9 @@ class SceneState;
 class NetConnection;
 
 class Sky;
+#ifdef TORQUE_TERRAIN
 class TerrainBlock;
+#endif
 class DecalManager;
 
 struct FogVolume
@@ -188,7 +190,9 @@ protected:
     LightManager mLightManager;
 
     Sky* mCurrSky;
+#ifdef TORQUE_TERRAIN
     TerrainBlock* mCurrTerrain;
+#endif
     DecalManager* mCurrDecalManager;
 
     Vector<SceneObject*> mWaterList;
@@ -229,7 +233,10 @@ public:
     F32 getFogInvHeightRange() { return mInvHeightRange; }
 
     Sky* getCurrentSky() { return mCurrSky; }
+
+#ifdef TORQUE_TERRAIN
     TerrainBlock* getCurrentTerrain() { return mCurrTerrain; }
+#endif
     DecalManager* getCurrentDecalManager() { return mCurrDecalManager; }
     void getWaterObjectList(SimpleQueryList&);
 

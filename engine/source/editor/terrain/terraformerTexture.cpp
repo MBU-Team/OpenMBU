@@ -5,7 +5,7 @@
 
 #include "console/console.h"
 #include "terrain/terrData.h"
-#include "editor/terraformer.h"
+#include "editor/terrain/terraformer.h"
 #include "gui/editor/guiFilterCtrl.h"
 #include "editor/editor.h"
 #include "platform/event.h"

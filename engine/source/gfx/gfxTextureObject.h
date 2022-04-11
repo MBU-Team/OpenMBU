@@ -12,6 +12,7 @@
 #include "gfx/gfxEnums.h"
 #include "gfx/gfxTextureProfile.h"
 #include "core/refBase.h"
+#include "gfx/gfxResource.h"
 
 class GFXDevice;
 class GFXTextureProfile;
@@ -41,7 +42,7 @@ struct GFXLockedRect
 };
 
 
-class GFXTextureObject : public RefBase
+class GFXTextureObject : public RefBase, public GFXResource
 {
 public:
 
@@ -119,6 +120,9 @@ public:
 #endif
 
     virtual void kill();
+
+    // GFXResource interface
+    virtual void describeSelf(char* buffer, U32 sizeOfBuffer);
 };
 
 //-----------------------------------------------------------------------------

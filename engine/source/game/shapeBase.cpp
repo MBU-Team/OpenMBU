@@ -17,9 +17,12 @@
 #include "game/shadow.h"
 #include "game/fx/explosion.h"
 #include "game/shapeBase.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/waterBlock.h"
+#endif
+#include "materials/material.h"
 #include "game/debris.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "game/physicalZone.h"
 #include "sceneGraph/detailManager.h"
 #include "math/mathUtils.h"
@@ -2962,12 +2965,14 @@ bool ShapeBase::pointInWater(Point3F& point)
     else
         getCurrentClientSceneGraph()->getWaterObjectList(sql);
 
+#ifdef TORQUE_TERRAIN
     for (U32 i = 0; i < sql.mList.size(); i++)
     {
         WaterBlock* pBlock = dynamic_cast<WaterBlock*>(sql.mList[i]);
         if (pBlock && pBlock->isUnderwater(point))
             return true;
     }
+#endif
 
     return false;
 }

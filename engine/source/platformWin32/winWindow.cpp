@@ -976,13 +976,21 @@ static S32 run(S32 argc, const char** argv)
     return ret;
 }
 
+/// Reference to the render target allocated on this window.
+static GFXWindowTargetRef mTarget = NULL;
+
+GFXWindowTarget * Platform::getWindowGFXTarget()
+{
+    return mTarget;
+}
+
 //--------------------------------------
 void Platform::initWindow(const Point2I& initialSize, const char* name)
 {
     Con::printf("Video Init:");
 
     //find our adapters
-    Vector<GFXAdapter> adapters;
+    Vector<GFXAdapter*> adapters;
     GFXInit::enumerateAdapters();
     GFXInit::getAdapters(&adapters);
 
@@ -993,9 +1001,9 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     {
         for (int k = 0; k < adapters.size(); k++)
         {
-            if (adapters[k].type == Direct3D9)
+            if (adapters[k]->mType == Direct3D9)
                 Con::printf("Direct 3D device found");
-            else if (adapters[k].type == OpenGL)
+            else if (adapters[k]->mType == OpenGL)
                 Con::printf("OpenGL device found");
             else
                 Con::printf("Unknown device found");
@@ -1061,6 +1069,10 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     }
 
     winState.processId = GetCurrentProcessId();
+
+    GFX->allocWindowTarget();//Win32Window);
+    if(mTarget.isValid())
+        mTarget->resetMode();
 }
 
 //--------------------------------------

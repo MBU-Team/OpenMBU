@@ -10,7 +10,7 @@
 #include "sceneGraph/sceneGraph.h"
 #include "gfx/primbuilder.h"
 #include "platform/profiler.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "renderElemMgr.h"
 #include "renderObjectMgr.h"
 #include "renderInteriorMgr.h"
@@ -54,6 +54,7 @@ RenderInstManager::RenderInstManager()
     mBlankShader = NULL;
     mWarningMat = NULL;
     mInitialized = false;
+    GFXDevice::getDeviceEventSignal().notify(this, &RenderInstManager::handleGFXEvent);
 }
 
 //-----------------------------------------------------------------------------
@@ -61,22 +62,46 @@ RenderInstManager::RenderInstManager()
 //-----------------------------------------------------------------------------
 RenderInstManager::~RenderInstManager()
 {
-    uninitBins();
-    if (mWarningMat)
-    {
-        delete mWarningMat;
-        mWarningMat = NULL;
-    }
+    uninit();
 }
 
 //-----------------------------------------------------------------------------
 // init
 //-----------------------------------------------------------------------------
+void RenderInstManager::handleGFXEvent(GFXDevice::GFXDeviceEventType event)
+{
+    switch (event)
+    {
+        case GFXDevice::deInit :
+            init();
+            break;
+        case GFXDevice::deDestroy :
+            uninit();
+            break;
+    }
+}
+
 void RenderInstManager::init()
 {
-    initBins();
-    initWarnMat();
-    mInitialized = true;
+    if (!mInitialized)
+    {
+        initBins();
+        initWarnMat();
+        mInitialized = true;
+    }
+}
+
+void RenderInstManager::uninit()
+{
+    if (mInitialized)
+    {
+        uninitBins();
+        if (mWarningMat)
+        {
+            SAFE_DELETE(mWarningMat);
+        }
+        mInitialized = false;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -356,12 +381,12 @@ void RenderInstManager::render()
     GFX->setProjectionMatrix(proj);
 }
 
-void RenderInstManager::renderToZBuff(GFXTextureObject* target)
+void RenderInstManager::renderToZBuff(GFXTarget* target)
 {
-    GFX->pushActiveRenderSurfaces();
-    GFX->setActiveRenderSurface(target);
+    GFX->pushActiveRenderTarget();
+    GFX->setActiveRenderTarget(target);
     mZOnlyBin->render();
-    GFX->popActiveRenderSurfaces();
+    GFX->popActiveRenderTarget();
 }
 
 

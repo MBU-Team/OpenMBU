@@ -40,6 +40,8 @@ private:
     S32                 mCallbackHandle;
     bool                mDisabled;
 
+    GFXTextureTargetRef mTarget;
+
     MatrixF setupOrthoProjection();
     void setupRenderStates();
     static void texManagerCallback(GFXTexCallbackCode code, void* userData);

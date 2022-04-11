@@ -3,7 +3,7 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#include "editor/missionAreaEditor.h"
+#include "editor/terrain/missionAreaEditor.h"
 #include "gfx/gBitmap.h"
 #include "terrain/terrData.h"
 #include "sim/sceneObject.h"

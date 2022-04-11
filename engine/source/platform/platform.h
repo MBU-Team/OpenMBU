@@ -20,6 +20,8 @@
 
 #include <new>
 
+class GFXWindowTarget;
+
 //------------------------------------------------------------------------------
 // Endian conversions
 #ifdef TORQUE_LITTLE_ENDIAN
@@ -320,6 +322,7 @@ struct Platform
     static void shutdown();
     static void process();
     static bool doCDCheck();
+    static GFXWindowTarget* getWindowGFXTarget();
     static void initWindow(const Point2I& initialSize, const char* name);
     static void enableKeyboardTranslation(void);
     static void disableKeyboardTranslation(void);

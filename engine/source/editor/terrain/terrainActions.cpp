@@ -3,7 +3,7 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#include "editor/terrainActions.h"
+#include "editor/terrain/terrainActions.h"
 #include "platform/event.h"
 #include "gui/core/guiCanvas.h"
 

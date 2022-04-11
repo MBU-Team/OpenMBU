@@ -3,12 +3,12 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#include "editor/terrainEditor.h"
+#include "editor/terrain/terrainEditor.h"
 #include "game/collisionTest.h"
 #include "terrain/terrData.h"
 #include "gui/core/guiCanvas.h"
 #include "console/consoleTypes.h"
-#include "editor/terrainActions.h"
+#include "editor/terrain/terrainActions.h"
 #include "interior/interiorInstance.h"
 #include "interior/interior.h"
 #include "game/gameConnection.h"

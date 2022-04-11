@@ -61,8 +61,11 @@ void sgDRLSystem::sgPrepSystem(const Point2I& offset, const Point2I& extent)
 
     // to avoid the back buffer copy just use
     // the copy-to texture as the surface...
-    GFX->pushActiveRenderSurfaces();
-    GFX->setActiveRenderSurface(sgSurfaceChain[0]);
+    GFX->pushActiveRenderTarget();
+    GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
+    myTarg->attachTexture(GFXTextureTarget::Color0, sgSurfaceChain[0] );
+    myTarg->attachTexture(GFXTextureTarget::DepthStencil, GFXTextureTarget::sDefaultDepthStencil);
+    GFX->setActiveRenderTarget( myTarg );
 }
 
 void sgDRLSystem::sgRenderSystem()
@@ -73,7 +76,7 @@ void sgDRLSystem::sgRenderSystem()
     sgDidPrep = false;
 
     // put back the back buffer...
-    GFX->popActiveRenderSurfaces();
+    GFX->popActiveRenderTarget();
 
     sgRenderChain();
     sgRenderDRL();
@@ -190,7 +193,7 @@ void sgDRLSurfaceChain::sgRenderChain()
         return;
 
     //GFX->copyBBToTexture(sgSurfaceChain[0]);
-    GFX->pushActiveRenderSurfaces();
+    GFX->pushActiveRenderTarget();
 
     // start copy and down-sample...
     RectI rect(-1, 1, 1, -1);
@@ -231,7 +234,11 @@ void sgDRLSurfaceChain::sgRenderChain()
         else
             sgDownSample4x4->shader->process();
 
-        GFX->setActiveRenderSurface(sgSurfaceChain[i]);
+        GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
+        myTarg->attachTexture(GFXTextureTarget::Color0, sgSurfaceChain[i] );
+        //myTarg->attachTexture(GFXTextureTarget::DepthStencil, GFXTextureTarget::sDefaultDepthStencil );
+        GFX->setActiveRenderTarget( myTarg );
+
         GFX->setTexture(0, (*lasttexture));
 
         // this stuff should be in a vertex buffer?
@@ -266,7 +273,10 @@ void sgDRLSurfaceChain::sgRenderChain()
     if (LightManager::sgAllowBloom())
     {
         sgBloomBlur->shader->process();
-        GFX->setActiveRenderSurface(sgBloom);
+        GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
+        myTarg->attachTexture(GFXTextureTarget::Color0, sgBloom );
+        myTarg->attachTexture(GFXTextureTarget::DepthStencil, GFXTextureTarget::sDefaultDepthStencil );
+        GFX->setActiveRenderTarget( myTarg );
         GFX->setTexture(0, sgSurfaceChain[sgdlrscBloomIndex]);
         //GFX->setTextureBorderColor(0, ColorI(0, 0, 0, 0));
         GFX->setTextureStageAddressModeU(0, GFXAddressClamp);
@@ -298,7 +308,8 @@ void sgDRLSurfaceChain::sgRenderChain()
         PrimBuild::end();
 
         //sgBloomBlur->shader->process();
-        GFX->setActiveRenderSurface(sgBloom2);
+        myTarg->attachTexture(GFXTextureTarget::Color0, sgBloom2 );
+        GFX->setActiveRenderTarget( myTarg );
         GFX->setTexture(0, sgBloom);
         //GFX->setTextureBorderColor(0, ColorI(0, 0, 0, 0));
         GFX->setTextureStageAddressModeU(0, GFXAddressClamp);
@@ -319,14 +330,18 @@ void sgDRLSurfaceChain::sgRenderChain()
     else
     {
         // makes sure texture doesn't affect DRL/Bloom composite shader...
-        GFX->setActiveRenderSurface(sgBloom2);
+        GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
+        myTarg->attachTexture(GFXTextureTarget::Color0, sgBloom2 );
+        GFX->setActiveRenderTarget( myTarg );
         GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
     }
 
     if (!LightManager::sgAllowFullDynamicRangeLighting())
     {
         // makes sure texture doesn't affect DRL/Bloom composite shader...
-        GFX->setActiveRenderSurface(sgSurfaceChain[sgSurfaceChain.size() - 1]);
+        GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
+        myTarg->attachTexture(GFXTextureTarget::Color0, sgSurfaceChain[sgSurfaceChain.size()-1] );
+        GFX->setActiveRenderTarget( myTarg );
         GFX->clear(GFXClearTarget,
             ColorF(0, 0, 0, LightManager::sgDRLTarget), 1.0f, 0);
     }
@@ -334,10 +349,10 @@ void sgDRLSurfaceChain::sgRenderChain()
 
     GFX->setZEnable(true);
 
-    GFX->setActiveRenderSurface(NULL);
+    //GFX->setActiveRenderSurface(NULL);
     GFX->setAlphaBlendEnable(false);
 
-    GFX->popActiveRenderSurfaces();
+    GFX->popActiveRenderTarget();
 }
 
 void sgDRLSurfaceChain::sgRenderDRL()

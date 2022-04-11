@@ -156,6 +156,12 @@ public:
     /// repainted
     /// @param   updateUnion   (out) Rectangle which surrounds all dirty areas
     void buildUpdateUnion(RectI* updateUnion);
+
+    /// This will swap the buffers at the end of renderFrame. It was added for canvas
+    /// sub-classes in case they wanted to do some custom code before the buffer
+    /// flip occured.
+    virtual void swapBuffers();
+
     /// @}
 
     /// @name Canvas Content Management

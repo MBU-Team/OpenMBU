@@ -1617,7 +1617,7 @@ GBitmap* TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, Ma
     GFX->setZFunc(GFXCmpLessEqual);
 
     // set gfx up for render to texture
-    GFX->pushActiveRenderSurfaces();
+    //GFX->pushActiveRenderSurfaces();
 
     PROFILE_END(); // setup
 
@@ -1625,7 +1625,7 @@ GBitmap* TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, Ma
     // take a snapshot of the shape with a black background...
     GFXTexHandle blackTex;
     blackTex.set(bmpWidth, bmpHeight, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetProfile);
-    GFX->setActiveRenderSurface(blackTex);
+    //GFX->setActiveRenderSurface(blackTex);
 
     ColorI black(0, 0, 0, 0);
     GFX->clear(GFXClearZBuffer | GFXClearStencil | GFXClearTarget, black, 1.0f, 0);
@@ -1636,7 +1636,7 @@ GBitmap* TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, Ma
     // take a snapshot of the shape with a white background...
     GFXTexHandle whiteTex;
     whiteTex.set(bmpWidth, bmpHeight, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetProfile);
-    GFX->setActiveRenderSurface(whiteTex);
+    //GFX->setActiveRenderSurface(whiteTex);
 
     ColorI white(255, 255, 255, 255);
     GFX->clear(GFXClearZBuffer | GFXClearStencil | GFXClearTarget, white, 1.0f, 0);
@@ -1647,7 +1647,7 @@ GBitmap* TSShapeInstance::snapshot_softblend(U32 width, U32 height, bool mip, Ma
 
     // done rendering, reset render states
 
-    GFX->popActiveRenderSurfaces();
+    //GFX->popActiveRenderSurfaces();
 
     GFX->setZEnable(false);
     GFX->setBaseRenderState();

@@ -1291,7 +1291,7 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
 
     if (gammaBuff)
     {
-        GFX->pushActiveRenderSurfaces();
+        GFX->pushActiveRenderTarget();
         gammaBuff->setAsRenderTarget();
     }
 
@@ -1354,7 +1354,7 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
     // ---------------------------------------
     if (gammaBuff)
     {
-        GFX->popActiveRenderSurfaces();
+        GFX->popActiveRenderTarget();
         gammaBuff->copyToScreen(vp);
     }
     // ---------------------------------------
@@ -1371,12 +1371,24 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
     PROFILE_START(GFXEndScene);
     GFX->endScene();
     PROFILE_END();
-    PROFILE_START(SwapBuffers);
-    GFX->swapBuffers();
-    PROFILE_END();
+
+    swapBuffers();
 
     if (disableSPMode)
         gSPMode = false;
+}
+
+void GuiCanvas::swapBuffers()
+{
+    //AssertISV(mPlatformWindow, "GuiCanvas::swapBuffers - no window present!");
+    //if(!mPlatformWindow->isVisible())
+    //    return;
+
+    PROFILE_START(SwapBuffers);
+    //mPlatformWindow->getGFXTarget()->present();
+    if (Platform::getWindowGFXTarget())
+        Platform::getWindowGFXTarget()->present();
+    PROFILE_END();
 }
 
 void GuiCanvas::buildUpdateUnion(RectI* updateUnion)

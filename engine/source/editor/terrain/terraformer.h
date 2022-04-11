@@ -22,7 +22,7 @@
 #include "math/mRandom.h"
 #endif
 #ifndef _TERRAFORMER_NOISE_H_
-#include "editor/terraformerNoise.h"
+#include "editor/terrain/terraformerNoise.h"
 #endif
 #ifndef _GUIFILTERCTRL_H_
 #include "gui/editor/guiFilterCtrl.h"

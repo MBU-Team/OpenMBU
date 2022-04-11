@@ -48,6 +48,9 @@
 /// Define me to enable shader caching support (Unfinished and really only needed for some versions of Wine or Proton)
 //#define TORQUE_SHADER_CACHING
 
+/// Define me to enable torque terrain
+//#define TORQUE_TERRAIN
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 

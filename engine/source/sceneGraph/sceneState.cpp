@@ -7,7 +7,7 @@
 #include "sceneGraph/sgUtil.h"
 #include "sim/sceneObject.h"
 #include "sceneGraph/sceneGraph.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "platform/profiler.h"
 #include "gfx/gfxDevice.h"
 #include "gfx/primBuilder.h"

@@ -10,39 +10,62 @@
 #include "core/tVector.h"
 #include "gfx/gfxDevice.h"
 
-#define MAX_ADAPTER_NAME_LEN 512 // This seems pretty generous
-
-
-struct GFXAdapter
-{
-    char name[MAX_ADAPTER_NAME_LEN];
-
-    GFXAdapterType type;
-    U32 index;
-};
-
-// Implement this class per platform (This is just a class so it can be friend with GFXDevice
+/// Interface for tracking GFX adapters and initializing them into devices.
+/// @note Implement this class per platform.
+/// @note This is just a class so it can be friends with GFXDevice)
 class GFXInit
 {
 private:
-    ///Hold the adapters, primarily for device switching
-    static Vector<GFXAdapter> smAdapters;
+    /// List of known adapters.
+    static Vector<GFXAdapter*> smAdapters;
 
 public:
-    /// Enumerate all the graphics adapters on the system
-    /// @param   out   Vector to store results in
-    static void enumerateAdapters();
+
+    /// Prepares the adapter list.
+    static void init();
 
     /// Creates a GFXDevice based on an adapter from the
-    /// enumerateAdapters method and it can be retrieved
-    /// by calling GFXDevice::get(). This method will fail
-    /// if a GFXDevice exists already.
+    /// enumerateAdapters method.
+    ///
     /// @param   adapter   Graphics adapter to create device
-    static void createDevice(GFXAdapter adapter);
+    static GFXDevice *createDevice( GFXAdapter *adapter );
+
+    /// Enumerate all the graphics adapters on the system
+    static void enumerateAdapters();
 
     /// Get the enumerated adapters.  Should only call this after
     /// a call to enumerateAdapters.
-    static void getAdapters(Vector<GFXAdapter>* adapters);
+    static void getAdapters( Vector<GFXAdapter*> *adapters );
+
+    /// Get the number of available adapters.
+    static S32 getAdapterCount();
+
+    /// Chooses a suitable GFXAdapter, based on type, preferences, and fallbacks.
+    /// If the requested type is omitted, we use the prefs value.
+    /// If the requested type isn't found, we use fallbacks: OpenGL, NullDevice
+    /// This method never returns NULL.
+    static GFXAdapter *chooseAdapter( GFXAdapterType type);
+
+    /// Gets the first adapter of the requested type from the list of enumerated
+    /// adapters. Should only call this after a call to enumerateAdapters.
+    static GFXAdapter *getAdapterOfType( GFXAdapterType type );
+
+    /// Converts a GFXAdapterType to a string name. Useful for writing out prefs
+    static const char *getAdapterNameFromType( GFXAdapterType type );
+
+    /// Converts a string to a GFXAdapterType. Useful for reading in prefs.
+    static GFXAdapterType getAdapterTypeFromName( const char* name );
+
+    /// Returns a GFXVideoMode that describes the current state of the main monitor.
+    /// This should probably move to the abstract window manager
+    static GFXVideoMode getDesktopResolution();
+
+    /// Based on user preferences (or in the absence of a valid user selection,
+    /// a heuristic), return a "best" adapter.
+    static GFXAdapter *getBestAdapterChoice();
+
+    /// Get the initial video mode based on user preferences (or a heuristic).
+    static GFXVideoMode getInitialVideoMode();
 };
 
 #endif

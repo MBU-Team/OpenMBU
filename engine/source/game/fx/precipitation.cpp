@@ -9,7 +9,7 @@
 #include "console/consoleTypes.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sceneState.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "game/gameConnection.h"
 #include "game/player.h"
 #include "core/bitStream.h"

@@ -11,6 +11,7 @@
 #include "gfx/gFont.h"
 #include "gfx/gfxTextureHandle.h"
 #include "gfx/gfxCubemap.h"
+#include "gfx/gfxFence.h"
 #include "scenegraph/sceneGraph.h"
 #include "gfx/debugDraw.h"
 #include "gfx/gNewFont.h"
@@ -21,6 +22,7 @@ Vector<GFXDevice*> GFXDevice::smGFXDevice;
 S32 GFXDevice::smActiveDeviceIndex = -1;
 
 bool GFXDevice::smUseZPass = true;
+GFXDevice::DeviceEventSignal* GFXDevice::smSignalGFXDeviceEvent = NULL;
 
 
 //-----------------------------------------------------------------------------
@@ -30,6 +32,15 @@ GFXDevice* GFXDevice::get()
 {
     AssertFatal(smActiveDeviceIndex > -1 && smGFXDevice[smActiveDeviceIndex] != NULL, "Attempting to get invalid GFX device.");
     return smGFXDevice[smActiveDeviceIndex];
+}
+
+GFXDevice::DeviceEventSignal& GFXDevice::getDeviceEventSignal()
+{
+    if (smSignalGFXDeviceEvent == NULL)
+    {
+        smSignalGFXDeviceEvent = new GFXDevice::DeviceEventSignal();
+    }
+    return *smSignalGFXDeviceEvent;
 }
 
 //-----------------------------------------------------------------------------
@@ -77,9 +88,16 @@ GFXDevice::GFXDevice()
 
     // misc
     mAllowRender = true;
+
+    mResourceListHead = NULL;
 }
 
 //-----------------------------------------------------------------------------
+
+void GFXDevice::deviceInited()
+{
+    getDeviceEventSignal().trigger(deInit);
+}
 
 // Static method
 void GFXDevice::create()
@@ -94,6 +112,14 @@ void GFXDevice::destroy()
 {
     // Make this release its buffer.
     PrimBuild::shutdown();
+
+    // Let people know we are shutting down
+    if (smSignalGFXDeviceEvent)
+    {
+        smSignalGFXDeviceEvent->trigger(deDestroy);
+        delete smSignalGFXDeviceEvent;
+        smSignalGFXDeviceEvent = NULL;
+    }
 
     // Destroy this way otherwise we are modifying the loop end case
     U32 arraySize = smGFXDevice.size();
@@ -112,7 +138,7 @@ void GFXDevice::destroy()
         GFXDevice* curr = smGFXDevice[0];
 
         smActiveDeviceIndex = 0;
-        smGFXDevice.pop_front();
+        //smGFXDevice.pop_front();
 
         SAFE_DELETE(curr);
     }
@@ -137,30 +163,84 @@ GFXDevice::~GFXDevice()
     if (smActiveDeviceIndex == mDeviceIndex)
         smActiveDeviceIndex = 0;
 
+    // Loop through all the GFX devices to find ourself.  If we find ourself,
+    // remove ourself from the vector and decrease the device index of all devices
+    // which came after us.
+    for(Vector<GFXDevice *>::iterator i = smGFXDevice.begin(); i != smGFXDevice.end(); i++)
+    {
+        if( (*i)->mDeviceIndex == mDeviceIndex )
+        {
+            for (Vector<GFXDevice *>::iterator j = i + 1; j != smGFXDevice.end(); j++)
+                (*j)->mDeviceIndex--;
+            smGFXDevice.erase( i );
+            break;
+        }
+    }
+
+    /// In the future, we may need to separate out this code block that clears out the GFXDevice refptrs, so that
+    /// derived classes can clear them out before releasing the device or something. BTR
+    mSfxBackBuffer = NULL;
+
     // Clean up our current PB, if any.
     mCurrentPrimitiveBuffer = NULL;
     mCurrentVertexBuffer = NULL;
 
     bool found = false;
 
-    for (Vector<GFXDevice*>::iterator i = smGFXDevice.begin(); i != smGFXDevice.end(); i++)
+//    for (Vector<GFXDevice*>::iterator i = smGFXDevice.begin(); i != smGFXDevice.end(); i++)
+//    {
+//        if ((*i)->mDeviceIndex == mDeviceIndex)
+//        {
+//            smGFXDevice.erase(i);
+//            found = true;
+//        }
+//        else if (found == true)
+//        {
+//            (*i)->mDeviceIndex--;
+//        }
+//    }
+
+    // Clear out our current texture references
+    for (U32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
     {
-        if ((*i)->mDeviceIndex == mDeviceIndex)
-        {
-            smGFXDevice.erase(i);
-            found = true;
-        }
-        else if (found == true)
-        {
-            (*i)->mDeviceIndex--;
-        }
+        mCurrentTexture[i] = NULL;
+        // TODO: This part may be important
+        //mNewTexture[i] = NULL;
+        //mCurrentCubemap[i] = NULL;
+        //mNewCubemap[i] = NULL;
     }
 
-    if (mTextureManager)
+    // Check for resource leaks
+#ifdef TORQUE_DEBUG
+    //GFXTextureObject::dumpActiveTOs();
+    GFXPrimitiveBuffer::dumpActivePBs();
+#endif
+
+    SAFE_DELETE( mTextureManager );
+    //SAFE_DELETE( mDrawer );
+
+#ifdef TORQUE_GFX_STATE_DEBUG
+    SAFE_DELETE( mDebugStateManager );
+#endif
+
+    /// End Block above BTR
+
+    // -- Clear out resource list
+    // Note: our derived class destructor will have already released resources.
+    // Clearing this list saves us from having our resources (which are not deleted
+    // just released) turn around and try to remove themselves from this list.
+    while (mResourceListHead)
     {
-        delete mTextureManager;
-        mTextureManager = NULL;
+        GFXResource * head = mResourceListHead;
+        mResourceListHead = head->mNextResource;
+
+        head->mPrevResource = NULL;
+        head->mNextResource = NULL;
+        head->mOwningDevice = NULL;
     }
+
+    // mark with bad device index so we can detect already deleted device
+    mDeviceIndex = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -255,6 +335,8 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
                 st.currentValue = st.newValue;
             }
         }
+
+        _updateRenderTargets();
 
         if (rememberToEndScene)
             GFX->endScene();
@@ -380,6 +462,8 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
         }
     }
 
+    _updateRenderTargets();
+
 #ifdef TORQUE_DEBUG_RENDER
     doParanoidStateCheck();
 #endif
@@ -436,7 +520,7 @@ void GFXDevice::drawPrimitives()
 //-------------------------------------------------------------
 ConsoleFunction(getDisplayDeviceList, const char*, 1, 1, "Returns a tab-seperated string of the detected devices.")
 {
-    Vector<GFXAdapter> adapters;
+    Vector<GFXAdapter*> adapters;
     GFXInit::getAdapters(&adapters);
 
     U32 deviceCount = adapters.size();
@@ -445,14 +529,14 @@ ConsoleFunction(getDisplayDeviceList, const char*, 1, 1, "Returns a tab-seperate
 
     U32 strLen = 0, i;
     for (i = 0; i < deviceCount; i++)
-        strLen += (dStrlen(adapters[i].name) + 1);
+        strLen += (dStrlen(adapters[i]->mName) + 1);
 
     char* returnString = Con::getReturnBuffer(strLen);
-    dStrcpy(returnString, adapters[0].name);
+    dStrcpy(returnString, adapters[0]->mName);
     for (i = 1; i < deviceCount; i++)
     {
         dStrcat(returnString, "\t");
-        dStrcat(returnString, adapters[i].name);
+        dStrcat(returnString, adapters[i]->mName);
     }
 
     return(returnString);
@@ -1593,6 +1677,647 @@ void GFXDevice::unregisterTexCallback(S32 handle)
     mTextureManager->unregisterTexCallback(handle);
 }
 
+void GFXDevice::setInitialGFXState()
+{
+    // Implementation plan:
+    // Create macro which respects debug state #define, sets the proper render state
+    // and creates a no-break watch on that state so that a report may be run at
+    // end of frame. Repeat process for sampler/texture stage states.
+
+    // Future work:
+    // Some simple "red flag" logic should be pretty trivial to implement here that
+    // could warn about a file-name setting a state and not restoring it's value
+
+    // CodeReview: Should there be some way to reset value of a state back to its
+    // 'initial' value? Not like a dglSetCanonicalState, but more like a:
+    //    GFX->setSomeRenderState(); // No args means default value
+    //
+    // When we switch back to state blocks, does a canonical state actually make
+    // *more* sense now?
+    // [6/5/2007 Pat]
+    //
+    // Another approach is to be able to "mark" the beginning of a new render setup,
+    // and from that point until a draw primitive track anything which was dirty
+    // before the mark  and not touched after the mark.  That way we can rely on a
+    // clean rendering slate without slamming all the states.  Something like this:
+    //    Default value of state A=a.  Assume previous render left A=a'.
+    //    If after calling markInitState() we never touch state A, it will get set to value a on first draw.
+    //    If we touch it, it will not get set back to default.
+    //    If, OTOH, the previous draw had left it in default state, it would not get reset.
+    // So algo would be that when markInitState() is called all the dirty states would get
+    // added to a linked list.  As states are touched they would be removed from this list.  When draw
+    // call is made, all remaining states would be slammed.  This works out better than the dglCannonical
+    // approach because we don't end up setting A=a' then A=a (on dglCannonical), then A=a' because
+    // next render wants the same state.  Particularly important for things like shader constants which
+    // our state cacher isn't cacheing.
+    // Note: markInitState() not meant to be actual name of method, just for illustration purposes.
+    // [6/30/2007 Clark]
+
+    // This macro will help this function out, because we don't actually want to
+    // use the GFX device methods to set the states. This is a forced-state set
+    // that, while it will notify the state-cache, it occurs on the graphics device
+    // immediately. If state debugging is enabled, then the macro will also set up
+    // a watch on each state and provide state history at end of frame. This will
+    // be very useful for figuring out what code is not cleaning up states.
+#ifdef TORQUE_GFX_STATE_DEBUG
+    #  define SET_INITIAL_RENDER_STATE( state, val ) \
+   initRenderState( state, val ); \
+   setRenderState( state, val ); \
+   mDebugStateManager->WatchState( GFXDebugState::GFXRenderStateEvent, state )
+#else
+#  define SET_INITIAL_RENDER_STATE( state, val ) \
+   initRenderState( state, val ); \
+   setRenderState( state, val )
+#endif
+
+    // Set up all render states with the macro
+    SET_INITIAL_RENDER_STATE( GFXRSZEnable,          false );
+    SET_INITIAL_RENDER_STATE( GFXRSZWriteEnable,     true );
+    SET_INITIAL_RENDER_STATE( GFXRSLighting,         false );
+    SET_INITIAL_RENDER_STATE( GFXRSAlphaBlendEnable, false );
+    SET_INITIAL_RENDER_STATE( GFXRSAlphaTestEnable,  false );
+    SET_INITIAL_RENDER_STATE( GFXRSZFunc,            GFXCmpAlways );
+
+    SET_INITIAL_RENDER_STATE( GFXRSSrcBlend,         GFXBlendOne );
+    SET_INITIAL_RENDER_STATE( GFXRSDestBlend,        GFXBlendZero );
+
+    SET_INITIAL_RENDER_STATE( GFXRSAlphaFunc,        GFXCmpAlways );
+    SET_INITIAL_RENDER_STATE( GFXRSAlphaRef,         0 );
+
+    SET_INITIAL_RENDER_STATE( GFXRSStencilFail,      GFXStencilOpKeep );
+    SET_INITIAL_RENDER_STATE( GFXRSStencilZFail,     GFXStencilOpKeep );
+    SET_INITIAL_RENDER_STATE( GFXRSStencilPass,      GFXStencilOpKeep );
+
+    SET_INITIAL_RENDER_STATE( GFXRSStencilFunc,      GFXCmpAlways );
+    SET_INITIAL_RENDER_STATE( GFXRSStencilRef,       0 );
+    SET_INITIAL_RENDER_STATE( GFXRSStencilMask,      0xFFFFFFFF );
+
+    SET_INITIAL_RENDER_STATE( GFXRSStencilWriteMask, 0xFFFFFFFF );
+
+    SET_INITIAL_RENDER_STATE( GFXRSStencilEnable,    false );
+
+    SET_INITIAL_RENDER_STATE( GFXRSCullMode,         GFXCullCCW );
+
+    SET_INITIAL_RENDER_STATE( GFXRSColorVertex,      true );
+
+    SET_INITIAL_RENDER_STATE( GFXRSDepthBias,        0 );
+
+    // Add more here using the macro
+
+#undef SET_INITIAL_RENDER_STATE
+
+    // Do the same thing for Texture-Stage states. In this case, all color-op's
+    // will get set to disable. This is actually the proper method for disabling
+    // texturing on a texture-stage. Setting the texture to NULL, is not.
+#ifdef TORQUE_GFX_STATE_DEBUG
+    #  define SET_INITIAL_TS_STATE( state, val, stage ) \
+   initTextureState( stage, state, val ); \
+   setTextureStageState( stage, state, val ); \
+   mDebugStateManager->WatchState( GFXDebugState::GFXTextureStageStateEvent, state, stage )
+#else
+#  define SET_INITIAL_TS_STATE( state, val, stage ) \
+   initTextureState( stage, state, val ); \
+   setTextureStageState( stage, state, val )
+#endif
+
+    // Init these states across all texture stages
+    for( int i = 0; i < getNumSamplers(); i++ )
+    {
+        SET_INITIAL_TS_STATE( GFXTSSColorOp, GFXTOPDisable, i );
+
+        // Add more here using the macro
+    }
+#undef SET_INITIAL_TS_STATE
+
+#ifdef TORQUE_GFX_STATE_DEBUG
+    #  define SET_INITIAL_SAMPLER_STATE( state, val, stage ) \
+   initSamplerState( stage, state, val ); \
+   setSamplerState( stage, state, val ); \
+   mDebugStateManager->WatchState( GFXDebugState::GFXSamplerStateEvent, state, stage )
+#else
+#  define SET_INITIAL_SAMPLER_STATE( state, val, stage ) \
+   initSamplerState( stage, state, val ); \
+   setSamplerState( stage, state, val )
+#endif
+
+    // Init these states across all texture stages
+    for( int i = 0; i < getNumSamplers(); i++ )
+    {
+        // Set all samplers to clamp tex coordinates outside of their range
+        SET_INITIAL_SAMPLER_STATE( GFXSAMPAddressU, GFXAddressClamp, i );
+        SET_INITIAL_SAMPLER_STATE( GFXSAMPAddressV, GFXAddressClamp, i );
+        SET_INITIAL_SAMPLER_STATE( GFXSAMPAddressW, GFXAddressClamp, i );
+
+        // And point sampling for everyone
+        SET_INITIAL_SAMPLER_STATE( GFXSAMPMagFilter, GFXTextureFilterPoint, i );
+        SET_INITIAL_SAMPLER_STATE( GFXSAMPMinFilter, GFXTextureFilterPoint, i );
+        SET_INITIAL_SAMPLER_STATE( GFXSAMPMipFilter, GFXTextureFilterPoint, i );
+
+        // Add more here using the macro
+    }
+#undef SET_INITIAL_SAMPLER_STATE
+}
+
+//------------------------------------------------------------------------------
+
+#ifdef TORQUE_GFX_STATE_DEBUG
+void GFXDevice::processStateWatchHistory( const GFXDebugState::GFXDebugStateWatch *watch )
+{
+   // This method will get called once per no-break watch, at end of frame, for
+   // every frame that the watch is active. The accessors on the state watch
+   // should provide all of the information needed to look at the history of
+   // the state that was being tracked.
+}
+#endif
+
+//------------------------------------------------------------------------------
+
+// These two methods I modified because I may want to catch these events for state
+// debugging. [6/7/2007 Pat]
+inline void GFXDevice::beginScene()
+{
+    beginSceneInternal();
+}
+
+//------------------------------------------------------------------------------
+
+inline void GFXDevice::endScene()
+{
+    endSceneInternal();
+}
+
+//------------------------------------------------------------------------------
+
+void GFXDevice::_updateRenderTargets()
+{
+    // Re-set the RT if needed.
+    GFXTarget *targ = getActiveRenderTarget();
+
+    if( !targ )
+        return;
+
+    if( targ->isPendingState() )
+        setActiveRenderTarget( targ );
+}
+
+void GFXDevice::pushActiveRenderTarget()
+{
+    // Duplicate last item on the stack.
+    mRTStack.push_back(mCurrentRT);
+}
+
+void GFXDevice::popActiveRenderTarget()
+{
+    // Pop the last item on the stack, set next item down.
+    AssertFatal(mRTStack.size() > 0, "GFXD3D9Device::popActiveRenderTarget - stack is empty!");
+    setActiveRenderTarget(mRTStack.last());
+    mRTStack.pop_back();
+}
+
+inline GFXTarget *GFXDevice::getActiveRenderTarget()
+{
+    return mCurrentRT;
+}
+
+#ifndef TORQUE_SHIPPING
+void GFXDevice::_dumpStatesToFile( const char *fileName ) const
+{
+#ifdef TORQUE_GFX_STATE_DEBUG
+    static int stateDumpNum = 0;
+   static char nameBuffer[256];
+
+   dSprintf( nameBuffer, sizeof(nameBuffer), "demo/%s_%d.gfxstate", fileName, stateDumpNum );
+
+
+   FileStream stream;
+
+   if( ResourceManager->openFileForWrite( stream, nameBuffer ) )
+   {
+      // Report
+      Con::printf( "--Dumping GFX States to file: %s", nameBuffer );
+
+      // Increment state dump #
+      stateDumpNum++;
+
+      // Dump render states
+      stream.writeLine( (U8 *)"Render States" );
+      for( U32 state = GFXRenderState_FIRST; state < GFXRenderState_COUNT; state++ )
+         stream.writeLine( (U8 *)avar( "%s - %s", GFXStringRenderState[state], GFXStringRenderStateValueLookup[state]( mStateTracker[state].newValue ) ) );
+
+      // Dump texture stage states
+      for( U32 stage = 0; stage < getNumSamplers(); stage++ )
+      {
+         stream.writeLine( (U8 *)avar( "Texture Stage: %d", stage ) );
+         for( U32 state = GFXTSS_FIRST; state < GFXTSS_COUNT; state++ )
+            stream.writeLine( (U8 *)avar( "::%s - %s", GFXStringTextureStageState[state], GFXStringTextureStageStateValueLookup[state]( mTextureStateTracker[stage][state].newValue ) ) );
+      }
+
+      // Dump sampler states
+      for( U32 stage = 0; stage < getNumSamplers(); stage++ )
+      {
+         stream.writeLine( (U8 *)avar( "Sampler Stage: %d\n", stage ) );
+         for( U32 state = GFXSAMP_FIRST; state < GFXSAMP_COUNT; state++ )
+            stream.writeLine( (U8 *)avar( "::%s - %s", GFXStringSamplerState[state], GFXStringSamplerStateValueLookup[state]( mSamplerStateTracker[stage][state].newValue ) ) );
+      }
+   }
+#endif
+}
+#endif
+
+void GFXDevice::listResources(bool unflaggedOnly)
+{
+    U32 numTextures = 0, numShaders = 0, numRenderToTextureTargs = 0, numWindowTargs = 0;
+    U32 numCubemaps = 0, numVertexBuffers = 0, numPrimitiveBuffers = 0, numFences = 0;
+    GFXResource* walk = mResourceListHead;
+    while(walk)
+    {
+        if(unflaggedOnly && walk->isFlagged())
+        {
+            walk = walk->getNextResource();
+            continue;
+        }
+
+        if(dynamic_cast<GFXTextureObject*>(walk))
+            numTextures++;
+        else if(dynamic_cast<GFXShader*>(walk))
+            numShaders++;
+        else if(dynamic_cast<GFXTextureTarget*>(walk))
+            numRenderToTextureTargs++;
+        else if(dynamic_cast<GFXWindowTarget*>(walk))
+            numWindowTargs++;
+        else if(dynamic_cast<GFXCubemap*>(walk))
+            numCubemaps++;
+        else if(dynamic_cast<GFXVertexBuffer*>(walk))
+            numVertexBuffers++;
+        else if(dynamic_cast<GFXPrimitiveBuffer*>(walk))
+            numPrimitiveBuffers++;
+        else if(dynamic_cast<GFXFence*>(walk))
+            numFences++;
+        else
+            Con::warnf("Unknown resource: %x", walk);
+
+        walk = walk->getNextResource();
+    }
+    const char* flag = unflaggedOnly ? "unflagged" : "allocated";
+
+    Con::printf("GFX currently has:");
+    Con::printf("   %i %s textures", numTextures, flag);
+    Con::printf("   %i %s shaders", numShaders, flag);
+    Con::printf("   %i %s texture targets", numRenderToTextureTargs, flag);
+    Con::printf("   %i %s window targets", numWindowTargs, flag);
+    Con::printf("   %i %s cubemaps", numCubemaps, flag);
+    Con::printf("   %i %s vertex buffers", numVertexBuffers, flag);
+    Con::printf("   %i %s primitive buffers", numPrimitiveBuffers, flag);
+    Con::printf("   %i %s fences", numFences, flag);
+}
+
+void GFXDevice::fillResourceVectors(const char* resNames, bool unflaggedOnly, Vector<GFXTextureObject*> &textureObjects,
+                                    Vector<GFXTextureTarget*> &textureTargets, Vector<GFXWindowTarget*> &windowTargets,
+                                    Vector<GFXVertexBuffer*> &vertexBuffers, Vector<GFXPrimitiveBuffer*> &primitiveBuffers,
+                                    Vector<GFXFence*> &fences, Vector<GFXCubemap*> &cubemaps, Vector<GFXShader*> &shaders)
+{
+    bool describeTexture = true, describeTextureTarget = true, describeWindowTarget = true, describeVertexBuffer = true,
+        describePrimitiveBuffer = true, describeFence = true, describeCubemap = true, describeShader = true;
+
+    // If we didn't specify a string of names, we'll print all of them
+    if(resNames && resNames[0] != '\0')
+    {
+        // If we did specify a string of names, determine which names
+        describeTexture =          (dStrstr(resNames, "GFXTextureObject")    != NULL);
+        describeTextureTarget =    (dStrstr(resNames, "GFXTextureTarget")    != NULL);
+        describeWindowTarget =     (dStrstr(resNames, "GFXWindowTarget")     != NULL);
+        describeVertexBuffer =     (dStrstr(resNames, "GFXVertexBuffer")     != NULL);
+        describePrimitiveBuffer =  (dStrstr(resNames, "GFXPrimitiveBuffer")   != NULL);
+        describeFence =            (dStrstr(resNames, "GFXFence")            != NULL);
+        describeCubemap =          (dStrstr(resNames, "GFXCubemap")          != NULL);
+        describeShader =           (dStrstr(resNames, "GFXShader")           != NULL);
+    }
+
+    // Start going through the list
+    GFXResource* walk = mResourceListHead;
+    while(walk)
+    {
+        // If we only want unflagged resources, skip all flagged resources
+        if(unflaggedOnly && walk->isFlagged())
+        {
+            walk = walk->getNextResource();
+            continue;
+        }
+
+        // All of the following checks go through the same logic.
+        // if(describingThisResource)
+        // {
+        //    ResourceType* type = dynamic_cast<ResourceType*>(walk)
+        //    if(type)
+        //    {
+        //       typeVector.push_back(type);
+        //       walk = walk->getNextResource();
+        //       continue;
+        //    }
+        // }
+
+        if(describeTexture)
+        {
+            GFXTextureObject* tex = dynamic_cast<GFXTextureObject*>(walk);
+            {
+                if(tex)
+                {
+                    textureObjects.push_back(tex);
+                    walk = walk->getNextResource();
+                    continue;
+                }
+            }
+        }
+        if(describeShader)
+        {
+            GFXShader* shd = dynamic_cast<GFXShader*>(walk);
+            if(shd)
+            {
+                shaders.push_back(shd);
+                walk = walk->getNextResource();
+                continue;
+            }
+        }
+        if(describeVertexBuffer)
+        {
+            GFXVertexBuffer* buf = dynamic_cast<GFXVertexBuffer*>(walk);
+            if(buf)
+            {
+                vertexBuffers.push_back(buf);
+                walk = walk->getNextResource();
+                continue;
+            }
+        }
+        if(describePrimitiveBuffer)
+        {
+            GFXPrimitiveBuffer* buf = dynamic_cast<GFXPrimitiveBuffer*>(walk);
+            if(buf)
+            {
+                primitiveBuffers.push_back(buf);
+                walk = walk->getNextResource();
+                continue;
+            }
+        }
+        if(describeTextureTarget)
+        {
+            GFXTextureTarget* targ = dynamic_cast<GFXTextureTarget*>(walk);
+            if(targ)
+            {
+                textureTargets.push_back(targ);
+                walk = walk->getNextResource();
+                continue;
+            }
+        }
+        if(describeWindowTarget)
+        {
+            GFXWindowTarget* targ = dynamic_cast<GFXWindowTarget*>(walk);
+            if(targ)
+            {
+                windowTargets.push_back(targ);
+                walk = walk->getNextResource();
+                continue;
+            }
+        }
+        if(describeCubemap)
+        {
+            GFXCubemap* cube = dynamic_cast<GFXCubemap*>(walk);
+            if(cube)
+            {
+                cubemaps.push_back(cube);
+                walk = walk->getNextResource();
+                continue;
+            }
+        }
+        if(describeFence)
+        {
+            GFXFence* fence = dynamic_cast<GFXFence*>(walk);
+            if(fence)
+            {
+                fences.push_back(fence);
+                walk = walk->getNextResource();
+                continue;
+            }
+        }
+        // Wasn't something we were looking for
+        walk = walk->getNextResource();
+    }
+}
+
+/// Helper class for GFXDevice::describeResources.
+class DescriptionOutputter
+{
+    /// Are we writing to a file?
+    bool mWriteToFile;
+
+    /// File if we are writing to a file
+    FileStream mFile;
+public:
+    DescriptionOutputter(const char* file)
+    {
+        mWriteToFile = false;
+        // If we've been given what could be a valid file path, open it.
+        if(file && file[0] != '\0')
+        {
+            mWriteToFile = mFile.open(file, FileStream::Write);
+
+            // Note that it is safe to retry.  If this is hit, we'll just write to the console instead of to the file.
+            AssertFatal(mWriteToFile, avar("DescriptionOutputter::DescriptionOutputter - could not open file %s", file));
+        }
+    }
+
+    ~DescriptionOutputter()
+    {
+        // Close the file
+        if(mWriteToFile)
+            mFile.close();
+    }
+
+    /// Writes line to the file or to the console, depending on what we want.
+    void write(const char* line)
+    {
+        if(mWriteToFile)
+            mFile.writeLine((U8*)line);
+        else
+            Con::printf(line);
+    }
+};
+
+void GFXDevice::describeResources(const char* resNames, const char* filePath, bool unflaggedOnly)
+{
+    // Vectors of objects.  By having these we can go through the list once.
+    Vector<GFXTextureObject*> textureObjects(__FILE__, __LINE__);
+    Vector<GFXTextureTarget*> textureTargets(__FILE__, __LINE__);
+    Vector<GFXWindowTarget*> windowTargets(__FILE__, __LINE__);
+    Vector<GFXVertexBuffer*> vertexBuffers(__FILE__, __LINE__);
+    Vector<GFXPrimitiveBuffer*> primitiveBuffers(__FILE__, __LINE__);
+    Vector<GFXFence*> fences(__FILE__, __LINE__);
+    Vector<GFXCubemap*> cubemaps(__FILE__, __LINE__);
+    Vector<GFXShader*> shaders(__FILE__, __LINE__);
+
+    // Fill the vectors with the right resources
+    fillResourceVectors(resNames, unflaggedOnly, textureObjects, textureTargets, windowTargets, vertexBuffers, primitiveBuffers,
+                        fences, cubemaps, shaders);
+
+    // Helper object
+    DescriptionOutputter output(filePath);
+
+    // Print the info to the file
+    // Note that we check if we have any objects of that type.
+    char descriptionBuffer[996];
+    char writeBuffer[1024];
+    if(textureObjects.size())
+    {
+        output.write("--------Dumping GFX texture descriptions...----------");
+        for(U32 i = 0; i < textureObjects.size(); i++)
+        {
+            textureObjects[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", textureObjects[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+
+    if(textureTargets.size())
+    {
+        output.write("--------Dumping GFX texture target descriptions...----------");
+        for(U32 i = 0; i < textureTargets.size(); i++)
+        {
+            textureTargets[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", textureTargets[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+
+    if(windowTargets.size())
+    {
+        output.write("--------Dumping GFX window target descriptions...----------");
+        for(U32 i = 0; i < windowTargets.size(); i++)
+        {
+            windowTargets[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", windowTargets[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+
+    if(vertexBuffers.size())
+    {
+        output.write("--------Dumping GFX vertex buffer descriptions...----------");
+        for(U32 i = 0; i < vertexBuffers.size(); i++)
+        {
+            vertexBuffers[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", vertexBuffers[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+
+    if(primitiveBuffers.size())
+    {
+        output.write("--------Dumping GFX primitive buffer descriptions...----------");
+        for(U32 i = 0; i < primitiveBuffers.size(); i++)
+        {
+            primitiveBuffers[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", primitiveBuffers[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+
+    if(fences.size())
+    {
+        output.write("--------Dumping GFX fence descriptions...----------");
+        for(U32 i = 0; i < fences.size(); i++)
+        {
+            fences[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", fences[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+
+    if(cubemaps.size())
+    {
+        output.write("--------Dumping GFX cubemap descriptions...----------");
+        for(U32 i = 0; i < cubemaps.size(); i++)
+        {
+            cubemaps[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", cubemaps[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+
+    if(shaders.size())
+    {
+        output.write("--------Dumping GFX shader descriptions...----------");
+        for(U32 i = 0; i < shaders.size(); i++)
+        {
+            shaders[i]->describeSelf(descriptionBuffer, sizeof(descriptionBuffer));
+            dSprintf(writeBuffer, sizeof(writeBuffer), "Addr: %x %s", shaders[i], descriptionBuffer);
+            output.write(writeBuffer);
+        }
+        output.write("--------------------Done---------------------");
+        output.write("");
+    }
+}
+
+
+void GFXDevice::flagCurrentResources()
+{
+    GFXResource* walk = mResourceListHead;
+    while(walk)
+    {
+        walk->setFlag();
+        walk = walk->getNextResource();
+    }
+}
+
+void GFXDevice::clearResourceFlags()
+{
+    GFXResource* walk = mResourceListHead;
+    while(walk)
+    {
+        walk->clearFlag();
+        walk = walk->getNextResource();
+    }
+}
+
+ConsoleFunction(listGFXResources, void, 1, 2, "(bool unflaggedOnly = false)")
+{
+    bool unflaggedOnly = false;
+    if(argc == 2)
+        unflaggedOnly = dAtob(argv[1]);
+    GFX->listResources(unflaggedOnly);
+}
+
+ConsoleFunction(flagCurrentGFXResources, void, 1, 1, "")
+{
+    GFX->flagCurrentResources();
+}
+
+ConsoleFunction(clearGFXResourceFlags, void, 1, 1, "")
+{
+    GFX->clearResourceFlags();
+}
+
+ConsoleFunction(describeGFXResources, void, 3, 4, "(string resourceNames, string filePath, bool unflaggedOnly = false)\n"
+                                                  " If resourceNames is "", this function describes all resources.\n"
+                                                  " If filePath is "", this function writes the resource descriptions to the console")
+{
+    bool unflaggedOnly = false;
+    if(argc == 4)
+        unflaggedOnly = dAtob(argv[3]);
+    GFX->describeResources(argv[1], argv[2], unflaggedOnly);
+}
 
 //-----------------------------------------------------------------------------
 // Get pixel shader version - for script

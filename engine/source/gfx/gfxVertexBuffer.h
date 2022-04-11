@@ -14,11 +14,13 @@
 #include "core/refBase.h"
 #endif
 
+#include "gfx/gfxResource.h"
+
 
 //*****************************************************************************
 // GFXVertexBuffer - base vertex buffer class
 //*****************************************************************************
-class GFXVertexBuffer : public RefBase
+class GFXVertexBuffer : public RefBase, public GFXResource
 {
     friend class GFXVertexBufferHandleBase;
     friend class GFXDevice;
@@ -49,8 +51,11 @@ public:
     virtual void lock(U32 vertexStart, U32 vertexEnd, void** vertexPtr) = 0;
     virtual void unlock() = 0;
     virtual void prepare() = 0;
-    virtual void setSize(U32 newSize) = 0;
+    //virtual void setSize(U32 newSize) = 0;
 
+
+    // GFXResource interface
+    virtual void describeSelf(char* buffer, U32 sizeOfBuffer);
 };
 
 

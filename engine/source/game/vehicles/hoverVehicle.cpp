@@ -18,7 +18,9 @@
 #include "game/fx/particleEmitter.h"
 #include "math/mathIO.h"
 #include "materials/materialPropertyMap.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/waterBlock.h"
+#endif
 
 IMPLEMENT_CO_DATABLOCK_V1(HoverVehicleData);
 IMPLEMENT_CO_NETOBJECT_V1(HoverVehicle);
@@ -598,6 +600,7 @@ void HoverVehicle::updateForces(F32 /*dt*/)
             normal[j] = rinfo.normal;
         }
 
+#ifdef TORQUE_TERRAIN
         // Check the waterblock directly
         SimpleQueryList sql;
         mSceneManager->getWaterObjectList(sql);
@@ -610,6 +613,7 @@ void HoverVehicle::updateForces(F32 /*dt*/)
                 break;
             }
         }
+#endif
     }
 
     for (j = 0; j < 2; j++) {

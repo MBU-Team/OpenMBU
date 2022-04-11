@@ -13,9 +13,11 @@
 #include "math/mMath.h"
 #include "console/simBase.h"
 #include "console/console.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "terrain/terrRender.h"
 #include "terrain/waterBlock.h"
+#endif
 #include "game/collisionTest.h"
 #include "game/showTSShape.h"
 #include "sceneGraph/sceneGraph.h"
@@ -29,7 +31,7 @@
 #include "core/fileStream.h"
 #include "gui/core/guiCanvas.h"
 #include "sceneGraph/sceneLighting.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "game/ambientAudioManager.h"
 #include "core/frameAllocator.h"
 #include "sceneGraph/detailManager.h"
@@ -556,6 +558,7 @@ ConsoleFunction(getControlObjectAltitude, const char*, 1, 1, "Get distance from 
             else
                 pSB->getTransform().getColumn(3, &pos);
 
+#ifdef TORQUE_TERRAIN
             TerrainBlock* pBlock = getCurrentClientSceneGraph()->getCurrentTerrain();
             if (pBlock != NULL) {
                 Point3F terrPos = pos;
@@ -571,6 +574,7 @@ ConsoleFunction(getControlObjectAltitude, const char*, 1, 1, "Get distance from 
                     pos.z -= terrPos.z;
                 }
             }
+#endif
 
             char* retBuf = Con::getReturnBuffer(128);
             dSprintf(retBuf, 128, "%g", mFloor(getMax(pos.z, 0.f)));

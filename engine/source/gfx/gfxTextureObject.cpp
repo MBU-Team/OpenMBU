@@ -132,3 +132,13 @@ void GFXTextureObject::kill()
 
     mDead = true;
 }
+
+void GFXTextureObject::describeSelf( char* buffer, U32 sizeOfBuffer )
+{
+    dSprintf(buffer, sizeOfBuffer, " (width: %4d, height: %4d)  profile: %s   creation path: %s", getWidth(),
+#if defined(TORQUE_DEBUG) && defined(TORQUE_ENABLE_PROFILER)
+        getHeight(), mProfile->getName(), mDebugCreationPath);
+#else
+             getHeight(), mProfile->getName(), "");
+#endif
+}

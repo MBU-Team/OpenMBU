@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "editor/editTSCtrl.h"
@@ -9,7 +9,9 @@
 #include "game/vehicles/wheeledVehicle.h"
 #include "game/gameConnection.h"
 #include "sceneGraph/sceneGraph.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrRender.h"
+#endif
 #include "game/shapeBase.h"
 #include "gui/core/guiCanvas.h"
 #include "ts/tsShape.h"
@@ -108,6 +110,7 @@ void SceneLighting::InteriorProxy::light(LightInfo* light)
                 gLighting->addInterior(&shadowVolume, *static_cast<InteriorProxy*>(*itr), light, SceneLighting::SHADOW_DETAIL);
         }
 
+#ifdef TORQUE_TERRAIN
         // insert the terrain squares
         if (gLighting->isTerrain((*itr)->mObj))
         {
@@ -168,6 +171,7 @@ void SceneLighting::InteriorProxy::light(LightInfo* light)
                 }
             }
         }
+#endif
     }
 
     // light all details

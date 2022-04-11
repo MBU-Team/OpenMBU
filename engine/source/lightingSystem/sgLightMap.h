@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #ifndef _SGLIGHTMAP_H_
@@ -149,6 +149,7 @@ protected:
     U32 sgAreAdjacent(U32 surface1, U32 surface2);
 };
 
+#ifdef TORQUE_TERRAIN
 /**
  * Used to generate terrain light maps.
  */
@@ -185,6 +186,6 @@ public:
     virtual void sgSetupLighting();
     virtual void sgCalculateLighting(LightInfo* light);
 };
-
+#endif
 
 #endif//_SGLIGHTMAP_H_

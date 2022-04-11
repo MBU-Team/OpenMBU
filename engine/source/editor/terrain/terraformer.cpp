@@ -8,7 +8,7 @@
 #include "core/fileStream.h"
 #include "gfx/gBitmap.h"
 #include "math/mRandom.h"
-#include "editor/terraformer.h"
+#include "editor/terrain/terraformer.h"
 
 #include "core/dnet.h"
 #include "game/shapeBase.h"
@@ -16,7 +16,7 @@
 
 #include "editor/guiTerrPreviewCtrl.h"
 
-
+IMPLEMENT_CONOBJECT(Terraformer);
 
 S32* Heightfield::zoneOffset = NULL;
 U32  Heightfield::instance = 0;

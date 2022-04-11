@@ -7,7 +7,7 @@
 #define _TERRAINACTIONS_H_
 
 #ifndef _TERRAINEDITOR_H_
-#include "editor/terrainEditor.h"
+#include "editor/terrain/terrainEditor.h"
 #endif
 #ifndef _GUIFILTERCTRL_H_
 #include "gui/editor/guiFilterCtrl.h"

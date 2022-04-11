@@ -3,8 +3,8 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#include "editor/terraformerNoise.h"
-#include "editor/terraformer.h"
+#include "editor/terrain/terraformerNoise.h"
+#include "editor/terrain/terraformer.h"
 
 
 //--------------------------------------

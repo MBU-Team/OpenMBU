@@ -3,7 +3,7 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "math/mMath.h"
 #include "console/console.h"
 #include "console/consoleTypes.h"

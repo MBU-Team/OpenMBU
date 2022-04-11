@@ -7,6 +7,7 @@
 #include "gfx/gfxDevice.h"
 #include "primBuilder.h"
 #include "core/bitStream.h"
+#include "sceneGraph/sceneGraph.h"
 
 IMPLEMENT_CONOBJECT(GammaBuffer);
 
@@ -77,7 +78,7 @@ void GammaBuffer::init()
         return;
     }
 
-    if (GFXDevice::devicePresent() && mCallbackHandle == -1)
+    if (GFXDevice::devicePresent() && mCallbackHandle != -1)
     {
         GFX->registerTexCallback(texManagerCallback, (void*)this, mCallbackHandle);
     }
@@ -100,8 +101,12 @@ void GammaBuffer::init()
 
     // this is necessary for Show Tool use
     if (mGammaShader)
-    {
         mGammaShader->initShader();
+
+    mTarget = GFX->allocRenderToTextureTarget();
+    if (mTarget.isNull())
+    {
+        Con::errorf("GammaBuffer: Could not allocate render target");
     }
 }
 
@@ -198,7 +203,20 @@ void GammaBuffer::copyToScreen(RectI& viewport)
 //--------------------------------------------------------------------------
 void GammaBuffer::setAsRenderTarget()
 {
-    GFX->setActiveRenderSurface(mSurface);
+    if (mTarget.isNull())
+        return;
+    // Make sure we have a final display target of the same size as the view
+    // we're rendering.
+//    Point2I goalResolution = getCurrentClientSceneGraph()->getDisplayTargetResolution();
+//    if(mSurface.isNull() || goalResolution != Point2I(mSurface.getWidth(), mSurface[2].getHeight()))
+//    {
+//        Con::printf("GlowBuffer (%x) - Resizing glow texture to be %dx%dpx", this, goalResolution.x, goalResolution.y);
+//        mSurface.set( goalResolution.x, goalResolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1 );
+//    }
+
+    mTarget->attachTexture(GFXTextureTarget::Color0, mSurface);
+    mTarget->attachTexture(GFXTextureTarget::DepthStencil, GFXTextureTarget::sDefaultDepthStencil );
+    GFX->setActiveRenderTarget( mTarget );
     GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
 }
 
@@ -217,8 +235,12 @@ void GammaBuffer::texManagerCallback(GFXTexCallbackCode code, void* userData)
 
     if (code == GFXResurrect)
     {
-        GFXVideoMode vm = GFX->getVideoMode();
-        gammaBuff->mSurface.set(vm.resolution.x, vm.resolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetProfile, 1);
+        GFXTarget *target = GFX->getActiveRenderTarget();
+        if ( target )
+        {
+            Point2I res = GFX->getActiveRenderTarget()->getSize();
+            gammaBuff->mSurface.set( res.x, res.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1 );
+        }
         return;
     }
 

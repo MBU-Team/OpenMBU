@@ -23,9 +23,11 @@
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sceneState.h"
 #include "sceneGraph/detailManager.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "terrain/terrRender.h"
 #include "terrain/waterBlock.h"
+#endif
 #include "game/game.h"
 #include "game/moveManager.h"
 #include "game/gameConnection.h"
@@ -2100,6 +2102,7 @@ void Player::updateActionThread()
                 TerrainObjectType | InteriorObjectType | VehicleObjectType, &rInfo))
             {
                 S32 sound = -1;
+#ifdef TORQUE_TERRAIN
                 // Only put footpuffs and prints on the terrain
                 if (rInfo.object->getTypeMask() & TerrainObjectType)
                 {
@@ -2150,6 +2153,7 @@ void Player::updateActionThread()
                             Point3F(rInfo.normal), getScale(), mDataBlock->decalData);
                 }
                 else
+#endif
                     if (rInfo.object->getTypeMask() & VehicleObjectType)
                         sound = 2; // Play metal sound
 
@@ -4022,6 +4026,7 @@ bool Player::pointInWater(Point3F& point)
     else
         getCurrentClientSceneGraph()->getWaterObjectList(sql);
 
+#ifdef TORQUE_TERRAIN
     for (U32 i = 0; i < sql.mList.size(); i++)
     {
         WaterBlock* pBlock = dynamic_cast<WaterBlock*>(sql.mList[i]);
@@ -4033,6 +4038,7 @@ bool Player::pointInWater(Point3F& point)
         }
 
     }
+#endif
 
     return false;
 }

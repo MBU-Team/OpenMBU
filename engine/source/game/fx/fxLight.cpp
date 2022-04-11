@@ -19,6 +19,7 @@
 #include "sceneGraph/sceneGraph.h"
 #include "fxLight.h"
 #include "gfx/primBuilder.h"
+#include "math/mathUtils.h"
 
 //------------------------------------------------------------------------------
 //
@@ -1379,7 +1380,7 @@ void fxLight::renderObject(SceneState* state, RenderInst* ri)
         //
         // Calculate screen point, on screen?
         //if (dglPointToScreen(ObjectPoint, ScreenPoint))
-        GFX->project(ScreenPoint, ObjectPoint, ModelView, projection, viewport);
+        MathUtils::projectWorldToScreen(ScreenPoint, ObjectPoint, viewport, ModelView, projection);
         if (true)
         {
             // Fetch Eye Position.

@@ -58,20 +58,22 @@ void GuiTSCtrl::renderWorld(const RectI& /*updateRect*/)
 
 bool GuiTSCtrl::project(const Point3F& pt, Point3F* dest)
 {
-
-    GFX->project(*dest, (Point3F&)pt, mSaveModelview, mSaveProjection, mSaveViewport);
-
-    if (dest->z < 0.0 || dest->z > 1.0)
-    {
-        return false;
-    }
-
-    return true;
+//
+//    GFX->project(*dest, (Point3F&)pt, mSaveModelview, mSaveProjection, mSaveViewport);
+//
+//    if (dest->z < 0.0 || dest->z > 1.0)
+//    {
+//        return false;
+//    }
+//
+//    return true;
+    return MathUtils::projectWorldToScreen(pt,*dest,mSaveViewport,mSaveModelview,mSaveProjection);
 }
 
 bool GuiTSCtrl::unproject(const Point3F& pt, Point3F* dest)
 {
-    GFX->unProject(*dest, (Point3F&)pt, mSaveModelview, mSaveProjection, mSaveViewport);
+    //GFX->unProject(*dest, (Point3F&)pt, mSaveModelview, mSaveProjection, mSaveViewport);
+    MathUtils::projectScreenToWorld(pt,*dest,mSaveViewport,mSaveModelview,mSaveProjection,mLastCameraQuery.farPlane,mLastCameraQuery.nearPlane);
 
     return true;
 }

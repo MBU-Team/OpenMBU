@@ -9,7 +9,7 @@
 #include "console/consoleTypes.h"
 #include "sceneGraph/sceneGraph.h"
 #include "terrain/terrData.h"
-#include "terrain/sun.h"
+#include "terrain/environment//sun.h"
 
 IMPLEMENT_CO_NETOBJECT_V1(Sun);
 
