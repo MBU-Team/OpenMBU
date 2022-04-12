@@ -175,6 +175,9 @@ new CustomMaterial(Material_Marble_BB)
    
    glow[0] = true;
    emissive[0] = true;
+   
+	specular[0] = "1 1 1 1";
+	specularPower[0] = 8.0;
 };
 
 
@@ -216,9 +219,9 @@ new CustomMaterial(Material_Marble_BB)
    emissive[0] = true;
    glow[0]=true;
    
-   pixelSpecular[0] = true;
+   //pixelSpecular[0] = true;
    specular[0] = "1.0 1.0 1.0 1.0";
-   specularPower[0] = 32.0;
+   specularPower[0] = 8.0;//32.0;
 };
 
 
@@ -487,7 +490,10 @@ new CustomMaterial(Material_Marble_BB)
    glow[0] = true;
    emissive[0] = true;
    translucent[0] = true;
-   translucentBlendOp = Add;
+   translucentBlendOp = AddAlpha;
+   
+	specular[0] = "1 1 1 1";
+	specularPower[0] = 8.0;
 
    animFlags[0] = $rotate;
    rotPivotOffset[0] = "-0.5 -0.5";
@@ -784,6 +790,9 @@ new CustomMaterial(Material_distort_d)
    texture[2] = "~/data/shapes/Particles/distort_d";
    //specular[0] = "1 1 1 1.0";
    //specularPower[0] = 10.0;
+   
+   specular[0] = "1 1 1 1.0";
+   specularPower[0] = 10.0;
 
    version = 2.0;
    refract = true;
@@ -814,24 +823,39 @@ new CustomMaterial(Material_cube_glass)
    pass[0] = Mat_Glass_NoRefract;
 };
 
-new CustomMaterial(Material_refract)
+//new CustomMaterial(Material_refract)
+//{
+   //mapto = refract;
+//
+   //texture[0] = "~/data/shapes/structures/time.normal";
+   //texture[1] = "$backbuff";
+   //texture[2] = "~/data/shapes/pads/refract";
+//
+   //friction = 1;
+   //restitution = 1;
+   //force = 0;
+//
+   //specular[0] = "1 1 1 1.0";
+   //specularPower[0] = 10.0;
+//
+   //version = 2.0;
+   //refract = true;
+   //shader = RefractPix;
+//};
+
+%mat = new Material(Material_refract)
 {
-   mapto = refract;
-
-   texture[0] = "~/data/shapes/structures/time.normal";
-   texture[1] = "$backbuff";
-   texture[2] = "~/data/shapes/pads/refract";
-
-   friction = 1;
-   restitution = 1;
-   force = 0;
-
-   specular[0] = "1 1 1 1.0";
-   specularPower[0] = 10.0;
-
-   version = 2.0;
-   refract = true;
-   shader = RefractPix;
+	mapTo = "refract";
+	
+	baseTex[0] = "marble/data/shapes/images/blast_glow";
+	
+	glow[0] = true;
+	pixelSpecular[0] = true;
+	specular[0] = "0.8 0.8 0.6 1";
+	specularPower[0] = 32.0;
+	
+	
+	texCompression[0] = DXT3;
 };
 
 %mat = new Material(Material_blastwave)
@@ -842,7 +866,7 @@ new CustomMaterial(Material_refract)
    glow[0] = true;
    emissive[0] = true;
    translucent[0] = true;
-   translucentBlendOp = Add;
+   translucentBlendOp = AddAlpha;
 
  };
  
