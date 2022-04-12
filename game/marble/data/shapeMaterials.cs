@@ -470,11 +470,30 @@ new CustomMaterial(Material_Marble_BB)
 
  };
  
+ %mat = new Material(Material_mistyglow_ff)
+{
+	mapTo = "mistyglow";
+	
+	baseTex[0] = "marble/data/shapes/pads/mistyglow";
+	
+	translucent = true;
+	specular[0] = "1 1 1 1";
+	specularPower[0] = 8.0;
+	translucent = true;
+	
+	translucentBlendOp = AddAlpha;
+	
+	texCompression[0] = DXT5;
+};
+ 
  %mat = new Material(Material_mistyglow)
 {
    mapTo = mistyglow;
 
    baseTex[0] = "~/data/shapes/pads/mistyglow";
+	
+	fallback = "Material_mistyglow_ff";
+	
    glow[0] = true;
    emissive[0] = true;
    translucent[0] = true;
@@ -639,9 +658,23 @@ new CustomMaterial(Mat_Glass_NoRefract)
 
    version = 2.0;
    translucent = true;
-   translucentZWrite = false;
+   //translucentZWrite = false;
    blendOp = LerpAlpha;
    shader = StdTex;
+};
+
+%mat = new Material(Material_glass_fallback)
+{
+	mapTo = "glass2";
+	
+	baseTex[0] = "marble/data/shapes/structures/glass2";
+	
+	emissive[0] = true;
+	specular[0] = "1 1 1 1";
+	specularPower[0] = 8.0;
+	translucent = true;
+	
+	texCompression[0] = DXT5;
 };
 
 new CustomMaterial(Material_glass)
@@ -651,6 +684,8 @@ new CustomMaterial(Material_glass)
    texture[0] = "~/data/shapes/structures/glass.normal";
    texture[1] = "$backbuff";
    texture[2] = "~/data/shapes/structures/glass";
+   
+	fallback = "Material_glass_fallback";
    
    friction = 1;
    restitution = 1;
@@ -761,6 +796,20 @@ new CustomMaterial(Material_glass)
    specularPower[0] = 12.0;
 };
 
+%mat = new Material(TimeTravelGlass_Fallback)
+{
+	mapTo = "timeTravel_glass_fallback";
+	
+	baseTex[0] = "marble/data/shapes/structures/glass";
+	
+	emissive[0] = true;
+	specular[0] = "1 1 1 1";
+	specularPower[0] = 8.0;
+	translucent = true;
+	
+	texCompression[0] = DXT5;
+};
+
 new CustomMaterial(Material_TimeTravelGlass)
 {
    mapto = timeTravel_glass;
@@ -775,6 +824,8 @@ new CustomMaterial(Material_TimeTravelGlass)
 
    specular[0] = "1 1 1 1.0";
    specularPower[0] = 10.0;
+   
+	fallback = "TimeTravelGlass_Fallback";
 
    version = 2.0;
    refract = true;
