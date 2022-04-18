@@ -1200,6 +1200,15 @@ function onXBLiveFriendChanged()
    }
 }
 
+function XBLiveShowAchievementsUI() { 
+   %backgui = RootGui.contentGui;
+	RootGui.setContent(AchievementListGui, %backgui);
+}
+
+function XBLiveShowGamercardUI(%name, %gamerscore) {
+	XMessagePopupDlg.show(0, %name @ "\n\n" @ %gamerscore @ " Gamer Score",$Text::OK, "","", "");
+}
+
 //-----------------------------------------------------------------------------
 // PDLC/MapPack helpers:
 //-----------------------------------------------------------------------------

@@ -128,6 +128,8 @@ function initClient()
    exec("./ui/GameEndGui.gui");
    exec("./ui/StartupErrorGui.gui");
    exec("./ui/controlerDisplayGui.gui");
+   exec("./ui/AchievementDlg.gui");
+   exec("./ui/AchievementListGui.gui");
    
    //exec("./ui/AboutGui.gui");   
    //exec("./ui/LevelScoresGui.gui");

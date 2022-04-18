@@ -1,0 +1,33 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(AchievementDlg) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   noCursor = "1";
+   
+   new GuiBitmapCtrl(AchievementFrame) {
+         profile = "GuiDefaultProfile";
+         horizSizing = "center";
+         vertSizing = "bottom";
+         position = "70 465";
+         //extent =   "240 460"; 
+         //minExtent = "48 92";
+         visible = "1";
+         bitmap = "";
+         wrap = "0";
+	};
+   
+};
+//--- OBJECT WRITE END ---
+
+function AchievementDlg::onWake(%this)
+{
+	enableGamepad();
+	moveMap.push();
+	//AchievementFrame.setPosition("70", "0");
+	AchievementFrame.setBitmap("./achievement/" @ $AchievementId, true);
+}
