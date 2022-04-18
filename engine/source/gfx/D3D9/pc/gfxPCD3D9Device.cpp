@@ -184,6 +184,8 @@ void GFXPCD3D9Device::init( const GFXVideoMode &mode/*, PlatformWindow *window*/
 
    initD3DXFnTable();
 
+   mVideoMode = mode;
+
    //Win32Window *win = dynamic_cast<Win32Window *>( window );
    //AssertISV( win, "GFXD3D9Device::init - got a non Win32Window window passed in! Did DX go crossplatform?" );
 

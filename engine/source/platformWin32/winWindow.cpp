@@ -1071,7 +1071,7 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     for (U32 i = 0; i < deviceVector->size(); i++)
     {
         GFX->setActiveDevice(i);
-        GFX->init(vm);
+        //GFX->init(vm);
     }
 
     winState.processId = GetCurrentProcessId();
