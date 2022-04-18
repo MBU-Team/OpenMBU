@@ -11,12 +11,14 @@
 #include "lightingSystem/sgLightingModel.h"
 #include "lightingSystem/sgMissionLightingFilter.h"
 #include "sceneGraph/lightManager.h"
+#include SHADER_CONSTANT_INCLUDE_FILE
 #include "interior/interiorInstance.h"
 #include "terrain/terrData.h"
 #include "game/shadow.h"
 #include "lightingSystem/sgLightObject.h"
 #include "sim/netConnection.h"
 #include "editor/worldEditor.h"
+#include "materials/processedCustomMaterial.h"
 
 
 bool LightManager::sgLightingProperties[sgPropertyCount];
@@ -152,6 +154,14 @@ void LightInfoList::sgUnregisterLight(LightInfo* light)
 
 
 //-----------------------------------------------
+
+
+
+LightInfo* LightManager::getDefaultLight()
+{
+    return &sgDefaultLight;
+}
+
 //-----------------------------------------------
 
 
@@ -719,6 +729,111 @@ sgSelfIlluminationColor = ColorF(ambientColor[0], ambientColor[1], ambientColor[
 }
 }
 */
+
+/// Sets shader constants / textures for light infos
+void LightManager::setLightInfo(ProcessedMaterial* pmat, const Material* mat, const SceneGraphData& sgData, U32 pass)
+{
+    U32 stageNum = pmat->getStageFromPass(pass);
+
+    // Light number 1
+    MatrixF objTrans = sgData.objTrans;
+    objTrans.inverse();
+
+    const LightInfo light = sgData.light;
+    Point3F lightPos = light.mPos;
+    Point3F lightDir = light.mDirection;
+    objTrans.mulP(lightPos);
+    objTrans.mulV(lightDir);
+    lightDir.normalizeSafe();
+
+    Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, light.sgTempModelInfo[0]);
+    GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
+    GFX->setVertexShaderConstF(VC_LIGHT_DIR1, (float*)&lightDir, 1);
+    GFX->setVertexShaderConstF(VC_LIGHT_DIFFUSE1, (float*)&(light.mColor), 1);
+    GFX->setPixelShaderConstF(PC_AMBIENT_COLOR, (float*)&(light.mAmbient), 1);
+
+    if(!mat->emissive[stageNum])
+        GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&(light.mColor), 1);
+    else
+    {
+        ColorF selfillum = LightManager::sgGetSelfIlluminationColor(mat->diffuse[stageNum]);
+        GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&selfillum, 1);
+    }
+    const MatrixF lightingmat = light.sgLightingTransform;
+    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);
+
+    // Light number 2
+    const LightInfo light2 = sgData.lightSecondary;
+    //AssertFatal(light2 != NULL, "ProcessedSGLightedMaterial::setSecondaryLightInfo: null light");
+    lightPos = light2.mPos;
+    objTrans.mulP(lightPos);
+
+    Point4F lightPosModel2(lightPos.x, lightPos.y, lightPos.z, light2.sgTempModelInfo[0]);
+    GFX->setVertexShaderConstF(VC_LIGHT_POS2, (float*)&lightPosModel2, 1);
+    GFX->setPixelShaderConstF(PC_DIFF_COLOR2, (float*)&light2.mColor, 1);
+
+    const MatrixF lightingmat2 = light2.sgLightingTransform;
+    GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat2, 4);
+
+    ProcessedCustomMaterial* pcm = dynamic_cast<ProcessedCustomMaterial*>(pmat);
+    if (!pcm)
+    {
+        // Set the dynamic light textures
+        const RenderPassData *rpass = pmat->getPass(pass);
+        if(rpass)
+        {
+            for(U32 i=0; i<rpass->numTex; i++)
+            {
+                setTextureStage(sgData, rpass->texFlags[i], i);
+            }
+        }
+    } else {
+        // Processed custom materials store their texflags in a different way, so
+        // just tell it to update its textures.
+        SceneGraphData& temp = const_cast<SceneGraphData&>(sgData);
+        pcm->setTextureStages(temp, pass);
+    }
+}
+
+void LightManager::setLightingBlendFunc()
+{
+    // don't break the material multipass rendering...
+    GFX->setAlphaBlendEnable(true);
+    GFX->setSrcBlend(GFXBlendSrcAlpha);
+    GFX->setDestBlend(GFXBlendOne);
+}
+
+bool LightManager::setTextureStage(const SceneGraphData& sgData, const U32 currTexFlag, const U32 textureSlot)
+{
+    switch (currTexFlag)
+    {
+        case Material::DynamicLight:
+            //GFX->setTextureBorderColor(textureSlot, ColorI(0, 0, 0, 0));
+            GFX->setTextureStageAddressModeU(textureSlot, GFXAddressClamp);
+            GFX->setTextureStageAddressModeV(textureSlot, GFXAddressClamp);
+            GFX->setTextureStageAddressModeW(textureSlot, GFXAddressClamp);
+            GFX->setTexture(textureSlot, sgData.dynamicLight.getPointer());
+            return true;
+            break;
+
+        case Material::DynamicLightSecondary:
+            //GFX->setTextureBorderColor(textureSlot, ColorI(0, 0, 0, 0));
+            GFX->setTextureStageAddressModeU(textureSlot, GFXAddressClamp);
+            GFX->setTextureStageAddressModeV(textureSlot, GFXAddressClamp);
+            GFX->setTextureStageAddressModeW(textureSlot, GFXAddressClamp);
+            GFX->setTexture(textureSlot, sgData.dynamicLightSecondary.getPointer());
+            return true;
+            break;
+
+//        case Material::DynamicLightMask:
+//            SG_CHECK_LIGHT(sgData.light);
+//            GFX->setCubeTexture(textureSlot, static_cast<sgLightInfo*>(sgData.light)->sgLightMask);
+//            return true;
+//            break;
+    }
+    return false;
+}
+
 void LightManager::sgSetupZoneLighting(bool enable, SimObject* sobj)
 {
     sgFilterZones = false;

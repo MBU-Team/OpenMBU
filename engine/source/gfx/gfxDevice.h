@@ -445,6 +445,10 @@ protected:
 
     MatrixF mViewMatrix;
     bool    mViewMatrixDirty;
+
+    MatrixF mTextureMatrix[TEXTURE_STAGE_COUNT];
+    bool    mTextureMatrixDirty[TEXTURE_STAGE_COUNT];
+    bool    mTextureMatrixCheckDirty;
     /// @}
 
     //-----------------------------------------------------------------------------

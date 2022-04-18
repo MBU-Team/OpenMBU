@@ -22,8 +22,10 @@
 #include "console/consoleTypes.h"
 #include "core/stringTable.h"
 #include "gfx/gfxDevice.h"
+#include "sceneGraph/lightInfo.h"
 
-
+class Material;
+class ProcessedMaterial;
 class SceneObject;
 
 static void sgFindObjectsCallback(SceneObject* obj, void* val)
@@ -36,66 +38,7 @@ static void sgFindObjectsCallback(SceneObject* obj, void* val)
 //-----------------------------------------------
 // Original name maintained due to widespread use...
 
-class LightInfo
-{
-    friend class LightManager;
 
-public:
-    enum Type {
-        Point = 0,
-        Spot = 1,
-        Vector = 2,
-        Ambient = 3,
-        SGStaticPoint,
-        SGStaticSpot
-    };
-    Type        mType;
-
-    Point3F     mPos;
-    VectorF     mDirection;
-    ColorF      mColor;
-    ColorF      mAmbient;
-    F32         mRadius;
-
-    //private:
-    S32         mScore;
-
-public:
-    enum sgFeatures
-    {
-        // in order from most features to least...
-        sgFull = 0,
-        sgNoCube,
-        sgNoSpecCube,
-        sgFeatureCount
-    };
-    sgFeatures sgSupportedFeatures;
-
-    bool sgCanBeSecondary() { return sgSupportedFeatures >= sgNoSpecCube; }
-
-    static bool sgAllowSpecular(sgFeatures features) { return features < sgNoSpecCube; }
-    static bool sgAllowCubeMapping(sgFeatures features) { return features < sgNoCube; }
-
-    F32 sgSpotAngle;
-    bool sgAssignedToTSObject;
-    bool sgCastsShadows;
-    bool sgDiffuseRestrictZone;
-    bool sgAmbientRestrictZone;
-    S32 sgZone[2];
-    F32 sgLocalAmbientAmount;
-    bool sgSmoothSpotLight;
-    bool sgDoubleSidedAmbient;
-    bool sgAssignedToParticleSystem;
-    StringTableEntry sgLightingModelName;
-    bool sgUseNormals;
-    Point3F sgTempModelInfo;
-    MatrixF sgLightingTransform;
-    PlaneF sgSpotPlane;
-
-    LightInfo();
-    bool sgIsInZone(S32 zone);
-    bool sgAllowDiffuseZoneLighting(S32 zone);
-};
 
 class LightInfoList : public Vector<LightInfo*>
 {
@@ -138,6 +81,11 @@ public:
 
     LightManager() { sgInit(); }
 
+
+    // Returns a "default" light info that callers should not free.  Used for instances where we don't actually care about
+    // the light
+    virtual LightInfo* getDefaultLight();
+
     // registered before scene traversal...
     void sgRegisterGlobalLight(LightInfo* light, SimObject* obj, bool zonealreadyset);
     void sgUnregisterGlobalLight(LightInfo* light) { sgRegisteredGlobalLights.sgUnregisterLight(light); }
@@ -175,6 +123,16 @@ public:
     void sgSetupLights(SceneObject* obj, const Box3F& box, S32 maxlights);
     /// Reset the best lights list and all associated data.
     void sgResetLights();
+
+    /// Sets shader constants / textures for light infos
+    virtual void setLightInfo(ProcessedMaterial* pmat, const Material* mat, const SceneGraphData& sgData, U32 pass);
+
+    /// Sets the blend state for a lighting pass
+    virtual void setLightingBlendFunc();
+
+    /// Allows us to set textures during the Material::setTextureStage call
+    virtual bool setTextureStage(const SceneGraphData& sgData, const U32 currTexFlag, const U32 textureSlot);
+
 
 private:
     LightInfo* sgSpecialLights[sgSpecialLightTypesCount];

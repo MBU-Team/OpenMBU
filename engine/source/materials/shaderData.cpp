@@ -26,8 +26,10 @@ ShaderData::ShaderData()
     OGLVertexShaderName = NULL;
     OGLPixelShaderName = NULL;
 
+    useDevicePixVersion = false;
     pixVersion = 1.0;
     shader = NULL;
+    shaderInitialized = false;
 }
 
 //--------------------------------------------------------------------------
@@ -43,20 +45,22 @@ void ShaderData::initPersistFields()
     addField("OGLVertexShaderFile", TypeString, Offset(OGLVertexShaderName, ShaderData));
     addField("OGLPixelShaderFile", TypeFilename, Offset(OGLPixelShaderName, ShaderData));
 
+    addField("useDevicePixVersion",  TypeBool, Offset(useDevicePixVersion,   ShaderData));
     addField("pixVersion", TypeF32, Offset(pixVersion, ShaderData));
 }
 
 //--------------------------------------------------------------------------
-// onAdd
+// getShader
 //--------------------------------------------------------------------------
-bool ShaderData::onAdd()
+GFXShader* ShaderData::getShader()
 {
-    if (!Parent::onAdd())
-        return false;
+    if( !shaderInitialized )
+    {
+        initShader();
+        shaderInitialized = true;
+    }
 
-    initShader();
-
-    return true;
+    return shader;
 }
 
 //--------------------------------------------------------------------------
@@ -64,27 +68,29 @@ bool ShaderData::onAdd()
 //--------------------------------------------------------------------------
 bool ShaderData::initShader()
 {
-    if (shader) return true;
+    if( shader ) return true;
+
+    F32 pixver = pixVersion;
+    if(useDevicePixVersion)
+        pixver = getMax(pixver, GFX->getPixelShaderVersion());
 
     // get shader type from GFX layer
-    switch (GFX->getAdapterType())
+    switch( GFX->getAdapterType() )
     {
-    case Direct3D9:
-    {
-        shader = GFX->createShader((char*)DXVertexShaderName,
-            (char*)DXPixelShaderName,
-            pixVersion);
-        break;
+        //case Direct3D9_360:
+        case Direct3D9:
+        {
+            shader = GFX->createShader( (char*)DXVertexShaderName,
+                                        (char*)DXPixelShaderName,
+                                        pixver );
+            break;
+        }
+
+        default:
+            return false;
     }
-
-    default:
-        return false;
-    }
-
-
 
     return true;
-
 }
 
 //--------------------------------------------------------------------------
@@ -94,22 +100,8 @@ bool ShaderData::reloadShader()
 {
     if (!shader) return false;
 
-    GFX->destroyShader(shader);
-    shader = NULL;
-
-    // get shader type from GFX layer
-    switch (GFX->getAdapterType()) {
-    case Direct3D9: {
-        shader = GFX->createShader((char*)DXVertexShaderName,
-            (char*)DXPixelShaderName,
-            pixVersion);
-        break;
-    }
-    default:
-        return false;
-    }
-
-    return true;
+    destroyShader();
+    return initShader();
 }
 
 //--------------------------------------------------------------------------

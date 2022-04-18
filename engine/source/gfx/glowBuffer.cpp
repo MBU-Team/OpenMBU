@@ -209,12 +209,12 @@ void GlowBuffer::setupPixelOffsets(Point4F offsets, bool horizontal)
 void GlowBuffer::blur()
 {
     // set blur shader
-    if (!mBlurShader->shader)
+    if (!mBlurShader->getShader())
         return;
 
     GFX->setAlphaTestEnable(false);
 
-    mBlurShader->shader->process();
+    mBlurShader->getShader()->process();
 
     // Attempt at MBU X360 Glow Buffer
     /*Point4F pixelOffsets = mPixelOffsets;
@@ -394,7 +394,7 @@ void GlowBuffer::blur()
 //--------------------------------------------------------------------------
 void GlowBuffer::copyToScreen(RectI& viewport)
 {
-    if (!mBlurShader || !mBlurShader->shader || mDisabled)
+    if (!mBlurShader || !mBlurShader->getShader() || mDisabled)
         return;
 
     if (!mSurface[0] || !mSurface[1] || !mSurface[2]) return;

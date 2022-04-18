@@ -39,9 +39,10 @@
 #define PC_ACCUM_TIME      C4
 #define PC_DIFF_COLOR2     C5
 
-#define PC_USERDEF1        C6
-#define PC_USERDEF2        C7
-#define PC_USERDEF3        C8
+#define PC_COLORMULTIPLY   C6
+
+#define PC_USERDEF1        C7
+#define PC_USERDEF2        C8
 
 #define PC_VISIBILITY      C9
 
@@ -88,9 +89,10 @@
 #define PC_ACCUM_TIME      4
 #define PC_DIFF_COLOR2     5
 
-#define PC_USERDEF1        6
-#define PC_USERDEF2        7
-#define PC_USERDEF3        8
+#define PC_COLORMULTIPLY   6
+
+#define PC_USERDEF1        7
+#define PC_USERDEF2        8
 
 #define PC_VISIBILITY      9
 

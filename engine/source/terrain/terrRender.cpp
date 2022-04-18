@@ -1360,6 +1360,8 @@ void TerrainRender::renderBlock(TerrainBlock* block, SceneState* state, MatInsta
 
     GFX->setTextureStageAlphaOp(2, GFXTOPDisable);
 
+
+#ifdef TEMP_ENABLE_TERRAIN_RENDER
     // render dynamic light materials...
     if (m && (!mRenderingCommander))
     {
@@ -1415,6 +1417,7 @@ void TerrainRender::renderBlock(TerrainBlock* block, SceneState* state, MatInsta
                 TerrBatch::end(dmat, sgData, NULL, true, true);
         }
     }
+#endif
 
     //   Con::printf("Emitted %d chunks", emitCount);
 

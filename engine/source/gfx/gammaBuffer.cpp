@@ -148,7 +148,7 @@ void GammaBuffer::setupRenderStates()
 //--------------------------------------------------------------------------
 void GammaBuffer::copyToScreen(RectI& viewport)
 {
-    if (!mGammaShader || !mGammaShader->shader || mDisabled)
+    if (!mGammaShader || !mGammaShader->getShader() || mDisabled)
         return;
 
     if (!mSurface || !mGammaRamp)
@@ -159,7 +159,7 @@ void GammaBuffer::copyToScreen(RectI& viewport)
     MatrixF proj = setupOrthoProjection();
     setupRenderStates();
 
-    mGammaShader->shader->process();
+    mGammaShader->getShader()->process();
     float invSize = (1.0f / (F32)mGammaRamp->getWidth());
     GFX->setPixelShaderConstF(0, &invSize, 1);
 

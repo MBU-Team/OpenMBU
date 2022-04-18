@@ -496,7 +496,7 @@ void sgShadowProjector::sgRenderShadowBuffer()
 
     GFX->setTextureStageColorOp(0, GFXTOPDisable);
 
-    sgShadowBuilderShader->shader->process();
+    sgShadowBuilderShader->getShader()->process();
 
     const MatrixF& world = GFX->getWorldMatrix();
 
@@ -563,8 +563,8 @@ bool sgShadowProjector::shouldRender(F32 camDist)
     sgSetupShadowType();
     sgCalculateBoundingBox();
 
-    if (!sgShadowBuilderShader || !sgShadowBuilderShader->shader ||
-        !sgShadowShader || !sgShadowShader->shader)
+    if (!sgShadowBuilderShader || !sgShadowBuilderShader->getShader() ||
+        !sgShadowShader || !sgShadowShader->getShader())
         return false;
 
     F32 attn = 2.0;
@@ -715,7 +715,7 @@ void sgShadowProjector::sgRender(F32 camdist)
         GFX->setTextureStageColorOp(1, GFXTOPDisable);
     }
 
-    sgShadowShader->shader->process();
+    sgShadowShader->getShader()->process();
 
     F32 size = (1.0 / (sgShadowLODObject.sgShadowTexture.getWidth() - 1)) * 1.25;
     Point4F stride(size, size, sgShadowLODObject.sgShadowTexture.getWidth(),

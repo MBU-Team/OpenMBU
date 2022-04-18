@@ -123,11 +123,11 @@ void sgDRLSurfaceChain::sgPrepChain(const Point2I& offset, const Point2I& extent
         Sim::findObject("DRLOnlyBloomToneShader", sgDRLOnlyBloomTone);
 
         if (//(!sgAlphaBloom) || (!sgAlphaBloom->shader) ||
-            (!sgDownSample4x4) || (!sgDownSample4x4->shader) ||
-            (!sgDownSample4x4BloomClamp) || (!sgDownSample4x4BloomClamp->shader) ||
-            (!sgBloomBlur) || (!sgBloomBlur->shader) ||
-            (!sgDRLFull) || (!sgDRLFull->shader) ||
-            (!sgDRLOnlyBloomTone) || (!sgDRLOnlyBloomTone->shader))
+            (!sgDownSample4x4) || (!sgDownSample4x4->getShader()) ||
+            (!sgDownSample4x4BloomClamp) || (!sgDownSample4x4BloomClamp->getShader()) ||
+            (!sgBloomBlur) || (!sgBloomBlur->getShader()) ||
+            (!sgDRLFull) || (!sgDRLFull->getShader()) ||
+            (!sgDRLOnlyBloomTone) || (!sgDRLOnlyBloomTone->getShader()))
             return;
 
         sgSurfaceSize.increment(1);
@@ -230,9 +230,9 @@ void sgDRLSurfaceChain::sgRenderChain()
     for (U32 i = 1; i < sgSurfaceChain.size(); i++)
     {
         if (i == 1)
-            sgDownSample4x4BloomClamp->shader->process();
+            sgDownSample4x4BloomClamp->getShader()->process();
         else
-            sgDownSample4x4->shader->process();
+            sgDownSample4x4->getShader()->process();
 
         GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
         myTarg->attachTexture(GFXTextureTarget::Color0, sgSurfaceChain[i] );
@@ -272,7 +272,7 @@ void sgDRLSurfaceChain::sgRenderChain()
 
     if (LightManager::sgAllowBloom())
     {
-        sgBloomBlur->shader->process();
+        sgBloomBlur->getShader()->process();
         GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
         myTarg->attachTexture(GFXTextureTarget::Color0, sgBloom );
         myTarg->attachTexture(GFXTextureTarget::DepthStencil, GFXTextureTarget::sDefaultDepthStencil );
@@ -452,9 +452,9 @@ intensity = max(intensity, drlinfo.y);
     GFX->setTextureStageColorOp(6, GFXTOPDisable);
 
     if (LightManager::sgAllowFullDynamicRangeLighting())
-        sgDRLFull->shader->process();
+        sgDRLFull->getShader()->process();
     else
-        sgDRLOnlyBloomTone->shader->process();
+        sgDRLOnlyBloomTone->getShader()->process();
 
     //Point4F temp(intensity, fullrange, 0, LightManager::sgDRLMultiplier);
     Point4F temp(LightManager::sgDRLMax, LightManager::sgDRLMin,

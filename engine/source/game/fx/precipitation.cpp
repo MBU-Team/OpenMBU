@@ -1349,7 +1349,7 @@ void Precipitation::renderObject(SceneState* state, RenderInst* ri)
     // Use the shader or setup the pipeline 
     // for fixed function rendering.
     if (mDropShader)
-        mDropShader->shader->process();
+        mDropShader->getShader()->process();
     else
     {
         // We don't support distance fade or lighting without shaders.
@@ -1485,7 +1485,7 @@ void Precipitation::renderObject(SceneState* state, RenderInst* ri)
     GFX->setTexture(0, mSplashHandle);
 
     if (mSplashShader)
-        mSplashShader->shader->process();
+        mSplashShader->getShader()->process();
 
     while (curr)
     {

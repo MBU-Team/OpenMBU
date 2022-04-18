@@ -250,6 +250,9 @@
 #endif
 #endif
 
+// This define is for the shader constant include string
+#define SHADER_CONSTANT_INCLUDE_FILE "../../game/shaders/shdrConsts.h"
+
 // Someday, it might make sense to do some pragma magic here so we error
 // on inconsistent flags.
 

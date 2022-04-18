@@ -55,6 +55,7 @@ GFXDevice::GFXDevice()
     mWorldStackSize = 0;
     mProjectionMatrixDirty = false;
     mViewMatrixDirty = false;
+    mTextureMatrixCheckDirty = false;
 
     mViewMatrix.identity();
     mProjectionMatrix.identity();
@@ -75,6 +76,7 @@ GFXDevice::GFXDevice()
     mPrimitiveBufferDirty = false;
     mTexturesDirty = false;
 
+    // Use of TEXTURE_STAGE_COUNT in initialization is okay [7/2/2007 Pat]
     for (U32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
     {
         mTextureDirty[i] = false;
@@ -83,6 +85,9 @@ GFXDevice::GFXDevice()
         mCurrentCubemap[i] = NULL;
         mNewCubemap[i] = NULL;
         mTexType[i] = GFXTDT_Normal;
+
+        mTextureMatrix[i].identity();
+        mTextureMatrixDirty[i] = false;
     }
 
     // Initialize the state stack.
@@ -280,23 +285,25 @@ F32 GFXDevice::formatByteSize(GFXFormat format)
 // If this causes problems, talk to patw
 void GFXDevice::updateStates(bool forceSetAll /*=false*/)
 {
-    if (forceSetAll)
+    PROFILE_SCOPE(GFXDevice_updateStates);
+
+    if(forceSetAll)
     {
         bool rememberToEndScene = false;
-        if (!GFX->canCurrentlyRender())
+        if(!canCurrentlyRender())
         {
-            GFX->beginScene();
+            beginScene();
             rememberToEndScene = true;
         }
 
-        setMatrix(GFXMatrixProjection, mProjectionMatrix);
-        setMatrix(GFXMatrixWorld, mWorldMatrix[mWorldStackSize]);
-        setMatrix(GFXMatrixView, mViewMatrix);
+        setMatrix( GFXMatrixProjection, mProjectionMatrix );
+        setMatrix( GFXMatrixWorld, mWorldMatrix[mWorldStackSize] );
+        setMatrix( GFXMatrixView, mViewMatrix );
 
-        if (mCurrentVertexBuffer.isValid())
+        if(mCurrentVertexBuffer.isValid())
             mCurrentVertexBuffer->prepare();
 
-        if (mCurrentPrimitiveBuffer.isValid()) // This could be NULL when the device is initalizing
+        if( mCurrentPrimitiveBuffer.isValid() ) // This could be NULL when the device is initalizing
             mCurrentPrimitiveBuffer->prepare();
 
         for(U32 i = 0; i < getNumSamplers(); i++)
@@ -324,37 +331,45 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
             }
         }
 
-        for (S32 i = 0; i < GFXRenderState_COUNT; i++)
+        for(S32 i=0; i<GFXRenderState_COUNT; i++)
         {
             setRenderState(i, mStateTracker[i].newValue);
             mStateTracker[i].currentValue = mStateTracker[i].newValue;
         }
 
         // Why is this 8 and not 16 like the others?
-        for (S32 i = 0; i < 8; i++)
+        for(S32 i=0; i<8; i++)
         {
-            for (S32 j = 0; j < GFXTSS_COUNT; j++)
+            for(S32 j=0; j<GFXTSS_COUNT; j++)
             {
-                StateTracker& st = mTextureStateTracker[i][j];
+                StateTracker &st = mTextureStateTracker[i][j];
                 setTextureStageState(i, j, st.newValue);
                 st.currentValue = st.newValue;
             }
         }
 
-        for (S32 i = 0; i < 8; i++)
+        for(S32 i=0; i<8; i++)
         {
-            for (S32 j = 0; j < GFXSAMP_COUNT; j++)
+            for(S32 j=0; j<GFXSAMP_COUNT; j++)
             {
-                StateTracker& st = mSamplerStateTracker[i][j];
+                StateTracker &st = mSamplerStateTracker[i][j];
                 setSamplerState(i, j, st.newValue);
                 st.currentValue = st.newValue;
             }
         }
+        // Set our material
+//        setLightMaterialInternal(mCurrentLightMaterial);
+//
+//        // Set our lights
+//        for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
+//        {
+//            setLightInternal(i, mCurrentLight[i], mCurrentLightEnable[i]);
+//        }
 
         _updateRenderTargets();
 
-        if (rememberToEndScene)
-            GFX->endScene();
+        if(rememberToEndScene)
+            endScene();
 
         return;
     }
@@ -363,38 +378,58 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
     mStateDirty = false;
 
     // Update Projection Matrix
-    if (mProjectionMatrixDirty)
+    if( mProjectionMatrixDirty )
     {
-        setMatrix(GFXMatrixProjection, mProjectionMatrix);
+        setMatrix( GFXMatrixProjection, mProjectionMatrix );
         mProjectionMatrixDirty = false;
     }
 
     // Update World Matrix
-    if (mWorldMatrixDirty)
+    if( mWorldMatrixDirty )
     {
-        setMatrix(GFXMatrixWorld, mWorldMatrix[mWorldStackSize]);
+        setMatrix( GFXMatrixWorld, mWorldMatrix[mWorldStackSize] );
         mWorldMatrixDirty = false;
     }
 
     // Update View Matrix
-    if (mViewMatrixDirty)
+    if( mViewMatrixDirty )
     {
-        setMatrix(GFXMatrixView, mViewMatrix);
+        setMatrix( GFXMatrixView, mViewMatrix );
         mViewMatrixDirty = false;
     }
 
-    // Update vertex buffer
-    if (mVertexBufferDirty)
+
+    if( mTextureMatrixCheckDirty )
     {
-        if (mCurrentVertexBuffer.isValid())
+        for( int i = 0; i < getNumSamplers(); i++ )
+        {
+            if( mTextureMatrixDirty[i] )
+            {
+                mTextureMatrixDirty[i] = false;
+                setMatrix( (GFXMatrixType)(GFXMatrixTexture + i), mTextureMatrix[i] );
+            }
+        }
+
+        mTextureMatrixCheckDirty = false;
+    }
+
+    // Update vertex buffer
+    if( mVertexBufferDirty )
+    {
+        if(mCurrentVertexBuffer.isValid())
             mCurrentVertexBuffer->prepare();
         mVertexBufferDirty = false;
     }
 
     // Update primitive buffer
-    if (mPrimitiveBufferDirty)
+    //
+    // NOTE: It is very important to set the primitive buffer AFTER the vertex buffer
+    // because in order to draw indexed primitives in DX8, the call to SetIndicies
+    // needs to include the base vertex offset, and the DX8 GFXDevice relies on
+    // having mCurrentVB properly assigned before the call to setIndices -patw
+    if( mPrimitiveBufferDirty )
     {
-        if (mCurrentPrimitiveBuffer.isValid()) // This could be NULL when the device is initalizing
+        if( mCurrentPrimitiveBuffer.isValid() ) // This could be NULL when the device is initalizing
             mCurrentPrimitiveBuffer->prepare();
         mPrimitiveBufferDirty = false;
     }
@@ -435,7 +470,7 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
     }
 
     // Set render states
-    while (mNumDirtyStates)
+    while( mNumDirtyStates )
     {
         mNumDirtyStates--;
         U32 state = mTrackedState[mNumDirtyStates];
@@ -444,10 +479,10 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
         // and thus be ignored, could possibly put in a call to the gfx device
         // to handle an unsupported call so it could log it, or do some workaround
         // or something? -pw
-        if (state > GFXRenderState_COUNT)
+        if( state > GFXRenderState_COUNT )
             continue;
 
-        if (mStateTracker[state].currentValue != mStateTracker[state].newValue)
+        if( mStateTracker[state].currentValue != mStateTracker[state].newValue )
         {
             setRenderState(state, mStateTracker[state].newValue);
             mStateTracker[state].currentValue = mStateTracker[state].newValue;
@@ -456,14 +491,14 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
     }
 
     // Set texture states
-    while (mNumDirtyTextureStates)
+    while( mNumDirtyTextureStates )
     {
         mNumDirtyTextureStates--;
         U32 state = mTextureTrackedState[mNumDirtyTextureStates].state;
         U32 stage = mTextureTrackedState[mNumDirtyTextureStates].stage;
-        StateTracker& st = mTextureStateTracker[stage][state];
+        StateTracker &st = mTextureStateTracker[stage][state];
         st.dirty = false;
-        if (st.currentValue != st.newValue)
+        if( st.currentValue != st.newValue )
         {
             setTextureStageState(stage, state, st.newValue);
             st.currentValue = st.newValue;
@@ -471,19 +506,40 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
     }
 
     // Set sampler states
-    while (mNumDirtySamplerStates)
+    while( mNumDirtySamplerStates )
     {
         mNumDirtySamplerStates--;
         U32 state = mSamplerTrackedState[mNumDirtySamplerStates].state;
         U32 stage = mSamplerTrackedState[mNumDirtySamplerStates].stage;
-        StateTracker& st = mSamplerStateTracker[stage][state];
+        StateTracker &st = mSamplerStateTracker[stage][state];
         st.dirty = false;
-        if (st.currentValue != st.newValue)
+        if( st.currentValue != st.newValue )
         {
             setSamplerState(stage, state, st.newValue);
             st.currentValue = st.newValue;
         }
     }
+
+    // Set light material
+//    if(mLightMaterialDirty)
+//    {
+//        setLightMaterialInternal(mCurrentLightMaterial);
+//        mLightMaterialDirty = false;
+//    }
+//
+//    // Set our lights
+//    if(mLightsDirty)
+//    {
+//        mLightsDirty = false;
+//        for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
+//        {
+//            if(!mLightDirty[i])
+//                continue;
+//
+//            mLightDirty[i] = false;
+//            setLightInternal(i, mCurrentLight[i], mCurrentLightEnable[i]);
+//        }
+//    }
 
     _updateRenderTargets();
 

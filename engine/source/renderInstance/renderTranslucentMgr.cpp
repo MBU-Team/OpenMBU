@@ -197,7 +197,7 @@ void RenderTranslucentMgr::render()
         setupSGData(ri, sgData);
 
         GFX->setZWriteEnable(false);
-        bool firstmatpass = true;
+        //bool firstmatpass = true;
         while (mat->setupPass(sgData))
         {
             ++numChanges;
@@ -229,9 +229,9 @@ void RenderTranslucentMgr::render()
 //                    }
 //                }
 
-                setupSGData(passRI, sgData);
-                sgData.matIsInited = true;
-                mat->setLightInfo(sgData);
+                //setupSGData(passRI, sgData);
+                //sgData.matIsInited = true;
+                //mat->setLightInfo(sgData);
                 mat->setWorldXForm(*passRI->worldXform);
                 mat->setObjectXForm(*passRI->objXform);
                 mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
@@ -244,7 +244,7 @@ void RenderTranslucentMgr::render()
             }
 
             matListEnd = a;
-            firstmatpass = false;
+            //firstmatpass = false;
         }
 
         // force increment if none happened, otherwise go to end of batch

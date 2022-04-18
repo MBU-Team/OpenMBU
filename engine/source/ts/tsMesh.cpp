@@ -470,13 +470,14 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
             if (matInst)
             {
                 //----------------------------------------------
-                if (!sunlight)
-                {
-                    MatInstance* dmat = MatInstance::getDynamicLightingMaterial(matInst, light, (secondary != NULL));
-                    if (matInst->getMaterial()->translucent || !dmat)
-                        continue;
-                    matInst = dmat;
-                }
+                // TEMP: Remove dynamic lighting stuff till we update it
+//                if (!sunlight)
+//                {
+//                    MatInstance* dmat = MatInstance::getDynamicLightingMaterial(matInst, light, (secondary != NULL));
+//                    if (matInst->getMaterial()->translucent || !dmat)
+//                        continue;
+//                    matInst = dmat;
+//                }
                 //----------------------------------------------
 
                 RenderInst* ri = gRenderInstManager.allocInst();
@@ -485,12 +486,13 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
                 ri->matInst = matInst;
                 ri->primBuffIndex = i;
 
-                if (matInst->isDynamicLightingMaterial_Dual())
-                {
-                    // piggyback onto the primary light...
-                    dMemcpy(&ri->lightSecondary, secondary, sizeof(ri->lightSecondary));
-                }
-                else if (secondary)
+//                if (matInst->isDynamicLightingMaterial_Dual())
+//                {
+//                    // piggyback onto the primary light...
+//                    dMemcpy(&ri->lightSecondary, secondary, sizeof(ri->lightSecondary));
+//                }
+//                else
+                if (secondary)
                 {
                     // not dual material, but two lights?
                     // finalize light one...

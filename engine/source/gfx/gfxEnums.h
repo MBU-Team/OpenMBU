@@ -478,7 +478,16 @@ enum GFXMatrixType
 {
     GFXMatrixWorld = 256,
     GFXMatrixView = 2,
-    GFXMatrixProjection = 3
+    GFXMatrixProjection = 3,
+    GFXMatrixTexture = 16,     // This value is texture matrix for sampler 0, can use this for offset
+    GFXMatrixTexture0 = 16,
+    GFXMatrixTexture1 = 17,
+    GFXMatrixTexture2 = 18,
+    GFXMatrixTexture3 = 19,
+    GFXMatrixTexture4 = 20,
+    GFXMatrixTexture5 = 21,
+    GFXMatrixTexture6 = 22,
+    GFXMatrixTexture7 = 23,
 };
 
 #define GFXVERTEXFLAG_F32     3

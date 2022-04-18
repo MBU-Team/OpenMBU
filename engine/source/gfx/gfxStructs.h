@@ -127,6 +127,7 @@ struct GFXShaderFeatureData
         RTLighting = 0,   // realtime lighting
         TexAnim,
         BaseTex,
+        ColorMultiply,
         DynamicLight,
         DynamicLightDual,
         SelfIllumination,
