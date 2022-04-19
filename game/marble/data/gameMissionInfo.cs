@@ -333,11 +333,11 @@ function GameMissionInfo::selectMission(%this, %index)
       if ($curr_sky !$= %this.getCurrentMission().sky)
       {
          // First hide our clouds
-         if ($curr_sky $= $sky_beginner)
+         if ($curr_sky $= $sky_beginner || $curr_sky $= "")
             Cloud_Beginner.setHidden(true);
-         if ($curr_sky $= $sky_intermediate)
+         if ($curr_sky $= $sky_intermediate || $curr_sky $= "")
             Cloud_Intermediate.setHidden(true);
-         if ($curr_sky $= $sky_advanced)
+         if ($curr_sky $= $sky_advanced || $curr_sky $= "")
             Cloud_Advanced.setHidden(true);
 
          // Then set the material
