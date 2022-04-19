@@ -761,6 +761,35 @@ void GFXD3DDevice::setRenderTarget(GFXTextureObject* surf,
     setViewport(vp);
 }
 
+void GFXD3DDevice::setRenderTarget(IDirect3DSurface9* surf,
+                                    U32 targetIndex,
+                                    U32 mipLevel)
+
+{
+    if (surf == NULL)
+    {
+        mD3DDevice->SetRenderTarget(targetIndex, NULL);
+        return;
+    }
+
+    //GFXD3DTextureObject* renderTarget;
+    //renderTarget = static_cast<GFXD3DTextureObject*>(surf);
+    //LPDIRECT3DSURFACE9 tempSurface = NULL;
+    //D3DAssert(renderTarget->get2DTex()->GetSurfaceLevel(mipLevel, &tempSurface),
+    //    "Failed to grab surface from texture");
+    //D3DAssert(mD3DDevice->SetRenderTarget(targetIndex, tempSurface), "Failed to set render target");
+    D3DAssert(mD3DDevice->SetRenderTarget(targetIndex, surf), "Failed to set render target");
+
+    // reset viewport data
+    D3DSURFACE_DESC desc;
+    //tempSurface->GetDesc(&desc);
+    //SAFE_RELEASE(tempSurface);
+    surf->GetDesc(&desc);
+    SAFE_RELEASE(surf);
+    RectI vp(0, 0, desc.Width, desc.Height);
+    setViewport(vp);
+}
+
 //-----------------------------------------------------------------------------
 // setRTBackBuffer() - set the render target to be the back buffer
 //-----------------------------------------------------------------------------
@@ -796,7 +825,7 @@ void GFXD3DDevice::popActiveRenderSurfaces()
     mRTStack.free(mRTStack.first());
 
     // Set render target to back buffer if stack is clear
-    if (mRTStack.size() == 0 && RTData.renderTarget[0] == NULL)
+    if (mRTStack.size() == 0 && RTData.renderTarget[0] == NULL && RTData.targets[0] == NULL)
     {
         mCurrentRTData = RTData;
         setRTBackBuffer();
@@ -809,6 +838,9 @@ void GFXD3DDevice::popActiveRenderSurfaces()
         if (RTData.renderTarget[i] != mCurrentRTData.renderTarget[i])
         {
             setRenderTarget(RTData.renderTarget[i], i, RTData.mipLevel[i]);
+        } else if (RTData.targets[i] != mCurrentRTData.targets[i])
+        {
+            setRenderTarget(RTData.targets[i], i, RTData.mipLevel[i]);
         }
     }
 
@@ -831,6 +863,7 @@ void GFXD3DDevice::setActiveRenderSurface(GFXTextureObject* surface, U32 renderT
                 "GFXD3DDevice::setActiveRenderSurface - Cannot have an active render target bound to a texture sampler!");
         }
 
+        mCurrentRTData.targets[renderTargetIndex] = NULL;
         mCurrentRTData.renderTarget[renderTargetIndex] = NULL;
 
         // if ending render surface 0, then switch it back to the back buffer
@@ -853,12 +886,64 @@ void GFXD3DDevice::setActiveRenderSurface(GFXTextureObject* surface, U32 renderT
             "GFXD3DDevice::setActiveRenderSurface - Cannot have an active render target bound to a texture sampler!");
     }
 
+    GFXD3DTextureObject *d3dto = static_cast<GFXD3DTextureObject*>(surface);
+
+    mCurrentRTData.targets[renderTargetIndex] = d3dto->getSurface();
     mCurrentRTData.renderTarget[renderTargetIndex] = surface;
     mCurrentRTData.mipLevel[renderTargetIndex] = mipLevel;
 
     setRenderTarget(surface, renderTargetIndex, mipLevel);
 }
 
+void GFXD3DDevice::setActiveRenderSurface(GFXCubemap* cubemap, U32 face, U32 renderTargetIndex, U32 mipLevel)
+{
+    if (cubemap == NULL)
+    {
+        // In debug, iterate over everything and make sure this isn't bound to a
+        // texture sampler yet.
+        for (S32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
+        {
+            AssertFatal(mCurrentTexture[i] != mCurrentRTData.renderTarget[renderTargetIndex],
+                        "GFXD3DDevice::setActiveRenderSurface - Cannot have an active render target bound to a texture sampler!");
+        }
+
+        mCurrentRTData.targets[renderTargetIndex] = NULL;
+        mCurrentRTData.renderTarget[renderTargetIndex] = NULL;
+
+        // if ending render surface 0, then switch it back to the back buffer
+        if (renderTargetIndex == 0)
+        {
+            setRTBackBuffer();
+        }
+        else
+        {
+            mD3DDevice->SetRenderTarget(renderTargetIndex, NULL);
+        }
+        return;
+    }
+
+    // Cast the texture object to D3D...
+    AssertFatal(dynamic_cast<GFXD3DCubemap*>(cubemap),
+                "GFXD3DTextureTarget::attachTexture - invalid cubemap object.");
+
+    GFXD3DCubemap *cube = static_cast<GFXD3DCubemap*>(cubemap);
+
+    D3DAssert(cube->mCubeTex->GetCubeMapSurface( (D3DCUBEMAP_FACES)face, mipLevel, &mCurrentRTData.targets[renderTargetIndex] ),
+               "GFXD3DDevice::setActiveRenderSurface - could not get surface level for the passed texture!");
+
+    // In debug, iterate over everything and make sure this isn't bound to a
+    // texture sampler yet.
+    // TODO: This breaks cubemaps, but removing this check doesn't sound like the right thing to do.
+//    for (S32 i = 0; i < TEXTURE_STAGE_COUNT; i++)
+//    {
+//        AssertFatal(mCurrentTexture[i] != cubemap,
+//                    "GFXD3DDevice::setActiveRenderSurface - Cannot have an active render target bound to a texture sampler!");
+//    }
+;
+    mCurrentRTData.mipLevel[renderTargetIndex] = mipLevel;
+
+    setRenderTarget(mCurrentRTData.targets[renderTargetIndex], renderTargetIndex, mipLevel);
+}
 
 void GFXD3DDevice::pushActiveZSurface()
 {
