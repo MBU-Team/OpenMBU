@@ -9,6 +9,7 @@ new SimGroup(MissionGroup) {
          desc = "A preview mission";
          name = $Text::LevelName61;
          time = "35000";
+         goldTime = "10000";
          include = "1";
    };
    new Sky(Sky) {

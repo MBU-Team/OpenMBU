@@ -9,6 +9,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          artist = "Alex Swanson";
          type = "intermediate";
+	      goldTime = "12000";
    };
    new Sky(Sky) {
       position = "336 136 0";

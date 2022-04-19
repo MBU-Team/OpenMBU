@@ -7,6 +7,7 @@ new SimGroup(MissionGroup) {
          desc = "Be careful crossing these bridges.";
          level = "11";
          time = "60000";
+	      goldTime = "20000";
          difficulty = "2";
          startHelpText = $Text::LevelStartHelp21;
          name = $Text::LevelName21;

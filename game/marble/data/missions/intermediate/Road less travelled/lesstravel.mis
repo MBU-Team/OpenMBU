@@ -45,6 +45,7 @@ new SimGroup(MissionGroup) {
          level = "29";
          gameType = "SinglePlayer";
          time = "80000";
+         goldTime = "30000";
          artist = "Alex Swanson";
          include = "1";
          name = $Text::LevelName101;

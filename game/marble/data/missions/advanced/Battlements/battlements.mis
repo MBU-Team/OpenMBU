@@ -4,6 +4,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName89;
          startHelpText = $Text::LevelStartHelp89;
          time = "100000";
+	      goldTime = "45000";
          gameType = "SinglePlayer";
          desc = "Make your way to the inner keep!";
          type = "advanced";

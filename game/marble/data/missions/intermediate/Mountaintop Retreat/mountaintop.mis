@@ -2,6 +2,7 @@
 new SimGroup(MissionGroup) {
   new ScriptObject(MissionInfo) {
          time = "50000";
+         goldTime = "20000";
          include = "1";
          difficulty = "4";
          type = "Intermediate";

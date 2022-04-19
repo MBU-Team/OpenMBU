@@ -8,6 +8,7 @@ new SimGroup(MissionGroup) {
 	 isInDemoMode = "1";
          name = $Text::LevelName10;
          time = "60000";
+         goldTime = "25000";
          gameType = "SinglePlayer";
          desc = "A single player mission that shows of basic multiplayer powerups.";
          startHelpText = $Text::LevelStartHelp10;

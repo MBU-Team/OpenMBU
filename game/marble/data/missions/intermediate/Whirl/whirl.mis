@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName80;
          gameType = "SinglePlayer";
          time = "140000";
+	      goldTime = "45000";
          hasEggIndex = "12";
    };
    new MissionArea(MissionArea) {

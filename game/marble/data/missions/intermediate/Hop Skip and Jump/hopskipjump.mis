@@ -6,6 +6,7 @@ new SimGroup(MissionGroup) {
          desc = "Master your aerial skills!";
          include = "1";
          time = "60000";
+	      goldTime = "12000";
          artist = "Alex Swanson";
          difficulty = "7";
          type = "Intermediate";

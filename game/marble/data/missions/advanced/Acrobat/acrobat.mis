@@ -3,6 +3,7 @@ new SimGroup(MissionGroup) {
 
   new ScriptObject(MissionInfo) {
          time = "80000";
+	      goldTime = "25000";
          artist = "Alex Swanson";
          gameType = "SinglePlayer";
          desc = "Careful jumping is the key!";

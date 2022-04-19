@@ -861,7 +861,8 @@ function clientCmdSetGameState(%state, %data)
          $CachedUserTime::levelTime[%mission.level] = %elapsed;
 		
 		// Color coding based on difference from Par Time.
-		if (%elapsed < %mission.time) %elapColor = "\c1";
+		if (%elapsed < %mission.goldTime && %mission.goldTime !$= "") %elapColor = "\c4";
+		else if (%elapsed < %mission.time) %elapColor = "\c1";
 		else if (%elapsed == %mission.time) %elapColor = "\c3";
 		else %elapColor = "\c2";
 		
@@ -869,6 +870,7 @@ function clientCmdSetGameState(%state, %data)
  		// Format: "Centered `yay` column for `New Best Time!`" TAB "Time Column" TAB "Tag Column" 
       GE_Stats.addRow(-1, " " TAB %elapColor @ formatTime( %elapsed ) TAB $Text::EndTime );
       GE_Stats.addRow(-1, " " TAB "\c3" @ formatTime( %mission.time ) TAB $Text::ParTime );
+      GE_Stats.addRow(-1, " " TAB "\c4" @ formatTime( %mission.goldTime ) TAB "Gold Time" );
       GE_Stats.addRow(-1, " " TAB %rating TAB $Text::EndScore );
       if (%isNewBestTime)
       	GE_Stats.addRow(-1, $Text::NewBestTime SPC " ");

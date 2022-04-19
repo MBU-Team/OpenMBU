@@ -8,6 +8,7 @@ startHelpText  =  $Text::LevelStartHelp73;
          difficulty = "6";
          level = "37";
          time = "120000";
+	      goldTime = "35000";
 name  =  $Text::LevelName73;
          artist = "Alex Swanson";
          gameType = "SinglePlayer";

@@ -6,6 +6,7 @@ new SimGroup(MissionGroup) {
          level = "22";
          name = $Text::LevelName107;
          time = "120000";
+         goldTime = "50000";
          difficulty = "4";
          startHelpText = $Text::LevelStartHelp107;
          gameType = "SinglePlayer";

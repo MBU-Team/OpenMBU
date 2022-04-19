@@ -7,6 +7,7 @@ new SimGroup(MissionGroup) {
          desc = "All your base are belong to us.";
          level = "60";
          time = "210000";
+	      goldTime = "85000";
          startHelpText = $Text::LevelStartHelp98;
          artist = "Alex Swanson";
          include = "1";

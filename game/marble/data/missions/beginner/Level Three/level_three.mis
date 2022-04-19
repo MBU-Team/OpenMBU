@@ -6,6 +6,7 @@ new SimGroup(MissionGroup) {
 startHelpText  =  $Text::LevelStartHelp3;
          difficulty = "1";
          time = "70000";
+         goldTime = "10000";
          isInDemoMode = "1";
          level = "3";
          type = "beginner";

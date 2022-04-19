@@ -3,6 +3,7 @@ new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
          time = "75000";
+         goldTime = "10000";
          type = "advanced";
          level = "41";
          artist = "Alex Swanson";

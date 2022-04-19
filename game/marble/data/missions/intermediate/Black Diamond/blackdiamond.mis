@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          time = "75000";
          hasEggIndex = "11";
+         goldTime = "30000";
    };
    new Sky(Sky) {
       position = "336 136 0";

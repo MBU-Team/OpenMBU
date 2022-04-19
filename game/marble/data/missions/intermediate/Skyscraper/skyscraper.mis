@@ -27,6 +27,7 @@ new SimGroup(MissionGroup) {
          desc = "A preview mission";
          include = "1";
          time = "150000";
+         goldTime = "85000";
          level = "25";
 startHelpText  =  $Text::LevelStartHelp77;
          difficulty = "5";

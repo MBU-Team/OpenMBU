@@ -8,6 +8,7 @@ new SimGroup(MissionGroup) {
          type = "Intermediate";
          artist = "Kevin Ryan";
          time = "30000";
+	      goldTime = "13500";
          level = "24";
          name = $Text::LevelName69;
    };

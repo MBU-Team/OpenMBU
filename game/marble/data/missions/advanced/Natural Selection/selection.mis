@@ -9,6 +9,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName58;
          include = "1";
          time = "75000";
+         goldTime = "54000";
          difficulty = "10";
          type = "advanced";
          artist = "Alex Swanson";

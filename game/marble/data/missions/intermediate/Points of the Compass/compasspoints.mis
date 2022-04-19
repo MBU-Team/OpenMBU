@@ -6,6 +6,7 @@ new SimGroup(MissionGroup) {
          level = "31";
          name = $Text::LevelName56;
          time = "60000";
+	      goldTime = "13000";
          gameType = "SinglePlayer";
          desc = "A test mission for an interior";
          type = "intermediate";

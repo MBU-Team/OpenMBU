@@ -10,6 +10,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName106;
          difficulty = "9";
          time = "70000";
+         goldTime = "40000";
    };
    new Sky(Sky) {
       position = "336 136 0";

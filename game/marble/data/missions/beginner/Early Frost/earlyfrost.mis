@@ -7,6 +7,7 @@ startHelpText  =  $Text::LevelStartHelp34;
          include = "1";
          difficulty = "3";
          time = "30000";
+         goldTime = "13000";
          level = "14";
 name  =  $Text::LevelName34;
          artist = "Alex Swanson";

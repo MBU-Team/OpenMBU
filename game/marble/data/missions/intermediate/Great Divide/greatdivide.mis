@@ -63,6 +63,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          type = "intermediate";
          time = "150000";
+         goldTime = "75000";
          include = "1";
          level = "34";
          name = $Text::LevelName45;

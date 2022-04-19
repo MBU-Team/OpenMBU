@@ -6,6 +6,7 @@ new SimGroup(MissionGroup) {
          desc = "Master this monumental mountain challenge!";
          name = $Text::LevelName100;
          time = "120000";
+	      goldTime = "44000";
          include = "1";
          type = "advanced";
          artist = "Alex Swanson";

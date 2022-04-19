@@ -22,6 +22,7 @@ new SimGroup(MissionGroup) {
          type = "advanced";
          startHelpText = $Text::LevelStartHelp88;
          time = "70000";
+         goldTime = "30000";
          level = "43";
          isInDemoMode = "1";
          name = $Text::LevelName88;

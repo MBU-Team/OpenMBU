@@ -7,6 +7,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName37;
          time = "120000";
          difficulty = "6";
+         goldTime = "36000";
          startHelpText = $Text::LevelStartHelp37;
          gameType = "SinglePlayer";
          artist = "Kevin Ryan";

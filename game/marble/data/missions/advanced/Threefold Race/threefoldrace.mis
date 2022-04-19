@@ -3,6 +3,7 @@ new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
          time = "120000";
+	      goldTime = "48000";
          include = "1";
          difficulty = "10";
          type = "advanced";

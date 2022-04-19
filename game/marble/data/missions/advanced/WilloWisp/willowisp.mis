@@ -5,6 +5,7 @@ new SimGroup(MissionGroup) {
          type = "advanced";
          gameType = "SinglePlayer";
          time = "105000";
+         goldTime = "25000";
          level = "54";
          include = "1";
          difficulty = "10";

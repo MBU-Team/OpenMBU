@@ -3,6 +3,7 @@ new SimGroup(MissionGroup) {
 
     new ScriptObject(MissionInfo) {
          time = "120000";
+	      goldTime = "35000";
          startHelpText = $Text::LevelStartHelp40;
          include = "1";
          difficulty = "5";

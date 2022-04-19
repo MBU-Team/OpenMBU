@@ -9,6 +9,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName109;
          gameType = "SinglePlayer";
          time = "100000";
+         goldTime = "50000";
          include = "1";
    };
    new MissionArea(MissionArea) {

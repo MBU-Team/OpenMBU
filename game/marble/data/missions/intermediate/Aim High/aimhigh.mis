@@ -5,6 +5,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          include = "1";
          difficulty = "5";
+         goldTime = "10000";
          type = "Intermediate";
          artist = "Kevin Ryan and Tim Aste";
          time = "30000";

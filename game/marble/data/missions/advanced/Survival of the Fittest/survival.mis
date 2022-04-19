@@ -4,6 +4,7 @@ new SimGroup(MissionGroup) {
     new ScriptObject(MissionInfo) {
          type = "advanced";
          time = "52000";
+	      goldTime = "37000";
          level = "45";
          artist = "Alex Swanson";
          include = "1";

@@ -6,6 +6,7 @@ new SimGroup(MissionGroup) {
          desc = "Follow the path to the top!";
          include = "1";
          time = "150000";
+         goldTime = "37000";
          artist = "Alex Swanson";
 startHelpText  =  $Text::LevelStartHelp48;
          type = "beginner";

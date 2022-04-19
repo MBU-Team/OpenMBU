@@ -13,7 +13,7 @@ new GuiControl(GameEndGui) {
       horizSizing = "right";
       vertSizing = "bottom";
       position = isWideScreen() ? "715 410" : "279 240"; 
-      extent = "344 154";
+      extent = "344 174";
       maxLength = "255";
       resizeWidth = "1";
       resizeHeight = "1";

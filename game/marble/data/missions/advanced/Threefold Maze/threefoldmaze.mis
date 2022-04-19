@@ -8,6 +8,7 @@ new SimGroup(MissionGroup) {
          include = "1";
          type = "advanced";
          time = "180000";
+	      goldTime = "38000";
          difficulty = "9";
          level = "52";
          name = $Text::LevelName57;
