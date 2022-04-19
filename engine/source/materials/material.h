@@ -163,6 +163,9 @@ public:
     BlendOp           translucentBlendOp;
     bool              translucentZWrite;
 
+    bool              alphaTest;
+    U32               alphaRef;
+
     bool              planarReflection;
 
 #ifdef MARBLE_BLAST

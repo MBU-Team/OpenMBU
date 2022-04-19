@@ -17,7 +17,7 @@ class GFXD3DCubemap : public GFXCubemap
     friend class GFXD3DDevice;
 
     LPDIRECT3DCUBETEXTURE9  mCubeTex;
-    LPDIRECT3DSURFACE9      mDepthBuff;
+    GFXTexHandle            mDepthBuff;
 
     static _D3DCUBEMAP_FACES faceList[6];
     bool mInit;

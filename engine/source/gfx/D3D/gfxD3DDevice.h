@@ -75,6 +75,29 @@ private:
 
     Vector<IDirect3DSurface9*> activeZStack;
 
+    //---------------------------------------
+    // Render target related
+    //---------------------------------------
+    struct RTStackElement
+    {
+        IDirect3DSurface9* targets[MAX_MRT_TARGETS];
+        GFXTextureObject* renderTarget[MAX_MRT_TARGETS];
+        U32               mipLevel[MAX_MRT_TARGETS];
+
+        RTStackElement()
+        {
+            clear();
+        }
+        void clear()
+        {
+            dMemset(this, 0, sizeof(RTStackElement));
+        }
+
+    };
+
+    RTStackElement mCurrentRTData;
+    LList <RTStackElement> mRTStack;
+
     /// Special effects back buffer - for refraction and other effects
     virtual void copyBBToSfxBuff();
 
@@ -201,12 +224,14 @@ public:
     // Render Targets
     // {
     void setRenderTarget(GFXTextureObject* surface, U32 renderTargetIndex, U32 mipLevel);
+    void setRenderTarget(IDirect3DSurface9* surface, U32 renderTargetIndex, U32 mipLevel);
     void setRTBackBuffer();
     void pushActiveRenderSurfaces();
     void pushActiveZSurface();
     void popActiveRenderSurfaces();
     void popActiveZSurface();
     void setActiveRenderSurface(GFXTextureObject* surface, U32 renderTargetIndex = 0, U32 mipLevel = 0);
+    void setActiveRenderSurface(GFXCubemap* cubemap, U32 face, U32 renderTargetIndex = 0, U32 mipLevel = 0);
     void setActiveZSurface(GFXTextureObject* surface);
 
     // }

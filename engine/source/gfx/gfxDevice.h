@@ -450,27 +450,6 @@ protected:
     bool         mUseSfxBackBuffer;
 
 
-    //---------------------------------------
-    // Render target related
-    //---------------------------------------
-    struct RTStackElement
-    {
-        GFXTextureObject* renderTarget[MAX_MRT_TARGETS];
-        U32               mipLevel[MAX_MRT_TARGETS];
-
-        RTStackElement()
-        {
-            clear();
-        }
-        void clear()
-        {
-            dMemset(this, 0, sizeof(RTStackElement));
-        }
-
-    };
-
-    RTStackElement mCurrentRTData;
-    LList <RTStackElement> mRTStack;
 
 
 public:
@@ -522,6 +501,7 @@ public:
     ///    If using only one render target, specify 0 (or nothing) as the renderTargetIndex.
     ///    To turn off a particular render target, pass in the proper index and set the surface parameter to NULL
     virtual void setActiveRenderSurface(GFXTextureObject* surface, U32 renderTargetIndex = 0, U32 mipLevel = 0) = 0;
+    virtual void setActiveRenderSurface(GFXCubemap* cubemap, U32 face, U32 renderTargetIndex = 0, U32 mipLevel = 0) = 0;
     virtual void setActiveZSurface(GFXTextureObject* surface) = 0;
 
     ///@}

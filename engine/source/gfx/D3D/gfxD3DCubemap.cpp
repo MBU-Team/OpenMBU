@@ -55,11 +55,11 @@ void GFXD3DCubemap::releaseSurfaces()
         mCubeTex->Release();
         mCubeTex = NULL;
     }
-    if (mDepthBuff)
-    {
-        mDepthBuff->Release();
-        mDepthBuff = NULL;
-    }
+//    if (mDepthBuff)
+//    {
+//        mDepthBuff->Release();
+//        mDepthBuff = NULL;
+//    }
 }
 
 //-----------------------------------------------------------------------------
@@ -149,14 +149,16 @@ void GFXD3DCubemap::initDynamic(U32 texSize)
         &mCubeTex,
         NULL), NULL);
 
-    D3DDevice->CreateDepthStencilSurface(texSize,
-        texSize,
-        D3DFMT_D24S8,
-        D3DMULTISAMPLE_NONE,
-        0,
-        false,
-        &mDepthBuff,
-        NULL);
+//    D3DDevice->CreateDepthStencilSurface(texSize,
+//        texSize,
+//        D3DFMT_D24S8,
+//        D3DMULTISAMPLE_NONE,
+//        0,
+//        false,
+//        &mDepthBuff,
+//        NULL);
+
+    mDepthBuff = GFXTexHandle( texSize, texSize, GFXFormatD24S8, &GFXDefaultZTargetProfile);
 
 }
 
@@ -205,17 +207,18 @@ void GFXD3DCubemap::updateDynamic(Point3F& pos)
     mInit = true;
 #endif
 
-    LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice*>(GFX)->getDevice();
+    //LPDIRECT3DDEVICE9 D3DDevice = dynamic_cast<GFXD3DDevice*>(GFX)->getDevice();
 
     GFX->pushActiveRenderSurfaces();
+    GFX->pushActiveZSurface();
 
     // store current matrices
     GFX->pushWorldMatrix();
     MatrixF proj = GFX->getProjectionMatrix();
 
     // store previous depth buffer
-    IDirect3DSurface9* prevDepthSurface;
-    D3DDevice->GetDepthStencilSurface(&prevDepthSurface);
+    //IDirect3DSurface9* prevDepthSurface;
+    //D3DDevice->GetDepthStencilSurface(&prevDepthSurface);
 
     // set projection to 90 degrees vertical and horizontal
     MatrixF matProj;
@@ -226,7 +229,7 @@ void GFXD3DCubemap::updateDynamic(Point3F& pos)
     MatrixF rotMat(EulerF((M_PI / 2.0), 0.0, 0.0));
 
     matProj.mul(rotMat);
-    GFX->setFrustum((M_PI / 2.0), 1.0f, 0.1f, 1000.0f);
+    //GFX->setFrustum((M_PI / 2.0), 1.0f, 0.1f, 1000.0f);
     GFX->setProjectionMatrix(matProj);
 
     getCurrentClientSceneGraph()->setReflectPass(true);
@@ -281,26 +284,32 @@ void GFXD3DCubemap::updateDynamic(Point3F& pos)
 
 
         // set new render target / zbuffer , clear buffers
-        LPDIRECT3DSURFACE9 pFace;
-        mCubeTex->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 0, &pFace);
-        D3DDevice->SetRenderTarget(0, pFace);
-        D3DDevice->SetDepthStencilSurface(mDepthBuff);
-        pFace->Release();
+        //LPDIRECT3DSURFACE9 pFace;
+        //mCubeTex->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 0, &pFace);
+        //D3DDevice->SetRenderTarget(0, pFace);
+        //D3DDevice->SetDepthStencilSurface(mDepthBuff);
+        //pFace->Release();
 
-        D3DDevice->Clear(0, NULL, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+        //mRenderTarget->attachTexture( GFXTextureTarget::Color0, this, i );
+        GFX->setActiveRenderSurface( this, i );
+        GFX->setActiveZSurface(mDepthBuff);
+
+        //D3DDevice->Clear(0, NULL, D3DCLEAR_STENCIL | D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+        GFX->clear( GFXClearStencil | GFXClearTarget | GFXClearZBuffer, ColorI( 0, 0, 0 ), 1.f, 0 );
 
         // render scene
         //getCurrentClientSceneGraph()->renderScene(InteriorObjectType | ItemObjectType | StaticShapeObjectType | EnvironmentObjectType);
-        //getCurrentClientSceneGraph()->renderScene(InteriorObjectType | EnvironmentObjectType);
-        getCurrentClientSceneGraph()->renderScene(InteriorObjectType);
+        getCurrentClientSceneGraph()->renderScene(InteriorObjectType | EnvironmentObjectType);
+        //getCurrentClientSceneGraph()->renderScene(InteriorObjectType);
     }
 
     getCurrentClientSceneGraph()->setReflectPass(false);
 
     // restore render surface and depth buffer
+    GFX->popActiveZSurface();
     GFX->popActiveRenderSurfaces();
-    D3DDevice->SetDepthStencilSurface(prevDepthSurface);
-    prevDepthSurface->Release();
+    //D3DDevice->SetDepthStencilSurface(prevDepthSurface);
+    //prevDepthSurface->Release();
 
     // restore matrices
     GFX->popWorldMatrix();
