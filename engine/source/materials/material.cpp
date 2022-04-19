@@ -105,6 +105,9 @@ Material::Material()
     translucentBlendOp = LerpAlpha;
     translucentZWrite = false;
 
+    alphaTest = true;
+    alphaRef = 1;
+
     planarReflection = false;
 
     mCubemapData = NULL;
@@ -170,6 +173,9 @@ void Material::initPersistFields()
     addField("translucent", TypeBool, Offset(translucent, Material));
     addField("translucentBlendOp", TypeEnum, Offset(translucentBlendOp, Material), 1, &mBlendOpTable);
     addField("translucentZWrite", TypeBool, Offset(translucentZWrite, Material));
+
+    addField("alphaTest",    TypeBool, Offset(alphaTest,  Material));
+    addField("alphaRef",     TypeS32,  Offset(alphaRef,   Material));
 
     addField("castsShadow", TypeBool, Offset(castsShadow, Material));
     addField("breakable", TypeBool, Offset(breakable, Material));

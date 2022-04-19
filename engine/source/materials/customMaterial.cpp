@@ -500,11 +500,11 @@ bool CustomMaterial::setupPass(SceneGraphData& sgData)
 
     if (isTranslucent())
     {
-        GFX->setAlphaBlendEnable(true);
+        GFX->setAlphaBlendEnable(translucentBlendOp != Material::None );
         setBlendState(translucentBlendOp);
         GFX->setZWriteEnable(translucentZWrite);
-        GFX->setAlphaTestEnable(true);
-        GFX->setAlphaRef(1);
+        GFX->setAlphaTestEnable(alphaTest);
+        GFX->setAlphaRef(alphaRef);
         GFX->setAlphaFunc(GFXCmpGreaterEqual);
 
         // set up register combiners
