@@ -114,6 +114,29 @@ ConsoleFunction(XBLiveGetSignInPort, S32, 1, 1, "()")
     return 0;
 }
 
+bool xbliveSessionActive = false;
+
+ConsoleFunction(XBLiveIsStatsSessionActive, bool, 1, 1, "()")
+{
+    argc;
+
+    return xbliveSessionActive;
+}
+
+ConsoleFunction(XBLiveStartStatsSession, void, 1, 1, "()")
+{
+    argc;
+
+    xbliveSessionActive = true;
+}
+
+ConsoleFunction(XBLiveEndStatsSession, void, 1, 1, "()")
+{
+    argc;
+
+    xbliveSessionActive = false;
+}
+
 ConsoleFunction(PDLCAllowMission, bool, 2, 2, "(levelId)")
 {
     argc;
