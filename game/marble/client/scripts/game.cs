@@ -733,7 +733,7 @@ function clientWriteMultiplayerScore(%client)
 
 function clientAreStatsAllowed()
 {
-   return !isDemoLaunch() && !isPCBuild() && XBLiveIsSignedInSilver() && $Client::UseXBLiveMatchMaking;
+   return !isDemoLaunch();// && !isPCBuild() && XBLiveIsSignedInSilver() && $Client::UseXBLiveMatchMaking;
 }
 
 function clientAreOfflineStatsAllowed()
@@ -942,8 +942,7 @@ function clientCmdSetGameState(%state, %data)
       // if we are in end state, write scores
       if (XBLiveIsStatsSessionActive() && (%state $= "end" || %state $= "wait"))
       {
-         //if (%allowStats && $Client::currentGameCounts && %state $= "end")
-         if (%state $= "end")
+         if (%allowStats && $Client::currentGameCounts && %state $= "end")
             clientWriteMultiplayerScores();
          echo("clientCmdSetGameState: Ending stats session and cleaning up stats");
          XBLiveEndStatsSession();
