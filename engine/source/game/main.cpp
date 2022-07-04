@@ -62,6 +62,7 @@
 
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
+#include "autosplitter/autosplitter.h"
 
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
@@ -188,6 +189,8 @@ static bool initLibraries()
     RedBook::init();
     SFXSystem::init();
 
+    Autosplitter::init();
+
     return true;
 }
 
@@ -199,6 +202,8 @@ static void shutdownLibraries()
     // Purge any resources on the timeout list...
     if (ResourceManager)
         ResourceManager->purge();
+
+    Autosplitter::destroy();
 
     RedBook::destroy();
     TSShapeInstance::destroy();

@@ -7896,6 +7896,8 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
 
 @param format One of JPEG or PNG.</desc>
     </function>
+    <function>        <name>sendAutosplitterData</name>
+    </function>
     <function>        <name>setClipboard</name>
         <args>string text</args>
         <desc>Set the system clipboard.</desc>

@@ -71,6 +71,7 @@ endif()
 # Always enabled paths first
 ###############################################################################
 addPath("${srcDir}/") # must come first :)
+addPath("${srcDir}/autosplitter")
 addPath("${srcDir}/collision")
 addPath("${srcDir}/console")
 addPath("${srcDir}/core")
