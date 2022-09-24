@@ -205,7 +205,7 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
             Point3F otherPos = other->getPosition();
 
             F32 time;
-            if (MathUtils::capsuleSphereNearestOverlap(position, nextPos, mRadius, otherPos, other->mRadius, time));
+            if (MathUtils::capsuleSphereNearestOverlap(position, nextPos, mRadius, otherPos, other->mRadius, time))
             {
                 time *= deltaT;
 
