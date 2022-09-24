@@ -192,6 +192,7 @@ private:
     F32 mMouseX;
     F32 mMouseY;
     bool mControllable;
+    bool mEnablePhysics;
     bool mOOB;
     Point3F mOOBCamPos;
     U32 mSuperSpeedDoneTime;
@@ -227,6 +228,9 @@ public:
     // consoleInit was not overriden in the original decompile
     // if you want it to match MBO exactly, then remove it.
     static void consoleInit();
+
+    void setPhysicsEnabled(bool enabled);
+    bool getPhysicsEnabled() const { return mEnablePhysics;}
 
     SceneObject* getPad();
     S32 getPowerUpId();

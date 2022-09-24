@@ -584,6 +584,7 @@ if (isPCBuild())
    moveMap.bind( xinput, thumbry, "D", "-0.23 0.23", gamepadPitch );
 
    moveMap.bind(keyboard, m, spawnStupidMarble);
+   moveMap.bind(keyboard, n, toggleDummyPhysics);
    moveMap.bind( xinput, btn_y, spawnStupidMarble );
    
    

@@ -99,6 +99,7 @@ Marble::Marble()
     mPosition = Point3D(0, 0, 0);
 
     mControllable = true;
+    mEnablePhysics = true;
 
     mLastContact.position = Point3D(1.0e10, 1.0e10, 1.0e10);
     mLastContact.normal = Point3D(0, 0, 1);
@@ -175,6 +176,23 @@ void Marble::initPersistFields()
     Parent::initPersistFields();
 
     addField("Controllable", TypeBool, Offset(mControllable, Marble));
+    //addField("EnablePhysics", TypeBool, Offset(mEnablePhysics, Marble));
+}
+
+void Marble::setPhysicsEnabled(bool enabled)
+{
+    mEnablePhysics = enabled;
+    setMaskBits(WarpMask);
+}
+
+ConsoleMethod(Marble, setPhysicsEnabled, void, 3, 3, "(enabled)")
+{
+    object->setPhysicsEnabled(dAtob(argv[2]));
+}
+
+ConsoleMethod(Marble, getPhysicsEnabled, bool, 2, 2, "()")
+{
+    return object->getPhysicsEnabled();
 }
 
 void Marble::consoleInit()
@@ -522,6 +540,8 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 {
     Parent::packUpdate(conn, mask, stream);
 
+    stream->writeFlag(mEnablePhysics);
+
     bool isControl = false;
 
     // if it's the control object and the WarpMask is not set
@@ -621,6 +641,8 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
 void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
 {
     Parent::unpackUpdate(conn, stream);
+
+    mEnablePhysics = stream->readFlag();
 
     bool warp = stream->readFlag();
     bool isGravWarp = stream->readFlag();
@@ -831,6 +853,8 @@ void Marble::writePacketData(GameConnection* conn, BitStream* stream)
 
     if (stream->writeFlag(mBlastTimer != 0))
         stream->writeRangedU32(mBlastTimer >> 5, 1, 16);
+
+    stream->writeFlag(mEnablePhysics);
 }
 
 void Marble::readPacketData(GameConnection* conn, BitStream* stream)
@@ -896,6 +920,8 @@ void Marble::readPacketData(GameConnection* conn, BitStream* stream)
         mBlastTimer = stream->readRangedU32(1, 16) * 32;
     else
         mBlastTimer = 0;
+
+    mEnablePhysics = stream->readFlag();
 
     mPosition = mSinglePrecision.mPosition;
     mVelocity = mSinglePrecision.mVelocity;
@@ -1660,6 +1686,9 @@ void Marble::advanceTime(F32 dt)
 {
     Parent::advanceTime(dt);
 
+    //if (!mEnablePhysics)
+    //    return;
+
     F32 deltaTime = dt * 1000.0f;
 
     if (mBlastEnergy >= mDataBlock->maxNaturalBlastRecharge >> 5)
@@ -1750,6 +1779,9 @@ void Marble::advanceTime(F32 dt)
 
 void Marble::computeNetSmooth(F32 backDelta)
 {
+    //if (!mEnablePhysics)
+    //    return;
+
     mNetSmoothPos.set(0, 0, 0);
 
     Point3F oldPos = mLastRenderPos;
@@ -1992,6 +2024,9 @@ void Marble::setPowerUpId(U32 id, bool reset)
 void Marble::processTick(const Move* move)
 {
     Parent::processTick(move);
+
+    //if (!mEnablePhysics)
+    //    return;
 
     clearMarbleAxis();
     if ((mMode & TimerMode) != 0)

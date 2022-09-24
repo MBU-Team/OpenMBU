@@ -583,6 +583,9 @@ Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
 
 void Marble::advancePhysics(const Move* move, U32 timeDelta)
 {
+    //if (!mEnablePhysics)
+    //    return;
+
     dMemcpy(&delta.posVec, &mPosition, sizeof(delta.posVec));
 
     smPathItrVec.clear();

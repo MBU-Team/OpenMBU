@@ -2090,11 +2090,27 @@ function serverCmdSpawnStupidMarble(%client,%forceNew)
       };
       MissionCleanup.add(%dummy);
       %client.dummyMarble = %dummy;
+      
+      $DummyMarble = %dummy;
 
       %dummy.setPosition(VectorAdd(%pos,"0 1.5 1"), 0.45);
       %dummy.setShapeName(%client.getMarbleChoice());
       %dummy.setGravityDir("1 0 0 0 -1 0 0 0 -1",true);
       echo("stupid marble id" SPC %dummy SPC "position" SPC %pos);
+   }
+}
+
+function toggleDummyPhysics(%flag)
+{
+   if (%flag)
+   {
+      %wasEnabled = $DummyMarble.getPhysicsEnabled();
+      $DummyMarble.setPhysicsEnabled(!%wasEnabled);
+      
+      if ($DummyMarble.getPhysicsEnabled())
+         error("Enabled Dummy Physics");
+      else
+         error("Disabled Dummy Physics");
    }
 }
 
