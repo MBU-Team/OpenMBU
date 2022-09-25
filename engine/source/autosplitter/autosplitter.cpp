@@ -38,7 +38,7 @@ Autosplitter::Autosplitter()
     mFile.open(mFilename, std::ios_base::app);
     if (!mFile.is_open())
     {
-        Con::errorf("Failed to open autosplitter file %s.", mFilename);
+        Con::errorf("Failed to open autosplitter file %s.", mFilename.c_str());
         Con::errorf("Autosplitter is disabled.");
         return;
     }
