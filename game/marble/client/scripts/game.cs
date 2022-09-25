@@ -733,7 +733,7 @@ function clientWriteMultiplayerScore(%client)
 
 function clientAreStatsAllowed()
 {
-   return !isDemoLaunch() && !isPCBuild() && XBLiveIsSignedInSilver() && $Client::UseXBLiveMatchMaking;
+   return !isDemoLaunch();// && !isPCBuild() && XBLiveIsSignedInSilver() && $Client::UseXBLiveMatchMaking;
 }
 
 function clientAreOfflineStatsAllowed()
