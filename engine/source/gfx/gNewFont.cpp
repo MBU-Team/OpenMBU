@@ -418,15 +418,26 @@ GFont::GFont()
 
 GFont::~GFont()
 {
-    if (mGFTFile)
+    /*if (mGFTFile)
     {
-        FileStream stream;
-        if (ResourceManager->openFileForWrite(stream, mGFTFile))
+        bool noBitmap = false;
+        U32 i;
+        for (i = 0; i < mTextureSheets.size(); i++)
         {
-            write(stream);
-            stream.close();
+            if (!mTextureSheets[i].getBitmap())
+                noBitmap = true;
         }
-    }
+
+        if (!noBitmap)
+        {
+            FileStream stream;
+            if (ResourceManager->openFileForWrite(stream, mGFTFile))
+            {
+                write(stream);
+                stream.close();
+            }
+        }
+    }*/
 
     S32 i;
 
