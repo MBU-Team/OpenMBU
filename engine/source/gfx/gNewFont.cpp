@@ -941,7 +941,10 @@ bool GFont::write(Stream& stream)
 
     stream.write(mTextureSheets.size());
     for (i = 0; i < mTextureSheets.size(); i++)
+    {
+        AssertFatal(mTextureSheets[i].getBitmap(), "GFont::write - no bitmap for texture sheet!");
         mTextureSheets[i].getBitmap()->writePNG(stream);
+    }
 
     stream.write(mCurX);
     stream.write(mCurY);
