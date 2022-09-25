@@ -222,7 +222,7 @@ bool GFXD3DTextureObject::copyToBmp(GBitmap* bmp)
 
     // assert if we stomped or underran memory
     AssertFatal(U32(destPtr - bmp->getWritableBits()) == width * height * destBytesPerPixel, "copyToBmp: doh, memory error");
-    AssertFatal(U32(srcPtr - lockRect->pBits) == height * lockRect->Pitch, "copyToBmp: doh, memory error");
+    AssertFatal(U32(srcPtr - (U8*)lockRect->pBits) == height * lockRect->Pitch, "copyToBmp: doh, memory error");
 
     // unlock
     unlock();
