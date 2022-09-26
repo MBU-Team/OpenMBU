@@ -6,47 +6,46 @@
 #ifndef _SFXXAUDIOBUFFER_H_
 #define _SFXXAUDIOBUFFER_H_
 
-#include "platformXbox/platformXbox.h"
-#include <xaudio.h>
-#include <x3daudio.h>
-
 #ifndef _SFXBUFFER_H_
    #include "sfx/sfxBuffer.h"
 #endif
+#ifndef _SFXRESOURCE_H_
+   #include "sfx/sfxResource.h"
+#endif
 
-class SFXSource;
+#include <xaudio2.h>
+
+class SFXProfile;
+
 
 class SFXXAudioBuffer : public SFXBuffer
 {
    friend class SFXXAudioDevice;
 
    protected:
-      SFXXAudioBuffer( bool is3d, U32 channels, U32 frequency, U32 bitsPerSample, U32 dataSize );
-      IXAudioSourceVoice *mSourceVoice;
-      XAUDIOPACKET mPacket;
 
-      U32 mDataSize;
-      void *mAlignedData;
+      ///
+      Resource<SFXResource> mResource;
+
+      /// The buffer struct used by the XAudio voices.
+      XAUDIO2_BUFFER mBuffer;
+
+      bool mIs3d;
+
+      ///
+      SFXXAudioBuffer( const Resource<SFXResource> &resource, bool is3d );
+      virtual ~SFXXAudioBuffer();
 
    public:
 
-      virtual ~SFXXAudioBuffer();
+      ///
+      static SFXXAudioBuffer* create( SFXProfile *profile );
 
-      bool copyData( U32 offset, const U8* data, U32 length );
-
-      void setPosition( U32 pos );
-
-      void setMinMaxDistance( F32 min, F32 max );
-
-      bool isPlaying() const;
-
-      void play( bool looping );
-      void stop();
-
-      void setVelocity( const VectorF& velocity );
-      void setTransform( const MatrixF& transform );
-      void setVolume( F32 volume );
-      void setPitch( F32 pitch );
+      ///
+      void getFormat( WAVEFORMATEX *wft ) const;
+      
+      ///
+      const XAUDIO2_BUFFER& getData() const { return mBuffer; }
 };
 
 

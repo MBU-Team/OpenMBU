@@ -51,6 +51,8 @@ if(WIN32)
 	addLib(d3d9)
 	addLib(d3dx9)
 	addLib(dxerr)
+
+    addLib(xaudio2)
 endif()
 
 # build types
@@ -108,6 +110,7 @@ addPath("${srcDir}/sfx/vorbis")
 addPath("${srcDir}/sfx/null")
 if (WIN32)
 	addPath("${srcDir}/sfx/dsound")
+    addPath("${srcDir}/sfx/xaudio")
 endif()
 addPath("${srcDir}/shaderGen")
 addPath("${srcDir}/sim")
