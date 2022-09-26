@@ -109,7 +109,7 @@ addPath("${srcDir}/sfx")
 addPath("${srcDir}/sfx/vorbis")
 addPath("${srcDir}/sfx/null")
 if (WIN32)
-	addPath("${srcDir}/sfx/dsound")
+	#addPath("${srcDir}/sfx/dsound") # Disable DirectSound for now
     addPath("${srcDir}/sfx/xaudio")
 endif()
 addPath("${srcDir}/shaderGen")
