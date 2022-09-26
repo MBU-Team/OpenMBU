@@ -49,8 +49,10 @@ function HelpAndOptionsGui::onA(%this)
       case 2: 
          RootGui.setContent(videoOptionsGui, %this.backGui);
       case 3: 
+         RootGui.setContent(miscOptionsGui, %this.backGui);
+      case 4: 
          RootGui.setContent(aboutMenuOptionsGui, %this.backGui);
-      case 4:
+      case 5:
          RootGui.setContent(helpGui, %this.backGui, 5);
    }
     
@@ -70,6 +72,7 @@ function HelpAndOptionsGui::show(%this, %backGui)
    HelpAndOptionsList.addRow($Text::HOMarble, "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOOptions, "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOVideoOptions, "", 0, 8);
+   HelpAndOptionsList.addRow($Text::HOMiscOptions, "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOInstructions, "", 0, 12);
    HelpAndOptionsList.addRow($Text::HOCredits, "", 0, 12);
   

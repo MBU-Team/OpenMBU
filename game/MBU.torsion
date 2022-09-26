@@ -8,7 +8,7 @@
         <Folder>creator</Folder>
     </Mods>
     <ScannerExts>cs; gui</ScannerExts>
-    <Configs>        <Config>            <Name>Debug</Name>
+    <Configs>        <Config>            <Name>Debug x86</Name>
             <Executable>MBUltra_DEBUG.exe</Executable>
             <Arguments></Arguments>
             <HasExports>true</HasExports>
@@ -16,8 +16,24 @@
             <InjectDebugger>true</InjectDebugger>
             <UseSetModPaths>false</UseSetModPaths>
         </Config>
-        <Config>            <Name>Release</Name>
+        <Config>            <Name>Release x86</Name>
             <Executable>MBUltra.exe</Executable>
+            <Arguments></Arguments>
+            <HasExports>false</HasExports>
+            <Precompile>true</Precompile>
+            <InjectDebugger>true</InjectDebugger>
+            <UseSetModPaths>false</UseSetModPaths>
+        </Config>
+        <Config>            <Name>Debug x64</Name>
+            <Executable>MBUltra64_DEBUG.exe</Executable>
+            <Arguments></Arguments>
+            <HasExports>true</HasExports>
+            <Precompile>true</Precompile>
+            <InjectDebugger>true</InjectDebugger>
+            <UseSetModPaths>false</UseSetModPaths>
+        </Config>
+        <Config>            <Name>Release x64</Name>
+            <Executable>MBUltra64.exe</Executable>
             <Arguments></Arguments>
             <HasExports>false</HasExports>
             <Precompile>true</Precompile>

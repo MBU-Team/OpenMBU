@@ -22,9 +22,8 @@ ConsoleFunction(isDemoLaunch, bool, 1, 1, "()")
     return false;
 }
 
-ConsoleFunction(getLanguage, const char*, 1, 1, "()")
+const char* getSystemLanguage_forConsole()
 {
-    argc;
     char* ret = Con::getReturnBuffer(1024);
 
     LangType lang = Platform::getSystemLanguage();
@@ -67,6 +66,24 @@ ConsoleFunction(getLanguage, const char*, 1, 1, "()")
 
     dSprintf(ret, 1024, "%s", language);
     return ret;
+}
+
+ConsoleFunction(getSystemLanguage, const char*, 1, 1, "()")
+{
+    argc;
+    return getSystemLanguage_forConsole();
+}
+
+ConsoleFunction(getLanguage, const char*, 1, 1, "()")
+{
+    argc;
+    const char* lang = Con::getVariable("pref::Language");
+
+    if (*lang)
+        return lang;
+
+    Con::warnf("getLanguage: $pref::Language is not set, using system language");
+    return getSystemLanguage_forConsole();
 }
 
 ConsoleFunction(XBLiveIsSignedIn, bool, 1, 2, "([port])")

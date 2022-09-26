@@ -400,6 +400,7 @@ $Text::ErrorNoChangeRes     = "你可能不會在遊戲的同時改變分辨率�
 $Text::HOMarble="彈珠外觀";
 $Text::HOOptions="輸入及聲音選項";
 $Text::HOVideoOptions = "視頻選項";
+$Text::HOMiscOptions = "其他選項";
 $Text::HOInstructions="如何玩";
 $Text::HOCredits="製作群";
 

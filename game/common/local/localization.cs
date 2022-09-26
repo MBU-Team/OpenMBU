@@ -3,6 +3,16 @@
 //------------------------------------------------------------------------------
 exec( "./controlerIcons.cs" );
 
+function getLanguageList()
+{
+   return "english" TAB "french" TAB "german" TAB "italian" TAB "spanish" TAB "chinese" TAB "japanese" TAB "korean";
+}
+
+function getLanguageDisplayList()
+{
+   return $Text::LangEnglish TAB $Text::LangFrench TAB $Text::LangGerman TAB $Text::LangItalian TAB $Text::LangSpanish TAB $Text::LangChinese TAB $Text::LangJapanese TAB $Text::LangKorean;
+}
+
 function isEnglish()
 {
 	return (getLanguage() $= "english");	
@@ -130,41 +140,54 @@ function isKorean()
 
 outputdebugline( "WARNING: LOCALIZATION DEBUG BUILD, DO NOT SHIP" );
 
-$language = getLanguage();
-if( $platform $= "windows" && $locLanguage !$= "" )
+loadLocaleInf("common/local/languageStrings.inf"); 
+
+function setLanguage(%lang)
 {
-   $language = $locLanguage;
-   // redefine getLanguage function
-   %str = "function getLanguage() { return \"" @ $locLanguage @ "\"; }";
-   eval(%str);
+   echo("Setting Language to " @ %lang @ "...");
+      
+   loadLocaleInf("common/local/" @ %lang @ "Strings.inf"); 
+   loadLocaleInf("common/local/" @ %lang @ "Strings_U1.inf");
+   
+   $pref::Language = %lang;
 }
 
-$langValue = $language;
-if($language $= "portuguese")
-   $language = "english";
-   
-loadLocaleInf("common/local/" @ $language @ "Strings.inf"); 
-loadLocaleInf("common/local/" @ $language @ "Strings_U1.inf"); 
-
-$language = $langValue;
-
-if (isJapanese())
-   $GFXDevice::FontDrawYOffset = 2;
-   
-// it may be safe to leave this enabled in all cases, but so that we don't rock the boat...
-$GFXDevice::FontAllowNoHangulWrap = isKorean(); 
-   
-if ($Test::ForceFontDrawYOffset !$= "")
+function initLanguage()
 {
-   echo("Applying forced font y offset:" SPC $Test::ForceFontDrawYOffset);
-   $GFXDevice::FontDrawYOffset = $Test::ForceFontDrawYOffset;
-}
+   echo("Initializing Language...");   
    
-if ($Test::ForceAllowNoHangulWrap !$= "")
-{
-   echo("Applying forced nohangulwrap:" SPC $Test::ForceAllowNoHangulWrap);
-   $GFXDevice::FontAllowNoHangulWrap = $Test::ForceAllowNoHangulWrap;
-}
+   %language = getLanguage();
+   if( $platform $= "windows" && $locLanguage !$= "" )
+   {
+      %language = $locLanguage;
+      // redefine getLanguage function
+      %str = "function getLanguage() { return \"" @ $locLanguage @ "\"; }";
+      eval(%str);
+   }
 
-echo("FontDrawYOffset:" SPC $GFXDevice::FontDrawYOffset);
-echo("FontAllowNoHangulWrap:" SPC $GFXDevice::FontAllowNoHangulWrap);
+   if(%language $= "portuguese")
+      %language = "english";
+      
+   setLanguage(%language);
+   
+   if (isJapanese())
+      $GFXDevice::FontDrawYOffset = 2;
+      
+   // it may be safe to leave this enabled in all cases, but so that we don't rock the boat...
+   $GFXDevice::FontAllowNoHangulWrap = isKorean(); 
+      
+   if ($Test::ForceFontDrawYOffset !$= "")
+   {
+      echo("Applying forced font y offset:" SPC $Test::ForceFontDrawYOffset);
+      $GFXDevice::FontDrawYOffset = $Test::ForceFontDrawYOffset;
+   }
+      
+   if ($Test::ForceAllowNoHangulWrap !$= "")
+   {
+      echo("Applying forced nohangulwrap:" SPC $Test::ForceAllowNoHangulWrap);
+      $GFXDevice::FontAllowNoHangulWrap = $Test::ForceAllowNoHangulWrap;
+   }
+
+   echo("FontDrawYOffset:" SPC $GFXDevice::FontDrawYOffset);
+   echo("FontAllowNoHangulWrap:" SPC $GFXDevice::FontAllowNoHangulWrap);
+}

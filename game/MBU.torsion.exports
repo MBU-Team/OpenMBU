@@ -7476,6 +7476,9 @@ Sim time is time since the game started.</desc>
         <args>string str, int start, int numChars</args>
         <desc>Returns the substring of str, starting at start, and continuing to either the end of the string, or numChars characters, whichever comes first.</desc>
     </function>
+    <function>        <name>getSystemLanguage</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>getTag</name>
         <args>textTagString</args>
     </function>
@@ -8242,6 +8245,8 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
     </function>
+    <function>        <name>XBLiveEndStatsSession</name>
+    </function>
     <function>        <name>XBLiveGetSignInPort</name>
     </function>
     <function>        <name>XBLiveGetUserId</name>
@@ -8254,5 +8259,9 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveIsSignedInGold</name>
     </function>
     <function>        <name>XBLiveIsSignedInSilver</name>
+    </function>
+    <function>        <name>XBLiveIsStatsSessionActive</name>
+    </function>
+    <function>        <name>XBLiveStartStatsSession</name>
     </function>
 </exports>

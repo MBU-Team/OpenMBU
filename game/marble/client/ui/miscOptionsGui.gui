@@ -1,0 +1,81 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(miscOptionsGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 2";
+   visible = "1";
+
+   new GuiXboxOptionListCtrl(miscOptionsList) {
+      profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallProfile";
+      position = isWidescreen()? "380 211" : "132 100";
+      extent = isWidescreen()? "815 400" : "510 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = "center";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "50 50" : "45 55";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+      
+      // data is dynamically added to this option list in the show() function
+   };
+};
+//--- OBJECT WRITE END ---
+
+function miscOptionsGui::show(%this, %backGui)
+{   
+	if (%backGui !$= "")
+      %this.backGui = %backGui;
+      
+   miscOptionsList.clear();
+   
+   $Option::initialLang = $pref::Language;
+   
+   %langCount = getWordCount(getLanguageDisplayList());
+  
+   miscOptionsList.addRow($Text::LanguageLabel, getLanguageDisplayList(), 8); // language
+   
+   for (%i = 0; %i < %langCount; %i++)
+   {
+      if (getWord(getLanguageList(), %i) !$= getLanguage())
+         continue;
+         
+      %langIndex = %i;
+      break;
+   }
+
+   miscOptionsList.setOptionIndex(0, %langIndex);
+
+   RootGui.setA( $Text::OK );
+   RootGui.setTitle( $Text::About1Title );
+}
+
+function miscOptionsList::onOptionChange(%this, %increase)
+{
+   %row = %this.getSelectedIndex();
+   %val = %this.getOptionIndex(%row); 
+   
+   echo(%val);
+   
+   switch (%row)
+   {
+      case 0:
+         // language
+         $pref::Language = getWord(getLanguageList(), %val);
+         echo("Language = " @ $pref::Language);
+   }  
+}
+
+function miscOptionsGui::onA(%this)
+{
+   if ($pref::Language !$= $Option::initialLang)
+      setLanguage($pref::Language);   
+   
+   RootGui.setContent(HelpAndOptionsGui, %this.backGui);
+   saveUserProfile();
+}

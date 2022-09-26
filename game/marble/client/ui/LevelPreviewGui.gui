@@ -460,7 +460,7 @@ function levelPreviewGui::populateLevelInfo(%this)
       %timeText = %biggerFont @ %time @ "\n" @ %timeText;
    }
    
-   levelPreviewGui.setLevelText( %mission.level, %mission.name );
+   levelPreviewGui.setLevelText( %mission.level, getMissionNameFromNameVar(%mission) );
    LP_timetext.setText( %descText );
    LP_times.setText( %timeText );
 }
