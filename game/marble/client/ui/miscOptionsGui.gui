@@ -52,7 +52,7 @@ function miscOptionsGui::show(%this, %backGui)
    miscOptionsList.setOptionIndex(0, %langIndex);
 
    RootGui.setA( $Text::OK );
-   RootGui.setTitle( $Text::About1Title );
+   RootGui.setTitle( strupr($Text::HOMiscOptions) );
 }
 
 function miscOptionsList::onOptionChange(%this, %increase)

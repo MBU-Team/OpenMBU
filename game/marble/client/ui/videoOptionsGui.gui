@@ -131,7 +131,7 @@ function videoOptionsGui::show(%this, %backGui)
    videoOptionsList.setOptionIndex(2, $Option::fullScreen);
 
    RootGui.setA( $Text::OK );
-   RootGui.setTitle( $Text::About1Title );
+   RootGui.setTitle( strupr($Text::HOVideoOptions) );
 }
 
 function videoOptionsList::onOptionChange(%this, %increase)
