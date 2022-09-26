@@ -13,6 +13,11 @@ $MusicAudioType = 2;
 $MusicVolume = 1;
 $AudioChannelTypesDefined = 1;
 
+/// Causes the system to do a one time autodetect
+/// of an SFX provider and device at startup if the
+/// provider is unset.
+$SFX::autoDetect = true;
+
 /// This initializes the sound system device from
 /// the defaults in the $pref::SFX:: globals.
 function sfxStartup()
@@ -23,7 +28,7 @@ function sfxStartup()
    if ( $pref::SFX::provider $= "" )
    {
       // If enabled autodetect a safe device.
-      if ( $pref::SFX::autoDetect )
+      if ( $SFX::autoDetect )
          sfxAutodetect();
                
       return;
@@ -38,6 +43,10 @@ function sfxStartup()
       error( "   Failed to initialize device!\n\n" );
       $pref::SFX::provider = "";
       $pref::SFX::device   = "";
+      
+      if ( $SFX::autoDetect )
+         sfxAutodetect();
+         
       return;
    }
 
@@ -77,7 +86,7 @@ function sfxShutdown()
 function sfxAutodetect()
 {
    // We only want this to happen once.
-   $pref::SFX::autoDetect = false;   
+   $SFX::autoDetect = false;   
    
    // Clear whatever previous provider 
    // and device we had.   
@@ -104,6 +113,10 @@ function sfxAutodetect()
       $pref::SFX::useHardware    = getField( %info, 2 );
       break;         
    }
+      
+   // By default we've decided to avoid hardware devices as
+   // they are buggy and prone to problems.
+   $pref::SFX::useHardware = false;
       
    // Try the newly found device.
    sfxStartup();

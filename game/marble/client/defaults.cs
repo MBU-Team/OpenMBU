@@ -48,11 +48,6 @@ $pref::OpenGL::forcePalettedTexture = "0";
 $pref::OpenGL::maxHardwareLights = 3;
 $pref::VisibleDistanceMod = 1.0;
 
-/// Causes the system to do a one time autodetect
-/// of an SFX provider and device at startup if the
-/// provider is unset.
-$pref::SFX::autoDetect = true;
-
 /// The sound provider to select at startup.  Typically
 /// this is DirectSound, OpenAL, or XACT.  There is also 
 /// a special Null provider which acts normally, but 
