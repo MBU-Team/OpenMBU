@@ -5,12 +5,14 @@ exec( "./controlerIcons.cs" );
 
 function getLanguageList()
 {
-   return "english" TAB "french" TAB "german" TAB "italian" TAB "spanish" TAB "chinese" TAB "japanese" TAB "korean";
+   // TODO: Unicode characters don't work, fix them and re-enable these languages
+   return "english" TAB "french" TAB "german" TAB "italian" TAB "spanish";// TAB "chinese" TAB "japanese" TAB "korean";
 }
 
 function getLanguageDisplayList()
 {
-   return $Text::LangEnglish TAB $Text::LangFrench TAB $Text::LangGerman TAB $Text::LangItalian TAB $Text::LangSpanish TAB $Text::LangChinese TAB $Text::LangJapanese TAB $Text::LangKorean;
+   // TODO: Unicode characters don't work, fix them and re-enable these languages
+   return $Text::LangEnglish TAB $Text::LangFrench TAB $Text::LangGerman TAB $Text::LangItalian TAB $Text::LangSpanish;// TAB $Text::LangChinese TAB $Text::LangJapanese TAB $Text::LangKorean;
 }
 
 function isEnglish()
@@ -166,6 +168,10 @@ function initLanguage()
    }
 
    if(%language $= "portuguese")
+      %language = "english";
+      
+   // TODO: Unicode characters don't work, fix them and re-enable these languages
+   if(%language $= "chinese" || %language $= "japanese" || %language $= "korean")
       %language = "english";
       
    setLanguage(%language);
