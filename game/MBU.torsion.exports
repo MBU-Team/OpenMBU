@@ -1539,6 +1539,12 @@
             <desc>string shader</desc>
         </field>
     </class>
+    <class>        <name>GuiAchievementPopupCtrl</name>
+        <base>GuiControl</base>
+        <field>            <name>bitmap</name>
+            <desc>filename bitmap</desc>
+        </field>
+    </class>
     <class>        <name>GuiArrayCtrl</name>
         <base>GuiControl</base>
         <field>            <name>allowUnselectedScroll</name>
