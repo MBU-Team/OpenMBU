@@ -9,7 +9,7 @@ new GuiControl(AchievementDlg) {
    visible = "1";
    noCursor = "1";
    
-   new GuiBitmapCtrl(AchievementFrame) {
+   new GuiAchievementPopupCtrl(AchievementFrame) {
          profile = "GuiDefaultProfile";
          horizSizing = "center";
          vertSizing = "bottom";
@@ -29,5 +29,5 @@ function AchievementDlg::onWake(%this)
 	enableGamepad();
 	moveMap.push();
 	//AchievementFrame.setPosition("70", "0");
-	AchievementFrame.setBitmap("./achievement/" @ $AchievementId, true);
+	AchievementFrame.setBitmap("./achievement/" @ $AchievementId);
 }

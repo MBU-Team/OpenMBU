@@ -1537,6 +1537,12 @@
             <desc>string shader</desc>
         </field>
     </class>
+    <class>        <name>GuiAchievementPopupCtrl</name>
+        <base>GuiControl</base>
+        <field>            <name>bitmap</name>
+            <desc>filename bitmap</desc>
+        </field>
+    </class>
     <class>        <name>GuiArrayCtrl</name>
         <base>GuiControl</base>
     </class>
@@ -7377,6 +7383,8 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     </function>
     <function>        <name>getCoreLangTable</name>
     </function>
+    <function>        <name>getCPPVersion</name>
+    </function>
     <function>        <name>getCurrentActionMap</name>
     </function>
     <function>        <name>getDesktopResolution</name>
@@ -7477,7 +7485,6 @@ Sim time is time since the game started.</desc>
         <desc>Returns the substring of str, starting at start, and continuing to either the end of the string, or numChars characters, whichever comes first.</desc>
     </function>
     <function>        <name>getSystemLanguage</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>getTag</name>
         <args>textTagString</args>
