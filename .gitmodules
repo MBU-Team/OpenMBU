@@ -1,0 +1,3 @@
+[submodule "engine/lib/OpenMBU-WebAPI"]
+	path = engine/lib/OpenMBU-WebAPI
+	url = https://github.com/MBU-Team/OpenMBU-WebAPI

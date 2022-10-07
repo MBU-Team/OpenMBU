@@ -164,6 +164,7 @@ function initClient()
    exec("./scripts/achievements.cs");
    
    exec("./scripts/xbLive.cs");
+   exec("./scripts/webApi.cs");
    
    // Default player key bindings
    exec("./scripts/default.bind.cs");

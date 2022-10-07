@@ -232,7 +232,7 @@ addLib(zlib)
 addLib(lungif)
 addLib(libqslim)
 
-
+addLib(OpenMBUWebAPI)
 
 if(WIN32)
     # copy pasted from T3D build system, some might not be needed

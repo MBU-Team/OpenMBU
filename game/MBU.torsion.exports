@@ -7377,6 +7377,8 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     </function>
     <function>        <name>getCoreLangTable</name>
     </function>
+    <function>        <name>getCPPVersion</name>
+    </function>
     <function>        <name>getCurrentActionMap</name>
     </function>
     <function>        <name>getDesktopResolution</name>
@@ -7477,7 +7479,6 @@ Sim time is time since the game started.</desc>
         <desc>Returns the substring of str, starting at start, and continuing to either the end of the string, or numChars characters, whichever comes first.</desc>
     </function>
     <function>        <name>getSystemLanguage</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>getTag</name>
         <args>textTagString</args>
@@ -8241,6 +8242,14 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>warn</name>
         <args>text [, ... ]</args>
+    </function>
+    <function>        <name>WebAPILogin</name>
+        <args>username, password</args>
+    </function>
+    <function>        <name>WebAPILoginSession</name>
+        <args>token</args>
+    </function>
+    <function>        <name>WebAPILogout</name>
     </function>
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>

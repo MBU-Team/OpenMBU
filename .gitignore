@@ -4,6 +4,7 @@ out.*.*/
 *.log
 game/*.exe
 game/*.ilk
+game/OpenMBUWebAPI*
 *.dso
 prefs.cs
 banlist.cs

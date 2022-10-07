@@ -921,6 +921,7 @@ function savePCUserProfile()
    export("$pref*", "prefs.cs");
    export("$CachedUserTime*", "scores.cs");
    export("$UserAchievements*", "achievements.cs");
+   export("$Account*", "account.cs");
 }
 
 function loadPCUserProfile()
@@ -928,6 +929,7 @@ function loadPCUserProfile()
    execPrefs("prefs.cs");
    execPrefs("scores.cs");
    execPrefs("achievements.cs");
+   execPrefs("account.cs");
    
    xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
    xbSetFXVolume($pref::Option::FXVolume * 0.01);

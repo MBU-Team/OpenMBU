@@ -2,6 +2,8 @@
 #include "console/console.h"
 #include "console/consoleInternal.h"
 
+#include <openmbu_webapi/account.hpp>
+
 ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 {
     argc;
@@ -228,4 +230,79 @@ ConsoleFunction(getCPPVersion, const char*, 1, 1, "()")
     dSprintf(ret, 1024, "%s (%dL)", versionString, version);
 
     return ret;
+}
+
+static OpenMBUWebAPI::Account MBUAccount;
+
+ConsoleFunction(WebAPILogin, bool, 3, 3, "(username, password)")
+{
+    argc;
+    const char* username = argv[1];
+    const char* password = argv[2];
+
+    std::string msg = "";
+
+    MBUAccount = {};
+
+    OpenMBUWebAPI::Status status = MBUAccount.Login(username, password, &msg);
+
+    bool loggedIn = status == OpenMBUWebAPI::Status::STATUS_SUCCESS;
+
+    char* statusMsg = Con::getArgBuffer(1024);
+    dSprintf(statusMsg, 1024, "%s", msg.c_str());
+    char* token = Con::getArgBuffer(1024);
+    dSprintf(token, 1024, "%s", MBUAccount.GetGameToken().c_str());
+    char* displayName = Con::getArgBuffer(1024);
+    dSprintf(displayName, 1024, "%s", MBUAccount.GetDisplayName().c_str());
+
+
+
+    Con::executef(5, "onWebAPILoginComplete", Con::getIntArg((S32)loggedIn), statusMsg, token, displayName);
+
+    return loggedIn;
+}
+
+ConsoleFunction(WebAPILoginSession, bool, 2, 2, "(token)")
+{
+    argc;
+    const char* token = argv[1];
+
+    std::string msg = "";
+
+    MBUAccount = {};
+
+    OpenMBUWebAPI::Status status = MBUAccount.LoginSession(token, &msg);
+
+    bool loggedIn = status == OpenMBUWebAPI::Status::STATUS_SUCCESS;
+
+    char* statusMsg = Con::getArgBuffer(1024);
+    dSprintf(statusMsg, 1024, "%s", msg.c_str());
+    char* token2 = Con::getArgBuffer(1024);
+    dSprintf(token2, 1024, "%s", MBUAccount.GetGameToken().c_str());
+    char* displayName = Con::getArgBuffer(1024);
+    dSprintf(displayName, 1024, "%s", MBUAccount.GetDisplayName().c_str());
+
+    Con::executef(5, "onWebAPILoginComplete", Con::getIntArg((S32)loggedIn), statusMsg, token2, displayName);
+
+    return loggedIn;
+}
+
+ConsoleFunction(WebAPILogout, bool, 1, 1, "()")
+{
+    argc;
+
+    std::string msg = "";
+
+    OpenMBUWebAPI::Status status = MBUAccount.Logout(&msg);
+
+    MBUAccount = {};
+
+    bool loggedOut = status == OpenMBUWebAPI::Status::STATUS_SUCCESS;
+
+    char* statusMsg = Con::getArgBuffer(1024);
+    dSprintf(statusMsg, 1024, "%s", msg.c_str());
+
+    Con::executef(3, "onWebAPILogoutComplete", Con::getIntArg((S32)loggedOut), statusMsg);
+
+    return loggedOut;
 }
