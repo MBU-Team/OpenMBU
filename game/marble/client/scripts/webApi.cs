@@ -2,6 +2,8 @@ function login()
 {
    if ($Client::LoggedIn)
       return;
+      
+   execPrefs("account.cs");
    
    if ($Account::Token !$= "")
    {
