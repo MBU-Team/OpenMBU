@@ -262,10 +262,13 @@ bool Marble::computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const M
     Point2F currentVelocity(mDot(sideDir, rollVelocity), mDot(motionDir, rollVelocity));
 
     Point2F mv(move->x, move->y);
+#ifndef MBG_PHYSICS
+    // Prevent increasing marble speed with diagonal movement (on the ground)
     mv *= 1.538461565971375;
 
     if (mv.len() > 1.0f)
         m_point2F_normalize_f(mv, 1.0f);
+#endif
 
     Point2F desiredVelocity = mv * mDataBlock->maxRollVelocity;
 
@@ -331,7 +334,6 @@ LABEL_20:
     desiredOmega = newSideDir * (1.0f / r.lenSquared());
     aControl = desiredOmega - mOmega;
 
-    // Prevent increasing marble speed with diagonal movement
     if (mDataBlock->angularAcceleration < aControl.len())
         aControl *= mDataBlock->angularAcceleration / aControl.len();
 
