@@ -97,7 +97,7 @@ protected:
 
    virtual void setTextureInternal(U32 textureUnit, const GFXTextureObject*texture) override { };
 
-   virtual void setLightInternal(U32 lightStage, const GFXLightInfo light, bool lightEnable) override;
+   virtual void setLightInternal(U32 lightStage, const LightInfo light, bool lightEnable) override;
    virtual void setLightMaterialInternal(const GFXLightMaterial mat) override { };
    virtual void setGlobalAmbientInternal(ColorF color) override { };
 

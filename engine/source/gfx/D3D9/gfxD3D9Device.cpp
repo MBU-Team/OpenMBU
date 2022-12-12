@@ -834,7 +834,7 @@ void GFXD3D9Device::setTextureInternal( U32 textureUnit, const GFXTextureObject 
 //-----------------------------------------------------------------------------
 // This function should ONLY be called from GFXDevice::updateStates() !!!
 //-----------------------------------------------------------------------------
-void GFXD3D9Device::setLightInternal(U32 lightStage, const GFXLightInfo light, bool lightEnable)
+void GFXD3D9Device::setLightInternal(U32 lightStage, const LightInfo light, bool lightEnable)
 {
 #ifndef TORQUE_OS_XENON
    if(!lightEnable)
@@ -843,21 +843,21 @@ void GFXD3D9Device::setLightInternal(U32 lightStage, const GFXLightInfo light, b
       return;
    }
    // TODO: Fix this
-   /*D3DLIGHT9 d3dLight;
+   D3DLIGHT9 d3dLight;
    switch (light.mType)
    {
-      case GFXLightInfo::Ambient:
+      case LightInfo::Ambient:
          AssertFatal(false, "Instead of setting an ambient light you should set the global ambient color.");
        return;
-      case GFXLightInfo::Vector:
+      case LightInfo::Vector:
         d3dLight.Type = D3DLIGHT_DIRECTIONAL;
        break;
 
-      case GFXLightInfo::Point:
+      case LightInfo::Point:
        d3dLight.Type = D3DLIGHT_POINT;
        break;
 
-      case GFXLightInfo::Spot:      
+      case LightInfo::Spot:
          d3dLight.Type = D3DLIGHT_SPOT;
          break;
 
@@ -883,7 +883,7 @@ void GFXD3D9Device::setLightInternal(U32 lightStage, const GFXLightInfo light, b
    d3dLight.Phi = light.sgSpotAngle;
 
    mD3DDevice->SetLight(lightStage, &d3dLight);
-   mD3DDevice->LightEnable(lightStage, true);*/
+   mD3DDevice->LightEnable(lightStage, true);
 #endif
 }
 

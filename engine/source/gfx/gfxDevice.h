@@ -37,6 +37,8 @@
 
 #ifndef _SIGNAL_H_
 #include "util/tSignal.h"
+#include "sceneGraph/lightInfo.h"
+
 #endif
 
 class GFont;
@@ -413,6 +415,24 @@ protected:
     bool           mTextureDirty[TEXTURE_STAGE_COUNT];
     bool           mTexturesDirty;
 
+   /// @name Light Tracking
+   /// @{
+
+   LightInfo  mCurrentLight[LIGHT_STAGE_COUNT];
+   bool          mCurrentLightEnable[LIGHT_STAGE_COUNT];
+   bool          mLightDirty[LIGHT_STAGE_COUNT];
+   bool          mLightsDirty;
+
+   ColorF        mGlobalAmbientColor;
+   bool          mGlobalAmbientColorDirty;
+
+   /// @}
+
+   /// @name Fixed function material tracking
+   /// @{
+
+   GFXLightMaterial mCurrentLightMaterial;
+   bool mLightMaterialDirty;
     /// @}
 
     /// @name Bitmap modulation and color stack
@@ -473,7 +493,7 @@ protected:
 
     virtual void setTextureInternal(U32 textureUnit, const GFXTextureObject* texture) = 0;
 
-    virtual void setLightInternal(U32 lightStage, const GFXLightInfo light, bool lightEnable) = 0;
+    virtual void setLightInternal(U32 lightStage, const LightInfo light, bool lightEnable) = 0;
     virtual void setGlobalAmbientInternal(ColorF color) = 0;
     virtual void setLightMaterialInternal(const GFXLightMaterial mat) = 0;
 
@@ -697,6 +717,15 @@ public:
     /// state like a disable Z buffer doesn't affect other bits of rendering code.
     void setBaseRenderState();
 
+    /// @name Light Settings
+    /// NONE of these should be overridden by API implementations
+    /// because of the state caching stuff.
+    /// @{
+    void setLight(U32 stage, LightInfo* light);
+    void setLightMaterial(GFXLightMaterial mat);
+    void setGlobalAmbientColor(ColorF color);
+
+    /// @}
 
     /// @name Texture State Settings
     /// NONE of these should be overridden by API implementations
@@ -710,6 +739,8 @@ public:
     void setTextureStageColorOp(U32 stage, GFXTextureOp op);
     void setTextureStageColorArg1(U32 stage, U32 argFlags);
     void setTextureStageColorArg2(U32 stage, U32 argFlags);
+    void setTextureStageColorArg3( U32 stage, U32 argFlags );
+    void setTextureStageResultArg( U32 stage, GFXTextureArgument arg );
     void setTextureStageAlphaOp(U32 stage, GFXTextureOp op);
     void setTextureStageAlphaArg1(U32 stage, U32 argFlags);
     void setTextureStageAlphaArg2(U32 stage, U32 argFlags);
@@ -979,9 +1010,19 @@ inline void GFXDevice::setTextureStageColorArg2(U32 stage, U32 argFlags)
     trackTextureStageState(stage, GFXTSSColorArg2, argFlags);
 }
 
+inline void GFXDevice::setTextureStageColorArg3( U32 stage, U32 argFlags )
+{
+   trackTextureStageState( stage, GFXTSSColorArg0, argFlags );
+}
+
 inline void GFXDevice::setTextureStageAlphaOp(U32 stage, GFXTextureOp op)
 {
     trackTextureStageState(stage, GFXTSSAlphaOp, op);
+}
+
+inline void GFXDevice::setTextureStageResultArg( U32 stage, GFXTextureArgument arg )
+{
+   trackTextureStageState( stage, GFXTSSResultArg, arg );
 }
 
 inline void GFXDevice::setTextureStageAlphaArg1(U32 stage, U32 argFlags)
@@ -1061,7 +1102,7 @@ inline void GFXDevice::setTextureStageMaxMipLevel(U32 stage, U32 maxMiplevel)
 
 inline void GFXDevice::setTextureStageMaxAnisotropy(U32 stage, F32 maxAnisotropy)
 {
-    trackSamplerState(stage, GFXSAMPMaxAnisotropy, maxAnisotropy);
+    trackSamplerState(stage, GFXSAMPMaxAnisotropy, (U32)maxAnisotropy);
 }
 
 //-----------------------------------------------------------------------------

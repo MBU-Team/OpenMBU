@@ -490,6 +490,9 @@ enum GFXMatrixType
     GFXMatrixTexture7 = 23,
 };
 
+// Light define
+#define LIGHT_STAGE_COUNT 8
+
 #define GFXVERTEXFLAG_F32     3
 #define GFXVERTEXFLAG_POINT2F 0
 #define GFXVERTEXFLAG_POINT3F 1 

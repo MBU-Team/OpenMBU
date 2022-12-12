@@ -170,7 +170,7 @@ class GFXD3D9Device : public GFXDevice
 
       // CodeReview - How exactly do we want to deal with this on the Xenon?
       // Right now it's just in an #ifndef in gfxD3D9Device.cpp - AlexS 4/11/07
-      virtual void setLightInternal(U32 lightStage, const GFXLightInfo light, bool lightEnable) override;
+      virtual void setLightInternal(U32 lightStage, const LightInfo light, bool lightEnable) override;
       virtual void setLightMaterialInternal(const GFXLightMaterial mat) override;
       virtual void setGlobalAmbientInternal(ColorF color) override;
 

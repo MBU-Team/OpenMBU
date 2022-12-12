@@ -201,7 +201,7 @@ void GFXNullDevice::enumerateAdapters( Vector<GFXAdapter*> &adapterList )
    adapterList.push_back(toAdd);
 }
 
-void GFXNullDevice::setLightInternal(U32 lightStage, const GFXLightInfo light, bool lightEnable)
+void GFXNullDevice::setLightInternal(U32 lightStage, const LightInfo light, bool lightEnable)
 {
 
 }

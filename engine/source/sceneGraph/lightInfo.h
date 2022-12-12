@@ -79,6 +79,33 @@ public:
     LightInfo();
     bool sgIsInZone(S32 zone);
     bool sgAllowDiffuseZoneLighting(S32 zone);
+
+    // Sets up a GFX fixed function light
+    void setGFXLight(LightInfo* light)
+    {
+        switch (mType) {
+            case LightInfo::SGStaticPoint :
+            case LightInfo::Point :
+                light->mType = LightInfo::Point;
+                break;
+            case LightInfo::Spot :
+            case LightInfo::SGStaticSpot :
+                light->mType = LightInfo::Spot;
+                break;
+            case LightInfo::Vector:
+                light->mType = LightInfo::Vector;
+                break;
+            case LightInfo::Ambient:
+                light->mType = LightInfo::Ambient;
+                break;
+        }
+        light->mPos = mPos;
+        light->mDirection = mDirection;
+        light->mColor = mColor;
+        light->mAmbient = mAmbient;
+        light->mRadius = mRadius;
+        light->sgSpotAngle = sgSpotAngle;
+    }
 };
 
 #endif

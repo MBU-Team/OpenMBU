@@ -250,15 +250,12 @@ void ProcessedFFMaterial::setWorldXForm(MatrixF xform)
 
 void ProcessedFFMaterial::setLightInfo(const SceneGraphData& sgData, U32 pass)
 {
-    // TODO: Re-Add this
-    //setPrimaryLightInfo(sgData.objTrans, sgData.light, pass);
-    //setSecondaryLightInfo(sgData.objTrans, sgData.lightSecondary);
+    setPrimaryLightInfo(sgData.objTrans, (LightInfo*)&sgData.light, pass);
+    setSecondaryLightInfo(sgData.objTrans, (LightInfo*)&sgData.lightSecondary);
 }
 
 void ProcessedFFMaterial::setPrimaryLightInfo(MatrixF objTrans, LightInfo* light, U32 pass)
 {
-    // TODO: Re-Add this
-    /*
     // Just in case
     GFX->setGlobalAmbientColor(ColorF(0.0f, 0.0f, 0.0f, 1.0f));
     if(light->mType == LightInfo::Ambient)
@@ -285,7 +282,7 @@ void ProcessedFFMaterial::setPrimaryLightInfo(MatrixF objTrans, LightInfo* light
 
     // fill in primary light
     //-------------------------
-    GFXLightInfo xlatedLight;
+    LightInfo xlatedLight;
     light->setGFXLight(&xlatedLight);
     Point3F lightPos = light->mPos;
     Point3F lightDir = light->mDirection;
@@ -296,19 +293,16 @@ void ProcessedFFMaterial::setPrimaryLightInfo(MatrixF objTrans, LightInfo* light
     xlatedLight.mDirection = lightDir;
 
     GFX->setLight(0, &xlatedLight);
-     */
 }
 
 void ProcessedFFMaterial::setSecondaryLightInfo(MatrixF objTrans, LightInfo* light)
 {
-    // TODO: Re-Add this
-    /*
     // set object transform
     objTrans.inverse();
 
     // fill in secondary light
     //-------------------------
-    GFXLightInfo xlatedLight;
+    LightInfo xlatedLight;
     light->setGFXLight(&xlatedLight);
 
     Point3F lightPos = light->mPos;
@@ -320,7 +314,6 @@ void ProcessedFFMaterial::setSecondaryLightInfo(MatrixF objTrans, LightInfo* lig
     xlatedLight.mDirection = lightDir;
 
     GFX->setLight(1, &xlatedLight);
-     */
 }
 
 void ProcessedFFMaterial::setEyePosition(MatrixF objTrans, Point3F position, U32 pass)

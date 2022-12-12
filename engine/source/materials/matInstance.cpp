@@ -204,7 +204,7 @@ bool MatInstance::filterRefractPasses(SceneGraphData& sgData)
     if (mMaterial->getType() == Material::Base)
         return false;
 
-    ProcessedCustomMaterial* customMat = static_cast<ProcessedCustomMaterial*>(mProcessedMaterial);
+    ProcessedCustomMaterial* customMat = dynamic_cast<ProcessedCustomMaterial*>(mProcessedMaterial);
     if (customMat && sgData.refractPass)
     {
         while (!customMat->doesRefract(mCurPass))

@@ -90,6 +90,19 @@ GFXDevice::GFXDevice()
         mTextureMatrixDirty[i] = false;
     }
 
+   mLightsDirty = false;
+   for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
+   {
+      mLightDirty[i] = false;
+      mCurrentLightEnable[i] = false;
+   }
+
+   mGlobalAmbientColorDirty = false;
+   mGlobalAmbientColor = ColorF(0.0f, 0.0f, 0.0f, 1.0f);
+
+   mLightMaterialDirty = false;
+   dMemset(&mCurrentLightMaterial, NULL, sizeof(GFXLightMaterial));
+   
     // Initialize the state stack.
     mStateStackDepth = 0;
     mStateStack[0].init();
@@ -358,13 +371,13 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
             }
         }
         // Set our material
-//        setLightMaterialInternal(mCurrentLightMaterial);
-//
-//        // Set our lights
-//        for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
-//        {
-//            setLightInternal(i, mCurrentLight[i], mCurrentLightEnable[i]);
-//        }
+        setLightMaterialInternal(mCurrentLightMaterial);
+
+        // Set our lights
+        for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
+        {
+            setLightInternal(i, mCurrentLight[i], mCurrentLightEnable[i]);
+        }
 
         _updateRenderTargets();
 
@@ -521,25 +534,25 @@ void GFXDevice::updateStates(bool forceSetAll /*=false*/)
     }
 
     // Set light material
-//    if(mLightMaterialDirty)
-//    {
-//        setLightMaterialInternal(mCurrentLightMaterial);
-//        mLightMaterialDirty = false;
-//    }
-//
-//    // Set our lights
-//    if(mLightsDirty)
-//    {
-//        mLightsDirty = false;
-//        for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
-//        {
-//            if(!mLightDirty[i])
-//                continue;
-//
-//            mLightDirty[i] = false;
-//            setLightInternal(i, mCurrentLight[i], mCurrentLightEnable[i]);
-//        }
-//    }
+    if(mLightMaterialDirty)
+    {
+        setLightMaterialInternal(mCurrentLightMaterial);
+        mLightMaterialDirty = false;
+    }
+
+    // Set our lights
+    if(mLightsDirty)
+    {
+        mLightsDirty = false;
+        for(U32 i = 0; i < LIGHT_STAGE_COUNT; i++)
+        {
+            if(!mLightDirty[i])
+                continue;
+
+            mLightDirty[i] = false;
+            setLightInternal(i, mCurrentLight[i], mCurrentLightEnable[i]);
+        }
+    }
 
     _updateRenderTargets();
 
@@ -1704,6 +1717,43 @@ void GFXDevice::setBaseRenderState()
 }
 
 //-----------------------------------------------------------------------------
+// Set Light
+//-----------------------------------------------------------------------------
+void GFXDevice::setLight(U32 stage, LightInfo* light)
+{
+   AssertFatal(stage < LIGHT_STAGE_COUNT, "GFXDevice::setLight - out of range stage!");
+
+   if(!mLightDirty[stage])
+   {
+      mStateDirty = true;
+      mLightsDirty = true;
+      mLightDirty[stage] = true;
+   }
+   mCurrentLightEnable[stage] = (light != NULL);
+   if(mCurrentLightEnable[stage])
+      mCurrentLight[stage] = *light;
+}
+
+//-----------------------------------------------------------------------------
+// Set Light Material
+//-----------------------------------------------------------------------------
+void GFXDevice::setLightMaterial(GFXLightMaterial mat)
+{
+   mCurrentLightMaterial = mat;
+   mLightMaterialDirty = true;
+   mStateDirty = true;
+}
+
+void GFXDevice::setGlobalAmbientColor(ColorF color)
+{
+   if(mGlobalAmbientColor != color)
+   {
+      mGlobalAmbientColor = color;
+      mGlobalAmbientColorDirty = true;
+   }
+}
+
+//-----------------------------------------------------------------------------
 // Set texture
 //-----------------------------------------------------------------------------
 void GFXDevice::setTexture(U32 stage, GFXTextureObject* texture)
@@ -1774,6 +1824,7 @@ void GFXDevice::unregisterTexCallback(S32 handle)
 {
     mTextureManager->unregisterTexCallback(handle);
 }
+//------------------------------------------------------------------------------
 
 void GFXDevice::setInitialGFXState()
 {
