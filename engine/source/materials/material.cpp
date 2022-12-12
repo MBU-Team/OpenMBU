@@ -16,14 +16,14 @@
 //--------------------------------------------------------------------------
 // getNormalizeCube - static method, returns a normalization cubemap
 //--------------------------------------------------------------------------
-//GFXCubemap * Material::getNormalizeCube()
-//{
-//    if(normalizeCube)
-//        return normalizeCube;
-//    normalizeCube = GFX->createCubemap();
-//    normalizeCube->initNormalize(64);
-//    return normalizeCube;
-//}
+GFXCubemap * Material::getNormalizeCube()
+{
+    if(normalizeCube)
+        return normalizeCube;
+    normalizeCube = GFX->createCubemap();
+    normalizeCube->initNormalize(64);
+    return normalizeCube;
+}
 
 //****************************************************************************
 // Material
@@ -88,6 +88,8 @@ static EnumTable::Enums gRenderBinEnums[] =
 };
 EnumTable Material::mRenderBinTable(sizeof(gRenderBinEnums) / sizeof(EnumTable::Enums), gRenderBinEnums);
 #endif
+
+GFXCubemapHandle Material::normalizeCube;
 
 //----------------------------------------------------------------------------
 // Constructor
@@ -292,7 +294,7 @@ bool Material::onAdd()
 //--------------------------------------------------------------------------
 void Material::onRemove()
 {
-    //SAFE_DELETE( normalizeCube );
+    SAFE_DELETE( normalizeCube );
 
     Parent::onRemove();
 }

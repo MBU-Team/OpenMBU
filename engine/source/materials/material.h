@@ -28,7 +28,7 @@ class Material : public SimObject
     typedef SimObject Parent;
 
 public:
-    //static GFXCubemap *getNormalizeCube();
+    static GFXCubemap *getNormalizeCube();
 
     //-----------------------------------------------------------------------
     // Enums
@@ -109,7 +109,7 @@ public:
     };
 
 private:
-    //static GFXCubemapHandle normalizeCube;
+    static GFXCubemapHandle normalizeCube;
 public:
 
     //-----------------------------------------------------------------------

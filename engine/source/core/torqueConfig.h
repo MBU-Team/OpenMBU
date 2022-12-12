@@ -222,6 +222,8 @@
 // Used to check internal GFX state, D3D/OGL states, etc.  
 //#define TORQUE_DEBUG_RENDER
 
+// Enable ShaderGen
+#define TORQUE_SHADERGEN
 
 //-----------------------------------------------------------------------------
 // Finally, we define some dependent #defines for the various build 

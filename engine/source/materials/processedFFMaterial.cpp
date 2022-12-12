@@ -189,9 +189,9 @@ void ProcessedFFMaterial::setTextureStages(SceneGraphData& sgData, U32 pass)
                     GFX->setTextureStageColorOp(i, GFXTOPModulate);
                     break;
 
-//                case Material::NormalizeCube:
-//                    GFX->setCubeTexture(i, Material::getNormalizeCube());
-//                    break;
+                case Material::NormalizeCube:
+                    GFX->setCubeTexture(i, Material::getNormalizeCube());
+                    break;
 
                 case Material::Lightmap:
                     GFX->setTexture( i, sgData.lightmap );
