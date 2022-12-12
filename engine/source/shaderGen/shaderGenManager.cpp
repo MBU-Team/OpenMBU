@@ -89,7 +89,7 @@ Stream* ShaderGenManager::readShaderStream(const char* fileName)
             else
             {
                 FileStream* fs = new FileStream();
-                fs->open(fileName, FileStream::Write);
+                fs->open(fileName, FileStream::Read);
                 _mOpenReadStream = fs;
                 break;
             }
