@@ -400,6 +400,7 @@ $Text::ErrorNoChangeRes     = "No puedes cambiar las resoluciones mientras está
 $Text::HOMarble = "Aspecto de la pelota";
 $Text::HOOptions = "Opc. sonido y control";
 $Text::HOVideoOptions = "Opciones de video";
+$Text::HOMiscOptions = "Opciones varias";
 $Text::HOInstructions = "Cómo jugar";
 $Text::HOCredits = "Créditos";
 

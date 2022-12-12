@@ -333,11 +333,11 @@ function GameMissionInfo::selectMission(%this, %index)
       if ($curr_sky !$= %this.getCurrentMission().sky)
       {
          // First hide our clouds
-         if ($curr_sky $= $sky_beginner)
+         if ($curr_sky $= $sky_beginner || $curr_sky $= "")
             Cloud_Beginner.setHidden(true);
-         if ($curr_sky $= $sky_intermediate)
+         if ($curr_sky $= $sky_intermediate || $curr_sky $= "")
             Cloud_Intermediate.setHidden(true);
-         if ($curr_sky $= $sky_advanced)
+         if ($curr_sky $= $sky_advanced || $curr_sky $= "")
             Cloud_Advanced.setHidden(true);
 
          // Then set the material
@@ -600,7 +600,7 @@ function GameMissionInfo::getMissionDisplayNameList(%this)
       
       if( %this.filterDifficulty() $= "" || %this.filterDifficulty() $= %mission.difficultySet )
       {
-         %list = %list @ %mission.name;
+         %list = %list @ getMissionNameFromNameVar(%mission);
          if (%i < %group.getCount() - 1)
             %list = %list @ "\t";
       }
@@ -614,7 +614,17 @@ function GameMissionInfo::getMissionDisplayName(%this, %missionId)
    if (!isObject(%mission))
       return "";
    else
-      return %mission.name;
+      return getMissionNameFromNameVar(%mission);
+}
+
+function getMissionNameFromNameVar(%mission)
+{
+   %name = %mission.name;   
+   
+   if (%mission.nameVar !$= "")
+      eval("%name = " @ %mission.nameVar @ ";");
+      
+   return %name;
 }
 
 // returns true if there was a tie, false otherwise
@@ -865,6 +875,7 @@ function getMissionObject( %missionFile )
    %file = new FileObject();
    
    %missionInfoObject = "";
+   %missionNameVar = "";
    
    if ( %file.openForRead( %missionFile ) ) {
 		%inInfoBlock = false;
@@ -894,6 +905,14 @@ function getMissionObject( %missionFile )
 			   {
 			      GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Bad loc info in" SPC %missionFile @ "\n";
 			   }
+			   
+			   %missionNameVarIndex = strpos(%line, "$Text::LevelName");
+			   if (%missionNameVarIndex != -1)
+			   {
+			      %missionNameVar = getSubStr(%line, %missionNameVarIndex, 99);
+			      %missionNameVar = strreplace(%missionNameVar, ";", "");
+			      %missionNameVar = stripTrailingSpaces(%missionNameVar);
+			   }
 			}
 		}
 		
@@ -903,10 +922,17 @@ function getMissionObject( %missionFile )
 	echo("checking mission" SPC %missionFile);
 	%missionInfoObject = "%missionInfoObject = " @ %missionInfoObject;
 	eval( %missionInfoObject );
+   
+   if (%missionNameVar !$= "")
+      %missionInfoObject.nameVar = %missionNameVar;
 	
 	if (!%missionInfoObject.include)
 	{
-	   echo("skipping mission because include field is not true:" SPC %missionInfoObject.name);
+	   if (%missionInfoObject.nameVar !$= "")
+	      %missionName = %missionInfoObject.nameVar;
+      else
+	      %missionName = %missionInfoObject.name;
+	   echo("skipping mission because include field is not true:" SPC %missionName);
 	   %missionInfoObject.delete();
 	   return;
 	}

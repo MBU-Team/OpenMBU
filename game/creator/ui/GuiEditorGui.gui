@@ -340,6 +340,9 @@ function GuiEditorSaveGuiCallback(%name)
 //----------------------------------------
 function GuiEdit(%val)
 {
+   if (!$testCheats)
+      return;   
+   
    if(%val != 0)
       return;
       

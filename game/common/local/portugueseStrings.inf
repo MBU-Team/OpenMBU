@@ -400,6 +400,7 @@ $Text::ErrorNoChangeRes     = "Você não pode alterar resoluções, enquanto em
 $Text::HOMarble = "Marble Appearance";
 $Text::HOOptions = "Input and Sound Options";
 $Text::HOVideoOptions = "Opções de Vídeo";
+$Text::HOMiscOptions = "Opções diversas";
 $Text::HOInstructions = "How to Play";
 $Text::HOCredits = "Credits";
 

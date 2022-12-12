@@ -44,6 +44,9 @@ void RenderTranslucentMgr::addElement(RenderInst* inst)
     F32 camDist = (gRenderInstManager.getCamPos() - inst->sortPoint).len();
     elem.key = *((U32*)&camDist);
 
+    //F32 camDist = HIGH_NUM - (gRenderInstManager.getCamPos() - inst->sortPoint).lenSquared() * 2500.0f;
+    //elem.key = *((U32*)&camDist);
+
     // we want key2 to sort by Material, but if the matInst is null, we can't.
     // in that case, use the "miscTex" for the secondary key
     if (inst->matInst == NULL)
@@ -67,7 +70,7 @@ void RenderTranslucentMgr::render()
 
     SceneGraphData sgData;
 
-    GFX->setCullMode(GFXCullNone);
+    //GFX->setCullMode(GFXCullNone);
 
     // set up register combiners
     GFX->setTextureStageAlphaOp(0, GFXTOPModulate);
@@ -83,11 +86,12 @@ void RenderTranslucentMgr::render()
     GFX->setAlphaRef(1);
     GFX->setAlphaFunc(GFXCmpGreaterEqual);
 
+    GFX->setAlphaBlendEnable( true );
 
     GFX->setZWriteEnable(false);
 
-    U32 numChanges = 0;
-    U32 numDrawCalls = 0;
+    //U32 numChanges = 0;
+    //U32 numDrawCalls = 0;
 
     U32 binSize = mElementList.size();
     for (U32 j = 0; j < binSize; )
@@ -166,6 +170,7 @@ void RenderTranslucentMgr::render()
         {
             GFX->setTextureStageColorOp(0, GFXTOPModulate);
             GFX->setTextureStageColorOp(1, GFXTOPDisable);
+            GFX->setZWriteEnable( false );
 
             if (ri->translucent)
             {
@@ -200,7 +205,7 @@ void RenderTranslucentMgr::render()
         //bool firstmatpass = true;
         while (mat->setupPass(sgData))
         {
-            ++numChanges;
+            //++numChanges;
 
             U32 a;
             for (a = j; a < binSize; a++)
@@ -240,7 +245,7 @@ void RenderTranslucentMgr::render()
                 // draw it
                 GFX->drawPrimitive(passRI->primBuffIndex);
 
-                ++numDrawCalls;
+                //++numDrawCalls;
             }
 
             matListEnd = a;

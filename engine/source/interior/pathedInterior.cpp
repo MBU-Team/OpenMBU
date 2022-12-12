@@ -18,6 +18,7 @@
 #include "core/frameAllocator.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sfx/sfxSystem.h"
+#include "game/gameConnection.h"
 
 #ifdef MARBLE_BLAST
 #include "game/marble/marble.h"
@@ -181,7 +182,7 @@ bool PathedInterior::onAdd()
         SimSet* reflectSet = dynamic_cast<SimSet*>(Sim::findObject("reflectiveSet"));
         reflectSet->addObject((SimObject*)mDummyInst);
     }
-    
+
     // Install material list
     mDummyInst->mMaterialMaps.push_back(new MaterialList(mInterior->mMaterialList));
 
@@ -389,7 +390,7 @@ U32 PathedInterior::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
         // Inital update...
         stream->writeString(mInteriorResName);
         stream->write(mInteriorResIndex);
-        
+
         MatrixF mat = mBaseTransform;
         mat.setPosition(mOffset);
         mathWrite(*stream, mat);
@@ -490,6 +491,8 @@ void PathedInterior::readPacketData(GameConnection* conn, BitStream* stream)
 
 void PathedInterior::processTick(const Move* move)
 {
+    //NetConnection* conn = NetConnection::getLocalClientConnection();
+
     computeNextPathStep(TickMs);
     advance(TickMs);
     U32 oldNetUpdate = mNextNetUpdate;
@@ -497,11 +500,54 @@ void PathedInterior::processTick(const Move* move)
     if (!oldNetUpdate)
     {
         setMaskBits(NewPositionMask);
-        mNextNetUpdate = UpdateTicks;
+#ifdef EXPERIMENTAL_MP_LAG_FIX
+        NetConnection* conn = NetConnection::getLocalClientConnection();
+        if (conn && conn->isLocalConnection())
+            mNextNetUpdate = 8192;
+        else
+#endif
+            mNextNetUpdate = UpdateTicks;
     }
     doSustainSound();
     mCurrentVelocity *= getMin((F32)mStopTime, (F32)TickMs) / (F32)TickMask;
     mStopTime = 1000.0;
+
+
+    /*if (conn && conn->isLocalConnection() && isServerObject())
+    {
+        NetConnection* toServer = NetConnection::getConnectionToServer();
+        NetConnection* toClient = NetConnection::getLocalClientConnection();
+
+        S32 index = toClient->getGhostIndex(this);
+
+        if (index == -1)
+            return;
+        PathedInterior* clientPathedInterior = dynamic_cast<PathedInterior*>(toServer->resolveGhost(index));
+        if (!clientPathedInterior)
+            return;
+
+        if (clientPathedInterior)
+        {
+            PathedInterior* clientObj = clientPathedInterior;
+
+            clientObj->mInteriorResName = mInteriorResName;
+            clientObj->mInteriorResIndex = mInteriorResIndex;
+
+            clientObj->mBaseTransform = mBaseTransform;
+            clientObj->mOffset = mOffset;
+            clientObj->mBaseScale = mBaseScale;
+            clientObj->mPathKey = mPathKey;
+
+            clientObj->mCurrentPosition = mCurrentPosition;
+
+            clientObj->mBaseTransform.setPosition(getTransform().getPosition());
+            clientObj->setTransform(clientObj->mBaseTransform);
+
+            clientObj->mTargetPosition = mTargetPosition;
+            clientObj->mCurrentVelocity = mCurrentVelocity;
+            clientObj->mStopTime = mStopTime;
+        }
+    }*/
 }
 
 void PathedInterior::interpolateTick(F32 delta)

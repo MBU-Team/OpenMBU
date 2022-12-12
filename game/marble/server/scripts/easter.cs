@@ -58,6 +58,8 @@ function clientCmdOnEasterEggPickup( %index )
       return;
    }
    
+   sendAutosplitterData("egg" SPC %index);
+   
    if( hasFoundEgg( %index ) )
    {
       serverPlay2d(easterNotNewSfx);

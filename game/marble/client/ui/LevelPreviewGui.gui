@@ -219,6 +219,10 @@ function levelPreviewGui::onA()
          
          // Create a new server
          loadMission(GameMissionInfo.getCurrentMission().file, true);
+         
+         // Tell autosplitter to start
+         sendAutosplitterData("start" SPC GameMissionInfo.getCurrentMission().level);
+         sendAutosplitterData("loading started");
       }
       else
       {
@@ -456,7 +460,7 @@ function levelPreviewGui::populateLevelInfo(%this)
       %timeText = %biggerFont @ %time @ "\n" @ %timeText;
    }
    
-   levelPreviewGui.setLevelText( %mission.level, %mission.name );
+   levelPreviewGui.setLevelText( %mission.level, getMissionNameFromNameVar(%mission) );
    LP_timetext.setText( %descText );
    LP_times.setText( %timeText );
 }

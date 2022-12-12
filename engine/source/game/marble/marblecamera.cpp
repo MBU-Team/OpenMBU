@@ -10,6 +10,12 @@
 
 static U32 sCameraCollisionMask = InteriorObjectType | StaticShapeObjectType;
 
+#ifdef MB_GOLD
+#define RADIUS_FOR_CAMERA 0.09f
+#else
+#define RADIUS_FOR_CAMERA 0.25f
+#endif
+
 bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep)
 {
     disableCollision();
@@ -24,7 +30,7 @@ bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIter
     U32 i = 0;
     for (bool flag = timeStep > 0.0f; flag && i < maxIterations; flag = totalTime > 0.0f)
     {
-        if (testMove(velocity, position, time, 0.25, sCameraCollisionMask, true))
+        if (testMove(velocity, position, time, RADIUS_FOR_CAMERA, sCameraCollisionMask, true))
         {
             hitSomething = true;
             
@@ -356,7 +362,7 @@ bool Marble::isCameraClear(Point3F start, Point3F end)
     if (!moveCamera(start, end, start, 1, 1.0f))
         return false;
        
-    F32 radius = 0.25f;
+    F32 radius = RADIUS_FOR_CAMERA;
     Point3D ep = end;
     findContacts(sCameraCollisionMask, &ep, &radius);
 
@@ -436,7 +442,7 @@ void Marble::getOOBCamera(MatrixF* mat)
     getLookMatrix(&camMat);
     Point3F camUpDir(camMat[2], camMat[6], camMat[10]);
     Point3F matPos(mRenderObjToWorld[3], mRenderObjToWorld[7], mRenderObjToWorld[11]);
-    float radius = mRadius + 0.25f;
+    float radius = mRadius + RADIUS_FOR_CAMERA;
     Point3F scale(camMat[2] * radius, camMat[6] * radius, camMat[10] * radius);
     matPos += scale;
     Point3F camForwardDir = matPos - mOOBCamPos;
@@ -462,13 +468,13 @@ void Marble::setPlatformsForCamera(const Point3F& marblePos, const Point3F& star
     camBox.min = marblePos + camBox.min;
     camBox.max = marblePos + camBox.max;
 
-    camBox.min.setMin(startCam - 0.25f);
-    camBox.max.setMax(startCam + 0.25f);
-    camBox.min.setMin(endCam - 0.25f);
-    camBox.max.setMax(endCam + 0.25f);
+    camBox.min.setMin(startCam - RADIUS_FOR_CAMERA);
+    camBox.max.setMax(startCam + RADIUS_FOR_CAMERA);
+    camBox.min.setMin(endCam - RADIUS_FOR_CAMERA);
+    camBox.max.setMax(endCam + RADIUS_FOR_CAMERA);
     
-    camBox.min -= 0.25f;
-    camBox.max += 0.25f;
+    camBox.min -= RADIUS_FOR_CAMERA;
+    camBox.max += RADIUS_FOR_CAMERA;
 
 #ifdef MB_ULTRA_PREVIEWS
     F32 delta = getCurrentClientProcessList()->getLastDelta();
@@ -532,7 +538,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
 #endif // MBU_FINISH_PAD_FIX
     }
 
-    F64 verticalOffset = mRadius + 0.25;
+    F64 verticalOffset = mRadius + RADIUS_FOR_CAMERA;
     mEffect.lastCamFocus = position;
 
     startCam = camUpDir * verticalOffset + position;

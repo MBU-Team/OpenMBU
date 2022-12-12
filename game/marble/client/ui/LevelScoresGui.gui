@@ -524,7 +524,7 @@ function levelScoresGui::setSelectedInfo(%this)
    if (isObject(%mission))
    {
       %isOverall = false;
-      levelScoresGui.setTitleText( %mission.level, %mission.name );
+      levelScoresGui.setTitleText( %mission.level, getMissionNameFromNameVar(%mission) );
    }
    else
    {

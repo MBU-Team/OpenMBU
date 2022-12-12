@@ -205,7 +205,7 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
             Point3F otherPos = other->getPosition();
 
             F32 time;
-            if (MathUtils::capsuleSphereNearestOverlap(position, nextPos, mRadius, otherPos, other->mRadius, time));
+            if (MathUtils::capsuleSphereNearestOverlap(position, nextPos, mRadius, otherPos, other->mRadius, time))
             {
                 time *= deltaT;
 
@@ -265,27 +265,22 @@ bool Marble::testMove(Point3D velocity, Point3D& position, F64& deltaT, F64 radi
 
                 Point3D collisionPos = velocity * collisionTime + position;
 
-                bool isOnEdge;
-
-                if (poly->vertexCount != 0)
+                U32 i;
+                for (i = 0; i < poly->vertexCount; i++)
                 {
-                    U32 i;
-                    for (i = 0; i < poly->vertexCount; i++)
+                    Point3F thisVert = polyList.mVertexList[polyList.mIndexList[i + poly->vertexStart]];
+                    if (thisVert != lastVert)
                     {
-                        Point3F thisVert = polyList.mVertexList[polyList.mIndexList[i + poly->vertexStart]];
-                        if (thisVert != lastVert)
-                        {
-                            PlaneD edgePlane(thisVert + polyPlane, thisVert, lastVert);
-                            lastVert = thisVert;
+                        PlaneD edgePlane(thisVert + polyPlane, thisVert, lastVert);
+                        lastVert = thisVert;
 
-                            // if we are on the far side of the edge
-                            if (mDot(edgePlane, collisionPos) + edgePlane.d < 0.0)
-                                break;
-                        }
+                        // if we are on the far side of the edge
+                        if (mDot(edgePlane, collisionPos) + edgePlane.d < 0.0)
+                            break;
                     }
-
-                    isOnEdge = i != poly->vertexCount;
                 }
+
+                bool isOnEdge = i != poly->vertexCount;
 
                 // If we're inside the poly, just get the position
                 if (!isOnEdge)
