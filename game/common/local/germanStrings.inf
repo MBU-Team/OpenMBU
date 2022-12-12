@@ -400,6 +400,7 @@ $Text::ErrorNoChangeRes     = "Sie dürfen die Auflösungen während eines Spiel
 $Text::HOMarble = "Murmelaussehen";
 $Text::HOOptions = " Eingabe-/Sound-Optionen";
 $Text::HOVideoOptions = "Videooptionen";
+$Text::HOMiscOptions = "Verschiedene optionen";
 $Text::HOInstructions = "So wird gespielt";
 $Text::HOCredits = "Mitwirkende";
 

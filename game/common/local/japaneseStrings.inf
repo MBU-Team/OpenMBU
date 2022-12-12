@@ -399,6 +399,7 @@ $Text::ErrorNoChangeRes     = "ゲーム中に解像度を変更することは�
 $Text::HOMarble = "マーブルのデザイン";
 $Text::HOOptions = "視点と音の設定";
 $Text::HOVideoOptions = "ビデオオプション";
+$Text::HOMiscOptions = "その他のオプション";
 $Text::HOInstructions = "プレイ方法";
 $Text::HOCredits = "クレジット";
 

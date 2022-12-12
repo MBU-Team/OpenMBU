@@ -91,9 +91,11 @@ void NetObject::clearMaskBits(U32 orMask)
 
 void NetObject::collapseDirtyList()
 {
+#ifdef TORQUE_DEBUG
     Vector<NetObject*> tempV;
     for (NetObject* t = mDirtyList; t; t = t->mNextDirtyList)
         tempV.push_back(t);
+#endif
 
     for (NetObject* obj = mDirtyList; obj; )
     {
@@ -121,10 +123,12 @@ void NetObject::collapseDirtyList()
         obj = next;
     }
     mDirtyList = NULL;
+#ifdef TORQUE_DEBUG
     for (U32 i = 0; i < tempV.size(); i++)
     {
         AssertFatal(tempV[i]->mNextDirtyList == NULL && tempV[i]->mPrevDirtyList == NULL && tempV[i]->mDirtyMaskBits == 0, "Error in collapse");
     }
+#endif
 }
 
 //-----------------------------------------------------------------------------

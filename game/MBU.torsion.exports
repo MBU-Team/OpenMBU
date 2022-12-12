@@ -1622,6 +1622,9 @@
         <field>            <name>bitmap</name>
             <desc>filename bitmap</desc>
         </field>
+        <field>            <name>onMouseUp</name>
+            <desc>string onMouseUp</desc>
+        </field>
         <field>            <name>wrap</name>
             <desc>bool wrap</desc>
         </field>
@@ -3573,6 +3576,12 @@ More of a helper function than anything.   If console access to the field list i
     </class>
     <class>        <name>Material</name>
         <base>SimObject</base>
+        <field>            <name>alphaRef</name>
+            <desc>int alphaRef</desc>
+        </field>
+        <field>            <name>alphaTest</name>
+            <desc>bool alphaTest</desc>
+        </field>
         <field>            <name>animFlags</name>
             <desc>int animFlags</desc>
         </field>
@@ -3876,6 +3885,8 @@ More of a helper function than anything.   If console access to the field list i
             <desc>Undo the effects of a scopeToClient() call.</desc>
         </method>
         <method>            <name>getGhostID</name>
+        </method>
+        <method>            <name>isSPModeObject</name>
         </method>
         <method>            <name>scopeToClient</name>
             <args>NetConnection %client</args>
@@ -7265,7 +7276,7 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>enableMouse</name>
     </function>
     <function>        <name>enableWinConsole</name>
-        <args>bool</args>
+        <args>enable, [showWindow]</args>
     </function>
     <function>        <name>enableXInput</name>
     </function>
@@ -7341,9 +7352,6 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
         <args>srcFile, size, squareSize, vertScale, destFile, error, treeDepth</args>
         <desc>Create a chunk file from a raw 16 bit heightfield of the given square size and vert scale.</desc>
     </function>
-    <function>        <name>generateFont</name>
-        <args>sysFaceName, newFaceName, size, padding</args>
-    </function>
     <function>        <name>generateTQT</name>
         <args>filename sourceImage, filename tgtFile, treeDepth, tileSize</args>
         <desc>Generate a TQT file with the specified parameters from the given source image.</desc>
@@ -7375,6 +7383,9 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     </function>
     <function>        <name>getDisplayDeviceList</name>
         <desc>Returns a tab-seperated string of the detected devices.</desc>
+    </function>
+    <function>        <name>getDisplayDeviceName</name>
+        <desc>Returns the name of the current display device</desc>
     </function>
     <function>        <name>getEventTimeLeft</name>
         <args>scheduleId</args>
@@ -7448,6 +7459,9 @@ Real time is platform defined; typically time since the computer booted.</desc>
     <function>        <name>getScheduleDuration</name>
         <desc>getTimeSinceStart(%scheduleId);</desc>
     </function>
+    <function>        <name>getScreenMode</name>
+        <desc>Returns full screen mode (0 = windowed, 1 = fullscreen, 2 = borderless)</desc>
+    </function>
     <function>        <name>getServerCount</name>
     </function>
     <function>        <name>getSimTime</name>
@@ -7461,6 +7475,9 @@ Sim time is time since the game started.</desc>
     <function>        <name>getSubStr</name>
         <args>string str, int start, int numChars</args>
         <desc>Returns the substring of str, starting at start, and continuing to either the end of the string, or numChars characters, whichever comes first.</desc>
+    </function>
+    <function>        <name>getSystemLanguage</name>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>getTag</name>
         <args>textTagString</args>
@@ -7580,6 +7597,10 @@ If mode is "forceAlways", the lightmaps will be regenerated regardless of whethe
     <function>        <name>loadChunkFile</name>
         <args>Filename file</args>
         <desc>Read a chunk hierarchy from a file.</desc>
+    </function>
+    <function>        <name>loadObjectsFromMission</name>
+        <args>mission, className, dataBlock</args>
+        <desc>- Loads Objects from a Mission</desc>
     </function>
     <function>        <name>loadZip</name>
         <args>zipName</args>
@@ -7877,6 +7898,8 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
         <desc>Take a screenshot.
 
 @param format One of JPEG or PNG.</desc>
+    </function>
+    <function>        <name>sendAutosplitterData</name>
     </function>
     <function>        <name>setClipboard</name>
         <args>string text</args>
@@ -8222,6 +8245,8 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
     </function>
+    <function>        <name>XBLiveEndStatsSession</name>
+    </function>
     <function>        <name>XBLiveGetSignInPort</name>
     </function>
     <function>        <name>XBLiveGetUserId</name>
@@ -8234,5 +8259,9 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveIsSignedInGold</name>
     </function>
     <function>        <name>XBLiveIsSignedInSilver</name>
+    </function>
+    <function>        <name>XBLiveIsStatsSessionActive</name>
+    </function>
+    <function>        <name>XBLiveStartStatsSession</name>
     </function>
 </exports>

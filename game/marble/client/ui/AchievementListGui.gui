@@ -1,0 +1,221 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(AchievementListGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";
+   
+   //new GuiMLTextCtrl(AchievementCountText)
+   //	{
+   //   	profile = "TextHeadingProfile";
+    //     horizSizing = "center";
+    //     vertSizing = "bottom";
+    //  	position = "0 440";
+    //  	extent = "640 20";
+    //  	minExtent = "8 8";
+    //  	lineSpacing = "2";
+    //  	allowColorChars = "0";
+    //  	maxChars = "-1";
+    //  	lineCount = 0;
+    //  	visible = 1;
+   	//};
+   	//
+   	//new GuiMLTextCtrl(TotalGemCountText)
+   	//{
+      	//profile = "TextHeadingProfile";
+         //horizSizing = "center";
+         //vertSizing = "bottom";
+      	//position = "0 490";
+      	//extent = "640 20";
+      	//minExtent = "8 8";
+      	//lineSpacing = "2";
+      	//allowColorChars = "0";
+      	//maxChars = "-1";
+      	//lineCount = 0;
+      	//visible = 1;
+   	//};
+	
+	new GuiWindowCtrl(AchievementListBG) {
+      profile = "bgBoxTopProfile";
+      horizSizing = isWidescreen() ? "center" : "right";
+      vertSizing = isWidescreen() ? "center" : "bottom";
+      position =  "25 58";
+      extent = "600 480";
+      maxLength = "255";
+      resizeWidth = "0";
+      resizeHeight = "0";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      canMove = "0";
+      minSize = "50 50";
+	      				
+	   new GuiTextListCtrl(AchievementList)
+	   {
+	      profile = "LobbyTextArrayProfile";
+	      setFirstResponder = "true";
+	      horizSizing = "right";
+	      vertSizing = "bottom";
+	      position = "25 22";
+	      extent = "550 480";
+	      autoResize = false; // don't try to resize to accommodate new rows - stay within extents
+	      rowsPerPage = $totalAchievements;    // maximum number of rows to render per page
+	      allowUnselectedScroll = false;
+	      minExtent = "8 8";
+	      //hAlign = "width";
+	      enumerate = "0";
+	      resizeCell = "1";
+	      // readyicon, player, score last game, tankicon, skillicon, voiceicon
+	      columns = "0 26 315 367 423 490";  
+	      columnAligns = "0 0 0 0 0 0";
+	      columnBmps = "1 0 0 1 1 1";
+	      clipColumnText = "1";
+	      fitParentWidth = "0";
+	      noDuplicates = "false";
+	      iconPath = "marble/client/ui/xbox/";
+	      hostIcon = "BrainIcon";
+	      readyIcon = "Ready";
+	      demoOutOfTimeIcon = "DemoOutOfTimeIcon";
+	      skill1Icon = "stars_1";
+	      skill2Icon = "stars_2";
+	      skill3Icon = "stars_3";
+	      skill4Icon = "stars_4";
+	      skill5Icon = "stars_5";
+	      skill6Icon = "stars_6";
+	      voiceIcon = "voiceIcon";
+	      voiceIconOff = "voiceIconOff";
+	      voiceIconPity = "voiceIconPity";
+	      voiceIconSpeak = "voiceIconSpeak";
+	      voidIcon = "void";
+	      centerBmpsVert = true;
+	      centerBmpsHoriz = true;
+	   };
+	};
+           	
+};
+//--- OBJECT WRITE END ---
+
+//function AchievementList::onClick(%this)
+//{
+//	AchievementListGui.onA();
+//}
+
+function AchievementListGui::show(%this, %backgui)
+{     
+	if (%backGui !$= "")
+	   %this.backGui = %backGui;
+	
+   %has = AchievementList.iconPath @ AchievementList.readyIcon;
+   %noHas = AchievementList.iconPath @ AchievementList.demoOutOfTimeIcon;
+   
+   %num = 0;
+   
+   for (%i = 0; %i < $totalAchievements + 1; %i++)
+   {
+		if ($UserAchievementsGot::achieved[%i] == 1)
+		{
+			%ach[%i] = %has;
+			%num++;
+		} else {
+			%ach[%i] = %noHas;
+		}
+   }
+   
+   //AchievementCountText.setText(%num @ "/14 Total Achievements Unlocked");
+   
+   AchievementList.clear();
+   
+   AchievementList.addRow(0, %ach[1] TAB "Timely Marble" TAB "5G");
+   AchievementList.addRow(1, %ach[2] TAB "Apprentice's Badge" TAB "10G");
+   AchievementList.addRow(2, %ach[3] TAB "Journeyman's Badge" TAB "15G");
+   AchievementList.addRow(3, %ach[4] TAB "Adept's Badge" TAB "25G");
+   AchievementList.addRow(4, %ach[5] TAB "Marble-fu Initiate" TAB "15G");
+   AchievementList.addRow(5, %ach[6] TAB "Marble-fu Master" TAB "25G");
+   AchievementList.addRow(6, %ach[7] TAB "Marble-fu Transcendent" TAB "35G");
+   AchievementList.addRow(7, %ach[8] TAB "Egg Seeker" TAB "5G");
+   AchievementList.addRow(8, %ach[9] TAB "Egg Basket" TAB "25G");
+   AchievementList.addRow(9, %ach[10] TAB "First Place" TAB "10G");
+   AchievementList.addRow(10, %ach[11] TAB "Gem Collector" TAB "10G");
+   AchievementList.addRow(11, %ach[12] TAB "Veteran Battler" TAB "20G");
+   
+   // creates an empty popup dialog?
+   RootGui.setA("Details");
+   RootGui.setB($Text::Back);
+   RootGui.setTitle($Text::AchievementsScreen);
+   
+   AchievementList.setSelectedById(0);
+}
+
+function AchievementListGui::hide(%this)
+{
+   //endPreviewMission();
+}
+
+function AchievementListGui::onA(%this)
+{
+   if (AchievementList.getSelectedId() != -1)
+   {
+      sfxPlay( AudioButtonDown );
+      %id = AchievementList.getSelectedId();
+      %desc = "Select an achievement from the list.";
+      switch$ (%id)
+      {
+         case 0: %desc = "Finish any level under par time.";
+         case 1: %desc = "Complete all Beginner levels.";
+         case 2: %desc = "Complete all Intermediate levels.";
+         case 3: %desc = "Complete all Advanced levels.";
+         case 4: %desc = "Finish all Beginner levels under par time.";
+         case 5: %desc = "Finish all Intermediate levels under par time.";
+         case 6: %desc = "Finish all Advanced levels under par time.";
+         case 7: %desc = "Find any hidden easter egg.";
+         case 8: %desc = "Find all twenty easter eggs.";
+         case 9: %desc = "Get first place in a multiplayer match.";
+         case 10: %desc = "Get 75 points in a multiplayer match.";
+         case 11: %desc = "Collect 2,000 total points in multiplayer.";
+         case 12: %desc = "Complete all Bonus levels.";
+         case 13: %desc = "Finish all Bonus levels under par time.";
+      }
+      %name = getField(AchievementList.getRowTextById(%id), 1);
+      //LobbyPopupDlg.show(%name,%id,true,false,false,true);
+      XMessagePopupDlg.show(0, %name @ "\n\n" @ %desc, "Ok", "","", "");
+   }
+}
+
+function AchievementListGui::onUp(%this)
+{
+   %selected = AchievementList.getSelectedId();
+   
+   %selected = %selected - 1;
+   
+   if (%selected < 0)
+      %selected = AchievementList.rowCount() - 1;
+      
+   AchievementList.setSelectedById(%selected);
+   
+   sfxPlay( AudioButtonOver );
+}
+
+function AchievementListGui::onDown(%this)
+{
+   %selected = AchievementList.getSelectedId();
+   
+   %selected = %selected + 1;
+   
+   if (%selected >= AchievementList.rowCount())
+      %selected = 0;
+      
+   AchievementList.setSelectedById(%selected);
+   
+   sfxPlay( AudioButtonOver );
+}
+
+function AchievementListGui::onB(%this)
+{
+	//sfxPlay( AudioButtonDown );
+	if (%this.backGui !$= "")
+	   RootGui.setContent(%this.backGui);
+   else
+	   RootGui.setContent(MainMenuGui);
+}

@@ -169,13 +169,14 @@ namespace Memory
             if (header->preguard[i] != guardVal || header->postguard[i] != guardVal)
                 Platform::debugBreak();
     }
-
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void setGuard(Header* header, bool alloc)
     {
         U32 guardVal = alloc ? AllocatedGuard : FreeGuard;
         for (U32 i = 0; i < 4; i++)
             header->preguard[i] = header->postguard[i] = guardVal;
     }
+#endif // !defined(TORQUE_DISABLE_MEMORY_MANAGER)
 #endif
 
     static void memoryError()
@@ -344,6 +345,7 @@ namespace Memory
 #endif
     }
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void rotateLeft(TreeNode* hdr)
     {
         TreeNode* temp = hdr->right;
@@ -360,7 +362,9 @@ namespace Memory
         temp->left = hdr;
         hdr->parent = temp;
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void rotateRight(TreeNode* hdr)
     {
         TreeNode* temp = hdr->left;
@@ -377,7 +381,9 @@ namespace Memory
         temp->right = hdr;
         hdr->parent = temp;
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void treeInsert(FreeHeader* fhdr)
     {
 #ifdef TORQUE_DEBUG_GUARD
@@ -483,7 +489,9 @@ namespace Memory
         gFreeTreeRoot->color = Black;
         //validateTree();
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void treeRemove(FreeHeader* hdr)
     {
 #ifdef TORQUE_DEBUG_GUARD
@@ -629,7 +637,9 @@ namespace Memory
         }
         //validateTree();
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static FreeHeader* treeFindSmallestGreaterThan(dsize_t size)
     {
         TreeNode* bestMatch = NIL;
@@ -652,6 +662,7 @@ namespace Memory
 
         return NULL;
     }
+#endif
 
     static void check()
     {
@@ -836,6 +847,7 @@ namespace Memory
         fws.close();
     }
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void logAlloc(const AllocatedHeader* hdr, S32 memSize)
     {
         FileStream fws;
@@ -849,7 +861,9 @@ namespace Memory
         fws.write(dStrlen(buffer), buffer);
         fws.close();
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void logRealloc(const AllocatedHeader* hdr, S32 memSize)
     {
         FileStream fws;
@@ -863,7 +877,9 @@ namespace Memory
         fws.write(dStrlen(buffer), buffer);
         fws.close();
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void logFree(const AllocatedHeader* hdr)
     {
         FileStream fws;
@@ -877,6 +893,8 @@ namespace Memory
         fws.write(dStrlen(buffer), buffer);
         fws.close();
     }
+#endif // !defined(TORQUE_DISABLE_MEMORY_MANAGER)
+
 #endif
 
     void enableLogging(const char* fileName)
@@ -891,50 +909,55 @@ namespace Memory
         gEnableLogging = false;
     }
 
-    static void shutdown()
-    {
-#ifdef TORQUE_MULTITHREAD
-        Mutex::destroyMutex(gMemMutex);
-#endif
+//    // CodeReview - this is never called so commented out to save warning.
+//    // Do we want to re-enable it?  Might be nice to get leak tracking on
+//    // exit...or maybe that is just a problematical feature we shouldn't
+//    // worry about.
+//    static void shutdown()
+//    {
+//#ifdef TORQUE_MULTITHREAD
+//        Mutex::destroyMutex(gMemMutex);
+//#endif
+//
+//        // write out leaks and such
+//
+//        const U32 maxNumLeaks = 1024;
+//        U32 numLeaks = 0;
+//
+//        PageRecord* walk;
+//#ifdef TORQUE_DEBUG_GUARD
+//        AllocatedHeader* pLeaks[maxNumLeaks];
+//        for (walk = gPageList; walk; walk = walk->prevPage)
+//            for (Header* probe = walk->headerList; probe; probe = probe->next)
+//                if ((probe->flags & Allocated) && ((AllocatedHeader*)probe)->fileName != NULL)
+//                    pLeaks[numLeaks++] = (AllocatedHeader*)probe;
+//
+//        if (numLeaks && !gNeverLogLeaks) {
+//            if (gAlwaysLogLeaks || Platform::AlertOKCancel("Memory Status", "Memory leaks detected.  Write to memoryLeaks.log?") == true) {
+//                char buffer[1024];
+//                FileStream logFile;
+//                logFile.open("memoryLeaks.log", FileStream::Write);
+//
+//                for (U32 i = 0; i < numLeaks; i++) {
+//                    dSprintf(buffer, 1023, "Leak in %s: %d (%d)\r\n", pLeaks[i]->fileName, pLeaks[i]->line, pLeaks[i]->allocNum);
+//                    logFile.write(dStrlen(buffer), buffer);
+//                }
+//                logFile.close();
+//            }
+//        }
+//#endif
+//
+//        // then free all the memory pages
+//
+//        walk = gPageList;
+//        while (walk) {
+//            PageRecord* prev = walk->prevPage;
+//            dRealFree(walk);
+//            walk = prev;
+//        }
+//    }
 
-        // write out leaks and such
-
-        const U32 maxNumLeaks = 1024;
-        U32 numLeaks = 0;
-
-        PageRecord* walk;
-#ifdef TORQUE_DEBUG_GUARD
-        AllocatedHeader* pLeaks[maxNumLeaks];
-        for (walk = gPageList; walk; walk = walk->prevPage)
-            for (Header* probe = walk->headerList; probe; probe = probe->next)
-                if ((probe->flags & Allocated) && ((AllocatedHeader*)probe)->fileName != NULL)
-                    pLeaks[numLeaks++] = (AllocatedHeader*)probe;
-
-        if (numLeaks && !gNeverLogLeaks) {
-            if (gAlwaysLogLeaks || Platform::AlertOKCancel("Memory Status", "Memory leaks detected.  Write to memoryLeaks.log?") == true) {
-                char buffer[1024];
-                FileStream logFile;
-                logFile.open("memoryLeaks.log", FileStream::Write);
-
-                for (U32 i = 0; i < numLeaks; i++) {
-                    dSprintf(buffer, 1023, "Leak in %s: %d (%d)\r\n", pLeaks[i]->fileName, pLeaks[i]->line, pLeaks[i]->allocNum);
-                    logFile.write(dStrlen(buffer), buffer);
-                }
-                logFile.close();
-            }
-        }
-#endif
-
-        // then free all the memory pages
-
-        walk = gPageList;
-        while (walk) {
-            PageRecord* prev = walk->prevPage;
-            dRealFree(walk);
-            walk = prev;
-        }
-    }
-
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static Header* allocMemPage(dsize_t pageSize)
     {
         pageSize += sizeof(Header);
@@ -962,15 +985,19 @@ namespace Memory
         else
             dStrncpy(strBytesAllocated, "unknown - enable TORQUE_DEBUG_GUARD", StrSize);
 
+#ifndef TORQUE_MULTITHREAD // May deadlock.
         // NOTE: This code may be called within Con::_printf, and if that is the case
         // this will infinitly recurse. This is the reason for the code in Con::_printf
         // that sets Con::active to false. -patw
         if (Con::isActive())
             Con::errorf("PlatformMemory: allocating new page, total bytes allocated so far: %s (total bytes in all pages=%i)", strBytesAllocated, gPageBytesAllocated);
 #endif
+#endif
         return rec;
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void checkUnusedAlloc(FreeHeader* header, U32 size)
     {
         //validate();
@@ -993,11 +1020,13 @@ namespace Memory
             treeInsert(newHeader);
         }
     }
+#endif
 
-#ifdef TORQUE_MULTITHREAD
+#if defined(TORQUE_MULTITHREAD) && !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static bool gReentrantGuard = false;
 #endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void* alloc(dsize_t size, bool array, const char* fileName, const U32 line)
     {
         //   These should be true, but seem to simply give false errors for people?
@@ -1096,7 +1125,9 @@ namespace Memory
 
         return basePtr;
     }
+#endif
 
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void free(void* mem, bool array)
     {
         //validate();
@@ -1172,8 +1203,9 @@ namespace Memory
         Mutex::unlockMutex(gMemMutex);
 #endif
     }
+#endif
 
-
+#if !defined(TORQUE_DISABLE_MEMORY_MANAGER)
     static void* realloc(void* mem, dsize_t size)
     {
         //validate();
@@ -1256,7 +1288,7 @@ namespace Memory
 #endif
         return ret;
     }
-
+#endif
 
     dsize_t getMemoryUsed()
     {

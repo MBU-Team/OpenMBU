@@ -418,15 +418,26 @@ GFont::GFont()
 
 GFont::~GFont()
 {
-    if (mGFTFile)
+    /*if (mGFTFile)
     {
-        FileStream stream;
-        if (ResourceManager->openFileForWrite(stream, mGFTFile))
+        bool noBitmap = false;
+        U32 i;
+        for (i = 0; i < mTextureSheets.size(); i++)
         {
-            write(stream);
-            stream.close();
+            if (!mTextureSheets[i].getBitmap())
+                noBitmap = true;
         }
-    }
+
+        if (!noBitmap)
+        {
+            FileStream stream;
+            if (ResourceManager->openFileForWrite(stream, mGFTFile))
+            {
+                write(stream);
+                stream.close();
+            }
+        }
+    }*/
 
     S32 i;
 
@@ -941,7 +952,10 @@ bool GFont::write(Stream& stream)
 
     stream.write(mTextureSheets.size());
     for (i = 0; i < mTextureSheets.size(); i++)
+    {
+        AssertFatal(mTextureSheets[i].getBitmap(), "GFont::write - no bitmap for texture sheet!");
         mTextureSheets[i].getBitmap()->writePNG(stream);
+    }
 
     stream.write(mCurX);
     stream.write(mCurY);

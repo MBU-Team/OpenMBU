@@ -400,6 +400,7 @@ $Text::ErrorNoChangeRes     = "Non puoi modificare le risoluzioni durante un gio
 $Text::HOMarble = "Aspetto della biglia";
 $Text::HOOptions = "Opzioni comandi e audio";
 $Text::HOVideoOptions = "Opzioni video";
+$Text::HOMiscOptions = "Opzioni varie";
 $Text::HOInstructions = "Come giocare";
 $Text::HOCredits = "Riconoscimenti";
 

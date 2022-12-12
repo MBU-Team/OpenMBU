@@ -200,6 +200,20 @@ datablock SFXProfile(GetRollingVoiceSfx)
    preload = true;
 };
 
+datablock SFXProfile(AchievementSfx)
+{
+   filename    = "~/data/sound/new_achievement";
+   description = Audio2D;
+   preload = true;
+};
+
+datablock SFXProfile(AllAchievementSfx)
+{
+   filename    = "~/data/sound/all_achievement";
+   description = Audio2D;
+   preload = true;
+};
+
 datablock SFXProfile(WonRaceSfx)
 {
    filename    = "~/data/sound/finish.wav";
