@@ -27,6 +27,12 @@
 
 HINSTANCE g_hOpenALDLL = NULL;
 
+#ifdef _WIN64
+#define WIN_OPENAL_DLL_NAME "openal64.dll"
+#else
+#define WIN_OPENAL_DLL_NAME "openal32.dll"
+#endif
+
 ALboolean LoadOAL10Library(char *szOALFullPathName, LPOPENALFNTABLE lpOALFnTable)
 {
 	if (!lpOALFnTable)
@@ -35,7 +41,7 @@ ALboolean LoadOAL10Library(char *szOALFullPathName, LPOPENALFNTABLE lpOALFnTable
 	if (szOALFullPathName)
 		g_hOpenALDLL = LoadLibraryA(szOALFullPathName);
 	else
-		g_hOpenALDLL = LoadLibraryA("openal32.dll");
+		g_hOpenALDLL = LoadLibraryA(WIN_OPENAL_DLL_NAME);
 	
 	if (!g_hOpenALDLL)
 		return AL_FALSE;
