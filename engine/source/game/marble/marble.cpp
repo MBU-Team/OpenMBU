@@ -1342,18 +1342,27 @@ void Marble::trailEmitter(U32 timeDelta)
 
 void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
 {
-    if (mRollHandle && mSlipHandle && mMegaHandle)
+    //if (mRollHandle && mSlipHandle && mMegaHandle)
     {
         Point3F marblePos = mPosition;
 
-        mRollHandle->setPosition(marblePos);
-        mRollHandle->setVelocity(VectorF(0, 0, 0));
-        
-        mSlipHandle->setPosition(marblePos);
-        mSlipHandle->setVelocity(VectorF(0, 0, 0));
-        
-        mMegaHandle->setPosition(marblePos);
-        mMegaHandle->setVelocity(VectorF(0, 0, 0));
+        if (mRollHandle)
+        {
+            mRollHandle->setPosition(marblePos);
+            mRollHandle->setVelocity(VectorF(0, 0, 0));
+        }
+
+        if (mSlipHandle)
+        {
+            mSlipHandle->setPosition(marblePos);
+            mSlipHandle->setVelocity(VectorF(0, 0, 0));
+        }
+
+        if (mMegaHandle)
+        {
+            mMegaHandle->setPosition(marblePos);
+            mMegaHandle->setVelocity(VectorF(0, 0, 0));
+        }
 
         float scale = mDataBlock->size;
         float megaAmt = (this->mRenderScale.x - scale) / (mDataBlock->megaSize - scale);
@@ -1379,24 +1388,28 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
                 slipVolume = 1.0;
             rollVolume = (1.0 - slipVolume) * rollVolume;
         }
-        mRollHandle->setVolume(rollVolume * regAmt);
-        mMegaHandle->setVolume(rollVolume * megaAmt);
-        mSlipHandle->setVolume(slipVolume);
+        if (mRollHandle)
+            mRollHandle->setVolume(rollVolume * regAmt);
+        if (mMegaHandle)
+            mMegaHandle->setVolume(rollVolume * megaAmt);
+        if (mSlipHandle)
+            mSlipHandle->setVolume(slipVolume);
         
-        if (!mRollHandle->isPlaying())
+        if (mRollHandle && !mRollHandle->isPlaying())
             mRollHandle->play();
 
-        if (!mMegaHandle->isPlaying())
+        if (mMegaHandle && !mMegaHandle->isPlaying())
             mMegaHandle->play();
 
-        if (!mSlipHandle->isPlaying())
+        if (mSlipHandle && !mSlipHandle->isPlaying())
             mSlipHandle->play();
 
         float pitch = scale;
         if (scale > 1.0f)
             pitch = 1.0f;
 
-        mRollHandle->setPitch(pitch * 0.75f + 0.75f);
+        if (mRollHandle)
+            mRollHandle->setPitch(pitch * 0.75f + 0.75f);
     }
 }
 

@@ -465,7 +465,8 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 
     // MBU X360
     } while (!done && itersIn < 20);
-    
+
+#ifndef MBG_PHYSICS
     if (mVelocity.lenSquared() < 625.0)
     {
         bool gotOne = false;
@@ -508,7 +509,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             mVelocity += soFar * dir;
         }
     }
-    
+#endif
 }
 
 Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
