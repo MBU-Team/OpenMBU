@@ -2108,10 +2108,16 @@ void Marble::processTick(const Move* move)
     if (mOmega.len() < 0.000001)
         mOmega.set(0, 0, 0);
 
-#ifdef MB_ULTRA_PREVIEWS
-    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[2])
+#ifdef MBG_PHYSICS
+#define MB_RESPAWN_TRIGGER_ID 0
 #else
-    if (!isGhost()) && mOOB && newMove->trigger[2])
+#define MB_RESPAWN_TRIGGER_ID 2
+#endif
+
+#ifdef MB_ULTRA_PREVIEWS
+    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
+#else
+    if (!isGhost()) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
 #endif
         Con::executef(this, 1, "onOOBClick");
 
