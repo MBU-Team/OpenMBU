@@ -220,10 +220,10 @@
 //#define TORQUE_DEBUG_RENDER
 
 // If this is defined, and a material is not found, it will be created
-#define CREATE_MISSING_MATERIALS
+//#define CREATE_MISSING_MATERIALS
 
 // Use legacy font shadow rendering
-#define MBG_FONT_SHADOW_RENDERING
+//#define MBG_FONT_SHADOW_RENDERING
 
 
 //-----------------------------------------------------------------------------
