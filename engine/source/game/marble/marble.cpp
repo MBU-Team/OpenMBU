@@ -1542,6 +1542,7 @@ LABEL_7:
         }
     }
 
+#ifndef MBG_PHYSICS
     if ((mMode & StoppingMode) != 0 && !Marble::smEndPad.isNull())
     {
         MatrixF trans = Marble::smEndPad->getTransform();
@@ -1659,6 +1660,7 @@ LABEL_7:
         mEffect.effectTime += dt;
     }
     else
+#endif
     {
         if ((mMode & StoppingMode) == 0)
         {
@@ -2214,7 +2216,11 @@ ConsoleMethod(Marble, setMode, void, 3, 3, "(mode)")
     modeFlags[0] = Marble::StartingMode;
 
     modesStrings[1] = "Victory";
+#ifdef MBG_PHYSICS
+    modeFlags[1] = Marble::StoppingMode | Marble::FinishMode;
+#else
     modeFlags[1] = Marble::StoppingMode;
+#endif
 
     modesStrings[2] = "Lost";
     modeFlags[2] = Marble::StoppingMode;
