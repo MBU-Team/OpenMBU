@@ -302,6 +302,9 @@ void GuiObjectView::renderWorld(const RectI &updateRect)
     getCurrentClientSceneGraph()->buildFogTexture(NULL);
 
     LightManager *lm = getCurrentClientSceneGraph()->getLightManager();
+    //lm->sgUnregisterAllLights();
+    //lm->sgClearSpecialLights();
+    LightInfo* oldLight = lm->sgGetSpecialLight(LightManager::sgSunLightType);
     lm->sgSetSpecialLight(LightManager::sgSunLightType, mFakeSun);
 
     GFX->setZEnable(true);
@@ -342,6 +345,12 @@ void GuiObjectView::renderWorld(const RectI &updateRect)
     gRenderInstManager.sort();
     gRenderInstManager.render();
     gRenderInstManager.clear();
+
+    lm->sgSetSpecialLight(LightManager::sgSunLightType, oldLight);
+
+    //lm->sgUnregisterGlobalLight(mFakeSun);
+    //lm->sgClearSpecialLights();
+    //lm->sgUnregisterAllLights();
 }
 
 void GuiObjectView::setOrbitDistance(F32 distance)
