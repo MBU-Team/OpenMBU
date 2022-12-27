@@ -185,8 +185,6 @@ void GuiObjectView::setObjectModel(const char *modelName, const char *skinName)
     {
         StringHandle skinHandle = StringHandle(skinName);
         mModel->reSkin(skinHandle);
-        if (skinHandle.isValidString())
-            gNetStringTable->removeString(skinHandle.getIndex());
     }
 
     // Initialize camera values:
