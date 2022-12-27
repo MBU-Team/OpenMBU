@@ -14,77 +14,89 @@ class LightInfo;
 class GuiObjectView : public GuiTSCtrl
 {
 private:
-   typedef GuiTSCtrl Parent;
+    typedef GuiTSCtrl Parent;
 
 protected:
-   enum MouseState
-   {
-      None,
-      Rotating,
-      Zooming
-   };
+    enum MouseState
+    {
+        None,
+        Rotating,
+        Zooming
+    };
 
-   MouseState  mMouseState;
+    MouseState mMouseState;
 
-   TSShapeInstance*  mModel;
-   TSShapeInstance*  mMountedModel;
-   U32   mSkinTag;
+    TSShapeInstance *mModel;
+    TSShapeInstance *mMountedModel;
+    U32 mSkinTag;
 
-   Point3F     mCameraPos;
-   MatrixF     mCameraMatrix;
-   EulerF      mCameraRot;
-   EulerF      mCameraRotSpeed;
-   Point3F     mOrbitPos;
-   S32         mMountNode;
+    Point3F mCameraPos;
+    MatrixF mCameraMatrix;
+    EulerF mCameraRot;
+    EulerF mCameraRotSpeed;
+    Point3F mOrbitPos;
+    S32 mMountNode;
 
-   TSThread *  runThread;
-   S32         lastRenderTime;
-   S32         mAnimationSeq;
+    TSThread *runThread;
+    S32 lastRenderTime;
+    S32 mAnimationSeq;
 
-   Point2I     mLastMousePoint;
+    Point2I mLastMousePoint;
 
-   LightInfo*  mFakeSun;
+    LightInfo *mFakeSun;
 
 public:
-   bool onWake();
+    bool onWake();
 
-   void onMouseEnter(const GuiEvent &event);
-   void onMouseLeave(const GuiEvent &event);
-   void onMouseDown(const GuiEvent &event);
-   void onMouseUp(const GuiEvent &event);
-   void onMouseDragged(const GuiEvent &event);
-   void onRightMouseDown(const GuiEvent &event);
-   void onRightMouseUp(const GuiEvent &event);
-   void onRightMouseDragged(const GuiEvent &event);
+    void onMouseEnter(const GuiEvent &event);
 
-   void setObjectModel(const char * modelName);
-   void setObjectAnimation(S32 index);
-   void setMountedObject(const char * modelName, S32 mountPoint);
-   void getMountedObjTransform(MatrixF *mat);
-   
-   /// Sets the distance at which the camera orbits the object. Clamped to the
-   /// acceptable range defined in the class by min and max orbit distances.
-   ///
-   /// \param distance The distance to set the orbit to (will be clamped).
-   void setOrbitDistance(F32 distance);
+    void onMouseLeave(const GuiEvent &event);
 
-   bool processCameraQuery(CameraQuery *query);
-   void renderWorld(const RectI &updateRect);
+    void onMouseDown(const GuiEvent &event);
 
-   DECLARE_CONOBJECT(GuiObjectView);
+    void onMouseUp(const GuiEvent &event);
 
-   GuiObjectView();
-   ~GuiObjectView();
+    void onMouseDragged(const GuiEvent &event);
 
-   static void initPersistFields();
+    void onRightMouseDown(const GuiEvent &event);
+
+    void onRightMouseUp(const GuiEvent &event);
+
+    void onRightMouseDragged(const GuiEvent &event);
+
+    void setObjectModel(const char *modelName);
+
+    void setObjectAnimation(S32 index);
+
+    void setMountedObject(const char *modelName, S32 mountPoint);
+
+    void getMountedObjTransform(MatrixF *mat);
+
+    /// Sets the distance at which the camera orbits the object. Clamped to the
+    /// acceptable range defined in the class by min and max orbit distances.
+    ///
+    /// \param distance The distance to set the orbit to (will be clamped).
+    void setOrbitDistance(F32 distance);
+
+    bool processCameraQuery(CameraQuery *query);
+
+    void renderWorld(const RectI &updateRect);
+
+    DECLARE_CONOBJECT(GuiObjectView);
+
+    GuiObjectView();
+
+    ~GuiObjectView();
+
+    static void initPersistFields();
 
 private:
-   F32         mMaxOrbitDist;
-   F32         mMinOrbitDist;
-   F32         mOrbitDist;
+    F32 mMaxOrbitDist;
+    F32 mMinOrbitDist;
+    F32 mOrbitDist;
 
-   static const S32 MAX_ANIMATIONS  =  6;    ///< Maximum number of animations for the primary model displayed in this control
-   static const S32 NO_NODE         =  -1;   ///< Indicates there is no node with a mounted object
+    static const S32 MAX_ANIMATIONS = 6;    ///< Maximum number of animations for the primary model displayed in this control
+    static const S32 NO_NODE = -1;   ///< Indicates there is no node with a mounted object
 };
 
 #endif
