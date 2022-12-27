@@ -105,6 +105,8 @@ void GFXInit::createDevice(GFXAdapter adapter)
     }
     else
         AssertFatal(false, "Bad adapter type");
+
+    GFXDevice::getDeviceEventSignal().trigger(GFXDevice::deCreate);
 }
 
 //---------------------------------------------------------------

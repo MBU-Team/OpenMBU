@@ -19,6 +19,7 @@
 
 Vector<GFXDevice*> GFXDevice::smGFXDevice;
 S32 GFXDevice::smActiveDeviceIndex = -1;
+GFXDevice::DeviceEventSignal* GFXDevice::smSignalGFXDeviceEvent = NULL;
 
 bool GFXDevice::smUseZPass = true;
 
@@ -30,6 +31,15 @@ GFXDevice* GFXDevice::get()
 {
     AssertFatal(smActiveDeviceIndex > -1 && smGFXDevice[smActiveDeviceIndex] != NULL, "Attempting to get invalid GFX device.");
     return smGFXDevice[smActiveDeviceIndex];
+}
+
+GFXDevice::DeviceEventSignal& GFXDevice::getDeviceEventSignal()
+{
+    if (smSignalGFXDeviceEvent == NULL)
+    {
+        smSignalGFXDeviceEvent = new GFXDevice::DeviceEventSignal();
+    }
+    return *smSignalGFXDeviceEvent;
 }
 
 //-----------------------------------------------------------------------------
@@ -77,9 +87,16 @@ GFXDevice::GFXDevice()
 
     // misc
     mAllowRender = true;
+
+    mInitialized = false;
 }
 
 //-----------------------------------------------------------------------------
+
+void GFXDevice::deviceInited()
+{
+    getDeviceEventSignal().trigger(deInit);
+}
 
 // Static method
 void GFXDevice::create()
@@ -94,6 +111,14 @@ void GFXDevice::destroy()
 {
     // Make this release its buffer.
     PrimBuild::shutdown();
+
+    // Let people know we are shutting down
+    if (smSignalGFXDeviceEvent)
+    {
+        smSignalGFXDeviceEvent->trigger(deDestroy);
+        delete smSignalGFXDeviceEvent;
+        smSignalGFXDeviceEvent = NULL;
+    }
 
     // Destroy this way otherwise we are modifying the loop end case
     U32 arraySize = smGFXDevice.size();

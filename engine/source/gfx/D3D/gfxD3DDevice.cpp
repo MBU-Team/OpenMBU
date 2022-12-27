@@ -1764,6 +1764,9 @@ void GFXD3DDevice::init(const GFXVideoMode& mode)
     mCardProfiler->init();
 
     gScreenShot = new ScreenShotD3D;
+
+    mInitialized = true;
+    deviceInited();
 }
 
 //-----------------------------------------------------------------------------
@@ -1828,6 +1831,11 @@ D3DPRESENT_PARAMETERS GFXD3DDevice::setupPresentParams(const GFXVideoMode& mode)
 //-----------------------------------------------------------------------------
 void GFXD3DDevice::reset(D3DPRESENT_PARAMETERS& d3dpp)
 {
+    if (!mD3DDevice)
+        return;
+
+    mInitialized = false;
+
     // First release all the stuff we allocated from D3DPOOL_DEFAULT
     releaseDefaultPoolResources();
 
@@ -1847,6 +1855,7 @@ void GFXD3DDevice::reset(D3DPRESENT_PARAMETERS& d3dpp)
     }
 
     D3DAssert(hres, "Failed to create D3D Device");
+    mInitialized = true;
 
     // Now re aquire all the resources we trashed earlier
     reacquireDefaultPoolResources();

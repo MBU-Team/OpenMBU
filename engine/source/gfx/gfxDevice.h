@@ -29,6 +29,7 @@
 #include "console/console.h"
 
 #include "util/safeDelete.h"
+#include "util/tSignal.h"
 
 
 class GFont;
@@ -158,26 +159,40 @@ private:
     // Static GFX interface
     //--------------------------------------------------------------------------
 
-private:
-    /// @name Device management variables
-    /// @{
-    static Vector<GFXDevice*> smGFXDevice; ///< Global GFXDevice vector
-    static S32 smActiveDeviceIndex;         ///< Active GFX Device index, signed so -1 can be uninitalized
-
-    static bool smUseZPass;
-
-    /// @}
-
 public:
+    enum GFXDeviceEventType
+    {
+        /// The device has been created, but not initialized
+        deCreate,
+        /// The device has been initialized
+        deInit,
+        /// The device is about to be destroyed.
+        deDestroy
+    };
+    typedef Signal <GFXDeviceEventType> DeviceEventSignal;
+    static DeviceEventSignal& getDeviceEventSignal();
+
+    static GFXDevice* get();
+
     static void create();
     static void destroy();
 
     static bool useZPass() { return smUseZPass; }
 
     static const Vector<GFXDevice*>* getDeviceVector() { return &smGFXDevice; };
-    static GFXDevice* get();
     static void setActiveDevice(U32 deviceIndex);
     static bool devicePresent() { return smActiveDeviceIndex > -1 && smGFXDevice[smActiveDeviceIndex] != NULL; }
+
+private:
+    /// @name Device management variables
+    /// @{
+    static Vector<GFXDevice*> smGFXDevice; ///< Global GFXDevice vector
+    static S32 smActiveDeviceIndex;         ///< Active GFX Device index, signed so -1 can be uninitalized
+    static DeviceEventSignal* smSignalGFXDeviceEvent;
+
+    static bool smUseZPass;
+
+    /// @}
 
     //--------------------------------------------------------------------------
     // Core GFX interface
@@ -202,9 +217,16 @@ protected:
     /// Set if we're in a mode where we want rendering to occur.
     bool mAllowRender;
 
+    /// This will allow querying to see if a device is initialized and ready to
+    /// have operations performed on it.
+    bool mInitialized;
+
     /// This is called before this, or any other device, is deleted in the global destroy()
     /// method. It allows the device to clean up anything while everything is still valid.
     virtual void preDestroy() = 0;
+
+    /// Notify GFXDevice that we are initialized
+    virtual void deviceInited();
 
 public:
     GFXDevice();
