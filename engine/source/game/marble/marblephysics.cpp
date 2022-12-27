@@ -655,7 +655,13 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
         mOmega += a * timeStep;
 
         if ((mMode & RestrictXYZMode) != 0)
+        {
+#ifdef MBG_PHYSICS
+            mVelocity.set(0, 0, mVelocity.z);
+#else
             mVelocity.set(0, 0, 0);
+#endif
+        }
 
         velocityCancel(isCentered, true, bouncedYet, stoppedPaths, smPathItrVec);
 

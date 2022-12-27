@@ -234,9 +234,9 @@ bool ShapeBaseImageData::preload(bool server, char errorBuffer[256])
             if (state[i].emitter)
                 if (!Sim::findObject(SimObjectId(state[i].emitter), state[i].emitter))
                     Con::errorf(ConsoleLogEntry::General, "Error, unable to load emitter for image datablock");
-            /*if (state[i].sound)
+            if (state[i].sound)
                 if (!Sim::findObject(SimObjectId(state[i].sound), state[i].sound))
-                    Con::errorf(ConsoleLogEntry::General, "Error, unable to load sound profile for image datablock");*/
+                    Con::errorf(ConsoleLogEntry::General, "Error, unable to load sound profile for image datablock");
         }
     }
 

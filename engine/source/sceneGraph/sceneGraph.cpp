@@ -224,8 +224,6 @@ void SceneGraph::buildFogTexture(SceneState* pState)
         return;
     }
 
-    const Point3F& cp = pState->getCameraPosition();
-
     if (!bool(mFogTexture))
     {
         // This texture should be Dynamic AND KeepBitmap - not possible
@@ -233,6 +231,22 @@ void SceneGraph::buildFogTexture(SceneState* pState)
         mFogTexture = GFXTexHandle(new GBitmap(FogTextureDistSize, FogTextureHeightSize, false, GFXFormatR8G8B8A8), &GFXDefaultPersistentProfile, true);
         mFogTextureIntensity = mFogTexture;
     }
+
+    // If there is no scenestate, lets just create an empty fog (needed for GuiObjectView currently)
+    if (!pState)
+    {
+        GBitmap* fogBitmap = mFogTexture.getBitmap();
+        U8* bits = fogBitmap->getWritableBits();
+        dMemset(bits, 0, fogBitmap->bytesPerPixel * fogBitmap->getWidth() * fogBitmap->getHeight());
+        mFogTexture.refresh();
+        //GBitmap* blackfogBitmap = mBlackFogTexture.getBitmap();
+        //U8* blackbits = blackfogBitmap->getWritableBits();
+        //dMemset(blackbits, 0, blackfogBitmap->bytesPerPixel * blackfogBitmap->getWidth() * blackfogBitmap->getHeight());
+        //mBlackFogTexture.refresh();
+        return;
+    }
+
+    const Point3F& cp = pState->getCameraPosition();
 
     // build the fog texture
     TerrainBlock* block = getCurrentTerrain();

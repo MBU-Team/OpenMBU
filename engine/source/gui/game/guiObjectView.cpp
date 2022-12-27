@@ -16,7 +16,7 @@
 GuiObjectView::GuiObjectView()
     : mMaxOrbitDist(5.0f),
       mMinOrbitDist(0.0f),
-      mOrbitDist(5.0f),
+      mOrbitDist(9.5f),
       mMouseState(None),
       mModel(NULL),
       mMountedModel(NULL),
@@ -31,11 +31,15 @@ GuiObjectView::GuiObjectView()
 
     // TODO: lots of hardcoded things in here
     mCameraMatrix.identity();
-    mCameraRot.set(0.0f, 0.0f, 3.9f);
-    mCameraRotSpeed.set(0.0f, 0.0f, 0.0f);
+    mCameraRot.set(0.0f, 0.0f, 0.0f);//3.9f);
+    mCameraRotSpeed.set(0.0f, 0.0f, 0.001f);
     mCameraPos.set(0.0f, 1.75f, 1.25f);
     mCameraMatrix.setColumn(3, mCameraPos);
     mOrbitPos.set(0.0f, 0.0f, 0.0f);
+
+    mModelName = NULL;
+    mSkinName = StringTable->insert("base");
+    mAutoSize = false;
 }
 
 GuiObjectView::~GuiObjectView()
@@ -45,36 +49,43 @@ GuiObjectView::~GuiObjectView()
     SAFE_DELETE(mFakeSun);
 }
 
+void GuiObjectView::onSleep()
+{
+    Parent::onSleep();
+    setObjectModel(NULL, NULL);
+}
+
 bool GuiObjectView::onWake()
 {
     if (!Parent::onWake())
-    {
-        return (false);
-    }
+        return false;
 
-    //LightManager* lm = getCurrentClientSceneGraph()->getLightManager();
     if (!mFakeSun)
-    {
-        mFakeSun = new LightInfo();//lm->createLightInfo();
-    }
+        mFakeSun = new LightInfo();
     mFakeSun->mColor.set(1.0f, 1.0f, 1.0f);
     mFakeSun->mAmbient.set(0.5f, 0.5f, 0.5f);
     mFakeSun->mDirection.set(0.f, 0.707f, -0.707f);
 
-    return (true);
+    if (mModelName && mModelName[0])
+        setObjectModel(mModelName, mSkinName);
+
+    return true;
 }
 
 void GuiObjectView::initPersistFields()
 {
     Parent::initPersistFields();
 
-    addField("orbitDistance", TypeF32, Offset(mOrbitDist, GuiObjectView));
+    addField("model", TypeFilename, Offset(mModelName, GuiObjectView));
+    addField("skin", TypeString, Offset(mSkinName, GuiObjectView));
     addField("cameraRotX", TypeF32, Offset(mCameraRot.x, GuiObjectView));
     addField("cameraRotY", TypeF32, Offset(mCameraRot.y, GuiObjectView));
     addField("cameraRotZ", TypeF32, Offset(mCameraRot.z, GuiObjectView));
     addField("cameraXRotSpeed", TypeF32, Offset(mCameraRotSpeed.x, GuiObjectView));
     addField("cameraYRotSpeed", TypeF32, Offset(mCameraRotSpeed.y, GuiObjectView));
     addField("cameraZRotSpeed", TypeF32, Offset(mCameraRotSpeed.z, GuiObjectView));
+    addField("orbitDistance", TypeF32, Offset(mOrbitDist, GuiObjectView));
+    addField("autoSize", TypeBool, Offset(mAutoSize, GuiObjectView));
 }
 
 void GuiObjectView::onMouseDown(const GuiEvent &event)
@@ -148,11 +159,14 @@ void GuiObjectView::setObjectAnimation(S32 index)
     mAnimationSeq = index;
 }
 
-void GuiObjectView::setObjectModel(const char *modelName)
+void GuiObjectView::setObjectModel(const char *modelName, const char *skinName)
 {
     SAFE_DELETE(mModel);
 
     runThread = 0;
+
+    if (!modelName)
+        return;
 
     Resource<TSShape> model = ResourceManager->load(modelName);
     if (!bool(model))
@@ -167,6 +181,14 @@ void GuiObjectView::setObjectModel(const char *modelName)
                 avar("GuiObjectView: Failed to load model %s. Please check your model name and load a valid model.",
                      modelName));
 
+    if (dStrcmp(skinName, "base") != 0)
+    {
+        StringHandle skinHandle = StringHandle(skinName);
+        mModel->reSkin(skinHandle);
+        if (skinHandle.isValidString())
+            gNetStringTable->removeString(skinHandle.getIndex());
+    }
+
     // Initialize camera values:
     mOrbitPos = mModel->getShape()->center;
     mMinOrbitDist = mModel->getShape()->radius;
@@ -179,6 +201,11 @@ void GuiObjectView::setObjectModel(const char *modelName)
     mMountNode = mModel->getShape()->findNode(mountName);
     delete[] mountName;
 
+}
+
+void GuiObjectView::setEmpty()
+{
+    SAFE_DELETE(mModel);
 }
 
 void GuiObjectView::setMountedObject(const char *modelName, S32 mountPoint)
@@ -274,11 +301,10 @@ void GuiObjectView::renderWorld(const RectI &updateRect)
     S32 dt = time - lastRenderTime;
     lastRenderTime = time;
 
-    //getCurrentClientSceneGraph()->buildFogTexture(NULL);
+    getCurrentClientSceneGraph()->buildFogTexture(NULL);
 
     LightManager *lm = getCurrentClientSceneGraph()->getLightManager();
-    lm->sgRegisterGlobalLight(mFakeSun, this, false);
-    //lm->setSpecialLight(LightManager::slSunLightType, mFakeSun);
+    lm->sgSetSpecialLight(LightManager::sgSunLightType, mFakeSun);
 
     GFX->setZEnable(true);
     GFX->setZWriteEnable(true);
@@ -332,13 +358,15 @@ void GuiObjectView::setOrbitDistance(F32 distance)
 
 IMPLEMENT_CONOBJECT(GuiObjectView);
 
-ConsoleMethod(GuiObjectView, setModel, void, 3, 3,
+ConsoleMethod(GuiObjectView, setModel, void, 4, 4,
               "(string shapeName)\n"
+              "(string skinName)\n"
               "Sets the model to be displayed in this control\n\n"
-              "\\param shapeName Name of the model to display.\n")
+              "\\param shapeName Name of the model to display.\n"
+              "\\param skinName Name of the skin to use for the model.\n")
 {
     argc;
-    object->setObjectModel(argv[2]);
+    object->setObjectModel(argv[2], argv[3]);
 }
 
 ConsoleMethod(GuiObjectView, setSeq, void, 3, 3,
@@ -367,4 +395,12 @@ ConsoleMethod(GuiObjectView, setOrbitDistance, void, 3, 3,
 {
     argc;
     object->setOrbitDistance(dAtof(argv[2]));
+}
+
+ConsoleMethod(GuiObjectView, setEmpty, void, 2, 2,
+              "()\n"
+              "Removes the model displayed in this control\n\n")
+{
+    argc;
+    object->setEmpty();
 }

@@ -120,8 +120,8 @@ void RenderMeshMgr::render()
                         }
                         else
                         {
-                            //AssertFatal((passRI->light.mType != LightInfo::Vector), "Not good");
-                            //AssertFatal((passRI->light.mType != LightInfo::Ambient), "Not good");
+                            AssertFatal((passRI->light.mType != LightInfo::Vector), "Not good");
+                            AssertFatal((passRI->light.mType != LightInfo::Ambient), "Not good");
                             mat->setLightingBlendFunc();
                         }
                     }

@@ -45,7 +45,12 @@ protected:
 
     LightInfo *mFakeSun;
 
+    StringTableEntry mModelName;
+    StringTableEntry mSkinName;
+    bool mAutoSize;
+
 public:
+    void onSleep();
     bool onWake();
 
     void onMouseEnter(const GuiEvent &event);
@@ -64,7 +69,8 @@ public:
 
     void onRightMouseDragged(const GuiEvent &event);
 
-    void setObjectModel(const char *modelName);
+    void setObjectModel(const char *modelName, const char* skinName);
+    void setEmpty();
 
     void setObjectAnimation(S32 index);
 
