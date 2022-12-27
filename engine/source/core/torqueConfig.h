@@ -219,6 +219,9 @@
 // Used to check internal GFX state, D3D/OGL states, etc.  
 //#define TORQUE_DEBUG_RENDER
 
+// If this is defined, and a material is not found, it will be created
+//#define CREATE_MISSING_MATERIALS
+
 
 //-----------------------------------------------------------------------------
 // Finally, we define some dependent #defines for the various build 

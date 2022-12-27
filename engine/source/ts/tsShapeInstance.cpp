@@ -361,7 +361,7 @@ void TSShapeInstance::setMaterialList(TSMaterialList* ml)
             ((TSShape*)mShape)->readIflMaterials(hShape.getFilePath());
 
         mMaterialList->load(MeshTexture, hShape.getFilePath(), true);
-        mMaterialList->mapMaterials();
+        mMaterialList->mapMaterials(hShape.getFilePath());
 
         initMatInstances();
 

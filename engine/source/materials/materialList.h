@@ -110,7 +110,7 @@ public:
     bool readText(Stream& stream);
     bool writeText(Stream& stream);
 
-    void mapMaterials();
+    void mapMaterials(const char* path = NULL);
     Material* getMappedMaterial(U32 index);
     MatInstance* getMaterialInst(U32 texIndex);
     void setMaterialInst(MatInstance* matInst, U32 texIndex);
