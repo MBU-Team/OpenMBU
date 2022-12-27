@@ -84,7 +84,6 @@ void RenderInstManager::handleGFXEvent(GFXDevice::GFXDeviceEventType event)
 void RenderInstManager::init()
 {
     initBins();
-    initWarnMat();
     mInitialized = true;
 }
 
