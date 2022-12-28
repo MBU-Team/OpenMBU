@@ -466,7 +466,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
     // MBU X360
     } while (!done && itersIn < 20);
 
-#ifndef MBG_PHYSICS
+#ifndef MB_PHYSICS_PHASE_INTO_PLATFORMS
     if (mVelocity.lenSquared() < 625.0)
     {
         bool gotOne = false;
