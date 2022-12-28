@@ -91,6 +91,9 @@
 // Define me to enable xblive functions
 #define XB_LIVE
 
+// Define me to use MBG Moving Platform Timing
+//#define MBG_MOVING_PLATFORM_TIMING
+
 //-----------------------------------------------------------------------------
 // Here we specify the build configuration defines.  These are usually 
 // defined by the build system (makefiles, visual studio, etc) and not 
