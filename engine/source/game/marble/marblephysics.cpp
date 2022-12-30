@@ -466,7 +466,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
     // MBU X360
     } while (!done && itersIn < 20);
 
-#ifndef MBG_PHYSICS
+#ifndef MB_PHYSICS_PHASE_INTO_PLATFORMS
     if (mVelocity.lenSquared() < 625.0)
     {
         bool gotOne = false;
@@ -627,7 +627,9 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
     F32 slipAmount = 0.0;
     F64 contactTime = 0.0;
 
+#ifndef MBG_PHYSICS
     U32 it = 0;
+#endif
     do
     {
         if (timeRemaining == 0.0)
@@ -705,8 +707,12 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
             pint->advance(timeStep);
         }
 
+#ifdef MBG_PHYSICS
+    } while (true);
+#else
         it++;
     } while (it <= 10);
+#endif
 
     for (S32 i = 0; i < smPathItrVec.size(); i++)
         smPathItrVec[i]->popTickState();

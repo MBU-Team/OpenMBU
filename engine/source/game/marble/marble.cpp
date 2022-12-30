@@ -391,13 +391,17 @@ void Marble::setMode(U32 mode)
 
     if ((newMode & StartingMode) != 0)
     {
+#ifndef MBG_PHYSICS
         mModeTimer = mDataBlock->startModeTime >> 5;
+#endif
     }
     else if ((newMode & (StoppingMode | FinishMode)) != 0)
     {
         if ((newMode & StoppingMode) != 0)
             mMode |= RestrictXYZMode;
+#ifndef MBG_PHYSICS
         mModeTimer = mDataBlock->startModeTime >> 5;
+#endif
     }
 
     setMaskBits(PowerUpMask);
@@ -2025,11 +2029,13 @@ void Marble::processTick(const Move* move)
         mFullMarbleTime += 32;
     }
 
+#ifndef MBG_PHYSICS
     if (mModeTimer)
     {
         mModeTimer--;
         if (!mModeTimer)
         {
+#endif
             if ((mMode & StartingMode) != 0)
                 mMode = mMode & ~(RestrictXYZMode | CameraHoverMode) | (MoveMode | TimerMode);
             if ((mMode & StoppingMode) != 0)
@@ -2037,8 +2043,10 @@ void Marble::processTick(const Move* move)
             if ((mMode & FinishMode) != 0)
                 mMode |= CameraHoverMode;
             mMode &= ~(StartingMode | FinishMode);
+#ifndef MBG_PHYSICS
         }
     }
+#endif
 
     if (mBlastEnergy < mDataBlock->maxNaturalBlastRecharge >> 5)
         mBlastEnergy++;

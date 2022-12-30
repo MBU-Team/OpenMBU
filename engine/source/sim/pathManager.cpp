@@ -214,7 +214,11 @@ void PathManager::updatePath(const U32              id,
     rEntry.smoothingType = smoothingTypes;
 
     rEntry.totalTime = 0;
+#ifdef MBG_MOVING_PLATFORM_TIMING
+    for (S32 i = 0; i < S32(rEntry.msToNext.size() - 1); i++)
+#else
     for (S32 i = 0; i < S32(rEntry.msToNext.size()); i++)
+#endif
         rEntry.totalTime += rEntry.msToNext[i];
 
     transmitPath(id);

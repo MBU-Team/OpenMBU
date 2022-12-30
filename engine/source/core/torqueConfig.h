@@ -91,6 +91,12 @@
 // Define me to enable xblive functions
 #define XB_LIVE
 
+// Define me to use MBG Moving Platform Timing
+//#define MBG_MOVING_PLATFORM_TIMING
+
+// Define me to allow phasing into platforms (MBG does this, and MBU did before the title update)
+//#define MB_PHYSICS_PHASE_INTO_PLATFORMS
+
 //-----------------------------------------------------------------------------
 // Here we specify the build configuration defines.  These are usually 
 // defined by the build system (makefiles, visual studio, etc) and not 
