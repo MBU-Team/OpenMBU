@@ -25,6 +25,8 @@ protected:
     S32 mShiftPoint;
     S32 mShiftExtent;
     bool mDisplayValue;
+    GFXTexHandle mBitmap;
+    StringTableEntry mBitmapName;
 
 public:
     //creation methods
@@ -43,6 +45,8 @@ public:
     void setScriptValue(const char* val);
 
     void onRender(Point2I offset, const RectI& updateRect);
+
+    void setBitmap(const char *name);
 };
 
 #endif
