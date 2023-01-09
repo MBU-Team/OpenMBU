@@ -178,7 +178,6 @@ private:
     void initWarnMat();
 
     void init();
-    void uninit();
 
 public:
 
@@ -200,6 +199,7 @@ public:
     // for lighting...
     bool* allocPrimitiveFirstPass() { return mPrimitiveFirstPassAllocator.alloc(); }
 
+    void uninit();
     void clear();  // clear instances, matrices
     void sort();
     void render();
@@ -208,7 +208,7 @@ public:
 
     void setCamPos(Point3F& camPos) { mCamPos = camPos; }
     Point3F getCamPos() { return mCamPos; }
-    MatInstance* getWarningMat() { return mWarningMat; }
+    MatInstance* getWarningMat();
 };
 
 extern RenderInstManager gRenderInstManager;

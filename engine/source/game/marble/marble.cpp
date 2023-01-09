@@ -391,13 +391,17 @@ void Marble::setMode(U32 mode)
 
     if ((newMode & StartingMode) != 0)
     {
+#ifndef MBG_PHYSICS
         mModeTimer = mDataBlock->startModeTime >> 5;
+#endif
     }
     else if ((newMode & (StoppingMode | FinishMode)) != 0)
     {
         if ((newMode & StoppingMode) != 0)
             mMode |= RestrictXYZMode;
+#ifndef MBG_PHYSICS
         mModeTimer = mDataBlock->startModeTime >> 5;
+#endif
     }
 
     setMaskBits(PowerUpMask);
@@ -1342,18 +1346,27 @@ void Marble::trailEmitter(U32 timeDelta)
 
 void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
 {
-    if (mRollHandle && mSlipHandle && mMegaHandle)
+    //if (mRollHandle && mSlipHandle && mMegaHandle)
     {
         Point3F marblePos = mPosition;
 
-        mRollHandle->setPosition(marblePos);
-        mRollHandle->setVelocity(VectorF(0, 0, 0));
-        
-        mSlipHandle->setPosition(marblePos);
-        mSlipHandle->setVelocity(VectorF(0, 0, 0));
-        
-        mMegaHandle->setPosition(marblePos);
-        mMegaHandle->setVelocity(VectorF(0, 0, 0));
+        if (mRollHandle)
+        {
+            mRollHandle->setPosition(marblePos);
+            mRollHandle->setVelocity(VectorF(0, 0, 0));
+        }
+
+        if (mSlipHandle)
+        {
+            mSlipHandle->setPosition(marblePos);
+            mSlipHandle->setVelocity(VectorF(0, 0, 0));
+        }
+
+        if (mMegaHandle)
+        {
+            mMegaHandle->setPosition(marblePos);
+            mMegaHandle->setVelocity(VectorF(0, 0, 0));
+        }
 
         float scale = mDataBlock->size;
         float megaAmt = (this->mRenderScale.x - scale) / (mDataBlock->megaSize - scale);
@@ -1379,24 +1392,28 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
                 slipVolume = 1.0;
             rollVolume = (1.0 - slipVolume) * rollVolume;
         }
-        mRollHandle->setVolume(rollVolume * regAmt);
-        mMegaHandle->setVolume(rollVolume * megaAmt);
-        mSlipHandle->setVolume(slipVolume);
+        if (mRollHandle)
+            mRollHandle->setVolume(rollVolume * regAmt);
+        if (mMegaHandle)
+            mMegaHandle->setVolume(rollVolume * megaAmt);
+        if (mSlipHandle)
+            mSlipHandle->setVolume(slipVolume);
         
-        if (!mRollHandle->isPlaying())
+        if (mRollHandle && !mRollHandle->isPlaying())
             mRollHandle->play();
 
-        if (!mMegaHandle->isPlaying())
+        if (mMegaHandle && !mMegaHandle->isPlaying())
             mMegaHandle->play();
 
-        if (!mSlipHandle->isPlaying())
+        if (mSlipHandle && !mSlipHandle->isPlaying())
             mSlipHandle->play();
 
         float pitch = scale;
         if (scale > 1.0f)
             pitch = 1.0f;
 
-        mRollHandle->setPitch(pitch * 0.75f + 0.75f);
+        if (mRollHandle)
+            mRollHandle->setPitch(pitch * 0.75f + 0.75f);
     }
 }
 
@@ -1529,6 +1546,7 @@ LABEL_7:
         }
     }
 
+#ifndef MBG_PHYSICS
     if ((mMode & StoppingMode) != 0 && !Marble::smEndPad.isNull())
     {
         MatrixF trans = Marble::smEndPad->getTransform();
@@ -1646,6 +1664,7 @@ LABEL_7:
         mEffect.effectTime += dt;
     }
     else
+#endif
     {
         if ((mMode & StoppingMode) == 0)
         {
@@ -2010,11 +2029,13 @@ void Marble::processTick(const Move* move)
         mFullMarbleTime += 32;
     }
 
+#ifndef MBG_PHYSICS
     if (mModeTimer)
     {
         mModeTimer--;
         if (!mModeTimer)
         {
+#endif
             if ((mMode & StartingMode) != 0)
                 mMode = mMode & ~(RestrictXYZMode | CameraHoverMode) | (MoveMode | TimerMode);
             if ((mMode & StoppingMode) != 0)
@@ -2022,8 +2043,10 @@ void Marble::processTick(const Move* move)
             if ((mMode & FinishMode) != 0)
                 mMode |= CameraHoverMode;
             mMode &= ~(StartingMode | FinishMode);
+#ifndef MBG_PHYSICS
         }
     }
+#endif
 
     if (mBlastEnergy < mDataBlock->maxNaturalBlastRecharge >> 5)
         mBlastEnergy++;
@@ -2093,10 +2116,16 @@ void Marble::processTick(const Move* move)
     if (mOmega.len() < 0.000001)
         mOmega.set(0, 0, 0);
 
-#ifdef MB_ULTRA_PREVIEWS
-    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[2])
+#ifdef MBG_PHYSICS
+#define MB_RESPAWN_TRIGGER_ID 0
 #else
-    if (!isGhost()) && mOOB && newMove->trigger[2])
+#define MB_RESPAWN_TRIGGER_ID 2
+#endif
+
+#ifdef MB_ULTRA_PREVIEWS
+    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
+#else
+    if (!isGhost()) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
 #endif
         Con::executef(this, 1, "onOOBClick");
 
@@ -2201,7 +2230,11 @@ ConsoleMethod(Marble, setMode, void, 3, 3, "(mode)")
     modeFlags[0] = Marble::StartingMode;
 
     modesStrings[1] = "Victory";
+#ifdef MBG_PHYSICS
+    modeFlags[1] = Marble::StoppingMode | Marble::FinishMode;
+#else
     modeFlags[1] = Marble::StoppingMode;
+#endif
 
     modesStrings[2] = "Lost";
     modeFlags[2] = Marble::StoppingMode;

@@ -167,9 +167,6 @@ void RenderInstManager::uninitBins()
 //-----------------------------------------------------------------------------
 void RenderInstManager::addInst(RenderInst* inst)
 {
-    if (!mInitialized)
-        gRenderInstManager.init();
-
     AssertISV(mInitialized, "RenderInstManager not initialized - call console function 'initRenderInstManager()'");
     AssertFatal(inst != NULL, "doh, null instance");
 
@@ -356,6 +353,14 @@ void RenderInstManager::initWarnMat()
         mWarningMat = new MatInstance(*warnMat);
         mWarningMat->init(sgData, (GFXVertexFlags)getGFXVertFlags(vertDef));
     }
+}
+
+MatInstance *RenderInstManager::getWarningMat()
+{
+    if (!mWarningMat)
+        initWarnMat();
+
+    return mWarningMat;
 }
 
 //-----------------------------------------------------------------------------

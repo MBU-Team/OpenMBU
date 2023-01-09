@@ -94,6 +94,15 @@
 // Define me to enable xblive functions
 #define XB_LIVE
 
+// Define me to use MBG Moving Platform Timing
+//#define MBG_MOVING_PLATFORM_TIMING
+
+// Define me to allow phasing into platforms (MBG does this, and MBU did before the title update)
+//#define MB_PHYSICS_PHASE_INTO_PLATFORMS
+
+// Define me to fix the shape base images for MBG
+//#define MBG_SHAPEBASEFIX
+
 //-----------------------------------------------------------------------------
 // Here we specify the build configuration defines.  These are usually 
 // defined by the build system (makefiles, visual studio, etc) and not 
@@ -222,8 +231,16 @@
 // Used to check internal GFX state, D3D/OGL states, etc.  
 //#define TORQUE_DEBUG_RENDER
 
+// If this is defined, and a material is not found, it will be created
+//#define CREATE_MISSING_MATERIALS
+
 // Enable ShaderGen
 #define TORQUE_SHADERGEN
+// Enable ShaderGen
+#define TORQUE_SHADERGEN
+
+// Use legacy font shadow rendering
+//#define MBG_FONT_SHADOW_RENDERING
 
 //-----------------------------------------------------------------------------
 // Finally, we define some dependent #defines for the various build 

@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #ifndef _SGLIGHTMANAGER_H_
@@ -79,7 +79,11 @@ public:
         sgSpecialLightTypesCount
     };
 
-    LightManager() { sgInit(); }
+    LightManager()
+    {
+        dMemset(&sgSpecialLights, 0, sizeof(sgSpecialLights));
+        sgInit();
+    }
 
 
     // Returns a "default" light info that callers should not free.  Used for instances where we don't actually care about
