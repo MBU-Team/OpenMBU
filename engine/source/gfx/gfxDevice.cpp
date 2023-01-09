@@ -22,7 +22,7 @@ Vector<GFXDevice*> GFXDevice::smGFXDevice;
 S32 GFXDevice::smActiveDeviceIndex = -1;
 bool GFXDevice::smUseZPass = true;
 GFXDevice::DeviceEventSignal* GFXDevice::smSignalGFXDeviceEvent = NULL;
-S32 GFXDevice::smSfxBackBufferSize = 64;
+S32 GFXDevice::smSfxBackBufferSize = 128;//64;
 
 
 //-----------------------------------------------------------------------------
