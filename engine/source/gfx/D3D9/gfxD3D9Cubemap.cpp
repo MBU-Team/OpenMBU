@@ -274,10 +274,23 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
       GFX->clear( GFXClearStencil | GFXClearTarget | GFXClearZBuffer, ColorI( 0, 0, 0 ), 1.f, 0 );
 
       // render scene
-       getCurrentClientSceneGraph()->renderScene( InteriorObjectType | EnvironmentObjectType );
-      //getCurrentClientSceneGraph()->renderScene( InteriorObjectType | EnvironmentObjectType | StaticShapeObjectType );
-      //getCurrentClientSceneGraph()->renderScene( InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
-      //getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
+      switch (smReflectionDetailLevel)
+      {
+          case 1: // Basic Reflection
+              getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType );
+              break;
+          case 2: // Items
+              getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType | ItemObjectType );
+              break;
+          case 3: // Static Shapes like glass and pads
+              getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType | ItemObjectType | StaticShapeObjectType );
+              break;
+          case 4: // Astrolabe and anything else
+              getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType );
+              break;
+          default: // No Reflection
+              break;
+      }
    }
 
     getCurrentClientSceneGraph()->setReflectPass( false );

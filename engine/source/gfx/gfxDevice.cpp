@@ -141,6 +141,8 @@ void GFXDevice::create()
 {
     Con::addVariable("pref::Video::sfxBackBufferSize", TypeS32, &GFXDevice::smSfxBackBufferSize);
     Con::addVariable("pref::video::useZPass", TypeBool, &GFXDevice::smUseZPass);
+
+    Con::addVariable("$pref::Video::ReflectionDetailLevel", TypeS32, &GFXCubemap::smReflectionDetailLevel);
 }
 
 //-----------------------------------------------------------------------------
