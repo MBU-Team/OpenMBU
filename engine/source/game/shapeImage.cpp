@@ -234,9 +234,12 @@ bool ShapeBaseImageData::preload(bool server, char errorBuffer[256])
             if (state[i].emitter)
                 if (!Sim::findObject(SimObjectId(state[i].emitter), state[i].emitter))
                     Con::errorf(ConsoleLogEntry::General, "Error, unable to load emitter for image datablock");
+#ifdef MBG_SHAPEBASEFIX
+            // For some reason on MBU this breaks the gyrocopter sound, but on MBG not having this causes a crash when using the gyrocopter.
             if (state[i].sound)
                 if (!Sim::findObject(SimObjectId(state[i].sound), state[i].sound))
                     Con::errorf(ConsoleLogEntry::General, "Error, unable to load sound profile for image datablock");
+#endif
         }
     }
 
