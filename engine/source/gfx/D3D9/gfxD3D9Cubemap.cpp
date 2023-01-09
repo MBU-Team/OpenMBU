@@ -213,11 +213,11 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
 
    matProj.mul(rotMat);
 
-   GFX->setFrustum((M_PI / 2.0), 1.0f, 0.1f, 1000.0f);
+   //GFX->setFrustum((M_PI / 2.0), 1.0f, 0.1f, 1000.0f);
 
    GFX->setProjectionMatrix(matProj);
    
-   gClientSceneGraph->setReflectPass( true );
+   getCurrentClientSceneGraph()->setReflectPass( true );
    
    // Loop through the six faces of the cube map.
    for( DWORD i=0; i<6; i++ )
@@ -271,13 +271,13 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
       GFX->clear( GFXClearStencil | GFXClearTarget | GFXClearZBuffer, ColorI( 0, 0, 0 ), 1.f, 0 );
 
       // render scene
-      gClientSceneGraph->renderScene( InteriorObjectType | EnvironmentObjectType );
-      //gClientSceneGraph->renderScene( InteriorObjectType | EnvironmentObjectType | StaticShapeObjectType );
-      //gClientSceneGraph->renderScene( InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
-      //gClientSceneGraph->renderScene( TerrainObjectType | InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
+       getCurrentClientSceneGraph()->renderScene( InteriorObjectType | EnvironmentObjectType );
+      //getCurrentClientSceneGraph()->renderScene( InteriorObjectType | EnvironmentObjectType | StaticShapeObjectType );
+      //getCurrentClientSceneGraph()->renderScene( InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
+      //getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
    }
 
-   gClientSceneGraph->setReflectPass( false );
+    getCurrentClientSceneGraph()->setReflectPass( false );
    
    // restore render surface and depth buffer
    GFX->popActiveRenderTarget();

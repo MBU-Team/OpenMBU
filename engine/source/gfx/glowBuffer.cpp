@@ -497,7 +497,7 @@ void GlowBuffer::setAsRenderTarget()
 {
     // Make sure we have a final display target of the same size as the view
     // we're rendering.
-    Point2I goalResolution = gClientSceneGraph->getDisplayTargetResolution();
+    Point2I goalResolution = getCurrentClientSceneGraph()->getDisplayTargetResolution();
     if(mSurface[2].isNull() || goalResolution != Point2I(mSurface[2].getWidth(), mSurface[2].getHeight()))
     {
         Con::printf("GlowBuffer (%x) - Resizing glow texture to be %dx%dpx", this, goalResolution.x, goalResolution.y);

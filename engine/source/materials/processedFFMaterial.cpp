@@ -170,7 +170,7 @@ void ProcessedFFMaterial::setTextureStages(SceneGraphData& sgData, U32 pass)
     {
         GFX->setTextureStageColorOp( i, GFXTOPModulate );
         U32 currTexFlag = mPasses[pass].texFlags[i];
-        if (!gClientSceneGraph->getLightManager()->setTextureStage(sgData, currTexFlag, i))
+        if (!getCurrentClientSceneGraph()->getLightManager()->setTextureStage(sgData, currTexFlag, i))
         {
             switch( currTexFlag )
             {
