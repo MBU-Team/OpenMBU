@@ -79,7 +79,6 @@ bool CustomMaterial::onAdd()
 
     mShaderData = static_cast<ShaderData*>(Sim::findObject(mShaderDataName));
 
-    // TEMP: Disable this until we can figure out the z-fighting and brightness issues with this.
     // Allow translucent objects to be seen behind each other
     for (S32 i = 0; i < MAX_PASSES; i++)
     {
