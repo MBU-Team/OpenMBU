@@ -41,7 +41,10 @@ GFXD3D9Cubemap::~GFXD3D9Cubemap()
    
    if( mDynamic )
    {
-      GFX->unregisterTexCallback( mCallbackHandle );
+       if (GFXDevice::devicePresent())
+       {
+           GFX->unregisterTexCallback(mCallbackHandle);
+       }
    }
 }
 

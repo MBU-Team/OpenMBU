@@ -30,7 +30,18 @@ S32 GFXDevice::smSfxBackBufferSize = 128;//64;
 // Static method
 GFXDevice* GFXDevice::get()
 {
-    AssertFatal(smActiveDeviceIndex > -1 && smGFXDevice[smActiveDeviceIndex] != NULL, "Attempting to get invalid GFX device.");
+    // This triggers sometimes on exit.
+    /*if (smActiveDeviceIndex >= smGFXDevice.size())
+    {
+        char buf[1024];
+        dSprintf(buf, sizeof(buf), "GFXDevice::get() - invalid device index %d out of %d", smActiveDeviceIndex, smGFXDevice.size());
+        AssertFatal(false, buf);
+        return NULL;
+    }*/
+
+    AssertFatal(smActiveDeviceIndex > -1  && smActiveDeviceIndex < smGFXDevice.size()
+                && smGFXDevice[smActiveDeviceIndex] != NULL,
+                "Attempting to get invalid GFX device. GFX may not have been initialized!");
     return smGFXDevice[smActiveDeviceIndex];
 }
 

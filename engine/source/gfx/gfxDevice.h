@@ -203,7 +203,7 @@ public:
     static const Vector<GFXDevice*>* getDeviceVector() { return &smGFXDevice; };
     static GFXDevice* get();
     static void setActiveDevice(U32 deviceIndex);
-    static bool devicePresent() { return smActiveDeviceIndex > -1 && smGFXDevice[smActiveDeviceIndex] != NULL; }
+    static bool devicePresent() { return smActiveDeviceIndex > -1 && smActiveDeviceIndex < smGFXDevice.size() && smGFXDevice[smActiveDeviceIndex] != NULL; }
 
     //--------------------------------------------------------------------------
     // Core GFX interface
