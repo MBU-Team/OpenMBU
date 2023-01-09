@@ -176,7 +176,6 @@ private:
     void initWarnMat();
 
     void init();
-    void uninit();
 
 public:
 
