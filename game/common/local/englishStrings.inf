@@ -318,6 +318,8 @@ $Text::FullscreenResolution = "Fullscreen Resolution";
 $Text::WindowedResolution = "Windowed Resolution";
 $Text::DisplayMode = "Display Mode";
 $Text::DisplayModeOptions = "Windowed\tBorderless Fullscreen\tExclusive Fullscreen";
+$Text::ReflectionDetailLevel = "Reflection Detail Level";
+$Text::ReflectionDetailLevelOptions = "Nothing\tSky\tLevel and Sky\tLevel, Sky and Items\tEverything";
 $Text::MarbleSkin = "Marble Type";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";

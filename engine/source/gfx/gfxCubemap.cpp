@@ -2,7 +2,7 @@
 #include "console/consoleTypes.h"
 
 // Added as console variable in gfxDevice.cpp - GFXDevice::create()
-S32 GFXCubemap::smReflectionDetailLevel = 1;
+S32 GFXCubemap::smReflectionDetailLevel = 2;
 
 void GFXCubemap::initNormalize(U32 size)
 {

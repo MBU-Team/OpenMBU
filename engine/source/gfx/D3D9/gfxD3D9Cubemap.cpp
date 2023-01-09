@@ -276,16 +276,16 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
       // render scene
       switch (smReflectionDetailLevel)
       {
-          case 1: // Basic Reflection
+          case 1: // Sky
+              getCurrentClientSceneGraph()->renderScene( EnvironmentObjectType );
+              break;
+          case 2: // Level
               getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType );
               break;
-          case 2: // Items
+          case 3: // Items
               getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType | ItemObjectType );
               break;
-          case 3: // Static Shapes like glass and pads
-              getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType | ItemObjectType | StaticShapeObjectType );
-              break;
-          case 4: // Astrolabe and anything else
+          case 4: // Static Shapes like glass and pads
               getCurrentClientSceneGraph()->renderScene( TerrainObjectType | InteriorObjectType | EnvironmentObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType );
               break;
           default: // No Reflection

@@ -101,6 +101,8 @@ function videoOptionsGui::show(%this, %backGui)
    // Block Exclusive Fullscreen for now as it's buggy
    videoOptionsList.addRow($Text::DisplayMode, getFields($Text::DisplayModeOptions, 0, 1), 8); // display mode
    //videoOptionsList.addRow($Text::DisplayMode, $Text::DisplayModeOptions, 8); // display mode
+   
+   videoOptionsList.addRow($Text::ReflectionDetailLevel, $Text::ReflectionDetailLevelOptions, 8); // reflection detail level
 
    for (%i = 0; %i < getFieldCount($Option::resList); %i++)
    {
@@ -125,10 +127,13 @@ function videoOptionsGui::show(%this, %backGui)
       $Option::fullScreen = 2;
    else if ($Option::fullScreen == 2)
       $Option::fullScreen = 1;
+      
+   $Option::reflection = $pref::Video::ReflectionDetailLevel;
 
    videoOptionsList.setOptionIndex(0, $Option::resolution);
    videoOptionsList.setOptionIndex(1, $Option::windowedRes);
    videoOptionsList.setOptionIndex(2, $Option::fullScreen);
+   videoOptionsList.setOptionIndex(3, $Option::reflection);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOVideoOptions) );
@@ -162,6 +167,11 @@ function videoOptionsList::onOptionChange(%this, %increase)
             
          $pref::Video::fullScreen = %val;
          echo("Display Mode = " @ $pref::Video::fullScreen);
+      case 3:
+         $Option::reflection = %val;
+         $pref::Video::ReflectionDetailLevel = $Option::reflection;
+         
+         echo("Reflection Detail Level = " @ $pref::Video::ReflectionDetailLevel);
    }  
 }
 
