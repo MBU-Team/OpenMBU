@@ -830,6 +830,9 @@ new CustomMaterial(Material_TimeTravelGlass)
    version = 2.0;
    refract = true;
    shader = RefractPix;
+
+   // TODO: This shouldn't be needed but, without this line it renders all black.
+   translucent = true;
 };
 
 new CustomMaterial(Material_distort_d)
