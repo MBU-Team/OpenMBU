@@ -130,6 +130,7 @@ struct GFXShaderFeatureData
         ColorMultiply,
         DynamicLight,
         DynamicLightDual,
+        //DynamicLightAttenuateBackFace,
         SelfIllumination,
         LightMap,
         LightNormMap,

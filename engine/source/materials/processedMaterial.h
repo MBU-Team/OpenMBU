@@ -66,7 +66,7 @@ protected:
         DynamicLight,
         DynamicLightDual,
         DynamicLightMask,
-        DynamicLightAttenuateBackFace,
+        //DynamicLightAttenuateBackFace,
         SelfIllumination,
         LightMap,
         LightNormMap,
