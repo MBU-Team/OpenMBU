@@ -442,7 +442,7 @@ void MaterialList::clearMappedMaterials()
 //--------------------------------------------------------------------------
 // Map materials - map materials to the textures in the list
 //--------------------------------------------------------------------------
-void MaterialList::mapMaterials()
+void MaterialList::mapMaterials(const char* path)
 {
 
     MaterialPropertyMap* matMap = MaterialPropertyMap::get();
@@ -478,7 +478,49 @@ void MaterialList::mapMaterials()
                 mMatInstList[i] = NULL;
         }
         else
+        {
+#ifdef CREATE_MISSING_MATERIALS
+            Con::warnf("MaterialList::mapMaterials: unmapped material %s, generating new material", matName);
+
+            const char* texPath;
+
+            if (path)
+            {
+                char buffer[512];
+                dSprintf(buffer, sizeof(buffer), "%s/%s", path, matName);
+                texPath = StringTable->insert(buffer);
+            }
+            else
+            {
+                texPath = StringTable->insert(matName);
+            }
+
+            const char* bumpPath;
+            char buffer2[512];
+            dSprintf(buffer2, sizeof(buffer2), "%s.bump", texPath);
+            bumpPath = StringTable->insert(buffer2);
+
+            static int newMatIndex = 0;
+
+            const char* newMatName;
+            char buffer3[512];
+            dSprintf(buffer3, sizeof(buffer3), "GeneratedMaterial%d", newMatIndex);
+            newMatName = buffer3;
+            newMatName = StringTable->insert(buffer3);
+            newMatIndex++;
+
+            Material *mat = new Material;
+            mat->mapTo = matName;
+            mat->baseTexFilename[0] = texPath;
+            mat->bumpFilename[0] = bumpPath;
+            mat->registerObject(newMatName);
+
+            MatInstance *matInst = new MatInstance(*mat);
+            mMatInstList[i] = matInst;
+#else
             mMatInstList[i] = NULL;
+#endif
+        }
     }
 }
 

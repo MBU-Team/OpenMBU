@@ -3430,10 +3430,9 @@ void TSMesh::assemble(bool skip)
         // only do this if we copied the data...
         computeBounds();
 
-    createTangents();
-
-    if (meshType != SkinMeshType)
+    if (alloc.allocShape32(0) && meshType != SkinMeshType)
     {
+        createTangents();
         createVBIB();
     }
 }

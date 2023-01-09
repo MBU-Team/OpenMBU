@@ -576,7 +576,7 @@ void InteriorSimpleMesh::packPrimitive(primitive &primnew, const primitive &prim
 bool InteriorSimpleMesh::prepForRendering(const char* path)
 {
    //materialList->load(InteriorTexture, path, false);
-   materialList->mapMaterials();
+   materialList->mapMaterials(path);
 
    SceneGraphData sgData;
    sgData.useFog = true;

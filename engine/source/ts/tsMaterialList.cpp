@@ -343,6 +343,53 @@ bool TSMaterialList::setMaterial(U32 i, const char* texPath)
             GFXVertexPNT* tsVertex = NULL;
             matInst->init(sgData, (GFXVertexFlags)getGFXVertFlags(tsVertex));
         }
+    } else {
+#ifdef CREATE_MISSING_MATERIALS
+        Con::warnf("TSMaterialList::setMaterial: unmapped material %s, generating new material", matName);
+
+        const char* texPath;
+
+        if (path)
+        {
+            char buffer[512];
+            dSprintf(buffer, sizeof(buffer), "%s/%s", path, matName);
+            texPath = StringTable->insert(buffer);
+        }
+        else
+        {
+            texPath = StringTable->insert(matName);
+        }
+
+        const char* bumpPath;
+        char buffer2[512];
+        dSprintf(buffer2, sizeof(buffer2), "%s.bump", texPath);
+        bumpPath = StringTable->insert(buffer2);
+
+        static int newMatIndex = 0;
+
+        const char* newMatName;
+        char buffer3[512];
+        dSprintf(buffer3, sizeof(buffer3), "GeneratedMaterialTS%d", newMatIndex);
+        newMatName = buffer3;
+        newMatName = StringTable->insert(buffer3);
+        newMatIndex++;
+
+        Material *mat = new Material;
+        mat->mapTo = matName;
+        mat->baseTexFilename[0] = texPath;
+        mat->bumpFilename[0] = bumpPath;
+        mat->registerObject(newMatName);
+
+        MatInstance *matInst = new MatInstance(*mat);
+        mMatInstList[i] = matInst;
+
+        // initialize the new mat instance
+        SceneGraphData sgData;
+        sgData.useLightDir = true;
+        sgData.useFog = SceneGraph::renderFog;
+        GFXVertexPNT* tsVertex = NULL;
+        matInst->init(sgData, (GFXVertexFlags)getGFXVertFlags(tsVertex));
+#endif
     }
     return true;
 }

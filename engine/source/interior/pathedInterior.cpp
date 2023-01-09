@@ -148,6 +148,11 @@ bool PathedInterior::onAdd()
     mInteriorRes = ResourceManager->load(mInteriorResName);
     if (bool(mInteriorRes) == false)
         return false;
+    if (mInteriorResIndex >= mInteriorRes->getNumSubObjects())
+    {
+        Con::errorf(ConsoleLogEntry::General, "PathedInterior::onAdd: invalid interior index");
+        return false;
+    }
     mInterior = mInteriorRes->getSubObject(mInteriorResIndex);
     if (mInterior == NULL)
         return false;

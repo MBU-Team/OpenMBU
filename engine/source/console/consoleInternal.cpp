@@ -147,17 +147,52 @@ void Dictionary::exportVariables(const char* varString, const char* fileName, bo
 
     for (s = sortList.begin(); s != sortList.end(); s++)
     {
+        // -----------------------------------------------------------
+        // Make sure that we don't have any invalid variable names!
+        // -----------------------------------------------------------
+        // TODO: This code needs to be optimized!
+        bool needsFix = false;
+        S32 cIndex;
+        for (cIndex = 1; cIndex < dStrlen((*s)->name); cIndex++)
+        {
+            if (dIsalnum((*s)->name[cIndex]))
+                continue;
+
+            if ((*s)->name[cIndex] != ':' && (*s)->name[cIndex] != '_')
+            {
+                needsFix = true;
+                break;
+            }
+        }
+
+        char varName[1024];
+        if (needsFix)
+        {
+            const char *strInvalidStart = &(*s)->name[cIndex];
+            char expandBufferName[1024];
+            expandEscape(expandBufferName, strInvalidStart);
+
+            char orgStringStart[1024];
+            dStrncpy(orgStringStart, (*s)->name, cIndex);
+            orgStringStart[cIndex] = '\0';
+
+            dSprintf(varName, sizeof(varName), "%s[\"%s\"]", orgStringStart, strInvalidStart);
+        } else {
+            dStrcpy(varName, (*s)->name);
+        }
+        // -----------------------------------------------------------
+
         switch ((*s)->type)
         {
         case Entry::TypeInternalInt:
-            dSprintf(buffer, sizeof(buffer), "%s = %d;%s", (*s)->name, (*s)->ival, cat);
+            dSprintf(buffer, sizeof(buffer), "%s = %d;%s", varName, (*s)->ival, cat);
             break;
         case Entry::TypeInternalFloat:
-            dSprintf(buffer, sizeof(buffer), "%s = %g;%s", (*s)->name, (*s)->fval, cat);
+            dSprintf(buffer, sizeof(buffer), "%s = %g;%s", varName, (*s)->fval, cat);
             break;
         default:
             expandEscape(expandBuffer, (*s)->getStringValue());
-            dSprintf(buffer, sizeof(buffer), "%s = \"%s\";%s", (*s)->name, expandBuffer, cat);
+            dSprintf(buffer, sizeof(buffer), "%s = \"%s\";%s", varName, expandBuffer, cat);
             break;
         }
         if (fileName)

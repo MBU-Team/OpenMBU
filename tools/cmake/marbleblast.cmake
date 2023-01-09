@@ -51,8 +51,6 @@ if(WIN32)
 	addLib(d3d9)
 	addLib(d3dx9)
 	addLib(dxerr)
-
-    addLib(xaudio2)
 endif()
 
 # build types
@@ -112,10 +110,6 @@ addPath("${srcDir}/sceneGraph")
 addPath("${srcDir}/sfx")
 addPath("${srcDir}/sfx/vorbis")
 addPath("${srcDir}/sfx/null")
-if (WIN32)
-	#addPath("${srcDir}/sfx/dsound") # Disable DirectSound for now
-    addPath("${srcDir}/sfx/xaudio")
-endif()
 addPath("${srcDir}/shaderGen")
 addPath("${srcDir}/sim")
 #addPath("${srcDir}/terrain")
@@ -127,6 +121,23 @@ addPath("${srcDir}/xblive")
 ###############################################################################
 # modular paths
 ###############################################################################
+
+if(WIN32)
+    set(TORQUE_SFX_DIRECTSOUND OFF) # Disable DirectSound for now
+
+    # DirectSound
+    if(TORQUE_SFX_DIRECTSOUND AND NOT TORQUE_DEDICATED)
+        addPath("${srcDir}/sfx/dsound")
+    endif()
+
+    set(TORQUE_SFX_XAUDIO OFF) # Disable XAudio for now
+
+    # XAudio
+    if (TORQUE_SFX_XAUDIO AND NOT TORQUE_DEDICATED)
+        addPath("${srcDir}/sfx/xaudio")
+        addLib(xaudio2)
+    endif()
+endif()
 
 set(TORQUE_SFX_OPENAL ON)
 

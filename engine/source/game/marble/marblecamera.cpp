@@ -513,6 +513,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     Point3F position(mRenderObjToWorld[3], mRenderObjToWorld[7], mRenderObjToWorld[11]);
 
     Point3F startCam;
+#ifndef MBG_PHYSICS
     if (!Marble::smEndPad.isNull() && (mMode & StoppingMode) != 0)
     {
         MatrixF padMat = Marble::smEndPad->getTransform();
@@ -537,6 +538,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
         position += mEffect.lastCamFocus * 0.9750000238418579;
 #endif // MBU_FINISH_PAD_FIX
     }
+#endif
 
     F64 verticalOffset = mRadius + RADIUS_FOR_CAMERA;
     mEffect.lastCamFocus = position;

@@ -356,7 +356,7 @@ bool Interior::prepForRendering(const char* path)
 
     // Load the material list
     bool matListSuccess = mMaterialList->load(InteriorTexture, path, false);
-    mMaterialList->mapMaterials();
+    mMaterialList->mapMaterials(path);
 
     fillSurfaceTexMats();
     createZoneVBs();
