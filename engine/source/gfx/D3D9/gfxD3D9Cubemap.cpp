@@ -271,10 +271,10 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
       GFX->clear( GFXClearStencil | GFXClearTarget | GFXClearZBuffer, ColorI( 0, 0, 0 ), 1.f, 0 );
 
       // render scene
-      //gClientSceneGraph->renderScene( InteriorObjectType | EnvironmentObjectType );
+      gClientSceneGraph->renderScene( InteriorObjectType | EnvironmentObjectType );
       //gClientSceneGraph->renderScene( InteriorObjectType | EnvironmentObjectType | StaticShapeObjectType );
       //gClientSceneGraph->renderScene( InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
-      gClientSceneGraph->renderScene( TerrainObjectType | InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
+      //gClientSceneGraph->renderScene( TerrainObjectType | InteriorObjectType | ItemObjectType | StaticShapeObjectType | StaticTSObjectType | EnvironmentObjectType );
    }
 
    gClientSceneGraph->setReflectPass( false );
