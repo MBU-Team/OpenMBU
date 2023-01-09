@@ -424,9 +424,6 @@ function RootGui::removeContent(%this)
          %this.contentGui.hide();
       // error("Removing" SPC %this.contentGui.getName() SPC "from" SPC %this.contentGui.getGroup().getName());
       %this.contentGui.getGroup().remove(%this.contentGui);
-      // remove RootGuiBottomNavBar from content gui
-      RootGuiBottomNavBar.getGroup().remove(RootGuiBottomNavBar);
-      %this.add(RootGuiBottomNavBar);
       %this.eventControl = 0;
    }
    %this.contentGui = 0;
@@ -503,9 +500,6 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
    if (%this.contentGui.hasFunction(show))
       %this.contentGui.show(%a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9);
    
-   RootGuiBottomNavBar.getGroup().remove(RootGuiBottomNavBar);
-   %this.contentGui.add(RootGuiBottomNavBar);
-   
    // update the Canvas's first responder - we have to do this because the Canvas doesn't get 
    // any messages about the objects we are adding/removing
    Canvas.setDefaultFirstResponder();
@@ -514,7 +508,7 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
    %this.eventControl = %this.contentGui;
    
    // move the nav bar to the end.  this is only done so that its mouse on up commands work
-   %this.pushToBack(RootGuiBottomNavBar);
+   RootCenterCtrl.pushToBack(RootGuiBottomNavBar);
    
    // propogate nocursor attribute to RootGui
    %this.noCursor = %this.contentGui.noCursor;
