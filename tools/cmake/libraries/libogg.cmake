@@ -35,10 +35,11 @@ set(SIZE32 int32_t)
 set(USIZE32 uint32_t)
 set(SIZE64 int64_t)
 
-configure_file(${libDir}/libogg/include/ogg/config_types.h.in ${libDir}/libogg/include/ogg/config_types.h @ONLY)
+configure_file(${libDir}/libogg/include/ogg/config_types.h.in ${CMAKE_CURRENT_BINARY_DIR}/libogg/include/ogg/config_types.h @ONLY)
 
 addPath("${libDir}/libogg" REC)
 
+addInclude(${CMAKE_CURRENT_BINARY_DIR}/libogg/include)
 addInclude(${libDir}/libogg/include)
 
 finishLibrary()

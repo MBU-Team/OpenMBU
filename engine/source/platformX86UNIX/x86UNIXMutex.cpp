@@ -21,7 +21,12 @@ void * Mutex::createMutex()
    pthread_mutex_t *mutex;
 
    mutex = new pthread_mutex_t;
-   pthread_mutex_init(mutex, NULL);
+
+   pthread_mutexattr_t attr;
+
+   pthread_mutexattr_init(&attr);
+   pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
+   pthread_mutex_init(mutex, &attr);
 
    return((void*)mutex);
 }
@@ -36,11 +41,16 @@ void Mutex::destroyMutex(void * mutex)
 
 bool Mutex::lockMutex(void * mutex, bool block)
 {
-    // TODO: Might be wrong
    pthread_mutex_t *pt_mutex = reinterpret_cast<pthread_mutex_t*>(mutex);
    AssertFatal(pt_mutex, "Mutex::lockMutex: invalid mutex");
-   pthread_mutex_lock(pt_mutex);
-   return true;
+   if (block)
+   {
+       return pthread_mutex_lock(pt_mutex) == 0;
+   }
+   else
+   {
+       return pthread_mutex_trylock(pt_mutex) == 0;
+   }
 }
 
 void Mutex::unlockMutex(void * mutex)
