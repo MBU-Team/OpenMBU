@@ -536,6 +536,11 @@ namespace Con
         for (U32 i = 0; i < gConsumers.size(); i++)
             gConsumers[i](level, buffer);
 
+#ifdef TORQUE_DEBUG
+        dPrintf("%s\n", buffer);
+        ::fflush(stdout);
+#endif
+
         if (logBufferEnabled || consoleLogMode)
         {
             char* pos = buffer;

@@ -472,7 +472,7 @@ static inline void AlertEnableVideo(AlertWinState& state)
 //------------------------------------------------------------------------------
 void Platform::AlertOK(const char *windowTitle, const char *message)
 {
-#ifndef DEDICATED
+/*#ifndef DEDICATED
    if (x86UNIXState->isXWindowsRunning())
    {
       AlertWinState state;
@@ -485,7 +485,7 @@ void Platform::AlertOK(const char *windowTitle, const char *message)
       AlertEnableVideo(state);
    }
    else
-#endif
+#endif*/
    {
       if (Con::isActive() && StdConsole::isEnabled())
          Con::printf("Alert: %s %s", windowTitle, message);
@@ -497,7 +497,7 @@ void Platform::AlertOK(const char *windowTitle, const char *message)
 //------------------------------------------------------------------------------
 bool Platform::AlertOKCancel(const char *windowTitle, const char *message)
 {
-#ifndef DEDICATED
+/*#ifndef DEDICATED
    if (x86UNIXState->isXWindowsRunning())
    {
       AlertWinState state;
@@ -512,7 +512,7 @@ bool Platform::AlertOKCancel(const char *windowTitle, const char *message)
       return val;
    }
    else
-#endif
+#endif*/
    {
       if (Con::isActive() && StdConsole::isEnabled())
          Con::printf("Alert: %s %s", windowTitle, message);
@@ -525,7 +525,7 @@ bool Platform::AlertOKCancel(const char *windowTitle, const char *message)
 //------------------------------------------------------------------------------
 bool Platform::AlertRetry(const char *windowTitle, const char *message)
 {
-#ifndef DEDICATED
+/*#ifndef DEDICATED
    if (x86UNIXState->isXWindowsRunning())
    {
       AlertWinState state;
@@ -540,13 +540,13 @@ bool Platform::AlertRetry(const char *windowTitle, const char *message)
       return val;
    }
    else
-#endif
+#endif*/
    {
       if (Con::isActive() && StdConsole::isEnabled())
          Con::printf("Alert: %s %s", windowTitle, message);
       else
          dPrintf("Alert: %s %s\n", windowTitle, message);
-      return false;
+      return true;//false;
    }
 }
 

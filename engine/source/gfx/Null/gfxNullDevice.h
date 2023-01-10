@@ -128,7 +128,11 @@ public:
    virtual GFXTextureTarget *allocRenderToTextureTarget(Point2I size, GFXFormat format) {return NULL;};
    virtual GFXWindowTarget *allocWindowTarget(/*PlatformWindow *window*/) override
    {
-      return new GFXNullWindowTarget();//window);
+      GFXNullWindowTarget* target = new GFXNullWindowTarget();//window);
+
+      getDeviceEventSignal().trigger(deInit);
+
+      return target;
    };
 
    virtual void pushActiveRenderTarget() override {};
