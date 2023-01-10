@@ -258,7 +258,9 @@ bool PlayerData::preload(bool server, char errorBuffer[256])
     if (!server) {
         for (S32 i = 0; i < MaxSounds; i++)
             if (sound[i])
-                Sim::findObject(SimObjectId(sound[i]), sound[i]);
+            {
+                Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])), sound[i]);
+            }
     }
 
     //
@@ -580,7 +582,7 @@ void PlayerData::packData(BitStream* stream)
     S32 i;
     for (i = 0; i < MaxSounds; i++)
         if (stream->writeFlag(sound[i]))
-            stream->writeRangedU32(packed ? SimObjectId(sound[i]) :
+            stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])) :
                 sound[i]->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
 
     stream->write(boxSize.x);

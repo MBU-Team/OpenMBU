@@ -2439,7 +2439,7 @@ MarbleData::MarbleData()
     minBounceVel = 0.1f;
     minTrailSpeed = 10.0f;
     minBounceSpeed = 1.0f;
-    memset(sound, 0, sizeof(sound));
+    dMemset(sound, 0, sizeof(sound));
     genericShadowLevel = Player_GenericShadowLevel;
     noShadowLevel = Player_NoShadowLevel;
     blastRechargeTime = 1;

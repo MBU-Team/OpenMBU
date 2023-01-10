@@ -148,7 +148,8 @@ if(TORQUE_SFX_OPENAL AND NOT TORQUE_DEDICATED)
 	   addInclude("${libDir}/openal/win32")
        addPath("${srcDir}/sfx/openal/win32")
     elseif(UNIX)
-       addPath("${srcDir}/sfx/openal/posix")
+       addInclude("${libDir}/openal/LINUX")
+       addPath("${srcDir}/sfx/openal/linux")
     endif()
 endif()
 
@@ -208,9 +209,20 @@ if(UNIX AND NOT APPLE)
     addPath("${srcDir}/platformPOSIX")
 endif()
 
+if(UNIX)
+    FIND_PACKAGE(SDL REQUIRED)
+    addInclude(${SDL_INCLUDE_DIR})
+    #addLib(${SDL_LIBRARY})
+    #target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
+    #message("SDL: " ${SDL_LIBRARY})
+endif()
+
 ###############################################################################
 ###############################################################################
 finishExecutable()
+if (UNIX)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
+endif()
 ###############################################################################
 ###############################################################################
 

@@ -596,7 +596,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 				mContacts.increment();
 				Contact* marbleContact = &mContacts[mContacts.size() - 1];
 
-				memcpy(marbleContact->surfaceVelocity, otherMarble->getVelocityD(), sizeof(marbleContact->surfaceVelocity));
+				dMemcpy(marbleContact->surfaceVelocity, otherMarble->getVelocityD(), sizeof(marbleContact->surfaceVelocity));
 
 				marbleContact->material = 0;
 				marbleContact->object = otherMarble;

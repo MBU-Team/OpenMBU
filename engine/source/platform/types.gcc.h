@@ -45,7 +45,9 @@ typedef unsigned long long  U64;
 #  define TORQUE_OS_STRING "Linux"
 #  define TORQUE_OS_LINUX
 #  define TORQUE_SUPPORTS_NASM
+#ifndef __x86_64__
 #  define TORQUE_SUPPORTS_GCC_INLINE_X86_ASM
+#endif
 #  include "platform/types.posix.h"
 
 #elif defined(__OpenBSD__)
@@ -88,7 +90,7 @@ typedef unsigned long long  U64;
 #elif defined(__x86_64__)
 #  define TORQUE_CPU_STRING "Intel x86_64"
 #  define TORQUE_CPU_X64
-#  define TORQUE_BIG_ENDIAN
+#  define TORQUE_LITTLE_ENDIAN
 
 #else
 #  error "GCC: Unsupported Target CPU"

@@ -34,11 +34,13 @@ void Mutex::destroyMutex(void * mutex)
    delete pt_mutex;
 }
 
-void Mutex::lockMutex(void * mutex)
+bool Mutex::lockMutex(void * mutex, bool block)
 {
+    // TODO: Might be wrong
    pthread_mutex_t *pt_mutex = reinterpret_cast<pthread_mutex_t*>(mutex);
    AssertFatal(pt_mutex, "Mutex::lockMutex: invalid mutex");
    pthread_mutex_lock(pt_mutex);
+   return true;
 }
 
 void Mutex::unlockMutex(void * mutex)

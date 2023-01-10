@@ -238,6 +238,7 @@ LABEL_60:
             return ret;
         }
 
+        int n = 0;
         int m = 0;
         ConsoleObject* conObj;
         ConsoleObject* conThing;
@@ -264,7 +265,7 @@ LABEL_59:
                 goto LABEL_60;
         }
 
-        int n = 0;
+        n = 0;
         sceneObject->setModStaticFields(true);
 
         if (gameObj->mDictionary.size())

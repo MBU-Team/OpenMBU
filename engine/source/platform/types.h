@@ -29,7 +29,11 @@ struct EmptyType {};             ///< "Null" type used by templates
 //------------------------------------- String Types
 
 typedef char           UTF8;        ///< Compiler independent 8  bit Unicode encoded character
+#if defined(_MSC_VER)// && defined(__clang__)
 typedef wchar_t        UTF16;       ///< Compiler independent 16 bit Unicode encoded character
+#else
+typedef unsigned short UTF16;       ///< Compiler independent 16 bit Unicode encoded character
+#endif
 typedef unsigned int   UTF32;       ///< Compiler independent 32 bit Unicode encoded character
 
 typedef const char* StringTableEntry;

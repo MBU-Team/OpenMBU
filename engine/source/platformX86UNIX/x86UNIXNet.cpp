@@ -9,7 +9,7 @@
 #include "platformX86UNIX/platformX86UNIX.h"
 #include "platform/platform.h"
 #include "platform/event.h"
-#include "platform/platformNetAsync.h"
+#include "platformX86UNIX/platformNetAsync.h"
 
 #include <unistd.h>
 #include <sys/types.h>

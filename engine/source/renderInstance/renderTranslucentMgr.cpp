@@ -49,10 +49,12 @@ void RenderTranslucentMgr::addElement(RenderInst* inst)
 
     // we want key2 to sort by Material, but if the matInst is null, we can't.
     // in that case, use the "miscTex" for the secondary key
+
+    // TODO: might break under 64 bit
     if (inst->matInst == NULL)
-        elem.key2 = (U32) inst->miscTex;
+        elem.key2 = static_cast<U32>(reinterpret_cast<size_t>(inst->miscTex));
     else
-        elem.key2 = (U32) inst->matInst->getMaterial();
+        elem.key2 = static_cast<U32>(reinterpret_cast<size_t>(inst->matInst->getMaterial()));
 }
 
 //-----------------------------------------------------------------------------

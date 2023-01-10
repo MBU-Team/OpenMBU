@@ -465,7 +465,7 @@ void Interior::debugDefaultRender(const ZoneVisDeterminer& zoneVis, SceneGraphDa
         for (U32 j = 0; j < mZoneRNList[i].renderNodeList.size(); j++)
         {
             RenderNode& node = mZoneRNList[i].renderNodeList[j];
-            renderZoneNode(node, intInst, sgData, false);
+            renderZoneNode(node, intInst, sgData, NULL);
         }
     }
 }

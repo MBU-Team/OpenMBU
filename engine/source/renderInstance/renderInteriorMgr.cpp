@@ -49,13 +49,15 @@ void RenderInteriorMgr::addElement(RenderInst* inst)
     // sort by material and matInst
     if (inst->matInst)
     {
-        elem.key = (U32)inst->matInst->getMaterial();
+        // TODO: might break under 64 bit
+        elem.key = static_cast<U32>(reinterpret_cast<size_t>(inst->matInst->getMaterial()));
     }
 
     // sort by vertex buffer
     if (inst->vertBuff)
     {
-        elem.key2 = (U32)inst->vertBuff->getPointer();
+        // TODO: might break under 64 bit
+        elem.key2 = static_cast<U32>(reinterpret_cast<size_t>(inst->vertBuff->getPointer()));
     }
 
 }

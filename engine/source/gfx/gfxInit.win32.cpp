@@ -4,15 +4,20 @@
 // Copyright (c) 2003 GarageGames.Com
 //-----------------------------------------------------------------------------
 
-#include <d3d9.h>
-#include <d3dx9.h>
+#include "platform/types.h"
 #include "gfx/gfxInit.h"
 
 // Platform specific API includes
+#ifdef TORQUE_OS_WIN
 #include "gfx/D3D9/pc/gfxPCD3D9Device.h"
+#endif
+
 #include "gfx/Null/gfxNullDevice.h"
 
+#ifdef TORQUE_OS_WIN
 #include "platformWin32/platformWin32.h"
+#endif
+
 #include "console/console.h"
 
 Vector<GFXAdapter*> GFXInit::smAdapters;
@@ -30,7 +35,9 @@ void GFXInit::enumerateAdapters()
         return;
     }
 
+#ifdef TORQUE_OS_WIN
     GFXPCD3D9Device::enumerateAdapters( GFXInit::smAdapters );
+#endif
     GFXNullDevice::enumerateAdapters( GFXInit::smAdapters );
     //enumerateD3D8Adapters( GFXInit::smAdapters );
 }
@@ -43,6 +50,7 @@ GFXDevice *GFXInit::createDevice( GFXAdapter *adapter )
     Con::printf("Attempting to create GFX device: %s", adapter->getName());
     switch (adapter->mType)
     {
+#ifdef TORQUE_OS_WIN
         case Direct3D9 :
             temp = GFXPCD3D9Device::createInstance( adapter->mIndex );
             break;
@@ -50,6 +58,7 @@ GFXDevice *GFXInit::createDevice( GFXAdapter *adapter )
 //        case Direct3D8:
 //            createD3D8Instance( &temp, adapter->mIndex );
 //            break;
+#endif
         case NullDevice :
             temp = GFXNullDevice::createInstance( adapter->mIndex );
             break;

@@ -61,7 +61,7 @@ void MatInstance::construct()
 {
     mCurPass = -1;
     mHasGlow = false;
-    mProcessedMaterial = false;
+    mProcessedMaterial = NULL;
     mVertFlags = (GFXVertexFlags) NULL;
     mMaxStages = 1;
 

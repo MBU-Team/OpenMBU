@@ -17,6 +17,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_syswm.h>
 #include <SDL/SDL_version.h>
+#include <SDL/SDL_opengl.h>
 
 //------------------------------------------------------------------------------
 bool InitOpenGL()
@@ -175,7 +176,7 @@ bool OpenGLDevice::activate( U32 width, U32 height, U32 bpp, bool fullScreen )
    if ( versionString )
       Con::printf( "  Version: %s", versionString );
 
-   QGL_EXT_Init();
+   //QGL_EXT_Init();
 
    Con::setVariable( "$pref::Video::displayDevice", mDeviceName );
 
@@ -362,7 +363,7 @@ bool OpenGLDevice::setScreenMode( U32 width, U32 height, U32 bpp,
    // set various other parameters
    x86UNIXState->setWindowCreated(true);
    smCurrentRes = NewResolution;
-   Platform::setWindowSize ( width, height );
+   Platform::setWindowSize ( width, height, false, fullScreen);
    smIsFullScreen = fullScreen;
    Con::setBoolVariable( "$pref::Video::fullScreen", smIsFullScreen );
    char tempBuf[15];

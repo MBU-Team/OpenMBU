@@ -7,8 +7,8 @@
 
 #include "terrain/terrData.h"
 #include "math/mMath.h"
-#include "dgl/dgl.h"
-#include "dgl/gBitmap.h"
+//#include "dgl/dgl.h"
+//#include "dgl/gBitmap.h"
 #include "terrain/terrRender.h"
 
 //--------------------------------------------------------------------------

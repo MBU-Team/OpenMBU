@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <fcntl.h>
+#include <cstdlib>
 
 StdConsole *stdConsole = NULL;
 

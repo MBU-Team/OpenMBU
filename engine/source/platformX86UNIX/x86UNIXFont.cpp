@@ -1,234 +1,347 @@
 //-----------------------------------------------------------------------------
-// Torque Shader Engine
-// Copyright (C) GarageGames.com, Inc.
+// Copyright (c) 2012 GarageGames, LLC
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-
-
-#include "platformX86UNIX/platformX86UNIX.h"
-#include "dgl/gFont.h"
-#include "dgl/gBitmap.h"
+#include "gfx/gFont.h"
+#include "gfx/gBitmap.h"
 #include "math/mRect.h"
 #include "console/console.h"
+#include "core/unicode.h"
+#include "core/stringTable.h"
+#include "platformX86UNIX/platformX86UNIX.h"
+#include "platformX86UNIX/x86UNIXFont.h"
 
 // Needed by createFont
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 #include <X11/Xatom.h>
+#include <X11/Xft/Xft.h>
+//#include <X11/extensions/Xrender.h>      // For XRenderColor
 
 // Needed for getenv in createFont
 #include <stdlib.h>
-
-S32 mapSize(char* fontname, S32 size)
+XftFont *loadFont(const char *name, S32 size, Display *display)
 {
-   // warning!  hacking ahead
+    XftFont *fontInfo = NULL;
+    const char* fontname = name;
+    if (dStrlen(fontname)==0)
+        fontname = "arial";
+    else if (stristr(name, "arial") != NULL)
+        fontname = "arial";
+    else if (stristr(name, "lucida console") != NULL)
+        fontname = "lucida console";
 
-   S32 newSize = size;
+    const char* weight = "medium";
+    const char* slant = "roman"; // no slant
 
-   // if the size is >= 12, do a size - 2 adjustment
-   // (except for courier.)
-   // fonts seem to be too big otherwise, but this might be
-   // system/font specific
-   if (newSize >= 12 && !stristr(fontname, "courier"))
-      newSize = newSize - 2;
+    if (stristr(name, "bold") != NULL)
+        weight = "bold";
+    if (stristr(name, "italic") != NULL)
+        slant = "italic";
 
-   // adobe helvetica and courier look like crap at 22
-   // (probably scaled bitmap problem)
-   if (newSize == 22 &&
-      (stristr(fontname, "helvetica")==0 ||
-      stristr(fontname, "courier")==0))
-      newSize = 24;
+    int mSize = size - 2 - (int)((float)size * 0.1);
+    char xfontName[512];
+    // We specify a lower DPI to get 'correct' looking fonts, if we go with the
+    // native DPI the fonts are to big and don't fit the widgets.
+    dSprintf(xfontName, 512, "%s-%d:%s:slant=%s:dpi=76", fontname, mSize, weight, slant);
 
-   return newSize;
+    // Lets see if Xft can get a font for us.
+    char xftname[1024];
+    fontInfo = XftFontOpenName(display, DefaultScreen(display), xfontName);
+    // Cant find a suitabke font, default to a known font (6x10)
+    if ( !fontInfo )
+    {
+        dSprintf(xfontName, 512, "6x10-%d:%s:slant=%s:dpi=76", mSize, weight, slant);
+        fontInfo = XftFontOpenName(display, DefaultScreen(display), xfontName);
+    }
+    XftNameUnparse(fontInfo->pattern, xftname, 1024);
+
+#ifdef DEBUG
+    Con::printf("Font '%s %d' mapped to '%s'\n", name, size, xftname);
+#endif
+
+    return fontInfo;
 }
 
-XFontStruct* loadFont(const char *name, S32 size, Display* display,
-   char* pickedFontName, int pickedFontNameSize)
+
+//GOldFont* createFont(const char *name, dsize_t size, U32 charset)
+//{
+//  Display *display = XOpenDisplay(getenv("DISPLAY"));
+//  int screen;
+//
+//  if (!display)
+//    AssertFatal(false, "createFont: cannot connect to X server");
+//  screen = DefaultScreen(display);
+//
+//  XftFont *font = loadFont (name, size, display);
+//  if (!font) // This should almost never trigger anymore.
+//    AssertFatal(false, "createFont: cannot load font");
+//
+//  // Create the pixmap to draw on.
+//  Pixmap pixmap = XCreatePixmap(display,
+//                                DefaultRootWindow(display),
+//                                font->max_advance_width,
+//                                font->height,
+//                                DefaultDepth(display, screen));
+//  // And the Xft wrapper around it.
+//  XftDraw *draw = XftDrawCreate(display,
+//                                pixmap,
+//                                DefaultVisual(display, screen),
+//                                DefaultColormap(display, screen));
+//  // Allocate some colors, we don't use XftColorAllocValue here as that
+//  // Don't appear to function correctly (or I'm using it wrong) As we only do
+//  // this twice per new un cached font it isn't that big of a penalty. (Each
+//  // call to XftColorAllocName involves a round trip to the X Server)
+//  XftColor black, white;
+//  XftColorAllocName(display,
+//                    DefaultVisual(display, screen),
+//                    DefaultColormap(display, screen),
+//                    "black",
+//                    &black);
+//  // White
+//  XftColorAllocName(display,
+//                    DefaultVisual(display, screen),
+//                    DefaultColormap(display, screen),
+//                    "white",
+//                    &white);
+//
+//  // The font.
+//  GOldFont *retFont = new GOldFont;
+//  static U8 scratchPad[65536];
+//  int x, y;
+//  // insert bitmaps into the font for each character
+//  for(U16 i = 32; i < 256; i++)
+//  {
+//    XGlyphInfo extent;
+//    FT_UInt glyph;
+//    if (!XftCharExists(display, font, i))
+//      {
+//	retFont->insertBitmap(i, scratchPad, 0, 0, 0, 0, 0, font->max_advance_width);
+//	continue;
+//      }
+//    // Get the glyph and its extents.
+//    glyph = XftCharIndex(display, font, i);
+//    XftGlyphExtents (display, font, &glyph, 1, &extent);
+//    // Clear the bounding box and draw the glyph
+//    XftDrawRect (draw, &black, 0, 0, font->max_advance_width, font->height);
+//    XftDrawGlyphs (draw, &white, font, 0, font->ascent, &glyph, 1);
+//    // Grab the rendered image ...
+//    XImage *ximage = XGetImage(display, pixmap, 0, 0,
+//			       extent.xOff, font->height,
+//			       AllPlanes, XYPixmap);
+//    if (ximage == NULL)
+//      AssertFatal(false, "cannot get x image");
+//    // And store each pixel in the scratchPad for insertion into the bitmap.
+//    // We grab the full height of the pixmap.
+//    for(y = 0; y < font->height; y++)
+//      {
+//	// and the width of the glyph and its padding.
+//	for(x = 0; x < extent.xOff; x++)
+//	    scratchPad[y * extent.xOff + x] = static_cast<U8>(XGetPixel(ximage, x, y));
+//      }
+//    // Done with the image.
+//    XDestroyImage(ximage);
+//    // Add it to the bitmap.
+//    retFont->insertBitmap(i,                   // index
+//			  scratchPad,          // src
+//			  extent.xOff,         // stride
+//			  extent.xOff,         // width
+//			  font->height,        // height
+//			  0,                   // xOrigin
+//			  font->ascent,        // yOrigin
+//			  extent.xOff);        // xIncrement
+//
+//  }
+//  retFont->pack(font->height, font->ascent);
+//  XftFontClose(display, font);
+//
+//  XftColorFree(display, DefaultVisual(display, screen),
+//               DefaultColormap(display, screen), &black);
+//  XftColorFree(display, DefaultVisual(display, screen),
+//               DefaultColormap(display, screen), &white);
+//  XftDrawDestroy(draw);
+//  XFreePixmap(display, pixmap);
+//  XCloseDisplay(display);
+//  return retFont;
+//}
+
+
+// XA: New class for the unix unicode font
+PlatformFont *createPlatformFont(const char *name, U32 size, U32 charset /* = TGE_ANSI_CHARSET */)
 {
-   XFontStruct* fontInfo = NULL;
+    PlatformFont *retFont = new x86UNIXFont;
 
-   char* fontname = const_cast<char*>(name);
-   if (dStrlen(fontname)==0)
-      fontname = "arial";
-   else if (stristr(const_cast<char*>(name), "arial") != NULL)
-      fontname = "arial";
-   else if (stristr(const_cast<char*>(name), "lucida console") != NULL)
-      fontname = "lucida console";
+    if(retFont->create(name, size, charset))
+        return retFont;
 
-   char* weight = "medium";
-   char* slant = "r"; // no slant
-
-   int newSize = mapSize(fontname, size);
-
-   // look for bold or italic
-   if (stristr(const_cast<char*>(name), "bold") != NULL)
-      weight = "bold";
-   if (stristr(const_cast<char*>(name), "italic") != NULL)
-      slant = "o";
-
-   const int xfontNameSize = 512;
-   char xfontName[xfontNameSize];
-   char* fontFormat = "-*-%s-%s-%s-*-*-%d-*-*-*-*-*-*-*";
-   dSprintf(xfontName, xfontNameSize, fontFormat, fontname, weight, slant, newSize);
-   // lowercase the whole thing
-   strtolwr(xfontName);
-
-   fontInfo = XLoadQueryFont(display, xfontName);
-
-   if (fontInfo == NULL)
-   {
-      // Couldn't load the requested font.  This probably will be common
-      // since many unix boxes don't have arial or lucida console installed.
-      // Attempt to map the font name into a font we're pretty sure exists
-      if (stristr(const_cast<char*>(name), "arial") != NULL)
-         fontname = "helvetica";
-      else if (stristr(const_cast<char*>(name), "lucida console") != NULL)
-         fontname = "courier";
-      else
-         // to helvetica with you!
-         fontname = "helvetica";
-
-      newSize = mapSize(fontname, size);
-
-      // change the font format so that we get adobe fonts
-      fontFormat = "-adobe-%s-%s-%s-*-*-%d-*-*-*-*-*-*-*";
-      dSprintf(xfontName, xfontNameSize, fontFormat, fontname, weight, slant, newSize);
-      fontInfo = XLoadQueryFont(display, xfontName);
-   }
-
-   if (fontInfo != NULL && pickedFontName && pickedFontNameSize > 0)
-      dSprintf(pickedFontName, pickedFontNameSize, "%s", xfontName);
-
-   return fontInfo;
+    delete retFont;
+    return NULL;
 }
 
-GFont *createFont(const char *name, dsize_t size)
+x86UNIXFont::x86UNIXFont()
+{}
+
+x86UNIXFont::~x86UNIXFont()
+{}
+
+
+bool x86UNIXFont::create(const char *name, U32 size, U32 charset)
 {
-   char * displayName = getenv("DISPLAY");
-   Display* display = NULL;
+    Display *display = XOpenDisplay(getenv("DISPLAY"));
+    if (display == NULL)
+    AssertFatal(false, "createFont: cannot connect to X server");
 
-   display = XOpenDisplay(displayName);
-   if (display == NULL)
-      AssertFatal(false, "createFont: cannot connect to X server");
+    XftFont *font = loadFont(name, size, display);
 
-   // load the font
-   const int pickedFontNameSize = 512;
-   char pickedFontName[pickedFontNameSize];
-   XFontStruct* fontInfo =
-      loadFont(name, size, display, pickedFontName, pickedFontNameSize);
-   if (!fontInfo)
-      AssertFatal(false, "createFont: cannot load font");
-   Con::printf("CreateFont: request for %s %d, using %s", name, size,
-      pickedFontName);
+    if (!font)
+    {
+        Con::errorf("Error: Could not load font -%s-", name);
+        return false;
+    }
+    char xfontname[1024];
+    XftNameUnparse(font->pattern, xfontname, 1024);
+#ifdef DEBUG
+    Con::printf("CreateFont: request for %s %d, using %s", name, size, xfontname);
+#endif
+    // store some info about the font
+    baseline = font->ascent;
+    height = font->height;
+    mFontName = StringTable->insert(xfontname);
+    XftFontClose (display, font);
+    // DISPLAY
+    XCloseDisplay(display);
 
-   // store some info about the font
-   int maxAscent = fontInfo->max_bounds.ascent;
-   int maxDescent = fontInfo->max_bounds.descent;
-   int maxHeight = maxAscent + maxDescent;
-   int maxWidth = fontInfo->max_bounds.width;
+    return true;
+}
 
-//     dPrintf("Font info:\n");
-//     dPrintf("maxAscent: %d, maxDescent: %d, maxHeight: %d, maxWidth: %d\n",
-//  	   maxAscent, maxDescent, maxHeight, maxWidth);
+bool x86UNIXFont::isValidChar(const UTF16 str) const
+{
+    // 0x20  == 32
+    // 0x100 == 256
+    if( str < 0x20 || str > 0x100 )
+        return false;
 
-   // create the pixmap for rendering font characters
-   int width = maxWidth;
-   int height = maxHeight;
-   int depth = 8; // don't need much depth here
-   Pixmap pixmap = XCreatePixmap(display, DefaultRootWindow(display),
-      width, height, depth);
+    return true;
+}
 
-   // create the gc and set rendering parameters
-   GC gc = XCreateGC(display, pixmap, 0, 0);
-   XSetFont(display, gc, fontInfo->fid);
-   int screenNum = DefaultScreen(display);
-   int white = WhitePixel(display, screenNum);
-   int black = BlackPixel(display, screenNum);
+bool x86UNIXFont::isValidChar(const UTF8 *str) const
+{
 
-   // create more stuff
-   GFont *retFont = new GFont;
-   static U8 scratchPad[65536];
-   char textString[2];
-   int x = 0;
-   int y = 0;
+    return isValidChar(oneUTF32toUTF16(oneUTF8toUTF32(str,NULL)));
+}
 
-   // insert bitmaps into the font for each character
-   for(U16 i = 32; i < 256; i++)
-   {
-      // if the character is out of range, just insert an empty
-      // bitmap with xIncr set to maxWidth
-      if (i < fontInfo->min_char_or_byte2 ||
-         i > fontInfo->max_char_or_byte2)
-      {
-         retFont->insertBitmap(i, scratchPad, 0, 0, 0, 0, 0, maxWidth);
-         continue;
-      }
-      XCharStruct fontchar;
-      int fontDirection;
-      int fontAscent;
-      int fontDescent;
-      char charstr[2];
-      dSprintf(charstr, 2, "%c", i);
-      XTextExtents(fontInfo, charstr, 1, &fontDirection, &fontAscent,
-		   &fontDescent, &fontchar);
+PlatformFont::CharInfo &x86UNIXFont::getCharInfo(const UTF16 ch) const
+{
+    Display *display = XOpenDisplay(getenv("DISPLAY"));
+    if (!display )
+    AssertFatal(false, "createFont: cannot connect to X server");
 
-      int charAscent = fontchar.ascent;
-      int charDescent = fontchar.descent;
-//       int charLBearing = fontchar.lbearing;
-//       int charRBearing = fontchar.rbearing;
-      int charWidth = fontchar.width; //charRBearing - charLBearing;
-      int charHeight = charAscent + charDescent;
-      int charXIncr = fontchar.width;
+    static PlatformFont::CharInfo c;
+    dMemset(&c, 0, sizeof(c));
+    c.bitmapIndex = 0;
+    c.xOffset     = 0;
+    c.yOffset     = 0;
 
-//        dPrintf("Char info: %c\n", (char)i);
-//        dPrintf("charAscent: %d, charDescent: %d, charWidth: %d, charHeight: %d, charXIncr: %d\n", charAscent, charDescent, charWidth, charHeight, charXIncr);
+    XftFont *fontInfo  = XftFontOpenName(display, DefaultScreen(display), mFontName);
+    if (!fontInfo)
+    AssertFatal(false, "createFont: cannot load font");
 
-      // clear the pixmap
-      XSetForeground(display, gc, black);
-      XFillRectangle(display, pixmap, gc, 0, 0, width, height);
-      // draw the string in the pixmap
-      XSetForeground(display, gc, white);
-      dSprintf(textString, 2, "%c", static_cast<char>(i));
-      XDrawString(display, pixmap, gc, 0, charAscent,
-         textString, dStrlen(textString));
+    int screen = DefaultScreen(display);
+    // Create the pixmap to draw on.
+    Drawable pixmap = XCreatePixmap(display,
+                                    DefaultRootWindow(display),
+                                    fontInfo->max_advance_width,
+                                    fontInfo->height,
+                                    DefaultDepth(display, screen));
+    // And the Xft wrapper around it.
+    XftDraw *draw = XftDrawCreate(display,
+                                  pixmap,
+                                  DefaultVisual(display, screen),
+                                  DefaultColormap(display, screen));
+    // Allocate some colors, we don't use XftColorAllocValue here as that
+    // Don't appear to function correctly (or I'm using it wrong) As we only do
+    // this twice per new un cached font it isn't that big of a penalty. (Each
+    // call to XftColorAllocName involves a round trip to the X Server)
+    XftColor black, white;
+    XftColorAllocName(display,
+                      DefaultVisual(display, screen),
+                      DefaultColormap(display, screen),
+                      "black",
+                      &black);
+    // White
+    XftColorAllocName(display,
+                      DefaultVisual(display, screen),
+                      DefaultColormap(display, screen),
+                      "white",
+                      &white);
 
-      // grab the pixmap image
-      XImage *ximage = XGetImage(display, pixmap, 0, 0, width, height,
-         AllPlanes, XYPixmap);
-      if (ximage == NULL)
-         AssertFatal(false, "cannot get x image");
+    XGlyphInfo charinfo;
+    XftTextExtents16(display, fontInfo, &ch, 1, &charinfo);
+    c.height     = fontInfo->height;
+    c.xOrigin    = 0;
+    c.yOrigin    = fontInfo->ascent;
+    c.xIncrement = charinfo.xOff;
+    c.width      = charinfo.xOff;
+    // kick out early if the character is undrawable
+    if( c.width == 0 || c.height == 0)
+        return c;
 
-      // grab each pixel and store it in the scratchPad
-      for(y = 0; y < charHeight; y++)
-      {
-         for(x = 0; x < charWidth; x++)
-         {
-            U8 val = static_cast<U8>(XGetPixel(ximage, x, y));
-            scratchPad[y * charWidth + x] = val;
-         }
-      }
+    // allocate a greyscale bitmap and clear it.
+    int bitmapDataSize = c.width * c.height;
+    c.bitmapData = new U8[bitmapDataSize];
+    dMemset(c.bitmapData, 0, bitmapDataSize);
 
-      // we're done with the image
-      XDestroyImage(ximage);
+    XftDrawRect (draw, &black, 0, 0, fontInfo->max_advance_width, fontInfo->height);
+    XftDrawString16 (draw, &white, fontInfo, 0, fontInfo->ascent, &ch, 1);
+    // grab the pixmap image
 
-      // insert the bitmap
-      retFont->insertBitmap(i, scratchPad, charWidth, charWidth, charHeight,
-         0, charAscent, charXIncr);
-   }
+    XImage *ximage = XGetImage(display, pixmap, 0, 0,
+                               charinfo.xOff, fontInfo->height,
+                               AllPlanes, XYPixmap);
+    if (!ximage)
+    AssertFatal(false, "cannot get x image");
+    int x, y;
 
-   // pack the font
-   retFont->pack(fontInfo->ascent + fontInfo->descent, fontInfo->ascent);
+    // grab each pixel and store it in the scratchPad
+    for(y = 0; y < fontInfo->height; y++)
+    {
+        for(x = 0; x < charinfo.xOff; x++)
+            c.bitmapData[y * charinfo.xOff + x] = static_cast<U8>(XGetPixel(ximage, x, y));
+    }
+    XDestroyImage(ximage);
 
-   // free up stuff
-   // GC
-   XFreeGC(display, gc);
-   // PIXMAP
-   XFreePixmap(display, pixmap);
-   // FONT
-   XFreeFont(display, fontInfo);
-   // DISPLAY
-   XCloseDisplay(display);
+    XftColorFree(display, DefaultVisual(display, screen),
+                 DefaultColormap(display, screen), &black);
+    XftColorFree(display, DefaultVisual(display, screen),
+                 DefaultColormap(display, screen), &white);
+    XftDrawDestroy(draw);
+    XFreePixmap(display, pixmap);
+    XCloseDisplay(display);
 
-   return retFont;
+    return c;
+}
+
+
+PlatformFont::CharInfo &x86UNIXFont::getCharInfo(const UTF8 *str) const
+{
+    return getCharInfo(oneUTF32toUTF16(oneUTF8toUTF32(str,NULL)));
 }

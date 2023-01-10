@@ -17,7 +17,7 @@
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
 #endif
-#include <windows.h>
+#include <Windows.h>
 #ifndef _PLATFORM_H_
 #include "platform/platform.h"
 #endif

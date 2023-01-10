@@ -280,7 +280,7 @@ void DebrisData::packData(BitStream* stream)
 
     if (stream->writeFlag(explosion))
     {
-        stream->writeRangedU32(packed ? SimObjectId(explosion) :
+        stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(explosion)) :
             explosion->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
     }
 

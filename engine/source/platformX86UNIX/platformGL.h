@@ -17,18 +17,18 @@ extern "C" {
 
 #include "platformX86UNIX/gl_types.h"
 
-#define GL_FUNCTION(fn_return,fn_name,fn_args,fn_value) extern fn_return (*fn_name)fn_args;
-#include "platformX86UNIX/gl_func.h"
-#undef GL_FUNCTION
+//#define GL_FUNCTION(fn_return,fn_name,fn_args,fn_value) extern fn_return (*fn_name)fn_args;
+//#include "platformX86UNIX/gl_func.h"
+//#undef GL_FUNCTION
 
 // GLU functions are linked at compile time, except in the dedicated server build
-#ifndef DEDICATED
-#define GL_FUNCTION(fn_return,fn_name,fn_args,fn_value) fn_return fn_name fn_args;
-#else
-#define GL_FUNCTION(fn_return,fn_name,fn_args,fn_value) extern fn_return (*fn_name)fn_args;
-#endif
-#include "platformX86UNIX/glu_func.h"
-#undef GL_FUNCTION
+//#ifndef DEDICATED
+//#define GL_FUNCTION(fn_return,fn_name,fn_args,fn_value) fn_return fn_name fn_args;
+//#else
+//#define GL_FUNCTION(fn_return,fn_name,fn_args,fn_value) extern fn_return (*fn_name)fn_args;
+//#endif
+//#include "platformX86UNIX/glu_func.h"
+//#undef GL_FUNCTION
 
 namespace GLLoader
 {

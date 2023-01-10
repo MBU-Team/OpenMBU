@@ -207,9 +207,9 @@ extern "C"
 
 void mInstall_AMD_Math()
 {
-#if defined(ADD_3DNOW_FUNCS)
-    m_matF_x_matF = Athlon_MatrixF_x_MatrixF;
-#endif
+//#if defined(ADD_3DNOW_FUNCS)
+//    m_matF_x_matF = Athlon_MatrixF_x_MatrixF;
+//#endif
     // m_matF_x_point3F = Athlon_MatrixF_x_Point3F;
     // m_matF_x_vectorF = Athlon_MatrixF_x_VectorF;
 }

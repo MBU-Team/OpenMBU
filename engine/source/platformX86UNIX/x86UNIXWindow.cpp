@@ -7,7 +7,7 @@
 
 #include "console/console.h"
 #include "core/fileStream.h"
-#include "game/resource.h"
+//#include "game/resource.h"
 #include "game/version.h"
 #include "math/mRandom.h"
 #include "platformX86UNIX/platformX86UNIX.h"
@@ -15,7 +15,10 @@
 #include "platform/event.h"
 #include "platform/gameInterface.h"
 #include "platform/platform.h"
-#include "platform/platformAL.h"
+#include "gfx/gfxInit.h"
+#include "gfx/gfxTarget.h"
+#include "gfx/gfxDevice.h"
+//#include "platform/platformAL.h"
 #include "platform/platformInput.h"
 #include "platform/platformVideo.h"
 #include "platform/profiler.h"
@@ -142,11 +145,53 @@ static void DetectWindowingSystem()
 #endif
 }
 
+/// Reference to the render target allocated on this window.
+static GFXWindowTargetRef mTarget = NULL;
+
+GFXWindowTarget * Platform::getWindowGFXTarget()
+{
+    return mTarget;
+}
+
 //------------------------------------------------------------------------------
 static void InitWindow(const Point2I &initialSize, const char *name)
 {
    x86UNIXState->setWindowSize(initialSize);
    x86UNIXState->setWindowName(name);
+
+
+    // set the new video mode
+    if (SDL_SetVideoMode(800, 600, 32, 0) == NULL)
+    {
+        Con::printf("Unable to set SDL Video Mode: %s", SDL_GetError());
+        return;
+    }
+
+    // reset the window in platform state
+    SDL_SysWMinfo sysinfo;
+    SDL_VERSION(&sysinfo.version);
+    if (SDL_GetWMInfo(&sysinfo) == 0)
+    {
+        Con::printf("Unable to set SDL Video Mode: %s", SDL_GetError());
+        return;
+    }
+    x86UNIXState->setWindow(sysinfo.info.x11.window);
+
+    // set various other parameters
+    x86UNIXState->setWindowCreated(true);
+
+    // post a TORQUE_SETVIDEOMODE user event
+    SDL_Event event;
+    event.type = SDL_USEREVENT;
+    event.user.code = TORQUE_SETVIDEOMODE;
+    event.user.data1 = NULL;
+    event.user.data2 = NULL;
+    SDL_PushEvent(&event);
+
+    // reset the caption
+    SDL_WM_SetCaption(x86UNIXState->getWindowName(), NULL);
+
+    //mTarget = GFX->allocWindowTarget();
 }
 
 #ifndef DEDICATED
@@ -161,7 +206,11 @@ static bool InitSDL()
    SDL_SysWMinfo sysinfo;
    SDL_VERSION(&sysinfo.version);
    if (SDL_GetWMInfo(&sysinfo) == 0)
-      return false;
+   {
+       //AssertFatal(false, "SDL_GetWMInfo failed!");
+       //Con::errorf("SDL_GetWMInfo failed: %s", SDL_GetError());
+       return false;
+   }
 
    x86UNIXState->setDisplayPointer(sysinfo.info.x11.display);
    DisplayPtrManager::setDisplayLockFunction(sysinfo.info.x11.lock_func);
@@ -190,6 +239,8 @@ static bool InitSDL()
 
    // indicate that we want sys WM messages
    SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
+
+    //mTarget = GFX->allocWindowTarget();
 
    return true;
 }
@@ -308,6 +359,8 @@ static bool ProcessMessages()
       switch (event.type)
       {
          case SDL_QUIT:
+
+             //Platform::postQuitMessage(0);
             return false;
             break;
          case SDL_VIDEORESIZE:
@@ -497,6 +550,29 @@ bool Platform::AlertRetry(const char *windowTitle, const char *message)
    }
 }
 
+int Platform::AlertAbortRetryIgnore(const char* windowTitle, const char* message)
+{
+    // TEMP: Just call alert retry for now
+    bool ret = Platform::AlertRetry(windowTitle, message);
+    if (ret)
+        return ALERT_RESPONSE_RETRY;
+    else
+        return ALERT_RESPONSE_ABORT;
+    /*setCursorVisible(true);
+    int result = MessageBoxA(NULL, message, windowTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TASKMODAL | MB_ABORTRETRYIGNORE);
+    switch (result)
+    {
+        case IDABORT:
+            return ALERT_RESPONSE_ABORT;
+        case IDRETRY:
+            return ALERT_RESPONSE_RETRY;
+        case IDIGNORE:
+            return ALERT_RESPONSE_IGNORE;
+    }
+
+    return ALERT_RESPONSE_IGNORE;*/
+}
+
 //------------------------------------------------------------------------------
 bool Platform::excludeOtherInstances(const char *mutexName)
 {
@@ -531,12 +607,12 @@ void Platform::setWindowLocked(bool locked)
 #ifndef DEDICATED
    x86UNIXState->setWindowLocked(locked);
 
-   UInputManager* uInputManager =
+   /*UInputManager* uInputManager =
       dynamic_cast<UInputManager*>( Input::getManager() );
 
    if ( uInputManager && uInputManager->isEnabled() &&
       Input::isActive() )
-      uInputManager->setWindowLocked(locked);
+      uInputManager->setWindowLocked(locked);*/
 #endif
 }
 
@@ -639,7 +715,7 @@ const Point2I &Platform::getWindowSize()
 
 
 //------------------------------------------------------------------------------
-void Platform::setWindowSize( U32 newWidth, U32 newHeight )
+void Platform::setWindowSize( U32 newWidth, U32 newHeight, bool fullScreen, bool borderless )
 {
    x86UNIXState->setWindowSize( (S32) newWidth, (S32) newHeight );
 }
@@ -685,19 +761,61 @@ void Platform::init()
 
       Con::printf( "Video Init:" );
 
-      // load gl library
-      if (!GLLoader::OpenGLInit())
-      {
-         DisplayErrorAlert("Unable to initialize OpenGL.");
-         ImmediateShutdown(1);
-      }
+       //find our adapters
+       Vector<GFXAdapter*> adapters;
+       GFXInit::enumerateAdapters();
+       GFXInit::getAdapters(&adapters);
 
-      // initialize video
-      Video::init();
-      if ( Video::installDevice( OpenGLDevice::create() ) )
-         Con::printf( "   OpenGL display device detected." );
-      else
-         Con::printf( "   OpenGL display device not detected." );
+       //loop through and tell the user what kind of adapters we found
+       if (!adapters.size())
+           Con::printf("Could not find a display adapter");
+       else
+       {
+           for (int k = 0; k < adapters.size(); k++)
+           {
+               if (adapters[k]->mType == Direct3D9)
+                   Con::printf("Direct 3D device found");
+               else if (adapters[k]->mType == OpenGL)
+                   Con::printf("OpenGL device found");
+               else
+                   Con::printf("Unknown device found");
+           }
+       }
+
+       Con::printf("");
+
+       const char* renderer = Con::getVariable("$pref::Video::displayDevice");
+       //AssertFatal(dStrcmp(renderer, "OpenGL") == 0 || dStrcmp(renderer, "D3D") == 0, "Invalid renderer found");
+
+       //if (dStrcmp(renderer, "D3D") == 0)
+       AssertFatal(!adapters.empty(), "No adapters found");
+           GFXInit::createDevice(adapters[0]);
+       //else
+           //GFXInit::createDevice(adapters[1]);// YaHOOOOOO multiple windows!
+       const Vector<GFXDevice*>* deviceVector = GFX->getDeviceVector();
+
+       for (U32 i = 0; i < deviceVector->size(); i++)
+       {
+           GFX->setActiveDevice(i);
+           //GFX->init(vm);
+       }
+       mTarget = GFX->allocWindowTarget();
+       if(mTarget.isValid())
+           mTarget->resetMode();
+
+      // load gl library
+//      if (!GLLoader::OpenGLInit())
+//      {
+//         DisplayErrorAlert("Unable to initialize OpenGL.");
+//         ImmediateShutdown(1);
+//      }
+//
+//      // initialize video
+//      Video::init();
+//      if ( Video::installDevice( OpenGLDevice::create() ) )
+//         Con::printf( "   OpenGL display device detected." );
+//      else
+//         Con::printf( "   OpenGL display device not detected." );
 
       Con::printf(" ");
    }
@@ -736,8 +854,8 @@ void Platform::initWindow(const Point2I &initialSize, const char *name)
 #ifndef DEDICATED
    // initialize window
    InitWindow(initialSize, name);
-   if (!InitOpenGL())
-      ImmediateShutdown(1);
+   //if (!InitOpenGL())
+   //   ImmediateShutdown(1);
 #endif
 }
 

@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "lightingSystem/sgLighting.h"
@@ -173,7 +173,8 @@ void sgDecalProjector::sgProject()
 
     // use the instead of getId()...
     // id's are flaky in zones...
-    U32 ownerid = U32(this);
+    // TODO: This WILL break in 64 bit builds...
+    U32 ownerid = static_cast<U32>(reinterpret_cast<size_t>(this));
 
     gDecalManager->ageDecal(ownerid);
 

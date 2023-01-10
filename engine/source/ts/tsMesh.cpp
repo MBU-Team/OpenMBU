@@ -2352,8 +2352,8 @@ void TSSkinMesh::updateSkin()
 
     if (!initialTangents.size())
     {
-        memcpy(verts.address(), initialVerts.address(), sizeof(Point3F) * verts.size());
-        memcpy(norms.address(), initialNorms.address(), sizeof(Point3F) * norms.size());
+        dMemcpy(verts.address(), initialVerts.address(), sizeof(Point3F) * verts.size());
+        dMemcpy(norms.address(), initialNorms.address(), sizeof(Point3F) * norms.size());
         createTangents();
     }
 

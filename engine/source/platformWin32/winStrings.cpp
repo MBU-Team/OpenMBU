@@ -339,7 +339,7 @@ S32 dSprintf(char* buffer, dsize_t bufferSize, const char* format, ...)
 }
 
 
-S32 dVsprintf(char* buffer, dsize_t bufferSize, const char* format, void* arglist)
+S32 dVsprintf(char* buffer, dsize_t bufferSize, const char* format, va_list arglist)
 {
 #if defined(TORQUE_COMPILER_CODEWARRIOR)
     S32 len = vsnprintf(buffer, bufferSize, format, (char*)arglist);
