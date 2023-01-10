@@ -36,7 +36,7 @@ extern _D3DTEXTUREOP GFXD3D9TextureOp[GFXTOP_COUNT];
 
 #define GFXREVERSE_LOOKUP( tablearray, enumprefix, val ) \
    for( int i = enumprefix##_FIRST; i < enumprefix##_COUNT; i++ ) \
-      if( (int)tablearray##[i] == val ) \
+      if( (int)tablearray[i] == val ) \
       { \
          val = i; \
          break; \

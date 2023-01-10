@@ -42,7 +42,7 @@ HRESULT _gfxD3DXInclude::Open(THIS_ D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileNa
             path[ dStrlen( path ) - 1 ] = 0; // Kill the leading slash
 
          AssertISV( ( psTemp = dStrrchr( path, '/' ) ) != NULL, "Relative path error in shader include file" );
-         path[psTemp - path] = 0;
+         path[psTemp - (char*)path] = 0;
          tmpFileName += 3;
          pushback = true;
       }

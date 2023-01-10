@@ -27,13 +27,13 @@ _D3DTEXTUREOP GFXD3D9TextureOp[GFXTOP_COUNT];
 
 #define INIT_LOOKUPTABLE( tablearray, enumprefix, type ) \
    for( int i = enumprefix##_FIRST; i < enumprefix##_COUNT; i++ ) \
-      tablearray##[i] = (##type##)GFX_UNINIT_VAL;
+      tablearray[i] = (type)GFX_UNINIT_VAL;
 
 #define VALIDATE_LOOKUPTABLE( tablearray, enumprefix ) \
    for( int i = enumprefix##_FIRST; i < enumprefix##_COUNT; i++ ) \
-      if( (int)tablearray##[i] == GFX_UNINIT_VAL ) \
+      if( (int)tablearray[i] == GFX_UNINIT_VAL ) \
          Con::warnf( "GFXD3D9EnumTranslate: Unassigned value in " #tablearray ": %i", i ); \
-      else if( (int)tablearray##[i] == GFX_UNSUPPORTED_VAL ) \
+      else if( (int)tablearray[i] == GFX_UNSUPPORTED_VAL ) \
          Con::warnf( "GFXD3D9EnumTranslate: Unsupported value in " #tablearray ": %i", i );
 
 //------------------------------------------------------------------------------
