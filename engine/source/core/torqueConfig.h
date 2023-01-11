@@ -83,7 +83,7 @@
 // TEMP: Define me for a temporary fix for moving platform jitter
 #define MBU_TEMP_MP_DESYNC_FIX
 
-#define EXPERIMENTAL_MP_LAG_FIX
+//#define EXPERIMENTAL_MP_LAG_FIX
 
 // Re-order the sky rendering like MBO does (WIP)
 //#define MB_FLIP_SKY
