@@ -1993,7 +1993,7 @@ void Marble::processTick(const Move* move)
 #ifdef MB_ULTRA_PREVIEWS
     if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
 #else
-    if (!isGhost()) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
+    if (!isGhost() && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
 #endif
         Con::executef(this, 1, "onOOBClick");
 
