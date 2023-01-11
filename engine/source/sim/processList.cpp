@@ -280,66 +280,64 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
         return false;
     }
 
-    if (!tickCount || mLastTick == targetTick)
+    if (tickCount && mLastTick != targetTick)
     {
-LABEL_19:
-        if (!mSkipAdvanceObjectsMs)
+        if (connection)
         {
-            mLastDelta = (float)(-(targetTime + 1) & 0x1F) * 0.03125f;
-            AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
-            for ( ProcessObject *pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next )
+            if (connection->isPlayingBack())
             {
-                GameBase* gb = getGameBase(pobj);
-                if ( gb->mProcessTick)
-                    gb->interpolateTick( mLastDelta );
+                while (true)
+                {
+                    U32 nextBlockType = connection->getNextBlockType();
+                    if (!connection->processNextBlock())
+                    {
+                        PROFILE_END();
+                        return true;
+                    }
+                    if (nextBlockType == GameConnection::BlockTypeMove)
+                        break;
+                }
             }
-
-            F32 dt = F32(timeDelta) / 1000;
-            for ( ProcessObject *pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
+            if (!mSkipAdvanceObjectsMs)
             {
-                GameBase* gb = getGameBase(pobj);
-                gb->advanceTime( dt );
+                connection->collectMove(mLastTick);
+                advanceObjects();
             }
-        } else {
-            mSkipAdvanceObjectsMs -= timeDelta;
+            connection->incLastSentMove();
         }
-
-        mLastTime = targetTime;
-        PROFILE_END();
-        return tickCount != 0;
-    }
-
-    while (!connection)
-    {
-LABEL_18:
-        mLastTick += TickMs;
-        if (mLastTick == targetTick)
-            goto LABEL_19;
-    }
-
-    if (!connection->isPlayingBack())
-    {
-LABEL_15:
-        if (!mSkipAdvanceObjectsMs)
+        while (true)
         {
-            connection->collectMove(mLastTick);
-            advanceObjects();
+            mLastTick += TickMs;
+            if (mLastTick == targetTick)
+                break;
         }
-        connection->incLastSentMove();
-        goto LABEL_18;
     }
 
-    while (true)
+    if (!mSkipAdvanceObjectsMs)
     {
-        U32 nextBlockType = connection->getNextBlockType();
-        if (!connection->processNextBlock())
+        mLastDelta = (float)(-(targetTime + 1) & 0x1F) * 0.03125f;
+        AssertFatal(mLastDelta >= 0.0f && mLastDelta <= 1.0f, "Doh!  That would be bad.");
+        for (ProcessObject* pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
         {
-            PROFILE_END();
-            return true;
+            GameBase* gb = getGameBase(pobj);
+            if (gb->mProcessTick)
+                gb->interpolateTick(mLastDelta);
         }
-        if (nextBlockType == GameConnection::BlockTypeMove)
-            goto LABEL_15;
+
+        F32 dt = F32(timeDelta) / 1000;
+        for (ProcessObject* pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
+        {
+            GameBase* gb = getGameBase(pobj);
+            gb->advanceTime(dt);
+        }
     }
+    else {
+        mSkipAdvanceObjectsMs -= timeDelta;
+    }
+
+    mLastTime = targetTime;
+    PROFILE_END();
+    return tickCount != 0;
 }
 
 //----------------------------------------------------------------------------
@@ -432,6 +430,8 @@ void ProcessList::advanceObjects()
         // being controlled by a client, ticked once for each pending move.
         GameConnection* con = obj->getControllingClient();
 
+        bool processed = false;
+
         if (con && con->getControlObject() == obj) {
             Move* movePtr;
             U32 numMoves;
@@ -466,15 +466,15 @@ void ProcessList::advanceObjects()
 
                 }
                 con->clearMoves(1);
-                goto LABEL_16;
+                processed = true;
             }
         }
 
-        if (obj->mProcessTick)
+        if (obj->mProcessTick && !processed)
         {
             obj->processTick(NULL);
         }
-LABEL_16:
+        
         if (!obj.isNull() && (obj->isGhost() || gSPMode) && (obj->getType() & GameBaseHiFiObjectType) != 0)
         {
             GameConnection* serverCon = GameConnection::getConnectionToServer();

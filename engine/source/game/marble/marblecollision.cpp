@@ -24,86 +24,38 @@ void Marble::clearObjectsAndPolys()
 
 bool Marble::pointWithinPoly(const ConcretePolyList::Poly& poly, const Point3F& point)
 {
-    // TODO: Cleanup Decompile
-
-    unsigned int v4; // ecx
-    unsigned int v5; // eax
-    Point3F* v6; // eax
-    Point3F* v7; // eax
-    PlaneF p; // [esp+Ch] [ebp-34h] BYREF
-    Point3F k; // [esp+1Ch] [ebp-24h] BYREF
-    Point3F v2; // [esp+28h] [ebp-18h] BYREF
-    Point3F v1; // [esp+34h] [ebp-Ch] BYREF
-    unsigned int i; // [esp+48h] [ebp+8h]
-
-    v4 = poly.vertexCount;
-    v5 = poly.vertexStart;
-    i = 0;
-    v6 = &Marble::polyList.mVertexList[Marble::polyList.mIndexList[v4 - 1 + v5]];
-    v2.x = v6->x;
-    v2.y = v6->y;
-    v2.z = v6->z;
-    if (!v4)
+    if (poly.vertexCount == 0)
         return true;
-    while (true)
+
+    Point3F lastVert = Marble::polyList.mVertexList[Marble::polyList.mIndexList[poly.vertexStart + poly.vertexCount - 1]];
+
+    for (int i = 0; i < poly.vertexCount; i++)
     {
-        v7 = &Marble::polyList.mVertexList[Marble::polyList.mIndexList[i + poly.vertexStart]];
-        v1.x = v7->x;
-        v1.y = v7->y;
-        v1.z = v7->z;
-        k.x = poly.plane.x + v1.x;
-        k.y = v1.y + poly.plane.y;
-        k.z = poly.plane.z + v1.z;
-        p.set(k, v1, v2);
-        v2 = v1;
+        Point3F& v = Marble::polyList.mVertexList[Marble::polyList.mIndexList[i + poly.vertexStart]];
+        PlaneF p(v + poly.plane, v, lastVert);
+        lastVert = v;
         if (p.distToPlane(point) < 0.0f)
-            break;
-        if (++i >= poly.vertexCount)
-            return true;
+            return false;
     }
-    return false;
+    return true;
 }
 
 bool Marble::pointWithinPolyZ(const ConcretePolyList::Poly& poly, const Point3F& point, const Point3F& upDir)
 {
-    // TODO: Cleanup Decompile
-
-    unsigned int v5; // ecx
-    unsigned int v6; // eax
-    Point3F* v7; // eax
-    Point3F* v8; // eax
-    PlaneF p; // [esp+Ch] [ebp-34h] BYREF
-    Point3F k; // [esp+1Ch] [ebp-24h] BYREF
-    Point3F v2; // [esp+28h] [ebp-18h] BYREF
-    Point3F v1; // [esp+34h] [ebp-Ch] BYREF
-    unsigned int i; // [esp+48h] [ebp+8h]
-
-    v5 = poly.vertexCount;
-    v6 = poly.vertexStart;
-    i = 0;
-    v7 = &Marble::polyList.mVertexList[Marble::polyList.mIndexList[v5 - 1 + v6]];
-    v2.x = v7->x;
-    v2.y = v7->y;
-    v2.z = v7->z;
-    if (!v5)
+    if (poly.vertexCount == 0)
         return true;
-    while (true)
+
+    Point3F lastVert = Marble::polyList.mVertexList[Marble::polyList.mIndexList[poly.vertexStart + poly.vertexCount - 1]];
+    
+    for (int i = 0; i < poly.vertexCount; i++)
     {
-        v8 = &Marble::polyList.mVertexList[Marble::polyList.mIndexList[i + poly.vertexStart]];
-        v1.x = v8->x;
-        v1.y = v8->y;
-        v1.z = v8->z;
-        k.x = upDir.x + v1.x;
-        k.y = v1.y + upDir.y;
-        k.z = upDir.z + v1.z;
-        p.set(k, v1, v2);
-        v2 = v1;
+        Point3F& v = Marble::polyList.mVertexList[Marble::polyList.mIndexList[i + poly.vertexStart]];
+        PlaneF p(v + upDir, v, lastVert);
+        lastVert = v;
         if (p.distToPlane(point) < -0.003f)
-            break;
-        if (++i >= poly.vertexCount)
-            return true;
+            return false;
     }
-    return false;
+    return true;
 }
 
 void Marble::findObjectsAndPolys(U32 collisionMask, const Box3F& testBox, bool testPIs)

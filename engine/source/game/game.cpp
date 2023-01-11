@@ -91,8 +91,6 @@ ConsoleFunction(isSinglePlayerMode, bool, 1, 1, "() - Checks if singleplayer onl
 
 ConsoleFunction(loadObjectsFromMission, const char*, 2, 4, "(mission, className, dataBlock) - Loads Objects from a Mission")
 {
-    // TODO: Cleanup this decompiled code
-
     const char* missionFile = argv[1];
 
     char buf1[1024];
@@ -101,16 +99,16 @@ ConsoleFunction(loadObjectsFromMission, const char*, 2, 4, "(mission, className,
     if (!dStrrchr(missionFile, '.'))
         dStrcat(buf1, ".mis");
 
-    char buf2[1024];
-    buf2[0] = 0;
-    dStrcat(buf2, "*/");
-    dStrcat(buf2, buf1);
+    char srcPath[1024];
+    srcPath[0] = 0;
+    dStrcat(srcPath, "*/");
+    dStrcat(srcPath, buf1);
 
-    char buf3[1152];
+    char absPath[1152];
     ResourceObject* resourceObject;
     const char* fileName;
-    if (!Con::expandScriptFilename(buf3, 1024, buf2) ||
-        (resourceObject = ResourceManager->findMatch(buf3, &fileName)) == 0)
+    if (!Con::expandScriptFilename(absPath, 1024, srcPath) ||
+        (resourceObject = ResourceManager->findMatch(absPath, &fileName)) == 0)
     {
         Con::errorf("Unable to find %s", buf1);
         return "";
@@ -192,130 +190,67 @@ ConsoleFunction(loadObjectsFromMission, const char*, 2, 4, "(mission, className,
     dSprintf(buf5, 256, "%sGroup", buf1);
     if (buf5[0] < '0' || buf5[0] > '9')
     {
-        SimObject *obj = Sim::findObject(buf5);
-
-        SimObject *group;
-        if (obj)
+        SimGroup *group = static_cast<SimGroup*>(Sim::findObject(buf5));
+        if (!group)
         {
-            group = obj;
-        } else
-        {
-            group = reinterpret_cast<SimGroup*>(ConsoleObject::create("SimGroup"));
+            group = static_cast<SimGroup*>(ConsoleObject::create("SimGroup"));
             group->registerObject(buf5);
         }
 
-        SimSet* missionGroup = reinterpret_cast<SimSet*>(Sim::findObject("MissionGroup"));
+        SimSet* missionGroup = static_cast<SimSet*>(Sim::findObject("MissionGroup"));
         if (missionGroup)
             missionGroup->addObject(group);
         else
             Con::errorf("********* Unable to find MissionGroup!");
 
-        int i = gameEntities.size();
-        int j = 0;
-        int k;
-        int l;
-        if (!gameEntities.size())
+        for (int m = 0; m < gameEntities.size(); m++)
         {
-LABEL_60:
-            k = 0;
-            if (i)
+            
+            ItrGameEntity* gameObj = gameEntities[m];
+            ConsoleObject*  conObj = ConsoleObject::create(gameObj->mGameClass);
+            SceneObject* sceneObject = dynamic_cast<SceneObject*>(conObj);
+            if (!sceneObject)
+                Con::errorf("Invalid game class for entity: %s", gameEntities[m]->mGameClass);
+            else
             {
-                l = 0;
-                do
-                {
-                    if (gameEntities[l])
-                    {
-                        delete gameEntities[l];
-                        i = gameEntities.size();
-                    }
-                    ++k;
-                    ++l;
-                } while (k < i);
+                sceneObject->setModStaticFields(true);
+
+                for (int i = 0; i < gameObj->mDictionary.size(); i++)
+                    sceneObject->setDataField(StringTable->insert(gameObj->mDictionary[i].name, 0), 0, gameObj->mDictionary[i].value);
+                
+                sceneObject->setModStaticFields(false);
+                sceneObject->setHidden(true);
+
+                if (sceneObject->registerObject())
+                    group->addObject(sceneObject);
             }
-            gameEntities.clear();
-            char* ret = Con::getReturnBuffer(256);
-            dSprintf(ret, 256, "%s", buf5);
-            return ret;
         }
-
-        int n = 0;
-        int m = 0;
-        ConsoleObject* conObj;
-        ConsoleObject* conThing;
-        ItrGameEntity* gameObj;
-        SceneObject* sceneObject;
-        while (true)
+        
+        for (int i = 0; i < gameEntities.size(); i++)
         {
-            gameObj = gameEntities[m];
-            conObj = ConsoleObject::create(gameObj->mGameClass);
-            sceneObject = dynamic_cast<SceneObject*>(conObj);
-            if (sceneObject)
-                break;
-            Con::errorf("Invalid game class for entity: %s", gameEntities[m]->mGameClass);
-            if (conObj)
-            {
-                conThing = conObj;
-                goto LABEL_51;
-            }
-LABEL_59:
-            i = gameEntities.size();
-            ++j;
-            ++m;
-            if (j >= gameEntities.size())
-                goto LABEL_60;
+            if (gameEntities[i])
+                delete gameEntities[i];
         }
 
-        n = 0;
-        sceneObject->setModStaticFields(true);
-
-        if (gameObj->mDictionary.size())
-        {
-            int o = 0;
-            do
-            {
-                StringTableEntry oName = StringTable->insert(gameObj->mDictionary[o].name, 0);
-                sceneObject->setDataField(oName, 0, gameObj->mDictionary[o].value);
-                ++n;
-                ++o;
-            } while (n < gameObj->mDictionary.size());
-        }
-        sceneObject->setModStaticFields(false);
-        sceneObject->setHidden(true);
-
-        SceneObject* scObj;
-        if (sceneObject->registerObject())
-        {
-            scObj = sceneObject;
-            conThing = group;
-        } else {
-            conThing = sceneObject;
-LABEL_51:
-            scObj = (SceneObject*)1; // WHY?! (this was in the original x360 version)
-        }
-        SimSet* set = reinterpret_cast<SimSet*>(conThing);
-        set->addObject(scObj);
-        goto LABEL_59;
+        gameEntities.clear();
+        char* ret = Con::getReturnBuffer(256);
+        dSprintf(ret, 256, "%s", buf5);
+        return ret;
     }
-
-    Con::errorf("Don't use mission names that begin with numbers like %s!", buf1);
-    int p = 0;
-    if (gameEntities.size())
+    else
     {
-        int q = 0;
-        do
+        Con::errorf("Don't use mission names that begin with numbers like %s!", buf1);
+
+        for (int i = 0; i < gameEntities.size(); i++)
         {
-            if (gameEntities[q])
-            {
-                delete gameEntities[q];
-            }
-            ++p;
-            ++q;
-        } while (p < gameEntities.size());
+            if (gameEntities[i])
+                delete gameEntities[i];
+        }
+
+        gameEntities.clear();
+
+        return "";
     }
-
-    gameEntities.clear();
-
-    return "";
 }
 #endif
 

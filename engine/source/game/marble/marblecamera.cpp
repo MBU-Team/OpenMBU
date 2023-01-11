@@ -78,69 +78,27 @@ void pushToSquare(Point2F& dir)
 
 F32 applyNonlinearScale2(F32 value)
 {
-    // TODO: Cleanup this mess of decompiled code
-    double v1;
-    float v3;
-    float valuea;
-
-    if (value >= 0.0)
-        v1 = 1.0;
-    else
-        v1 = -1.0;
-    v3 = v1;
-    valuea = fabsf(value);
-    return (F32)(mPow(valuea, 3.2f) * v3);
+    float sign = value >= 0.0 ? 1.0 : -1.0;
+    float absval = fabsf(value);
+    return (mPow(absval, 3.2f) * sign);
 }
 
 F32 rescaleDeadZone(F32 value, F32 deadZone)
 {
-    // TODO: Cleanup this mess of decompiled code
-    double v2;
-    double v3;
-    double result;
-    float valuea;
-    float valueb;
-
-    v2 = value;
-    v3 = deadZone;
-    if (deadZone >= (double)value)
+    if (deadZone >= value)
     {
-        if (-v3 <= v2)
-        {
-            result = 0.0;
-        }
+        if (-deadZone <= value)
+            return 0.0;
         else
-        {
-            valueb = (v2 + v3) / (1.0 - v3);
-            result = valueb;
-        }
+            return (value + deadZone) / (1.0 - deadZone);
     }
     else
-    {
-        valuea = (v2 - v3) / (1.0 - v3);
-        result = valuea;
-    }
-    return result;
+        return (value - deadZone) / (1.0 - deadZone);
 }
 
 F32 computePitchSpeedFromDelta(F32 delta)
 {
-    // TODO: Cleanup this mess of decompiled code
-    double v1;
-
-    if (delta < 0.3141592700403172)
-    {
-        v1 = 0.31415927;
-    LABEL_5:
-        delta = v1;
-        return (float)(delta * 4.0);
-    }
-    if (delta > 1.570796326794897)
-    {
-        v1 = 1.5707964;
-        goto LABEL_5;
-    }
-    return (float)(delta * 4.0);
+    return mClampF(delta, 0.3141592700403172, 1.570796326794897) * 4;
 }
 
 void Marble::processCameraMove(const Move* move)
@@ -152,173 +110,99 @@ void Marble::processCameraMove(const Move* move)
 
     pushToSquare(value);
 
-    // ----------------------------------------------------------------------------
-    // TODO: Cleanup this mess of decompiled code
-    // ----------------------------------------------------------------------------
-
-    double v4;
-    double v5;
-    double v6;
-    bool v7;
-    double v8;
-    double v9;
-    double v10;
-    double v11;
-    double v12;
-    double v13;
-    double v14;
-    double v16;
-    float deadZone;
-    double v20;
-    float delta_new;
-    float movePitchc;
-    float movePitch;
-    float movePitchd;
-    float movePitche;
-    float movePitcha;
-    float movePitchf;
-    float movePitchg;
-    float movePitchh;
-    float movePitchi;
-    float movePitchj;
-    float movePitchk;
-    float movePitchb;
-
-    deadZone = rescaleDeadZone(value.x, 0.25);
-    movePitch = applyNonlinearScale2(deadZone);
-    *((float*)&v20 + 1) = fabsf(movePitch);
-    delta_new = this->mLastYaw;
-    v20 = *((float*)&v20 + 1);
-    v4 = fabsf(delta_new);
-    if (v4 > v20)
-        goto LABEL_2;
-    if (this->mLastYaw < 0.0 && movePitch > 0.0 || this->mLastYaw > 0.0 && movePitch < 0.0)
-        this->mLastYaw = 0.0;
-    if (fabsf(movePitch) > 0.2)
-    {
-        *((float*)&v20 + 1) = this->mLastYaw;
-        if (fabsf(*((float*)&v20 + 1)) < 0.2)
-        {
-            if (movePitch >= 0.0)
-                v6 = 0.2;
-            else
-                v6 = -0.2;
-            this->mLastYaw = v6;
-        }
-    }
-    delta_new = movePitch - this->mLastYaw;
-    if (fabsf(delta_new) <= 0.0544000044465065)
-    {
-    LABEL_2:
-        v5 = movePitch;
-    }
-    else if (delta_new >= 0.0)
-    {
-        v5 = this->mLastYaw + 0.0544000044465065;
-    }
+    float moveYaw = applyNonlinearScale2(rescaleDeadZone(value.x, 0.25));
+    if (fabsf(this->mLastYaw) > fabsf(moveYaw))
+        this->mLastYaw = moveYaw;
     else
     {
-        v5 = this->mLastYaw - 0.0544000044465065;
-    }
-    v7 = (this->mMode & CameraHoverMode) == 0;
-    this->mLastYaw = v5;
-    delta_new = this->mLastYaw * 0.7 * 6.283185307179586 * 0.03200000151991844;
-    if (!v7)
-    {
-        delta_new = 0.02;
-        goto LABEL_31;
-    }
-    if (this->mCenteringCamera)
-    {
-        *((float*)&v20 + 1) = fabsf(delta_new);
-        movePitchd = fabsf(this->mRadsLeftToCenter);
-        movePitche = *((float*)&v20 + 1) - movePitchd;
-        movePitcha = fabsf(movePitche);
-        if (movePitcha >= 0.15)
+        if (this->mLastYaw < 0.0 && moveYaw > 0.0 || this->mLastYaw > 0.0 && moveYaw < 0.0)
+            this->mLastYaw = 0.0;
+        if (fabsf(moveYaw) > 0.2)
         {
-            movePitchf = this->mRadsLeftToCenter / this->mRadsStartingToCenter;
-            v8 = sinf(movePitchf) * 0.15;
-        }
-        else
-        {
-            if (movePitcha < 0.05)
+            if (fabsf(this->mLastYaw) < 0.2)
             {
-                this->mCenteringCamera = 0;
-            LABEL_27:
-                if (this->mRadsLeftToCenter <= (double)delta_new)
-                {
-                    delta_new = delta_new - movePitcha;
-                    v9 = this->mRadsLeftToCenter + movePitcha;
-                }
+                if (moveYaw >= 0.0)
+                    this->mLastYaw = 0.2;
                 else
-                {
-                    delta_new = movePitcha + delta_new;
-                    v9 = this->mRadsLeftToCenter - movePitcha;
-                }
-                this->mRadsLeftToCenter = v9;
-                goto LABEL_31;
+                    this->mLastYaw = -0.2;
             }
-            v8 = 0.050000001;
         }
-        movePitcha = v8;
-        goto LABEL_27;
+        float deltaYaw = moveYaw - this->mLastYaw;
+        if (fabsf(deltaYaw) <= 0.0544000044465065)
+            this->mLastYaw = moveYaw;
+        else if (deltaYaw >= 0.0)
+            this->mLastYaw += 0.0544000044465065;
+        else
+            this->mLastYaw -= 0.0544000044465065;
     }
-LABEL_31:
+    float delta_new = this->mLastYaw * 0.7 * 6.283185307179586 * 0.03200000151991844;
     if ((this->mMode & CameraHoverMode) == 0)
     {
+        if (this->mCenteringCamera)
+        {
+            float yawDiff = fabsf(fabsf(delta_new) - fabsf(this->mRadsLeftToCenter));
+            if (yawDiff >= 0.15)
+                yawDiff = sinf(this->mRadsLeftToCenter / this->mRadsStartingToCenter) * 0.15;
+            else
+            {
+                if (yawDiff >= 0.05)
+                    yawDiff = 0.050000001;
+                else
+                    this->mCenteringCamera = 0;
+            }
+   
+            if (this->mRadsLeftToCenter <= (double)delta_new)
+            {
+                delta_new = delta_new - yawDiff;
+                this->mRadsLeftToCenter += yawDiff;
+            }
+            else
+            {
+                delta_new = yawDiff + delta_new;
+                this->mRadsLeftToCenter -= yawDiff;
+            }
+        }
+
         if (move->deviceIsKeyboardMouse)
         {
-            v10 = this->mMouseY + value.y;
-            goto LABEL_48;
+            this->mMouseY += value.y;
         }
-        movePitchi = rescaleDeadZone(value.y, 0.69999999);
-        v12 = movePitchi;
-        if (movePitchi <= 0.0)
-            v13 = 0.4 - v12 * -0.75;
         else
-            v13 = v12 * 1.1 + 0.4;
-        movePitchj = v13;
-        *((float*)&v20 + 1) = movePitchj - this->mMouseY;
-        movePitchk = fabsf(*((float*)&v20 + 1));
-        movePitchb = computePitchSpeedFromDelta(movePitchk) * 0.03200000151991844 * 0.8;
-        v14 = *((float*)&v20 + 1);
-        if (*((float*)&v20 + 1) <= 0.0)
         {
-            *((float*)&v20 + 1) = -v14;
-            if (*((float*)&v20 + 1) < (double)movePitchb)
-                movePitchb = *((float*)&v20 + 1);
-            v14 = -movePitchb;
+            float rescaledY = rescaleDeadZone(value.y, 0.69999999);
+            if (rescaledY <= 0.0)
+                rescaledY = 0.4 - rescaledY * -0.75;
+            else
+                rescaledY = rescaledY * 1.1 + 0.4;
+            float movePitchDelta = (rescaledY - this->mMouseY);
+            float movePitchSpeed = computePitchSpeedFromDelta(fabsf(movePitchDelta)) * 0.03200000151991844 * 0.8;
+            if (movePitchDelta <= 0.0)
+            {
+                movePitchDelta = -movePitchDelta;
+                if (movePitchDelta < movePitchSpeed)
+                    movePitchSpeed = movePitchDelta;
+                movePitchDelta = -movePitchSpeed;
+                movePitchSpeed = movePitchDelta;
+            }
+            else if (movePitchSpeed > movePitchDelta)
+            {
+                movePitchSpeed = movePitchDelta;
+            }
+            this->mMouseY += movePitchSpeed;
         }
-        else if (movePitchb <= v14)
+    }
+    else 
+    {
+        delta_new = 0.02;
+        if (this->mMouseY < 0.69999999)
         {
-        LABEL_46:
-            v10 = this->mMouseY + movePitchb;
-            goto LABEL_48;
+            this->mMouseY = getMin(0.050000001f, (float)(0.699999988079071 - this->mMouseY)) + this->mMouseY;
         }
-        movePitchb = v14;
-        goto LABEL_46;
+        else if (this->mMouseY > 0.69999999)
+        {
+            this->mMouseY = this->mMouseY - getMin(0.050000001f, (float)(this->mMouseY - 0.699999988079071));
+        }
     }
-    if (this->mMouseY < 0.69999999)
-    {
-        movePitchg = 0.699999988079071 - this->mMouseY;
-        v10 = getMin(0.050000001f, movePitchg) + this->mMouseY;
-    LABEL_48:
-        this->mMouseY = v10;
-        goto LABEL_49;
-    }
-    if (this->mMouseY > 0.69999999)
-    {
-        v20 = this->mMouseY;
-        movePitchh = v20 - 0.699999988079071;
-        v11 = getMin(0.050000001f, movePitchh);
-        v10 = v20 - v11;
-        goto LABEL_48;
-    }
-LABEL_49:
-
-    // ----------------------------------------------------------------------------
-    // End of Uncleaned Decompiled Code
-    // ----------------------------------------------------------------------------
 
     float finalYaw;
     if (!move->deviceIsKeyboardMouse || (mMode & CameraHoverMode) != 0)

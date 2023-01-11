@@ -1176,12 +1176,6 @@ void Marble::doPowerUpBoost(S32 powerUpId)
 
 void Marble::doPowerUpPower(S32 powerUpId)
 {
-    // TODO: Cleanup Decompile
-
-    char* v3; // eax
-    int v4; // edi
-    char* v5; // eax
-
     if (this->mDataBlock->powerUps)
     {
         mPowerUpState[powerUpId].active = true;
@@ -1194,11 +1188,10 @@ void Marble::doPowerUpPower(S32 powerUpId)
         if (isServerObject())
 #endif
         {
-            v4 = this->mDataBlock->powerUps->timeFreeze[powerUpId];
-            if (v4)
+            int timeFreezeAmt = this->mDataBlock->powerUps->timeFreeze[powerUpId];
+            if (timeFreezeAmt)
             {
-                v5 = Con::getIntArg(v4);
-                Con::executef(this, 2, "onTimeFreeze", v5);
+                Con::executef(this, 2, "onTimeFreeze", Con::getIntArg(timeFreezeAmt));
             }
         }
         setMaskBits(PowerUpMask);
@@ -1457,21 +1450,20 @@ void Marble::findRenderPos(F32 dt)
 
     if (mMovePathSize != 0)
     {
-        // TODO: Cleanup decompile
-        U32 iter = 0;
-        while (outforce > mMovePathTime[iter])
+        if (outforce > mMovePathTime[0])
         {
-            startTime = mMovePathTime[iter];
-            around = mMovePath[iter];
-            
-            if (++iter >= mMovePathSize)
-                goto LABEL_7;
+            for (int i = 0; i < mMovePathSize; i++)
+            {
+                startTime = mMovePathTime[i];
+                around = mMovePath[i];
+            }
         }
-
-        dist = mMovePathTime[iter];
-        dPos = mMovePath[iter];
+        else
+        {
+            dist = mMovePathTime[0];
+            dPos = mMovePath[0];
+        }
     }
-LABEL_7:
 
     F32 diff = (outforce - startTime) / (dist - startTime);
 
@@ -1782,21 +1774,15 @@ bool Marble::onAdd()
 
 void Marble::processMoveTriggers(const Move * move)
 {
-    // TODO: Cleanup Decompile
-
-    unsigned int v3; // ecx
-    char v4; // al
-    unsigned int v5; // eax
-
     if (move->trigger[0] && mPowerUpId || mPowerUpTimer)
     {
         mPowerUpTimer += 32;
-        if (mPowerUpTimer > 0x200)
+        if (mPowerUpTimer > 512)
             mPowerUpTimer = 512;
-        v3 = mDataBlock->powerUps->activateTime[mPowerUpId];
-        if (v3 > 0x200)
-            v3 = 512;
-        if (mPowerUpTimer >= v3)
+        int powerupActivateTime = mDataBlock->powerUps->activateTime[mPowerUpId];
+        if (powerupActivateTime > 512)
+            powerupActivateTime = 512;
+        if (mPowerUpTimer >= powerupActivateTime)
         {
             doPowerUp(mPowerUpId);
             mPowerUpId = 0;
@@ -1817,10 +1803,10 @@ void Marble::processMoveTriggers(const Move * move)
         mBlastTimer += 32;
         if (mBlastTimer > 0x200)
             mBlastTimer = 512;
-        v5 = mDataBlock->powerUps->activateTime[0];
-        if (v5 > 0x200)
-            v5 = 512;
-        if (mBlastTimer >= v5)
+        int blastActivateTime = mDataBlock->powerUps->activateTime[0];
+        if (blastActivateTime > 512)
+            blastActivateTime = 512;
+        if (mBlastTimer >= blastActivateTime)
         {
             doPowerUpPower(0);
 #ifdef MB_ULTRA_PREVIEWS
@@ -1871,12 +1857,7 @@ void Marble::processItemsAndTriggers(const Point3F& startPos, const Point3F& end
 }
 
 void Marble::setPowerUpId(U32 id, bool reset)
-{
-    // TODO: Cleanup Decompile
-    
-    Marble::PowerUpState* v7; // eax
-    int v8; // ecx
-    
+{ 
     if (mDataBlock && mDataBlock->powerUps != NULL && mDataBlock->powerUps->blastRecharge[id])
     {
         this->mBlastEnergy = mDataBlock->blastRechargeTime >> 5;
@@ -1888,14 +1869,8 @@ void Marble::setPowerUpId(U32 id, bool reset)
     }
     if (reset)
     {
-        v7 = this->mPowerUpState;
-        v8 = 10;
-        do
-        {
-            v7->active = 0;
-            ++v7;
-            --v8;
-        }     while (v8);
+        for (int i = 0; i < 10; i++)
+            this->mPowerUpState[i].active = 0;
         updatePowerUpParams();
     }
     setMaskBits(PowerUpMask);
