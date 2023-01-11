@@ -8,7 +8,7 @@
 #include "../../game/shaders/shdrConsts.h"
 #include "materials/customMaterial.h"
 #include "sceneGraph/sceneGraph.h"
-#include "gfx/primbuilder.h"
+#include "gfx/primBuilder.h"
 #include "platform/profiler.h"
 #include "terrain/environment/sky.h"
 #include "renderElemMgr.h"

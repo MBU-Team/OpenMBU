@@ -38,7 +38,7 @@
 #include "game/missionArea.h"
 #include "game/fx/particleEmitter.h"
 #include "game/fx/cameraFXMgr.h"
-#include "sim/decalmanager.h"
+#include "sim/decalManager.h"
 
 
 //----------------------------------------------------------------------------
