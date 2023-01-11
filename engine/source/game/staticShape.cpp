@@ -351,8 +351,8 @@ bool StaticShape::getForce(Point3F& pos, Point3F* force)
     {
         F32 strength = 0.0;
         F32 dot = 0.0;
-        S32 i = 0;
-        Point3F posVec;
+        MatrixF node;
+        Point3F nodeVec;
         for (int i = 0; i < 4; i++)
         {
             if (mDataBlock->forceType[i] == StaticShapeData::NoForce)
@@ -365,13 +365,13 @@ bool StaticShape::getForce(Point3F& pos, Point3F* force)
             else
                 nodeVec = mDataBlock->forceVector[i];
 
-            posVec = pos - node.getPosition();
+            Point3F posVec = pos - node.getPosition();
             dot = posVec.len();
 
             if (mDataBlock->forceRadius[i] < dot)
                 continue;
 
-            forceType = mDataBlock->forceType[i];
+            StaticShapeData::ForceType forceType = mDataBlock->forceType[i];
             strength = (1.0f - dot / mDataBlock->forceRadius[i]) * mDataBlock->forceStrength[i];
 
             if (forceType == StaticShapeData::ForceSpherical)
@@ -387,12 +387,15 @@ bool StaticShape::getForce(Point3F& pos, Point3F* force)
                 retval = true;
             }
 
-            if (forceType != StaticShapeData::ForceCone)
+            if (forceType == StaticShapeData::ForceCone)
             {
-                posVec *= 1 / dot;
+
+                posVec *= 1.0f / dot;
+
                 F32 newDot = mDot(nodeVec, posVec);
                 F32 arc = mDataBlock->forceArc[i];
-                if (arc < newDot) {
+                if (arc < newDot)
+                {
                     *force += ((posVec * strength) * (newDot - arc)) / (1.0f - arc);
                     retval = true;
                 }
