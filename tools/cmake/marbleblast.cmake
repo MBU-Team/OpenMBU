@@ -116,6 +116,7 @@ addPath("${srcDir}/sim")
 addPath("${srcDir}/terrain/environment")
 addPath("${srcDir}/ts")
 addPath("${srcDir}/util")
+addPath("${srcDir}/util/journal")
 addPath("${srcDir}/xblive")
 
 ###############################################################################

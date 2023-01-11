@@ -38,33 +38,33 @@ public:
 
 
 //-------------------------------------- RawData type
-class ResourceTypeRawData : public ResourceType
-{
-public:
-    ResourceTypeRawData(const char* ext = ".dat") :
-        ResourceType(ResourceType::typeof(ext)) { }
-    void* construct(Stream* stream, S32 size)
-    {
-        return (void*)new RawData(*stream, size);
-    }
-    void destruct(void* p)
-    {
-        delete (RawData*)p;
-    }
-};
-
-class ResourceTypeStaticRawData : public ResourceType
-{
-public:
-    ResourceTypeStaticRawData(const char* ext = ".sdt") :
-        ResourceType(ResourceType::typeof(ext)) { }
-    void* construct(Stream* stream, S32 size)
-    {
-        return (void*)new RawData(*stream, size);
-    }
-    void destruct(void* p)
-    { }
-};
+//class ResourceTypeRawData : public ResourceType
+//{
+//public:
+//    ResourceTypeRawData(const char* ext = ".dat") :
+//        ResourceType(ResourceType::typeof(ext)) { }
+//    void* construct(Stream* stream, S32 size)
+//    {
+//        return (void*)new RawData(*stream, size);
+//    }
+//    void destruct(void* p)
+//    {
+//        delete (RawData*)p;
+//    }
+//};
+//
+//class ResourceTypeStaticRawData : public ResourceType
+//{
+//public:
+//    ResourceTypeStaticRawData(const char* ext = ".sdt") :
+//        ResourceType(ResourceType::typeof(ext)) { }
+//    void* construct(Stream* stream, S32 size)
+//    {
+//        return (void*)new RawData(*stream, size);
+//    }
+//    void destruct(void* p)
+//    { }
+//};
 
 #endif //_CORERES_H_
 

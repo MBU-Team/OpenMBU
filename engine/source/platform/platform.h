@@ -452,16 +452,6 @@ struct Processor
     static void init();
 };
 
-
-//------------------------------------------------------------------------------
-// time manager generates a ServerTimeEvent / ClientTimeEvent, FrameEvent combo
-// every other time its process is called.
-extern S32 sgTimeManagerProcessInterval;
-struct TimeManager
-{
-    static void process();
-};
-
 // the entry point of the app is in the platform code...
 // it calls out into game code at GameMain
 
@@ -711,6 +701,9 @@ struct NetAddress;
 typedef S32 NetSocket;
 const NetSocket InvalidSocket = -1;
 
+/// void event(NetAddress originator, RawData incomingData)
+//typedef JournaledSignal<NetAddress,RawData> PacketReceiveEvent;
+
 struct Net
 {
     enum Error
@@ -729,6 +722,8 @@ struct Net
         IPXProtocol,
         TCPProtocol
     };
+
+    //static PacketReceiveEvent      smPacketReceive;
 
     static bool init();
     static void shutdown();

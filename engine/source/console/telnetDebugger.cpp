@@ -12,6 +12,7 @@
 #include "console/ast.h"
 #include "console/compiler.h"
 #include "platform/gameInterface.h"
+#include "util/journal/process.h"
 
 
 //
@@ -147,10 +148,12 @@ TelnetDebugger* TelDebugger = NULL;
 void TelnetDebugger::create()
 {
     TelDebugger = new TelnetDebugger;
+    Process::notify(TelDebugger, &TelnetDebugger::process, PROCESS_FIRST_ORDER);
 }
 
 void TelnetDebugger::destroy()
 {
+    Process::remove(TelDebugger, &TelnetDebugger::process);
     delete TelDebugger;
     TelDebugger = NULL;
 }

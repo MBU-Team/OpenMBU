@@ -24,7 +24,7 @@ public:
     void processMouseMoveEvent(MouseMoveEvent* event);
     void processInputEvent(InputEvent* event);
     void processQuitEvent();
-    void processTimeEvent(TimeEvent* event);
+    //void processTimeEvent(TimeEvent* event);
     void processConsoleEvent(ConsoleEvent* event);
     void processConnectedAcceptEvent(ConnectedAcceptEvent* event);
     void processConnectedReceiveEvent(ConnectedReceiveEvent* event);

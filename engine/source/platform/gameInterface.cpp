@@ -69,9 +69,9 @@ void GameInterface::processEvent(Event* event)
     case QuitEventType:
         processQuitEvent();
         break;
-    case TimeEventType:
-        processTimeEvent((TimeEvent*)event);
-        break;
+    //case TimeEventType:
+    //    processTimeEvent((TimeEvent*)event);
+    //    break;
     case ConsoleEventType:
         processConsoleEvent((ConsoleEvent*)event);
         break;
@@ -112,9 +112,9 @@ void GameInterface::processQuitEvent()
 {
 }
 
-void GameInterface::processTimeEvent(TimeEvent*)
-{
-}
+//void GameInterface::processTimeEvent(TimeEvent*)
+//{
+//}
 
 void GameInterface::processConsoleEvent(ConsoleEvent*)
 {

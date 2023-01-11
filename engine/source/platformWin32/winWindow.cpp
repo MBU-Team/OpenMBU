@@ -17,6 +17,7 @@
 #include "gfx/gfxInit.h"
 #include "gfx/gfxDevice.h"
 #include "core/unicode.h"
+#include "util/journal/process.h"
 
 
 extern void createFontInit();
@@ -898,11 +899,14 @@ void Platform::init()
     sgDoubleByteEnabled = GetSystemMetrics(SM_DBCSENABLED);
     sgQueueEvents = true;
     Con::printf("Done");
+
+    Process::notify(&Platform::process, PROCESS_FIRST_ORDER);
 }
 
 //--------------------------------------
 void Platform::shutdown()
 {
+    Process::remove(&Platform::process);
     sgQueueEvents = false;
 
     if (gMutexHandle)
@@ -1124,7 +1128,7 @@ S32 PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, S32)
 }
 
 //--------------------------------------
-void TimeManager::process()
+/*void TimeManager::process()
 {
     TimeEvent event;
     event.elapsedTime = gTimer.getElapsedMS();
@@ -1136,7 +1140,7 @@ void TimeManager::process()
         gTimer.advance();
         Game->postEvent(event);
     }
-}
+}*/
 
 F32 Platform::getRandom()
 {

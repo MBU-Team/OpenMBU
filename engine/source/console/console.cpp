@@ -18,7 +18,8 @@
 #include "console/stringStack.h"
 #include <stdarg.h>
 #include "platform/platformMutex.h"
-
+//#include "core/coreRes.h"
+//#include "util/journal/journaledSignal.h"
 
 extern StringStack STR;
 
@@ -176,6 +177,13 @@ namespace Con
     static U32 completionBaseStart;
     static U32 completionBaseLen;
 
+
+    //typedef JournaledSignal<RawData> ConsoleInputEvent;
+
+    /// Called from the native consoles to provide lines of console input
+    /// to process. This will schedule it for execution ASAP.
+    //Con::ConsoleInputEvent smConsoleInput;
+
 #ifdef TORQUE_MULTITHREAD
     static void* mainThreadMutex;
 #endif
@@ -214,6 +222,8 @@ namespace Con
     };
 
     ConsoleFunctionGroupEnd(Clipboard);
+
+    //void postConsoleInput( RawData data );
 
     void init()
     {
@@ -271,6 +281,9 @@ namespace Con
 
         // And finally, the ACR...
         AbstractClassRep::initialize();
+
+        // Plug us into the journaled console input signal.
+        //smConsoleInput.notify(postConsoleInput);
     }
 
     //--------------------------------------
@@ -279,6 +292,8 @@ namespace Con
     {
         AssertFatal(active == true, "Con::shutdown should only be called once.");
         active = false;
+
+        //smConsoleInput.remove(postConsoleInput);
 
         consoleLogFile.close();
         Namespace::shutdown();
@@ -1106,6 +1121,15 @@ namespace Con
         AssertFatal(cbt, "Con::getData - could not resolve type ID!");
         return cbt->getData((void*)(((const char*)dptr) + index * cbt->getTypeSize()), tbl, flag);
     }
+
+//    void postConsoleInput(RawData data)
+//    {
+//        // Schedule this to happen at the next time event.
+//        char* argv[2];
+//        argv[0] = "eval";
+//        argv[1] = data.data;
+//        Sim::postCurrentEvent(Sim::getRootGroup(), new SimConsoleEvent(2, const_cast<const char**>(argv), false));
+//    }
 
 } // end of Console namespace
 

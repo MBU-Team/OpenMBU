@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 #include "platform/platform.h"
+#include "platform/platformTimer.h"
 //#include "platform/platformVideo.h"
 #include "gfx/gfxDevice.h"
 #include "platform/platformInput.h"
@@ -65,6 +66,8 @@
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
 #include "autosplitter/autosplitter.h"
+#include "util/journal/process.h"
+#include "core/coreRes.h"
 
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
@@ -135,6 +138,10 @@ extern void processConnectedNotifyEvent(ConnectedNotifyEvent* event);
 extern void processConnectedAcceptEvent(ConnectedAcceptEvent* event);
 extern void ShowInit();
 
+static TimeManager* gTimeManager = NULL;
+
+void processTimeEvent(S32 elapsedTime);
+
 /// Initalizes the components of the game like the TextureManager, ResourceManager
 /// console...etc.
 static bool initLibraries()
@@ -147,6 +154,13 @@ static bool initLibraries()
 
     // asserts should be created FIRST
     PlatformAssert::create();
+
+    // Hook in for UDP notification
+    //Net::smPacketReceive.notify(GNet, &NetInterface::processPacketReceiveEvent);
+
+    // Register event with this guy.
+    gTimeManager = new TimeManager;
+    gTimeManager->timeEvent.notify(&::processTimeEvent);
 
     FrameAllocator::init(TORQUE_FRAME_SIZE);      // See comments in torqueConfig.h
 
@@ -183,6 +197,7 @@ static bool initLibraries()
 #endif
 
     Con::init();
+    Platform::initConsole();
     NetStringTable::create();
 
     TelnetConsole::create();
@@ -449,6 +464,8 @@ bool initGame(int argc, const char** argv)
 
     BadWordFilter::create();
 
+    Process::init();
+
     SimChunk::initChunkMappings();
 
     // run the entry script and return.
@@ -562,24 +579,27 @@ int DemoGame::main(int argc, const char** argv)
     while (Game->isRunning())
     {
         PROFILE_START(MainLoop);
-        PROFILE_START(JournalMain);
-        Game->journalProcess();
-        PROFILE_END();
-        PROFILE_START(NetProcessMain);
-        Net::process();      // read in all events
-        PROFILE_END();
-        PROFILE_START(PlatformProcessMain);
-        Platform::process(); // keys, etc.
-        PROFILE_END();
-        PROFILE_START(TelconsoleProcessMain);
-        TelConsole->process();
-        PROFILE_END();
-        PROFILE_START(TelDebuggerProcessMain);
-        TelDebugger->process();
-        PROFILE_END();
-        PROFILE_START(TimeManagerProcessMain);
-        TimeManager::process(); // guaranteed to produce an event
-        PROFILE_END();
+        //PROFILE_START(JournalMain);
+        //Game->journalProcess();
+        //PROFILE_END();
+        //PROFILE_START(NetProcessMain);
+        //Net::process();      // read in all events
+        //PROFILE_END();
+        //PROFILE_START(PlatformProcessMain);
+        //Platform::process(); // keys, etc.
+        //PROFILE_END();
+        //PROFILE_START(TelconsoleProcessMain);
+        //TelConsole->process();
+        //PROFILE_END();
+        //PROFILE_START(TelDebuggerProcessMain);
+        //TelDebugger->process();
+        //PROFILE_END();
+
+        if(!Process::processEvents())
+            Game->setRunning(false);
+        //PROFILE_START(TimeManagerProcessMain);
+        //TimeManager::process(); // guaranteed to produce an event
+        //PROFILE_END();
         PROFILE_END();
     }
     shutdownGame();
@@ -735,18 +755,16 @@ void DemoGame::processConsoleEvent(ConsoleEvent* event)
 }
 
 /// Process a time event and update all sub-processes
-void DemoGame::processTimeEvent(TimeEvent* event)
+void processTimeEvent(S32 elapsedTime)
 {
     PROFILE_START(ProcessTimeEvent);
-    U32 elapsedTime = event->elapsedTime;
+
     // cap the elapsed time to one second
     // if it's more than that we're probably in a bad catch-up situation
-
     if (elapsedTime > 1024)
         elapsedTime = 1024;
 
     U32 timeDelta;
-
     if (gTimeAdvance)
         timeDelta = gTimeAdvance;
     else

@@ -42,7 +42,7 @@ public:
     virtual void processMouseMoveEvent(MouseMoveEvent* event);
     virtual void processInputEvent(InputEvent* event);
     virtual void processQuitEvent();
-    virtual void processTimeEvent(TimeEvent* event);
+    //virtual void processTimeEvent(TimeEvent* event);
     virtual void processConsoleEvent(ConsoleEvent* event);
     virtual void processConnectedAcceptEvent(ConnectedAcceptEvent* event);
     virtual void processConnectedReceiveEvent(ConnectedReceiveEvent* event);

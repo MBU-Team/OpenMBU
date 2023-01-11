@@ -22,6 +22,7 @@ typedef void* SOCKADDR_IPX;
 #include "console/console.h"
 #include "platform/gameInterface.h"
 #include "core/fileStream.h"
+#include "util/journal/process.h"
 
 struct NameLookup
 {
@@ -196,11 +197,18 @@ bool Net::init()
 {
     WSADATA stWSAData;
     InitNetWindow();
-    return !WSAStartup(0x0101, &stWSAData);
+    bool flag = !WSAStartup(0x0101, &stWSAData);
+    if (flag)
+    {
+        Process::notify(&Net::process, PROCESS_NET_ORDER);
+    }
+    return flag;
 }
 
 void Net::shutdown()
 {
+    Process::remove(&Net::process);
+
     while (lookupList)
     {
         NameLookup* temp = lookupList;

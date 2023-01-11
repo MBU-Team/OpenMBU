@@ -8,16 +8,19 @@
 #include "console/telnetConsole.h"
 #include "platform/gameInterface.h"
 #include "core/torqueConfig.h"
+#include "util/journal/process.h"
 
 TelnetConsole* TelConsole = NULL;
 
 void TelnetConsole::create()
 {
     TelConsole = new TelnetConsole;
+    Process::notify(TelConsole, &TelnetConsole::process, PROCESS_FIRST_ORDER);
 }
 
 void TelnetConsole::destroy()
 {
+    Process::remove(TelConsole, &TelnetConsole::process);
     delete TelConsole;
     TelConsole = NULL;
 }
