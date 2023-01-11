@@ -2024,17 +2024,16 @@ void Interior::storeSurfVerts(Vector<U16>& masterIndexList,
             {
                 U32 it = 0;
                 U32 theIndex = 0;
-                if (surface.windingCount)
+
+                for (int i = 0; i < surface.windingCount; i++)
                 {
-                    while (mWindings[surface.windingStart + it] != tempIndexList[startIndex + i])
+                    if (mWindings[surface.windingStart + it] == tempIndexList[startIndex + i])
                     {
-                        ++it;
-                        if (it >= surface.windingCount)
-                            goto LABEL_19;
+                        theIndex = it;
+                        break;
                     }
-                    theIndex = it;
                 }
-LABEL_19:
+                
                 getTexMat(surfaceIndex, theIndex, vert.T, vert.N, vert.B);
             }
 

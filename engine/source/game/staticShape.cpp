@@ -346,24 +346,17 @@ void StaticShape::unpackUpdate(NetConnection* connection, BitStream* bstream)
 #ifdef MARBLE_BLAST
 bool StaticShape::getForce(Point3F& pos, Point3F* force)
 {
-    // TODO: Cleanup Decompile
-
+    bool retval = false;
     if (mDataBlock != NULL && (mTypeMask & ForceObjectType) != 0 && mPowered)
     {
-        F32 strength;
-        F32 dot;
-        F32 newDot;
-        F32 arc;
-        StaticShapeData::ForceType forceType;
-        bool retval = false;
-        S32 i = 0;
-        Point3F posVec;
+        F32 strength = 0.0;
+        F32 dot = 0.0;
         MatrixF node;
         Point3F nodeVec;
-        while (true)
+        for (int i = 0; i < 4; i++)
         {
             if (mDataBlock->forceType[i] == StaticShapeData::NoForce)
-                goto LABEL_19;
+                continue;
 
             getMountTransform(mDataBlock->forceNode[i], &node);
 
@@ -372,48 +365,44 @@ bool StaticShape::getForce(Point3F& pos, Point3F* force)
             else
                 nodeVec = mDataBlock->forceVector[i];
 
-            posVec = pos - node.getPosition();
+            Point3F posVec = pos - node.getPosition();
             dot = posVec.len();
 
             if (mDataBlock->forceRadius[i] < dot)
-                goto LABEL_19;
+                continue;
 
-            forceType = mDataBlock->forceType[i];
+            StaticShapeData::ForceType forceType = mDataBlock->forceType[i];
             strength = (1.0f - dot / mDataBlock->forceRadius[i]) * mDataBlock->forceStrength[i];
 
             if (forceType == StaticShapeData::ForceSpherical)
-                break;
+            {
+                dot = strength / dot;
+                *force += posVec * dot;
+                retval = true;
+            }
 
             if (forceType == StaticShapeData::ForceField)
             {
                 *force += nodeVec * strength;
-                goto LABEL_17;
+                retval = true;
             }
 
-            if (forceType != StaticShapeData::ForceCone)
-                goto LABEL_19;
+            if (forceType == StaticShapeData::ForceCone)
+            {
 
-            posVec *= 1.0f / dot;
+                posVec *= 1.0f / dot;
 
-            newDot = mDot(nodeVec, posVec);
-            arc = mDataBlock->forceArc[i];
-            if (arc >= newDot)
-                goto LABEL_19;
-
-            *force += ((posVec * strength) * (newDot - arc)) / (1.0f - arc);
-LABEL_17:
-            retval = true;
-LABEL_19:
-            i++;
-            if (i >= 4)
-                return retval;
+                F32 newDot = mDot(nodeVec, posVec);
+                F32 arc = mDataBlock->forceArc[i];
+                if (arc < newDot)
+                {
+                    *force += ((posVec * strength) * (newDot - arc)) / (1.0f - arc);
+                    retval = true;
+                }
+            }
         }
-
-        dot = strength / dot;
-        *force += posVec * dot;
-        goto LABEL_17;
     }
-    return false;
+    return retval;
 }
 #endif
 

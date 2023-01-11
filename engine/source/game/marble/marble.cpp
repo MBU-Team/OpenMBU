@@ -1051,30 +1051,11 @@ void Marble::onRemove()
 
 bool Marble::updatePadState()
 {
-    // TODO: Cleanup Decompile
-    
-    bool result; // al
-    int v4; // edi
-    ConcretePolyList::Poly* v5; // esi
-    float in_rRadius; // [esp+0h] [ebp-88h]
-    Box3F box; // [esp+10h] [ebp-78h] BYREF
-    float v10; // [esp+50h] [ebp-38h]
-    float v11; // [esp+54h] [ebp-34h]
-    float v12; // [esp+58h] [ebp-30h]
-    Point3F boxCenter; // [esp+5Ch] [ebp-2Ch] BYREF
-    Point3F v14; // [esp+68h] [ebp-20h]
-    Point3F upDir; // [esp+74h] [ebp-14h] BYREF
-    float dist; // [esp+80h] [ebp-8h]
-    unsigned int i; // [esp+84h] [ebp-4h]
-
     Box3F pad(mPadPtr->getWorldBox());
-    MatrixF v2 = mPadPtr->getTransform();
-    upDir.x = v2[2];
-    upDir.y = v2[6];
-    upDir.z = v2[10];
-    upDir.x = upDir.x * 10.0;
-    upDir.y = upDir.y * 10.0;
-    upDir.z = 10.0 * upDir.z;
+    MatrixF padTransform = mPadPtr->getTransform();
+    Point3F upDir;
+    padTransform.getColumn(2, &upDir);
+    upDir *= 10;
     if (upDir.x <= 0.0)
         pad.min.x = pad.min.x + upDir.x;
     else
@@ -1087,66 +1068,49 @@ bool Marble::updatePadState()
         pad.min.z = pad.min.z + upDir.z;
     else
         pad.max.z = pad.max.z + upDir.z;
+
+    bool result;
     result = mWorldBox.isOverlapped(pad);
     if (result)
     {
-        v14.x = this->mPosition.x;
-        v14.y = this->mPosition.y;
-        v14.z = this->mPosition.z;
-        v10 = this->mObjBox.min.x + v14.x;
-        v11 = this->mObjBox.min.y + v14.y;
-        v12 = this->mObjBox.min.z + v14.z;
-        pad.max.x = v10 - 0.0;
-        pad.max.y = v11 - 0.0;
-        pad.max.z = v12 - 10.0;
-        box.min.x = pad.max.x;
-        v10 = this->mPosition.x;
-        box.min.y = pad.max.y;
-        v11 = this->mPosition.y;
-        v12 = this->mPosition.z;
-        box.min.z = pad.max.z;
-        pad.max.x = this->mObjBox.max.x + v10;
-        pad.max.y = this->mObjBox.max.y + v11;
-        pad.max.z = this->mObjBox.max.z + v12;
-        v14.x = pad.max.x + 0.0;
-        v14.y = pad.max.y + 0.0;
-        v14.z = pad.max.z + 10.0;
-        box.max = v14;
+        Box3F box;
+        box.min = this->mObjBox.min + this->mPosition - Point3F(0, 0, 10);
+        box.max = this->mObjBox.max + this->mPosition + Point3F(0, 0, 10);
+        Point3F boxCenter;
         box.getCenter(&boxCenter);
-        pad.max.x = v14.x - boxCenter.x;
-        pad.max.y = v14.y - boxCenter.y;
-        pad.max.z = v14.z - boxCenter.z;
-        in_rRadius = pad.max.len();
+        
+        float in_rRadius;
+        in_rRadius = (box.max - boxCenter).len();
         SphereF sphere(boxCenter, in_rRadius);
         polyList.clear();
         mPadPtr->buildPolyList(&Marble::polyList, box, sphere);
-        v4 = 0;
-        i = 0;
         if (!polyList.mPolyList.empty())
         {
-            while (true)
+            int i = 0;
+            for (i = 0; i < Marble::polyList.mPolyList.size(); i++) 
             {
-                v5 = &Marble::polyList.mPolyList[v4];
-                pad.max.x = upDir.x * -10.0;
-                pad.max.y = upDir.y * -10.0;
-                pad.max.z = -10.0 * upDir.z;
-                if (mDot(polyList.mPolyList[v4].plane, pad.max) < 0.0)
+                auto& poly = Marble::polyList.mPolyList[i];
+
+                if (mDot(poly.plane, upDir * -10) < 0.0)
                 {
-                    dist = v5->plane.distToPlane(boxCenter);
-                    if (dist >= 0.0 && dist < 5.0 && pointWithinPolyZ(*v5, boxCenter, upDir))
+                    F32 dist = poly.plane.distToPlane(boxCenter);
+                    if (dist >= 0.0 && dist < 5.0 && pointWithinPolyZ(poly, boxCenter, upDir))
                         break;
                 }
-                ++i;
-                ++v4;
-                if (i >= Marble::polyList.mPolyList.size())
-                    goto LABEL_17;
             }
-            this->mOnPad = true;
-            result = true;
+            if (i >= Marble::polyList.mPolyList.size()) 
+            {
+                this->mOnPad = false;
+                result = false;
+            }
+            else 
+            {
+                this->mOnPad = true;
+                result = true;
+            }
         }
         else
         {
-        LABEL_17:
             this->mOnPad = false;
             result = false;
         }
@@ -1212,12 +1176,6 @@ void Marble::doPowerUpBoost(S32 powerUpId)
 
 void Marble::doPowerUpPower(S32 powerUpId)
 {
-    // TODO: Cleanup Decompile
-
-    char* v3; // eax
-    int v4; // edi
-    char* v5; // eax
-
     if (this->mDataBlock->powerUps)
     {
         mPowerUpState[powerUpId].active = true;
@@ -1230,11 +1188,10 @@ void Marble::doPowerUpPower(S32 powerUpId)
         if (isServerObject())
 #endif
         {
-            v4 = this->mDataBlock->powerUps->timeFreeze[powerUpId];
-            if (v4)
+            int timeFreezeAmt = this->mDataBlock->powerUps->timeFreeze[powerUpId];
+            if (timeFreezeAmt)
             {
-                v5 = Con::getIntArg(v4);
-                Con::executef(this, 2, "onTimeFreeze", v5);
+                Con::executef(this, 2, "onTimeFreeze", Con::getIntArg(timeFreezeAmt));
             }
         }
         setMaskBits(PowerUpMask);
@@ -1493,21 +1450,20 @@ void Marble::findRenderPos(F32 dt)
 
     if (mMovePathSize != 0)
     {
-        // TODO: Cleanup decompile
-        U32 iter = 0;
-        while (outforce > mMovePathTime[iter])
+        if (outforce > mMovePathTime[0])
         {
-            startTime = mMovePathTime[iter];
-            around = mMovePath[iter];
-            
-            if (++iter >= mMovePathSize)
-                goto LABEL_7;
+            for (int i = 0; i < mMovePathSize; i++)
+            {
+                startTime = mMovePathTime[i];
+                around = mMovePath[i];
+            }
         }
-
-        dist = mMovePathTime[iter];
-        dPos = mMovePath[iter];
+        else
+        {
+            dist = mMovePathTime[0];
+            dPos = mMovePath[0];
+        }
     }
-LABEL_7:
 
     F32 diff = (outforce - startTime) / (dist - startTime);
 
@@ -1818,21 +1774,15 @@ bool Marble::onAdd()
 
 void Marble::processMoveTriggers(const Move * move)
 {
-    // TODO: Cleanup Decompile
-
-    unsigned int v3; // ecx
-    char v4; // al
-    unsigned int v5; // eax
-
     if (move->trigger[0] && mPowerUpId || mPowerUpTimer)
     {
         mPowerUpTimer += 32;
-        if (mPowerUpTimer > 0x200)
+        if (mPowerUpTimer > 512)
             mPowerUpTimer = 512;
-        v3 = mDataBlock->powerUps->activateTime[mPowerUpId];
-        if (v3 > 0x200)
-            v3 = 512;
-        if (mPowerUpTimer >= v3)
+        int powerupActivateTime = mDataBlock->powerUps->activateTime[mPowerUpId];
+        if (powerupActivateTime > 512)
+            powerupActivateTime = 512;
+        if (mPowerUpTimer >= powerupActivateTime)
         {
             doPowerUp(mPowerUpId);
             mPowerUpId = 0;
@@ -1853,10 +1803,10 @@ void Marble::processMoveTriggers(const Move * move)
         mBlastTimer += 32;
         if (mBlastTimer > 0x200)
             mBlastTimer = 512;
-        v5 = mDataBlock->powerUps->activateTime[0];
-        if (v5 > 0x200)
-            v5 = 512;
-        if (mBlastTimer >= v5)
+        int blastActivateTime = mDataBlock->powerUps->activateTime[0];
+        if (blastActivateTime > 512)
+            blastActivateTime = 512;
+        if (mBlastTimer >= blastActivateTime)
         {
             doPowerUpPower(0);
 #ifdef MB_ULTRA_PREVIEWS
@@ -1876,114 +1826,38 @@ void Marble::processMoveTriggers(const Move * move)
 
 void Marble::processItemsAndTriggers(const Point3F& startPos, const Point3F& endPos)
 {
-    // TODO: Cleanup decompile
+    SimpleQueryList sql;
 
-    double v5; // st7
-    double v6; // st7
-    double v7; // st7
-    double v8; // st7
-    double v9; // st7
-    double v10; // st7
-    double v11; // st7
-    Container* v12; // ecx
-    unsigned int i; // ebx
-    SceneObject* v14; // ecx
-    unsigned int v15; // eax
-    Box3F box; // [esp+10h] [ebp-5Ch] BYREF
-    Point3F in_rMin; // [esp+28h] [ebp-44h] BYREF
-    Point3F in_rMax; // [esp+34h] [ebp-38h] BYREF
-    SimpleQueryList sql; // [esp+40h] [ebp-2Ch] BYREF
-    float expansion; // [esp+4Ch] [ebp-20h]
-    float v21; // [esp+50h] [ebp-1Ch]
-    float v22; // [esp+54h] [ebp-18h]
-    float v23; // [esp+58h] [ebp-14h]
-    float v24; // [esp+5Ch] [ebp-10h]
-    int v25; // [esp+68h] [ebp-4h]
-    float startPosa; // [esp+74h] [ebp+8h]
-    float startPosb; // [esp+74h] [ebp+8h]
-    float startPosc; // [esp+74h] [ebp+8h]
-    float endPosa; // [esp+78h] [ebp+Ch]
-    float endPosb; // [esp+78h] [ebp+Ch]
-    float endPosc; // [esp+78h] [ebp+Ch]
-
-    if (endPos.z <= (double)startPos.z)
-        v5 = endPos.z;
-    else
-        v5 = startPos.z;
-    v21 = v5;
-    if (endPos.y <= (double)startPos.y)
-        v6 = endPos.y;
-    else
-        v6 = startPos.y;
-    v22 = v6;
-    if (endPos.x <= (double)startPos.x)
-        v7 = endPos.x;
-    else
-        v7 = startPos.x;
-    v23 = v7;
-    if (endPos.z >= (double)startPos.z)
-        v8 = endPos.z;
-    else
-        v8 = startPos.z;
-    v24 = v8;
-    if (endPos.y >= (double)startPos.y)
-        v9 = endPos.y;
-    else
-        v9 = startPos.y;
-    endPosa = v9;
-    if (endPos.x >= (double)startPos.x)
-        v10 = endPos.x;
-    else
-        v10 = startPos.x;
-    startPosa = v10;
-    expansion = this->mRadius + 0.2000000029802322;
-    v11 = expansion;
-    startPosb = startPosa + expansion;
-    endPosb = endPosa + expansion;
-    expansion = v24 + expansion;
-    in_rMax.x = startPosb;
-    in_rMax.y = endPosb;
-    in_rMax.z = expansion;
-    startPosc = v23 - v11;
-    endPosc = v22 - v11;
-    expansion = v21 - v11;
-    in_rMin.x = startPosc;
-    in_rMin.y = endPosc;
-    in_rMin.z = expansion;
-    box = Box3F(in_rMin, in_rMax, 0);
+    float expansion = this->mRadius + 0.2000000029802322;
+    Point3F in_rMax(fmax(startPos.x, endPos.y) + expansion, fmax(startPos.y, endPos.y) + expansion, fmax(startPos.z, endPos.z) + expansion);
+    Point3F in_rMin(fmin(startPos.x, endPos.x) - expansion, fmin(startPos.y, endPos.y) - expansion, fmin(startPos.z, endPos.z) - expansion);
+    Box3F box(in_rMin, in_rMax);
     
-    v25 = 0;
     mContainer->findObjects(box, sTriggerItemMask, SimpleQueryList::insertionCallback, &sql);
-    for (i = 0; i < sql.mList.size(); ++i)
+    for (int i = 0; i < sql.mList.size(); ++i)
     {
-        v14 = sql.mList[i];
-        if ((v14->getTypeMask() & TriggerObjectType) != 0)
+        auto& so = sql.mList[i];
+        if ((so->getTypeMask() & TriggerObjectType) != 0)
         {
 #ifdef MB_ULTRA_PREVIEWS
             if (isServerObject() && !gSPMode)
 #else
             if (isServerObject())
 #endif
-                ((Trigger*)v14)->potentialEnterObject(this);
+                ((Trigger*)so)->potentialEnterObject(this);
         }
-        else if ((v14->getTypeMask() & ItemObjectType) != 0 && this != ((Item*)v14)->getCollisionObject())
+        else if ((so->getTypeMask() & ItemObjectType) != 0 && this != ((Item*)so)->getCollisionObject())
         {
             in_rMin.x = 0.0;
             in_rMin.y = 0.0;
             in_rMin.z = 0.0;
-            queueCollision((Item*)v14, in_rMin, 0);
+            queueCollision((Item*)so, in_rMin, 0);
         }
     }
-    v25 = -1;
 }
 
 void Marble::setPowerUpId(U32 id, bool reset)
-{
-    // TODO: Cleanup Decompile
-    
-    Marble::PowerUpState* v7; // eax
-    int v8; // ecx
-    
+{ 
     if (mDataBlock && mDataBlock->powerUps != NULL && mDataBlock->powerUps->blastRecharge[id])
     {
         this->mBlastEnergy = mDataBlock->blastRechargeTime >> 5;
@@ -1995,14 +1869,8 @@ void Marble::setPowerUpId(U32 id, bool reset)
     }
     if (reset)
     {
-        v7 = this->mPowerUpState;
-        v8 = 10;
-        do
-        {
-            v7->active = 0;
-            ++v7;
-            --v8;
-        }     while (v8);
+        for (int i = 0; i < 10; i++)
+            this->mPowerUpState[i].active = 0;
         updatePowerUpParams();
     }
     setMaskBits(PowerUpMask);

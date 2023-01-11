@@ -272,72 +272,36 @@ bool Marble::computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const M
 
     Point2F desiredVelocity = mv * mDataBlock->maxRollVelocity;
 
-    if (desiredVelocity.x == 0.0f && desiredVelocity.y == 0.0f)
-        return 1;
-
-    // TODO: Clean up gotos
-
-    float cY;
-
-    float desiredYVel = desiredVelocity.y;
-    float currentYVel = currentVelocity.y;
-    float desiredVelX;
-    if (currentVelocity.y > desiredVelocity.y)
+    if (desiredVelocity.x != 0.0f || desiredVelocity.y != 0.0f)
     {
-        cY = currentVelocity.y;
-        if (desiredVelocity.y > 0.0f)
-        {
-LABEL_11:
-            desiredVelX = desiredVelocity.x;
-            desiredVelocity.y = cY;
-            goto LABEL_13;
+        if (currentVelocity.y > desiredVelocity.y && desiredVelocity.y > 0) {
+            desiredVelocity.y = currentVelocity.y;
         }
-        currentYVel = currentVelocity.y;
-        desiredYVel = desiredVelocity.y;
-    }
-
-    if (currentYVel < desiredYVel)
-    {
-        cY = currentYVel;
-        if (desiredYVel < 0.0f)
-            goto LABEL_11;
-    }
-    desiredVelX = desiredVelocity.x;
-LABEL_13:
-    float cX = currentVelocity.x;
-    float v17;
-    if (currentVelocity.x > desiredVelX)
-    {
-        if (desiredVelX > 0.0f)
-        {
-            v17 = currentVelocity.x;
-LABEL_16:
-            desiredVelocity.x = v17;
-            goto LABEL_20;
+        else if (currentVelocity.y < desiredVelocity.y && desiredVelocity.y < 0) {
+            desiredVelocity.y = currentVelocity.y;
         }
-        cX = currentVelocity.x;
+        if (currentVelocity.x > desiredVelocity.x && desiredVelocity.x > 0) {
+            desiredVelocity.x = currentVelocity.x;
+        }
+        else if (currentVelocity.x < desiredVelocity.x && desiredVelocity.x < 0) {
+            desiredVelocity.x = currentVelocity.x;
+        }
+
+        Point3D newMotionDir = sideDir * desiredVelocity.x + motionDir * desiredVelocity.y;
+
+        Point3D newSideDir;
+        mCross(r, newMotionDir, newSideDir);
+
+        desiredOmega = newSideDir * (1.0f / r.lenSquared());
+        aControl = desiredOmega - mOmega;
+
+        if (mDataBlock->angularAcceleration < aControl.len())
+            aControl *= mDataBlock->angularAcceleration / aControl.len();
+
+        return false;
     }
 
-    if (cX < desiredVelX)
-    {
-        v17 = cX;
-        if (desiredVelX < 0.0f)
-            goto LABEL_16;
-    }
-
-LABEL_20:
-    Point3D newMotionDir = sideDir * desiredVelocity.x + motionDir * desiredVelocity.y;
-
-    Point3D newSideDir;
-    mCross(r, newMotionDir, newSideDir);
-
-    desiredOmega = newSideDir * (1.0f / r.lenSquared());
-    aControl = desiredOmega - mOmega;
-
-    if (mDataBlock->angularAcceleration < aControl.len())
-        aControl *= mDataBlock->angularAcceleration / aControl.len();
-
-    return false;
+    return true;
 }
 
 void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec)
