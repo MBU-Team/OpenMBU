@@ -282,31 +282,33 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
 
     if (tickCount && mLastTick != targetTick)
     {
-        if (connection)
-        {
-            if (connection->isPlayingBack())
-            {
-                while (true)
-                {
-                    U32 nextBlockType = connection->getNextBlockType();
-                    if (!connection->processNextBlock())
-                    {
-                        PROFILE_END();
-                        return true;
-                    }
-                    if (nextBlockType == GameConnection::BlockTypeMove)
-                        break;
-                }
-            }
-            if (!mSkipAdvanceObjectsMs)
-            {
-                connection->collectMove(mLastTick);
-                advanceObjects();
-            }
-            connection->incLastSentMove();
-        }
         while (true)
         {
+            if (connection)
+            {
+                if (connection->isPlayingBack())
+                {
+                    while (true)
+                    {
+                        U32 nextBlockType = connection->getNextBlockType();
+                        if (!connection->processNextBlock())
+                        {
+                            PROFILE_END();
+                            return true;
+                        }
+                        if (nextBlockType == GameConnection::BlockTypeMove)
+                            break;
+                    }
+                }
+
+                if (!mSkipAdvanceObjectsMs)
+                {
+                    connection->collectMove(mLastTick);
+                    advanceObjects();
+                }
+                connection->incLastSentMove();
+            }
+
             mLastTick += TickMs;
             if (mLastTick == targetTick)
                 break;
