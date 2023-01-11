@@ -1189,16 +1189,46 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
     // Set our window as the current render target so we can see outputs.
     GFX->setActiveRenderTarget(Platform::getWindowGFXTarget());
 
+    if (!GFX->getActiveRenderTarget())
+    {
+        if (disableSPMode)
+            gSPMode = false;
+        PROFILE_END();
+        return;
+    }
+
+#ifdef TORQUE_GFX_STATE_DEBUG
+    GFX->getDebugStateManager()->startFrame();
+#endif
+
+    GFXTarget* renderTarget = GFX->getActiveRenderTarget();
+    if (renderTarget == NULL)
+    {
+        if (disableSPMode)
+            gSPMode = false;
+        PROFILE_END();
+        return;
+    }
+
     //We always want to render to the back buffer now
     //if(mRenderFront)
     //   glDrawBuffer(GL_FRONT);
     //else
     //   glDrawBuffer(GL_BACK);
 
+    //Point2I size = renderTarget->getSize();//GFX->getVideoMode().resolution;//Platform::getWindowSize();
+    //Point2I size_old = renderTarget->getSize();//GFX->getVideoMode().resolution;//Platform::getWindowSize();
     Point2I size = GFX->getVideoMode().resolution;//Platform::getWindowSize();
 
+    //Con::errorf("Size (%d,%d) - (%d,%d)", size_old.x, size_old.y, size.x, size.y);
+
     if (size.x == 0 || size.y == 0)
+    {
+        if (disableSPMode)
+            gSPMode = false;
+        PROFILE_END();
         return;
+    }
 
     RectI screenRect(0, 0, size.x, size.y);
     mBounds = screenRect;
@@ -1329,11 +1359,27 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
 
         GFX->setClipRect(updateUnion);
 
+        // Fill Black if no Dialogs
+        if(this->size() == 0)
+            GFX->clear( GFXClearTarget, ColorI(0,0,0,0), 1.0f, 0 );
+
+        // TODO: Tooltip stuff here in TGEA 1.7.1
+
+        GFX->setClipRect(updateUnion);
+
         //temp draw the mouse
         /*if (cursorON && mShowCursor && !mouseCursor)
         {
             GFX->drawRectFill(RectI(cursorPt.x, cursorPt.y, cursorPt.x + 2, cursorPt.y + 2), ColorI(255, 0, 0));
         }*/
+
+
+        // CodeReview - Make sure our bitmap modulation is clear or else there's a black modulation
+        // that ruins rendering of textures at startup.. This was done in mouseCursor
+        // onRender and so at startup when it wasn't called the modulation was black, ruining
+        // the loading screen display. This fixes the issue, but is it only masking a deeper issue
+        // in GFX with regard to gui rendering? [5/3/2007 justind]
+        GFX->clearBitmapModulation();
 
         //DEBUG
         //draw the help ctrl
@@ -1365,17 +1411,22 @@ void GuiCanvas::renderFrame(bool preRenderOnly)
     // mPending is set when the console function "screenShot()" is called
     // this situation is necessary because it needs to take the screenshot
     // before the buffers swap
-    if (gScreenShot->mPending)
+    if (gScreenShot != NULL && gScreenShot->mPending)
     {
         gScreenShot->captureStandard();
     }
 
     PROFILE_END();
+
     PROFILE_START(GFXEndScene);
     GFX->endScene();
     PROFILE_END();
 
     swapBuffers();
+
+#ifdef TORQUE_GFX_STATE_DEBUG
+    GFX->getDebugStateManager()->endFrame();
+#endif
 
     if (disableSPMode)
         gSPMode = false;
@@ -1389,7 +1440,8 @@ void GuiCanvas::swapBuffers()
 
     PROFILE_START(SwapBuffers);
     //mPlatformWindow->getGFXTarget()->present();
-    if (Platform::getWindowGFXTarget())
+    GFXTarget* target = Platform::getWindowGFXTarget();
+    if (target)
         Platform::getWindowGFXTarget()->present();
     PROFILE_END();
 }

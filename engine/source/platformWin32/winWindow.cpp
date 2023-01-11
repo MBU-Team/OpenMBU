@@ -1129,9 +1129,9 @@ void TimeManager::process()
     TimeEvent event;
     event.elapsedTime = gTimer.getElapsedMS();
 
-#ifndef TORQUE_NVPERFHUD
-    if (event.elapsedTime > 2)
-#endif
+//#ifndef TORQUE_NVPERFHUD
+//    if (event.elapsedTime > 2)
+//#endif
     {
         gTimer.advance();
         Game->postEvent(event);

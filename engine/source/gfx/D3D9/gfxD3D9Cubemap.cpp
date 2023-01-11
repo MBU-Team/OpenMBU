@@ -216,7 +216,8 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
 
    matProj.mul(rotMat);
 
-   //GFX->setFrustum((M_PI / 2.0), 1.0f, 0.1f, 1000.0f);
+   if (smReflectionDetailLevel < 3)
+        GFX->setFrustum((M_PI / 2.0), 1.0f, 0.1f, 1000.0f);
 
    GFX->setProjectionMatrix(matProj);
    
