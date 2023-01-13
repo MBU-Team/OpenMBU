@@ -401,9 +401,17 @@ void GFXPCD3D9Device::copyBBToSfxBuff()
    IDirect3DSurface9 *surf;
    GFXD3D9TextureObject *texObj = (GFXD3D9TextureObject*)(GFXTextureObject*)mSfxBackBuffer;
    texObj->get2DTex()->GetSurfaceLevel( 0, &surf );
-   // mD3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surf);
-   mD3DDevice->StretchRect( mDeviceBackbuffer, NULL, surf, NULL, D3DTEXF_NONE );
-
+   //mD3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surf);
+   if (!mCurrentRT.isNull()) {
+       auto& target = *mCurrentRT;
+       if (GFXPCD3D9TextureTarget* gdtt = dynamic_cast<GFXPCD3D9TextureTarget*>(&target))
+       {
+           IDirect3DSurface9* ss = gdtt->mTargets[GFXTextureTarget::Color0];
+           mD3DDevice->StretchRect(ss, NULL, surf, NULL, D3DTEXF_NONE);
+       }
+   }
+   // mD3DDevice->StretchRect( mDeviceBackbuffer, NULL, surf, NULL, D3DTEXF_NONE );
+   
    surf->Release();
 }
 
