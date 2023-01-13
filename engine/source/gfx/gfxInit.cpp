@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 #include "gfx/gfxInit.h"
-#include "gfx/null/gfxNullDevice.h"
+#include "gfx/Null/gfxNullDevice.h"
 
 inline static void _GFXInitReportAdapters(Vector<GFXAdapter*>&);
 inline static void _GFXInitGetInitialRes(GFXVideoMode&, const Point2I&);

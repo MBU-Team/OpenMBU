@@ -6,7 +6,7 @@
 #ifndef _PRECIPITATION_H_
 #define _PRECIPITATION_H_
 
-#include "gfx/GFXDevice.h"
+#include "gfx/gfxDevice.h"
 #include "game/gameBase.h"
 #include "materials/shaderData.h"
 

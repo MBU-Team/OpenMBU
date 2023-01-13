@@ -12,7 +12,7 @@
 #include "gfx/gfxTextureHandle.h"
 #include "gfx/gfxCubemap.h"
 #include "gfx/gfxFence.h"
-#include "scenegraph/sceneGraph.h"
+#include "sceneGraph/sceneGraph.h"
 #include "gfx/debugDraw.h"
 #include "gfx/gNewFont.h"
 #include "platform/profiler.h"

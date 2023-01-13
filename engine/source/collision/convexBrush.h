@@ -8,7 +8,7 @@
 #include "math/mPlane.h"
 #include "collision/abstractPolyList.h"
 #include "collision/optimizedPolyList.h"
-#include "sim/sceneobject.h"
+#include "sim/sceneObject.h"
 #include "interior/interiorMapRes.h"
 
 #define WINDINGSCALE 10000

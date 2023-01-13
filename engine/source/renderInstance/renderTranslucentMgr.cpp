@@ -2,7 +2,7 @@
 // Torque Shader Engine
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
-#include "RenderTranslucentMgr.h"
+#include "renderTranslucentMgr.h"
 #include "materials/sceneData.h"
 #include "sceneGraph/sceneGraph.h"
 #include "materials/matInstance.h"

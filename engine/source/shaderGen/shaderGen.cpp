@@ -8,7 +8,7 @@
 #include "bump.h"
 #include "featureMgr.h"
 #include "gfx/gfxShader.h"
-#include "core/filestream.h"
+#include "core/fileStream.h"
 #include "gfx/gfxDevice.h"
 #include "shaderGen/shaderGenManager.h"
 
