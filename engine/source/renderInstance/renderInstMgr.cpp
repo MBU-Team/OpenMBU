@@ -183,7 +183,7 @@ void RenderInstManager::addInst(RenderInst* inst)
         hasGlow = false;
 
     // handle special cases that don't require insertion into multiple bins
-    if (inst->matInst && instMat && instMat->renderBin != NumRenderBins && instMat->renderBin != Begin)
+    if (inst->matInst && instMat && instMat->renderBin)
     {
         PROFILE_END();
         AssertFatal(instMat->renderBin >= 0 && instMat->renderBin < NumRenderBins, "doh, invalid bin, check the renderBin property for this material");
