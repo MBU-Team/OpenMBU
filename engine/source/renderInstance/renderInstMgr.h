@@ -144,10 +144,10 @@ public:
         MiscObject,
         Shadow,
         Decal,
-        Refraction,
         Water,
         TranslucentPreGlow,
         Glow,
+        Refraction,
         Foliage,
         Translucent,
         NumRenderBins

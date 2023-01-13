@@ -80,12 +80,12 @@ bool CustomMaterial::onAdd()
     mShaderData = static_cast<ShaderData*>(Sim::findObject(mShaderDataName));
 
     // Allow translucent objects to be seen behind each other
-    for (S32 i = 0; i < MAX_PASSES; i++)
-    {
-        CustomMaterial* mat = pass[i];
-        if (mat && mat->translucent)
-            subPassTranslucent = true;
-    }
+    //for (S32 i = 0; i < MAX_PASSES; i++)
+    //{
+    //    CustomMaterial* mat = pass[i];
+    //    if (mat && mat->translucent)
+    //        subPassTranslucent = true;
+    //}
 
     return true;
 }
