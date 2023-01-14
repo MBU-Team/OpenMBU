@@ -22,7 +22,7 @@ Vector<GFXDevice*> GFXDevice::smGFXDevice;
 S32 GFXDevice::smActiveDeviceIndex = -1;
 bool GFXDevice::smUseZPass = true;
 GFXDevice::DeviceEventSignal* GFXDevice::smSignalGFXDeviceEvent = NULL;
-S32 GFXDevice::smSfxBackBufferSize = 128;//64;
+S32 GFXDevice::smSfxBackBufferSize = 512;//128;//64;
 
 
 //-----------------------------------------------------------------------------
@@ -139,7 +139,7 @@ void GFXDevice::deviceInited()
 // Static method
 void GFXDevice::create()
 {
-    Con::addVariable("pref::Video::sfxBackBufferSize", TypeS32, &GFXDevice::smSfxBackBufferSize);
+    //Con::addVariable("pref::Video::sfxBackBufferSize", TypeS32, &GFXDevice::smSfxBackBufferSize);
     Con::addVariable("pref::video::useZPass", TypeBool, &GFXDevice::smUseZPass);
 
     Con::addVariable("$pref::Video::ReflectionDetailLevel", TypeS32, &GFXCubemap::smReflectionDetailLevel);
