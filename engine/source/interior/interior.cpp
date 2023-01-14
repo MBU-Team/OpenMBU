@@ -2022,23 +2022,15 @@ void Interior::storeSurfVerts(Vector<U16>& masterIndexList,
 
             if (mFileVersion == 4)
             {
-                U32 it = 0;
                 U32 theIndex = 0;
 
-                if (surface.windingCount)
+                for (int j = 0; j < surface.windingCount; j++)
                 {
-                    bool fullBreak = false;
-                    while (mWindings[surface.windingStart + it] != tempIndexList[startIndex + i])
+                    if (mWindings[surface.windingStart + j] == tempIndexList[startIndex + i])
                     {
-                        it++;
-                        if (it >= surface.windingCount)
-                        {
-                            fullBreak = true;
-                            break;
-                        }
+                        theIndex = j;
+                        break;
                     }
-                    if (!fullBreak)
-                        theIndex = it;
                 }
                 
                 getTexMat(surfaceIndex, theIndex, vert.T, vert.N, vert.B);
