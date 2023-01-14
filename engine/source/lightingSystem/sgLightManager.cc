@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "lightingSystem/sgLighting.h"
@@ -742,9 +742,15 @@ void LightManager::setLightInfo(ProcessedMaterial* pmat, const Material* mat, co
     const LightInfo light = sgData.light;
     Point3F lightPos = light.mPos;
     Point3F lightDir = light.mDirection;
-    objTrans.mulP(lightPos);
-    objTrans.mulV(lightDir);
-    lightDir.normalizeSafe();
+
+    // TODO: This fixes glass flickering, but checkpoints on Spelunking(lv37) still flicker.
+    //  This is probably not the root of the problem
+    if (!sgData.refractPass)
+    {
+        objTrans.mulP(lightPos);
+        objTrans.mulV(lightDir);
+        lightDir.normalizeSafe();
+    }
 
     Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, light.sgTempModelInfo[0]);
     GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
