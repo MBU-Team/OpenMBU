@@ -933,6 +933,10 @@ struct FontRenderBatcher
 
     void render(F32 rot, F32 y)
     {
+        if( mLength == 0 )
+            return;
+
+        GFX->disableShaders();
         GFX->setLightingEnable(false);
         GFX->setCullMode(GFXCullNone);
         GFX->setAlphaBlendEnable(true);
@@ -942,6 +946,11 @@ struct FontRenderBatcher
         GFX->setTextureStageMinFilter(0, GFXTextureFilterPoint);
         GFX->setTextureStageAddressModeU(0, GFXAddressClamp);
         GFX->setTextureStageAddressModeV(0, GFXAddressClamp);
+
+        GFX->setTextureStageAlphaOp( 0, GFXTOPModulate );
+        GFX->setTextureStageAlphaOp( 1, GFXTOPDisable );
+        GFX->setTextureStageAlphaArg1( 0, GFXTATexture );
+        GFX->setTextureStageAlphaArg2( 0, GFXTADiffuse );
 
         // This is an add operation because in D3D, when a texture of format D3DFMT_A8
         // is used, the RGB channels are all set to 0.  Therefore a modulate would 
