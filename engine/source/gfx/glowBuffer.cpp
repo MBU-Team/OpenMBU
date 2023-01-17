@@ -358,7 +358,7 @@ void GlowBuffer::blur()
             {
                 // PASS 3
                 //-------------------------------
-                setupPixelOffsets(pixelOffsets * -1.0f, false);
+                setupPixelOffsets(pixelOffsets, false);
                 mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[1] );
 
                 GFX->setTexture(0, mSurface[0]);

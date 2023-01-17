@@ -117,13 +117,13 @@ void PixelSpecular::processVert(Vector<ShaderComponent*>& componentList,
         Var* inLightVec = (Var*)LangElement::find("inLightVec");
         Var* outLightVec = (Var*)LangElement::find("outLightVec");
 
-        if (fd.features[GFXShaderFeatureData::SelfIllumination])
-        {
-            inLightVec = (Var*)LangElement::find("N");
-            useneg = false;
-        }
-        else
-        {
+        //if (fd.features[GFXShaderFeatureData::SelfIllumination])
+        //{
+        //    inLightVec = (Var*)LangElement::find("N");
+        //    useneg = false;
+        //}
+        //else
+        //{
             if (!inLightVec)
             {
                 // grab light direction var
@@ -133,7 +133,7 @@ void PixelSpecular::processVert(Vector<ShaderComponent*>& componentList,
                 inLightVec->uniform = true;
                 inLightVec->constNum = VC_LIGHT_DIR1;
             }
-        }
+        //}
 
         if (!outLightVec)
         {
@@ -158,9 +158,9 @@ void PixelSpecular::processVert(Vector<ShaderComponent*>& componentList,
         Var* inNorm = (Var*)LangElement::find("normal");
 
         if (useneg)
-            meta->addStatement(new GenOp("   @.w = step( 0.0, dot( -@, @ ) );", outLightVec, inLightVec, inNorm));
+            meta->addStatement(new GenOp("   @.w = step( -0.5, dot( -@, @ ) );", outLightVec, inLightVec, inNorm));
         else
-            meta->addStatement(new GenOp("   @.w = step( 0.0, dot( @, @ ) );", outLightVec, inLightVec, inNorm));
+            meta->addStatement(new GenOp("   @.w = step( -0.5, dot( @, @ ) );", outLightVec, inLightVec, inNorm));
 
     }
 

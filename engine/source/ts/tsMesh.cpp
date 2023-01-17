@@ -343,6 +343,11 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
     *coreRI->worldXform = proj;
 
     coreRI->objXform = gRenderInstManager.allocXform();
+    Point3F sc = objTrans.getScale();
+    sc.x = 1 / sc.x;
+    sc.y = 1 / sc.y;
+    sc.z = 1 / sc.z;
+    objTrans.scale(sc); // Normalize this
     *coreRI->objXform = objTrans;
 
     coreRI->vertBuff = &getVertexBuffer();
@@ -2350,12 +2355,12 @@ void TSSkinMesh::updateSkin()
     norms.set(gSkinNorms.address(), gSkinNorms.size());
 #endif
 
-    if (!initialTangents.size())
-    {
-        dMemcpy(verts.address(), initialVerts.address(), sizeof(Point3F) * verts.size());
-        dMemcpy(norms.address(), initialNorms.address(), sizeof(Point3F) * norms.size());
-        createTangents();
-    }
+    //if (!initialTangents.size())
+    //{
+    //    dMemcpy(verts.address(), initialVerts.address(), sizeof(Point3F) * verts.size());
+    //    dMemcpy(norms.address(), initialNorms.address(), sizeof(Point3F) * norms.size());
+    //    createTangents();
+    //}
 
     // set up bone transforms
     S32 i;
@@ -3240,95 +3245,77 @@ void TSMesh::createVBIB()
     PROFILE_START(CreateVBIB);
 
 
-    GFXVertexBufferHandle<MeshVertex>& vb = getVertexBuffer();
+    MeshVertex* tempVerts = new MeshVertex[verts.size()];
 
-    // Number of verts can change in LOD skinned mesh
-    bool vertsChanged = false;
-    if (vb && vb->mNumVerts < verts.size())
+    // fill in basic info
+    for (U32 i = 0; i < verts.size(); i++)
     {
-        vertsChanged = true;
+        tempVerts[i].point = verts[i];
+        tempVerts[i].texCoord = tverts[i];
+        tempVerts[i].normal = norms[i];
     }
 
-    if (vb == NULL || vertsChanged)
+    // expensive operation - optimize
+    fillTextureSpaceInfo(tempVerts);
+
+    // copy to video mem
+
+    mVB.set(GFX, verts.size(), mDynamic ? GFXBufferTypeVolatile : GFXBufferTypeStatic);
+    MeshVertex* vbVerts = mVB.lock();
+
+    dMemcpy(vbVerts, tempVerts, sizeof(MeshVertex) * verts.size());
+
+    mVB.unlock();
+
+    delete[] tempVerts;
+
+    // go through and create PrimitiveInfo array
+    Vector <GFXPrimitive> piArray;
+    for (S32 i = 0; i < primitives.size(); i++)
     {
-        vb.set(GFX, verts.size(), mDynamic ? GFXBufferTypeDynamic : GFXBufferTypeStatic);
-    }
+        GFXPrimitive pInfo;
 
-    MeshVertex* vbVerts = vb.lock();
-    Point3F temp;
-    Point2F temp2(0.0, 0.0);  // needed to write to every AGP slot, or will be slower
+        TSDrawPrimitive& draw = primitives[i];
 
-    U32 listSize = verts.size();
-    for (U32 i = 0; i < listSize; i++)
-    {
-        MeshVertex* vert = &vbVerts[i];
-        Point3F& norm = norms[i];        // gets dereferenced 3 times
-        Point4F& tangent = tangents[i];  // gets dereferenced 2 times
-
-        vert->point = verts[i];
-        vert->normal = norm;
-        vert->texCoord = tverts[i];
-        vert->texCoord2 = temp2;         // need to write this or write will be slower
-        vert->T = tangent;
-        mCross(norm, (Point3F&)tangent, &temp);  // can be calculated in vert shader
-        temp *= tangent.w;               // temp is used to avoid read from the buffer
-        vert->B = temp;
-        vert->N = norm;                  // redundant data!
-    }
-
-    vb.unlock();
+        GFXPrimitiveType drawType = getDrawType(draw.matIndex >> 30);
 
 
-    if (mPB == NULL || vertsChanged)
-    {
-        // go through and create PrimitiveInfo array
-        Vector <GFXPrimitive> piArray;
-        for (S32 i = 0; i < primitives.size(); i++)
+        switch (drawType)
         {
-            GFXPrimitive pInfo;
+        case GFXTriangleList:
+            pInfo.type = drawType;
+            pInfo.numPrimitives = draw.numElements / 3;
+            pInfo.startIndex = draw.start;
+            pInfo.minIndex = 0;
+            pInfo.numVertices = verts.size();
+            break;
 
-            TSDrawPrimitive& draw = primitives[i];
-
-            GFXPrimitiveType drawType = getDrawType(draw.matIndex >> 30);
-
-
-            switch (drawType)
-            {
-            case GFXTriangleList:
-                pInfo.type = drawType;
-                pInfo.numPrimitives = draw.numElements / 3;
-                pInfo.startIndex = draw.start;
-                pInfo.minIndex = 0;
-                pInfo.numVertices = verts.size();
-                break;
-
-            case GFXTriangleStrip:
-            case GFXTriangleFan:
-                pInfo.type = drawType;
-                pInfo.numPrimitives = draw.numElements - 2;
-                pInfo.startIndex = draw.start;
-                pInfo.minIndex = 0;
-                pInfo.numVertices = verts.size();
-                break;
+        case GFXTriangleStrip:
+        case GFXTriangleFan:
+            pInfo.type = drawType;
+            pInfo.numPrimitives = draw.numElements - 2;
+            pInfo.startIndex = draw.start;
+            pInfo.minIndex = 0;
+            pInfo.numVertices = verts.size();
+            break;
 
 
-            default:
-                AssertFatal(false, "WTF?!");
-            }
-
-            piArray.push_back(pInfo);
+        default:
+            AssertFatal(false, "WTF?!");
         }
 
-        U16* ibIndices;
-        GFXPrimitive* piInput;
-        mPB.set(GFX, indices.size(), piArray.size(), GFXBufferTypeStatic);
-        mPB.lock(&ibIndices, &piInput);
-
-        dMemcpy(ibIndices, indices.address(), indices.size() * sizeof(U16));
-        dMemcpy(piInput, piArray.address(), piArray.size() * sizeof(GFXPrimitive));
-
-        mPB.unlock();
+        piArray.push_back(pInfo);
     }
+
+    U16* ibIndices;
+    GFXPrimitive* piInput;
+    mPB.set(GFX, indices.size(), piArray.size(), mDynamic ? GFXBufferTypeVolatile : GFXBufferTypeStatic);
+    mPB.lock(&ibIndices, &piInput);
+
+    dMemcpy(ibIndices, indices.address(), indices.size() * sizeof(U16));
+    dMemcpy(piInput, piArray.address(), piArray.size() * sizeof(GFXPrimitive));
+
+    mPB.unlock();
 
     PROFILE_END();
 }
@@ -3434,7 +3421,6 @@ void TSMesh::assemble(bool skip)
 
     if (alloc.allocShape32(0) && meshType != SkinMeshType)
     {
-        createTangents();
         createVBIB();
     }
 }
@@ -3619,76 +3605,99 @@ void TSSkinMesh::disassemble()
 
 
 //-----------------------------------------------------------------------------
-// find tangent vector
+// createTextureSpaceMatrix
 //-----------------------------------------------------------------------------
-inline void TSMesh::findTangent(U32 index1,
-    U32 index2,
-    U32 index3,
-    Point3F* tan0,
-    Point3F* tan1)
+#define SMALL_FLOAT (1e-12)
+void TSMesh::createTextureSpaceMatrix(MeshVertex* v0, MeshVertex* v1, MeshVertex* v2)
 {
-    const Point3F& v1 = verts[index1];
-    const Point3F& v2 = verts[index2];
-    const Point3F& v3 = verts[index3];
+    Point3F edge1, edge2;
+    Point3F cp;
 
-    const Point2F& w1 = tverts[index1];
-    const Point2F& w2 = tverts[index2];
-    const Point2F& w3 = tverts[index3];
+    // x, s, t
+    edge1.set(v1->point.x - v0->point.x, v1->texCoord.x - v0->texCoord.x, v1->texCoord.y - v0->texCoord.y);
+    edge2.set(v2->point.x - v0->point.x, v2->texCoord.x - v0->texCoord.x, v2->texCoord.y - v0->texCoord.y);
 
-    float x1 = v2.x - v1.x;
-    float x2 = v3.x - v1.x;
-    float y1 = v2.y - v1.y;
-    float y2 = v3.y - v1.y;
-    float z1 = v2.z - v1.z;
-    float z2 = v3.z - v1.z;
+    mCross(edge1, edge2, &cp);
+    if (fabs(cp.x) > SMALL_FLOAT)
+    {
+        v0->T.x = -cp.y / cp.x;
+        v0->B.x = -cp.z / cp.x;
 
-    float s1 = w2.x - w1.x;
-    float s2 = w3.x - w1.x;
-    float t1 = w2.y - w1.y;
-    float t2 = w3.y - w1.y;
+        v1->T.x = -cp.y / cp.x;
+        v1->B.x = -cp.z / cp.x;
 
-    F32 denom = (s1 * t2 - s2 * t1);
+        v2->T.x = -cp.y / cp.x;
+        v2->B.x = -cp.z / cp.x;
+    }
 
-    if (fabs(denom) < 0.0001) return;  // handle degenerate triangles from strips
+    // y, s, t
+    edge1.set(v1->point.y - v0->point.y, v1->texCoord.x - v0->texCoord.x, v1->texCoord.y - v0->texCoord.y);
+    edge2.set(v2->point.y - v0->point.y, v2->texCoord.x - v0->texCoord.x, v2->texCoord.y - v0->texCoord.y);
 
-    float r = 1.0F / denom;
+    mCross(edge1, edge2, &cp);
+    if (fabs(cp.x) > SMALL_FLOAT)
+    {
+        v0->T.y = -cp.y / cp.x;
+        v0->B.y = -cp.z / cp.x;
 
-    Point3F sdir((t2 * x1 - t1 * x2) * r,
-        (t2 * y1 - t1 * y2) * r,
-        (t2 * z1 - t1 * z2) * r);
+        v1->T.y = -cp.y / cp.x;
+        v1->B.y = -cp.z / cp.x;
 
-    Point3F tdir((s1 * x2 - s2 * x1) * r,
-        (s1 * y2 - s2 * y1) * r,
-        (s1 * z2 - s2 * z1) * r);
+        v2->T.y = -cp.y / cp.x;
+        v2->B.y = -cp.z / cp.x;
+    }
 
+    // z, s, t
+    edge1.set(v1->point.z - v0->point.z, v1->texCoord.x - v0->texCoord.x, v1->texCoord.y - v0->texCoord.y);
+    edge2.set(v2->point.z - v0->point.z, v2->texCoord.x - v0->texCoord.x, v2->texCoord.y - v0->texCoord.y);
 
-    tan0[index1] += sdir;
-    tan1[index1] += tdir;
+    mCross(edge1, edge2, &cp);
+    if (fabs(cp.x) > SMALL_FLOAT)
+    {
+        v0->T.z = -cp.y / cp.x;
+        v0->B.z = -cp.z / cp.x;
 
-    tan0[index2] += sdir;
-    tan1[index2] += tdir;
+        v1->T.z = -cp.y / cp.x;
+        v1->B.z = -cp.z / cp.x;
 
-    tan0[index3] += sdir;
-    tan1[index3] += tdir;
+        v2->T.z = -cp.y / cp.x;
+        v2->B.z = -cp.z / cp.x;
+    }
+
+    // v0
+    v0->T.normalizeSafe();
+    v0->B.normalizeSafe();
+    mCross(v0->T, v0->B, &v0->N);
+    if (mDot(v0->N, v0->normal) < 0.0)
+    {
+        v0->N = -v0->N;
+    }
+
+    // v1
+    v1->T.normalizeSafe();
+    v1->B.normalizeSafe();
+    mCross(v1->T, v1->B, &v1->N);
+    if (mDot(v1->N, v1->normal) < 0.0)
+    {
+        v1->N = -v1->N;
+    }
+
+    // v2
+    v2->T.normalizeSafe();
+    v2->B.normalizeSafe();
+    mCross(v2->T, v2->B, &v2->N);
+    if (mDot(v2->N, v2->normal) < 0.0)
+    {
+        v2->N = -v2->N;
+    }
 
 }
 
 //-----------------------------------------------------------------------------
-// create array of tangent vectors
+// Fills in texture space matrix portion of each vertex - for bumpmapping
 //-----------------------------------------------------------------------------
-void TSMesh::createTangents()
+void TSMesh::fillTextureSpaceInfo(MeshVertex* vertArray)
 {
-    if (!verts.size() || !&verts[0])
-    {
-        return;
-    }
-
-
-    Vector<Point3F> tan0(verts.size() * 2);
-    Point3F* tan1 = tan0.address() + verts.size();
-    dMemset(tan0.address(), 0, sizeof(Point3F) * 2 * verts.size());
-
-
     for (S32 i = 0; i < primitives.size(); i++)
     {
         TSDrawPrimitive& draw = primitives[i];
@@ -3707,7 +3716,7 @@ void TSMesh::createTangents()
         {
             for (U32 j = 0; j < draw.numElements; j += 3)
             {
-                findTangent(baseIdx[j], baseIdx[j + 1], baseIdx[j + 2], tan0.address(), tan1);
+                createTextureSpaceMatrix(&vertArray[baseIdx[j]], &vertArray[baseIdx[j + 1]], &vertArray[baseIdx[j + 2]]);
             }
             break;
         }
@@ -3718,7 +3727,7 @@ void TSMesh::createTangents()
             p2Index = baseIdx[1];
             for (U32 j = 2; j < draw.numElements; j++)
             {
-                findTangent(p1Index, p2Index, baseIdx[j], tan0.address(), tan1);
+                createTextureSpaceMatrix(&vertArray[p1Index], &vertArray[p2Index], &vertArray[baseIdx[j]]);
                 p1Index = p2Index;
                 p2Index = baseIdx[j];
             }
@@ -3730,7 +3739,7 @@ void TSMesh::createTangents()
             p2Index = baseIdx[1];
             for (U32 j = 2; j < draw.numElements; j++)
             {
-                findTangent(p1Index, p2Index, baseIdx[j], tan0.address(), tan1);
+                createTextureSpaceMatrix(&vertArray[p1Index], &vertArray[p2Index], &vertArray[baseIdx[j]]);
                 p2Index = baseIdx[j];
             }
             break;
@@ -3739,27 +3748,6 @@ void TSMesh::createTangents()
         default:
             AssertFatal(false, "WTF?!");
         }
-
-    }
-
-    initialTangents.setSize(verts.size());
-    tangents.setSize(verts.size());
-
-    // fill out final info from accumulated basis data
-    for (U32 i = 0; i < verts.size(); i++)
-    {
-        const Point3F& n = norms[i];
-        const Point3F& t = tan0[i];
-        const Point3F& b = tan1[i];
-
-        initialTangents[i] = t - n * mDot(n, t);
-        initialTangents[i].normalize();
-        tangents[i] = initialTangents[i];
-
-        Point3F cp;
-        mCross(n, t, &cp);
-
-        tangents[i].w = (mDot(cp, b) < 0.0F) ? -1.0F : 1.0F;
 
     }
 
