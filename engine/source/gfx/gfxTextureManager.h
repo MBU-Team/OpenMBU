@@ -92,7 +92,7 @@ protected:
     virtual GFXTextureObject* _createTexture(U32 height, U32 width, U32 depth, GFXFormat format, GFXTextureProfile* profile, U32 numMipLevels, bool forceMips = false) = 0;
 
     /// hack to load .dds files using DirectX
-    virtual GFXTextureObject* _loadDDSHack(const char* filename, GFXTextureProfile* profile) = 0;
+    //virtual GFXTextureObject* _loadDDSHack(const char* filename, GFXTextureProfile* profile) = 0;
 
     /// Load a texture from a proper DDSFile instance.
     virtual bool _loadTexture(GFXTextureObject* texture, DDSFile* dds) = 0;

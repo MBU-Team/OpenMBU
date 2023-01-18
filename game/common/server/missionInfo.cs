@@ -64,7 +64,7 @@ function buildLoadInfo( %mission ) {
 //------------------------------------------------------------------------------
 function dumpLoadInfo()
 {
-	echo( "Mission Name: " @ MissionInfo.name );
+	echo( "Mission Name: " @ getMissionNameFromNameVar(MissionInfo) );
    echo( "Mission Description:" );
    
    for( %i = 0; MissionInfo.desc[%i] !$= ""; %i++ )

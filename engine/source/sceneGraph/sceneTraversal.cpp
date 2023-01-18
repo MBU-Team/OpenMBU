@@ -305,9 +305,11 @@ void SceneGraph::buildSceneTree(SceneState* state,
     // Ok, that's it!
 }
 
+#ifdef TORQUE_TERRAIN
 bool terrCheck(TerrainBlock* pBlock,
     SceneObject* pObj,
     const Point3F camPos);
+#endif
 
 void SceneGraph::treeTraverseVisit(SceneObject* obj,
     SceneState* state,
@@ -337,6 +339,7 @@ void SceneGraph::treeTraverseVisit(SceneObject* obj,
 
     obj->setTraversalState(SceneObject::Done);
 
+#ifdef TORQUE_TERRAIN
     // Cull it, but not if it's too low or there's no terrain to occlude against, or if it's global...
     if (getCurrentTerrain() != NULL && obj->getWorldBox().min.x > -1e5 && !obj->isGlobalBounds())
     {
@@ -355,10 +358,12 @@ void SceneGraph::treeTraverseVisit(SceneObject* obj,
         if (doTerrCheck == true && terrCheck(getCurrentTerrain(), obj, state->getCameraPosition()) == true)
             return;
     }
+#endif
 
     obj->prepRenderImage(state, stateKey, 0xFFFFFFFF);
 }
 
+#ifdef TORQUE_TERRAIN
 bool terrCheck(TerrainBlock* pBlock,
     SceneObject* pObj,
     const Point3F camPos)
@@ -428,3 +433,4 @@ bool terrCheck(TerrainBlock* pBlock,
 
     return false;
 }
+#endif

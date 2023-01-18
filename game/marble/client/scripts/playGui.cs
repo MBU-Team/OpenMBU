@@ -80,6 +80,8 @@ function PlayGui::onWake(%this)
 	   %isFreeLevel = (%levelPlaying == $PDLC::MapPack0LevelStart);
 	   UpsellGui.displayPDLCUpsell = %isFreeLevel ? false : !%hasLevel;
    }
+
+   sendAutosplitterData("loading finished");
 }
 
 function PlayGui::show(%this)

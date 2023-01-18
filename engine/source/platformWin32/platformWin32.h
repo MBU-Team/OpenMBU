@@ -17,7 +17,7 @@
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
 #endif
-#include <windows.h>
+#include <Windows.h>
 #ifndef _PLATFORM_H_
 #include "platform/platform.h"
 #endif
@@ -48,6 +48,8 @@
 
 #define NOMINMAX
 
+class Win32WinMgr;
+struct GFXVideoMode;
 
 struct Win32PlatState
 {
@@ -69,6 +71,9 @@ struct Win32PlatState
     S32 desktopWidth;
     S32 desktopHeight;
     U32 currentTime;
+
+    Win32WinMgr* windowManager;
+    GFXVideoMode* videoMode;
 
     Win32PlatState();
 };

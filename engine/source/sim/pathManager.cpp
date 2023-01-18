@@ -214,7 +214,11 @@ void PathManager::updatePath(const U32              id,
     rEntry.smoothingType = smoothingTypes;
 
     rEntry.totalTime = 0;
+#ifdef MBG_MOVING_PLATFORM_TIMING
+    for (S32 i = 0; i < S32(rEntry.msToNext.size() - 1); i++)
+#else
     for (S32 i = 0; i < S32(rEntry.msToNext.size()); i++)
+#endif
         rEntry.totalTime += rEntry.msToNext[i];
 
     transmitPath(id);
@@ -229,11 +233,18 @@ void PathManager::transmitPaths(NetConnection* nc)
     // Send over paths
     for (S32 i = 0; i < mPaths.size(); i++)
     {
-        PathManagerEvent* event = new PathManagerEvent;
+        PathManagerEvent *event = new PathManagerEvent;
         event->clearPaths = (i == 0);
         event->modifiedPath = i;
         event->path = *(mPaths[i]);
-        nc->postNetEvent(event);
+
+#ifdef EXPERIMENTAL_MP_LAG_FIX
+        // Local connection, just call the process method directly
+        if (nc->isLocalConnection())
+            event->process(nc);
+        else
+#endif
+            nc->postNetEvent(event);
     }
 }
 
@@ -249,11 +260,18 @@ void PathManager::transmitPath(const U32 id)
         if (nc && nc->missionPathsSent())
         {
             // Transmit the updated path...
-            PathManagerEvent* event = new PathManagerEvent;
+            PathManagerEvent *event = new PathManagerEvent;
             event->modifiedPath = id;
             event->clearPaths = false;
             event->path = *(mPaths[id]);
-            nc->postNetEvent(event);
+
+#ifdef EXPERIMENTAL_MP_LAG_FIX
+            // Local connection, just call the process method directly
+            if (nc->isLocalConnection())
+                event->process(nc);
+            else
+#endif
+                nc->postNetEvent(event);
         }
     }
 }

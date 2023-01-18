@@ -85,31 +85,31 @@ void AtlasClipMapImageCache_Blender::initialize(U32 clipMapSize, U32 clipMapDept
     // Find and init shaders.
     ShaderData* sd = NULL;
 
-    if (!Sim::findObject("AtlasBlender20Shader", sd) || (sd->shader == NULL))
+    if (!Sim::findObject("AtlasBlender20Shader", sd) || (sd->getShader() == NULL))
     {
         Con::errorf("AtlasClipMapImageCache_Blender::initialize - Couldn't find shader 'TerrBlender20Shader'! Terrain will not blend properly on SM2.0 cards!");
     }
     else
     {
-        mOnePass = sd->shader;
+        mOnePass = sd->getShader();
     }
 
-    if (!Sim::findObject("AtlasBlender11AShader", sd) || (sd->shader == NULL))
+    if (!Sim::findObject("AtlasBlender11AShader", sd) || (sd->getShader() == NULL))
     {
         Con::errorf("AtlasClipMapImageCache_Blender::initialize - Couldn't find shader 'AtlasBlender11AShader'! Terrain will not blend properly on SM1.0 cards!");
     }
     else
     {
-        mTwoPass[0] = sd->shader;
+        mTwoPass[0] = sd->getShader();
     }
 
-    if (!Sim::findObject("AtlasBlender11BShader", sd) || (sd->shader == NULL))
+    if (!Sim::findObject("AtlasBlender11BShader", sd) || (sd->getShader() == NULL))
     {
         Con::errorf("AtlasClipMapImageCache_Blender::initialize - Couldn't find shader 'AtlasBlender11BShader'! Terrain will not blend properly on SM1.0 cards!");
     }
     else
     {
-        mTwoPass[1] = sd->shader;
+        mTwoPass[1] = sd->getShader();
     }
 }
 

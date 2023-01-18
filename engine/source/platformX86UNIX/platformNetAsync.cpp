@@ -6,7 +6,7 @@
 #include "platform/platform.h"
 // can't include this until new mutex interface is merged
 //#include "platform/platformMutex.h"
-#include "platform/platformNetAsync.h"
+#include "platformX86UNIX/platformNetAsync.h"
 #include "console/console.h"
 
 #include <netdb.h>

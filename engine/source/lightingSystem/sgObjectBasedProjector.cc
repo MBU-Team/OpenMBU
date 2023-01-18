@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "gfx/gfxDevice.h"
@@ -9,8 +9,9 @@
 #include "game/shapeBase.h"
 #include "sceneGraph/sceneGraph.h"
 #include "interior/interiorInstance.h"
+#ifdef TORQUE_TERRAIN
 #include "atlas/runtime/atlasInstance2.h"
-
+#endif
 #include "lightingSystem/sgLighting.h"
 #include "lightingSystem/sgLightingModel.h"
 #include "lightingSystem/sgObjectBasedProjector.h"
@@ -470,10 +471,14 @@ void sgShadowProjector::sgRenderShadowBuffer()
 {
     RectI originalview = GFX->getViewport();
 
-    GFX->pushActiveRenderSurfaces();
-    GFX->pushActiveZSurface();
-    GFX->setActiveRenderSurface(sgShadowLODObject.sgShadowTexture);
-    GFX->setActiveZSurface(sgShadowSharedZBuffer::sgGetZBuffer());
+    GFX->pushActiveRenderTarget();
+    if (mShadowBufferTarget.isNull())
+    {
+        mShadowBufferTarget = GFX->allocRenderToTextureTarget();
+    }
+    mShadowBufferTarget->attachTexture(GFXTextureTarget::Color0, sgShadowLODObject.sgShadowTexture );
+    mShadowBufferTarget->attachTexture(GFXTextureTarget::DepthStencil, sgShadowSharedZBuffer::sgGetZBuffer() );
+    GFX->setActiveRenderTarget( mShadowBufferTarget );
 
     if (sgAllowSelfShadowing())
         GFX->clear(GFXClearTarget | GFXClearZBuffer, ColorI(255, 255, 255, 255), 1.0f, 0);
@@ -491,7 +496,7 @@ void sgShadowProjector::sgRenderShadowBuffer()
 
     GFX->setTextureStageColorOp(0, GFXTOPDisable);
 
-    sgShadowBuilderShader->shader->process();
+    sgShadowBuilderShader->getShader()->process();
 
     const MatrixF& world = GFX->getWorldMatrix();
 
@@ -537,8 +542,7 @@ void sgShadowProjector::sgRenderShadowBuffer()
     }
 
     GFX->popWorldMatrix();
-    GFX->popActiveZSurface();
-    GFX->popActiveRenderSurfaces();
+    GFX->popActiveRenderTarget();
 
     GFX->setViewport(originalview);
 }
@@ -559,8 +563,8 @@ bool sgShadowProjector::shouldRender(F32 camDist)
     sgSetupShadowType();
     sgCalculateBoundingBox();
 
-    if (!sgShadowBuilderShader || !sgShadowBuilderShader->shader ||
-        !sgShadowShader || !sgShadowShader->shader)
+    if (!sgShadowBuilderShader || !sgShadowBuilderShader->getShader() ||
+        !sgShadowShader || !sgShadowShader->getShader())
         return false;
 
     F32 attn = 2.0;
@@ -711,7 +715,7 @@ void sgShadowProjector::sgRender(F32 camdist)
         GFX->setTextureStageColorOp(1, GFXTOPDisable);
     }
 
-    sgShadowShader->shader->process();
+    sgShadowShader->getShader()->process();
 
     F32 size = (1.0 / (sgShadowLODObject.sgShadowTexture.getWidth() - 1)) * 1.25;
     Point4F stride(size, size, sgShadowLODObject.sgShadowTexture.getWidth(),

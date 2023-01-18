@@ -42,6 +42,7 @@ private:
     S32                 mMaxGlowPasses;
 
     GFXVertexBufferHandle<GFXVertexPT> mVertBuff;
+    GFXTextureTargetRef mTarget;
 
     void setupOrthoGeometry();
     MatrixF setupOrthoProjection();

@@ -400,6 +400,7 @@ $Text::ErrorNoChangeRes     = "Vous ne pouvez pas modifier les résolutions en c
 $Text::HOMarble = "Aspect de la bille";
 $Text::HOOptions = "Options audio et vidéo";
 $Text::HOVideoOptions = "Options vidéo";
+$Text::HOMiscOptions = "Options diverses";
 $Text::HOInstructions = "Comment jouer";
 $Text::HOCredits = "Crédits";
 

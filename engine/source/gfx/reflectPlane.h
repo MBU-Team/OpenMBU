@@ -15,6 +15,7 @@ class ReflectPlane
 {
     PlaneF         mPlane;
     GFXTexHandle   mReflectTex;
+    GFXTexHandle   mDepthTex;
     U32            mTexSize;
 
 
@@ -28,6 +29,7 @@ public:
     MatrixF getCameraReflection(MatrixF& camTrans);
     MatrixF getFrustumClipProj(MatrixF& modelview);
     GFXTexHandle& getTex() { return mReflectTex; }
+    GFXTexHandle & getDepth() { return mDepthTex; }
 
 };
 

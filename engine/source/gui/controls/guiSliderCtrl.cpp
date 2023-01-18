@@ -23,6 +23,8 @@ GuiSliderCtrl::GuiSliderCtrl(void)
     mShiftPoint = 5;
     mShiftExtent = 10;
     mDisplayValue = false;
+    mBitmapName = StringTable->insert("");
+    mBitmap = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -34,6 +36,7 @@ void GuiSliderCtrl::initPersistFields()
     addField("range", TypePoint2F, Offset(mRange, GuiSliderCtrl));
     addField("ticks", TypeS32, Offset(mTicks, GuiSliderCtrl));
     addField("value", TypeF32, Offset(mValue, GuiSliderCtrl));
+    addField("bitmap", TypeFilename, Offset(mBitmapName, GuiSliderCtrl));
     endGroup("Slider");
 }
 
@@ -55,6 +58,8 @@ bool GuiSliderCtrl::onWake()
 {
     if (!Parent::onWake())
         return false;
+
+    setBitmap(mBitmapName);
 
     mValue = mClampF(getFloatVariable(), mRange.x, mRange.y);
 
@@ -180,6 +185,14 @@ void GuiSliderCtrl::onRender(Point2I offset, const RectI& updateRect)
     Point2I pos(offset.x + mShiftPoint, offset.y);
     Point2I ext(mBounds.extent.x - mShiftExtent, mBounds.extent.y);
 
+    if (mBitmap)
+    {
+        Point2I pos(mThumb.point.x + offset.x, mThumb.point.y + offset.y);
+        GFX->clearBitmapModulation();
+        GFX->drawBitmap(mBitmap, pos);
+        return;
+    }
+
     if (mBounds.extent.x >= mBounds.extent.y)
     {
         Point2I mid(ext.x, ext.y / 2);
@@ -238,5 +251,30 @@ void GuiSliderCtrl::onRender(Point2I offset, const RectI& updateRect)
         GFX->drawText(mProfile->mFont, textStart, buf, mProfile->mFontColors);
     }
     renderChildControls(offset, updateRect);
+}
+
+void GuiSliderCtrl::setBitmap(const char *name)
+{
+    mBitmapName = StringTable->insert(name);
+    if (*mBitmapName)
+    {
+        mBitmap.set(mBitmapName, &GFXDefaultGUIProfile);
+
+        Point2I bitmapExtent(0, 0);
+        // Resize the control to fit the bitmap
+        if (mBitmap)
+        {
+            bitmapExtent.x = mBitmap->getWidth();
+            bitmapExtent.y = mBitmap->getHeight();
+        }
+
+        mThumbSize.x = bitmapExtent.x;
+        mThumbSize.y = bitmapExtent.y;
+        mShiftExtent = 0;
+    }
+    else
+        mBitmap = NULL;
+
+    setUpdate();
 }
 

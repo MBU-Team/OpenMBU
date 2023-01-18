@@ -47,7 +47,7 @@ void RenderGlowMgr::render()
 
     RectI vp = GFX->getViewport();
 
-    GFX->pushActiveRenderSurfaces();
+    GFX->pushActiveRenderTarget();
     glowBuffer->setAsRenderTarget();
 
     GFX->pushWorldMatrix();
@@ -116,7 +116,7 @@ void RenderGlowMgr::render()
 
     // restore render states, copy to screen
     GFX->setZWriteEnable(true);
-    GFX->popActiveRenderSurfaces();
+    GFX->popActiveRenderTarget();
     glowBuffer->copyToScreen(vp);
 
     GFX->popWorldMatrix();

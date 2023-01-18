@@ -19,6 +19,9 @@
 #endif
 
 #include <new>
+#include <cstdarg>
+
+class GFXWindowTarget;
 
 //------------------------------------------------------------------------------
 // Endian conversions
@@ -320,6 +323,8 @@ struct Platform
     static void shutdown();
     static void process();
     static bool doCDCheck();
+    static StringTableEntry createPlatformFriendlyFilename(const char *filename);
+    static GFXWindowTarget* getWindowGFXTarget();
     static void initWindow(const Point2I& initialSize, const char* name);
     static void enableKeyboardTranslation(void);
     static void disableKeyboardTranslation(void);
@@ -511,7 +516,7 @@ extern bool        dAtob(const char* str);
 extern void   dPrintf(const char* format, ...);
 extern int    dVprintf(const char* format, void* arglist);
 extern int    dSprintf(char* buffer, dsize_t bufferSize, const char* format, ...);
-extern int    dVsprintf(char* buffer, dsize_t bufferSize, const char* format, void* arglist);
+extern int    dVsprintf(char* buffer, dsize_t bufferSize, const char* format, va_list arglist);
 extern int    dSscanf(const char* buffer, const char* format, ...);
 extern int    dFflushStdout();
 extern int    dFflushStderr();

@@ -87,7 +87,7 @@ function Editor::checkActiveLoadDone()
 //------------------------------------------------------------------------------
 function toggleEditor(%make)
 {
-   if (%make)
+   if (%make && $testCheats)
    {
       if (!$missionRunning) 
       {

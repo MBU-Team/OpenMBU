@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #include "editor/editTSCtrl.h"
@@ -9,7 +9,9 @@
 #include "game/vehicles/wheeledVehicle.h"
 #include "game/gameConnection.h"
 #include "sceneGraph/sceneGraph.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrRender.h"
+#endif
 #include "game/shapeBase.h"
 #include "gui/core/guiCanvas.h"
 #include "ts/tsShape.h"
@@ -161,6 +163,7 @@ void SceneLighting::sgTGELightStartEvent(U32 light)
             continue;
         }
 
+#ifdef TORQUE_TERRAIN
         // don't do this to interiors, need to collect the shadow volume info...
         if (dynamic_cast<AtlasInstance2*>((*proxyItr)->getObject()))
             continue;
@@ -171,7 +174,9 @@ void SceneLighting::sgTGELightStartEvent(U32 light)
             if ((*proxyItr)->preLight(lightobj))
                 mLitObjects.push_back(*proxyItr);
         }
-        else if (dynamic_cast<InteriorProxy*>(*proxyItr))
+        else
+#endif
+            if (dynamic_cast<InteriorProxy*>(*proxyItr))
         {
             // need this for interior shadows on the terrain...
             // but these cannot preLight...
@@ -206,8 +211,10 @@ void SceneLighting::sgTGELightProcessEvent(U32 light, S32 object)
 
     //process object and light
     S32 time = Platform::getRealMilliseconds();
+#ifdef TORQUE_TERRAIN
     if (dynamic_cast<TerrainProxy*>(mLitObjects[object]))
         mLitObjects[object]->light(mLights[light]);
+#endif
 
     sgTGESetProgress(light, object);
     Con::printf("      Object lighting complete (%3.3f seconds)", (Platform::getRealMilliseconds() - time) / 1000.f);
@@ -316,6 +323,7 @@ void SceneLighting::sgSGObjectStartEvent(S32 object)
         Con::printf("    Lighting interior object %d of %d (%s)...", (object + 1), mLitObjects.size(), interior->mInteriorFileName);
     else
     {
+#ifdef TORQUE_TERRAIN
         AtlasInstance2* atlas = dynamic_cast<AtlasInstance2*>(mLitObjects[object]->getObject());
         if (atlas)
         {
@@ -324,6 +332,7 @@ void SceneLighting::sgSGObjectStartEvent(S32 object)
             GFX->setAllowRender(false);
         }
         else
+#endif
             Con::printf("    Lighting object %d of %d...", (object + 1), mLitObjects.size());
     }
 
@@ -369,11 +378,13 @@ void SceneLighting::sgSGObjectProcessEvent(U32 light, S32 object)
     {
         // can we use the light?
         LightInfo* lightobj = mLights[light];
+#ifdef TORQUE_TERRAIN
         if (!((lightobj->mType == LightInfo::Vector) && (dynamic_cast<TerrainProxy*>(mLitObjects[object]))))
         {
             // light part of the object
             mLitObjects[object]->light(lightobj);
         }
+#endif
 
         sgSGSetProgress(light, object);
 
@@ -531,6 +542,7 @@ bool SceneLighting::light(BitSet32 flags)
         ObjectProxy* proxy;
         if (isInterior(*itr))
             proxy = new InteriorProxy(*itr);
+#ifdef TORQUE_TERRAIN
         else if (isTerrain(*itr))
             proxy = new TerrainProxy(*itr);
         else if (isAtlas(*itr))
@@ -557,6 +569,7 @@ bool SceneLighting::light(BitSet32 flags)
             // already calc-ed and added...
             continue;
         }
+#endif
         else
         {
             //AssertFatal(0, "SceneLighting:: invalid object returned from container search");
@@ -830,6 +843,7 @@ bool SceneLighting::loadPersistInfo(const char* fileName)
     if (!verifyMissionInfo(persistInfo.mChunks[0]))
         return(false);
 
+#ifdef TORQUE_TERRAIN
     // remove atlas proxy info, these do not persist here...
     for (U32 i = 0; i < mSceneObjects.size(); i++)
     {
@@ -840,6 +854,7 @@ bool SceneLighting::loadPersistInfo(const char* fileName)
             i--;
         }
     }
+#endif
 
     if (mSceneObjects.size() != (persistInfo.mChunks.size() - 1))
         return(false);
@@ -890,12 +905,14 @@ bool SceneLighting::savePersistInfo(const char* fileName)
     {
         if (isInterior(mSceneObjects[i]->mObj))
             persistInfo.mChunks.push_back(new PersistInfo::InteriorChunk);
+#ifdef TORQUE_TERRAIN
         else if (isTerrain(mSceneObjects[i]->mObj))
             persistInfo.mChunks.push_back(new PersistInfo::TerrainChunk);
         else if (dynamic_cast<AtlasLightMapProxy*>(mSceneObjects[i]))
             persistInfo.mChunks.push_back(new PersistInfo::AtlasLightMapChunk);
         else if (isAtlas(mSceneObjects[i]->mObj))
             continue;
+#endif
         else
             return(false);
 
@@ -1150,6 +1167,7 @@ bool SceneLighting::ObjectProxy::setPersistInfo(PersistInfo::PersistChunk* chunk
     return(true);
 }
 
+#ifdef TORQUE_TERRAIN
 bool SceneLighting::AtlasLightMapProxy::setPersistInfo(PersistInfo::PersistChunk* info)
 {
     if (!Parent::setPersistInfo(info))
@@ -1203,4 +1221,4 @@ bool SceneLighting::AtlasLightMapProxy::getPersistInfo(PersistInfo::PersistChunk
 
     return(true);
 }
-
+#endif

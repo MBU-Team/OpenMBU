@@ -81,9 +81,16 @@ bool WaterBlock::onAdd()
         // Load in various Material definitions
         for (U32 i = 0; i < NUM_MAT_TYPES; i++)
         {
-            if (mSurfMatName[i])
+            SceneGraphData sgData;
+            sgData.setDefaultLights();
+
+            GFXVertexPC* vert = NULL;
+            GFXVertexFlags flags = (GFXVertexFlags)getGFXVertFlags(vert);
+
+            if( dStrlen(mSurfMatName[i]) > 0 )
             {
-                mMaterial[i] = static_cast<CustomMaterial*>(Sim::findObject(mSurfMatName[i]));
+                mMaterial[i] = new MatInstance(mSurfMatName[i]);
+                mMaterial[i]->init(sgData, flags);
             }
             if (!mMaterial[i])
             {
@@ -567,7 +574,7 @@ void WaterBlock::render1_1(SceneGraphData& sgData, const Point3F& camPosition)
 
 
     // set the material
-    CustomMaterial* mat = NULL;
+    MatInstance* mat = NULL;
     if (!mFullReflect)
     {
         // This is here because the 1_1 pass is run by 2.0 cards when full reflect is off
@@ -582,7 +589,8 @@ void WaterBlock::render1_1(SceneGraphData& sgData, const Point3F& camPosition)
     if (isUnderwater(camPosition))
     {
         underWater = true;
-        mat = static_cast<CustomMaterial*>(Sim::findObject(mSurfMatName[UNDERWATER_PASS]));
+        mat = mMaterial[UNDERWATER_PASS];
+        //mat = static_cast<CustomMaterial*>(Sim::findObject(mSurfMatName[UNDERWATER_PASS]));
         GFX->setTextureStageAddressModeU(3, GFXAddressWrap);
         GFX->setTextureStageAddressModeV(3, GFXAddressWrap);
 
@@ -709,13 +717,14 @@ void WaterBlock::render2_0(SceneGraphData& sgData, const Point3F& camPosition)
 
 
     // set the material
-    CustomMaterial* mat = mMaterial[BASE_PASS];
+    MatInstance* mat = mMaterial[BASE_PASS];
 
     bool underwater = false;
     if (isUnderwater(camPosition))
     {
         underwater = true;
-        mat = static_cast<CustomMaterial*>(Sim::findObject(mSurfMatName[UNDERWATER_PASS]));
+        //mat = static_cast<CustomMaterial*>(Sim::findObject(mSurfMatName[UNDERWATER_PASS]));
+        mat = mMaterial[UNDERWATER_PASS];
     }
 
 
@@ -939,7 +948,7 @@ void WaterBlock::animBumpTex(SceneState* state)
     GFX->setVertexShaderConstF(0, (float*)&newMat, 4);
 
     // set up blend shader - pass in wave params
-    CustomMaterial* mat = mMaterial[BLEND];
+    MatInstance* mat = mMaterial[BLEND];
 
     // send time info to shader
     mElapsedTime = (F32)Platform::getVirtualMilliseconds() / 1000.0f; // uggh, should multiply by timescale (it's in main.cpp)

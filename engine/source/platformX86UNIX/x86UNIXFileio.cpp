@@ -531,7 +531,7 @@ U32 File::getPosition() const
 //
 // Returns the currentStatus of the file.
 //-----------------------------------------------------------------------------
-File::Status File::setPosition(S32 position, bool absolutePos)
+File::Status File::setPosition(S64 position, bool absolutePos)
 {
     AssertFatal(Closed != currentStatus, "File::setPosition: file closed");
     AssertFatal(NULL != handle, "File::setPosition: invalid file handle");
@@ -846,7 +846,7 @@ bool Platform::createPath(const char *file)
 // }
 
 //-----------------------------------------------------------------------------
-bool Platform::dumpPath(const char *path, Vector<Platform::FileInfo> &fileVector)
+bool Platform::dumpPath(const char *path, Vector<Platform::FileInfo> &fileVector, int depth)
 {
    const char* pattern = "*";
 
@@ -957,4 +957,43 @@ bool Platform::isSubDirectory(const char *pParent, const char *pDir)
 
    closedir(directory);
    return false;
+}
+
+StringTableEntry Platform::getUserDataDirectory()
+{
+    return StringTable->insert( GetPrefDir() );
+}
+
+StringTableEntry Platform::getUserHomeDirectory()
+{
+    char *home = getenv( "HOME" );
+    return StringTable->insert( home );
+}
+
+StringTableEntry Platform::getUserName(int charLimit)
+{
+    AssertFatal(charLimit <= 1024, "Platform::getUserName: out of range character limit");
+    char temp[1024];
+
+    cuserid(temp);
+    if (charLimit > 1023)
+        charLimit = 1023;
+    temp[charLimit] = '\0';
+
+    return StringTable->insert( temp );
+}
+
+S32 Platform::getFileSize(const char *pFilePath)
+{
+    if (!pFilePath || !*pFilePath)
+        return -1;
+    // Get the file info
+    struct stat fStat;
+    if (stat(pFilePath, &fStat) < 0)
+        return -1;
+    // if the file is a "regular file" then return the size
+    if ( (fStat.st_mode & S_IFMT) == S_IFREG)
+        return fStat.st_size;
+    // Must be something else or we can't read the file.
+    return -1;
 }

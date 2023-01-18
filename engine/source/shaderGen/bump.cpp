@@ -27,50 +27,50 @@ Var* BumpFeat::setupLightVec(Vector<ShaderComponent*>& componentList,
     lightVec->setStructName("OUT");
     lightVec->setType("float3");
 
-    if (fd.features[GFXShaderFeatureData::DynamicLight])
-    {
-        Var* inpos = (Var*)LangElement::find("position");
-        Var* lightpos = (Var*)LangElement::find("lightPos");
-        Var* dlightcoord = (Var*)LangElement::find("dlightCoord");
-        Var* N = (Var*)LangElement::find("N");
+    //if (fd.features[GFXShaderFeatureData::DynamicLight])
+    //{
+    //    Var* inpos = (Var*)LangElement::find("position");
+    //    Var* lightpos = (Var*)LangElement::find("lightPos");
+    //    Var* dlightcoord = (Var*)LangElement::find("dlightCoord");
+    //    Var* N = (Var*)LangElement::find("N");
 
-        // setup language elements to output incoming tex coords to output
-        if (inpos && lightpos)
-        {
-            meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVec, lightpos, inpos));
-            if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
-                meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVec, N));
-        }
+    //    // setup language elements to output incoming tex coords to output
+    //    if (inpos && lightpos)
+    //    {
+    //        meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVec, lightpos, inpos));
+    //        if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
+    //            meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVec, N));
+    //    }
 
-        if (fd.features[GFXShaderFeatureData::DynamicLightDual])
-        {
-            Var* lightVecSec = connectComp->getElement(RT_TEXCOORD);
-            lightVecSec->setName("outLightVecSec");
-            lightVecSec->setStructName("OUT");
-            lightVecSec->setType("float3");
+    //    if (fd.features[GFXShaderFeatureData::DynamicLightDual])
+    //    {
+    //        Var* lightVecSec = connectComp->getElement(RT_TEXCOORD);
+    //        lightVecSec->setName("outLightVecSec");
+    //        lightVecSec->setStructName("OUT");
+    //        lightVecSec->setType("float3");
 
-            lightpos = (Var*)LangElement::find("lightPosSec");
-            dlightcoord = (Var*)LangElement::find("dlightCoordSec");
+    //        lightpos = (Var*)LangElement::find("lightPosSec");
+    //        dlightcoord = (Var*)LangElement::find("dlightCoordSec");
 
-            // setup language elements to output incoming tex coords to output
-            if (inpos && lightpos)
-            {
-                meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVecSec, lightpos, inpos));
-                if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
-                    meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVecSec, N));
-            }
-        }
-    }
-    else if (fd.features[GFXShaderFeatureData::SelfIllumination])
-    {
-        Var* N = (Var*)LangElement::find("N");
-        if (N)
-        {
-            meta->addStatement(new GenOp("   @.xyz = @;\r\n", lightVec, N));
-        }
-    }
-    else
-    {
+    //        // setup language elements to output incoming tex coords to output
+    //        if (inpos && lightpos)
+    //        {
+    //            meta->addStatement(new GenOp("   @.xyz = normalize(@.xyz - @.xyz);\r\n", lightVecSec, lightpos, inpos));
+    //            if (dlightcoord && N && (GFX->getPixelShaderVersion() >= 2.0))
+    //                meta->addStatement(new GenOp("   @.w = saturate(dot(@, @) * 4.0);\r\n", dlightcoord, lightVecSec, N));
+    //        }
+    //    }
+    //}
+    //else if (fd.features[GFXShaderFeatureData::SelfIllumination])
+    //{
+    //    Var* N = (Var*)LangElement::find("N");
+    //    if (N)
+    //    {
+    //        meta->addStatement(new GenOp("   @.xyz = @;\r\n", lightVec, N));
+    //    }
+    //}
+    //else
+    //{
         if (fd.useLightDir)
         {
             // grab light direction var
@@ -94,7 +94,7 @@ Var* BumpFeat::setupLightVec(Vector<ShaderComponent*>& componentList,
             LangElement* assign = new GenOp("   @.xyz = normalize(@ - @.xyz);\r\n", lightVec, lightPos, position);
             meta->addStatement(assign);
         }
-    }
+    //}
 
     return lightVec;
 }

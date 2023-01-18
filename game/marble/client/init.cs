@@ -37,6 +37,8 @@ function initClient()
    exec("./prefs.cs"); 
    execPrefs("prefs.cs"); 
    
+   initLanguage();
+   
    // Make sure this variable reflects the correct state.
    $Server::Dedicated = false;
    // Game information used to query the master server
@@ -121,6 +123,7 @@ function initClient()
    exec("./ui/ESRBGui.gui");
    exec("./ui/inputAndSoundOptionsGui.gui");
    exec("./ui/videoOptionsGui.gui");
+   exec("./ui/miscOptionsGui.gui");
    exec("./ui/marblePickerGui.gui");
    exec("./ui/aboutMenuOptionsGui.gui");
    exec("./ui/helpGui.gui");
@@ -128,6 +131,8 @@ function initClient()
    exec("./ui/GameEndGui.gui");
    exec("./ui/StartupErrorGui.gui");
    exec("./ui/controlerDisplayGui.gui");
+   exec("./ui/AchievementDlg.gui");
+   exec("./ui/AchievementListGui.gui");
    
    //exec("./ui/AboutGui.gui");   
    //exec("./ui/LevelScoresGui.gui");

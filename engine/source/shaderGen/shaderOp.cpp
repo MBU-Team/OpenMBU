@@ -6,8 +6,10 @@
 
 #ifdef _XBOX
 #  include "platformXbox/platformXbox.h"
-#else
+#elif defined(TORQUE_OS_WIN)
 #  include "platformWin32/platformWin32.h"
+#else
+#include <cstdarg>
 #endif
 
 //**************************************************************************
@@ -83,7 +85,7 @@ GenOp::GenOp(const char* statement, ...) : Parent(NULL, NULL)
         if (!str)
         {
             // not found, handle end of line
-            str = (char*)&statement[strlen((char*)statement)];
+            str = (char*)&statement[dStrlen((char*)statement)];
 
             U32 diff = str - lastEntry + 1;
             if (diff == 1) break;

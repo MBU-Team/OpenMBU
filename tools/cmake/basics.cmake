@@ -17,6 +17,12 @@ set(cmakeDir      "${CMAKE_SOURCE_DIR}/tools/cmake")
 mark_as_advanced(CMAKE_INSTALL_PREFIX)
 mark_as_advanced(CMAKE_CONFIGURATION_TYPES)
 
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+    add_compile_options (-fdiagnostics-color=always)
+elseif (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+    add_compile_options (-fcolor-diagnostics)
+endif ()
+
 #if (WIN32)
 #	set(CMAKE_ASM_NASM_COMPILER "${CMAKE_SOURCE_DIR}/engine/bin/nasm/nasmw.exe")
 #endif()
@@ -349,12 +355,20 @@ if(WIN32)
 
     #set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /O2 /Ob2 /Oi /Ot /Oy /GT /Zi /W4 /nologo /GF /EHsc /GS- /Gy- /Qpar /fp:precise /fp:except- /GR /Zc:wchar_t-" )
 	set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /Oi /Ot /Oy /GT /Zi /nologo /GF /EHsc /GS- /Gy- /Qpar /fp:precise /fp:except- /GR" )
+
+    # Temp: TempFix Use /RTCs and /fp:precise to Fix Physics Bugs in Multiplayer
+    #set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS /MP /GT /Zi /nologo /GF /EHsc /GS- /Gy- /Qpar /fp:precise /fp:except- /GR /RTCs /Od" )
     if( TORQUE_CPU_X32 )
        set(TORQUE_CXX_FLAGS_COMMON_DEFAULT "${TORQUE_CXX_FLAGS_COMMON_DEFAULT} /arch:SSE2")
     endif()
     set(TORQUE_CXX_FLAGS_COMMON ${TORQUE_CXX_FLAGS_COMMON_DEFAULT} CACHE STRING STRING)
 
     mark_as_advanced(TORQUE_CXX_FLAGS_COMMON)
+
+    #STRING(REPLACE "/O2" "/Od" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})
+    #STRING(REPLACE "/O2" "/Od" CMAKE_CXX_FLAGS_RELWITHDEBINFO ${CMAKE_CXX_FLAGS_RELWITHDEBINFO})
+    #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Od")
+    #set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Od")
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORQUE_CXX_FLAGS_COMMON}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS}")
@@ -373,16 +387,17 @@ if(WIN32)
             CMAKE_CXX_FLAGS_DEBUG
             CMAKE_CXX_FLAGS_DEBUG_INIT)
             STRING(REPLACE "/MD"  "/MT" "${flag}" "${${flag}}")
+            #STRING(REPLACE "/O2"  "/Od" "${flag}" "${${flag}}") # Temp: TempFix Disable Optimization to Fix Physics Bugs in Multiplayer
             SET("${flag}" "${${flag}} /EHsc")
         ENDFOREACH()
     endif()
 else()
     # TODO: improve default settings on other platforms
-    set(TORQUE_CXX_FLAGS_EXECUTABLES "" CACHE TYPE STRING)
+    set(TORQUE_CXX_FLAGS_EXECUTABLES "" CACHE STRING "")
     mark_as_advanced(TORQUE_CXX_FLAGS_EXECUTABLES)
-    set(TORQUE_CXX_FLAGS_LIBS "" CACHE TYPE STRING)
+    set(TORQUE_CXX_FLAGS_LIBS "" CACHE STRING "")
     mark_as_advanced(TORQUE_CXX_FLAGS_LIBS)
-    set(TORQUE_CXX_FLAGS_COMMON "" CACHE TYPE STRING)
+    set(TORQUE_CXX_FLAGS_COMMON "" CACHE STRING "")
     mark_as_advanced(TORQUE_CXX_FLAGS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORQUE_CXX_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS}")

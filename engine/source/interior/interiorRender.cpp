@@ -170,6 +170,7 @@ SceneGraphData Interior::setupSceneGraphInfo(InteriorInstance* intInst,
 //------------------------------------------------------------------------------
 void Interior::renderToZBuffer(ZoneVisDeterminer& zoneVis, SceneGraphData& sgData)
 {
+#if 0
     CustomMaterial* mat = static_cast<CustomMaterial*>(Sim::findObject("Blank"));
 
     if (!mat) return;
@@ -205,6 +206,7 @@ void Interior::renderToZBuffer(ZoneVisDeterminer& zoneVis, SceneGraphData& sgDat
 
     // Restore color writes before we leave.
     GFX->enableColorWrites(true, true, true, true);
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -370,6 +372,10 @@ void Interior::prepBatchRender(InteriorInstance* intInst, SceneState* state)
     // render zones
     for (U32 i = 0; i < mZones.size(); i++)
     {
+        // No need to try to render zones without any surfaces
+        if (mZones[i].surfaceCount == 0)
+            continue;
+
         if (zoneVis.isZoneVisible(i) == false && !getCurrentClientSceneGraph()->isReflectPass())
         {
             continue;
@@ -439,6 +445,7 @@ public:
 bool Interior::renderLights(InteriorInstance* intInst, SceneGraphData& sgData,
     RenderInst* coreRi, const ZoneVisDeterminer& zonevis)
 {
+#ifdef TEMP_REMOVE_RENDER_LIGHTS
     sgDynamicLightCache lightdatacache;
     LightInfoList lights;
     LightManager* lm = getCurrentClientSceneGraph()->getLightManager();
@@ -676,6 +683,7 @@ bool Interior::renderLights(InteriorInstance* intInst, SceneGraphData& sgData,
                 }
         }
     }*/
+#endif
 
     return true;
 }

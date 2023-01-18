@@ -356,7 +356,7 @@ bool Interior::prepForRendering(const char* path)
 
     // Load the material list
     bool matListSuccess = mMaterialList->load(InteriorTexture, path, false);
-    mMaterialList->mapMaterials();
+    mMaterialList->mapMaterials(path);
 
     fillSurfaceTexMats();
     createZoneVBs();
@@ -2022,19 +2022,17 @@ void Interior::storeSurfVerts(Vector<U16>& masterIndexList,
 
             if (mFileVersion == 4)
             {
-                U32 it = 0;
                 U32 theIndex = 0;
-                if (surface.windingCount)
+
+                for (int j = 0; j < surface.windingCount; j++)
                 {
-                    while (mWindings[surface.windingStart + it] != tempIndexList[startIndex + i])
+                    if (mWindings[surface.windingStart + j] == tempIndexList[startIndex + i])
                     {
-                        ++it;
-                        if (it >= surface.windingCount)
-                            goto LABEL_19;
+                        theIndex = j;
+                        break;
                     }
-                    theIndex = it;
                 }
-LABEL_19:
+                
                 getTexMat(surfaceIndex, theIndex, vert.T, vert.N, vert.B);
             }
 

@@ -5,8 +5,8 @@
 #ifndef _SHADERTDATA_H_
 #define _SHADERTDATA_H_
 
-#ifndef _GAMEBASE_H_
-#include "game/gameBase.h"
+#ifndef _SIMBASE_H_
+#include "console/simBase.h"
 #endif
 
 #ifndef _GFXSHADER_H_
@@ -25,8 +25,8 @@ public:
     //--------------------------------------------------------------
     // Data
     //--------------------------------------------------------------
-    GFXShader* shader;
 
+    bool                    useDevicePixVersion;
     F32                     pixVersion;
     StringTableEntry        DXVertexShaderName;
     StringTableEntry        DXPixelShaderName;
@@ -34,6 +34,9 @@ public:
     StringTableEntry        OGLVertexShaderName;
     StringTableEntry        OGLPixelShaderName;
 
+private:
+    GFXShader*              shader;
+    bool                    shaderInitialized;
 
     //--------------------------------------------------------------
     // Procedures
@@ -44,10 +47,10 @@ public:
     ShaderData();
 
     static void initPersistFields();
-    bool onAdd();
     bool initShader();
     bool reloadShader();
     void destroyShader();
+    GFXShader* getShader();
 
     DECLARE_CONOBJECT(ShaderData);
 };

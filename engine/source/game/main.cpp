@@ -33,9 +33,11 @@
 #include "interior/interiorInstance.h"
 #include "interior/interiorMapRes.h"
 #include "ts/tsShapeInstance.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "terrain/terrRender.h"
-#include "editor/terraformer.h"
+#include "editor/terrain/terraformer.h"
+#endif
 #include "sceneGraph/sceneGraph.h"
 //#include "dgl/materialList.h"
 #include "sceneGraph/sceneRoot.h"
@@ -62,6 +64,7 @@
 
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
+#include "autosplitter/autosplitter.h"
 
 #include "levelgeometry/LevelModelResource.h"
 
@@ -70,12 +73,12 @@ DemoGame GameObject;
 DemoNetInterface GameNetInterface;
 #endif
 
+#ifdef TORQUE_TERRAIN
 extern ResourceInstance* constructAtlasChunkFile(Stream& stream);
 extern ResourceInstance* constructAtlasFileResource(Stream& stream);
 extern ResourceInstance* constructTerrainFile(Stream& stream);
+#endif
 extern ResourceInstance* constructTSShape(Stream&);
-
-IMPLEMENT_CONOBJECT(Terraformer);
 
 ConsoleFunctionGroupBegin(Platform, "General platform functions.");
 
@@ -165,15 +168,21 @@ static bool initLibraries()
     ResourceManager->registerExtension(".bmp", constructBitmapBMP);
     ResourceManager->registerExtension(".jng", constructBitmapMNG);
     //   ResourceManager->registerExtension(".gft", constructFont);
+#ifdef TORQUE_TERRAIN
     ResourceManager->registerExtension(".chu", constructAtlasChunkFile);
+#endif
     //ResourceManager->registerExtension(".gf2", constructFont);
     ResourceManager->registerExtension(".uft", constructNewFont);
     ResourceManager->registerExtension(".dif", constructInteriorDIF);
+#ifdef TORQUE_TERRAIN
     ResourceManager->registerExtension(".ter", constructTerrainFile);
+#endif
     ResourceManager->registerExtension(".dts", constructTSShape);
     //   ResourceManager->registerExtension(".dml", constructMaterialList);
     ResourceManager->registerExtension(".map", constructInteriorMAP);
+#ifdef TORQUE_TERRAIN
     ResourceManager->registerExtension(".atlas", constructAtlasFileResource);
+#endif
 
     ResourceManager->registerExtension(".lmd", constructLevelModelLMD);
 
@@ -192,6 +201,8 @@ static bool initLibraries()
     RedBook::init();
     SFXSystem::init();
 
+    Autosplitter::init();
+
     return true;
 }
 
@@ -203,6 +214,8 @@ static void shutdownLibraries()
     // Purge any resources on the timeout list...
     if (ResourceManager)
         ResourceManager->purge();
+
+    Autosplitter::destroy();
 
     RedBook::destroy();
     TSShapeInstance::destroy();
@@ -399,7 +412,9 @@ bool initGame(int argc, const char** argv)
  #endif
  */
 
+#ifdef TORQUE_TERRAIN
     TerrainRender::init();
+#endif
     netInit();
     GameInit();
     ShowInit();
@@ -481,7 +496,9 @@ void shutdownGame()
     sgShadowTextureCache::sgClear();
     sgShadowSharedZBuffer::sgClear();
 
+#ifdef TORQUE_TERRAIN
     TerrainRender::shutdown();
+#endif
 }
 
 extern bool gDGLRender;

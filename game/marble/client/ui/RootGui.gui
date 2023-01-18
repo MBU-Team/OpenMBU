@@ -68,6 +68,17 @@ new GuiControl(RootGui) {
 		bitmap = "./xbox/BG_fadeOutSoftEdge";
 	   visible = "1";
 	};
+
+   new GuiTextCtrl(FPSDisplay) {
+      Profile = "TextTitleProfile";
+	   horizSizing = "right";
+	   vertSizing = "bottom";
+      position = "5 0";
+      extent = "1120 80";
+      minExtent = "8 8";
+      text = "FPS: ";
+      Visible = "0";
+   };
 };
 
 new GuiControl(RootCenterCtrl) {
@@ -400,6 +411,8 @@ function RootGui::show(%this)
       %this.add(RootCenterCtrl);
       RootCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    }
+
+   FPSDisplay.update();
 }
 
 function RootGui::removeContent(%this)
@@ -509,6 +522,7 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
 function RootGui::setA(%this,%text)
 {
    RootGuiAButtonText.setText(%text);
+   
    if (%text $= "")
       RootGuiAButton.visible = false;
    else
@@ -655,4 +669,22 @@ function RootBackgroundBitmaps::setVisible(%this,%vis)
    }
    
    RootBackgroundOverlay.setVisible(%vis);
+}
+
+function FPSDisplay::update(%this)
+{
+   // make sure periodic event is scheduled
+   if (!isEventPending(%this.periodicUpdate))
+      %this.periodicUpdate = %this.schedule(1000, update);
+
+   if ($showFPS)
+   {
+      %text = "FPS: " @ $fps::real;
+      %this.setText(%text);
+      %this.setVisible(true);
+   }
+   else
+   {
+      %this.setVisible(false);
+   }
 }

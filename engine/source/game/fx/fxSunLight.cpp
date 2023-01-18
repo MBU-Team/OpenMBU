@@ -1928,7 +1928,7 @@ bool fxSunLight::TestLOS(const Point3F& ObjectPosition)
     MatrixF wdMat = GFX->getWorldMatrix();
     wdMat.mul(GFX->getViewMatrix());
     MatrixF pjMat = GFX->getProjectionMatrix();
-    GFX->project(out, in, wdMat, pjMat, viewport);
+    MathUtils::projectWorldToScreen(in,out,viewport,wdMat,pjMat);
 
     if (out.z < 0.0 || out.z > 1.0 || out.x > viewport.extent.x || out.x < 0 || out.y > viewport.extent.y || out.y < 0)
         return false;

@@ -15,14 +15,19 @@
 #include "core/llist.h"
 
 #include "gfx/gfxEnums.h"
-#include "gfx/gfxStructs.h"
 #include "gfx/gfxShader.h"
+#include "gfx/gfxVertexBuffer.h"
+#include "gfx/gfxPrimitiveBuffer.h"
+#include "gfx/gfxTarget.h"
+#include "gfx/gfxStructs.h"
+#include "gfx/gfxAdapter.h"
+#include "gfx/gfxCubemap.h"
 #include "core/refBase.h"
 #include "gfx/gfxTextureObject.h"
 #include "gfx/gfxTextureManager.h"
 #include "gfx/gfxTextureHandle.h"
-#include "gfx/gfxVertexBuffer.h"
 #include "gfx/gfxStateFrame.h"
+#include "util/swizzle.h"
 
 #include "core/unicode.h"
 #include "core/frameAllocator.h"
@@ -30,10 +35,16 @@
 
 #include "util/safeDelete.h"
 
+#ifndef _SIGNAL_H_
+#include "util/tSignal.h"
+#include "sceneGraph/lightInfo.h"
+
+#endif
 
 class GFont;
 class GFXCubemap;
 class GFXCardProfiler;
+class GFXFence;
 
 // Global macro
 #define GFX GFXDevice::get()
@@ -153,10 +164,23 @@ private:
     friend class Blender;
     friend class GFXStateFrame;
     friend class sgLightingModel;
+    friend class GFXResource;
 
     //--------------------------------------------------------------------------
     // Static GFX interface
     //--------------------------------------------------------------------------
+public:
+    enum GFXDeviceEventType
+    {
+        /// The device has been created, but not initialized
+        deCreate,
+        /// The device has been initialized
+        deInit,
+        /// The device is about to be destroyed.
+        deDestroy
+    };
+    typedef Signal <GFXDeviceEventType> DeviceEventSignal;
+    static DeviceEventSignal& getDeviceEventSignal();
 
 private:
     /// @name Device management variables
@@ -165,6 +189,8 @@ private:
     static S32 smActiveDeviceIndex;         ///< Active GFX Device index, signed so -1 can be uninitalized
 
     static bool smUseZPass;
+
+    static DeviceEventSignal* smSignalGFXDeviceEvent;
 
     /// @}
 
@@ -177,7 +203,7 @@ public:
     static const Vector<GFXDevice*>* getDeviceVector() { return &smGFXDevice; };
     static GFXDevice* get();
     static void setActiveDevice(U32 deviceIndex);
-    static bool devicePresent() { return smActiveDeviceIndex > -1 && smGFXDevice[smActiveDeviceIndex] != NULL; }
+    static bool devicePresent() { return smActiveDeviceIndex > -1 && smActiveDeviceIndex < smGFXDevice.size() && smGFXDevice[smActiveDeviceIndex] != NULL; }
 
     //--------------------------------------------------------------------------
     // Core GFX interface
@@ -185,6 +211,9 @@ public:
 private:
     /// Device ID for this device.
     U32 mDeviceIndex;
+
+    /// Adapter for this device.
+    GFXAdapter mAdapter;
 
 protected:
     /// List of valid video modes for this device.
@@ -196,22 +225,37 @@ protected:
     /// The CardProfiler for this device.
     GFXCardProfiler* mCardProfiler;
 
+    /// Head of the resource list.
+    ///
+    /// @see GFXResource
+    GFXResource *mResourceListHead;
+
     /// Set once the device is active.
     bool mCanCurrentlyRender;
 
     /// Set if we're in a mode where we want rendering to occur.
     bool mAllowRender;
 
+    /// This will allow querying to see if a device is initialized and ready to
+    /// have operations performed on it.
+    bool mInitialized;
+
     /// This is called before this, or any other device, is deleted in the global destroy()
     /// method. It allows the device to clean up anything while everything is still valid.
     virtual void preDestroy() = 0;
+
+    /// Set the adapter that this device is using.  For use by GFXInit::createDevice only.
+    virtual void setAdapter(const GFXAdapter& adapter) { mAdapter = adapter; }
+
+    /// Notify GFXDevice that we are initialized
+    virtual void deviceInited();
 
 public:
     GFXDevice();
     virtual ~GFXDevice();
 
     /// initialize - create window, device, etc
-    virtual void init(const GFXVideoMode& mode) = 0;
+    virtual void init(const GFXVideoMode& mode/*, PlatformWindow *window = NULL*/) = 0;
 
     virtual void activate() = 0;
     virtual void deactivate() = 0;
@@ -226,6 +270,9 @@ public:
     /// Returns active graphics adapter type.
     virtual GFXAdapterType getAdapterType() = 0;
 
+    /// Returns the Adapter that was used to create this device
+    virtual const GFXAdapter& getAdapter() { return mAdapter; }
+
     /// @}
 
     /// @name Debug Methods
@@ -234,6 +281,47 @@ public:
     virtual void enterDebugEvent(ColorI color, const char* name) = 0;
     virtual void leaveDebugEvent() = 0;
     virtual void setDebugMarker(ColorI color, const char* name) = 0;
+
+    /// @}
+
+    /// @name Resource debug methods
+    /// @{
+
+    /// Lists how many of each GFX resource (e.g. textures, texture targets, shaders, etc.) GFX is aware of
+    /// @param unflaggedOnly   If true, this method only counts unflagged resources
+    virtual void listResources(bool unflaggedOnly);
+
+    /// Flags all resources GFX is currently aware of
+    virtual void flagCurrentResources();
+
+    /// Clears the flag on all resources GFX is currently aware of
+    virtual void clearResourceFlags();
+
+    /// Dumps a description of the specified resource types to the console
+    /// @param resNames     A string of space separated class names (e.g. "GFXTextureObject GFXTextureTarget GFXShader")
+    ///                     to describe to the console
+    /// @param file         A path to the file to write the descriptions to.  If it is NULL or "", descriptions are
+    ///                     written to the console.
+    /// @param unflaggedOnly If true, this method only counts unflagged resources
+    /// @note resNames is case sensitive because there is no dStristr function.
+    virtual void describeResources(const char* resName, const char* file, bool unflaggedOnly);
+
+    /// This method sets up the initial states for the GFXDevice. If state
+    /// debugging is enabled, this method will get called at the beginning of
+    /// every frame, and at the end of the frame, it will generate a report of the
+    /// state activity on the states which it sets up.
+    void setInitialGFXState();
+
+protected:
+    /// This is a helper method for describeResourcesToFile.  It walks through the
+    /// GFXResource list and sorts it by item type, putting the resources into the proper vector.
+    /// @see describeResources
+    virtual void fillResourceVectors(const char* resNames, bool unflaggedOnly, Vector<GFXTextureObject*> &textureObjects,
+                                     Vector<GFXTextureTarget*> &textureTargets, Vector<GFXWindowTarget*> &windowTargets,
+                                     Vector<GFXVertexBuffer*> &vertexBuffers, Vector<GFXPrimitiveBuffer*> &primitiveBuffers,
+                                     Vector<GFXFence*> &fences, Vector<GFXCubemap*> &cubemaps, Vector<GFXShader*> &shaders);
+
+public:
 
     /// @}
 
@@ -318,11 +406,33 @@ protected:
         GFXTDT_Cube
     };
 
-    void* mCurrentTexture[TEXTURE_STAGE_COUNT];
+    GFXTexHandle mCurrentTexture[TEXTURE_STAGE_COUNT];
+    GFXTexHandle mNewTexture[TEXTURE_STAGE_COUNT];
+    GFXCubemapHandle mCurrentCubemap[TEXTURE_STAGE_COUNT];
+    GFXCubemapHandle mNewCubemap[TEXTURE_STAGE_COUNT];
+
     TexDirtyType   mTexType[TEXTURE_STAGE_COUNT];
     bool           mTextureDirty[TEXTURE_STAGE_COUNT];
     bool           mTexturesDirty;
 
+   /// @name Light Tracking
+   /// @{
+
+   LightInfo  mCurrentLight[LIGHT_STAGE_COUNT];
+   bool          mCurrentLightEnable[LIGHT_STAGE_COUNT];
+   bool          mLightDirty[LIGHT_STAGE_COUNT];
+   bool          mLightsDirty;
+
+   ColorF        mGlobalAmbientColor;
+   bool          mGlobalAmbientColorDirty;
+
+   /// @}
+
+   /// @name Fixed function material tracking
+   /// @{
+
+   GFXLightMaterial mCurrentLightMaterial;
+   bool mLightMaterialDirty;
     /// @}
 
     /// @name Bitmap modulation and color stack
@@ -334,6 +444,11 @@ protected:
     GFXVertexColor mColorStackValue;
     /// @}
 
+    /// @see getDeviceSwizzle32
+    Swizzle<U8, 4> *mDeviceSwizzle32;
+
+    /// @see getDeviceSwizzle24
+    Swizzle<U8, 3> *mDeviceSwizzle24;
 
     //-----------------------------------------------------------------------------
 
@@ -350,6 +465,10 @@ protected:
 
     MatrixF mViewMatrix;
     bool    mViewMatrixDirty;
+
+    MatrixF mTextureMatrix[TEXTURE_STAGE_COUNT];
+    bool    mTextureMatrixDirty[TEXTURE_STAGE_COUNT];
+    bool    mTextureMatrixCheckDirty;
     /// @}
 
     //-----------------------------------------------------------------------------
@@ -373,6 +492,13 @@ protected:
     /// @}
 
     virtual void setTextureInternal(U32 textureUnit, const GFXTextureObject* texture) = 0;
+
+    virtual void setLightInternal(U32 lightStage, const LightInfo light, bool lightEnable) = 0;
+    virtual void setGlobalAmbientInternal(ColorF color) = 0;
+    virtual void setLightMaterialInternal(const GFXLightMaterial mat) = 0;
+
+    virtual void beginSceneInternal() = 0;
+    virtual void endSceneInternal() = 0;
 
     /// @name State Initalization.
     /// @{
@@ -448,30 +574,17 @@ protected:
 protected:
     GFXTexHandle mSfxBackBuffer;
     bool         mUseSfxBackBuffer;
+    static S32   smSfxBackBufferSize;
+
 
 
     //---------------------------------------
     // Render target related
     //---------------------------------------
-    struct RTStackElement
-    {
-        GFXTextureObject* renderTarget[MAX_MRT_TARGETS];
-        U32               mipLevel[MAX_MRT_TARGETS];
+    Vector<GFXTargetRef> mRTStack;
+    GFXTargetRef mCurrentRT;
 
-        RTStackElement()
-        {
-            clear();
-        }
-        void clear()
-        {
-            dMemset(this, 0, sizeof(RTStackElement));
-        }
-
-    };
-
-    RTStackElement mCurrentRTData;
-    LList <RTStackElement> mRTStack;
-
+    virtual void _updateRenderTargets();
 
 public:
 
@@ -506,35 +619,49 @@ public:
 
     ///@}
 
+    /// Swizzle to convert 32bpp bitmaps from RGBA to the native device format.
+    const Swizzle<U8, 4> *getDeviceSwizzle32() const
+    {
+        return mDeviceSwizzle32;
+    }
+
+    /// Swizzle to convert 24bpp bitmaps from RGB to the native device format.
+    const Swizzle<U8, 3> *getDeviceSwizzle24() const
+    {
+        return mDeviceSwizzle24;
+    }
+
     /// @name Render Target functions
     /// @{
 
+    /// Allocate a target for doing render to texture operations, with no
+    /// depth/stencil buffer.
+    virtual GFXTextureTarget *allocRenderToTextureTarget()=0;
+
+    /// Allocate a target for a given window.
+    virtual GFXWindowTarget *allocWindowTarget(/*PlatformWindow *window*/)=0;
+
     /// Save current render target states - note this works with MRT's
-    virtual void pushActiveRenderSurfaces() = 0;
-    virtual void pushActiveZSurface() = 0;
+    virtual void pushActiveRenderTarget();
 
     /// Restore all render targets - supports MRT's
-    virtual void popActiveRenderSurfaces() = 0;
-    virtual void popActiveZSurface() = 0;
+    virtual void popActiveRenderTarget();
 
-    /// Start rendering to to a specified render target.  This function can be used to set up
-    ///    multiple render targets (MRT).  Each render target is indicated by the renderTargetIndex.
-    ///    If using only one render target, specify 0 (or nothing) as the renderTargetIndex.
-    ///    To turn off a particular render target, pass in the proper index and set the surface parameter to NULL
-    virtual void setActiveRenderSurface(GFXTextureObject* surface, U32 renderTargetIndex = 0, U32 mipLevel = 0) = 0;
-    virtual void setActiveZSurface(GFXTextureObject* surface) = 0;
+    /// Start rendering to to a specified render target.
+    virtual void setActiveRenderTarget( GFXTarget *target )=0;
+
+    /// Return a pointer to the current active render target.
+    virtual GFXTarget *getActiveRenderTarget();
 
     ///@}
 
-
-
     /// @name Shader functions
     /// @{
-    virtual F32 getPixelShaderVersion() = 0;
+    virtual F32 getPixelShaderVersion() const = 0;
     virtual void  setPixelShaderVersion(F32 version) = 0;
 
     /// Returns the number of texture samplers that can be used in a shader rendering pass
-    virtual U32 getNumSamplers() = 0;
+    virtual U32 getNumSamplers() const = 0;
 
     virtual void setShader(GFXShader* shader) {};
     virtual void setVertexShaderConstF(U32 reg, const float* data, U32 size) {};
@@ -546,13 +673,16 @@ public:
     /// @param  vertFile       Vertex shader filename
     /// @param  pixFile        Pixel shader filename
     /// @param  pixVersion     Pixel shader version
-    virtual GFXShader* createShader(char* vertFile, char* pixFile, F32 pixVersion) = 0;
+    virtual GFXShader* createShader(const char* vertFile, const char* pixFile, F32 pixVersion) = 0;
 
     /// Generates a shader based on the passed in features
     virtual GFXShader* createShader(GFXShaderFeatureData& featureData, GFXVertexFlags vertFlags) = 0;
 
     /// Destroys shader
     virtual void destroyShader(GFXShader* shader) {};
+
+    // This is called by MatInstance::reinitInstances to cause the shaders to be regenerated.
+    virtual void flushProceduralShaders() = 0;
 
     /// @}
 
@@ -561,9 +691,9 @@ public:
     /// @name Rendering methods
     /// @{
     virtual void clear(U32 flags, ColorI color, F32 z, U32 stencil) = 0;
-    virtual void beginScene() = 0;
-    virtual void endScene() = 0;
-    virtual void swapBuffers() = 0;
+    virtual void beginScene();
+    virtual void endScene();
+    //virtual void swapBuffers() = 0;
 
     void setPrimitiveBuffer(GFXPrimitiveBuffer* buffer);
     void setVertexBuffer(GFXVertexBuffer* buffer);
@@ -578,10 +708,24 @@ public:
 
     //-----------------------------------------------------------------------------
 
+    /// Allocate a fence. The API specific implementation of GFXDevice is responsible
+    /// to make sure that the proper type is used. GFXGeneralFence should work in
+    /// all cases.
+    virtual GFXFence *createFence() = 0;
+
     /// This resets a number of basic rendering states.  Insures that a forgotten
     /// state like a disable Z buffer doesn't affect other bits of rendering code.
     void setBaseRenderState();
 
+    /// @name Light Settings
+    /// NONE of these should be overridden by API implementations
+    /// because of the state caching stuff.
+    /// @{
+    void setLight(U32 stage, LightInfo* light);
+    void setLightMaterial(GFXLightMaterial mat);
+    void setGlobalAmbientColor(ColorF color);
+
+    /// @}
 
     /// @name Texture State Settings
     /// NONE of these should be overridden by API implementations
@@ -595,6 +739,8 @@ public:
     void setTextureStageColorOp(U32 stage, GFXTextureOp op);
     void setTextureStageColorArg1(U32 stage, U32 argFlags);
     void setTextureStageColorArg2(U32 stage, U32 argFlags);
+    void setTextureStageColorArg3( U32 stage, U32 argFlags );
+    void setTextureStageResultArg( U32 stage, GFXTextureArgument arg );
     void setTextureStageAlphaOp(U32 stage, GFXTextureOp op);
     void setTextureStageAlphaArg1(U32 stage, U32 argFlags);
     void setTextureStageAlphaArg2(U32 stage, U32 argFlags);
@@ -747,6 +893,7 @@ public:
     virtual const RectI& getViewport() const = 0;
 
     virtual void setClipRect(const RectI& rect) = 0;
+    virtual void setClipRectOrtho( const RectI &rect, const RectI &orthoRect ) = 0;
     virtual const RectI& getClipRect() const = 0;
 
     void setFrustum(F32 left, F32 right, F32 bottom, F32 top, F32 nearPlane, F32 farPlane, bool bRotate = true);
@@ -759,17 +906,17 @@ public:
     F32 projectRadius(F32 dist, F32 radius);
 
     /// project 3D point onto 2D screen.  Returns X, Y, and depth in the outPoint vector.
-    virtual void project(Point3F& outPoint,
-        Point3F& inPoint,
-        MatrixF& modelview,
-        MatrixF& projection,
-        RectI& viewport) = 0;
-
-    virtual void unProject(Point3F& outPoint,
-        Point3F& inPoint,
-        MatrixF& modelview,
-        MatrixF& projection,
-        RectI& viewport) = 0;
+//    virtual void project(Point3F& outPoint,
+//        Point3F& inPoint,
+//        MatrixF& modelview,
+//        MatrixF& projection,
+//        RectI& viewport) = 0;
+//
+//    virtual void unProject(Point3F& outPoint,
+//        Point3F& inPoint,
+//        MatrixF& modelview,
+//        MatrixF& projection,
+//        RectI& viewport) = 0;
 
     /// @}
 
@@ -816,6 +963,7 @@ public:
     enum GenericShaderType
     {
         GSColor = 0,
+        GSTexture,
         GSModColorTexture,
         GSAddColorTexture,
         GS_COUNT
@@ -834,6 +982,14 @@ public:
     virtual U32 getMaxDynamicIndices() = 0;
 
     virtual void doParanoidStateCheck() {};
+
+#ifndef TORQUE_SHIPPING
+    /// This is a method designed for debugging. It will allow you to dump the states
+    /// in the render manager out to a file so that it can be diffed and examined.
+    void _dumpStatesToFile( const char *fileName ) const;
+#else
+    void _dumpStatesToFile( const char *fileName ) const {};
+#endif
 };
 
 //-----------------------------------------------------------------------------
@@ -854,9 +1010,19 @@ inline void GFXDevice::setTextureStageColorArg2(U32 stage, U32 argFlags)
     trackTextureStageState(stage, GFXTSSColorArg2, argFlags);
 }
 
+inline void GFXDevice::setTextureStageColorArg3( U32 stage, U32 argFlags )
+{
+   trackTextureStageState( stage, GFXTSSColorArg0, argFlags );
+}
+
 inline void GFXDevice::setTextureStageAlphaOp(U32 stage, GFXTextureOp op)
 {
     trackTextureStageState(stage, GFXTSSAlphaOp, op);
+}
+
+inline void GFXDevice::setTextureStageResultArg( U32 stage, GFXTextureArgument arg )
+{
+   trackTextureStageState( stage, GFXTSSResultArg, arg );
 }
 
 inline void GFXDevice::setTextureStageAlphaArg1(U32 stage, U32 argFlags)
@@ -936,7 +1102,7 @@ inline void GFXDevice::setTextureStageMaxMipLevel(U32 stage, U32 maxMiplevel)
 
 inline void GFXDevice::setTextureStageMaxAnisotropy(U32 stage, F32 maxAnisotropy)
 {
-    trackSamplerState(stage, GFXSAMPMaxAnisotropy, maxAnisotropy);
+    trackSamplerState(stage, GFXSAMPMaxAnisotropy, (U32)maxAnisotropy);
 }
 
 //-----------------------------------------------------------------------------

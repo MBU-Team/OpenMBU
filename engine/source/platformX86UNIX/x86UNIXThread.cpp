@@ -14,7 +14,7 @@
 struct x86UNIXThreadData
 {
    ThreadRunFunction       mRunFunc;
-   S32                     mRunArg;
+   void*                     mRunArg;
    Thread *                mThread;
    void *                  mSemaphore;
 
@@ -28,7 +28,7 @@ struct x86UNIXThreadData
 };
 
 //--------------------------------------------------------------------------
-Thread::Thread(ThreadRunFunction func, S32 arg, bool start_thread)
+Thread::Thread(ThreadRunFunction func, void* arg, bool start_thread)
 {
    x86UNIXThreadData * threadData = new x86UNIXThreadData();
    threadData->mRunFunc = func;
@@ -80,7 +80,7 @@ bool Thread::join()
    return(Semaphore::acquireSemaphore(threadData->mSemaphore));
 }
 
-void Thread::run(S32 arg)
+void Thread::run(void* arg)
 {
    x86UNIXThreadData * threadData = reinterpret_cast<x86UNIXThreadData*>(mData);
    if(threadData->mRunFunc)
@@ -95,4 +95,9 @@ bool Thread::isAlive()
    if(signal)
       Semaphore::releaseSemaphore(threadData->mSemaphore);
    return(!signal);
+}
+
+U32 Thread::getCurrentThreadId()
+{
+    return (U32)pthread_self();
 }

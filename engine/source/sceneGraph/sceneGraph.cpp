@@ -8,8 +8,10 @@
 #include "sceneGraph/sceneRoot.h"
 #include "sceneGraph/sceneState.h"
 #include "sim/netConnection.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
+#endif
 #include "sim/decalManager.h"
 #include "sceneGraph/detailManager.h"
 #include "core/fileStream.h"
@@ -52,7 +54,9 @@ SceneGraph::SceneGraph(bool isClient)
     mFogColor.set(128, 128, 128);
 
     mCurrSky = NULL;
+#ifdef TORQUE_TERRAIN
     mCurrTerrain = NULL;
+#endif
     mFreeRefPool = NULL;
     addRefPoolBlock();
 
@@ -224,8 +228,6 @@ void SceneGraph::buildFogTexture(SceneState* pState)
         return;
     }
 
-    const Point3F& cp = pState->getCameraPosition();
-
     if (!bool(mFogTexture))
     {
         // This texture should be Dynamic AND KeepBitmap - not possible
@@ -234,10 +236,27 @@ void SceneGraph::buildFogTexture(SceneState* pState)
         mFogTextureIntensity = mFogTexture;
     }
 
-    // build the fog texture
-    TerrainBlock* block = getCurrentTerrain();
+    // If there is no scenestate, lets just create an empty fog (needed for GuiObjectView currently)
+    if (!pState)
+    {
+        GBitmap* fogBitmap = mFogTexture.getBitmap();
+        U8* bits = fogBitmap->getWritableBits();
+        dMemset(bits, 0, fogBitmap->bytesPerPixel * fogBitmap->getWidth() * fogBitmap->getHeight());
+        mFogTexture.refresh();
+        //GBitmap* blackfogBitmap = mBlackFogTexture.getBitmap();
+        //U8* blackbits = blackfogBitmap->getWritableBits();
+        //dMemset(blackbits, 0, blackfogBitmap->bytesPerPixel * blackfogBitmap->getWidth() * blackfogBitmap->getHeight());
+        //mBlackFogTexture.refresh();
+        return;
+    }
+
+    const Point3F& cp = pState->getCameraPosition();
 
     F32 heightRange = 250.0;
+
+#ifdef TORQUE_TERRAIN
+    // build the fog texture
+    TerrainBlock* block = getCurrentTerrain();
 
     if (block)
     {
@@ -245,6 +264,7 @@ void SceneGraph::buildFogTexture(SceneState* pState)
         heightRange = fixedToFloat(sq->maxHeight - sq->minHeight);
         mHeightOffset = fixedToFloat(sq->minHeight);
     }
+#endif
 
     mInvHeightRange = 1 / heightRange;
     mInvVisibleDistance = 1 / getVisibleDistanceMod();
@@ -496,11 +516,13 @@ void SceneGraph::scopeScene(const Point3F& scopePosition,
 //------------------------------------------------------------------------------
 bool SceneGraph::addObjectToScene(SceneObject* obj)
 {
+#ifdef TORQUE_TERRAIN
     if (obj->getType() & TerrainObjectType) {
         // Double check
         AssertFatal(dynamic_cast<TerrainBlock*>(obj) != NULL, "Not a terrain, but a terrain type?");
         mCurrTerrain = static_cast<TerrainBlock*>(obj);
     }
+#endif
     if (obj->getType() & EnvironmentObjectType) {
         if (dynamic_cast<Sky*>(obj) != NULL) {
             mCurrSky = static_cast<Sky*>(obj);
@@ -528,12 +550,14 @@ void SceneGraph::removeObjectFromScene(SceneObject* obj)
     if (obj->mSceneManager != NULL) {
         AssertFatal(obj->mSceneManager == this, "Error, removing from the wrong sceneGraph!");
 
+#ifdef TORQUE_TERRAIN
         if (obj->getType() & TerrainObjectType) {
             // Double check
             AssertFatal(dynamic_cast<TerrainBlock*>(obj) != NULL, "Not a terrain, but a terrain type?");
             if (mCurrTerrain == static_cast<TerrainBlock*>(obj))
                 mCurrTerrain = NULL;
         }
+#endif
         if (obj->getType() & EnvironmentObjectType) {
             if (dynamic_cast<Sky*>(obj) != NULL && mCurrSky == static_cast<Sky*>(obj))
                 mCurrSky = NULL;

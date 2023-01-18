@@ -2,7 +2,7 @@
 // Torque Shader Engine
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
-#include "RenderTranslucentMgr.h"
+#include "renderTranslucentMgr.h"
 #include "materials/sceneData.h"
 #include "sceneGraph/sceneGraph.h"
 #include "materials/matInstance.h"
@@ -44,12 +44,17 @@ void RenderTranslucentMgr::addElement(RenderInst* inst)
     F32 camDist = (gRenderInstManager.getCamPos() - inst->sortPoint).len();
     elem.key = *((U32*)&camDist);
 
+    //F32 camDist = HIGH_NUM - (gRenderInstManager.getCamPos() - inst->sortPoint).lenSquared() * 2500.0f;
+    //elem.key = *((U32*)&camDist);
+
     // we want key2 to sort by Material, but if the matInst is null, we can't.
     // in that case, use the "miscTex" for the secondary key
+
+    // TODO: might break under 64 bit
     if (inst->matInst == NULL)
-        elem.key2 = (U32) inst->miscTex;
+        elem.key2 = static_cast<U32>(reinterpret_cast<size_t>(inst->miscTex));
     else
-        elem.key2 = (U32) inst->matInst->getMaterial();
+        elem.key2 = static_cast<U32>(reinterpret_cast<size_t>(inst->matInst->getMaterial()));
 }
 
 //-----------------------------------------------------------------------------
@@ -67,7 +72,7 @@ void RenderTranslucentMgr::render()
 
     SceneGraphData sgData;
 
-    GFX->setCullMode(GFXCullNone);
+    //GFX->setCullMode(GFXCullNone);
 
     // set up register combiners
     GFX->setTextureStageAlphaOp(0, GFXTOPModulate);
@@ -83,11 +88,12 @@ void RenderTranslucentMgr::render()
     GFX->setAlphaRef(1);
     GFX->setAlphaFunc(GFXCmpGreaterEqual);
 
+    GFX->setAlphaBlendEnable( true );
 
     GFX->setZWriteEnable(false);
 
-    U32 numChanges = 0;
-    U32 numDrawCalls = 0;
+    //U32 numChanges = 0;
+    //U32 numDrawCalls = 0;
 
     U32 binSize = mElementList.size();
     for (U32 j = 0; j < binSize; )
@@ -166,6 +172,7 @@ void RenderTranslucentMgr::render()
         {
             GFX->setTextureStageColorOp(0, GFXTOPModulate);
             GFX->setTextureStageColorOp(1, GFXTOPDisable);
+            GFX->setZWriteEnable( false );
 
             if (ri->translucent)
             {
@@ -197,10 +204,10 @@ void RenderTranslucentMgr::render()
         setupSGData(ri, sgData);
 
         GFX->setZWriteEnable(false);
-        bool firstmatpass = true;
+        //bool firstmatpass = true;
         while (mat->setupPass(sgData))
         {
-            ++numChanges;
+            //++numChanges;
 
             U32 a;
             for (a = j; a < binSize; a++)
@@ -229,9 +236,9 @@ void RenderTranslucentMgr::render()
 //                    }
 //                }
 
-                setupSGData(passRI, sgData);
-                sgData.matIsInited = true;
-                mat->setLightInfo(sgData);
+                //setupSGData(passRI, sgData);
+                //sgData.matIsInited = true;
+                //mat->setLightInfo(sgData);
                 mat->setWorldXForm(*passRI->worldXform);
                 mat->setObjectXForm(*passRI->objXform);
                 mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
@@ -240,11 +247,11 @@ void RenderTranslucentMgr::render()
                 // draw it
                 GFX->drawPrimitive(passRI->primBuffIndex);
 
-                ++numDrawCalls;
+                //++numDrawCalls;
             }
 
             matListEnd = a;
-            firstmatpass = false;
+            //firstmatpass = false;
         }
 
         // force increment if none happened, otherwise go to end of batch

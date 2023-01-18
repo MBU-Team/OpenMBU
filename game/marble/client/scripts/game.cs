@@ -733,7 +733,7 @@ function clientWriteMultiplayerScore(%client)
 
 function clientAreStatsAllowed()
 {
-   return !isDemoLaunch() && !isPCBuild() && XBLiveIsSignedInSilver() && $Client::UseXBLiveMatchMaking;
+   return !isDemoLaunch();// && !isPCBuild() && XBLiveIsSignedInSilver() && $Client::UseXBLiveMatchMaking;
 }
 
 function clientAreOfflineStatsAllowed()
@@ -778,6 +778,9 @@ function clientCmdSetGameState(%state, %data)
    {
       $GameEndUserName = XBLiveGetUserName();
       $GameEndNoAllowPause = true;
+      
+      // Tell autosplitter we finished the level
+      sendAutosplitterData("finish" SPC GameMissionInfo.getCurrentMission().level);
    }
    else
       $GameEndNoAllowPause = false;

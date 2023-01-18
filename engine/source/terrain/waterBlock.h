@@ -106,7 +106,7 @@ private:
 
     // materials
     const char* mSurfMatName[NUM_MAT_TYPES];
-    CustomMaterial* mMaterial[NUM_MAT_TYPES];
+    MatInstance* mMaterial[NUM_MAT_TYPES];
 
     // for reflection update interval
     U32 mRenderUpdateCount;

@@ -195,8 +195,9 @@ void GuiMLTextCtrl::drawAtomText(bool sel, U32 start, U32 end, Atom* atom, Line*
 
     if (!sel)
     {
+#ifdef MBG_FONT_SHADOW_RENDERING
         // In MBU this code isn't here, and it uses the profile shadow value instead.
-        /*if (atom->style->shadowOffset.x || atom->style->shadowOffset.y)
+        if (atom->style->shadowOffset.x || atom->style->shadowOffset.y)
         {
             ColorI shadowColor = atom->style->shadowColor;
             shadowColor.alpha = shadowColor.alpha * mAlpha;
@@ -204,7 +205,8 @@ void GuiMLTextCtrl::drawAtomText(bool sel, U32 start, U32 end, Atom* atom, Line*
 
 
             GFX->drawTextN(font, drawPoint + atom->style->shadowOffset, tmp, end - start, mAllowColorChars ? mProfile->mFontColors : NULL);
-        }*/
+        }
+#endif
 
         if (mProfile->mShadow)
         {

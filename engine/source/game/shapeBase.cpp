@@ -17,9 +17,12 @@
 #include "game/shadow.h"
 #include "game/fx/explosion.h"
 #include "game/shapeBase.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/waterBlock.h"
+#endif
+#include "materials/material.h"
 #include "game/debris.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "game/physicalZone.h"
 #include "sceneGraph/detailManager.h"
 #include "math/mathUtils.h"
@@ -549,7 +552,7 @@ void ShapeBaseData::packData(BitStream* stream)
 
     if (stream->writeFlag(debris != NULL))
     {
-        stream->writeRangedU32(packed ? SimObjectId(debris) :
+        stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(debris)) :
             debris->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
     }
 
@@ -810,11 +813,11 @@ ShapeBase::~ShapeBase()
         sFreeTimeoutList = cur;
     }
 
-    if (mDynamicCubemap)
+    /*if (mDynamicCubemap)
     {
         delete mDynamicCubemap;
         mDynamicCubemap = NULL;
-    }
+    }*/
 }
 
 
@@ -2134,7 +2137,7 @@ void ShapeBase::updateAudioState(Sound& st)
     {
         if (isGhost())
         {
-            if (Sim::findObject(SimObjectId(st.profile), st.profile))
+            if (Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(st.profile)), st.profile))
             {
                 st.sound = SFX->createSource(st.profile, &getTransform());
                 if (st.sound)
@@ -2673,7 +2676,7 @@ void ShapeBase::renderShadow(SceneState* state, RenderInst* ri)
 //----------------------------------------------------------------------------
 void ShapeBase::updateReflection()
 {
-    if (mDynamicCubemap)
+    if (mDynamicCubemap.isValid())
     {
         Point3F pos = getPosition();
         mDynamicCubemap->updateDynamic(pos);
@@ -2962,12 +2965,14 @@ bool ShapeBase::pointInWater(Point3F& point)
     else
         getCurrentClientSceneGraph()->getWaterObjectList(sql);
 
+#ifdef TORQUE_TERRAIN
     for (U32 i = 0; i < sql.mList.size(); i++)
     {
         WaterBlock* pBlock = dynamic_cast<WaterBlock*>(sql.mList[i]);
         if (pBlock && pBlock->isUnderwater(point))
             return true;
     }
+#endif
 
     return false;
 }

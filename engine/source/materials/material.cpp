@@ -13,6 +13,18 @@
 #include "materialPropertyMap.h"
 #include <sceneGraph/sceneGraph.h>
 
+//--------------------------------------------------------------------------
+// getNormalizeCube - static method, returns a normalization cubemap
+//--------------------------------------------------------------------------
+GFXCubemap * Material::getNormalizeCube()
+{
+    if(normalizeCube)
+        return normalizeCube;
+    normalizeCube = GFX->createCubemap();
+    normalizeCube->initNormalize(64);
+    return normalizeCube;
+}
+
 //****************************************************************************
 // Material
 //****************************************************************************
@@ -77,6 +89,8 @@ static EnumTable::Enums gRenderBinEnums[] =
 EnumTable Material::mRenderBinTable(sizeof(gRenderBinEnums) / sizeof(EnumTable::Enums), gRenderBinEnums);
 #endif
 
+GFXCubemapHandle Material::normalizeCube;
+
 //----------------------------------------------------------------------------
 // Constructor
 //----------------------------------------------------------------------------
@@ -86,6 +100,7 @@ Material::Material()
     {
         diffuse[i].set(1.0, 1.0, 1.0, 1.0);
         specular[i].set(1.0, 1.0, 1.0, 1.0);
+        colorMultiply[i].set(0.0f, 0.0f, 0.0f, 0.0f);
         specularPower[i] = 8;
         pixelSpecular[i] = false;
         vertexSpecular[i] = false;
@@ -94,22 +109,30 @@ Material::Material()
         emissive[i] = false;
     }
 
-    mType = base;
+    mType = Base;
+    mIsIFL = false;
 
     castsShadow = true;
     breakable = false;
     doubleSided = false;
+    attenuateBackFace = false;
+    preload = false;
 
     translucent = false;
     subPassTranslucent = false;
     translucentBlendOp = LerpAlpha;
     translucentZWrite = false;
 
+    alphaTest = true;
+    alphaRef = 1;
+
     planarReflection = false;
 
     mCubemapData = NULL;
     dynamicCubemap = NULL;
     cubemapName = NULL;
+
+    dMemset( mPath, 0, sizeof(mPath) );
 
     dMemset(animFlags, 0, sizeof(animFlags));
     dMemset(scrollOffset, 0, sizeof(scrollOffset));
@@ -147,6 +170,7 @@ Material::Material()
 #endif
 
     hasSetStageData = false;
+    mLastUpdateTime = 0;
     mapTo = NULL;
 }
 
@@ -158,6 +182,7 @@ void Material::initPersistFields()
     Parent::initPersistFields();
 
     addField("diffuse", TypeColorF, Offset(diffuse, Material), MAX_STAGES);
+    addField("colorMultiply", TypeColorF, Offset(colorMultiply, Material), MAX_STAGES);
     addField("specular", TypeColorF, Offset(specular, Material), MAX_STAGES);
     addField("specularPower", TypeF32, Offset(specularPower, Material), MAX_STAGES);
     addField("pixelSpecular", TypeBool, Offset(pixelSpecular, Material), MAX_STAGES);
@@ -171,9 +196,14 @@ void Material::initPersistFields()
     addField("translucentBlendOp", TypeEnum, Offset(translucentBlendOp, Material), 1, &mBlendOpTable);
     addField("translucentZWrite", TypeBool, Offset(translucentZWrite, Material));
 
+    addField("alphaTest",    TypeBool, Offset(alphaTest,  Material));
+    addField("alphaRef",     TypeS32,  Offset(alphaRef,   Material));
+
     addField("castsShadow", TypeBool, Offset(castsShadow, Material));
     addField("breakable", TypeBool, Offset(breakable, Material));
     addField("doubleSided", TypeBool, Offset(doubleSided, Material));
+    addField("attenuateBackFace",    TypeBool, Offset(attenuateBackFace,   Material));
+    addField("preload",        TypeBool, Offset(preload, Material));
 
     addField("scrollDir", TypePoint2F, Offset(scrollDir, Material), MAX_STAGES);
     addField("scrollSpeed", TypeF32, Offset(scrollSpeed, Material), MAX_STAGES);
@@ -235,15 +265,26 @@ bool Material::onAdd()
         mCubemapData = static_cast<CubemapData*>(Sim::findObject(cubemapName));
     }
 
+    if( translucentBlendOp >= NumBlendTypes || translucentBlendOp < 0 )
+    {
+        Con::errorf( "Invalid blend op in material: %s", getName() );
+        translucentBlendOp = LerpAlpha;
+    }
+
     SimSet* matSet = getMaterialSet();
     if (matSet)
     {
         matSet->addObject((SimObject*)this);
     }
 
-    mapMaterial();
+    // save the current script path for texture lookup later
+    const char *curScriptFile = Con::getVariable("Con::File");  // current script file - local materials.cs
+    const char *path = dStrrchr( curScriptFile, '/' );
+    U32 fileStrLen = path - curScriptFile + 1;
+    dStrncpy( mPath, curScriptFile, fileStrLen );
+    mPath[fileStrLen] = '\0';
 
-    setStageData();
+    mapMaterial();
 
     return true;
 }
@@ -253,48 +294,9 @@ bool Material::onAdd()
 //--------------------------------------------------------------------------
 void Material::onRemove()
 {
+    SAFE_DELETE( normalizeCube );
 
     Parent::onRemove();
-}
-
-//--------------------------------------------------------------------------
-// Set stage data
-//--------------------------------------------------------------------------
-void Material::setStageData()
-{
-    if (hasSetStageData) return;
-    hasSetStageData = true;
-
-    U32 i;
-
-    for (i = 0; i < MAX_STAGES; i++)
-    {
-        if (baseTexFilename[i] && baseTexFilename[i][0])
-        {
-            stages[i].tex[GFXShaderFeatureData::BaseTex] = createTexture(baseTexFilename[i], &GFXDefaultStaticDiffuseProfile);
-        }
-
-        if (detailFilename[i] && detailFilename[i][0])
-        {
-            stages[i].tex[GFXShaderFeatureData::DetailMap] = createTexture(detailFilename[i], &GFXDefaultStaticDiffuseProfile);
-        }
-
-        if (bumpFilename[i] && bumpFilename[i][0])
-        {
-            stages[i].tex[GFXShaderFeatureData::BumpMap] = createTexture(bumpFilename[i], &GFXDefaultStaticDiffuseProfile);
-        }
-
-        if (envFilename[i] && envFilename[i][0])
-        {
-            stages[i].tex[GFXShaderFeatureData::EnvMap] = createTexture(envFilename[i], &GFXDefaultStaticDiffuseProfile);
-        }
-    }
-
-    if (mCubemapData)
-    {
-        mCubemapData->createMap();
-        stages[0].cubemap = mCubemapData->cubemap;
-    }
 }
 
 
@@ -304,148 +306,26 @@ void Material::setStageData()
 void Material::updateTime()
 {
     U32 curTime = Platform::getVirtualMilliseconds();
-    mDt = (curTime - mLastTime) / 1000.0;
-    mLastTime = curTime;
-    mAccumTime += mDt;
+    if(curTime > mLastTime)
+    {
+        mDt =  (curTime - mLastTime) / 1000.0f;
+        mLastTime = curTime;
+        mAccumTime += mDt;
+    }
 }
 
-//--------------------------------------------------------------------------
-// Set vertex and pixel shader constants
-//--------------------------------------------------------------------------
-void Material::setShaderConstants(const SceneGraphData& sgData, U32 stageNum)
+void Material::updateTimeBasedParams()
 {
-
-    // set eye positions
-    //-------------------------
-    Point3F eyePos = sgData.camPos;
-    MatrixF objTrans = sgData.objTrans;
-
-    objTrans.transpose();
-    GFX->setVertexShaderConstF(VC_OBJ_TRANS, (float*)&objTrans, 4);
-    objTrans = sgData.objTrans;
-    objTrans.affineInverse();
-
-    objTrans.mulP(eyePos);
-    GFX->setVertexShaderConstF(VC_EYE_POS, (float*)&eyePos, 1);
-
-
-    // fill in primary light
-    //-------------------------
-    Point3F lightPos = sgData.light.mPos;
-    Point3F lightDir = sgData.light.mDirection;
-    objTrans.mulP(lightPos);
-    objTrans.mulV(lightDir);
-
-    Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, sgData.light.sgTempModelInfo[0]);
-    GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
-    GFX->setVertexShaderConstF(VC_LIGHT_DIR1, (float*)&lightDir, 1);
-    GFX->setVertexShaderConstF(VC_LIGHT_DIFFUSE1, (float*)&sgData.light.mColor, 1);
-    GFX->setPixelShaderConstF(PC_AMBIENT_COLOR, (float*)&sgData.light.mAmbient, 1);
-
-    if (!emissive[stageNum])
-        GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&sgData.light.mColor, 1);
-    else
+    if (mLastUpdateTime != mLastTime)
     {
-        ColorF selfillum = LightManager::sgGetSelfIlluminationColor(diffuse[stageNum]);
-        GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&selfillum, 1);
+        for (U32 i = 0; i < MAX_STAGES; i++)
+        {
+            scrollOffset[i] += scrollDir[i] * scrollSpeed[i] * mDt;
+            rotPos[i] += rotSpeed[i] * mDt;
+            wavePos[i] += waveFreq[i] * mDt;
+        }
+        mLastUpdateTime = mLastTime;
     }
-
-    MatrixF lightingmat = sgData.light.sgLightingTransform;
-    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);
-
-
-    // fill in secondary light
-    //-------------------------
-    lightPos = sgData.lightSecondary.mPos;
-    lightDir = sgData.lightSecondary.mDirection;
-    objTrans.mulP(lightPos);
-    objTrans.mulV(lightDir);
-
-    lightPosModel = Point4F(lightPos.x, lightPos.y, lightPos.z, sgData.lightSecondary.sgTempModelInfo[0]);
-    GFX->setVertexShaderConstF(VC_LIGHT_POS2, (float*)&lightPosModel, 1);
-    GFX->setPixelShaderConstF(PC_DIFF_COLOR2, (float*)&sgData.lightSecondary.mColor, 1);
-
-    lightingmat = sgData.lightSecondary.sgLightingTransform;
-    GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat, 4);
-
-
-    // fill in cubemap data
-    //-------------------------
-    if (mCubemapData || sgData.cubemap)
-    {
-        Point3F cubeEyePos = sgData.camPos - sgData.objTrans.getPosition();
-        GFX->setVertexShaderConstF(VC_CUBE_EYE_POS, (float*)&cubeEyePos, 1);
-
-        MatrixF cubeTrans = sgData.objTrans;
-        cubeTrans.setPosition(Point3F(0.0, 0.0, 0.0));
-        cubeTrans.transpose();
-        GFX->setVertexShaderConstF(VC_CUBE_TRANS, (float*)&cubeTrans, 3);
-    }
-
-    // this is OK for now, will need to change later to support different
-    // specular values per pass in custom materials
-    //-------------------------
-    GFX->setPixelShaderConstF(PC_MAT_SPECCOLOR, (float*)&specular[stageNum], 1);
-    GFX->setPixelShaderConstF(PC_MAT_SPECPOWER, (float*)&specularPower[stageNum], 1);
-    GFX->setVertexShaderConstF(VC_MAT_SPECPOWER, (float*)&specularPower[stageNum], 1);
-
-    // fog
-    //-------------------------
-    Point4F fogData;
-    fogData.x = sgData.fogHeightOffset;
-    fogData.y = sgData.fogInvHeightRange;
-    fogData.z = sgData.visDist;
-    GFX->setVertexShaderConstF(VC_FOGDATA, (float*)&fogData, 1);
-
-    // set detail scale
- //   F32 scale = 2.0;
- //   GFX->setVertexShaderConstF( VC_DETAIL_SCALE, &scale, 1 );
-
-   // Visibility
-    F32 visibility = sgData.visibility;
-    GFX->setPixelShaderConstF(PC_VISIBILITY, &visibility, 1);
-}
-
-//--------------------------------------------------------------------------
-// Set blend state
-//--------------------------------------------------------------------------
-void Material::setBlendState(Material::BlendOp blendOp)
-{
-
-    switch (blendOp)
-    {
-    case Add:
-    {
-        GFX->setSrcBlend(GFXBlendOne);
-        GFX->setDestBlend(GFXBlendOne);
-        break;
-    }
-    case AddAlpha:
-    {
-        GFX->setSrcBlend(GFXBlendSrcAlpha);
-        GFX->setDestBlend(GFXBlendOne);
-        break;
-    }
-    case Mul:
-    {
-        GFX->setSrcBlend(GFXBlendDestColor);
-        GFX->setDestBlend(GFXBlendZero);
-        break;
-    }
-    case LerpAlpha:
-    {
-        GFX->setSrcBlend(GFXBlendSrcAlpha);
-        GFX->setDestBlend(GFXBlendInvSrcAlpha);
-        break;
-    }
-
-    default:
-        // default to LerpAlpha
-        GFX->setSrcBlend(GFXBlendSrcAlpha);
-        GFX->setDestBlend(GFXBlendInvSrcAlpha);
-        break;
-    }
-
 }
 
 //--------------------------------------------------------------------------
@@ -457,6 +337,11 @@ void Material::mapMaterial()
     {
         Con::warnf("Unnamed Material!  Could not map to: %s", mapTo);
         return;
+    }
+
+    if( mapTo && dStrstr( mapTo, ".ifl" ) )
+    {
+        mIsIFL = true;
     }
 
     // If mapTo not defined in script, try to use the base texture name instead
@@ -503,7 +388,7 @@ void Material::mapMaterial()
 //   for textures in the current script loading directory if no path is 
 //   specified in the texture script parameter.
 //--------------------------------------------------------------------------
-GFXTexHandle Material::createTexture(const char* filename, GFXTextureProfile* profile)
+/*GFXTexHandle Material::createTexture(const char* filename, GFXTextureProfile* profile)
 {
     // if '/', then path is specified, open normally
     if (dStrstr(filename, "/"))
@@ -511,7 +396,7 @@ GFXTexHandle Material::createTexture(const char* filename, GFXTextureProfile* pr
         return GFXTexHandle(filename, profile);
     }
 
-    // otherwise, 
+    // otherwise,
  //   const char *curScriptFile = Con::getCurrentFile();  // current script file - local materials.cs
     const char* curScriptFile = Con::getVariable("Con::File");  // current script file - local materials.cs
     const char* path = dStrrchr(curScriptFile, '/');
@@ -524,7 +409,7 @@ GFXTexHandle Material::createTexture(const char* filename, GFXTextureProfile* pr
     dStrcat(fullFilename, filename);
 
     return GFXTexHandle(fullFilename, profile);
-}
+}*/
 
 //--------------------------------------------------------------------------
 // getMaterialSet - returns "MaterialSet" SimSet

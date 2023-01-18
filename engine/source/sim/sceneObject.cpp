@@ -13,8 +13,10 @@
 #include "platform/profiler.h"
 #include "interior/interior.h"
 #include "interior/interiorInstance.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "atlas/runtime/atlasInstance2.h"
+#endif
 #include "gfx/gBitmap.h"
 #include "lightingSystem/sgLightObject.h"
 #include "sim/netConnection.h"

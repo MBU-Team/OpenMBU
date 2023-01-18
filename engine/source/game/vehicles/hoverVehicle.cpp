@@ -18,7 +18,9 @@
 #include "game/fx/particleEmitter.h"
 #include "math/mathIO.h"
 #include "materials/materialPropertyMap.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/waterBlock.h"
+#endif
 
 IMPLEMENT_CO_DATABLOCK_V1(HoverVehicleData);
 IMPLEMENT_CO_NETOBJECT_V1(HoverVehicle);
@@ -197,10 +199,10 @@ bool HoverVehicleData::preload(bool server, char errorBuffer[256])
     if (!server) {
         for (S32 i = 0; i < MaxSounds; i++)
             if (sound[i])
-                Sim::findObject(SimObjectId(sound[i]), sound[i]);
+                Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])), sound[i]);
         for (S32 j = 0; j < MaxJetEmitters; j++)
             if (jetEmitter[j])
-                Sim::findObject(SimObjectId(jetEmitter[j]), jetEmitter[j]);
+                Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(jetEmitter[j])), jetEmitter[j]);
     }
 
     if (!dustTrailEmitter && dustTrailID != 0)
@@ -246,14 +248,14 @@ void HoverVehicleData::packData(BitStream* stream)
 
     for (S32 i = 0; i < MaxSounds; i++)
         if (stream->writeFlag(sound[i]))
-            stream->writeRangedU32(packed ? SimObjectId(sound[i]) :
+            stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])) :
                 sound[i]->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
 
     for (S32 j = 0; j < MaxJetEmitters; j++)
     {
         if (stream->writeFlag(jetEmitter[j]))
         {
-            SimObjectId writtenId = packed ? SimObjectId(jetEmitter[j]) : jetEmitter[j]->getId();
+            SimObjectId writtenId = packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(jetEmitter[j])) : jetEmitter[j]->getId();
             stream->writeRangedU32(writtenId, DataBlockObjectIdFirst, DataBlockObjectIdLast);
         }
     }
@@ -598,6 +600,7 @@ void HoverVehicle::updateForces(F32 /*dt*/)
             normal[j] = rinfo.normal;
         }
 
+#ifdef TORQUE_TERRAIN
         // Check the waterblock directly
         SimpleQueryList sql;
         mSceneManager->getWaterObjectList(sql);
@@ -610,6 +613,7 @@ void HoverVehicle::updateForces(F32 /*dt*/)
                 break;
             }
         }
+#endif
     }
 
     for (j = 0; j < 2; j++) {

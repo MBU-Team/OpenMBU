@@ -6,7 +6,7 @@
 #include "util/frustrumCuller.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sgUtil.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 
 void FrustrumCuller::init(SceneState* state)
 {

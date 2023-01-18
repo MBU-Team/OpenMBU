@@ -316,7 +316,7 @@ void EditTSCtrl::renderMissionArea()
 
 //------------------------------------------------------------------------------
 
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 
 bool EditTSCtrl::processCameraQuery(CameraQuery* query)
 {

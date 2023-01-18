@@ -90,6 +90,14 @@ namespace Con
         return STR.getReturnBuffer(bufferSize);
     }
 
+    char* getReturnBuffer( const char *stringToCopy )
+    {
+        char *ret = STR.getReturnBuffer( dStrlen( stringToCopy ) + 1 );
+        dStrcpy( ret, stringToCopy );
+        ret[dStrlen( stringToCopy )] = '\0';
+        return ret;
+    }
+
     char* getArgBuffer(U32 bufferSize)
     {
         return STR.getArgBuffer(bufferSize);

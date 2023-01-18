@@ -138,7 +138,7 @@ bool VehicleData::preload(bool server, char errorBuffer[256])
     if (!server) {
         for (S32 i = 0; i < Body::MaxSounds; i++)
             if (body.sound[i])
-                Sim::findObject(SimObjectId(body.sound[i]), body.sound[i]);
+                Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(body.sound[i])), body.sound[i]);
     }
 
     if (!dustEmitter && dustID != 0)
@@ -187,7 +187,7 @@ void VehicleData::packData(BitStream* stream)
     stream->write(body.friction);
     for (i = 0; i < Body::MaxSounds; i++)
         if (stream->writeFlag(body.sound[i]))
-            stream->writeRangedU32(packed ? SimObjectId(body.sound[i]) :
+            stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(body.sound[i])) :
                 body.sound[i]->getId(), DataBlockObjectIdFirst,
                 DataBlockObjectIdLast);
 

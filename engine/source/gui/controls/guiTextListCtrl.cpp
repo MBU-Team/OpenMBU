@@ -304,6 +304,9 @@ void GuiTextListCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, 
 
             if (index < mColumnBmps.size() && mColumnBmps[index])
             {
+                ColorI saveColor;
+                GFX->getBitmapModulation(&saveColor);
+
                 ColorI bmpMod(255, 255, 255);
                 GFX->setBitmapModulation(bmpMod);
 
@@ -344,6 +347,8 @@ void GuiTextListCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, 
 
                     GFX->drawBitmapStretch(texture, rect);
                 }
+
+                GFX->setBitmapModulation(saveColor);
             }
             else
             {

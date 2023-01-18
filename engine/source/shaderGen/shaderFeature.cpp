@@ -1149,3 +1149,25 @@ void VisibilityFeat::processPix(Vector<ShaderComponent*>& componentList, GFXShad
 
     output = meta;
 }
+
+//----------------------------------------------------------------------------
+// Color multiply feature
+//----------------------------------------------------------------------------
+void ColorMultiplyFeat::processPix( Vector<ShaderComponent*> &componentList, GFXShaderFeatureData &fd )
+{
+    Var *colorMultiply  = new Var;
+    colorMultiply->setType( "float4" );
+    colorMultiply->setName( "colorMultiply" );
+    colorMultiply->uniform = true;
+    colorMultiply->constNum = PC_COLORMULTIPLY;
+
+    // search for color var
+    Var *color = (Var*) LangElement::find( "col" );
+    if (color)
+    {
+        MultiLine* meta = new MultiLine;
+        LangElement* statement = new GenOp("lerp(@.rgb, @.rgb, @.a)", color, colorMultiply, colorMultiply);
+        meta->addStatement(new GenOp("   @.rgb = @;\r\n", color, statement));
+        output = meta;
+    }
+}

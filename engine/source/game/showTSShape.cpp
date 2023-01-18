@@ -15,8 +15,10 @@
 #include "sceneGraph/sceneState.h"
 #include "console/consoleTypes.h"
 
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "terrain/terrRender.h"
+#endif
 
 ShowTSShape* ShowTSShape::currentShow = NULL;
 
@@ -400,9 +402,11 @@ void ShowTSShape::deleteThread(S32 th)
 
 void ShowTSShape::setPosition(Point3F p)
 {
+#ifdef TORQUE_TERRAIN
     if (stayGrounded && getCurrentClientSceneGraph()->getCurrentTerrain())
         // won't actually change p.z if on empty square
         getCurrentClientSceneGraph()->getCurrentTerrain()->getHeight(Point2F(p.x, p.y), &p.z);
+#endif
 
     centerPos = p + shapeInstance->getShape()->center;
     mat.setColumn(3, p);

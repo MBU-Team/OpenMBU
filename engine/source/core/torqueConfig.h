@@ -48,6 +48,9 @@
 /// Define me to enable shader caching support (Unfinished and really only needed for some versions of Wine or Proton)
 //#define TORQUE_SHADER_CACHING
 
+/// Define me to enable torque terrain
+//#define TORQUE_TERRAIN
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 
@@ -80,11 +83,25 @@
 // TEMP: Define me for a temporary fix for moving platform jitter
 #define MBU_TEMP_MP_DESYNC_FIX
 
+//#define EXPERIMENTAL_MP_LAG_FIX
+
+// Re-order the sky rendering like MBO does (WIP)
+//#define MB_FLIP_SKY
+
 // Define me to enable MarbleBlastUltra Preview System
 #define MB_ULTRA_PREVIEWS
 
 // Define me to enable xblive functions
 #define XB_LIVE
+
+// Define me to use MBG Moving Platform Timing
+//#define MBG_MOVING_PLATFORM_TIMING
+
+// Define me to allow phasing into platforms (MBG does this, and MBU did before the title update)
+//#define MB_PHYSICS_PHASE_INTO_PLATFORMS
+
+// Define me to fix the shape base images for MBG
+//#define MBG_SHAPEBASEFIX
 
 //-----------------------------------------------------------------------------
 // Here we specify the build configuration defines.  These are usually 
@@ -214,6 +231,16 @@
 // Used to check internal GFX state, D3D/OGL states, etc.  
 //#define TORQUE_DEBUG_RENDER
 
+// If this is defined, and a material is not found, it will be created
+//#define CREATE_MISSING_MATERIALS
+
+// Enable ShaderGen
+#define TORQUE_SHADERGEN
+// Enable ShaderGen
+#define TORQUE_SHADERGEN
+
+// Use legacy font shadow rendering
+//#define MBG_FONT_SHADOW_RENDERING
 
 //-----------------------------------------------------------------------------
 // Finally, we define some dependent #defines for the various build 
@@ -243,6 +270,9 @@
 #define TORQUE_NO_OGGVORBIS
 #endif
 #endif
+
+// This define is for the shader constant include string
+#define SHADER_CONSTANT_INCLUDE_FILE "../../game/shaders/shdrConsts.h"
 
 // Someday, it might make sense to do some pragma magic here so we error
 // on inconsistent flags.

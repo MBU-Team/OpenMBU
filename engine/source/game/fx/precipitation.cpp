@@ -9,7 +9,7 @@
 #include "console/consoleTypes.h"
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sceneState.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "game/gameConnection.h"
 #include "game/player.h"
 #include "core/bitStream.h"
@@ -1349,7 +1349,7 @@ void Precipitation::renderObject(SceneState* state, RenderInst* ri)
     // Use the shader or setup the pipeline 
     // for fixed function rendering.
     if (mDropShader)
-        mDropShader->shader->process();
+        mDropShader->getShader()->process();
     else
     {
         // We don't support distance fade or lighting without shaders.
@@ -1485,7 +1485,7 @@ void Precipitation::renderObject(SceneState* state, RenderInst* ri)
     GFX->setTexture(0, mSplashHandle);
 
     if (mSplashShader)
-        mSplashShader->shader->process();
+        mSplashShader->getShader()->process();
 
     while (curr)
     {

@@ -56,6 +56,9 @@ function OptimatchGui::show(%this)
    OptimatchOptionList.setOptionIndex(%this.langOption, $pref::shell::langFilter);
    
    CreateGameOptionList.setOptionWrap(%this.maxPlayersOption, false);
+   
+   if(OptimatchOptionList.getOptionIndex(%this.missionOption) > 0)
+      GameMissionInfo.selectMission(OptimatchOptionList.getOptionIndex(%this.missionOption) - 1);
 }
 
 function OptimatchGui::setCenterText(%this,%text)

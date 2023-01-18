@@ -388,8 +388,16 @@ function toggleFirstPerson(%val)
 
 function toggleCamera(%val)
 {
-   if (%val)
+   if (%val && $testCheats)
       commandToServer('ToggleCamera');
+}
+
+function toggleFPSDisplay(%val)
+{
+   if (%val)
+      $showFPS = !$showFPS;
+      
+   FPSDisplay.update();
 }
 
 //------------------------------------------------------------------------------
@@ -530,6 +538,7 @@ function clearInputs()
 
 // keyboard
 GlobalActionMap.bind(keyboard, "tilde", toggleConsole);
+GlobalActionMap.bind(keyboard, "ctrl f", toggleFPSDisplay);
 //GlobalActionMap.bindCmd(keyboard, "alt enter", "", "toggleFullScreen();");
 GlobalActionMap.bind(keyboard, "F9", cycleDebugRenderMode);
 GlobalActionMap.bindCmd(keyboard, "escape", "", "pauseOrEscape();");

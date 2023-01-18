@@ -91,9 +91,6 @@ void GlowBuffer::init()
     mSurface[0].set(GLOW_BUFF_SIZE, GLOW_BUFF_SIZE, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetProfile, 1);
     mSurface[1].set(GLOW_BUFF_SIZE, GLOW_BUFF_SIZE, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetProfile, 1);
 
-    GFXVideoMode vm = GFX->getVideoMode();
-    mSurface[2].set(vm.resolution.x, vm.resolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetProfile, 1);
-
     mBlurShader = static_cast<ShaderData*>(Sim::findObject(mBlurShaderName));
     if (!mBlurShader)
     {
@@ -104,9 +101,9 @@ void GlowBuffer::init()
 
     // this is necessary for Show Tool use
     if (mBlurShader)
-    {
         mBlurShader->initShader();
-    }
+
+    mTarget = GFX->allocRenderToTextureTarget();
 }
 
 //--------------------------------------------------------------------------
@@ -171,7 +168,8 @@ void GlowBuffer::setupRenderStates()
         GFX->setTextureStageMipFilter(i, GFXTextureFilterLinear);
     }
 
-    GFX->disableShaders();
+    // No color information is provided in the vertex stream, use this generic shader -patw
+    GFX->setupGenericShaders( GFXDevice::GSTexture );
     GFX->setZEnable(false);
 }
 
@@ -211,12 +209,12 @@ void GlowBuffer::setupPixelOffsets(Point4F offsets, bool horizontal)
 void GlowBuffer::blur()
 {
     // set blur shader
-    if (!mBlurShader->shader)
+    if (!mBlurShader->getShader())
         return;
 
     GFX->setAlphaTestEnable(false);
 
-    mBlurShader->shader->process();
+    mBlurShader->getShader()->process();
 
     // Attempt at MBU X360 Glow Buffer
     /*Point4F pixelOffsets = mPixelOffsets;
@@ -333,13 +331,13 @@ void GlowBuffer::blur()
         // PASS 1
         //-------------------------------
         setupPixelOffsets(pixelOffsets, true);
+        mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[1] );
 
         GFX->setTexture(0, mSurface[0]);
         GFX->setTexture(1, mSurface[0]);
         GFX->setTexture(2, mSurface[0]);
         GFX->setTexture(3, mSurface[0]);
 
-        GFX->setActiveRenderSurface(mSurface[1]);
         GFX->drawPrimitive(GFXTriangleFan, 0, 2);
 
         if (mMaxGlowPasses > 1)
@@ -347,27 +345,27 @@ void GlowBuffer::blur()
             // PASS 2
             //-------------------------------
             setupPixelOffsets(pixelOffsets * -1.0f, true);
+            mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[0] );
 
             GFX->setTexture(0, mSurface[1]);
             GFX->setTexture(1, mSurface[1]);
             GFX->setTexture(2, mSurface[1]);
             GFX->setTexture(3, mSurface[1]);
 
-            GFX->setActiveRenderSurface(mSurface[0]);
             GFX->drawPrimitive(GFXTriangleFan, 0, 2);
 
             if (mMaxGlowPasses > 2)
             {
                 // PASS 3
                 //-------------------------------
-                setupPixelOffsets(pixelOffsets * -1.0f, false);
+                setupPixelOffsets(pixelOffsets, false);
+                mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[1] );
 
                 GFX->setTexture(0, mSurface[0]);
                 GFX->setTexture(1, mSurface[0]);
                 GFX->setTexture(2, mSurface[0]);
                 GFX->setTexture(3, mSurface[0]);
 
-                GFX->setActiveRenderSurface(mSurface[1]);
                 GFX->drawPrimitive(GFXTriangleFan, 0, 2);
 
                 if (mMaxGlowPasses > 3)
@@ -375,18 +373,20 @@ void GlowBuffer::blur()
                     // PASS 4
                     //-------------------------------
                     setupPixelOffsets(pixelOffsets * -1.0f, false);
+                    mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[0] );
 
                     GFX->setTexture(0, mSurface[1]);
                     GFX->setTexture(1, mSurface[1]);
                     GFX->setTexture(2, mSurface[1]);
                     GFX->setTexture(3, mSurface[1]);
 
-                    GFX->setActiveRenderSurface(mSurface[0]);
                     GFX->drawPrimitive(GFXTriangleFan, 0, 2);
                 }
             }
         }
     }
+
+    mTarget->clearAttachments();
 }
 
 //--------------------------------------------------------------------------
@@ -394,7 +394,7 @@ void GlowBuffer::blur()
 //--------------------------------------------------------------------------
 void GlowBuffer::copyToScreen(RectI& viewport)
 {
-    if (!mBlurShader || !mBlurShader->shader || mDisabled)
+    if (!mBlurShader || !mBlurShader->getShader() || mDisabled)
         return;
 
     if (!mSurface[0] || !mSurface[1] || !mSurface[2]) return;
@@ -402,7 +402,8 @@ void GlowBuffer::copyToScreen(RectI& viewport)
     PROFILE_START(Glow);
 
     // setup
-    GFX->pushActiveRenderSurfaces();
+    GFX->disableShaders();
+    GFX->pushActiveRenderTarget();
 
     setupRenderStates();
     MatrixF proj = setupOrthoProjection();
@@ -412,13 +413,19 @@ void GlowBuffer::copyToScreen(RectI& viewport)
 
     // draw from full-size glow buffer to smaller buffer for 4 pass shader work
     GFX->setTexture(0, mSurface[2]);
-    GFX->setActiveRenderSurface(mSurface[0]);
+
+    mTarget->attachTexture(GFXTextureTarget::Color0, mSurface[0] );
+    mTarget->attachTexture(GFXTextureTarget::DepthStencil, NULL );
+    GFX->setActiveRenderTarget( mTarget );
+
     GFX->setVertexBuffer(mVertBuff);
     GFX->drawPrimitive(GFXTriangleFan, 0, 2);
 
     blur();
 
-    GFX->popActiveRenderSurfaces();
+    mTarget->clearAttachments();
+
+    GFX->popActiveRenderTarget();
 
 
     //*** DAW: When the render target is changed, it appears that the view port
@@ -427,26 +434,32 @@ void GlowBuffer::copyToScreen(RectI& viewport)
 
     // blend final result to back buffer
     GFX->disableShaders();
+    // Mod color texture for this draw because we are providing color information to the PrimBuilder -patw
+    GFX->setupGenericShaders( GFXDevice::GSModColorTexture );
     GFX->setTexture(0, mSurface[0]);
     GFX->setTexture(1, NULL);
     GFX->setTexture(2, NULL);
     GFX->setTexture(3, NULL);
     GFX->setTexture(4, NULL);
+    for (U32 i = 1; i < GFX->getNumSamplers(); i++)
+    {
+        GFX->setTextureStageColorOp(i, GFXTOPDisable);
+    }
 
     GFX->setAlphaBlendEnable(Con::getBoolVariable("$translucentGlow", true));
     GFX->setSrcBlend(GFXBlendOne);
     GFX->setDestBlend(GFXBlendOne);
-    GFX->setAlphaTestEnable(false);
+    GFX->setAlphaTestEnable(true);//false); // TODO: verify this
     GFX->setAlphaRef(1);
     GFX->setAlphaFunc(GFXCmpGreaterEqual);
 
-    GFXVideoMode mode = GFX->getVideoMode();
-    F32 copyOffsetX = 1.0 / mode.resolution.x;
-    F32 copyOffsetY = 1.0 / mode.resolution.y;
+    Point2I resolution = GFX->getActiveRenderTarget()->getSize();
+    F32 copyOffsetX = 1.0f / (F32)resolution.x;
+    F32 copyOffsetY = 1.0f / (F32)resolution.y;
 
     // setup geometry and draw
-    PrimBuild::color4f(1.0, 1.0, 1.0, 1.0);
     PrimBuild::begin(GFXTriangleFan, 4);
+    PrimBuild::color4f(1.0, 1.0, 1.0, 1.0);
     PrimBuild::texCoord2f(0.0, 1.0);
     PrimBuild::vertex3f(-1.0 - copyOffsetX, -1.0 + copyOffsetY, 0.0);
 
@@ -470,6 +483,8 @@ void GlowBuffer::copyToScreen(RectI& viewport)
     GFX->popWorldMatrix();
     GFX->disableShaders();
 
+    mTarget->clearAttachments();
+
     PROFILE_END();
 
 }
@@ -489,8 +504,11 @@ void GlowBuffer::setAsRenderTarget()
         mSurface[2].set( goalResolution.x, goalResolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1 );
     }
 
-    GFX->setActiveRenderSurface(mSurface[2]);
-    GFX->clear(GFXClearTarget, ColorI(0, 0, 0, 0), 1.0f, 0);
+    // Set up render target.
+    mTarget->attachTexture(GFXTextureTarget::Color0, mSurface[2]);
+    mTarget->attachTexture(GFXTextureTarget::DepthStencil, GFXTextureTarget::sDefaultDepthStencil );
+    GFX->setActiveRenderTarget( mTarget );
+    GFX->clear( GFXClearTarget, ColorI(0,0,0,0), 1.0f, 0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -508,8 +526,12 @@ void GlowBuffer::texManagerCallback(GFXTexCallbackCode code, void* userData)
 
     if (code == GFXResurrect)
     {
-        Point2I res = getCurrentClientSceneGraph()->getDisplayTargetResolution();
-        glowBuff->mSurface[2].set(res.x, res.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1);
+        GFXTarget *target = GFX->getActiveRenderTarget();
+        if ( target )
+        {
+            Point2I res = GFX->getActiveRenderTarget()->getSize();
+            glowBuff->mSurface[2].set( res.x, res.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1 );
+        }
         return;
     }
 

@@ -1,8 +1,9 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
+#ifdef TORQUE_TERRAIN
 #include "editor/editTSCtrl.h"
 #include "editor/worldEditor.h"
 #include "game/shadow.h"
@@ -1084,3 +1085,4 @@ bool SceneLighting::TerrainProxy::sgMarkStaticShadow(void* terrainproxy,
     delete mBoxShadowBSP;
     return(true);
 }
+#endif

@@ -1316,6 +1316,8 @@ void InteriorInstance::updateReflection()
 
     getCurrentClientSceneGraph()->setReflectPass(true);
 
+    GFXTextureTargetRef myTarg = GFX->allocRenderToTextureTarget();
+
     for (U32 i = 0; i < mReflectPlanes.size(); i++)
     {
         ReflectPlane& rf = mReflectPlanes[i];
@@ -1342,8 +1344,10 @@ void InteriorInstance::updateReflection()
         GFX->setProjectionMatrix(clipProj);
 
         // render a frame
-        GFX->pushActiveRenderSurfaces();
-        GFX->setActiveRenderSurface(rf.getTex());
+        GFX->pushActiveRenderTarget();
+        myTarg->attachTexture(GFXTextureTarget::Color0, rf.getTex() );
+        myTarg->attachTexture(GFXTextureTarget::DepthStencil, rf.getDepth() );
+        GFX->setActiveRenderTarget(myTarg);
         GFX->setZEnable(true);
         GFX->clear(GFXClearZBuffer | GFXClearStencil | GFXClearTarget, ColorI(0, 0, 0), 1.0f, 0);
 
@@ -1352,7 +1356,7 @@ void InteriorInstance::updateReflection()
 
         getCurrentClientSceneGraph()->renderScene(objTypeFlag);
 
-        GFX->popActiveRenderSurfaces();
+        GFX->popActiveRenderTarget();
     }
 
 

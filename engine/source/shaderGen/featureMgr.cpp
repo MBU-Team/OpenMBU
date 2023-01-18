@@ -51,6 +51,7 @@ void FeatureMgr::init()
     mFeatures[GFXShaderFeatureData::RTLighting] = new VertLightColor;
     mFeatures[GFXShaderFeatureData::TexAnim] = new TexAnim;
     mFeatures[GFXShaderFeatureData::BaseTex] = new BaseTexFeat;
+    mFeatures[ GFXShaderFeatureData::ColorMultiply ] = new ColorMultiplyFeat;
     mFeatures[GFXShaderFeatureData::DynamicLight] = new DynamicLightingFeature;
     mFeatures[GFXShaderFeatureData::DynamicLightDual] = new DynamicLightingDualFeature;
     mFeatures[GFXShaderFeatureData::SelfIllumination] = new SelfIlluminationFeature;

@@ -38,6 +38,7 @@ typedef unsigned _int64 U64;
 #  include "platform/types.win32.h"
 #elif defined(_WIN32) && !defined ( _WIN64 )
 #  define TORQUE_OS_STRING "Win32"
+#  define TORQUE_OS_WIN
 #  define TORQUE_OS_WIN32
 #  include "platform/types.win32.h"
 #elif defined( _WIN64 )

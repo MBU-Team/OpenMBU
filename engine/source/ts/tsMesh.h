@@ -235,12 +235,8 @@ public:
     virtual GFXVertexBufferHandle<MeshVertex>& getVertexBuffer() { return mVB; };
 
     void createVBIB();
-    void createTangents();
-    void findTangent(U32 index1,
-        U32 index2,
-        U32 index3,
-        Point3F* tan0,
-        Point3F* tan1);
+    void createTextureSpaceMatrix(MeshVertex* v0, MeshVertex* v1, MeshVertex* v2);
+    void fillTextureSpaceInfo(MeshVertex* vertArray);
 
     /// on load...optionally convert primitives to other form
     static bool smUseTriangles;

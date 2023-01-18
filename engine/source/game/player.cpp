@@ -23,9 +23,11 @@
 #include "sceneGraph/sceneGraph.h"
 #include "sceneGraph/sceneState.h"
 #include "sceneGraph/detailManager.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "terrain/terrRender.h"
 #include "terrain/waterBlock.h"
+#endif
 #include "game/game.h"
 #include "game/moveManager.h"
 #include "game/gameConnection.h"
@@ -36,7 +38,7 @@
 #include "game/missionArea.h"
 #include "game/fx/particleEmitter.h"
 #include "game/fx/cameraFXMgr.h"
-#include "sim/decalmanager.h"
+#include "sim/decalManager.h"
 
 
 //----------------------------------------------------------------------------
@@ -256,7 +258,9 @@ bool PlayerData::preload(bool server, char errorBuffer[256])
     if (!server) {
         for (S32 i = 0; i < MaxSounds; i++)
             if (sound[i])
-                Sim::findObject(SimObjectId(sound[i]), sound[i]);
+            {
+                Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])), sound[i]);
+            }
     }
 
     //
@@ -578,7 +582,7 @@ void PlayerData::packData(BitStream* stream)
     S32 i;
     for (i = 0; i < MaxSounds; i++)
         if (stream->writeFlag(sound[i]))
-            stream->writeRangedU32(packed ? SimObjectId(sound[i]) :
+            stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])) :
                 sound[i]->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
 
     stream->write(boxSize.x);
@@ -2100,6 +2104,7 @@ void Player::updateActionThread()
                 TerrainObjectType | InteriorObjectType | VehicleObjectType, &rInfo))
             {
                 S32 sound = -1;
+#ifdef TORQUE_TERRAIN
                 // Only put footpuffs and prints on the terrain
                 if (rInfo.object->getTypeMask() & TerrainObjectType)
                 {
@@ -2150,6 +2155,7 @@ void Player::updateActionThread()
                             Point3F(rInfo.normal), getScale(), mDataBlock->decalData);
                 }
                 else
+#endif
                     if (rInfo.object->getTypeMask() & VehicleObjectType)
                         sound = 2; // Play metal sound
 
@@ -4022,6 +4028,7 @@ bool Player::pointInWater(Point3F& point)
     else
         getCurrentClientSceneGraph()->getWaterObjectList(sql);
 
+#ifdef TORQUE_TERRAIN
     for (U32 i = 0; i < sql.mList.size(); i++)
     {
         WaterBlock* pBlock = dynamic_cast<WaterBlock*>(sql.mList[i]);
@@ -4033,6 +4040,7 @@ bool Player::pointInWater(Point3F& point)
         }
 
     }
+#endif
 
     return false;
 }

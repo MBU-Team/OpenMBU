@@ -90,6 +90,10 @@ Win32PlatState::Win32PlatState()
     desktopWidth = NULL;
     desktopHeight = NULL;
     currentTime = NULL;
+
+    windowManager = NULL;
+
+    videoMode = NULL;
 }
 
 
@@ -976,13 +980,21 @@ static S32 run(S32 argc, const char** argv)
     return ret;
 }
 
+/// Reference to the render target allocated on this window.
+static GFXWindowTargetRef mTarget = NULL;
+
+GFXWindowTarget * Platform::getWindowGFXTarget()
+{
+    return mTarget;
+}
+
 //--------------------------------------
 void Platform::initWindow(const Point2I& initialSize, const char* name)
 {
     Con::printf("Video Init:");
 
     //find our adapters
-    Vector<GFXAdapter> adapters;
+    Vector<GFXAdapter*> adapters;
     GFXInit::enumerateAdapters();
     GFXInit::getAdapters(&adapters);
 
@@ -993,9 +1005,9 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     {
         for (int k = 0; k < adapters.size(); k++)
         {
-            if (adapters[k].type == Direct3D9)
+            if (adapters[k]->mType == Direct3D9)
                 Con::printf("Direct 3D device found");
-            else if (adapters[k].type == OpenGL)
+            else if (adapters[k]->mType == OpenGL)
                 Con::printf("OpenGL device found");
             else
                 Con::printf("Unknown device found");
@@ -1046,6 +1058,8 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     vm.borderless = fullscreenType == 2;
     vm.refreshRate = 60; //HACK
 
+    winState.videoMode = new GFXVideoMode(vm);
+
     //TODO find a better way to handle Win32WinMgr...
     // create the window
     Win32Window = new Win32WinMgr(GFX->getDeviceIndex(), WindowProc);
@@ -1057,10 +1071,14 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
     for (U32 i = 0; i < deviceVector->size(); i++)
     {
         GFX->setActiveDevice(i);
-        GFX->init(vm);
+        //GFX->init(vm);
     }
 
     winState.processId = GetCurrentProcessId();
+
+    mTarget = GFX->allocWindowTarget();//Win32Window);
+    if(mTarget.isValid())
+        mTarget->resetMode();
 }
 
 //--------------------------------------
@@ -1111,9 +1129,9 @@ void TimeManager::process()
     TimeEvent event;
     event.elapsedTime = gTimer.getElapsedMS();
 
-#ifndef TORQUE_NVPERFHUD
-    if (event.elapsedTime > 2)
-#endif
+//#ifndef TORQUE_NVPERFHUD
+//    if (event.elapsedTime > 2)
+//#endif
     {
         gTimer.advance();
         Game->postEvent(event);

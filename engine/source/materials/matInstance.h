@@ -11,187 +11,136 @@
 
 #include "miscShdrDat.h"
 #include "sceneData.h"
+#include "processedMaterial.h"
 
 class GFXShader;
 class GFXCubemap;
 class ShaderFeature;
-
-//**************************************************************************
-// Render pass data
-//**************************************************************************
-struct RenderPassData
-{
-    GFXTexHandle      tex[Material::MAX_TEX_PER_PASS];
-    U32               texFlags[Material::MAX_TEX_PER_PASS];
-    GFXCubemap* cubeMap;
-
-    U32                  numTex;
-    U32                  numTexReg;
-    GFXShaderFeatureData fData;
-    GFXShader* shader;
-    bool                 translucent;
-    bool                 glow;
-    Material::BlendOp    blendOp;
-    U32                  stageNum;
-
-    RenderPassData()
-    {
-        reset();
-    }
-
-    void reset()
-    {
-        dMemset(this, 0, sizeof(RenderPassData));
-    }
-
-};
-
+class MatInstanceHook;
 
 //**************************************************************************
 // Material Instance
 //**************************************************************************
 class MatInstance
 {
+public:
+    static void reInitInstances();
+private:
+    static Vector<MatInstance*> mMatInstList;
+
+    void construct();
 
 private:
     Material* mMaterial;
+    ProcessedMaterial* mProcessedMaterial;
     SceneGraphData    mSGData;
     S32               mCurPass;
-    bool              mProcessedMaterial;
     GFXVertexFlags    mVertFlags;
     U32               mMaxStages;
     S32               mCullMode;
     bool              mHasGlow;
     U32               mSortWeight;
 
-    Vector <RenderPassData> mPasses;
-
-    static Vector<MatInstance*> mMatInstList;
-
-    void createPasses(GFXShaderFeatureData& fd, U32 stageNum);
-    void addPass(RenderPassData& rpd,
-        U32& texIndex,
-        GFXShaderFeatureData& fd,
-        U32 stageNum);
-
-    void processMaterial();
-    U32  getNumStages();
-    void determineFeatures(U32 stageNum, GFXShaderFeatureData& fd);
-    void cleanup();
-    void setTextureTransforms();
-    F32  getWaveOffset(U32 stage);
-    void setPassBlendOp(ShaderFeature* sf,
-        RenderPassData& passData,
-        U32& texIndex,
-        GFXShaderFeatureData& stageFeatures,
-        U32 stageNum);
-
-    bool filterGlowPasses(SceneGraphData& sgData);
-    void construct();
-
-private:
-    enum materialTypeEnum
-    {
-        mtStandard,
-        mtDynamicLightingSingle,
-        mtDynamicLightingDual
-    };
-    materialTypeEnum materialType;
-    LightInfo::sgFeatures dynamicLightingFeatures;
-    MatInstance* dynamicLightingMaterials_Single[LightInfo::sgFeatureCount];
-    MatInstance* dynamicLightingMaterials_Dual[LightInfo::sgFeatureCount];
-    void clearDynamicLightingMaterials()
-    {
-        for (U32 i = 0; i < LightInfo::sgFeatureCount; i++)
-        {
-            if (dynamicLightingMaterials_Single[i])
-                delete dynamicLightingMaterials_Single[i];
-            dynamicLightingMaterials_Single[i] = NULL;
-
-            if (dynamicLightingMaterials_Dual[i])
-                delete dynamicLightingMaterials_Dual[i];
-            dynamicLightingMaterials_Dual[i] = NULL;
-        }
-    }
+    bool filterGlowPasses( SceneGraphData &sgData );
+    bool filterRefractPasses( SceneGraphData &sgData );
+    virtual void processMaterial();
 public:
-    bool isDynamicLightingMaterial() { return (materialType != mtStandard); }
-    bool isDynamicLightingMaterial_Dual() { return (materialType == mtDynamicLightingDual); }
-    static MatInstance* getDynamicLightingMaterial(MatInstance* root, LightInfo* light, bool tryfordual)
-    {
-        if (!root) return NULL;
-        // in order from most features to least...
-        // we scan in reverse order (from least to most)
-        // this provides the opportunity to combine like
-        // materials making batching more efficient, by
-        // leaving a level NULL as the next level up is
-        // the same (not yet done)...
-        AssertFatal((root->materialType == mtStandard), "Calling getDynamicLightingMaterial on dynamic lighting material!");
-        AssertFatal((light->sgSupportedFeatures < LightInfo::sgFeatureCount), "Invalid light features.");
-        if (tryfordual && LightManager::sgAllowDynamicLightingDualOptimization())
-        {
-            // try dual...
-            for (S32 i = light->sgSupportedFeatures; i >= 0; i--)
-            {
-                if (root->dynamicLightingMaterials_Dual[i] && root->dynamicLightingMaterials_Dual[i]->isDynamicLightingMaterial())
-                    return root->dynamicLightingMaterials_Dual[i];
-            }
-        }
-        // look for single
-        for (S32 i = light->sgSupportedFeatures; i >= 0; i--)
-        {
-            if (root->dynamicLightingMaterials_Single[i] && root->dynamicLightingMaterials_Single[i]->isDynamicLightingMaterial())
-                return root->dynamicLightingMaterials_Single[i];
-        }
-        return NULL;
-    }
+    // Used to attach information to a MatInstance.
+    MatInstanceHook* mLightingHook;
 
+#ifdef TORQUE_DEBUG
+    char mMatName[64];
+    static void dumpMatInsts();
+#endif
 
     // Compares this MatInstance to mat
     virtual S32 compare(MatInstance* mat);
 
     /// Create a material instance by reference to a Material.
-    MatInstance(Material& mat);
+    MatInstance( Material &mat );
     /// Create a material instance by name.
-    MatInstance(const char* matName);
-
-    void setLightmaps(SceneGraphData& sgData);
+    MatInstance( const char * matName );
 
     virtual ~MatInstance();
-    static void reInitInstances();
 
-    bool setupPass(SceneGraphData& sgData);
+    bool setupPass( SceneGraphData &sgData );
 
-    void setObjectXForm(MatrixF xform);
-    void setWorldXForm(MatrixF xform);
-    void setLightInfo(SceneGraphData& sgData);
-    void setEyePosition(MatrixF objTrans, Point3F position);
-    void setBuffers(GFXVertexBufferHandleBase* vertBuffer, GFXPrimitiveBufferHandle* primBuffer);
-    void setTextureStages(SceneGraphData& sgData, U32 pass);
-    void setLightingBlendFunc();
+    void setObjectXForm(MatrixF xform)
+    {
+        mProcessedMaterial->setObjectXForm(xform, getCurPass());
+    }
 
-    void init(SceneGraphData& dat, GFXVertexFlags vertFlags);
+    void setWorldXForm(MatrixF xform)
+    {
+        mProcessedMaterial->setWorldXForm(xform);
+    }
+
+    void setLightInfo(const SceneGraphData& sgData)
+    {
+        mProcessedMaterial->setLightInfo(sgData, getCurPass());
+    }
+
+    void setEyePosition(MatrixF objTrans, Point3F position)
+    {
+        mProcessedMaterial->setEyePosition(objTrans, position, getCurPass());
+    }
+    void setBuffers(GFXVertexBufferHandleBase* vertBuffer, GFXPrimitiveBufferHandle* primBuffer)
+    {
+        mProcessedMaterial->setBuffers(vertBuffer, primBuffer);
+    }
+
+    void setTextureStages( SceneGraphData &sgData )
+    {
+        mProcessedMaterial->setTextureStages(sgData, getCurPass());
+    }
+
+    void setLightingBlendFunc()
+    {
+        mProcessedMaterial->setLightingBlendFunc();
+    }
+
+    void init( SceneGraphData &dat, GFXVertexFlags vertFlags );
     void reInit();
-    Material* getMaterial() { return mMaterial; }
-    bool hasGlow() { return mHasGlow; }
+    Material *getMaterial(){ return mMaterial; }
+    ProcessedMaterial *getProcessedMaterial()
+    {
+        return mProcessedMaterial;
+    }
+    bool hasGlow()
+    {
+        return mProcessedMaterial->hasGlow();
+    }
     U32 getCurPass()
     {
-        return getMax(mCurPass, 0);
+        return getMax( mCurPass, 0 );
     }
 
     U32 getCurStageNum()
     {
-        if (getCurPass() >= mPasses.size())
-            return 0;
-        return mPasses[mCurPass].stageNum;
+        return mProcessedMaterial->getStageFromPass(getCurPass());
     }
-    RenderPassData* getPass(U32 pass)
+    RenderPassData *getPass(U32 pass)
     {
-        if (pass >= mPasses.size())
-            return NULL;
-        return &mPasses[pass];
+        return mProcessedMaterial->getPass(pass);
     }
 
-    bool hasCubemap();
+    const SceneGraphData& getSceneGraphData() const
+    {
+        return mSGData;
+    }
+
+    const GFXVertexFlags getVertFlags() const
+    {
+        return mVertFlags;
+    }
+};
+
+// This class is used by the lighting system to add additional data to a MatInstance.
+// Currently, it just defines a virtual destructor and enforces a bit of type checking.
+class MatInstanceHook
+{
+public:
+    virtual ~MatInstanceHook() { };
 };
 
 #endif _MATINSTANCE_H_

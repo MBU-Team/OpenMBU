@@ -242,10 +242,10 @@ bool WheeledVehicleData::preload(bool server, char errorBuffer[256])
     if (!server) {
         for (S32 i = 0; i < MaxSounds; i++)
             if (sound[i])
-                Sim::findObject(SimObjectId(sound[i]), sound[i]);
+                Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])), sound[i]);
 
         if (tireEmitter)
-            Sim::findObject(SimObjectId(tireEmitter), tireEmitter);
+            Sim::findObject(static_cast<SimObjectId>(reinterpret_cast<size_t>(tireEmitter)), tireEmitter);
     }
 
     // Extract wheel information from the shape
@@ -362,12 +362,12 @@ void WheeledVehicleData::packData(BitStream* stream)
     Parent::packData(stream);
 
     if (stream->writeFlag(tireEmitter))
-        stream->writeRangedU32(packed ? SimObjectId(tireEmitter) :
+        stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(tireEmitter)) :
             tireEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
 
     for (S32 i = 0; i < MaxSounds; i++)
         if (stream->writeFlag(sound[i]))
-            stream->writeRangedU32(packed ? SimObjectId(sound[i]) :
+            stream->writeRangedU32(packed ? static_cast<SimObjectId>(reinterpret_cast<size_t>(sound[i])) :
                 sound[i]->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
 
     stream->write(maxWheelSpeed);

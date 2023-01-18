@@ -17,6 +17,8 @@
 #include "materials/shaderData.h"
 #endif
 
+#include "sceneGraph/lightInfo.h"
+
 class MatInstance;
 class SceneGraphData;
 class ShaderData;
@@ -128,18 +130,24 @@ public:
     enum RenderBinTypes
     {
         Begin = 0,
+#ifndef MB_FLIP_SKY
         Sky,
         SkyShape,
+#endif
         Interior,
         InteriorDynamicLighting,
         Mesh,
+#ifdef MB_FLIP_SKY
+        Sky,
+        SkyShape,
+#endif
         MiscObject,
         Shadow,
         Decal,
-        Refraction,
         Water,
         TranslucentPreGlow,
         Glow,
+        Refraction,
         Foliage,
         Translucent,
         NumRenderBins
@@ -164,9 +172,12 @@ private:
     Point3F mCamPos;
     RenderZOnlyMgr* mZOnlyBin;
 
+    void handleGFXEvent(GFXDevice::GFXDeviceEventType event);
     void initBins();
     void uninitBins();
     void initWarnMat();
+
+    void init();
 
 public:
 
@@ -188,16 +199,16 @@ public:
     // for lighting...
     bool* allocPrimitiveFirstPass() { return mPrimitiveFirstPassAllocator.alloc(); }
 
-    void init();
+    void uninit();
     void clear();  // clear instances, matrices
     void sort();
     void render();
-    void renderToZBuff(GFXTextureObject* target);
+    void renderToZBuff(GFXTarget* target);
     void renderGlow();
 
     void setCamPos(Point3F& camPos) { mCamPos = camPos; }
     Point3F getCamPos() { return mCamPos; }
-    MatInstance* getWarningMat() { return mWarningMat; }
+    MatInstance* getWarningMat();
 };
 
 extern RenderInstManager gRenderInstManager;

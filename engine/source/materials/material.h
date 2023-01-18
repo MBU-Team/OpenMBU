@@ -5,14 +5,16 @@
 #ifndef _MATERIAL_H_
 #define _MATERIAL_H_
 
-#ifndef _GAMEBASE_H_
-#include "game/gameBase.h"
-#endif
+//#ifndef _GAMEBASE_H_
+//#include "game/gameBase.h"
+//#endif
 
 #include "materials/miscShdrDat.h"
 #include "gfx/gfxTextureHandle.h"
 #include "gfx/gfxStructs.h"
 #include <renderInstance/renderInstMgr.h>
+
+#include "sceneGraph/lightInfo.h"
 
 class CubemapData;
 struct SceneGraphData;
@@ -26,6 +28,7 @@ class Material : public SimObject
     typedef SimObject Parent;
 
 public:
+    static GFXCubemap *getNormalizeCube();
 
     //-----------------------------------------------------------------------
     // Enums
@@ -39,6 +42,7 @@ public:
 
     enum TexType
     {
+        NoTexture = 0,
         Standard = 1,
         Detail,
         Bump,
@@ -53,7 +57,9 @@ public:
         ReflectBuff,
         Misc,
         DynamicLight,
-        DynamicLightSecondary
+        DynamicLightSecondary,
+        DynamicLightMask,
+        NormalizeCube
     };
 
     enum BlendOp
@@ -64,6 +70,7 @@ public:
         AddAlpha,      // add modulated with alpha channel
         Sub,
         LerpAlpha,     // linear interpolation modulated with alpha channel
+        NumBlendTypes
     };
 
     enum AnimType
@@ -82,10 +89,10 @@ public:
         Square,
     };
 
-    enum MatType
+    enum MaterialType
     {
-        base = 0,
-        custom = 1,
+        Base = 0,
+        Custom = 1,
     };
 
     struct StageData
@@ -101,6 +108,9 @@ public:
         }
     };
 
+private:
+    static GFXCubemapHandle normalizeCube;
+public:
 
     //-----------------------------------------------------------------------
     // Data
@@ -112,6 +122,7 @@ public:
     StageData         stages[MAX_STAGES];
     ColorF            diffuse[MAX_STAGES];
     ColorF            specular[MAX_STAGES];
+    ColorF            colorMultiply[MAX_STAGES];
     F32               specularPower[MAX_STAGES];
     bool              pixelSpecular[MAX_STAGES];
     bool              vertexSpecular[MAX_STAGES];
@@ -152,6 +163,8 @@ public:
     bool              castsShadow;
     bool              breakable;
     bool              doubleSided;
+    bool              attenuateBackFace;
+    bool              preload;
 
     const char* cubemapName;
 
@@ -162,6 +175,9 @@ public:
     bool              subPassTranslucent;
     BlendOp           translucentBlendOp;
     bool              translucentZWrite;
+
+    bool              alphaTest;
+    U32               alphaRef;
 
     bool              planarReflection;
 
@@ -180,18 +196,27 @@ public:
     const char* mapTo; // map Material to this texture name
 
 public:
+    // Static material wide time params
     static F32 mDt;
     static F32 mAccumTime;
 
 protected:
+    // Static material wide time params
     static U32 mLastTime;
+
+    // Per material animation parameters
+    U32 mLastUpdateTime;
+
     static SimSet* gMatSet;
 
     static LightInfo smDebugLight;
     static bool smDebugLightingEnabled;
 
     bool  hasSetStageData;
-    MatType mType;
+    MaterialType mType;
+    bool  mIsIFL;
+
+    char mPath[128];
 
     static EnumTable mBlendOpTable;
     static EnumTable mWaveTypeTable;
@@ -203,7 +228,7 @@ protected:
     bool onAdd();
     void onRemove();
 
-    GFXTexHandle createTexture(const char* filename, GFXTextureProfile* profile);
+    //GFXTexHandle createTexture(const char* filename, GFXTextureProfile* profile);
 
 public:
     Material();
@@ -212,16 +237,16 @@ public:
     static void updateTime();
     static SimSet* getMaterialSet();
 
+    MaterialType getType() { return mType; }
+    bool isIFL(){ return mIsIFL; }
+    bool isTranslucent() { return translucent || subPassTranslucent; }
+    char* getPath() { return mPath; }
+
+    void updateTimeBasedParams();
+
     static LightInfo* getDebugLight();
     static bool isDebugLightingEnabled() {return smDebugLightingEnabled; }
 
-    virtual void setShaderConstants(const SceneGraphData& sgData, U32 stageNum);
-    void setBlendState(Material::BlendOp blendOp);
-
-    virtual void setStageData();
-
-    MatType getType() { return mType; }
-    bool isTranslucent() { return translucent || subPassTranslucent; }
 
     DECLARE_CONOBJECT(Material);
 };

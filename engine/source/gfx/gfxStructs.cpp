@@ -6,7 +6,7 @@
 #include "gfx/gfxDevice.h"
 
 //-----------------------------------------------------------------------------
-#ifdef TORQUE_DEBUG
+/*#ifdef TORQUE_DEBUG
 GFXPrimitiveBuffer* GFXPrimitiveBuffer::smHead = NULL;
 U32 GFXPrimitiveBuffer::smExtantPBCount = 0;
 
@@ -28,7 +28,7 @@ void GFXPrimitiveBuffer::dumpExtantPBs()
     Con::printf("----- dump complete -------------------------------------------");
 }
 
-#endif
+#endif*/
 
 //-----------------------------------------------------------------------------
 // GFXShaderFeatureData
@@ -56,10 +56,10 @@ U32 GFXShaderFeatureData::codify()
 //-----------------------------------------------------------------------------
 // Set
 //-----------------------------------------------------------------------------
-void GFXPrimitiveBufferHandle::set(GFXDevice* theDevice, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType)
-{
-    RefPtr<GFXPrimitiveBuffer>::operator=(theDevice->allocPrimitiveBuffer(indexCount, primitiveCount, bufferType));
-}
+//void GFXPrimitiveBufferHandle::set(GFXDevice* theDevice, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType)
+//{
+//    RefPtr<GFXPrimitiveBuffer>::operator=(theDevice->allocPrimitiveBuffer(indexCount, primitiveCount, bufferType));
+//}
 
 //------------------------------------------------------------------------
 
@@ -75,4 +75,48 @@ void GFXDebugMarker::leave()
     AssertWarn(mActive, "Left inactive debug marker!");
     GFX->leaveDebugEvent();
     mActive = false;
+}
+
+//-----------------------------------------------------------------------------
+
+GFXVideoMode::GFXVideoMode()
+{
+    bitDepth = 32;
+    fullScreen = false;
+    borderless = false;
+    refreshRate = 60;
+    //wideScreen = false;
+    resolution.set(800,600);
+    antialiasLevel = 0;
+}
+
+void GFXVideoMode::parseFromString( const char *str )
+{
+    if(!str)
+        return;
+
+    // Copy the string, as dStrtok is destructive
+    char *tempBuf = new char[dStrlen( str ) + 1];
+    dStrcpy( tempBuf, str );
+
+#define PARSE_ELEM(type, var, func, tokParam, sep) \
+   if(const char *ptr = dStrtok( tokParam, sep)) \
+   { type tmp = func(ptr); if(tmp > 0) var = tmp; }
+
+    PARSE_ELEM(S32, resolution.x, dAtoi, tempBuf, " x\0")
+    PARSE_ELEM(S32, resolution.y, dAtoi, NULL,    " x\0")
+    PARSE_ELEM(S32, fullScreen,   dAtob, NULL,    " \0")
+    PARSE_ELEM(S32, bitDepth,     dAtoi, NULL,    " \0")
+    PARSE_ELEM(S32, refreshRate,  dAtoi, NULL,    " \0")
+    PARSE_ELEM(S32, antialiasLevel, dAtoi, NULL,    " \0")
+
+#undef PARSE_ELEM
+
+    delete [] tempBuf;
+}
+
+const char * GFXVideoMode::toString()
+{
+    // TODO: Should we include borderless?
+    return avar("%d %d %s %d %d %d", resolution.x, resolution.y, (fullScreen ? "true" : "false"), bitDepth,  refreshRate, antialiasLevel);
 }

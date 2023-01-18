@@ -399,18 +399,18 @@ GFXTextureObject* GFXTextureManager::createTexture(const char* filename, GFXText
 {
     PROFILE_START(GFXTextureManager_createTexture);
     // hack to load .dds files until proper support is in
-    if (dStrstr(filename, ".dds"))
-    {
-        GFXTextureObject* obj = _loadDDSHack(filename, profile);
-        if (!obj) return NULL;
-
-        linkTexture(obj);
-
-        // Return the new texture!
-        PROFILE_END();
-        return obj;
-
-    }
+//    if (dStrstr(filename, ".dds"))
+//    {
+//        GFXTextureObject* obj = _loadDDSHack(filename, profile);
+//        if (!obj) return NULL;
+//
+//        linkTexture(obj);
+//
+//        // Return the new texture!
+//        PROFILE_END();
+//        return obj;
+//
+//    }
 
     // Check the cache first...
     ResourceObject* ro = GBitmap::findBmpResource(filename);

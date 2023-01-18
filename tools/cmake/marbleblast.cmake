@@ -71,11 +71,13 @@ endif()
 # Always enabled paths first
 ###############################################################################
 addPath("${srcDir}/") # must come first :)
+addPath("${srcDir}/autosplitter")
 addPath("${srcDir}/collision")
 addPath("${srcDir}/console")
 addPath("${srcDir}/core")
 addPath("${srcDir}/editor")
-addPathRec("${srcDir}/atlas")
+#addPath("${srcDir}/editor/terrain")
+#addPathRec("${srcDir}/atlas")
 addPath("${srcDir}/game")
 addPath("${srcDir}/game/fps")
 addPath("${srcDir}/game/fx")
@@ -83,8 +85,11 @@ addPath("${srcDir}/game/marble")
 addPath("${srcDir}/game/net")
 addPath("${srcDir}/game/vehicles")
 addPath("${srcDir}/gfx")
+addPath("${srcDir}/gfx/Null")
 if (WIN32)
 	addPath("${srcDir}/gfx/D3D")
+    addPath("${srcDir}/gfx/D3D9")
+    addPath("${srcDir}/gfx/D3D9/pc")
 endif()
 addPath("${srcDir}/gui")
 addPath("${srcDir}/gui/containers")
@@ -106,12 +111,10 @@ addPath("${srcDir}/sceneGraph")
 addPath("${srcDir}/sfx")
 addPath("${srcDir}/sfx/vorbis")
 addPath("${srcDir}/sfx/null")
-if (WIN32)
-	addPath("${srcDir}/sfx/dsound")
-endif()
 addPath("${srcDir}/shaderGen")
 addPath("${srcDir}/sim")
-addPath("${srcDir}/terrain")
+#addPath("${srcDir}/terrain")
+addPath("${srcDir}/terrain/environment")
 addPath("${srcDir}/ts")
 addPath("${srcDir}/util")
 addPath("${srcDir}/xblive")
@@ -119,6 +122,23 @@ addPath("${srcDir}/xblive")
 ###############################################################################
 # modular paths
 ###############################################################################
+
+if(WIN32)
+    set(TORQUE_SFX_DIRECTSOUND OFF) # Disable DirectSound for now
+
+    # DirectSound
+    if(TORQUE_SFX_DIRECTSOUND AND NOT TORQUE_DEDICATED)
+        addPath("${srcDir}/sfx/dsound")
+    endif()
+
+    set(TORQUE_SFX_XAUDIO OFF) # Disable XAudio for now
+
+    # XAudio
+    if (TORQUE_SFX_XAUDIO AND NOT TORQUE_DEDICATED)
+        addPath("${srcDir}/sfx/xaudio")
+        addLib(xaudio2)
+    endif()
+endif()
 
 set(TORQUE_SFX_OPENAL ON)
 
@@ -129,7 +149,8 @@ if(TORQUE_SFX_OPENAL AND NOT TORQUE_DEDICATED)
 	   addInclude("${libDir}/openal/win32")
        addPath("${srcDir}/sfx/openal/win32")
     elseif(UNIX)
-       addPath("${srcDir}/sfx/openal/posix")
+       addInclude("${libDir}/openal/LINUX")
+       addPath("${srcDir}/sfx/openal/linux")
     endif()
 endif()
 
@@ -139,6 +160,7 @@ set(TORQUE_SFX_VORBIS ON)
 if(TORQUE_SFX_VORBIS)
     addInclude(${libDir}/libvorbis/include)
     addInclude(${libDir}/libogg/include)
+    addInclude(${CMAKE_CURRENT_BINARY_DIR}/libogg/include)
     addDef(TORQUE_OGGVORBIS)
     addLib(libvorbis)
     addLib(libogg)
@@ -189,9 +211,20 @@ if(UNIX AND NOT APPLE)
     addPath("${srcDir}/platformPOSIX")
 endif()
 
+if(UNIX)
+    FIND_PACKAGE(SDL REQUIRED)
+    addInclude(${SDL_INCLUDE_DIR})
+    #addLib(${SDL_LIBRARY})
+    #target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
+    #message("SDL: " ${SDL_LIBRARY})
+endif()
+
 ###############################################################################
 ###############################################################################
 finishExecutable()
+if (UNIX)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARY})
+endif()
 ###############################################################################
 ###############################################################################
 
@@ -311,6 +344,12 @@ if(WIN32)
 endif()
 
 if(MSVC)
+    if (DEFINED CUSTOM_SUFFIX)
+        set(CUSTOM_SUFFIX_REAL _${CUSTOM_SUFFIX})
+    else()
+        set(CUSTOM_SUFFIX_REAL "")
+    endif()
+
     # Match projectGenerator naming for executables
     set(OUTPUT_CONFIG DEBUG MINSIZEREL RELWITHDEBINFO)
     set(OUTPUT_SUFFIX DEBUG MINSIZE    OPTIMIZEDDEBUG)
@@ -318,12 +357,12 @@ if(MSVC)
         list(GET OUTPUT_CONFIG ${INDEX} CONF)
         list(GET OUTPUT_SUFFIX ${INDEX} SUFFIX)
         if (TORQUE_CPU_X64)
-            set_property(TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME_${CONF} ${PROJECT_NAME}64_${SUFFIX})
+            set_property(TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME_${CONF} ${PROJECT_NAME}64_${SUFFIX}${CUSTOM_SUFFIX_REAL})
         else()
-            set_property(TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME_${CONF} ${PROJECT_NAME}_${SUFFIX})
+            set_property(TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME_${CONF} ${PROJECT_NAME}_${SUFFIX}${CUSTOM_SUFFIX_REAL})
         endif()
     endforeach()
 	if (TORQUE_CPU_X64)
-		set_property(TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME_RELEASE ${PROJECT_NAME}64)
+		set_property(TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME_RELEASE ${PROJECT_NAME}64${CUSTOM_SUFFIX_REAL})
 	endif()
 endif()

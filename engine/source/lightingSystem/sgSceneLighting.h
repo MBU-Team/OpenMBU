@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #ifndef _SGSCENELIGHTING_H_
@@ -12,8 +12,10 @@
 #ifndef _SCENEOBJECT_H_
 #include "sim/sceneObject.h"
 #endif
+#ifdef TORQUE_TERRAIN
 #ifndef _TERRDATA_H_
 #include "terrain/terrData.h"
+#endif
 #endif
 #ifndef _INTERIORINSTANCE_H_
 #include "interior/interiorInstance.h"
@@ -21,8 +23,9 @@
 #ifndef _SHADOWVOLUMEBSP_H_
 #include "sceneGraph/shadowVolumeBSP.h"
 #endif
-
+#ifdef TORQUE_TERRAIN
 #include "atlas/runtime/atlasInstance2.h"
+#endif
 #include "math/mathUtils.h"
 #include "lightingSystem/sgScenePersist.h"
 #include "lightingSystem/sgLightMap.h"
@@ -118,6 +121,7 @@ public:
         /// @}
     };
 
+#ifdef TORQUE_TERRAIN
     class AtlasChunkProxy : public ObjectProxy
     {
     public:
@@ -225,6 +229,7 @@ public:
         virtual bool setPersistInfo(PersistInfo::PersistChunk*);
         virtual bool getPersistInfo(PersistInfo::PersistChunk*);
     };
+#endif
 
     class InteriorProxy : public ObjectProxy
     {
@@ -277,6 +282,7 @@ public:
         bool getPersistInfo(PersistInfo::PersistChunk*);
     };
 
+#ifdef TORQUE_TERRAIN
     class TerrainProxy : public ObjectProxy
     {
     private:
@@ -326,6 +332,7 @@ public:
         bool setPersistInfo(PersistInfo::PersistChunk*);
         bool getPersistInfo(PersistInfo::PersistChunk*);
     };
+#endif
 
     typedef Vector<ObjectProxy*>  ObjectProxyList;
 
@@ -356,7 +363,10 @@ public:
 
     // inlined
     bool isAtlas(SceneObject*);
+
+#ifdef TORQUE_TERRAIN
     bool isTerrain(SceneObject*);
+#endif
     bool isInterior(SceneObject*);
 };
 
@@ -447,10 +457,12 @@ inline bool SceneLighting::isAtlas(SceneObject* obj)
     return obj && ((obj->getTypeMask() & AtlasObjectType) != 0);
 }
 
+#ifdef TORQUE_TERRAIN
 inline bool SceneLighting::isTerrain(SceneObject* obj)
 {
     return obj && ((obj->getTypeMask() & TerrainObjectType) != 0);
 }
+#endif
 
 inline bool SceneLighting::isInterior(SceneObject* obj)
 {

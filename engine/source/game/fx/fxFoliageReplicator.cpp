@@ -26,7 +26,7 @@
 
 #include "platform/platform.h"
 #include "gfx/gfxDevice.h"
-#include "gfx/PrimBuilder.h"	// Used for debug / mission edit rendering
+#include "gfx/primBuilder.h"	// Used for debug / mission edit rendering
 #include "console/consoleTypes.h"
 #include "core/bitStream.h"
 #include "math/mRandom.h"

@@ -2071,7 +2071,7 @@ function serverCmdSetWaitState(%client)
 
 function spawnStupidMarble(%val, %forceNew)
 {
-   if (%val)
+   if (%val && $testCheats)
       commandToServer('spawnStupidMarble', %forceNew);
 }
 

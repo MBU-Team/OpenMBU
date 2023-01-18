@@ -9,6 +9,18 @@
 
 #include "util/fourcc.h"
 
+// These are for the enum translation. It will help with porting to other platforms
+// and API's.
+#define GFX_UNSUPPORTED_VAL 0xDEADBEEF
+#define GFX_UNINIT_VAL 0xDECAFBAD
+
+// Adjust these pools to your app's needs.  Be aware dynamic vertices are much more
+// expensive than static vertices. These are in gfxEnums because they should be
+// consistant across all APIs/platforms so that the dynamic buffer performance
+// and behavior is also consistant. -patw
+#define MAX_DYNAMIC_VERTS   (8192*2)
+#define MAX_DYNAMIC_INDICES (8192*4)
+
 enum GFXBufferType
 {
     GFXBufferTypeStatic,   ///< Static vertex buffers are created and filled one time.
@@ -85,6 +97,7 @@ enum GFXTextureOp
     GFXTOPBumpEnvMap,
     GFXTOPBumpEnvMapLuminance,
     GFXTOPDotProduct3,
+    GFXTOPLERP,
     GFXTOP_COUNT
 };
 
@@ -147,11 +160,13 @@ enum GFXFormat
     // 32 bit texture formats...
     GFXFormatR8G8B8A8,// first in group...
     GFXFormatR8G8B8X8,
+    GFXFormatR8G8B8X8_LE,
     GFXFormatR16G16,
     GFXFormatR16G16F,
     GFXFormatR10G10B10A2,
     GFXFormatD32,
     GFXFormatD24X8,
+    GFXFormatD24S8,
 
     // 64 bit texture formats...
     GFXFormatR16G16B16A16,// first in group...
@@ -212,7 +227,10 @@ enum GFXBlend
 enum GFXAdapterType
 {
     OpenGL = 0,
-    Direct3D9
+    Direct3D8,
+    Direct3D9,
+    NullDevice,
+    GFXAdapterType_Count
 };
 
 enum GFXCullMode
@@ -460,8 +478,20 @@ enum GFXMatrixType
 {
     GFXMatrixWorld = 256,
     GFXMatrixView = 2,
-    GFXMatrixProjection = 3
+    GFXMatrixProjection = 3,
+    GFXMatrixTexture = 16,     // This value is texture matrix for sampler 0, can use this for offset
+    GFXMatrixTexture0 = 16,
+    GFXMatrixTexture1 = 17,
+    GFXMatrixTexture2 = 18,
+    GFXMatrixTexture3 = 19,
+    GFXMatrixTexture4 = 20,
+    GFXMatrixTexture5 = 21,
+    GFXMatrixTexture6 = 22,
+    GFXMatrixTexture7 = 23,
 };
+
+// Light define
+#define LIGHT_STAGE_COUNT 8
 
 #define GFXVERTEXFLAG_F32     3
 #define GFXVERTEXFLAG_POINT2F 0

@@ -262,80 +262,46 @@ bool Marble::computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const M
     Point2F currentVelocity(mDot(sideDir, rollVelocity), mDot(motionDir, rollVelocity));
 
     Point2F mv(move->x, move->y);
+#ifndef MBG_PHYSICS
+    // Prevent increasing marble speed with diagonal movement (on the ground)
     mv *= 1.538461565971375;
 
     if (mv.len() > 1.0f)
         m_point2F_normalize_f(mv, 1.0f);
+#endif
 
     Point2F desiredVelocity = mv * mDataBlock->maxRollVelocity;
 
-    if (desiredVelocity.x == 0.0f && desiredVelocity.y == 0.0f)
-        return 1;
-
-    // TODO: Clean up gotos
-
-    float cY;
-
-    float desiredYVel = desiredVelocity.y;
-    float currentYVel = currentVelocity.y;
-    float desiredVelX;
-    if (currentVelocity.y > desiredVelocity.y)
+    if (desiredVelocity.x != 0.0f || desiredVelocity.y != 0.0f)
     {
-        cY = currentVelocity.y;
-        if (desiredVelocity.y > 0.0f)
-        {
-LABEL_11:
-            desiredVelX = desiredVelocity.x;
-            desiredVelocity.y = cY;
-            goto LABEL_13;
+        if (currentVelocity.y > desiredVelocity.y && desiredVelocity.y > 0) {
+            desiredVelocity.y = currentVelocity.y;
         }
-        currentYVel = currentVelocity.y;
-        desiredYVel = desiredVelocity.y;
-    }
-
-    if (currentYVel < desiredYVel)
-    {
-        cY = currentYVel;
-        if (desiredYVel < 0.0f)
-            goto LABEL_11;
-    }
-    desiredVelX = desiredVelocity.x;
-LABEL_13:
-    float cX = currentVelocity.x;
-    float v17;
-    if (currentVelocity.x > desiredVelX)
-    {
-        if (desiredVelX > 0.0f)
-        {
-            v17 = currentVelocity.x;
-LABEL_16:
-            desiredVelocity.x = v17;
-            goto LABEL_20;
+        else if (currentVelocity.y < desiredVelocity.y && desiredVelocity.y < 0) {
+            desiredVelocity.y = currentVelocity.y;
         }
-        cX = currentVelocity.x;
+        if (currentVelocity.x > desiredVelocity.x && desiredVelocity.x > 0) {
+            desiredVelocity.x = currentVelocity.x;
+        }
+        else if (currentVelocity.x < desiredVelocity.x && desiredVelocity.x < 0) {
+            desiredVelocity.x = currentVelocity.x;
+        }
+
+        Point3D newMotionDir = sideDir * desiredVelocity.x + motionDir * desiredVelocity.y;
+
+        Point3D newSideDir;
+        mCross(r, newMotionDir, newSideDir);
+
+        desiredOmega = newSideDir * (1.0f / r.lenSquared());
+        aControl = desiredOmega - mOmega;
+
+        if (mDataBlock->angularAcceleration < aControl.len())
+            aControl *= mDataBlock->angularAcceleration / aControl.len();
+
+        return false;
     }
 
-    if (cX < desiredVelX)
-    {
-        v17 = cX;
-        if (desiredVelX < 0.0f)
-            goto LABEL_16;
-    }
-
-LABEL_20:
-    Point3D newMotionDir = sideDir * desiredVelocity.x + motionDir * desiredVelocity.y;
-
-    Point3D newSideDir;
-    mCross(r, newMotionDir, newSideDir);
-
-    desiredOmega = newSideDir * (1.0f / r.lenSquared());
-    aControl = desiredOmega - mOmega;
-
-    // Prevent increasing marble speed with diagonal movement
-    if (mDataBlock->angularAcceleration < aControl.len())
-        aControl *= mDataBlock->angularAcceleration / aControl.len();
-
-    return false;
+    return true;
 }
 
 void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec)
@@ -463,7 +429,8 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 
     // MBU X360
     } while (!done && itersIn < 20);
-    
+
+#ifndef MB_PHYSICS_PHASE_INTO_PLATFORMS
     if (mVelocity.lenSquared() < 625.0)
     {
         bool gotOne = false;
@@ -506,7 +473,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             mVelocity += soFar * dir;
         }
     }
-    
+#endif
 }
 
 Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
@@ -624,7 +591,9 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
     F32 slipAmount = 0.0;
     F64 contactTime = 0.0;
 
+#ifndef MBG_PHYSICS
     U32 it = 0;
+#endif
     do
     {
         if (timeRemaining == 0.0)
@@ -652,7 +621,13 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
         mOmega += a * timeStep;
 
         if ((mMode & RestrictXYZMode) != 0)
+        {
+#ifdef MBG_PHYSICS
+            mVelocity.set(0, 0, mVelocity.z);
+#else
             mVelocity.set(0, 0, 0);
+#endif
+        }
 
         velocityCancel(isCentered, true, bouncedYet, stoppedPaths, smPathItrVec);
 
@@ -696,8 +671,12 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
             pint->advance(timeStep);
         }
 
+#ifdef MBG_PHYSICS
+    } while (true);
+#else
         it++;
     } while (it <= 10);
+#endif
 
     for (S32 i = 0; i < smPathItrVec.size(); i++)
         smPathItrVec[i]->popTickState();

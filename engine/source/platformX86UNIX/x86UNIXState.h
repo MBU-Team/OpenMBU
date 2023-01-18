@@ -254,7 +254,7 @@ class DisplayPtrManager
          if (display == NULL)
             return openDisplay();
 
-         mAcquiredLock = DisplayPtrManager::lockDisplay();
+         //mAcquiredLock = DisplayPtrManager::lockDisplay();
          return display;
       }
 };

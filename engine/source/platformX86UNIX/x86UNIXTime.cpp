@@ -12,6 +12,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <unistd.h>
 
 U32 x86UNIXGetTickCount();
 //--------------------------------------
@@ -91,3 +92,8 @@ U32 x86UNIXGetTickCount()
 }
 
 
+void Platform::sleep(U32 ms)
+{
+    // note: this will overflow if you want to sleep for more than 49 days. just so ye know.
+    usleep( ms * 1000 );
+}

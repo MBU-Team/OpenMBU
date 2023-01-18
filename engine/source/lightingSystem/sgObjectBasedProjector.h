@@ -1,6 +1,6 @@
 //-----------------------------------------------
 // Synapse Gaming - Lighting System
-// Copyright © Synapse Gaming 2003
+// Copyright ï¿½ Synapse Gaming 2003
 // Written by John Kabus
 //-----------------------------------------------
 #ifndef _SGOBJECTBASEDPROJECTOR_H_
@@ -104,6 +104,7 @@ protected:
     Vector<DepthSortList::Poly> sgShadowPolys;
     Vector<Point3F> sgShadowPoints;
     GFXVertexBufferHandle<GFXVertexPN> sgShadowBuffer;
+    GFXTextureTargetRef mShadowBufferTarget;
 
     Point3F testRenderPoints[8];
     Point3F testRenderPointsWorld[8];

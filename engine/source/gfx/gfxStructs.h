@@ -10,6 +10,7 @@
 #include "gfx/gfxEnums.h"
 #include "math/mMath.h"
 #include "platform/profiler.h"
+#include "gfx/gfxResource.h"
 
 #ifndef _REFBASE_H_
 #include "core/refBase.h"
@@ -56,15 +57,30 @@ class GFXLightInfo
 };
 
 //-----------------------------------------------------------------------------
+
+// Material definition for FF lighting
+struct GFXLightMaterial
+{
+    ColorF ambient;
+    ColorF diffuse;
+    ColorF specular;
+    ColorF emissive;
+    F32 shininess;
+};
+
 //-----------------------------------------------------------------------------
 
 struct GFXVideoMode
 {
+    GFXVideoMode();
+
     Point2I resolution;
     U32 bitDepth;
     U32 refreshRate;
     bool fullScreen;
     bool borderless;
+    // When this is returned from GFX, it's the max, otherwise it's the desired AA level.
+    U32 antialiasLevel;
 
     inline bool operator == (GFXVideoMode& otherMode) const
     {
@@ -78,9 +94,22 @@ struct GFXVideoMode
             return false;
         if (otherMode.refreshRate != refreshRate)
             return false;
+        if( otherMode.antialiasLevel != antialiasLevel)
+            return false;
 
         return true;
     }
+
+    /// Fill whatever fields we can from the passed string, which should be
+    /// of form "width height [bitDepth [refreshRate] [antialiasLevel]]" Unspecified fields
+    /// aren't modified, so you may want to set defaults before parsing.
+    void parseFromString( const char *str );
+
+    /// Gets a string representation of the object as
+    /// "resolution.x resolution.y fullScreen bitDepth refreshRate antialiasLevel"
+    ///
+    /// \return (string) A string representation of the object.
+    const char * toString();
 };
 
 //-----------------------------------------------------------------------------
@@ -98,8 +127,11 @@ struct GFXShaderFeatureData
         RTLighting = 0,   // realtime lighting
         TexAnim,
         BaseTex,
+        ColorMultiply,
         DynamicLight,
         DynamicLightDual,
+        //DynamicLightMask,
+        //DynamicLightAttenuateBackFace,
         SelfIllumination,
         LightMap,
         LightNormMap,
@@ -260,8 +292,6 @@ DEFINE_VERT(GFXVertexPNTTBN,
 
 //-----------------------------------------------------------------------------
 
-class GFXDevice;
-
 struct GFXPrimitive
 {
     GFXPrimitiveType type;
@@ -274,128 +304,6 @@ struct GFXPrimitive
     GFXPrimitive()
     {
         dMemset(this, 0, sizeof(GFXPrimitive));
-    }
-};
-
-class GFXPrimitiveBuffer : public RefBase
-{
-    friend class GFXPrimitiveBufferHandle;
-    friend class GFXDevice;
-public: //protected:
-    U32 mIndexCount;
-    U32 mPrimitiveCount;
-    GFXBufferType mBufferType;
-    GFXPrimitive* mPrimitiveArray;
-    GFXDevice* mDevice;
-
-#ifdef TORQUE_DEBUG
-    // In debug builds we provide a TOC leak tracking system.
-    static U32 smExtantPBCount;
-    static GFXPrimitiveBuffer* smHead;
-    static void dumpExtantPBs();
-
-    StringTableEntry mDebugCreationPath;
-    GFXPrimitiveBuffer* mDebugNext;
-    GFXPrimitiveBuffer* mDebugPrev;
-#endif
-
-    GFXPrimitiveBuffer(GFXDevice* device, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType)
-    {
-        mDevice = device;
-        mIndexCount = indexCount;
-        mPrimitiveCount = primitiveCount;
-        mBufferType = bufferType;
-        if (primitiveCount)
-        {
-            mPrimitiveArray = new GFXPrimitive[primitiveCount];
-            dMemset((void*)mPrimitiveArray, 0, primitiveCount * sizeof(GFXPrimitive));
-        }
-        else
-            mPrimitiveArray = NULL;
-
-#ifdef TORQUE_DEBUG
-        // Extant tracking.
-        smExtantPBCount++;
-        mDebugCreationPath = gProfiler->getProfilePath();
-        mDebugNext = smHead;
-        mDebugPrev = NULL;
-
-        if (smHead)
-        {
-            AssertFatal(smHead->mDebugPrev == NULL, "GFXPrimitiveBuffer::GFXPrimitiveBuffer - found unexpected previous in current head!");
-            smHead->mDebugPrev = this;
-        }
-
-        smHead = this;
-#endif
-    }
-
-    virtual ~GFXPrimitiveBuffer()
-    {
-        if (mPrimitiveArray != NULL)
-        {
-            delete[] mPrimitiveArray;
-            mPrimitiveArray = NULL;
-        }
-
-#ifdef TORQUE_DEBUG
-        if (smHead == this)
-            smHead = this->mDebugNext;
-
-        if (mDebugNext)
-            mDebugNext->mDebugPrev = mDebugPrev;
-
-        if (mDebugPrev)
-            mDebugPrev->mDebugNext = mDebugNext;
-
-        mDebugPrev = mDebugNext = NULL;
-
-        smExtantPBCount--;
-#endif
-    }
-
-    virtual void lock(U16 indexStart, U16 indexEnd, U16** indexPtr) = 0; ///< locks this primitive buffer for writing into
-    virtual void unlock() = 0; ///< unlocks this primitive buffer.
-    virtual void prepare() = 0;  ///< prepares this primitive buffer for use on the device it was allocated on
-};
-
-class GFXPrimitiveBufferHandle : public RefPtr<GFXPrimitiveBuffer>
-{
-    typedef RefPtr<GFXPrimitiveBuffer> Parent;
-public:
-    enum Constants {
-        MaxIndexCount = 65535,
-    };
-    GFXPrimitiveBufferHandle() {};
-    GFXPrimitiveBufferHandle(GFXDevice* theDevice, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType)
-    {
-        set(theDevice, indexCount, primitiveCount, bufferType);
-    }
-    void set(GFXDevice* theDevice, U32 indexCount, U32 primitiveCount, GFXBufferType bufferType);
-    void lock(U16** indexBuffer, GFXPrimitive** primitiveBuffer = NULL, U32 indexStart = 0, U32 indexEnd = 0)
-    {
-        if (indexEnd == 0)
-            indexEnd = getPointer()->mIndexCount;
-        AssertFatal(indexStart < indexEnd&& indexEnd <= getPointer()->mIndexCount, "Out of range index lock!");
-        getPointer()->lock(indexStart, indexEnd, indexBuffer);
-        if (primitiveBuffer)
-            *primitiveBuffer = getPointer()->mPrimitiveArray;
-    }
-    void unlock()
-    {
-        getPointer()->unlock();
-    }
-    void prepare()
-    {
-        getPointer()->prepare();
-    }
-    bool operator==(const GFXPrimitiveBufferHandle& buffer) const {
-        return getPointer() == buffer.getPointer();
-    }
-    GFXPrimitiveBufferHandle& operator=(GFXPrimitiveBuffer* ptr)
-    {
-        RefObjectRef::set(ptr);
-        return *this;
     }
 };
 

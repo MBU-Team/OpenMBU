@@ -543,6 +543,7 @@ namespace Con
 
     ///
     char* getReturnBuffer(U32 bufferSize);
+    char* getReturnBuffer(const char *stringToCopy);
 
     char* getArgBuffer(U32 bufferSize);
     char* getFloatArg(F64 arg);

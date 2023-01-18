@@ -4,6 +4,9 @@ function BIT(%place)
    return 1 << %place;
 }
 
+$totalAchievements = 15;
+$totalSPAchievements = 9;
+
 function setupAchievementMasks()
 {
    echo("Setting up achievement masks");
@@ -115,21 +118,21 @@ function checkForAchievements()
    // Get the Live/controller port
    %port = XBLiveGetSigninPort();
 
-   // Make sure the player's achievements are loaded
-   if (XBLiveAreAchievementsLoaded(%port))
-      $loadLoops = 0;
-   else
-   {
-      echo("checkForAchievements: I am loading achievements, not good");
-      if ($loadLoops < 3)
-      {
-         XBLiveLoadAchievements(%port, "checkForAchievements();");
-         $loadLoops++;
-         return;
-      }
-      else
-         errorf("@@@@@ checkForAchievements(): unable to load achievements after 3 attempts");
-   }
+   //// Make sure the player's achievements are loaded
+   //if (XBLiveAreAchievementsLoaded(%port))
+      //$loadLoops = 0;
+   //else
+   //{
+      //echo("checkForAchievements: I am loading achievements, not good");
+      //if ($loadLoops < 3)
+      //{
+         //XBLiveLoadAchievements(%port, "checkForAchievements();");
+         //$loadLoops++;
+         //return;
+      //}
+      //else
+         //errorf("@@@@@ checkForAchievements(): unable to load achievements after 3 attempts");
+   //}
 
    // complete a level under par time
    if (!XBLiveHasAchievement(%port, 1))
@@ -275,11 +278,34 @@ function checkForAchievements()
    }
 }
 
+function XBLiveWriteAchievement(%port, %id, %callback)
+{
+	$UserAchievementsGot::achieved[%id] = 1;
+	eval(%callback);
+}
+
+function XBLiveHasAchievement(%port, %id)
+{
+   return $UserAchievementsGot::achieved[%id] $= 1;
+}
+
 function getNumAwardedAchievements()
 {
-   if (XBLiveAreAchievementsLoaded(XBLiveGetSigninPort()))
-      return countbits(XBLiveGetAchievementMask(XBLiveGetSigninPort()));
-   return 0;
+   //if (XBLiveAreAchievementsLoaded(XBLiveGetSigninPort()))
+      //return countbits(XBLiveGetAchievementMask(XBLiveGetSigninPort()));
+   //return 0;
+   
+   %num = 0;
+   
+   for (%i = 1; %i <= $totalAchievements; %i++)
+   {
+      if(XBLiveHasAchievement(%i))
+      {
+         %num++;
+      }
+   }
+   
+   return %num;
 }
 
 function dumpAchievements()
@@ -292,9 +318,75 @@ function dumpAchievements()
    }
 }
 
+$tasks = 0;
+$ctask = 0;
+function addTask(%task)
+{
+   $taskArray[$tasks] = %task;
+   $tasks++;
+   if ($ctask == 0)
+   {
+      nextTask();
+   }
+}
+
+function nextTask()
+{
+   if ($ctask >= $tasks)
+   {
+		$tasks = 0;
+		$ctask = 0;
+		return;
+   }
+   eval($taskArray[$ctask]);
+   $ctask++;
+   
+}
+
 function notifyAwardOfAchievement(%achievementId)
 {
    echo("got achievement" SPC %achievementId);
+	addTask("notifyAchievement(" @ %achievementId @ ");"); 
+}
+
+function notifyAchievement(%achievementId)
+{
+   sfxPlay(AchievementSfx);
+   //addChatLine("You got the " @ %achievementId @ " achievement!");
+   $AchievementId = %achievementId;
+   Canvas.pushDialog(AchievementDlg);
+   $closeAchievement = schedule(3000, 0, CloseAchievementDlg);
+   // TODO: Different notification for completing singleplayer and all achievements?
+   //if (hasAllSPAchievements() || getNumAwardedAchievements() == $totalSPAchievements)
+   //   $allAchievement = schedule(3500, 0, AllAchievement);
+}
+
+function hasAllSPAchievements()
+{
+   %port = XBLiveGetSignInPort();
+   
+   for(%i = 1; %i <= $totalSPAchievements; %i++)
+   {
+      if (!XBLiveHasAchievement(%port, %i))
+         return false;
+   }
+   
+   return true;
+}
+
+function AllAchievement()
+{
+   sfxPlay(AllAchievementSfx);
+   $AchievementId = "all";
+   Canvas.pushDialog(AchievementDlg);
+   $closeAchievement = schedule(3000, 0, CloseAchievementDlg);
+}
+
+function CloseAchievementDlg()
+{
+	Canvas.popDialog(AchievementDlg);
+	$newAchievement = schedule(500, 0, nextTask);
+	
 }
 
 // Functions for accessing the various leaderboards to get point/finish values

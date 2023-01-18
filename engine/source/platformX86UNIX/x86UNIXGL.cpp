@@ -13,14 +13,14 @@
 #include <SDL/SDL.h>
 
 // declare stub functions
-#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_return stub_##fn_name fn_args{ fn_value }
-#include "platformX86UNIX/gl_func.h"
-#undef GL_FUNCTION
+//#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_return stub_##fn_name fn_args{ fn_value }
+//#include "platformX86UNIX/gl_func.h"
+//#undef GL_FUNCTION
 
 // point gl function pointers at stub functions
-#define GL_FUNCTION(fn_return,fn_name,fn_args, fn_value) fn_return (*fn_name)fn_args = stub_##fn_name;
-#include "platformX86UNIX/gl_func.h"
-#undef GL_FUNCTION
+//#define GL_FUNCTION(fn_return,fn_name,fn_args, fn_value) fn_return (*fn_name)fn_args = stub_##fn_name;
+//#include "platformX86UNIX/gl_func.h"
+//#undef GL_FUNCTION
 
 static void* dlHandle = NULL;
 
@@ -71,9 +71,9 @@ static bool bindOpenGLFunctions()
 {
    bool result = true;
    // point gl function pointers at dll functions, if possible
-#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) result &= bindFunction( *(void**)&fn_name, #fn_name);
-#include "platformX86UNIX/gl_func.h"
-#undef GL_FUNCTION
+//#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) result &= bindFunction( *(void**)&fn_name, #fn_name);
+//#include "platformX86UNIX/gl_func.h"
+//#undef GL_FUNCTION
 
    return result;
 }
@@ -81,9 +81,9 @@ static bool bindOpenGLFunctions()
 static void unbindOpenGLFunctions()
 {
    // point gl function pointers at stub functions
-#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_name = stub_##fn_name;
-#include "platformX86UNIX/gl_func.h"
-#undef GL_FUNCTION
+//#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_name = stub_##fn_name;
+//#include "platformX86UNIX/gl_func.h"
+//#undef GL_FUNCTION
 }
 
 namespace GLLoader
@@ -149,7 +149,7 @@ float gOpenGLGammaCorrection             = 0.5;
 bool  gOpenGLNoDrawArraysAlpha           = false;
 
 // JMQTODO: really need a platform-shared version of this nastiness
-bool QGL_EXT_Init( )
+/*bool QGL_EXT_Init( )
 {
    // Load extensions...
    //
@@ -325,5 +325,5 @@ bool QGL_EXT_Init( )
    }
 
    return true;
-}
+}*/
 

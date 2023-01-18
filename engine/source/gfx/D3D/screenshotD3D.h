@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Torque Shader Engine 
+// Torque Game Engine Advanced 
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 #ifndef _SCREENSHOTD3D_H_
@@ -14,13 +14,10 @@ class ScreenShotD3D : public ScreenShot
 {
 
 public:
-
-    /// captures the back buffer
-    virtual void captureStandard();
-
-    // captures a custom size - test
-    virtual void captureCustom();
-
+   
+   /// captures the back buffer
+   virtual void captureStandard();
+   
 };
 
 

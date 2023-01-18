@@ -13,9 +13,11 @@
 #include "math/mMath.h"
 #include "console/simBase.h"
 #include "console/console.h"
+#ifdef TORQUE_TERRAIN
 #include "terrain/terrData.h"
 #include "terrain/terrRender.h"
 #include "terrain/waterBlock.h"
+#endif
 #include "game/collisionTest.h"
 #include "game/showTSShape.h"
 #include "sceneGraph/sceneGraph.h"
@@ -29,7 +31,7 @@
 #include "core/fileStream.h"
 #include "gui/core/guiCanvas.h"
 #include "sceneGraph/sceneLighting.h"
-#include "terrain/sky.h"
+#include "terrain/environment/sky.h"
 #include "game/ambientAudioManager.h"
 #include "core/frameAllocator.h"
 #include "sceneGraph/detailManager.h"
@@ -39,6 +41,9 @@
 #include "core/iTickable.h"
 #include "core/tDictionary.h"
 #include <game/missionMarker.h>
+
+#include "core/tokenizer.h"
+#include "interior/interiorResObjects.h"
 
 static void cPanoramaScreenShot(SimObject*, S32, const char** argv);
 
@@ -82,6 +87,170 @@ ConsoleFunction(isSinglePlayerMode, bool, 1, 1, "() - Checks if singleplayer onl
     argc;
 
     return gSPMode;
+}
+
+ConsoleFunction(loadObjectsFromMission, const char*, 2, 4, "(mission, className, dataBlock) - Loads Objects from a Mission")
+{
+    const char* missionFile = argv[1];
+
+    char buf1[1024];
+    buf1[0] = 0;
+    dStrcat(buf1, missionFile);
+    if (!dStrrchr(missionFile, '.'))
+        dStrcat(buf1, ".mis");
+
+    char srcPath[1024];
+    srcPath[0] = 0;
+    dStrcat(srcPath, "*/");
+    dStrcat(srcPath, buf1);
+
+    char absPath[1152];
+    ResourceObject* resourceObject;
+    const char* fileName;
+    if (!Con::expandScriptFilename(absPath, 1024, srcPath) ||
+        (resourceObject = ResourceManager->findMatch(absPath, &fileName)) == 0)
+    {
+        Con::errorf("Unable to find %s", buf1);
+        return "";
+    }
+
+    Tokenizer tokenizer;
+    if (!tokenizer.openFile(fileName))
+    {
+        Con::errorf("Unable to open %s", fileName);
+        return "";
+    }
+
+    StringTableEntry className = StringTable->insert("InteriorInstance");
+    if (argc > 2)
+        className = StringTable->insert(argv[2]);
+
+    StringTableEntry dataBlockName = StringTable->insert("");
+    if (argc > 3)
+        dataBlockName = StringTable->insert(argv[3]);
+
+    Vector<ItrGameEntity*> gameEntities;
+
+    while (tokenizer.advanceToken(true))
+    {
+        const char* token = tokenizer.getToken();
+        if (dStrstr(token, className))
+        {
+            bool isGameEntity = argc <= 3;
+
+            ItrGameEntity* entity = new ItrGameEntity;
+            entity->mGameClass = className;
+
+            tokenizer.advanceToken(true);
+            tokenizer.advanceToken(true);
+
+            if (tokenizer.getToken()[0] != '}')
+            {
+                do
+                {
+                    entity->mDictionary.increment();
+                    const char *token2 = tokenizer.getToken();
+                    dSprintf(entity->mDictionary[entity->mDictionary.size() - 1].name, 256, "%s", token2);
+
+                    tokenizer.advanceToken(false);
+                    tokenizer.advanceToken(false);
+
+                    char buf4[1024];
+                    if (tokenizer.getToken()[0] == '.')
+                    {
+                        const char* token3 = tokenizer.getToken();
+                        dSprintf(buf4, 256, "%s/%s", resourceObject->path, token3 + 2); // why + 2?
+                    } else
+                    {
+                        const char* token3 = tokenizer.getToken();
+                        dSprintf(buf4, 1024, "%s", token3);
+                    }
+                    dSprintf(entity->mDictionary[entity->mDictionary.size() - 1].value, 256, "%s", buf4);
+
+                    if (argc == 4
+                        && !dStricmp(entity->mDictionary[entity->mDictionary.size() - 1].name, "datablock")
+                        && !dStricmp(entity->mDictionary[entity->mDictionary.size() - 1].value, dataBlockName))
+                    {
+                        isGameEntity = 1;
+                    }
+
+                    tokenizer.advanceToken(false);
+                    tokenizer.advanceToken(true);
+                } while (tokenizer.getToken()[0] != '}');
+            }
+
+            if (isGameEntity)
+                gameEntities.push_back(entity);
+        }
+    }
+
+    buf1[dStrlen(buf1) - 4] = 0;
+
+    char buf5[256];
+    dSprintf(buf5, 256, "%sGroup", buf1);
+    if (buf5[0] < '0' || buf5[0] > '9')
+    {
+        SimGroup *group = static_cast<SimGroup*>(Sim::findObject(buf5));
+        if (!group)
+        {
+            group = static_cast<SimGroup*>(ConsoleObject::create("SimGroup"));
+            group->registerObject(buf5);
+        }
+
+        SimSet* missionGroup = static_cast<SimSet*>(Sim::findObject("MissionGroup"));
+        if (missionGroup)
+            missionGroup->addObject(group);
+        else
+            Con::errorf("********* Unable to find MissionGroup!");
+
+        for (int m = 0; m < gameEntities.size(); m++)
+        {
+            
+            ItrGameEntity* gameObj = gameEntities[m];
+            ConsoleObject*  conObj = ConsoleObject::create(gameObj->mGameClass);
+            SceneObject* sceneObject = dynamic_cast<SceneObject*>(conObj);
+            if (!sceneObject)
+                Con::errorf("Invalid game class for entity: %s", gameEntities[m]->mGameClass);
+            else
+            {
+                sceneObject->setModStaticFields(true);
+
+                for (int i = 0; i < gameObj->mDictionary.size(); i++)
+                    sceneObject->setDataField(StringTable->insert(gameObj->mDictionary[i].name, 0), 0, gameObj->mDictionary[i].value);
+                
+                sceneObject->setModStaticFields(false);
+                sceneObject->setHidden(true);
+
+                if (sceneObject->registerObject())
+                    group->addObject(sceneObject);
+            }
+        }
+        
+        for (int i = 0; i < gameEntities.size(); i++)
+        {
+            if (gameEntities[i])
+                delete gameEntities[i];
+        }
+
+        gameEntities.clear();
+        char* ret = Con::getReturnBuffer(256);
+        dSprintf(ret, 256, "%s", buf5);
+        return ret;
+    }
+    else
+    {
+        Con::errorf("Don't use mission names that begin with numbers like %s!", buf1);
+
+        for (int i = 0; i < gameEntities.size(); i++)
+        {
+            if (gameEntities[i])
+                delete gameEntities[i];
+        }
+
+        gameEntities.clear();
+
+        return "";
+    }
 }
 #endif
 
@@ -556,6 +725,7 @@ ConsoleFunction(getControlObjectAltitude, const char*, 1, 1, "Get distance from 
             else
                 pSB->getTransform().getColumn(3, &pos);
 
+#ifdef TORQUE_TERRAIN
             TerrainBlock* pBlock = getCurrentClientSceneGraph()->getCurrentTerrain();
             if (pBlock != NULL) {
                 Point3F terrPos = pos;
@@ -571,6 +741,7 @@ ConsoleFunction(getControlObjectAltitude, const char*, 1, 1, "Get distance from 
                     pos.z -= terrPos.z;
                 }
             }
+#endif
 
             char* retBuf = Con::getReturnBuffer(128);
             dSprintf(retBuf, 128, "%g", mFloor(getMax(pos.z, 0.f)));

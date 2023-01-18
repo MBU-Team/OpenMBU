@@ -9,69 +9,76 @@
 class SFXProvider;
 
 #ifndef _SFXDEVICE_H_
-#  include "sfx/sfxDevice.h"
+#include "sfx/sfxDevice.h"
 #endif
 
 #ifndef _SFXPROVIDER_H_
-#  include "sfx/sfxProvider.h"
+#include "sfx/sfxProvider.h"
+#endif
+
+#ifndef _SFXXAUDIOVOICE_H_
+#include "sfx/xaudio/sfxXAudioVoice.h"
 #endif
 
 #ifndef _SFXXAUDIOBUFFER_H_
-#  include "sfx/xaudio/sfxXAudioBuffer.h"
+#include "sfx/xaudio/sfxXAudioBuffer.h"
 #endif
 
-//------------------------------------------------------------------------------
+#include <xaudio2.h>
+#include <x3daudio.h>
 
-#ifndef SAFE_RELEASE
-#define SAFE_RELEASE(a) if( (a) != NULL ) (a)->Release(); (a) = NULL;
-#endif
-
-
-#define SFX_XAUDIO_CHANNELCOUNT 6
-
-#if _XDK_VER < 2638
-// Speaker channel masks
-const DWORD SPEAKER_FRONT_LEFT      = 0x01;
-const DWORD SPEAKER_FRONT_RIGHT     = 0x02;
-const DWORD SPEAKER_FRONT_CENTER    = 0x04;
-const DWORD SPEAKER_LOW_FREQUENCY   = 0x08;
-const DWORD SPEAKER_BACK_LEFT       = 0x10;
-const DWORD SPEAKER_BACK_RIGHT      = 0x20;
-#endif
-
-extern XAUDIOREVERBI3DL2SETTINGS g_pReverbFxParams [];
-extern const XAUDIOFXINIT reverbEffectInit;
-extern const XAUDIOFXINIT* g_pSourceVoiceEffectsInit[];
-extern const XAUDIOVOICEFXCHAIN g_SourceEffectsChain;
-extern FLOAT g_EmitterAzimuths[];
-
-//------------------------------------------------------------------------------
 
 class SFXXAudioDevice : public SFXDevice
 {
    typedef SFXDevice Parent;
 
-   public:
-      SFXXAudioDevice( SFXProvider* provider, const char* name, bool useHardware, S32 maxBuffers );
-      virtual ~SFXXAudioDevice();
-
    protected:
+
       const StringTableEntry mName;
+
+      /// The XAudio engine interface passed 
+      /// on creation from the provider.
+      IXAudio2 *mXAudio;
+
+      /// The X3DAudio instance.
+      X3DAUDIO_HANDLE mX3DAudio;
+
+      /// The one and only mastering voice.
+      IXAudio2MasteringVoice* mMasterVoice;
+
+      /// The details of the master voice.
+      XAUDIO2_VOICE_DETAILS mMasterVoiceDetails;
+
+      /// The one listener.
+      X3DAUDIO_LISTENER mListener;
+
+      /// All the currently allocated voices.
+      SFXXAudioVoiceVector mVoices;
+
+      /// All the current audio buffers.
       SFXXAudioBufferVector mBuffers;
 
    public:
 
+      SFXXAudioDevice(  SFXProvider* provider, 
+                        const char* name,
+                        IXAudio2 *xaudio,
+                        U32 deviceIndex,
+                        U32 speakerChannelMask,
+                        U32 maxBuffers );
+
+      virtual ~SFXXAudioDevice();
+
+      // SFXDevice
       const char* getName() const { return mName; }
-
-      // TODO: add a duplicateBuffer which uses DuplicateSoundBuffer!
-
-      SFXBuffer* createBuffer( bool is3d, U32 channels, U32 frequency, U32 bitsPerSample, U32 dataSize );
-
-      void deleteBuffer( SFXBuffer* buffer );
-
-      S32 getBufferCount() const { return mBuffers.size(); }
-
+      SFXBuffer* createBuffer( SFXProfile *profile );
+      SFXVoice* createVoice( SFXBuffer *buffer );
+      void deleteVoice( SFXVoice* buffer );
+      U32 getVoiceCount() const { return mVoices.size(); }
       void update( const SFXListener& listener );
+
+      /// Called from the voice when its about to start playback.
+      void _setOutputMatrix( SFXXAudioVoice *voice );
 };
 
 #endif // _SFXXAUDIODEVICE_H_

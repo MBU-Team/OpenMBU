@@ -21,6 +21,7 @@ void ReflectPlane::setupTex(U32 texSize)
 {
     mTexSize = texSize;
     mReflectTex.set(texSize, texSize, GFXFormatR8G8B8, &GFXDefaultRenderTargetZBufferProfile);
+    mDepthTex.set( texSize, texSize, GFXFormatD24S8, &GFXDefaultZTargetProfile );
 }
 
 //--------------------------------------------------------------------------

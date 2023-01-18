@@ -11,20 +11,21 @@
 #endif
 
 #include "platformX86UNIX/platformGL.h"
-#include "platform/platformAL.h"
+//#include "platform/platformAL.h"
+#include "gfx/gNewFont.h"
 #include "platform/platformInput.h"
 
 // declare stub functions
-#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_return stub_##fn_name fn_args{ fn_value }
-#include "platformX86UNIX/gl_func.h"
-#include "platformX86UNIX/glu_func.h"
-#undef GL_FUNCTION
+//#define GL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_return stub_##fn_name fn_args{ fn_value }
+//#include "platformX86UNIX/gl_func.h"
+//#include "platformX86UNIX/glu_func.h"
+//#undef GL_FUNCTION
 
 // point gl function pointers at stub functions
-#define GL_FUNCTION(fn_return,fn_name,fn_args, fn_value) fn_return (*fn_name)fn_args = stub_##fn_name;
-#include "platformX86UNIX/gl_func.h"
+//#define GL_FUNCTION(fn_return,fn_name,fn_args, fn_value) fn_return (*fn_name)fn_args = stub_##fn_name;
+//#include "platformX86UNIX/gl_func.h"
 #include "platformX86UNIX/glu_func.h"
-#undef GL_FUNCTION
+//#undef GL_FUNCTION
 
 GLState gGLState;
 bool  gOpenGLDisablePT                   = false;
@@ -44,20 +45,20 @@ bool  gOpenGLNoDrawArraysAlpha           = false;
 //#include <al/eaxtypes.h>
 
 // Define the OpenAL and Extension Stub functions
-#define AL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_return stub_##fn_name fn_args{ fn_value }
-#include <al/al_func.h>
-#include <al/alc_func.h>
-#include <al/eax_func.h>
-#undef AL_FUNCTION
+//#define AL_FUNCTION(fn_return, fn_name, fn_args, fn_value) fn_return stub_##fn_name fn_args{ fn_value }
+//#include <al/al_func.h>
+//#include <al/alc_func.h>
+//#include <al/eax_func.h>
+//#undef AL_FUNCTION
 
 
 // Declare the OpenAL and Extension Function pointers
 // And initialize them to the stub functions
-#define AL_FUNCTION(fn_return,fn_name,fn_args, fn_value) fn_return (*fn_name)fn_args = stub_##fn_name;
-#include <al/al_func.h>
-#include <al/alc_func.h>
-#include <al/eax_func.h>
-#undef AL_FUNCTION
+//#define AL_FUNCTION(fn_return,fn_name,fn_args, fn_value) fn_return (*fn_name)fn_args = stub_##fn_name;
+//#include <al/al_func.h>
+//#include <al/alc_func.h>
+//#include <al/eax_func.h>
+//#undef AL_FUNCTION
 
 namespace Audio
 {

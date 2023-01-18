@@ -22,9 +22,8 @@ ConsoleFunction(isDemoLaunch, bool, 1, 1, "()")
     return false;
 }
 
-ConsoleFunction(getLanguage, const char*, 1, 1, "()")
+const char* getSystemLanguage_forConsole()
 {
-    argc;
     char* ret = Con::getReturnBuffer(1024);
 
     LangType lang = Platform::getSystemLanguage();
@@ -67,6 +66,24 @@ ConsoleFunction(getLanguage, const char*, 1, 1, "()")
 
     dSprintf(ret, 1024, "%s", language);
     return ret;
+}
+
+ConsoleFunction(getSystemLanguage, const char*, 1, 1, "()")
+{
+    argc;
+    return getSystemLanguage_forConsole();
+}
+
+ConsoleFunction(getLanguage, const char*, 1, 1, "()")
+{
+    argc;
+    const char* lang = Con::getVariable("pref::Language");
+
+    if (*lang)
+        return lang;
+
+    Con::warnf("getLanguage: $pref::Language is not set, using system language");
+    return getSystemLanguage_forConsole();
 }
 
 ConsoleFunction(XBLiveIsSignedIn, bool, 1, 2, "([port])")
@@ -114,6 +131,29 @@ ConsoleFunction(XBLiveGetSignInPort, S32, 1, 1, "()")
     return 0;
 }
 
+bool xbliveSessionActive = false;
+
+ConsoleFunction(XBLiveIsStatsSessionActive, bool, 1, 1, "()")
+{
+    argc;
+
+    return xbliveSessionActive;
+}
+
+ConsoleFunction(XBLiveStartStatsSession, void, 1, 1, "()")
+{
+    argc;
+
+    xbliveSessionActive = true;
+}
+
+ConsoleFunction(XBLiveEndStatsSession, void, 1, 1, "()")
+{
+    argc;
+
+    xbliveSessionActive = false;
+}
+
 ConsoleFunction(PDLCAllowMission, bool, 2, 2, "(levelId)")
 {
     argc;
@@ -145,4 +185,47 @@ ConsoleFunction(ContentQuery, const char*, 1, 2, "([contentCategory])")
     dSprintf(result, 64, "%d %d", newContentCount, totalContentCount);
 
     return result;
+}
+
+// TODO: This should probably be moved to a better place
+ConsoleFunction(getCPPVersion, const char*, 1, 1, "()")
+{
+    argc;
+
+#ifdef _MSVC_LANG
+    U32 version = _MSVC_LANG;
+#else
+    U32 version = __cplusplus;
+#endif
+
+    const char* versionString;
+    switch (version)
+    {
+        case 1L:
+            versionString = "pre-C++98";
+            break;
+        case 199711L:
+            versionString = "C++98";
+            break;
+        case 201103L:
+            versionString = "C++11";
+            break;
+        case 201402L:
+            versionString = "C++14";
+            break;
+        case 201703L:
+            versionString = "C++17";
+            break;
+        case 202002L:
+            versionString = "C++20";
+            break;
+        default:
+            versionString = "Unknown";
+            break;
+    }
+
+    char *ret = Con::getReturnBuffer(1024);
+    dSprintf(ret, 1024, "%s (%dL)", versionString, version);
+
+    return ret;
 }

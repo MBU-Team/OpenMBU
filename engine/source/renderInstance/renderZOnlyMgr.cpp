@@ -26,13 +26,13 @@ void RenderZOnlyMgr::render()
     if (!this->mBlankShader)
         Sim::findObject<ShaderData>("BlankShader", mBlankShader);
 
-    if (!mBlankShader || !mBlankShader->shader)
+    if (!mBlankShader || !mBlankShader->getShader())
         return;
 
     ColorI clearColor = ColorI(0x00, 0x00, 0x00, 0xFF); // 0xFF000000
 
     GFX->clear(GFXClearZBuffer | GFXClearStencil, clearColor, 1.0f, 0);
-    mBlankShader->shader->process();
+    mBlankShader->getShader()->process();
 
     GFX->enableColorWrites(false, false, false, false);
     GFX->setZWriteEnable(true);
