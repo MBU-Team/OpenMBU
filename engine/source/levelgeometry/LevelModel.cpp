@@ -3,7 +3,7 @@
 #include "console/console.h"
 
 const U32 LevelModel::smFileVersion = 0;
-const U32 LevelModel::smIdentifier = 'MDLX';
+const U32 LevelModel::smIdentifier = 'XLDM'; // MDLX
 
 LevelModel::LevelModel()
 {

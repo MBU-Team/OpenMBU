@@ -3,7 +3,7 @@
 #include "console/console.h"
 
 const U32 LevelModelResource::smFileVersion = 0;
-const U32 LevelModelResource::smIdentifier = 'LMDL';
+const U32 LevelModelResource::smIdentifier = 'LDML'; // LMDL
 
 LevelModelResource::LevelModelResource()
 {

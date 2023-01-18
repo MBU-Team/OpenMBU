@@ -24,6 +24,15 @@ private:
     Resource<LevelModelResource> mModelResource;
 
     U32 mCRC;
+
+    U32 packUpdate(NetConnection* conn, U32 mask, BitStream* stream) override;
+    void unpackUpdate(NetConnection* conn, BitStream* stream) override;
+
+    enum UpdateMaskBits
+    {
+        InitMask = BIT(0),
+        TransformMask = BIT(1),
+    };
 };
 
 #endif // _LEVEL_GEOMETRY_INSTANCE_H

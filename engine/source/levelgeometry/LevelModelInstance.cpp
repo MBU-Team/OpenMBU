@@ -3,6 +3,8 @@
 #include "LevelModel.h"
 
 #include "sim/netConnection.h"
+#include "core/bitStream.h"
+#include "math/mathIO.h"
 
 IMPLEMENT_CO_NETOBJECT_V1(LevelModelInstance);
 
@@ -75,4 +77,50 @@ void LevelModelInstance::onRemove()
 {
     removeFromScene();
     Parent::onRemove();
+}
+
+U32 LevelModelInstance::packUpdate(NetConnection *conn, U32 mask, BitStream *stream)
+{
+    U32 retMask = Parent::packUpdate(conn, mask, stream);
+
+    if (stream->writeFlag((mask & InitMask) != 0)) {
+        stream->write(mCRC);
+        stream->writeString(mModelFileName);
+
+        mathWrite(*stream, mObjToWorld);
+        mathWrite(*stream, mObjScale);
+    } else {
+        if (stream->writeFlag((mask & TransformMask) != 0)) {
+            mathWrite(*stream, mObjToWorld);
+            mathWrite(*stream, mObjScale);
+        }
+    }
+
+    return retMask;
+}
+
+void LevelModelInstance::unpackUpdate(NetConnection *conn, BitStream *stream)
+{
+    Parent::unpackUpdate(conn, stream);
+
+    MatrixF temp;
+    Point3F tempScale;
+
+    if (stream->readFlag())
+    {
+        stream->read(&mCRC);
+        mModelFileName = stream->readSTString();
+
+        mathRead(*stream, &temp);
+        mathRead(*stream, &tempScale);
+        setScale(tempScale);
+        setTransform(temp);
+    } else {
+        if (stream->readFlag()) {
+            mathRead(*stream, &temp);
+            mathRead(*stream, &tempScale);
+            setScale(tempScale);
+            setTransform(temp);
+        }
+    }
 }
