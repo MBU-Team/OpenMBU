@@ -145,14 +145,14 @@ void ProcessedShaderMaterial::determineFeatures( U32 stageNum, GFXShaderFeatureD
         }
 
         // These features only happen in the last state
-        if (stageNum == (mMaxStages-1))
-        {
-            // fog - last stage only
-            if( i == GFXShaderFeatureData::Fog && sgData.useFog)
-            {
-                fd.features[i] = true;
-            }
-        }
+        //if (stageNum == (mMaxStages-1))
+        //{
+        //    // fog - last stage only
+        //    if( i == GFXShaderFeatureData::Fog && sgData.useFog)
+        //    {
+        //        fd.features[i] = true;
+        //    }
+        //}
 
         // textures
         if( mStages[stageNum].tex[i] )

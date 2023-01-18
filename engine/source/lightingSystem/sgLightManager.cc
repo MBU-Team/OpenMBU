@@ -745,12 +745,12 @@ void LightManager::setLightInfo(ProcessedMaterial* pmat, const Material* mat, co
 
     // TODO: This fixes glass flickering, but checkpoints on Spelunking(lv37) still flicker.
     //  This is probably not the root of the problem
-    if (!sgData.refractPass)
-    {
+    //if (!sgData.refractPass)
+    //{
         objTrans.mulP(lightPos);
         objTrans.mulV(lightDir);
         lightDir.normalizeSafe();
-    }
+    //}
 
     Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, light.sgTempModelInfo[0]);
     GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
@@ -785,20 +785,21 @@ void LightManager::setLightInfo(ProcessedMaterial* pmat, const Material* mat, co
     if (!pcm)
     {
         // Set the dynamic light textures
-        const RenderPassData *rpass = pmat->getPass(pass);
-        if(rpass)
+        const RenderPassData* rpass = pmat->getPass(pass);
+        if (rpass)
         {
-            for(U32 i=0; i<rpass->numTex; i++)
+            for (U32 i = 0; i < rpass->numTex; i++)
             {
                 setTextureStage(sgData, rpass->texFlags[i], i);
             }
         }
-    } else {
-        // Processed custom materials store their texflags in a different way, so
-        // just tell it to update its textures.
-        SceneGraphData& temp = const_cast<SceneGraphData&>(sgData);
-        pcm->setTextureStages(temp, pass);
     }
+    //} else {
+    //    // Processed custom materials store their texflags in a different way, so
+    //    // just tell it to update its textures.
+    //    SceneGraphData& temp = const_cast<SceneGraphData&>(sgData);
+    //    pcm->setTextureStages(temp, pass);
+    //}
 }
 
 void LightManager::setLightingBlendFunc()
