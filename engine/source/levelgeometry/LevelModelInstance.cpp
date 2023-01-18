@@ -79,6 +79,20 @@ void LevelModelInstance::onRemove()
     Parent::onRemove();
 }
 
+bool LevelModelInstance::prepRenderImage(SceneState *state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState)
+{
+    LevelModel* model = mModelResource->getLevelModel(0);
+
+    if (!isHidden())
+    {
+        GFX->pushWorldMatrix();
+        model->prepBatchRender(this, state);
+        GFX->popWorldMatrix();
+    }
+
+    return false;
+}
+
 U32 LevelModelInstance::packUpdate(NetConnection *conn, U32 mask, BitStream *stream)
 {
     U32 retMask = Parent::packUpdate(conn, mask, stream);

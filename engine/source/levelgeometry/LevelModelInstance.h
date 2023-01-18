@@ -15,6 +15,8 @@ public:
     DECLARE_CONOBJECT(LevelModelInstance);
     static void initPersistFields();
 
+    bool prepRenderImage(SceneState* state, const U32 stateKey, const U32 startZone, const bool modifyBaseZoneState) override;
+
 protected:
     bool onAdd() override;
     void onRemove() override;
