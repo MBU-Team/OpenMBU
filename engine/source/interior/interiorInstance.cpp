@@ -27,6 +27,7 @@
 #include "gui/core/guiTSControl.h"
 #include "math/mathUtils.h"
 #include "renderInstance/renderInstMgr.h"
+#include "sim/pathManager.h"
 
 //--------------------------------------------------------------------------
 //-------------------------------------- Local classes, data, and functions
@@ -160,6 +161,17 @@ ConsoleMethod(InteriorInstance, setDetailLevel, void, 3, 3, "(int level)")
     }
     else
         instance->setDetailLevel(dAtoi(argv[2]));
+}
+
+ConsoleMethod(InteriorInstance, magicButton, void, 2, 2, "")
+{
+    if (object->isGhost())
+    {
+        Con::errorf("InteriorInstance: client objects may not receive console commands.  Ignored");
+        return;
+    }
+
+    object->addChildren();
 }
 
 //--------------------------------------------------------------------------
@@ -1392,3 +1404,160 @@ Material* InteriorInstance::getMaterial(U32 material)
     return NULL;
 }
 
+void InteriorInstance::addChildren()
+{
+    if(mInteriorRes)
+    {
+        SimGroup* group = this->getGroup();
+        Con::errorf("There are %d game entities", mInteriorRes->getNumGameEntities());
+
+        for (U32 i = 0; i < mInteriorRes->getNumGameEntities(); i++)
+        {
+            ItrGameEntity* entity = mInteriorRes->getGameEntity(i);
+            ConsoleObject* conObj = ConsoleObject::create(entity->mGameClass);
+            SceneObject* obj = dynamic_cast<SceneObject*>(conObj);
+            if (obj)
+            {
+                GameBase* gbObj = dynamic_cast<GameBase*>(conObj);
+                if (gbObj)
+                    gbObj->setField("dataBlock", entity->mDataBlock);
+
+                obj->setModStaticFields(true);
+                for (auto& entry : entity->mDictionary)
+                {
+                    obj->setDataField(StringTable->insert(entry.name), nullptr, entry.value);
+                }
+                obj->setModStaticFields(false);
+
+                Point3F origin = entity->mPos;
+                origin *= this->mObjScale;
+
+                MatrixF trans = this->getTransform();
+                trans.mulP(origin);
+
+                MatrixF xform(true);
+                xform.setPosition(origin);
+
+                obj->setTransform(xform);
+
+                bool success = obj->registerObject();
+                if (success)
+                {
+                    Con::errorf("Created entity: %s: %s", entity->mGameClass, entity->mDataBlock);
+                    group->addObject(obj);
+                } else {
+                    Con::errorf("Failed to register entity: %s: %s", entity->mGameClass, entity->mDataBlock);
+                    delete obj;
+                }
+            } else {
+                Con::errorf("Invalid game class for entity: %s", entity->mGameClass);
+                delete conObj;
+            }
+        }
+        this->addDoors(false);
+    }
+}
+
+void InteriorInstance::addDoors(bool hide)
+{
+    for (U32 i = 0; i < mInteriorRes->getNumInteriorPathFollowers(); i++)
+    {
+        InteriorPathFollower* follower = mInteriorRes->getInteriorPathFollower(i);
+        PathedInterior* pi = new PathedInterior();
+        pi->mName = StringTable->insert(follower->mName);
+        pi->mInteriorResIndex = follower->mInteriorResIndex;
+        pi->mPathIndex = follower->mPathIndex;
+        pi->mOffset = follower->mOffset;
+        pi->mInteriorResName = this->mInteriorFileName;
+        pi->setField("dataBlock", follower->mDataBlock);
+
+        for (auto& entry : follower->mDictionary)
+        {
+            pi->setDataField(entry.name, nullptr, entry.value);
+        }
+
+        SimGroup* doorGroup = new SimGroup();
+
+        char nameBuffer[256];
+        dSprintf(nameBuffer, 255, "%s_g", pi->mName);
+        doorGroup->registerObject();
+        this->getGroup()->addObject(doorGroup);
+        doorGroup->assignName(nameBuffer);
+
+        Path* path = new Path();
+        path->registerObject();
+        doorGroup->addObject(path);
+        U32 pathId = gServerPathManager->allocatePathId();
+        path->mPathIndex = pathId;
+        for (U32 k = 0; k < follower->mWayPoints.size(); k++)
+        {
+            Marker* marker = new Marker();
+
+            marker->mSeqNum = k;
+            marker->mMSToNext = follower->mWayPoints[k].msToNext;
+            marker->mSmoothingType = follower->mWayPoints[k].smoothingType;
+
+            marker->registerObject();
+            path->addObject(marker);
+
+            Point3F markerPos = follower->mWayPoints[k].pos;
+            markerPos *= this->mObjScale;
+
+            MatrixF transform = this->getTransform();
+            transform.mulP(markerPos);
+
+            MatrixF newXForm(true);
+            newXForm.setPosition(markerPos);
+
+            marker->setTransform(newXForm);
+        }
+
+        for (U32 k = 0; k < follower->mTriggerIds.size(); k++)
+        {
+            InteriorResTrigger* resTrigger = mInteriorRes->getTrigger(follower->mTriggerIds[k]);
+
+            Trigger* trigger = new Trigger();
+            trigger->setField("dataBlock", resTrigger->mDataBlock);
+
+            for (auto& entry : resTrigger->mDictionary)
+            {
+                trigger->setDataField(StringTable->insert(entry.name), nullptr, entry.value);
+            }
+
+            MatrixF newXForm;
+            this->createTriggerTransform(resTrigger, &newXForm);
+            trigger->setTriggerPolyhedron(resTrigger->mPolyhedron);
+            trigger->setScale(this->mObjScale);
+            trigger->setTransform(newXForm);
+            trigger->registerObject();
+            doorGroup->addObject(trigger, resTrigger->mName);
+        }
+
+        MatrixF piTransform(true);
+        Point3F piOffset = pi->mOffset;
+        piOffset *= this->mObjScale;
+
+        MatrixF trans = this->getTransform();
+        trans.mulP(piOffset);
+
+        piOffset = -piOffset;
+        piTransform.setPosition(piOffset);
+
+        MatrixF trans2 = this->getTransform();
+        piTransform.mul(trans2);
+
+        pi->mBaseTransform = piTransform;
+        pi->mBaseScale = this->mObjScale;
+
+        doorGroup->addObject(pi, pi->mName);
+
+        if (hide)
+            doorGroup->setHidden(hide);
+
+        if (!pi->registerObject())
+        {
+            Con::warnf("Warning, could not register door.  Door skipped!");
+            delete pi;
+        }
+    }
+}

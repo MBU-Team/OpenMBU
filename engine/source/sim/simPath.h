@@ -14,6 +14,8 @@
 /// A path!
 class Path : public SimGroup
 {
+    friend class InteriorInstance;
+
     typedef SimGroup Parent;
 
 public:

@@ -111,6 +111,9 @@ public:
     /// @param   newBase   New base skin
     void setSkinBase(const char* newBase);
 
+    void addChildren();
+    void addDoors(bool hide);
+
 public:
     static bool smDontRestrictOutside;
     static F32  smDetailModification;
