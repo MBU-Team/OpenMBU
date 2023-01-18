@@ -73,6 +73,11 @@ void RenderRefractMgr::render()
                 if (newPassNeeded(mat, passRI))
                     break;
 
+
+                setupSGData(passRI, sgData);
+                sgData.refractPass = true;
+                // sgData.matIsInited = true;
+                mat->setLightInfo(sgData);
                 mat->setWorldXForm(*passRI->worldXform);
                 mat->setObjectXForm(*passRI->objXform);
                 mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());

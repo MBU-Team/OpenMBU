@@ -236,9 +236,10 @@ void RenderTranslucentMgr::render()
 //                    }
 //                }
 
-                //setupSGData(passRI, sgData);
-                //sgData.matIsInited = true;
-                //mat->setLightInfo(sgData);
+                
+                setupSGData(passRI, sgData);
+                // sgData.matIsInited = true;
+                mat->setLightInfo(sgData);
                 mat->setWorldXForm(*passRI->worldXform);
                 mat->setObjectXForm(*passRI->objXform);
                 mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
