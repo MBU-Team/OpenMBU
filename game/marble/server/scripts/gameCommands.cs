@@ -346,7 +346,10 @@ function serverStartGameNow()
    cancel($Server::ArbSched);
    
    // Disable quick load for multi player so that the host doesn't get an advantage
-   $Host::QuickLoad = false;    
+   if (ClientGroup.getCount() > 1)
+   {
+      $Host::QuickLoad = false;    
+   }
    
    if ($EnableFMS)
    {
