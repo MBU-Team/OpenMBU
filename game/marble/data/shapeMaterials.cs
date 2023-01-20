@@ -934,7 +934,7 @@ new CustomMaterial(Material_cube_glass)
    glow[0]=true;
    emissive[0] = true;
    translucent[0] = true;
-   translucentBlendOp = Add;
+   translucentBlendOp = AddAlpha;
 };
 
  %mat = new Material(Material_sigil_glow)
