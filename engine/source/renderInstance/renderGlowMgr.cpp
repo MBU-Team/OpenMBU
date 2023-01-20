@@ -52,6 +52,22 @@ void RenderGlowMgr::render()
 
     GFX->pushWorldMatrix();
 
+    // set up register combiners
+    GFX->setTextureStageAlphaOp(0, GFXTOPModulate);
+    GFX->setTextureStageAlphaOp(1, GFXTOPDisable);
+    GFX->setTextureStageAlphaArg1(0, GFXTATexture);
+    GFX->setTextureStageAlphaArg2(0, GFXTADiffuse);
+
+    GFX->setTextureStageColorOp(0, GFXTOPModulate);
+    GFX->setTextureStageColorOp(1, GFXTOPDisable);
+
+    // turn on alpha test
+    GFX->setAlphaTestEnable(true);
+    GFX->setAlphaRef(1);
+    GFX->setAlphaFunc(GFXCmpGreaterEqual);
+
+    GFX->setAlphaBlendEnable(true);
+
     // set render states
     GFX->setCullMode(GFXCullCCW);
     GFX->setZWriteEnable(false);
