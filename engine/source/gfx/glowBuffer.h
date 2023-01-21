@@ -37,9 +37,6 @@ private:
     GFXTexHandle        mSurface[3];
     S32                 mCallbackHandle;
     bool                mDisabled;
-    Point4F             mKernel;
-    Point4F             mPixelOffsets;
-    S32                 mMaxGlowPasses;
 
     GFXVertexBufferHandle<GFXVertexPT> mVertBuff;
     GFXTextureTargetRef mTarget;
@@ -47,7 +44,6 @@ private:
     void setupOrthoGeometry();
     MatrixF setupOrthoProjection();
     void setupRenderStates();
-    void setupPixelOffsets(Point4F offsets, bool horizontal);
     void blur();
     static void texManagerCallback(GFXTexCallbackCode code, void* userData);
 

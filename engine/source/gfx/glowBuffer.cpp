@@ -26,10 +26,7 @@ GlowBuffer::GlowBuffer()
     mBlurShader = NULL;
     mBlurShaderName = NULL;
     mCallbackHandle = -1;
-    mKernel = Point4F(0.175f, 0.275f, 0.375f, 0.475f);
     mDisabled = false;
-    mMaxGlowPasses = 4;
-    mPixelOffsets = Point4F(3.5f, 2.5f, 1.5f, 0.5f);
 }
 
 //--------------------------------------------------------------------------
@@ -40,9 +37,6 @@ void GlowBuffer::initPersistFields()
     Parent::initPersistFields();
 
     addField("shader", TypeString, Offset(mBlurShaderName, GlowBuffer));
-    addField("kernel", TypePoint4F, Offset(mKernel, GlowBuffer));
-    addField("pixelOffsets", TypePoint4F, Offset(mPixelOffsets, GlowBuffer));
-    addField("maxGlowPasses", TypeS32, Offset(mMaxGlowPasses, GlowBuffer));
 }
 
 //--------------------------------------------------------------------------
@@ -174,37 +168,8 @@ void GlowBuffer::setupRenderStates()
 }
 
 //--------------------------------------------------------------------------
-// Setup pixel offsets for the blur shader
-//--------------------------------------------------------------------------
-void GlowBuffer::setupPixelOffsets(Point4F offsets, bool horizontal)
-{
-    Point2F offsetConsts[4];
-
-    if (horizontal)
-    {
-        offsetConsts[0].set(offsets.x / GLOW_BUFF_SIZE, 0.0);
-        offsetConsts[1].set(offsets.y / GLOW_BUFF_SIZE, 0.0);
-        offsetConsts[2].set(offsets.z / GLOW_BUFF_SIZE, 0.0);
-        offsetConsts[3].set(offsets.w / GLOW_BUFF_SIZE, 0.0);
-    }
-    else
-    {
-        offsetConsts[0].set(0.0, offsets.x / GLOW_BUFF_SIZE);
-        offsetConsts[1].set(0.0, offsets.y / GLOW_BUFF_SIZE);
-        offsetConsts[2].set(0.0, offsets.z / GLOW_BUFF_SIZE);
-        offsetConsts[3].set(0.0, offsets.w / GLOW_BUFF_SIZE);
-    }
-
-
-    GFX->setVertexShaderConstF(4, (float*)offsetConsts[0], 1);
-    GFX->setVertexShaderConstF(5, (float*)offsetConsts[1], 1);
-    GFX->setVertexShaderConstF(6, (float*)offsetConsts[2], 1);
-    GFX->setVertexShaderConstF(7, (float*)offsetConsts[3], 1);
-}
-
-//--------------------------------------------------------------------------
-// Perform 4 pass blur operation.  Ping pongs back and forth between 2
-// render targets.  Does horizontal passes first, then vertical.
+// Perform 2 pass blur operation.  Ping pongs back and forth between 2
+// render targets.  Does horizontal pass first, then vertical.
 //--------------------------------------------------------------------------
 void GlowBuffer::blur()
 {
@@ -246,176 +211,6 @@ void GlowBuffer::blur()
     GFX->setTexture(0, mSurface[1]);
     mTarget->attachTexture(GFXTextureTarget::Color0, mSurface[0]);
     GFX->drawPrimitive(GFXTriangleFan, 0, 2);
-
-    // Attempt at MBU X360 Glow Buffer
-    //Point4F pixelOffsets = mPixelOffsets;
-
-    //// PASS 1
-    ////-------------------------------
-    //setupPixelOffsets(pixelOffsets, true);
-
-    //Point3F kernel[13];
-    //kernel[0].set(0.0f, -0.0078125f, 0.0f);
-    //kernel[1].set(0.6f, 0.0f, -0.00390625f);
-    //kernel[2].set(0.0f, 0.69999999f, 0.0f);
-    //kernel[3].set(0.0f, 0.0f, 1.0f);
-    //kernel[4].set(0.0f, 0.00390625f, 1.0f);
-    //kernel[5].set(0.69999999f, 0.0f, 0.0078125f);
-    //kernel[6].set(0.0f, 0.6f, 0.0f);
-    //kernel[7].set(0.01171875f, 0.0f, 0.5f);
-    //kernel[8].set(0.0f, 0.015625f, 0.0f);
-    //kernel[9].set(0.4f, 0.0f, 0.01953125f);
-    //kernel[10].set(0.0f, 0.3f, 0.0f);
-    //kernel[11].set(0.0234375f, 0.0f, 0.1f);
-    //kernel[12].set(0.0f, 0.0f, 0.0f);
-
-    //float divisibles[13];
-    //divisibles[0] = 0.1f;
-    //divisibles[1] = 0.0f;
-    //divisibles[2] = -0.01953125f;
-    //divisibles[3] = 0.0f;
-    //divisibles[4] = 0.3f;
-    //divisibles[5] = 0.0f;
-    //divisibles[6] = -0.015625f;
-    //divisibles[7] = 0.0f;
-    //divisibles[8] = 0.4f;
-    //divisibles[9] = 0.0f;
-    //divisibles[10] = -0.01171875f;
-    //divisibles[11] = 0.0f;
-    //divisibles[12] = 0.5f;
-
-    //// set blur kernel
-    //GFX->setPixelShaderConstF(0, (float*)kernel, 13);
-
-    //float divisor = 0.0f;
-    //for (S32 i = 0; i < 13; i++)
-    //    divisor += divisibles[i];
-
-    //GFX->setPixelShaderConstF(30, &divisor, 1);
-
-    //GFX->setTexture(0, mSurface[0]);
-    //GFX->setTexture(1, mSurface[0]);
-    //GFX->setTexture(2, mSurface[0]);
-    //GFX->setTexture(3, mSurface[0]);
-    //mTarget->attachTexture(GFXTextureTarget::Color0, mSurface[1]);
-    //GFX->drawPrimitive(GFXTriangleFan, 0, 2);
-
-
-    //// PASS 2
-    ////-------------------------------
-    //setupPixelOffsets(pixelOffsets * -1.0f, true);
-
-    //Point3F kernel2[13];
-    //kernel2[0].set(0.0f, 0.0f, -0.0078125f);
-    //kernel2[1].set(0.6f, 0.0f, 0.0f);
-    //kernel2[2].set(-0.00390625f, 0.69999999f, 0.0f);
-    //kernel2[3].set(0.0f, 0.0f, 1.0f);
-    //kernel2[4].set(0.0f, 0.0f, 0.00390625f);
-    //kernel2[5].set(0.69999999f, 0.0f, 0.0f);
-    //kernel2[6].set(0.0078125, 0.6f, 0.0f);
-    //kernel2[7].set(0.0f, 0.01171875f, 0.5f);
-    //kernel2[8].set(0.0f, 0.0f, 0.015625f);
-    //kernel2[9].set(0.4f, 0.0f, 0.0f);
-    //kernel2[10].set(0.01953125f, 0.3f, 0.0f);
-    //kernel2[11].set(0.0f, 0.0234375f, 0.1f);
-    //kernel2[12].set(0.0f, 0.0f, 0.0f);
-
-    //float divisibles2[13];
-    //divisibles2[0] = 0.1f;
-    //divisibles2[1] = 0.0f;
-    //divisibles2[2] = 0.0f;
-    //divisibles2[3] = -0.01953125f;
-    //divisibles2[4] = 0.3f;
-    //divisibles2[5] = 0.0f;
-    //divisibles2[6] = 0.0f;
-    //divisibles2[7] = -0.015625f;
-    //divisibles2[8] = 0.4f;
-    //divisibles2[9] = 0.0f;
-    //divisibles2[10] = 0.0f;
-    //divisibles2[11] = -0.01171875f;
-    //divisibles2[12] = 0.5f;
-
-    //// set blur kernel
-    //GFX->setPixelShaderConstF(0, (float*)kernel2, 13);
-
-    //float divisor2 = 0.0f;
-    //for (S32 i = 0; i < 13; i++)
-    //    divisor2 += divisibles2[i];
-
-    //GFX->setPixelShaderConstF(30, &divisor2, 1);
-
-    //GFX->setTexture(0, mSurface[1]);
-    //GFX->setTexture(1, mSurface[1]);
-    //GFX->setTexture(2, mSurface[1]);
-    //GFX->setTexture(3, mSurface[1]);
-    //mTarget->attachTexture(GFXTextureTarget::Color0, mSurface[0]);
-    //GFX->drawPrimitive(GFXTriangleFan, 0, 2);
-    
-
-    // Point4F pixelOffsets = mPixelOffsets;
-
-    //float divisor = 1.25f;
-    //GFX->setPixelShaderConstF(2, &divisor, 1);
-
-    //if (mMaxGlowPasses > 0)
-    //{
-    //    // PASS 1
-    //    //-------------------------------
-    //    setupPixelOffsets(pixelOffsets, true);
-    //    mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[1] );
-
-    //    GFX->setTexture(0, mSurface[0]);
-    //    GFX->setTexture(1, mSurface[0]);
-    //    GFX->setTexture(2, mSurface[0]);
-    //    GFX->setTexture(3, mSurface[0]);
-
-    //    GFX->drawPrimitive(GFXTriangleFan, 0, 2);
-
-    //    if (mMaxGlowPasses > 1)
-    //    {
-    //        // PASS 2
-    //        //-------------------------------
-    //        setupPixelOffsets(pixelOffsets, false);
-    //        mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[0] );
-
-    //        GFX->setTexture(0, mSurface[1]);
-    //        GFX->setTexture(1, mSurface[1]);
-    //        GFX->setTexture(2, mSurface[1]);
-    //        GFX->setTexture(3, mSurface[1]);
-
-    //        GFX->drawPrimitive(GFXTriangleFan, 0, 2);
-
-    //        if (mMaxGlowPasses > 2)
-    //        {
-    //            // PASS 3
-    //            //-------------------------------
-    //            setupPixelOffsets(pixelOffsets, false);
-    //            mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[1] );
-
-    //            GFX->setTexture(0, mSurface[0]);
-    //            GFX->setTexture(1, mSurface[0]);
-    //            GFX->setTexture(2, mSurface[0]);
-    //            GFX->setTexture(3, mSurface[0]);
-
-    //            GFX->drawPrimitive(GFXTriangleFan, 0, 2);
-
-    //            if (mMaxGlowPasses > 3)
-    //            {
-    //                // PASS 4
-    //                //-------------------------------
-    //                setupPixelOffsets(pixelOffsets * -1.0f, false);
-    //                mTarget->attachTexture( GFXTextureTarget::Color0, mSurface[0] );
-
-    //                GFX->setTexture(0, mSurface[1]);
-    //                GFX->setTexture(1, mSurface[1]);
-    //                GFX->setTexture(2, mSurface[1]);
-    //                GFX->setTexture(3, mSurface[1]);
-
-    //                GFX->drawPrimitive(GFXTriangleFan, 0, 2);
-    //            }
-    //        }
-    //    }
-    //}
 
     mTarget->clearAttachments();
 }
@@ -468,10 +263,7 @@ void GlowBuffer::copyToScreen(RectI& viewport)
     // Mod color texture for this draw because we are providing color information to the PrimBuilder -patw
     GFX->setupGenericShaders( GFXDevice::GSModColorTexture );
     GFX->setTexture(0, mSurface[0]);
-    GFX->setTexture(1, NULL);
-    GFX->setTexture(2, NULL);
-    GFX->setTexture(3, NULL);
-    GFX->setTexture(4, NULL);
+    
     for (U32 i = 1; i < GFX->getNumSamplers(); i++)
     {
         GFX->setTextureStageColorOp(i, GFXTOPDisable);
