@@ -566,7 +566,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             event->action == SI_MOVE && event->deviceInst < 4)
         {
             F32 incomingValue = mFabs(event->fValue);
-            F32 deadZone = 0.05f;
+            F32 deadZone = 0.75f;//0.05f;
             F32 minClickTime = 500.f;
             F32 maxClickTime = 1000.f;
             static F32 xDecay[] = { 1.0f, 1.0f, 1.0f, 1.0f };
