@@ -155,6 +155,10 @@ GFX_DeclareTextureProfile(GFXDefaultPersistentProfile);
 // Generic diffusemap. This works in most cases.
 GFX_DeclareTextureProfile(GFXDefaultStaticDiffuseProfile);
 // Texture that resides in system memory - used to copy data to
+
+
+GFX_DeclareTextureProfile(GFXFFNoiseMapProfile);
+
 GFX_DeclareTextureProfile(GFXSystemMemProfile);
 // Depth buffer texture
 GFX_DeclareTextureProfile(GFXDefaultZTargetProfile);

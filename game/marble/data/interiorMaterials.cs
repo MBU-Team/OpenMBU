@@ -56,6 +56,7 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Plate )
 {
    mapTo = plate_1;
+   baseTex[0] = "./textures/plate.randomize";
    texture[0] = "./textures/plate.randomize";
    texture[1] = "./textures/plate.normal";
 
@@ -73,9 +74,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Beginner )
 {
    mapTo = tile_beginner;
+   baseTex[0] = "./textures/tile_beginner";
    texture[0] = "./textures/tile_beginner";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise";
+   noiseTexFileName = "./textures/noise";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -91,9 +94,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Beginner_Red  )
 {
    mapTo = tile_beginner_red;
+   baseTex[0] = "./textures/tile_beginner";
    texture[0] = "./textures/tile_beginner";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_red";
+   noiseTexFileName = "./textures/noise_red";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -110,9 +115,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Beginner_Blue  )
 {
    mapTo = tile_beginner_blue;
+   baseTex[0] = "./textures/tile_beginner";
    texture[0] = "./textures/tile_beginner";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_blue";
+   noiseTexFileName = "./textures/noise_blue";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -129,9 +136,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Intermediate  )
 {
    mapTo = tile_intermediate;
+   baseTex[0] = "./textures/tile_intermediate";
    texture[0] = "./textures/tile_intermediate";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise";
+   noiseTexFileName = "./textures/noise";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -147,9 +156,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Intermediate_green  )
 {
    mapTo = tile_intermediate_green;
+   baseTex[0] = "./textures/tile_intermediate";
    texture[0] = "./textures/tile_intermediate";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_green";
+   noiseTexFileName = "./textures/noise_green";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -165,9 +176,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Intermediate_red  )
 {
    mapTo = tile_intermediate_red;
+   baseTex[0] = "./textures/tile_intermediate";
    texture[0] = "./textures/tile_intermediate";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_red";
+   noiseTexFileName = "./textures/noise_red";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -183,9 +196,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Advanced  )
 {
    mapTo = tile_advanced;
+   baseTex[0] = "./textures/tile_advanced";
    texture[0] = "./textures/tile_advanced";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise";
+   noiseTexFileName = "./textures/noise";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -201,9 +216,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Advanced_Blue  )
 {
    mapTo = tile_advanced_blue;
+   baseTex[0] = "./textures/tile_advanced";
    texture[0] = "./textures/tile_advanced";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_blue";
+   noiseTexFileName = "./textures/noise_blue";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -218,9 +235,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Advanced_Green  )
 {
    mapTo = tile_advanced_green;
+   baseTex[0] = "./textures/tile_advanced";
    texture[0] = "./textures/tile_advanced";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_green";
+   noiseTexFileName = "./textures/noise_green";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;
@@ -236,9 +255,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Beginner_shadow )
 {
    mapTo = tile_beginner_shadow;
+   baseTex[0] = "./textures/tile_beginner";
    texture[0] = "./textures/tile_beginner";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_shadow";
+   noiseTexFileName = "./textures/noise_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -254,9 +275,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Beginner_Red_shadow  )
 {
    mapTo = tile_beginner_red_shadow;
+   baseTex[0] = "./textures/tile_beginner";
    texture[0] = "./textures/tile_beginner";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_red_shadow";
+   noiseTexFileName = "./textures/noise_red_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -273,9 +296,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Beginner_Blue_shadow  )
 {
    mapTo = tile_beginner_blue_shadow;
+   baseTex[0] = "./textures/tile_beginner";
    texture[0] = "./textures/tile_beginner";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_blue_shadow";
+   noiseTexFileName = "./textures/noise_blue_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -292,9 +317,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Intermediate_shadow  )
 {
    mapTo = tile_intermediate_shadow;
+   baseTex[0] = "./textures/tile_intermediate";
    texture[0] = "./textures/tile_intermediate";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_shadow";
+   noiseTexFileName = "./textures/noise_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -310,9 +337,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Intermediate_green_shadow  )
 {
    mapTo = tile_intermediate_green_shadow;
+   baseTex[0] = "./textures/tile_intermediate";
    texture[0] = "./textures/tile_intermediate";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_green_shadow";
+   noiseTexFileName = "./textures/noise_green_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -328,9 +357,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Intermediate_red_shadow  )
 {
    mapTo = tile_intermediate_red_shadow;
+   baseTex[0] = "./textures/tile_intermediate";
    texture[0] = "./textures/tile_intermediate";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_red_shadow";
+   noiseTexFileName = "./textures/noise_red_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -346,9 +377,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Advanced_shadow  )
 {
    mapTo = tile_advanced_shadow;
+   baseTex[0] = "./textures/tile_advanced";
    texture[0] = "./textures/tile_advanced";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_shadow";
+   noiseTexFileName = "./textures/noise_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -364,9 +397,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Advanced_Blue_shadow  )
 {
    mapTo = tile_advanced_blue_shadow;
+   baseTex[0] = "./textures/tile_advanced";
    texture[0] = "./textures/tile_advanced";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_blue_shadow";
+   noiseTexFileName = "./textures/noise_blue_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -381,9 +416,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Advanced_Green_shadow  )
 {
    mapTo = tile_advanced_green_shadow;
+   baseTex[0] = "./textures/tile_advanced";
    texture[0] = "./textures/tile_advanced";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise_green_shadow";
+   noiseTexFileName = "./textures/noise_green_shadow";
    
    specular[0] = "0.2 0.2 0.2 0.2";
    specularPower[0] = 40.0;
@@ -399,9 +436,11 @@ new ShaderData( HalfTile )
 %mat = new CustomMaterial( Material_Tile_Underside  )
 {
    mapTo = tile_underside;
+   baseTex[0] = "./textures/tile_underside";
    texture[0] = "./textures/tile_underside";
    texture[1] = "./textures/tile_intermediate.normal";
    texture[2] = "./textures/noise";
+   noiseTexFileName = "./textures/noise";
    
    specular[0] = "1 1 1 1";
    specularPower[0] = 40.0;

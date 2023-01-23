@@ -746,6 +746,7 @@ public:
     void setTextureStageAlphaArg2(U32 stage, U32 argFlags);
     void setTextureStageBumpEnvMat(U32 stage, F32 mat[2][2]);
     void setTextureStageTransform(U32 stage, U32 texTransFlags);
+    void setTextureMatrix(U32 stage, const MatrixF &texMat);
     /// @}
 
     //-----------------------------------------------------------------------------
@@ -1040,6 +1041,13 @@ inline void GFXDevice::setTextureStageTransform(U32 stage, U32 flags)
     trackTextureStageState(stage, GFXTSSTextureTransformFlags, flags);
 }
 
+inline void GFXDevice::setTextureMatrix(U32 stage, const MatrixF &texMat)
+{
+    mStateDirty = true;
+    mTextureMatrixDirty[stage] = true;
+    mTextureMatrix[stage] = texMat;
+    mTextureMatrixCheckDirty = true;
+}
 
 // Utility function
 inline U32 F32toU32(F32 f) { return *((U32*)&f); }

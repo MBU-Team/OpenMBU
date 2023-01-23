@@ -146,7 +146,7 @@ void MatInstance::processMaterial()
         CustomMaterial* custMat = static_cast<CustomMaterial*>(mMaterial);
         if(custMat->mVersion > pixVersion)
         {
-            if(custMat->fallback)
+            if(custMat->fallback && custMat->fallback != custMat)
             {
                 mMaterial = custMat->fallback;
                 processMaterial();

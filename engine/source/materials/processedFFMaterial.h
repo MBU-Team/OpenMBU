@@ -64,6 +64,7 @@ protected:
         {
             BaseTex,
             Lightmap,
+            NoiseTex,
             NumFeatures
         };
         bool features[NumFeatures];

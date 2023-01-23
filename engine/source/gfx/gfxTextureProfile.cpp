@@ -20,6 +20,10 @@ GFX_ImplementTextureProfile(GFXDefaultStaticDiffuseProfile,
     GFXTextureProfile::DiffuseMap,
     GFXTextureProfile::Static,
     GFXTextureProfile::None);
+GFX_ImplementTextureProfile(GFXFFNoiseMapProfile,
+    GFXTextureProfile::DiffuseMap,
+    GFXTextureProfile::Static | GFXTextureProfile::NoMipmap | GFXTextureProfile::PreserveSize,
+    GFXTextureProfile::None);
 GFX_ImplementTextureProfile(GFXDefaultPersistentProfile,
     GFXTextureProfile::DiffuseMap,
     GFXTextureProfile::PreserveSize | GFXTextureProfile::Static | GFXTextureProfile::KeepBitmap,

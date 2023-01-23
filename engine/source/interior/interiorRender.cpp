@@ -249,7 +249,7 @@ void Interior::renderZoneNode(RenderNode& node,
     //}
 
     MatInstance* mat = node.matInst;
-    if (mat && GFX->getPixelShaderVersion() > 0.0)
+    if (mat)// && GFX->getPixelShaderVersion() > 0.0)
     {
 
         ri->matInst = mat;
@@ -288,7 +288,7 @@ void Interior::renderReflectNode(ReflectRenderNode& node,
     }*/
 
     MatInstance* mat = node.matInst;
-    if (mat && GFX->getPixelShaderVersion() > 0.0)
+    if (mat)// && GFX->getPixelShaderVersion() > 0.0)
     {
         ri->matInst = mat;
         ri->primBuffIndex = node.primInfoIndex;

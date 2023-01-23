@@ -22,7 +22,8 @@ ProcessedFFMaterial::ProcessedFFMaterial(Material &mat)
 
 void ProcessedFFMaterial::createPasses(U32 stageNum, SceneGraphData& sgData)
 {
-    FixedFuncFeatureData featData;
+    FixedFuncFeatureData featData {};
+    featData.features[0] = 1;
     determineFeatures(stageNum, featData, sgData);
     // Just create a simple pass!
     addPass(0, featData);
@@ -30,7 +31,7 @@ void ProcessedFFMaterial::createPasses(U32 stageNum, SceneGraphData& sgData)
 
 void ProcessedFFMaterial::determineFeatures(U32 stageNum, FixedFuncFeatureData& featData, SceneGraphData& sgData)
 {
-    if(mMaterial->stages[stageNum].tex[ProcessedMaterial::BaseTex])
+    if(mStages[stageNum].tex[ProcessedMaterial::BaseTex])
     {
         featData.features[FixedFuncFeatureData::BaseTex] = true;
     }
@@ -40,6 +41,10 @@ void ProcessedFFMaterial::determineFeatures(U32 stageNum, FixedFuncFeatureData& 
         {
             featData.features[FixedFuncFeatureData::Lightmap] = true;
         }
+    }
+    if (mMaterial->noiseTexFileName)
+    {
+        featData.features[FixedFuncFeatureData::NoiseTex] = true;
     }
 }
 
@@ -69,7 +74,7 @@ U32 ProcessedFFMaterial::getNumStages()
         for( U32 j=0; j<NumFeatures; j++ )
         {
             // If we have a texture for the feature the stage is active
-            if( mMaterial->stages[i].tex[j] )
+            if( mStages[i].tex[j] )
             {
                 stageActive = true;
                 break;
@@ -112,6 +117,7 @@ void ProcessedFFMaterial::cleanup(U32 pass)
     GFX->setAlphaBlendEnable( false );
     GFX->setAlphaTestEnable( false );
     GFX->setZWriteEnable( true );
+    GFX->setTextureStageLODBias(0, 0.0f);
 }
 
 bool ProcessedFFMaterial::setupPass(SceneGraphData& sgData, U32 pass)
@@ -154,6 +160,8 @@ bool ProcessedFFMaterial::setupPass(SceneGraphData& sgData, U32 pass)
         GFX->setCullMode( GFXCullNone );
     }
 
+    GFX->setTextureStageLODBias(0, mMaterial->softwareMipOffset);
+
     // Bind our textures
     setTextureStages(sgData, pass);
     return true;
@@ -165,6 +173,11 @@ void ProcessedFFMaterial::setTextureStages(SceneGraphData& sgData, U32 pass)
 #ifdef TORQUE_DEBUG
     AssertFatal( pass<mPasses.size(), "Pass out of bounds" );
 #endif
+
+    GFXTextureObject* baseTex;
+    Point3I sz;
+    MatrixF texMatrix;
+    Point3F scale;
 
     for( U32 i=0; i<mPasses[pass].numTex; i++ )
     {
@@ -187,6 +200,30 @@ void ProcessedFFMaterial::setTextureStages(SceneGraphData& sgData, U32 pass)
                         GFX->setTexture( i, mPasses[pass].tex[i] );
                     }
                     GFX->setTextureStageColorOp(i, GFXTOPModulate);
+                    break;
+
+                case Material::Misc:
+
+                    GFX->setTextureStageAddressModeU( i, GFXAddressWrap );
+                    GFX->setTextureStageAddressModeV( i, GFXAddressWrap );
+
+                    GFX->setTextureStageMinFilter(i, GFXTextureFilterNone );
+                    GFX->setTextureStageMagFilter(i, GFXTextureFilterNone );
+
+                    GFX->setTextureStageColorOp(i, GFXTOPModulate2X);
+
+                    GFX->setTexture(i, mPasses[pass].tex[i]);
+
+                    GFX->setTextureStageTransform(i, GFXTTFCount2);
+
+                    baseTex = mPasses[pass].tex[i];
+                    sz = baseTex->mTextureSize;
+                    scale = Point3F(1.0f / (F32)sz.x, 1.0f / (F32)sz.y, 1.0f);
+
+                    texMatrix = MatrixF(true);
+                    texMatrix.scale(scale);
+                    GFX->setTextureMatrix(i, texMatrix);
+
                     break;
 
                 case Material::NormalizeCube:
@@ -342,6 +379,11 @@ void ProcessedFFMaterial::setStageData()
             mStages[i].tex[BaseTex] = createTexture( mMaterial->baseTexFilename[i], &GFXDefaultStaticDiffuseProfile );
         }
 
+        if (mMaterial->noiseTexFileName && mMaterial->noiseTexFileName[0])
+        {
+            mStages[i].tex[DetailMap] = createTexture(mMaterial->noiseTexFileName, &GFXFFNoiseMapProfile );
+        }
+
         if( mMaterial->detailFilename[i] && mMaterial->detailFilename[i][0] )
         {
             mStages[i].tex[DetailMap] = createTexture( mMaterial->detailFilename[i], &GFXDefaultStaticDiffuseProfile );
@@ -386,7 +428,14 @@ void ProcessedFFMaterial::addPass(U32 stageNum, FixedFuncFeatureData& featData)
     // lightmap, texunit 1
     if(featData.features[FixedFuncFeatureData::Lightmap])
     {
+        rpd.tex[1] = mStages[stageNum].tex[LightMap];
         rpd.texFlags[1] = Material::Lightmap;
+        numTex++;
+    }
+    if (featData.features[FixedFuncFeatureData::NoiseTex])
+    {
+        rpd.tex[2] = mStages[stageNum].tex[DetailMap];
+        rpd.texFlags[2] = Material::Misc;
         numTex++;
     }
     rpd.numTex = numTex;
