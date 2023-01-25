@@ -86,14 +86,13 @@ void RenderGlowMgr::render()
     SceneGraphData sgData;
     U32 binSize = mElementList.size();
 
-    for (U32 j = 0; j < binSize; )
+    for (U32 j = 0; j < binSize; j++)
     {
         RenderInst* ri = mElementList[j].inst;
 
         // temp fix - these shouldn't submit glow ri's...
         if (ri->dynamicLight)
         {
-            j++;
             continue;
         }
 
@@ -103,31 +102,22 @@ void RenderGlowMgr::render()
         {
             mat = gRenderInstManager.getWarningMat();
         }
-        U32 matListEnd = j;
 
         while (mat->setupPass(sgData))
         {
-            U32 a;
-            for (a = j; a < binSize; a++)
-            {
-                RenderInst* passRI = mElementList[a].inst;
+            RenderInst* passRI = mElementList[j].inst;
 
-                if (newPassNeeded(mat, passRI))
-                    break;
+            if (newPassNeeded(mat, passRI))
+                break;
 
-                mat->setWorldXForm(*passRI->worldXform);
-                mat->setObjectXForm(*passRI->objXform);
-                mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
-                mat->setBuffers(passRI->vertBuff, passRI->primBuff);
+            mat->setWorldXForm(*passRI->worldXform);
+            mat->setObjectXForm(*passRI->objXform);
+            mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
+            mat->setBuffers(passRI->vertBuff, passRI->primBuff);
 
-                if (passRI->primBuff)
-                    GFX->drawPrimitive(passRI->primBuffIndex); // draw it
-            }
-            matListEnd = a;
+            if (passRI->primBuff)
+                GFX->drawPrimitive(passRI->primBuffIndex); // draw it
         }
-
-        // force increment if none happened, otherwise go to end of batch
-        j = (j == matListEnd) ? j + 1 : matListEnd;
     }
 
     // restore render states, copy to screen

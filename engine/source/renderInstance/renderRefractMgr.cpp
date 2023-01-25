@@ -52,7 +52,7 @@ void RenderRefractMgr::render()
     SceneGraphData sgData;
     U32 binSize = mElementList.size();
 
-    for (U32 j = 0; j < binSize; )
+    for (U32 j = 0; j < binSize; j++)
     {
         RenderInst* ri = mElementList[j].inst;
 
@@ -65,33 +65,22 @@ void RenderRefractMgr::render()
 
         while (mat->setupPass(sgData))
         {
-            U32 a;
-            for (a = j; a < binSize; a++)
-            {
-                RenderInst* passRI = mElementList[a].inst;
+            if (newPassNeeded(mat, ri))
+                break;
 
-                if (newPassNeeded(mat, passRI))
-                    break;
+            //sgData.refractPass = true;
+            //setupSGData(passRI, sgData);
 
+            // sgData.matIsInited = true;
+            mat->setLightInfo(sgData);
+            mat->setWorldXForm(*ri->worldXform);
+            mat->setObjectXForm(*ri->objXform);
+            mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
+            mat->setBuffers(ri->vertBuff,ri->primBuff);
 
-                setupSGData(passRI, sgData);
-                sgData.refractPass = true;
-                // sgData.matIsInited = true;
-                mat->setLightInfo(sgData);
-                mat->setWorldXForm(*passRI->worldXform);
-                mat->setObjectXForm(*passRI->objXform);
-                mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
-                mat->setBuffers(passRI->vertBuff, passRI->primBuff);
-
-                // draw it
-                GFX->drawPrimitive(passRI->primBuffIndex);
-            }
-
-            matListEnd = a;
+            // draw it
+            GFX->drawPrimitive(ri->primBuffIndex);
         }
-
-        // force increment if none happened, otherwise go to end of batch
-        j = (j == matListEnd) ? j + 1 : matListEnd;
     }
 
     GFX->popWorldMatrix();

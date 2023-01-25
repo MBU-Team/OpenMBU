@@ -96,12 +96,10 @@ void RenderTranslucentMgr::render()
     //U32 numDrawCalls = 0;
 
     U32 binSize = mElementList.size();
-    for (U32 j = 0; j < binSize; )
+    for (U32 j = 0; j < binSize; j++)
     {
         RenderInst* ri = mElementList[j].inst;
         MatInstance* mat = ri->matInst;
-
-        U32 matListEnd = j;
 
         // set culling
         if (!mat || mat->getMaterial()->doubleSided)
@@ -130,7 +128,6 @@ void RenderTranslucentMgr::render()
             GFX->setAlphaFunc(GFXCmpGreaterEqual);
             GFX->setZWriteEnable(false);
 
-            j++;
             continue;
         }
 
@@ -163,7 +160,6 @@ void RenderTranslucentMgr::render()
 
             GFX->popWorldMatrix();
 
-            j++;
             continue;
         }
 
@@ -197,66 +193,30 @@ void RenderTranslucentMgr::render()
 
             GFX->popWorldMatrix();
 
-            j++;
             continue;
         }
 
         setupSGData(ri, sgData);
 
         GFX->setZWriteEnable(false);
-        //bool firstmatpass = true;
         while (mat->setupPass(sgData))
         {
-            //++numChanges;
+            if (newPassNeeded(mat, ri))
+                break;
+            
+            // Ew
+            //GFX->setPixelShaderConstF(PC_VISIBILITY, &ri->visibility, 1);
+            //setupSGData(ri, sgData);
+            sgData.matIsInited = true;
+            mat->setLightInfo(sgData);
+            mat->setWorldXForm(*ri->worldXform);
+            mat->setObjectXForm(*ri->objXform);
+            mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
+            mat->setBuffers(ri->vertBuff, ri->primBuff);
 
-            U32 a;
-            for (a = j; a < binSize; a++)
-            {
-                RenderInst* passRI = mElementList[a].inst;
-                
-                // if new matInst is null or different, break
-                if (newPassNeeded(mat, passRI))
-                    break;
-
-                // Z sorting and stuff is still not working in this mgr...
-
-                // don't break the material multipass rendering...
-//                if (firstmatpass)
-//                {
-//                    if (passRI->primitiveFirstPass)
-//                    {
-//                        bool& firstpass = *passRI->primitiveFirstPass;
-//                        if (!firstpass)
-//                        {
-//                            GFX->setAlphaBlendEnable(true);
-//                            GFX->setSrcBlend(GFXBlendOne);
-//                            GFX->setDestBlend(GFXBlendOne);
-//                        }
-//                        firstpass = false;
-//                    }
-//                }
-                // Ew
-                GFX->setPixelShaderConstF(PC_VISIBILITY, &passRI->visibility, 1);
-                setupSGData(passRI, sgData);
-                // sgData.matIsInited = true;
-                mat->setLightInfo(sgData);
-                mat->setWorldXForm(*passRI->worldXform);
-                mat->setObjectXForm(*passRI->objXform);
-                mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
-                mat->setBuffers(passRI->vertBuff, passRI->primBuff);
-
-                // draw it
-                GFX->drawPrimitive(passRI->primBuffIndex);
-
-                //++numDrawCalls;
-            }
-
-            matListEnd = a;
-            //firstmatpass = false;
+            // draw it
+            GFX->drawPrimitive(ri->primBuffIndex);
         }
-
-        // force increment if none happened, otherwise go to end of batch
-        j = (j == matListEnd) ? j + 1 : matListEnd;
 
     }
 

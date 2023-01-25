@@ -54,7 +54,7 @@ void RenderMeshMgr::render()
     SceneGraphData sgData;
     U32 binSize = mElementList.size();
 
-    for (U32 j = 0; j < binSize; )
+    for (U32 j = 0; j < binSize; j++)
     {
         RenderInst* ri = mElementList[j].inst;
 
@@ -79,7 +79,6 @@ void RenderMeshMgr::render()
 
             GFX->popWorldMatrix();
 
-            j++;
             continue;
         }
 
@@ -87,70 +86,59 @@ void RenderMeshMgr::render()
         {
             mat = gRenderInstManager.getWarningMat();
         }
-        U32 matListEnd = j;
 
         bool firstmatpass = true;
         while (mat && mat->setupPass(sgData))
         {
-            U32 a;
-            for (a = j; a < binSize; a++)
+            if (newPassNeeded(mat, ri))
+                break;
+            
+            // no dynamics if glowing...
+            RenderPassData *passdata = mat->getPass(mat->getCurPass());
+            if(passdata && passdata->glow && ri->dynamicLight)
+                continue;
+            
+            // don't break the material multipass rendering...
+            if (firstmatpass)
             {
-                RenderInst* passRI = mElementList[a].inst;
-
-                if (newPassNeeded(mat, passRI))
-                    break;
-
-                // no dynamics if glowing...
-                RenderPassData *passdata = mat->getPass(mat->getCurPass());
-                if(passdata && passdata->glow && passRI->dynamicLight)
-                    continue;
-
-                // don't break the material multipass rendering...
-                if (firstmatpass)
+                if (ri->primitiveFirstPass)
                 {
-                    if (passRI->primitiveFirstPass)
-                    {
-                        bool& firstpass = *passRI->primitiveFirstPass;
-                        if (firstpass)
-                        {
-                            GFX->setAlphaBlendEnable(false);
-                            GFX->setSrcBlend(GFXBlendOne);
-                            GFX->setDestBlend(GFXBlendZero);
-                            firstpass = false;
-                        }
-                        else
-                        {
-                            AssertFatal((passRI->light.mType != LightInfo::Vector), "Not good");
-                            AssertFatal((passRI->light.mType != LightInfo::Ambient), "Not good");
-                            mat->setLightingBlendFunc();
-                        }
-                    }
-                    else
+                    bool& firstpass = *ri->primitiveFirstPass;
+                    if (firstpass)
                     {
                         GFX->setAlphaBlendEnable(false);
                         GFX->setSrcBlend(GFXBlendOne);
                         GFX->setDestBlend(GFXBlendZero);
+                        firstpass = false;
+                    }
+                    else
+                    {
+                        AssertFatal((ri->light.mType != LightInfo::Vector), "Not good");
+                        AssertFatal((ri->light.mType != LightInfo::Ambient), "Not good");
+                        mat->setLightingBlendFunc();
                     }
                 }
-
-                mat->setWorldXForm(*passRI->worldXform);
-                mat->setObjectXForm(*passRI->objXform);
-                setupSGData(passRI, sgData);
-                sgData.matIsInited = true;
-                mat->setLightInfo(sgData);
-                mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
-                mat->setBuffers(passRI->vertBuff, passRI->primBuff);
-
-                // draw it
-                GFX->drawPrimitive(passRI->primBuffIndex);
+                else
+                {
+                    GFX->setAlphaBlendEnable(false);
+                    GFX->setSrcBlend(GFXBlendOne);
+                    GFX->setDestBlend(GFXBlendZero);
+                }
             }
+            
+            mat->setWorldXForm(*ri->worldXform);
+            mat->setObjectXForm(*ri->objXform);
+            //setupSGData(ri, sgData);
+            //sgData.matIsInited = true;
+            mat->setLightInfo(sgData);
+            mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
+            mat->setBuffers(ri->vertBuff, ri->primBuff);
+            
+            // draw it
+            GFX->drawPrimitive(ri->primBuffIndex);
 
-            matListEnd = a;
             firstmatpass = false;
         }
-
-        // force increment if none happened, otherwise go to end of batch
-        j = (j == matListEnd) ? j + 1 : matListEnd;
     }
 
     GFX->setLightingEnable(false);

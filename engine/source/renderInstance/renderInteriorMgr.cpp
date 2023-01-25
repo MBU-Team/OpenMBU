@@ -118,109 +118,92 @@ void RenderInteriorMgr::render()
 
     U32 changeCount = 0;
 
-    for (U32 j = 0; j < mElementList.size(); )
+    for (U32 j = 0; j < mElementList.size(); j++)
     {
         RenderInst* ri = mElementList[j].inst;
 
         setupSGData(ri, sgData);
         MatInstance* mat = ri->matInst;
 
-        U32 matListEnd = j;
-
-
         while (mat->setupPass(sgData))
         {
-            changeCount++;
-            U32 a;
-            for (a = j; a < binSize; a++)
+            // no dynamics if glowing...
+            RenderPassData *passData = mat->getPass(mat->getCurPass());
+            if (passData && passData->glow && ri->dynamicLight)
+                continue;
+
+            // commented out the reflective check as it is what causes the interior flickering for v4. MBO used debug interior rendering, but that's not ideal.
+            if (newPassNeeded(mat, ri))// && passRI->reflective))  // if reflective, we want to reset textures in case this piece of geometry uses different reflect texture
             {
-                RenderInst* passRI = mElementList[a].inst;
-
-                // no dynamics if glowing...
-                RenderPassData *passData = mat->getPass(mat->getCurPass());
-                if (passData && passData->glow && passRI->dynamicLight)
-                    continue;
-
-                // commented out the reflective check as it is what causes the interior flickering for v4. MBO used debug interior rendering, but that's not ideal.
-                if (newPassNeeded(mat, passRI) || (a != j))// && passRI->reflective))  // if reflective, we want to reset textures in case this piece of geometry uses different reflect texture
-                {
-                    lastLM = NULL;  // pointer no longer valid after setupPass() call
-                    lastLNM = NULL;
-                    break;
-                }
-
-                if (passRI->type == RenderInstManager::RIT_InteriorDynamicLighting || Material::isDebugLightingEnabled())
-                {
-                    mat->setLightingBlendFunc();
-
-                    setupSGData(passRI, sgData);
-                    sgData.matIsInited = true;
-                    mat->setLightInfo(sgData);
-                }
-
-                // fill in shader constants that change per draw
-                //-----------------------------------------------
-                mat->setWorldXForm(*passRI->worldXform);
-                mat->setObjectXForm(*passRI->objXform);
-                mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
-                mat->setBuffers(passRI->vertBuff, passRI->primBuff);
-
-                // This section of code is dangerous, it overwrites the
-                // lightmap values in sgData.  This could be a problem when multiple
-                // render instances use the same multi-pass material.  When
-                // the first pass is done, setupPass() is called again on
-                // the material, but the lightmap data has been changed in
-                // sgData to the lightmaps in the last renderInstance rendered.
-
-                // This section sets the lightmap data for the current batch.
-                // For the first iteration, it sets the same lightmap data,
-                // however the redundancy will be caught by GFXDevice and not
-                // actually sent to the card.  This is done for simplicity given
-                // the possible condition mentioned above.  Better to set always
-                // than to get bogged down into special case detection.
-                //-------------------------------------
-                bool dirty = false;
-
-                // set the lightmaps if different
-                if (passRI->lightmap && passRI->lightmap->getPointer() != lastLM)
-                {
-                    sgData.lightmap = *passRI->lightmap;
-                    lastLM = passRI->lightmap->getPointer();
-                    dirty = true;
-                }
-                if (passRI->normLightmap && passRI->normLightmap->getPointer() != lastLNM)
-                {
-                    sgData.normLightmap = *passRI->normLightmap;
-                    lastLNM = passRI->normLightmap->getPointer();
-                    dirty = true;
-                }
-
-                if (dirty && (passRI->type != RenderInstManager::RIT_InteriorDynamicLighting))
-                {
-                    mat->setTextureStages( sgData );
-                }
-                //-------------------------------------
-
-                // draw it
-                if (passRI->prim)
-                {
-                    GFXPrimitive* prim = passRI->prim;
-                    GFX->drawIndexedPrimitive(prim->type, prim->minIndex, prim->numVertices,
-                        prim->startIndex, prim->numPrimitives);
-                }
-                else
-                {
-                    GFX->drawPrimitive(passRI->primBuffIndex);
-                }
-
+                lastLM = NULL;  // pointer no longer valid after setupPass() call
+                lastLNM = NULL;
+                break;
             }
 
-            matListEnd = a;
+            if (ri->type == RenderInstManager::RIT_InteriorDynamicLighting || Material::isDebugLightingEnabled())
+            {
+                mat->setLightingBlendFunc();
+
+                setupSGData(ri, sgData);
+                sgData.matIsInited = true;
+                mat->setLightInfo(sgData);
+            }
+
+            // fill in shader constants that change per draw
+            //-----------------------------------------------
+            mat->setWorldXForm(*ri->worldXform);
+            mat->setObjectXForm(*ri->objXform);
+            mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
+            mat->setBuffers(ri->vertBuff, ri->primBuff);
+
+            // This section of code is dangerous, it overwrites the
+            // lightmap values in sgData.  This could be a problem when multiple
+            // render instances use the same multi-pass material.  When
+            // the first pass is done, setupPass() is called again on
+            // the material, but the lightmap data has been changed in
+            // sgData to the lightmaps in the last renderInstance rendered.
+
+            // This section sets the lightmap data for the current batch.
+            // For the first iteration, it sets the same lightmap data,
+            // however the redundancy will be caught by GFXDevice and not
+            // actually sent to the card.  This is done for simplicity given
+            // the possible condition mentioned above.  Better to set always
+            // than to get bogged down into special case detection.
+            //-------------------------------------
+            bool dirty = false;
+
+            // set the lightmaps if different
+            if (ri->lightmap && ri->lightmap->getPointer() != lastLM)
+            {
+                sgData.lightmap = *ri->lightmap;
+                lastLM = ri->lightmap->getPointer();
+                dirty = true;
+            }
+            if (ri->normLightmap && ri->normLightmap->getPointer() != lastLNM)
+            {
+                sgData.normLightmap = *ri->normLightmap;
+                lastLNM = ri->normLightmap->getPointer();
+                dirty = true;
+            }
+
+            if (dirty && (ri->type != RenderInstManager::RIT_InteriorDynamicLighting))
+            {
+                mat->setTextureStages( sgData );
+            }
+            //-------------------------------------
+
+            // draw it
+            if (ri->prim)
+            {
+                GFXPrimitive* prim = ri->prim;
+                GFX->drawIndexedPrimitive(prim->type, prim->minIndex, prim->numVertices,
+                    prim->startIndex, prim->numPrimitives);
+            }
+            else
+            {
+                GFX->drawPrimitive(ri->primBuffIndex);
+            }
         }
-
-        // force increment if none happened, otherwise go to end of batch
-        j = (j == matListEnd) ? j + 1 : matListEnd;
-
     }
 
     GFX->setLightingEnable(false);
