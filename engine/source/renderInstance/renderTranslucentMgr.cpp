@@ -235,8 +235,8 @@ void RenderTranslucentMgr::render()
 //                        firstpass = false;
 //                    }
 //                }
-
-                
+                // Ew
+                GFX->setPixelShaderConstF(PC_VISIBILITY, &passRI->visibility, 1);
                 setupSGData(passRI, sgData);
                 // sgData.matIsInited = true;
                 mat->setLightInfo(sgData);
