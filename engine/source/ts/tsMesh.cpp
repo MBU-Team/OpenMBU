@@ -343,11 +343,11 @@ void TSMesh::render(S32 frame, S32 matFrame, TSMaterialList* materials)
     *coreRI->worldXform = proj;
 
     coreRI->objXform = gRenderInstManager.allocXform();
-    Point3F sc = objTrans.getScale();
-    sc.x = 1 / sc.x;
-    sc.y = 1 / sc.y;
-    sc.z = 1 / sc.z;
-    objTrans.scale(sc); // Normalize this
+    //Point3F sc = objTrans.getScale();
+    //sc.x = 1 / sc.x;
+    //sc.y = 1 / sc.y;
+    //sc.z = 1 / sc.z;
+    //objTrans.scale(sc); // Normalize this
     *coreRI->objXform = objTrans;
 
     coreRI->vertBuff = &getVertexBuffer();
@@ -3610,58 +3610,68 @@ void TSSkinMesh::disassemble()
 #define SMALL_FLOAT (1e-12)
 void TSMesh::createTextureSpaceMatrix(MeshVertex* v0, MeshVertex* v1, MeshVertex* v2)
 {
-    Point3F edge1, edge2;
+    Point3F edge1;
+    Point3F edge2;
     Point3F cp;
+ 
 
     // x, s, t
     edge1.set(v1->point.x - v0->point.x, v1->texCoord.x - v0->texCoord.x, v1->texCoord.y - v0->texCoord.y);
     edge2.set(v2->point.x - v0->point.x, v2->texCoord.x - v0->texCoord.x, v2->texCoord.y - v0->texCoord.y);
 
-    mCross(edge1, edge2, &cp);
-    if (fabs(cp.x) > SMALL_FLOAT)
-    {
-        v0->T.x = -cp.y / cp.x;
-        v0->B.x = -cp.z / cp.x;
-
-        v1->T.x = -cp.y / cp.x;
-        v1->B.x = -cp.z / cp.x;
-
-        v2->T.x = -cp.y / cp.x;
-        v2->B.x = -cp.z / cp.x;
+    float fVar1 = v1->point.x - v0->point.x;
+    float fVar2 = v2->point.x - v0->point.x;
+    float fVar4 = v1->texCoord.x - v0->texCoord.x;
+    float fVar5 = v2->texCoord.x - v0->texCoord.x;
+    float fVar6 = v1->texCoord.y - v0->texCoord.y;
+    float fVar7 = v2->texCoord.y - v0->texCoord.y;
+    float fVar3 = fVar7 * fVar4 - fVar5 * fVar6;
+    if (1e-12 < fabs(fVar3)) {
+        fVar3 = 1.0 / fVar3;
+        fVar4 = -(fVar3 * (fVar5 * fVar1 - fVar4 * fVar2));
+        fVar1 = -(fVar3 * (fVar6 * fVar2 - fVar7 * fVar1));
+        v0->T.x = fVar1;
+        v1->T.x = fVar1;
+        v2->T.x = fVar1;
+        v0->B.x = fVar4;
+        v1->B.x = fVar4;
+        v2->B.x = fVar4;
     }
-
-    // y, s, t
-    edge1.set(v1->point.y - v0->point.y, v1->texCoord.x - v0->texCoord.x, v1->texCoord.y - v0->texCoord.y);
-    edge2.set(v2->point.y - v0->point.y, v2->texCoord.x - v0->texCoord.x, v2->texCoord.y - v0->texCoord.y);
-
-    mCross(edge1, edge2, &cp);
-    if (fabs(cp.x) > SMALL_FLOAT)
-    {
-        v0->T.y = -cp.y / cp.x;
-        v0->B.y = -cp.z / cp.x;
-
-        v1->T.y = -cp.y / cp.x;
-        v1->B.y = -cp.z / cp.x;
-
-        v2->T.y = -cp.y / cp.x;
-        v2->B.y = -cp.z / cp.x;
+    fVar1 = v1->texCoord.x - v0->texCoord.x;
+    fVar2 = v2->texCoord.x - v0->texCoord.x;
+    fVar3 = v1->texCoord.y - v0->texCoord.y;
+    fVar6 = v1->point.y - v0->point.y;
+    fVar4 = v2->texCoord.y - v0->texCoord.y;
+    fVar7 = v2->point.y - v0->point.y;
+    fVar5 = fVar4 * fVar1 - fVar2 * fVar3;
+    if (1e-12 < fabs(fVar5)) {
+        fVar5 = 1.0 / fVar5;
+        fVar3 = -(fVar5 * (fVar3 * fVar7 - fVar4 * fVar6));
+        fVar1 = -(fVar5 * (fVar2 * fVar6 - fVar1 * fVar7));
+        v0->B.y = fVar1;
+        v1->B.y = fVar1;
+        v2->B.y = fVar1;
+        v0->T.y = fVar3;
+        v1->T.y = fVar3;
+        v2->T.y = fVar3;
     }
-
-    // z, s, t
-    edge1.set(v1->point.z - v0->point.z, v1->texCoord.x - v0->texCoord.x, v1->texCoord.y - v0->texCoord.y);
-    edge2.set(v2->point.z - v0->point.z, v2->texCoord.x - v0->texCoord.x, v2->texCoord.y - v0->texCoord.y);
-
-    mCross(edge1, edge2, &cp);
-    if (fabs(cp.x) > SMALL_FLOAT)
-    {
-        v0->T.z = -cp.y / cp.x;
-        v0->B.z = -cp.z / cp.x;
-
-        v1->T.z = -cp.y / cp.x;
-        v1->B.z = -cp.z / cp.x;
-
-        v2->T.z = -cp.y / cp.x;
-        v2->B.z = -cp.z / cp.x;
+    fVar1 = v1->texCoord.x - v0->texCoord.x;
+    fVar2 = v2->texCoord.x - v0->texCoord.x;
+    fVar3 = v1->texCoord.y - v0->texCoord.y;
+    fVar5 = v1->point.z - v0->point.z;
+    fVar4 = v2->texCoord.y - v0->texCoord.y;
+    fVar6 = v2->point.z - v0->point.z;
+    fVar7 = fVar4 * fVar1 - fVar2 * fVar3;
+    if (1e-12 < fabs(fVar7)) {
+        fVar7 = 1.0 / fVar7;
+        fVar3 = -(fVar7 * (fVar3 * fVar6 - fVar4 * fVar5));
+        fVar1 = -(fVar7 * (fVar2 * fVar5 - fVar1 * fVar6));
+        v0->B.z = fVar1;
+        v1->B.z = fVar1;
+        v2->B.z = fVar1;
+        v0->T.z = fVar3;
+        v1->T.z = fVar3;
+        v2->T.z = fVar3;
     }
 
     // v0

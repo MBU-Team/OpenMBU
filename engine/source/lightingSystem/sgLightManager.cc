@@ -742,21 +742,22 @@ void LightManager::setLightInfo(ProcessedMaterial* pmat, const Material* mat, co
     const LightInfo light = sgData.light;
     Point3F lightPos = light.mPos;
     Point3F lightDir = light.mDirection;
+    ColorF lightAmbient = light.mAmbient;
 
-    // TODO: This fixes glass flickering, but checkpoints on Spelunking(lv37) still flicker.
-    //  This is probably not the root of the problem
-    //if (!sgData.refractPass)
-    //{
-        objTrans.mulP(lightPos);
-        objTrans.mulV(lightDir);
-        lightDir.normalizeSafe();
-    //}
+    objTrans.mulV(lightPos);
+    objTrans.mulV(lightDir);
+    
+    // TODO: FIGURE OUT MATH
+    if (strstr(mat->getName(), "ringglass")) {
+        lightPos.set(-0.068099, 0.012973, -0.086792);
+        lightAmbient *= ColorF(1 / 1.18f, 1 / 1.06f, 1 / 0.95f);
+    }
 
     Point4F lightPosModel(lightPos.x, lightPos.y, lightPos.z, light.sgTempModelInfo[0]);
     GFX->setVertexShaderConstF(VC_LIGHT_POS1, (float*)&lightPosModel, 1);
     GFX->setVertexShaderConstF(VC_LIGHT_DIR1, (float*)&lightDir, 1);
     GFX->setVertexShaderConstF(VC_LIGHT_DIFFUSE1, (float*)&(light.mColor), 1);
-    GFX->setPixelShaderConstF(PC_AMBIENT_COLOR, (float*)&(light.mAmbient), 1);
+    GFX->setPixelShaderConstF(PC_AMBIENT_COLOR, (float*)&(lightAmbient), 1);
 
     if(!mat->emissive[stageNum])
         GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&(light.mColor), 1);

@@ -331,7 +331,7 @@ void TSShapeInstance::buildInstanceData(TSShape* _shape, bool loadMaterials)
 void TSShapeInstance::initMatInstances()
 {
     SceneGraphData sgData;
-    sgData.useLightDir = true;
+    //sgData.useLightDir = true;
     sgData.useFog = SceneGraph::renderFog;
     GFXVertexPNT* tsVertex = NULL;
 

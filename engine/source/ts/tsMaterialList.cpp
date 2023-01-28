@@ -338,7 +338,7 @@ bool TSMaterialList::setMaterial(U32 i, const char* texPath)
 
             // initialize the new mat instance
             SceneGraphData sgData;
-            sgData.useLightDir = true;
+            //sgData.useLightDir = true;
             sgData.useFog = SceneGraph::renderFog;
             GFXVertexPNT* tsVertex = NULL;
             matInst->init(sgData, (GFXVertexFlags)getGFXVertFlags(tsVertex));

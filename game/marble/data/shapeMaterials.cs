@@ -394,6 +394,7 @@ new CustomMaterial(Material_Marble_BB)
    emissive[0] = true;
    translucent[0] = true;
    cubemap = sky_environment;
+   doubleSided = true;
 };
 
 
