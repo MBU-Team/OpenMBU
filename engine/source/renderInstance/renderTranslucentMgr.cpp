@@ -208,7 +208,7 @@ void RenderTranslucentMgr::render()
             //GFX->setPixelShaderConstF(PC_VISIBILITY, &ri->visibility, 1);
             //setupSGData(ri, sgData);
             sgData.matIsInited = true;
-            mat->setLightInfo(sgData);
+            //mat->setLightInfo(sgData);
             mat->setWorldXForm(*ri->worldXform);
             mat->setObjectXForm(*ri->objXform);
             mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
