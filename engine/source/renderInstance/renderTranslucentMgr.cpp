@@ -210,8 +210,8 @@ void RenderTranslucentMgr::render()
             sgData.matIsInited = true;
             //mat->setLightInfo(sgData);
             mat->setWorldXForm(*ri->worldXform);
-            mat->setObjectXForm(*ri->objXform);
-            mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
+            //mat->setObjectXForm(*ri->objXform);
+            //mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
             mat->setBuffers(ri->vertBuff, ri->primBuff);
 
             // draw it

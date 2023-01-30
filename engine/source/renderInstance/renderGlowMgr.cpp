@@ -111,8 +111,8 @@ void RenderGlowMgr::render()
                 break;
 
             mat->setWorldXForm(*passRI->worldXform);
-            mat->setObjectXForm(*passRI->objXform);
-            mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
+            //mat->setObjectXForm(*passRI->objXform);
+            //mat->setEyePosition(*passRI->objXform, gRenderInstManager.getCamPos());
             mat->setBuffers(passRI->vertBuff, passRI->primBuff);
 
             if (passRI->primBuff)

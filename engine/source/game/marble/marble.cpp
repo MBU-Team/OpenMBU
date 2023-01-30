@@ -413,8 +413,11 @@ void Marble::setOOB(bool isOOB)
     setMaskBits(OOBMask);
 }
 
+
 void Marble::interpolateTick(F32 delta)
 {
+    static SimObject* playGui = NULL;
+    
     Parent::interpolateTick(delta);
 
     if (getControllingClient() && (mMode & TimerMode) != 0)
@@ -426,7 +429,14 @@ void Marble::interpolateTick(F32 delta)
         if (marbleBonusTime && !mUseFullMarbleTime)
             finalMarbleTime = marbleTime;
 
-        Con::evaluatef("PlayGui.updateTimer(%i,%i);", finalMarbleTime, marbleBonusTime != 0);
+        if (playGui == NULL)
+            playGui = Sim::findObject("PlayGui");
+        char ftime[16];
+        char bonusTime[4];
+        dSprintf(ftime, 16, "%i", finalMarbleTime);
+        dSprintf(bonusTime, 4, "%i", marbleBonusTime != 0);
+        Con::executef(playGui, 3, "updateTimer", ftime, bonusTime);
+        //Con::evaluatef("PlayGui.updateTimer(%i,%i);", finalMarbleTime, marbleBonusTime != 0);
     }
 }
 

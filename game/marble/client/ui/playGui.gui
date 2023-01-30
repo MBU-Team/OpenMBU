@@ -282,6 +282,209 @@ new GuiControl(PlayGui) {
 	      };
 	   };
    };
+
+   new GuiControl(TimerDigits) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "relative";
+      vertSizing = "relative";
+      position = "0 190";
+      extent = "640 290";
+      minExtent = "8 8";
+      visible = "0";
+      helpTag = "0";
+	      new GuiBitmapCtrl(DigitZero) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/0.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitOne) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/1.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitTwo) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/2.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitThree) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/3.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitFour) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/4.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitFive) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/5.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitSix) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/6.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitSeven) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/7.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitEight) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/8.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(DigitNine) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/numbers/9.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(Backdrop1) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/timebackdrop0.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(Backdrop2) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/timebackdrop1.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(Backdrop3) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/timebackdrop2.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(Backdrop4) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/timebackdrop3.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(Backdrop5) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/timebackdrop4.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+		  new GuiBitmapCtrl(Backdrop6) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "140 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "0";
+	         bitmap = "./game/timebackdrop5.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
+   };
    
 	new GuiBitmapCtrl(BoostBar) {
       profile = "GuiDefaultProfile";

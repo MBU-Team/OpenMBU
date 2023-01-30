@@ -152,8 +152,8 @@ void RenderInteriorMgr::render()
             // fill in shader constants that change per draw
             //-----------------------------------------------
             mat->setWorldXForm(*ri->worldXform);
-            mat->setObjectXForm(*ri->objXform);
-            mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
+            //mat->setObjectXForm(*ri->objXform);
+            //mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
             mat->setBuffers(ri->vertBuff, ri->primBuff);
 
             // This section of code is dangerous, it overwrites the

@@ -127,11 +127,11 @@ void RenderMeshMgr::render()
             }
             
             mat->setWorldXForm(*ri->worldXform);
-            mat->setObjectXForm(*ri->objXform);
+            //mat->setObjectXForm(*ri->objXform);
             //setupSGData(ri, sgData);
             //sgData.matIsInited = true;
-            mat->setLightInfo(sgData);
-            mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
+            //mat->setLightInfo(sgData);
+            //mat->setEyePosition(*ri->objXform, gRenderInstManager.getCamPos());
             mat->setBuffers(ri->vertBuff, ri->primBuff);
             
             // draw it

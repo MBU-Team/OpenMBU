@@ -26,6 +26,12 @@ GFXD3D9Cubemap::GFXD3D9Cubemap()
    mDepthBuff = NULL;
    mDynamic = false;
    mCallbackHandle = -1;
+#ifdef MB_CUBEMAP_FAST
+   mNumFacesPerUpdate = 2;
+#else
+   mNumFacesPerUpdate = 6;
+#endif
+   mCurrentFace = 0;
 
    #ifdef INIT_HACK
    mInit = false;
@@ -224,12 +230,13 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
    getCurrentClientSceneGraph()->setReflectPass( true );
    
    // Loop through the six faces of the cube map.
-   for( DWORD i=0; i<6; i++ )
+   for( DWORD i = 0; i < mNumFacesPerUpdate; i++ )
    {
+       int faceIdx = (mCurrentFace + i) % 6;
       // Standard view that will be overridden below.
       VectorF vLookatPt, vUpVec, vRight;
 
-      switch( i )
+      switch(faceIdx)
       {
          case D3DCUBEMAP_FACE_POSITIVE_X:
              vLookatPt = VectorF( 1.0f, 0.0f, 0.0f );
@@ -270,7 +277,7 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
 
       GFX->setWorldMatrix(matView);
 
-      mRenderTarget->attachTexture( GFXTextureTarget::Color0, this, i );
+      mRenderTarget->attachTexture( GFXTextureTarget::Color0, this, faceIdx);
       GFX->setActiveRenderTarget( mRenderTarget );
       GFX->clear( GFXClearStencil | GFXClearTarget | GFXClearZBuffer, ColorI( 0, 0, 0 ), 1.f, 0 );
 
@@ -293,6 +300,8 @@ void GFXD3D9Cubemap::updateDynamic( const Point3F &pos )
               break;
       }
    }
+
+   mCurrentFace = (mCurrentFace + mNumFacesPerUpdate) % 6;
 
     getCurrentClientSceneGraph()->setReflectPass( false );
    

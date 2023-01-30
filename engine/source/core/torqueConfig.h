@@ -77,7 +77,7 @@
 // Define me to use MBG physics
 //#define MBG_PHYSICS
 
-// Define me to use a framerate-independant finish pad animation
+// Define me to use a framerate-independent finish pad animation
 #define MBU_FINISH_PAD_FIX
 
 // TEMP: Define me for a temporary fix for moving platform jitter
@@ -102,6 +102,9 @@
 
 // Define me to fix the shape base images for MBG
 //#define MBG_SHAPEBASEFIX
+
+// Define me to not render all six faces of marble cubemap in a single frame
+#define MB_CUBEMAP_FAST
 
 //-----------------------------------------------------------------------------
 // Here we specify the build configuration defines.  These are usually 
@@ -134,7 +137,7 @@
 
 /// Define me if you want to enable the profiler. 
 ///    See also the TORQUE_SHIPPING block below
-//#define TORQUE_ENABLE_PROFILER
+#define TORQUE_ENABLE_PROFILER
 
 /// Define me if you want the memory manager to hook into the profiler stack
 /// so that you can see where particular allocations come from when 
@@ -221,7 +224,7 @@
 #define TORQUE_FRAME_SIZE     16 << 20
 
 /// Define if you want nVIDIA's NVPerfHUD to work with TSE
-//#define TORQUE_NVPERFHUD
+#define TORQUE_NVPERFHUD
 
 /// Define to disable DSO file generation.  Note that existing DSOs will still be 
 // used by the engine.  Script files will load a bit more slowly because they need

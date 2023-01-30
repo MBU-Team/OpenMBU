@@ -29,6 +29,8 @@ class GFXD3D9Cubemap : public GFXCubemap
    bool mDynamic;
    U32  mTexSize;
    S32  mCallbackHandle;
+   S32  mNumFacesPerUpdate;
+   S32  mCurrentFace;
    
    void fillCubeTextures( GFXTexHandle *faces, LPDIRECT3DDEVICE9 D3DDevice );
    void releaseSurfaces();
