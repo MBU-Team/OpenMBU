@@ -766,35 +766,35 @@ void LightManager::setLightInfo(ProcessedMaterial* pmat, const Material* mat, co
         ColorF selfillum = LightManager::sgGetSelfIlluminationColor(mat->diffuse[stageNum]);
         GFX->setPixelShaderConstF(PC_DIFF_COLOR, (float*)&selfillum, 1);
     }
-    const MatrixF lightingmat = light.sgLightingTransform;
-    GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);
+    //const MatrixF lightingmat = light.sgLightingTransform;
+    //GFX->setVertexShaderConstF(VC_LIGHT_TRANS, (float*)&lightingmat, 4);
 
     // Light number 2
-    const LightInfo light2 = sgData.lightSecondary;
-    //AssertFatal(light2 != NULL, "ProcessedSGLightedMaterial::setSecondaryLightInfo: null light");
-    lightPos = light2.mPos;
-    objTrans.mulP(lightPos);
+    //const LightInfo light2 = sgData.lightSecondary;
+    ////AssertFatal(light2 != NULL, "ProcessedSGLightedMaterial::setSecondaryLightInfo: null light");
+    //lightPos = light2.mPos;
+    //objTrans.mulP(lightPos);
 
-    Point4F lightPosModel2(lightPos.x, lightPos.y, lightPos.z, light2.sgTempModelInfo[0]);
-    GFX->setVertexShaderConstF(VC_LIGHT_POS2, (float*)&lightPosModel2, 1);
-    GFX->setPixelShaderConstF(PC_DIFF_COLOR2, (float*)&light2.mColor, 1);
+    //Point4F lightPosModel2(lightPos.x, lightPos.y, lightPos.z, light2.sgTempModelInfo[0]);
+    //GFX->setVertexShaderConstF(VC_LIGHT_POS2, (float*)&lightPosModel2, 1);
+    //GFX->setPixelShaderConstF(PC_DIFF_COLOR2, (float*)&light2.mColor, 1);
 
-    const MatrixF lightingmat2 = light2.sgLightingTransform;
-    GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat2, 4);
+    //const MatrixF lightingmat2 = light2.sgLightingTransform;
+    //GFX->setVertexShaderConstF(VC_LIGHT_TRANS2, (float*)&lightingmat2, 4);
 
-    ProcessedCustomMaterial* pcm = dynamic_cast<ProcessedCustomMaterial*>(pmat);
-    if (!pcm)
-    {
-        // Set the dynamic light textures
-        const RenderPassData* rpass = pmat->getPass(pass);
-        if (rpass)
-        {
-            for (U32 i = 0; i < rpass->numTex; i++)
-            {
-                setTextureStage(sgData, rpass->texFlags[i], i);
-            }
-        }
-    }
+    //ProcessedCustomMaterial* pcm = dynamic_cast<ProcessedCustomMaterial*>(pmat);
+    //if (!pcm)
+    //{
+    //    // Set the dynamic light textures
+    //    const RenderPassData* rpass = pmat->getPass(pass);
+    //    if (rpass)
+    //    {
+    //        for (U32 i = 0; i < rpass->numTex; i++)
+    //        {
+    //            setTextureStage(sgData, rpass->texFlags[i], i);
+    //        }
+    //    }
+    //}
     //} else {
     //    // Processed custom materials store their texflags in a different way, so
     //    // just tell it to update its textures.
