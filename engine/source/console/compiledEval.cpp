@@ -1081,8 +1081,10 @@ const char* CodeBlock::exec(U32 ip, const char* functionName, Namespace* thisNam
                     }
                     case Namespace::Entry::VoidCallbackType:
                         nsEntry->cb.mVoidCallbackFunc(gEvalState.thisObject, callArgc, callArgv);
-                        if (code[ip] != OP_STR_TO_NONE)
+#ifdef CONSOLE_WARN_VOID_ASSIGNMENT
+                        if (code[ip] != OP_STR_TO_NONE && Con::getBoolVariable("$Con::warnVoidAssignment", true))
                             Con::warnf(ConsoleLogEntry::General, "%s: Call to %s in %s uses result of void function call.", getFileLine(ip - 4), fnName, functionName);
+#endif
                         STR.setStringValue("");
                         break;
                     case Namespace::Entry::BoolCallbackType:

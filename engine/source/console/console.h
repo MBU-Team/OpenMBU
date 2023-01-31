@@ -59,6 +59,7 @@ struct ConsoleLogEntry
         Script,
         GUI,
         Network,
+        GGConnect,
         NUM_TYPE
     } mType;
 

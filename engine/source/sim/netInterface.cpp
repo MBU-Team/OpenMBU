@@ -11,6 +11,11 @@
 #include "math/mRandom.h"
 #include "platform/gameInterface.h"
 
+#ifdef GGC_PLUGIN
+#include "GGCNatTunnel.h"
+extern void HandleGGCPacket(NetAddress* addr, unsigned char* data, U32 dataSize);
+#endif
+
 NetInterface* GNet = NULL;
 
 NetInterface::NetInterface()
@@ -89,6 +94,12 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
 
         if (packetType <= GameHeartbeat)
             handleInfoPacket(addr, packetType, &pStream);
+#ifdef GGC_PLUGIN
+        else if (packetType == GGCPacket)
+        {
+            HandleGGCPacket(addr, (U8*)packetData.data, dataSize);
+        }
+#endif
         else
         {
             // check if there's a connection already:

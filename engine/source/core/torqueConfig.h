@@ -129,6 +129,9 @@
 // Thus it may be preferable to enable them only in the configuration specific
 // sections below (TORQUE_DEBUG, TORQUE_SHIPPING, etc)
 
+// Define me if you want to warn during void assignment in script
+//#define CONSOLE_WARN_VOID_ASSIGNMENT
+
 /// Define me if you want asserts.  This is automatically enabled if you 
 /// define TORQUE_DEBUG.  However it may be useful to enable it for 
 /// your optimized non-ship configuration (where TORQUE_DEBUG is 

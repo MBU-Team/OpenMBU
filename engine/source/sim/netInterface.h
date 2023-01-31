@@ -24,7 +24,7 @@ public:
         GameInfoRequest = 18,
         GameInfoResponse = 20,
         GameHeartbeat = 22,
-
+        GGCPacket     = 24,
         ConnectChallengeRequest = 26,
         ConnectChallengeReject = 28,
         ConnectChallengeResponse = 30,
