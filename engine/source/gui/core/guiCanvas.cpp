@@ -731,7 +731,7 @@ void GuiCanvas::rootMouseDown(const GuiEvent& event)
     mMouseButtonDown = true;
 
     //pass the event to the mouse locked control
-    if (bool(mMouseCapturedControl))
+    if (bool(mMouseCapturedControl) && mMouseCapturedControl->isCurrentUIMode())
         mMouseCapturedControl->onMouseDown(event);
 
     //else pass it to whoever is underneath the cursor
@@ -752,7 +752,8 @@ void GuiCanvas::rootMouseDown(const GuiEvent& event)
                 continue;
             else
             {
-                controlHit->onMouseDown(event);
+                if (controlHit->isCurrentUIMode())
+                    controlHit->onMouseDown(event);
                 break;
             }
         }
@@ -792,7 +793,7 @@ void GuiCanvas::rootMouseUp(const GuiEvent& event)
     mMouseButtonDown = false;
 
     //pass the event to the mouse locked control
-    if (bool(mMouseCapturedControl))
+    if (bool(mMouseCapturedControl) && mMouseCapturedControl->isCurrentUIMode())
         mMouseCapturedControl->onMouseUp(event);
     else
     {
@@ -800,7 +801,7 @@ void GuiCanvas::rootMouseUp(const GuiEvent& event)
 
         //Con::printf("GuiCanvas::rootMouseUp: mMouseControl = %s", mMouseControl ? mMouseControl->getName() : "NULL");
 
-        if (bool(mMouseControl))
+        if (bool(mMouseControl) && mMouseControl->isCurrentUIMode())
             mMouseControl->onMouseUp(event);
     }
 }

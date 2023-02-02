@@ -415,102 +415,132 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
             GFX->clearBitmapModulation();
 #else
             ColorI arrowHighlightColor(255, 255, 255);
+            if (smLegacyUI)
+                arrowHighlightColor = ColorI(128, 128, 255);
 #endif
 
             S32 leftArrowIndex = unselectedLeftArrowIndex;
-            //if (index == mSelected)
-            //    leftArrowIndex = selectedLeftArrowIndex;
+            if (index == mSelected && smLegacyUI)
+                leftArrowIndex = selectedLeftArrowIndex;
 
             if (leftArrowIndex != -1)
             {
 #ifndef MBO_UNTOUCHED_MENUS
-                Point2I clickOffset(0, 0);
-
-                if (mArrowHover == -1 && index == mSelected)
+                if (!smLegacyUI)
                 {
-                    GFX->setBitmapModulation(arrowHighlightColor);
-                    if (mMouseDown)
+                    Point2I clickOffset(0, 0);
+
+                    if (mArrowHover == -1 && index == mSelected)
                     {
-                        GFX->setBitmapModulation(ColorI(128, 128, 128, 255));
-                        clickOffset = Point2I(1, 1);
-                    }
-                }
-                else
-                    GFX->clearBitmapModulation();
+                        GFX->setBitmapModulation(arrowHighlightColor);
+                        if (mMouseDown)
+                        {
+                            GFX->setBitmapModulation(ColorI(128, 128, 128, 255));
+                            clickOffset = Point2I(1, 1);
+                        }
+                    } else
+                        GFX->clearBitmapModulation();
                     //GFX->setBitmapModulation(ColorI(200, 200, 200, 255));
 
-                RectI srcRect = mProfile->mBitmapArrayRects[buttonIndex];
-                if (mArrowHover == -1 && index == mSelected)
-                    srcRect = mProfile->mBitmapArrayRects[hoverButtonIndex];
+                    RectI srcRect = mProfile->mBitmapArrayRects[buttonIndex];
+                    if (mArrowHover == -1 && index == mSelected)
+                        srcRect = mProfile->mBitmapArrayRects[hoverButtonIndex];
 
-                RectI dstRect;
-                dstRect.point.set(rightRect.point.x, yPos + offset.y);//offset.x + mProfile->mTextOffset.x, yPos + offset.y);
-                //dstRect.point += clickOffset;
-                dstRect.extent.set(bitmapButtonWidth, bitmapButtonHeight);
+                    RectI dstRect;
+                    dstRect.point.set(rightRect.point.x,
+                                      yPos + offset.y);//offset.x + mProfile->mTextOffset.x, yPos + offset.y);
+                    //dstRect.point += clickOffset;
+                    dstRect.extent.set(bitmapButtonWidth, bitmapButtonHeight);
 
-                GFX->drawBitmapStretchSR(mProfile->mTextureObject, dstRect, srcRect);
+                    GFX->drawBitmapStretchSR(mProfile->mTextureObject, dstRect, srcRect);
 
-                //if (mArrowHover == -1 && index == mSelected)
-                //    GFX->setBitmapModulation(arrowHighlightColor);
-                //else
-                GFX->clearBitmapModulation();
+                    GFX->clearBitmapModulation();
+                } else
+                {
+                    if (mArrowHover == -1 && index == mSelected)
+                        GFX->setBitmapModulation(arrowHighlightColor);
+                    else
+                        GFX->clearBitmapModulation();
+                }
 #endif
 
-                S32 arrowX = rightRect.point.x;
-                arrowX -= (S32)(bitmapArrowWidth / 1.2f);
-                arrowX += bitmapButtonWidth / 2;
-
                 RectI rect;
-                rect.point.set(arrowX, yPos + arrowOffset + rightRect.point.y);
-                rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+                if (smLegacyUI)
+                {
+                    rect.point.set(rightRect.point.x, yPos + arrowOffset + rightRect.point.y);
+                    rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+                } else
+                {
+                    S32 arrowX = rightRect.point.x;
+                    arrowX -= (S32) (bitmapArrowWidth / 1.2f);
+                    arrowX += bitmapButtonWidth / 2;
+
+                    rect.point.set(arrowX, yPos + arrowOffset + rightRect.point.y);
+                    rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+                }
 
                 GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[leftArrowIndex]);
             }
 
             S32 rightArrowIndex = unselectedRightArrowIndex;
-            //if (index == mSelected)
-            //    rightArrowIndex = selectedRightArrowIndex;
+            if (index == mSelected && smLegacyUI)
+                rightArrowIndex = selectedRightArrowIndex;
 
             if (rightArrowIndex != -1)
             {
 #ifndef MBO_UNTOUCHED_MENUS
 
-                Point2I clickOffset(0, 0);
-
-                if (mArrowHover == 1 && index == mSelected)
+                if (!smLegacyUI)
                 {
-                    GFX->setBitmapModulation(arrowHighlightColor);
-                    if (mMouseDown)
+                    Point2I clickOffset(0, 0);
+
+                    if (mArrowHover == 1 && index == mSelected)
                     {
-                        GFX->setBitmapModulation(ColorI(128, 128, 128, 255));
-                        clickOffset = Point2I(1, 1);
-                    }
-                }
-                else
-                    GFX->clearBitmapModulation();
+                        GFX->setBitmapModulation(arrowHighlightColor);
+                        if (mMouseDown)
+                        {
+                            GFX->setBitmapModulation(ColorI(128, 128, 128, 255));
+                            clickOffset = Point2I(1, 1);
+                        }
+                    } else
+                        GFX->clearBitmapModulation();
                     //GFX->setBitmapModulation(ColorI(200, 200, 200, 255));
 
-                RectI srcRect = mProfile->mBitmapArrayRects[buttonIndex];
-                if (mArrowHover == 1 && index == mSelected)
-                    srcRect = mProfile->mBitmapArrayRects[hoverButtonIndex];
+                    RectI srcRect = mProfile->mBitmapArrayRects[buttonIndex];
+                    if (mArrowHover == 1 && index == mSelected)
+                        srcRect = mProfile->mBitmapArrayRects[hoverButtonIndex];
 
-                RectI dstRect;
-                dstRect.point.set(rightRect.extent.x + rightRect.point.x - bitmapButtonWidth, yPos + offset.y);//offset.x + mProfile->mTextOffset.x, yPos + offset.y);
-                //dstRect.point += clickOffset;
-                dstRect.extent.set(bitmapButtonWidth, bitmapButtonHeight);
+                    RectI dstRect;
+                    dstRect.point.set(rightRect.extent.x + rightRect.point.x - bitmapButtonWidth,
+                                      yPos + offset.y);//offset.x + mProfile->mTextOffset.x, yPos + offset.y);
+                    //dstRect.point += clickOffset;
+                    dstRect.extent.set(bitmapButtonWidth, bitmapButtonHeight);
 
-                GFX->drawBitmapStretchSR(mProfile->mTextureObject, dstRect, srcRect);
+                    GFX->drawBitmapStretchSR(mProfile->mTextureObject, dstRect, srcRect);
 
-                //if (mArrowHover == 1 && index == mSelected)
-                //    GFX->setBitmapModulation(arrowHighlightColor);
-                //else
-                GFX->clearBitmapModulation();
+                    GFX->clearBitmapModulation();
+                } else {
+                    if (mArrowHover == 1 && index == mSelected)
+                        GFX->setBitmapModulation(arrowHighlightColor);
+                    else
+                        GFX->clearBitmapModulation();
+                }
 #endif
 
                 RectI rect;
-                rect.point.set(rightRect.extent.x + rightRect.point.x - (S32)(bitmapArrowWidth / 3.2) - bitmapButtonWidth / 2,
-                               yPos + arrowOffset + rightRect.point.y);
-                rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+                if (smLegacyUI)
+                {
+                    rect.point.set(
+                        rightRect.extent.x + rightRect.point.x - bitmapArrowWidth,
+                        yPos + arrowOffset + rightRect.point.y);
+                    rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+                } else
+                {
+                    rect.point.set(
+                        rightRect.extent.x + rightRect.point.x - (S32) (bitmapArrowWidth / 3.2) - bitmapButtonWidth / 2,
+                        yPos + arrowOffset + rightRect.point.y);
+                    rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
+                }
 
                 GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[rightArrowIndex]);
             }
@@ -577,12 +607,12 @@ void GuiXboxOptionListCtrl::onMouseMove(const GuiEvent& event)
         if (row != mSelected)
             move(row - mSelected);
 
-#ifdef MBO_UNTOUCHED_MENUS
         // Arrow hover
         S32 bitmapArrowWidth = 0;
         if (mProfile->mBitmapArrayRects.size() > 2)
             bitmapArrowWidth = mProfile->mBitmapArrayRects[2].extent.x;
-#else
+
+#ifndef MBO_UNTOUCHED_MENUS
         S32 bitmapButtonWidth = 0;
         if (mProfile->mBitmapArrayRects.size() > 5)
             bitmapButtonWidth = mProfile->mBitmapArrayRects[6].extent.x;
@@ -604,9 +634,12 @@ void GuiXboxOptionListCtrl::onMouseMove(const GuiEvent& event)
         {
             if (unk3 - bitmapArrowWidth <= localPoint.x && localPoint.x <= unk3)
 #else
-        if (unk2 > localPoint.x || localPoint.x > bitmapButtonWidth + unk2)
+        S32 wid = bitmapButtonWidth;
+            if (smLegacyUI)
+                wid = bitmapArrowWidth;
+        if (unk2 > localPoint.x || localPoint.x > wid + unk2)
         {
-            if (unk3 - bitmapButtonWidth <= localPoint.x && localPoint.x <= unk3)
+            if (unk3 - wid <= localPoint.x && localPoint.x <= unk3)
 #endif
             {
                 // Right arrow hover
@@ -650,12 +683,12 @@ void GuiXboxOptionListCtrl::onMouseUp(const GuiEvent& event)
 
 void GuiXboxOptionListCtrl::clickOption(S32 xPos)
 {
-#ifdef MBO_UNTOUCHED_MENUS
     // Arrow hover
-        S32 bitmapArrowWidth = 0;
-        if (mProfile->mBitmapArrayRects.size() > 2)
-            bitmapArrowWidth = mProfile->mBitmapArrayRects[2].extent.x;
-#else
+    S32 bitmapArrowWidth = 0;
+    if (mProfile->mBitmapArrayRects.size() > 2)
+        bitmapArrowWidth = mProfile->mBitmapArrayRects[2].extent.x;
+
+#ifndef MBO_UNTOUCHED_MENUS
     S32 bitmapButtonWidth = 0;
     if (mProfile->mBitmapArrayRects.size() > 5)
         bitmapButtonWidth = mProfile->mBitmapArrayRects[6].extent.x;
@@ -678,9 +711,12 @@ void GuiXboxOptionListCtrl::clickOption(S32 xPos)
         if (unk3 - bitmapArrowWidth <= xPos && xPos <= unk3)
         {
 #else
-    if (unk2 > xPos || xPos > bitmapButtonWidth + unk2)
+    S32 wid = bitmapButtonWidth;
+    if (smLegacyUI)
+        wid = bitmapArrowWidth;
+    if (unk2 > xPos || xPos > wid + unk2)
     {
-        if (unk3 - bitmapButtonWidth <= xPos && xPos <= unk3)
+        if (unk3 - wid <= xPos && xPos <= unk3)
         {
 #endif
             incOption();

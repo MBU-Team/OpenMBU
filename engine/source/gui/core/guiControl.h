@@ -65,6 +65,8 @@ private:
 
 public:
 
+    static bool smLegacyUI;
+
     /// @name Control State
     /// @{
 
@@ -72,6 +74,15 @@ public:
 
     GuiControlProfile* mTooltipProfile;
 
+    enum UIMode
+    {
+        AlwaysShow = 0,
+        LegacyOnly,
+        NewOnly
+    };
+    UIMode mUIMode;
+
+    bool isCurrentUIMode();
 
     bool    mVisible;
     bool    mActive;
@@ -197,6 +208,7 @@ public:
     GuiControl();
     virtual ~GuiControl();
     static void initPersistFields();
+    static void consoleInit();
     /// @}
 
     /// @name Accessors

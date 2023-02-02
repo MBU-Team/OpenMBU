@@ -51,6 +51,7 @@ new GuiControl(XMessagePopupDlg) {
 		      extent = "640 200";
 		      minExtent = "8 2";
 		      visible = "1";
+		      UIMode = "LegacyOnly";
 		
 		      new GuiControl(XMessagePopupABtn) {
 		         profile = "GuiDefaultProfile";

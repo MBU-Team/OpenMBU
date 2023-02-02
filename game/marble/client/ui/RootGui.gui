@@ -112,6 +112,7 @@ new GuiControl(RootCenterCtrl) {
       minExtent = "8 8";
       visible = "1";
       helpTag = "0";
+      UIMode = "LegacyOnly";
 				
 		new GuiBitmapCtrl(ab_bg) {
 		   profile = "GuiDefaultProfile";
@@ -207,6 +208,7 @@ new GuiControl(RootCenterCtrl) {
       extent = "640 200";
       minExtent = "8 2";
       visible = "1";
+      UIMode = "LegacyOnly";
 
       new GuiControl(RootGuiAButton) {
          profile = "GuiDefaultProfile";
