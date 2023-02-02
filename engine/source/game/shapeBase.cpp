@@ -2478,17 +2478,20 @@ void ShapeBase::prepBatchRender(SceneState* state, S32 mountedImageIndex)
     MatrixF proj = GFX->getProjectionMatrix();
 
     GameConnection* conn = GameConnection::getConnectionToServer();
-    if (!conn) return;
-    ShapeBase* control = conn->getControlObject();
-    if (!control) return;
+    if (conn)
+    {
+        ShapeBase *control = conn->getControlObject();
+        if (control)
+        {
+            F32 fov;
+            conn->getControlCameraFov(&fov);
 
-    F32 fov;
-    conn->getControlCameraFov(&fov);
+            float pixSize = ((mWorldSphere.radius / (state->getCameraPosition() - mWorldSphere.center).len()) * viewport.len_y()) / fov;
 
-    float pixSize = ((mWorldSphere.radius / (state->getCameraPosition() - mWorldSphere.center).len()) * viewport.len_y()) / fov;
-
-    if (pixSize < Con::getFloatVariable("$cullSize", 0.05f))
-        return;
+            if (pixSize < Con::getFloatVariable("$cullSize", 0.05f))
+                return;
+        }
+    }
     
     GFX->pushWorldMatrix();
 
