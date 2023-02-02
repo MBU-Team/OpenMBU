@@ -14,7 +14,7 @@ new GuiControl(CreateGameGui) {
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = isWidescreen()? "bottom" : "top";
       // there can only be two columns; these values are percentages of total extent
-      columns = isWidescreen()? "48 52" : "48 52";
+      columns = isWidescreen()? "40 60" : "48 52";
       // each column can have a left and right margin, specified here.  order is 
       // C1L C1R C2L C2R.  amount is in pixels
       columnMargins = isWidescreen()? "0 0 3 35" : "0 0 2 25";

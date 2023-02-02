@@ -314,11 +314,11 @@ $Text::InvY = "Camera Y-Axis";
 $Text::MouseSensitivity = "Mouse Sensitivity";
 $Text::InvOnOff = "Normal\tInverted";
 $Text::VideoOptions = "Video Options";
-$Text::FullscreenResolution = "Fullscreen Resolution";
-$Text::WindowedResolution = "Windowed Resolution";
+$Text::FullscreenResolution = "Fullscreen Res";
+$Text::WindowedResolution = "Windowed Res";
 $Text::DisplayMode = "Display Mode";
 $Text::DisplayModeOptions = "Windowed\tBorderless Fullscreen\tExclusive Fullscreen";
-$Text::ReflectionDetailLevel = "Reflection Detail Level";
+$Text::ReflectionDetailLevel = "Reflection Detail";
 $Text::ReflectionDetailLevelOptions = "Nothing\tSky\tLevel and Sky\tLevel, Sky and Items\tEverything";
 $Text::MarbleSkin = "Marble Type";
 

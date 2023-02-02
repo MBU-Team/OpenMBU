@@ -15,7 +15,7 @@ new GuiControl(videoOptionsGui) {
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = "center";
       // there can only be two columns; these values are percentages of total extent
-      columns = isWidescreen()? "50 50" : "45 55";
+      columns = isWidescreen()? "35 65" : "45 55";
       // each column can have a left and right margin, specified here.  order is 
       // C1L C1R C2L C2R.  amount is in pixels
       columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
