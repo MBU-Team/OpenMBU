@@ -346,7 +346,7 @@ function GuiEdit(%val)
    if(%val != 0)
       return;
       
-   %content = Canvas.getContent();
+   %content = RootGui.contentGui;
    
    if(%content == GuiEditorGui.getId())
    {
@@ -357,7 +357,8 @@ function GuiEdit(%val)
       {
          GuiGroup.add(%obj);
          //Canvas.setContent(%obj);
-         Canvas.setContent($previousContent);
+         Canvas.setContent(RootGui);
+         RootGui.setContent($previousContent);
       }
       echo("Exporting Gui Editor Prefs");
       export( "$Pref::GuiEditor::*", "./prefs.cs", false );
@@ -495,6 +496,7 @@ function GuiEditorOpen(%content)
    GuiEditorResList.add("640 x 480", 640);
    GuiEditorResList.add("800 x 600", 800);
    GuiEditorResList.add("1024 x 768", 1024);
+   GuiEditorResList.add("1280 x 720", 1280);
    %ext = $Pref::GuiEditor::PreviewResolution;
    if( %ext $= "" )
    {
@@ -508,6 +510,8 @@ function GuiEditorOpen(%content)
          GuiEditorResList.setText("800 x 600");
       case 1024:
          GuiEditorResList.setText("1024 x 768");
+      case 1280:
+         GuiEditorResList.setText("1280 x 720");
    }
    }
    else
@@ -570,6 +574,10 @@ function GuiEditorResList::onSelect(%this, %id)
          GuiEditorRegion.resize(0,0,1024,768);
          GuiEditorContent.getObject(0).resize(0,0,1024,768);
          $Pref::GuiEditor::PreviewResolution = "1024 768";
+      case 1280:
+         GuiEditorRegion.resize(0,0,1280,720);
+         GuiEditorContent.getObject(0).resize(0,0,1280,720);
+         $Pref::GuiEditor::PreviewResolution = "1280 720";
    }
 }
 
