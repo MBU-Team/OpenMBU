@@ -1,5 +1,6 @@
 #include "guiXboxButtonCtrl.h"
 #include "console/consoleTypes.h"
+#include "sfx/sfxSystem.h"
 
 IMPLEMENT_CONOBJECT(GuiXboxButtonCtrl);
 
@@ -12,14 +13,14 @@ GuiXboxButtonCtrl::GuiXboxButtonCtrl()
     mInitialText = StringTable->insert("");
     mInitialTextID = StringTable->insert("");
     mText[0] = '\0';
-    // TODO: init
+    mButtonState = Normal;
+    mHovering = false;
 }
 
 void GuiXboxButtonCtrl::initPersistFields()
 {
     Parent::initPersistFields();
 
-    // TODO: add fields
     addField("text", TypeCaseString, Offset(mInitialText, GuiXboxButtonCtrl));
     addField("textID", TypeString, Offset(mInitialTextID, GuiXboxButtonCtrl));
 }
@@ -60,6 +61,8 @@ bool GuiXboxButtonCtrl::onWake()
 void GuiXboxButtonCtrl::onSleep()
 {
     Parent::onSleep();
+    //mButtonState = Normal;
+    //mHovering = false;
 }
 
 //--------------------------------------------------------
@@ -84,14 +87,30 @@ ConsoleMethod(GuiXboxButtonCtrl, getText, const char*, 2, 2, "() - returns the t
     return object->getText();
 }
 
-// TODO: Console Methods
-
 //--------------------------------------------------------
 // Misc
 //--------------------------------------------------------
 
+//void GuiXboxButtonCtrl::setVisible(bool value)
+//{
+//    Parent ::setVisible(value);
+//
+//    if (!value)
+//    {
+//        mButtonState = Normal;
+//        mHovering = false;
+//    }
+//}
+
 void GuiXboxButtonCtrl::setText(const char* text)
 {
+    // Hacky workaround to make hover not persist between guis
+    if (dStrcmp(text, mText) == 0)
+    {
+        mButtonState = Normal;
+        mHovering = false;
+    }
+
     if (text)
         dStrncpy(mText, (UTF8*)text, MAX_STRING_LENGTH);
     mText[MAX_STRING_LENGTH] = '\0';
@@ -136,8 +155,6 @@ void GuiXboxButtonCtrl::onRender(Point2I offset, const RectI &updateRect)
     if (!isCurrentUIMode())
         return;
 
-    // TODO: onRender
-
     S32 numBitmaps = mProfile->mBitmapArrayRects.size();
     bool hasBitmap = numBitmaps > 0;
 
@@ -146,11 +163,27 @@ void GuiXboxButtonCtrl::onRender(Point2I offset, const RectI &updateRect)
     if (numBitmaps > 0)
         bitmapHeight = mProfile->mBitmapArrayRects[0].extent.y;
 
-    RectI ctrlRect(offset, mBounds.extent);
-    GFX->drawRectFill(ctrlRect, ColorI(128, 128, 128));
+    Point2I clickOffset(0, 0);
+
+    GFX->clearBitmapModulation();
+    ColorI color(128, 128, 128);
+
+    if (mButtonState == Down)
+    {
+        color = ColorI(64, 64, 64, 255);
+        //clickOffset.set(1, 1);
+    } else if (mButtonState == Hover)
+    {
+        color = ColorI(200, 200, 200);
+    }
+
+    RectI ctrlRect(offset + clickOffset, mBounds.extent);
+    GFX->drawRectFill(ctrlRect, color);
 
     Point2I point(0, 0);
-    Point2I clickOffset(0, 0);
+
+
+    GFX->clearBitmapModulation();
 
     point.x = offset.x;
     point.y = offset.y;
@@ -165,24 +198,42 @@ void GuiXboxButtonCtrl::onRender(Point2I offset, const RectI &updateRect)
 void GuiXboxButtonCtrl::onMouseDragged(const GuiEvent &event)
 {
     Parent::onMouseDragged(event);
+    //onMouseDown(event);
 }
 
 void GuiXboxButtonCtrl::onMouseDown(const GuiEvent &event)
 {
-    // TODO: onMouseDown
+    mButtonState = Down;
+    //if (mProfile->mSoundButtonDown)
+    //    SFX->playOnce(mProfile->mSoundButtonDown);
 }
 
 void GuiXboxButtonCtrl::onMouseUp(const GuiEvent &event)
 {
-    // TODO: onMouseUp
+    if (mHovering)
+        mButtonState = Hover;
+    else
+        mButtonState = Normal;
+
+    if (mConsoleCommand[0])
+        Con::evaluate(mConsoleCommand, false);
 }
 
 void GuiXboxButtonCtrl::onMouseMove(const GuiEvent &event)
 {
-    // TODO: onMouseMove
+    //mButtonState = Hover;
+}
+
+void GuiXboxButtonCtrl::onMouseEnter(const GuiEvent &event)
+{
+    if (mProfile->mSoundButtonOver)
+        SFX->playOnce(mProfile->mSoundButtonOver);
+    mButtonState = Hover;
+    mHovering = true;
 }
 
 void GuiXboxButtonCtrl::onMouseLeave(const GuiEvent &event)
 {
-    // TODO: onMouseLeave
+    mButtonState = Normal;
+    mHovering = false;
 }

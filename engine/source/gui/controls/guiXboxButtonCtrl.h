@@ -12,18 +12,26 @@ private:
 
 public:
     enum Constants { MAX_STRING_LENGTH = 255 };
+    enum ButtonState
+    {
+        Normal,
+        Hover,
+        Down
+    };
 
 protected:
     StringTableEntry mInitialText;
     StringTableEntry mInitialTextID;
     UTF8 mText[MAX_STRING_LENGTH + 1];
-    // TODO: Fields
+    ButtonState mButtonState;
+    bool mHovering;
 
 public:
     DECLARE_CONOBJECT(GuiXboxButtonCtrl);
     GuiXboxButtonCtrl();
     static void initPersistFields();
 
+    //void setVisible(bool value) override;
     void setText(const char* text);
     void setTextID(S32 id);
     void setTextID(const char* id);
@@ -42,6 +50,7 @@ public:
     void onMouseDown(const GuiEvent &event) override;
     void onMouseUp(const GuiEvent &event) override;
     void onMouseMove(const GuiEvent &event) override;
+    void onMouseEnter(const GuiEvent &event) override;
     void onMouseLeave(const GuiEvent &event) override;
 
 };

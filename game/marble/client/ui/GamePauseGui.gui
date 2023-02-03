@@ -70,8 +70,11 @@ function GamePauseGui::onWake(%this)
    LevelTitle.setText(%level);
    
    RootGui.setTitle($Text::Paused);
-   RootGui.setA($Text::Go);
-   RootGui.setX($Text::AboutBasics);
+   if ($pref::UI::LegacyUI)
+   {
+      RootGui.setA($Text::Go);
+      RootGui.setX($Text::AboutBasics);
+   }
    
    DemoTimerGui.pause(1);
    

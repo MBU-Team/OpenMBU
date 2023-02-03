@@ -1015,7 +1015,7 @@ GuiControl* GuiControl::findHitControl(const Point2I& pt, S32 initialLayer)
         {
             continue;
         }
-        else if (ctrl->mVisible && ctrl->pointInControl(pt))
+        else if (ctrl->mVisible && ctrl->isCurrentUIMode() && ctrl->pointInControl(pt))
         {
             Point2I ptemp = pt - ctrl->mBounds.point;
             GuiControl* hitCtrl = ctrl->findHitControl(ptemp);

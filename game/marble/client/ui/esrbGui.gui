@@ -48,7 +48,10 @@ new GuiControl(ESRBGui) {
 function ESRBGui::show(%this)
 {
    RootGui.setTitle("");
-   RootGui.setA($Text::PressAToStart);
+   if ($pref::UI::LegacyUI)
+      RootGui.setA($Text::PressAToStart);
+   else
+      RootGui.setA($Text::Start);
    
    if (getRegion() $= "na_all")
       ESRBText.visible = true;

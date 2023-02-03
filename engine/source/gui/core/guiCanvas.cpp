@@ -752,8 +752,7 @@ void GuiCanvas::rootMouseDown(const GuiEvent& event)
                 continue;
             else
             {
-                if (controlHit->isCurrentUIMode())
-                    controlHit->onMouseDown(event);
+                controlHit->onMouseDown(event);
                 break;
             }
         }

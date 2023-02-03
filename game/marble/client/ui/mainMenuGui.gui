@@ -157,7 +157,8 @@ function MainMenuGui::show(%this)
    // disable some stuff
    //MainMenu.setRowEnabled(4,false);
    
-   RootGui.setA($Text::Go);
+   if ($pref::UI::LegacyUI)
+      RootGui.setA($Text::Go);
    // test::Cheatsenabled should be empty normally
    //RootGui.setTitle($Text::MainMenu @ $Test::CheatsEnabled);
    RootGui.setTitle("" @ $Test::CheatsEnabled);

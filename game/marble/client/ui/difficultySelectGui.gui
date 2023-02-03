@@ -60,6 +60,7 @@ function DifficultySelectGui::show(%this, %fromGui)
    DifficultyMenu.addRow($Text::LevelsAdvanced, "", 0, 2);
                 
    RootGui.setTitle($Text::DifficultyMenu);
-   RootGui.setA($Text::GO);
+   if ($pref::UI::LegacyUI)
+      RootGui.setA($Text::GO);
    RootGui.setB($Text::Back);
 }

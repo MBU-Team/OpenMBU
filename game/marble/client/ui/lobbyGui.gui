@@ -931,7 +931,7 @@ function LobbyGuiPlayerList::onSelect( %this, %id, %text )
    // If we can't kick this person, change the Y action to "Show Gamercard"
    // that will take care of friend invites and all that other jazz
    if( !%showKick && !%showPlayerReview )
-      RootGui.setY( $Text::GamerCard );
+      RootGui.setY( "" );//$Text::GamerCard );
    else
       RootGui.setY( $Text::SelectPlayer );
 }
@@ -965,8 +965,8 @@ function LobbyGui::onY(%this)
 
    if( !%isSelf )
       LobbyPopupDlg.show(%name,%id,%showPlayerReview,%showKick,%showInviteFriend,%showGamerCard);
-   else
-      XBLiveShowGamercardUI(XBLiveGetSignInPort(), %otherXbliveid);
+   //else
+   //   XBLiveShowGamercardUI(XBLiveGetSignInPort(), %otherXbliveid);
 }
 
 function LobbyGuiPlayerList::test(%this)

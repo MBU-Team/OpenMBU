@@ -200,64 +200,71 @@ new GuiControl(RootCenterCtrl) {
       };
    };
    
-   new GuiXboxButtonCtrl(RootGui_BButtonNew) {
-      profile = "TextMenuButtonProfile";
-      horizSizing = "left";
+   new GuiControl(RootGuiBottomNavBarNew) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "relative";
       vertSizing = "bottom";
-      position = "-200 590";
-      extent = "100 60";
+      position = isWidescreen()? "0 590" : "0 385";
+      extent = "640 200";
       minExtent = "8 2";
-      bitmap = "./xbox/pad_button_b";
-      bitmapAlign = "right";
-      text = "";
-      command = "RootGui.contentGui.onB();";
       visible = "1";
       UIMode = "NewOnly";
-   };
    
-   new GuiXboxButtonCtrl(RootGui_XButtonNew) {
-      profile = "TextMenuButtonProfile";
-      horizSizing = "left";
-      vertSizing = "bottom";
-      position = "-20 590";
-      extent = "150 60";
-      minExtent = "8 2";
-      bitmap = "./xbox/pad_button_x";
-      bitmapAlign = "right";
-      text = "";
-      command = "RootGui.contentGui.onX();";
-      visible = "1";
-      UIMode = "NewOnly";
-   };
-   
-   new GuiXboxButtonCtrl(RootGui_YButtonNew) {
-      profile = "TextMenuButtonProfile";
-      horizSizing = "left";
-      vertSizing = "bottom";
-      position = "140 590";
-      extent = "170 60";
-      minExtent = "8 2";
-      bitmap = "./xbox/pad_button_y";
-      bitmapAlign = "right";
-      text = "";
-      command = "RootGui.contentGui.onY();";
-      visible = "1";
-      UIMode = "NewOnly";
-   };
-   
-   new GuiXboxButtonCtrl(RootGui_AButtonNew) {
-      profile = "TextMenuButtonProfile";
-      horizSizing = "left";
-      vertSizing = "bottom";
-      position = "320 590";
-      extent = "100 60";
-      minExtent = "8 2";
-      bitmap = "./xbox/pad_button_a";
-      bitmapAlign = "right";
-      text = "";
-      command = "RootGui.contentGui.onA();";
-      visible = "1";
-      UIMode = "NewOnly";
+      new GuiXboxButtonCtrl(RootGui_AButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "320 0";
+         extent = "120 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_a";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onA();";
+         visible = "1";
+      };
+      
+      new GuiXboxButtonCtrl(RootGui_BButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "-200 0";
+         extent = "100 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_b";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onB();";
+         visible = "1";
+      };
+      
+      new GuiXboxButtonCtrl(RootGui_XButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "-80 0";
+         extent = "180 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_x";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onX();";
+         visible = "1";
+      };
+      
+      new GuiXboxButtonCtrl(RootGui_YButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "110 0";
+         extent = "200 60";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_y";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onY();";
+         visible = "1";
+      };
    };
    
    new GuiControl(RootGuiBottomNavBar) {
@@ -571,6 +578,7 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
    
    // move the nav bar to the end.  this is only done so that its mouse on up commands work
    RootCenterCtrl.pushToBack(RootGuiBottomNavBar);
+   RootCenterCtrl.pushToBack(RootGuiBottomNavBarNew);
    
    // propogate nocursor attribute to RootGui
    %this.noCursor = %this.contentGui.noCursor;
