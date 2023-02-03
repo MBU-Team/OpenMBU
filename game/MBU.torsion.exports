@@ -1850,8 +1850,7 @@
             <desc>GuiProfile tooltipprofile</desc>
         </field>
         <field>            <name>UIMode</name>
-            <desc>enumval UIMode
-(only exists in Debug x64)</desc>
+            <desc>enumval UIMode</desc>
         </field>
         <field>            <name>Variable</name>
             <desc>string Variable</desc>
@@ -3110,6 +3109,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>resizeWidth</name>
             <desc>bool resizeWidth</desc>
         </field>
+    </class>
+    <class>        <name>GuiXboxButtonCtrl</name>
+        <base>GuiControl</base>
     </class>
     <class>        <name>GuiXboxListCtrl</name>
         <base>GuiControl</base>

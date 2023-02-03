@@ -200,6 +200,66 @@ new GuiControl(RootCenterCtrl) {
       };
    };
    
+   new GuiXboxButtonCtrl(RootGui_BButtonNew) {
+      profile = "TextMenuButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "-200 590";
+      extent = "100 60";
+      minExtent = "8 2";
+      bitmap = "./xbox/pad_button_b";
+      bitmapAlign = "right";
+      text = "";
+      command = "RootGui.contentGui.onB();";
+      visible = "1";
+      UIMode = "NewOnly";
+   };
+   
+   new GuiXboxButtonCtrl(RootGui_XButtonNew) {
+      profile = "TextMenuButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "-20 590";
+      extent = "150 60";
+      minExtent = "8 2";
+      bitmap = "./xbox/pad_button_x";
+      bitmapAlign = "right";
+      text = "";
+      command = "RootGui.contentGui.onX();";
+      visible = "1";
+      UIMode = "NewOnly";
+   };
+   
+   new GuiXboxButtonCtrl(RootGui_YButtonNew) {
+      profile = "TextMenuButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "140 590";
+      extent = "170 60";
+      minExtent = "8 2";
+      bitmap = "./xbox/pad_button_y";
+      bitmapAlign = "right";
+      text = "";
+      command = "RootGui.contentGui.onY();";
+      visible = "1";
+      UIMode = "NewOnly";
+   };
+   
+   new GuiXboxButtonCtrl(RootGui_AButtonNew) {
+      profile = "TextMenuButtonProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "320 590";
+      extent = "100 60";
+      minExtent = "8 2";
+      bitmap = "./xbox/pad_button_a";
+      bitmapAlign = "right";
+      text = "";
+      command = "RootGui.contentGui.onA();";
+      visible = "1";
+      UIMode = "NewOnly";
+   };
+   
    new GuiControl(RootGuiBottomNavBar) {
       profile = "GuiDefaultProfile";
       horizSizing = "relative";
@@ -524,58 +584,85 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
 function RootGui::setA(%this,%text)
 {
    RootGuiAButtonText.setText(%text);
+   RootGui_AButtonNew.setText(%text);
    
    if (%text $= "")
+   {
       RootGuiAButton.visible = false;
-   else
+      RootGui_AButtonNew.visible = false;
+   } else
+   {
       RootGuiAButton.visible = true;
+      RootGui_AButtonNew.visible = true;
+   }
 }
 
 function RootGui::AEnabled(%this)
 {
-   return RootGuiAButton.visible;
+   return RootGuiAButton.visible || RootGui_AButtonNew.visible;
 }
 
 function RootGui::setB(%this,%text)
 {
    RootGuiBButtonText.setText(%text);
+   RootGui_BButtonNew.setText(%text);
+   
    if (%text $= "")
+   {
       RootGuiBButton.visible = false;
-   else
+      RootGui_BButtonNew.visible = false;
+   } else
+   {
       RootGuiBButton.visible = true;
+      RootGui_BButtonNew.visible = true;
+   }
 }
 
 function RootGui::BEnabled(%this)
 {
-   return RootGuiBButton.visible;
+   return RootGuiBButton.visible || RootGui_BButtonNew.visible;
 }
 
 function RootGui::setY(%this,%text)
 {
    RootGuiYButtonText.setText(%text);
+   RootGui_YButtonNew.setText(%text);
+   
    if (%text $= "")
+   {
       RootGuiYButton.visible = false;
-   else
+      RootGui_YButtonNew.visible = false;
+   } else
+   {
       RootGuiYButton.visible = true;
+      RootGui_YButtonNew.visible = true;
+   }
 }
 
 function RootGui::YEnabled(%this)
 {
-   return RootGuiYButton.visible;
+   return RootGuiYButton.visible || RootGui_YButtonNew.visible;
 }
 
 function RootGui::setX(%this,%text)
 {
    RootGuiXButtonText.setText(%text);
+   RootGui_XButtonNew.setText(%text);
+   
    if (%text $= "")
+   {
       RootGuiXButton.visible = false;
-   else
+      RootGui_XButtonNew.visible = false;
+   } else
+   {
       RootGuiXButton.visible = true;
+      RootGui_XButtonNew.visible = true;
+   }
 }
 
 function RootGui::XEnabled(%this)
 {
-   return RootGuiXButton.visible;
+   return RootGuiXButton.visible || RootGui_XButtonNew.visible;
 }
 
 function RootGui::setLS(%this,%text)

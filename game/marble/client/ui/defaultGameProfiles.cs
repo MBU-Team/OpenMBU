@@ -237,6 +237,30 @@ new GuiControlProfile(TextOptionListInactiveSmallProfile : TextOptionListSmallPr
    canKeyFocus = false; // ditto.  hopefully we don't have to sacrifice chickens too.	
 };
 
+new GuiControlProfile(TextMenuButtonProfile)
+{
+	fontType = "Arial Bold"; //$XBOX::MenuFont;
+	fontSize = 30;
+	shadow = 0;
+	autoSizeWidth = true;
+	autoSizeHeight = true;
+	border = false;
+	fontColors[0] = $XBOX::MenuTextColor;
+	fontColors[1] = $XBOX::MenuTextColorSelected;
+	fontColors[2] = $XBOX::MenuTextColorDisabled; // used to disable menu items in demo mode
+   canKeyFocus = true;
+   justify = center;
+   tab = false;//
+   textOffset = "92 0"; 
+   bitmap = "marble/client/ui/xbox/cursorButtonArray"; // bitmap 0 = unselected, bitmap 1 = selected
+   //bitmap = ""; // make sure to uncomment this line if you don't want a bitmap
+   soundButtonOver = "AudioButtonOver";
+   iconPosition = "42 30";
+   rowHeight = 62;
+   
+   hitArea = "20 76";
+};
+
 new GuiControlProfile(TextArrayProfile : TextHeadingProfile)
 {
    border = false;
