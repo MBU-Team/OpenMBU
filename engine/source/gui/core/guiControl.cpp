@@ -492,7 +492,7 @@ void GuiControl::parentResized(const Point2I& oldParentExtent, const Point2I& ne
 
 void GuiControl::onRender(Point2I offset, const RectI& updateRect)
 {
-    if ((mUIMode == LegacyOnly && !smLegacyUI) || (mUIMode == NewOnly && smLegacyUI))
+    if (!isCurrentUIMode())
         return;
 
     RectI ctrlRect(offset, mBounds.extent);
