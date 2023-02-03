@@ -163,9 +163,16 @@ function GamePauseGui::onA()
             // in ranked mode we disconnect totally and bounce to preview mode
             %forcePreview = true;
          }
+         %okTxt = $Text::OK;
+         %cancelTxt = $Text::Cancel;
+         if (!$pref::UI::LegacyUI)
+         {
+            %okTxt = $Text::Yes;
+            %cancelTxt = $Text::No;
+         }
          XMessagePopupDlg.show(0, %msg, 
-            $Text::OK, "resumeGame();escapeFromGame(" @ %forcePreview @ ");", 
-            $Text::Cancel);
+            %okTxt, "resumeGame();escapeFromGame(" @ %forcePreview @ ");", 
+            %cancelTxt);
       case 9: 
          %unpause = false;
          %this.resumingGame = false;
@@ -185,9 +192,16 @@ function GamePauseGui::onA()
                %msg = $Text::RankedClientConfirm;
          }
          
+         %okTxt = $Text::OK;
+         %cancelTxt = $Text::Cancel;
+         if (!$pref::UI::LegacyUI)
+         {
+            %okTxt = $Text::Yes;
+            %cancelTxt = $Text::No;
+         }
          XMessagePopupDlg.show(0, %msg, 
-            $Text::OK, "GamePauseGui.onMMSelected();", 
-            $Text::Cancel);
+            %okTxt, "GamePauseGui.onMMSelected();", 
+            %cancelTxt);
    }
    
    if (%unpause)
