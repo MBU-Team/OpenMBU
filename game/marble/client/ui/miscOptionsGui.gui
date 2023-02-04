@@ -97,6 +97,8 @@ function miscOptionsGui::onA(%this)
 {
    if ($pref::Language !$= $Option::initialLang)
       setLanguage($pref::Language);   
+   if ($pref::UI::LegacyUI !$= $Option::initialUIStyle && %this.backGui $= "PlayGui")
+      PlayGui.updatePlayGui();
    
    RootGui.setContent(HelpAndOptionsGui, %this.backGui);
    saveUserProfile();

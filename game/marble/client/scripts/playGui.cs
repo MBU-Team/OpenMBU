@@ -62,6 +62,7 @@ function PlayGui::onWake(%this)
    schedule(0, 0, "refreshBottomTextCtrl");
    playGameMusic();
    %this.setPowerUp( "" );
+   %this.setBlastBar();
    
    // hack town - pause if system UI is active
    if ($Client::SystemUIActive && !GamePauseGui.isAwake() && !$GameEndNoAllowPause)
@@ -163,16 +164,36 @@ function PlayGui::setMessage(%this,%text,%timer)
 //-----------------------------------------------------------------------------
 function PlayGui::setPowerUp(%this,%bmpFile)
 {
+   %this.currentPowerUpFile = %bmpFile;
+   %path = "marble/client/ui/game/pc/";
+   if ($pref::UI::LegacyUI)
+      %path = "marble/client/ui/game/";
+   
    // Update the power up hud control
    if (%bmpFile $= "")
    {
-      HUD_ShowPowerUp.setBitmap("marble/client/ui/game/powerup.png");
+      HUD_ShowPowerUp.setBitmap(%path @ "powerup.png");
    }
    else
    {
-      HUD_ShowPowerUp.setBitmap("marble/client/ui/game/" @ %bmpFile);
+      HUD_ShowPowerUp.setBitmap(%path @ %bmpFile);
    }
 }   
+
+function PlayGui::setBlastBar(%this)
+{
+   %path = "marble/client/ui/game/pc/";
+   if ($pref::UI::LegacyUI)
+      %path = "marble/client/ui/game/";
+      
+   BoostBarFG.setBitmap(%path @ "powerbar.png");
+}
+
+function PlayGui::updatePlayGui(%this)
+{
+   %this.setPowerUp(%this.currentPowerUpFile);
+   %this.setBlastBar();
+}
 
 //-----------------------------------------------------------------------------
 
