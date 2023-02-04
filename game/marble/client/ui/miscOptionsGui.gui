@@ -15,7 +15,7 @@ new GuiControl(miscOptionsGui) {
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = "center";
       // there can only be two columns; these values are percentages of total extent
-      columns = isWidescreen()? "50 50" : "45 55";
+      columns = isWidescreen()? "30 70" : "45 55";
       // each column can have a left and right margin, specified here.  order is 
       // C1L C1R C2L C2R.  amount is in pixels
       columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
@@ -34,6 +34,10 @@ function miscOptionsGui::show(%this, %backGui)
       
    miscOptionsList.clear();
    
+   // --------
+   // Language
+   // --------
+   
    $Option::initialLang = $pref::Language;
    
    %langCount = getWordCount(getLanguageDisplayList());
@@ -50,6 +54,20 @@ function miscOptionsGui::show(%this, %backGui)
    }
 
    miscOptionsList.setOptionIndex(0, %langIndex);
+   
+   // --------
+   // UI Style
+   // --------
+   
+   $Option::initialUIStyle = $pref::UI::LegacyUI;
+  
+   miscOptionsList.addRow($Text::UIStyle, $Text::UIStyleOptions, 8); // ui style
+   
+   %uiStyleIndex = 0;
+   if ($pref::UI::LegacyUI)
+      %uiStyleIndex = 1;
+
+   miscOptionsList.setOptionIndex(1, %uiStyleIndex);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOMiscOptions) );
@@ -68,6 +86,10 @@ function miscOptionsList::onOptionChange(%this, %increase)
          // language
          $pref::Language = getWord(getLanguageList(), %val);
          echo("Language = " @ $pref::Language);
+      case 1:
+         // ui style
+         $pref::UI::LegacyUI = %val;
+         echo("UIStyle = " @ $pref::UI::LegacyUI);
    }  
 }
 
