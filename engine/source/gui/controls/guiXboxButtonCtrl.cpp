@@ -221,7 +221,7 @@ void GuiXboxButtonCtrl::onMouseUp(const GuiEvent &event)
 
 void GuiXboxButtonCtrl::onMouseMove(const GuiEvent &event)
 {
-    //mButtonState = Hover;
+    mButtonState = Hover;
 }
 
 void GuiXboxButtonCtrl::onMouseEnter(const GuiEvent &event)
