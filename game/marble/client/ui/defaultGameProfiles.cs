@@ -390,3 +390,10 @@ new GuiControlProfile ("ControllerTextRightProfile" : ControllerTextProfile)
 {
    justify = right;
 };
+
+new GuiControlProfile ("AchievementDlgProfile" : TextHeadingProfile)
+{
+   border = 2;
+   borderColor = "16 16 16";
+   justify = center;
+};
