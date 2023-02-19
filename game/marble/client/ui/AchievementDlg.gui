@@ -14,7 +14,7 @@ new GuiControl(AchievementDlg) {
          horizSizing = "center";
          vertSizing = "bottom";
          position = "70 465";
-         extent =   "480 90"; 
+         extent =   "507 116";
          //minExtent = "48 92";
          visible = "1";
          bitmap = "";
