@@ -470,6 +470,9 @@ $Text::AchievementName09 = "Easter Egg-Korb";
 $Text::AchievementName10 = "Erster Platz";
 $Text::AchievementName11 = "Edelsteinsammler";
 $Text::AchievementName12 = "Kampfveteran";
+$Text::AchievementName13 = "Blaue Edelsteinjagd";
+$Text::AchievementName14 = "Dominator des Kartenpakets";
+$Text::AchievementName15 = "Meister der Spitzen";
 
 $Text::AchievementDescription01 = "Schließen Sie ein beliebiges Level unter Par-Zeit ab.";
 $Text::AchievementDescription02 = "Schließen Sie alle Einsteiger-Levels ab.";
@@ -483,6 +486,10 @@ $Text::AchievementDescription09 = "Suchen Sie alle 20 Easter Eggs.";
 $Text::AchievementDescription10 = "Erzielen Sie den ersten Platz in einem Multiplayer-Spiel.";
 $Text::AchievementDescription11 = "Erzielen Sie 75 Punkte in einem Multiplayer-Spiel.";
 $Text::AchievementDescription12 = "Sammeln Sie insgesamt 2000 Punkte im Multiplayer-Modus.";
+$Text::AchievementDescription13 = "Sammle einen blauen Edelstein in einem Marble It Up! Multiplayer-Match.";
+$Text::AchievementDescription14 = "Holen Sie sich 40 Edelsteine in 3 beliebigen von Playground, Bowl, Concentric, Vortex Effect, Blast Club (Marble Fu Pack).";
+$Text::AchievementDescription15 = "Sammle 50 Edelsteine in Spires (Agoraphobia-Pack).";
+
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings

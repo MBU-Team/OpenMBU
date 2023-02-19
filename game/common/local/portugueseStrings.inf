@@ -470,6 +470,9 @@ $Text::AchievementName09 = "Egg Basket";
 $Text::AchievementName10 = "First Place";
 $Text::AchievementName11 = "Gem Collector";
 $Text::AchievementName12 = "Veteran Battler";
+$Text::AchievementName13 = "Blue Gem Hunt";
+$Text::AchievementName14 = "Map Pack Dominator";
+$Text::AchievementName15 = "Master of the Spires";
 
 $Text::AchievementDescription01 = "Finish any level under par time.";
 $Text::AchievementDescription02 = "Complete all Beginner levels.";
@@ -483,6 +486,9 @@ $Text::AchievementDescription09 = "Find all twenty easter eggs.";
 $Text::AchievementDescription10 = "Get first place in a multiplayer match.";
 $Text::AchievementDescription11 = "Get 75 points in a multiplayer match.";
 $Text::AchievementDescription12 = "Collect 2,000 total points in multiplayer.";
+$Text::AchievementDescription13 = "Collect a blue gem in a Marble It Up! multiplayer match.";
+$Text::AchievementDescription14 = "Get 40 gems in any 3 of Playground, Bowl, Concentric, Vortex Effect, Blast Club (Marble Fu pack).";
+$Text::AchievementDescription15 = "Collect 50 gems in Spires (Agoraphobia pack).";
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings

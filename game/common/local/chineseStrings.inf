@@ -470,6 +470,9 @@ $Text::AchievementName09="彩蛋籃";
 $Text::AchievementName10="第一名";
 $Text::AchievementName11="寶石收藏家";
 $Text::AchievementName12="身經百戰的老手";
+$Text::AchievementName13="蓝色宝石狩猎";
+$Text::AchievementName14="地图包统治者";
+$Text::AchievementName15="尖塔大师";
 
 $Text::AchievementDescription01="在平均時間內完成任何等級。";
 $Text::AchievementDescription02="完成所有初級等級。";
@@ -483,6 +486,9 @@ $Text::AchievementDescription09="找出全部二十個復活節彩蛋。";
 $Text::AchievementDescription10="在多人遊戲配對中贏得第一名。";
 $Text::AchievementDescription11="在多人遊戲配對中獲得 75 點。";
 $Text::AchievementDescription12="在多人遊戲中獲得 2,000 點。";
+$Text::AchievementDescription13="在 Marble It Up 中收集一颗蓝色宝石！ 多人比赛。";
+$Text::AchievementDescription14="在 Playground、Bowl、Concentric、Vortex Effect、Blast Club 中的任意 3 个中获得 40 颗宝石（Marble Fu 包）。";
+$Text::AchievementDescription15="在 Spiers（广场恐惧症包）中收集 50 颗宝石。";
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings
