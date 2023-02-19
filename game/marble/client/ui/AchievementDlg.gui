@@ -12,8 +12,8 @@ new GuiControl(AchievementDlg) {
    new GuiAchievementPopupCtrl(AchievementFrame) {
          profile = "AchievementDlgProfile";
          horizSizing = "center";
-         vertSizing = "bottom";
-         position = "70 465";
+         vertSizing = "top";
+         position = "0 150";
          extent =   "507 116";
          //minExtent = "48 92";
          visible = "1";

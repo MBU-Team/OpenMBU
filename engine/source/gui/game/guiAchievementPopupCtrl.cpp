@@ -20,6 +20,7 @@ void GuiAchievementPopupCtrl::initPersistFields()
     Parent::initPersistFields();
 
     addField("bitmap", TypeFilename, Offset(mBitmapName, GuiAchievementPopupCtrl));
+    addField("title", TypeString, Offset(mTitle, GuiAchievementPopupCtrl));
 }
 
 //------------------------------------------------------------------------------
@@ -82,6 +83,9 @@ void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
 
     GFX->setBitmapModulation(mProfile->mFontColor);
     renderJustifiedText(offset, mBounds.extent, mTitle);
+
+    //Point2I headerExtent(mBounds.extent.x, mBounds.extent.y / 2);
+    //renderJustifiedText(offset, headerExtent, "Achievement Unlocked");
 
     renderChildControls(offset, updateRect);
 }
