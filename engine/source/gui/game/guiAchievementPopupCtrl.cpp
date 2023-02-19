@@ -9,6 +9,7 @@ GuiAchievementPopupCtrl::GuiAchievementPopupCtrl()
 {
     mBitmapName = StringTable->insert("");
     mTextureObject = NULL;
+    mTitle = StringTable->insert("");
 }
 
 //------------------------------------------------------------------------------
@@ -45,6 +46,12 @@ void GuiAchievementPopupCtrl::setBitmap(const char *name)
     setUpdate();
 }
 
+void GuiAchievementPopupCtrl::setTitle(const char *title)
+{
+    mTitle = StringTable->insert(title);
+    setUpdate();
+}
+
 //------------------------------------------------------------------------------
 
 void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
@@ -53,7 +60,7 @@ void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
     {
         GFX->clearBitmapModulation();
 
-        RectI rect(offset, mBounds.extent);
+        RectI rect(offset.x + 6, offset.y + 4, 64, 64);
         GFX->drawBitmapStretch(mTextureObject, rect);
     }
 
@@ -62,6 +69,8 @@ void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
         RectI rect(offset.x, offset.y, mBounds.extent.x, mBounds.extent.y);
         GFX->drawRect(rect, mProfile->mBorderColor);
     }
+
+    renderJustifiedText(offset, mBounds.extent, mTitle);
 
     renderChildControls(offset, updateRect);
 }
@@ -72,4 +81,10 @@ ConsoleMethod(GuiAchievementPopupCtrl, setBitmap, void, 3, 3, "(string filename)
     char fileName[1024];
     Con::expandScriptFilename(fileName, sizeof(fileName), argv[2]);
     object->setBitmap(fileName);
+}
+
+ConsoleMethod(GuiAchievementPopupCtrl, setTitle, void, 3, 3, "(string title)"
+    "Set the title of the achievement.")
+{
+    object->setTitle(argv[2]);
 }

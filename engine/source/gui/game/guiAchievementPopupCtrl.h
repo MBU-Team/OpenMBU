@@ -10,6 +10,7 @@ class GuiAchievementPopupCtrl : public GuiControl
 protected:
     StringTableEntry mBitmapName;
     GFXTexHandle mTextureObject;
+    StringTableEntry mTitle;
 
 public:
     GuiAchievementPopupCtrl();
@@ -17,6 +18,7 @@ public:
     void onRender(Point2I offset, const RectI &updateRect);
     bool onWake();
     void setBitmap(const char *name);
+    void setTitle(const char *title);
 
     DECLARE_CONOBJECT(GuiAchievementPopupCtrl);
 };
