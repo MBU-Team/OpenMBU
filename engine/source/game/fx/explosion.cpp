@@ -25,7 +25,7 @@
 #include "game/debris.h"
 #include "renderInstance/renderInstMgr.h"
 
-IMPLEMENT_CONOBJECT(Explosion);
+IMPLEMENT_CO_NETOBJECT_V1(Explosion);
 
 #define MaxLightRadius 20
 
@@ -128,6 +128,10 @@ ExplosionData::ExplosionData()
     camShakeRadius = 10.0;
     camShakeFalloff = 10.0;
 
+    impulseMask = ShapeBaseObjectType;
+    impulseRadius = 10.0f;
+    impulseForce = 10.0f;
+
     for (U32 i = 0; i < EC_NUM_TIME_KEYS; i++)
     {
         times[i] = 1.0;
@@ -193,6 +197,10 @@ void ExplosionData::initPersistFields()
     addField("camShakeDuration", TypeF32, Offset(camShakeDuration, ExplosionData));
     addField("camShakeRadius", TypeF32, Offset(camShakeRadius, ExplosionData));
     addField("camShakeFalloff", TypeF32, Offset(camShakeFalloff, ExplosionData));
+
+    addField("impulseForce", TypeF32, Offset(impulseForce, ExplosionData));
+    addField("impulseRadius", TypeF32, Offset(impulseRadius, ExplosionData));
+    addField("impulseMask", TypeS32, Offset(impulseMask, ExplosionData));
 
     addNamedFieldV(lightStartRadius, TypeF32, ExplosionData, new FRangeValidator(0, MaxLightRadius));
     addNamedFieldV(lightEndRadius, TypeF32, ExplosionData, new FRangeValidator(0, MaxLightRadius));
@@ -369,6 +377,10 @@ void ExplosionData::packData(BitStream* stream)
     stream->write(camShakeRadius);
     stream->write(camShakeFalloff);
 
+    stream->write(impulseForce);
+    stream->write(impulseRadius);
+    stream->write(impulseMask);
+
     for (S32 j = 0; j < EC_NUM_DEBRIS_TYPES; j++)
     {
         if (stream->writeFlag(debrisList[j]))
@@ -479,6 +491,9 @@ void ExplosionData::unpackData(BitStream* stream)
     stream->read(&camShakeRadius);
     stream->read(&camShakeFalloff);
 
+    stream->read(&impulseForce);
+    stream->read(&impulseRadius);
+    stream->read(&impulseMask);
 
     for (S32 j = 0; j < EC_NUM_DEBRIS_TYPES; j++)
     {
@@ -563,6 +578,7 @@ bool ExplosionData::preload(bool server, char errorBuffer[256])
 Explosion::Explosion()
 {
     mTypeMask |= ExplosionObjectType;
+    mNetFlags.set(Ghostable | ScopeAlways);
 
     mExplosionInstance = NULL;
     mExplosionThread = NULL;
@@ -575,6 +591,8 @@ Explosion::Explosion()
     mEndingMS = 1000;
     mActive = false;
     mCollideType = 0;
+
+    mInitialPosSet = false;
 
     mInitialNormal.set(0.0, 0.0, 1.0);
     mRandAngle = sgRandom.randF(0.0, 1.0) * M_PI * 2.0;
@@ -593,10 +611,13 @@ Explosion::~Explosion()
 
 void Explosion::setInitialState(const Point3F& point, const Point3F& normal, const F32 fade)
 {
-    setPosition(point);
+    mInitialPosition = point;
+    //setPosition(point);
     mInitialNormal = normal;
     mFade = fade;
     mFog = 0.0f;
+
+    mInitialPosSet = true;
 }
 
 //--------------------------------------------------------------------------
@@ -612,6 +633,11 @@ bool Explosion::onAdd()
 {
     if (!Parent::onAdd())
         return false;
+
+    if (!mInitialPosSet)
+    {
+        mInitialPosition = getPosition();
+    }
 
     mDelayMS = mDataBlock->delayMS + sgRandom.randI(-mDataBlock->delayVariance, mDataBlock->delayVariance);
     mEndingMS = mDataBlock->lifetimeMS + sgRandom.randI(-mDataBlock->lifetimeVariance, mDataBlock->lifetimeVariance);
@@ -633,7 +659,7 @@ bool Explosion::onAdd()
     }
 
     // shake camera
-    if (mDataBlock->shakeCamera)
+    if (mDataBlock->shakeCamera && (isGhost() || gSPMode))
     {
         // first check if explosion is near player
         GameConnection* connection = GameConnection::getConnectionToServer();
@@ -678,7 +704,6 @@ bool Explosion::onAdd()
         }
     }
 
-
     if (mDelayMS == 0)
     {
         if (!explode())
@@ -687,24 +712,30 @@ bool Explosion::onAdd()
         }
     }
 
-    getCurrentClientContainer()->addObject(this);
-    getCurrentClientSceneGraph()->addObjectToScene(this);
+    //getCurrentClientContainer()->addObject(this);
+    //getCurrentClientSceneGraph()->addObjectToScene(this);
 
-    removeFromProcessList();
-    gClientProcessList.addObject(this);
+    addToScene();
+
+    //removeFromProcessList();
+    //gClientProcessList.addObject(this);
 
     mRandomVal = sgRandom.randF();
 
-    NetConnection* pNC = NetConnection::getConnectionToServer();
-    AssertFatal(pNC != NULL, "Error, must have a connection to the server!");
-    pNC->addObject(this);
+    //NetConnection* pNC = NetConnection::getConnectionToServer();
+    //AssertFatal(pNC != NULL, "Error, must have a connection to the server!");
+    //pNC->addObject(this);
 
-    // Initialize the light structure and register as a dynamic light
-    if (mDataBlock->lightStartRadius != 0 || mDataBlock->lightEndRadius) {
-        mLight.mType = LightInfo::Point;
-        mLight.mRadius = mDataBlock->lightStartRadius;
-        mLight.mColor = mDataBlock->lightStartColor;
-        Sim::getLightSet()->addObject(this);
+    if (isGhost() || gSPMode)
+    {
+        // Initialize the light structure and register as a dynamic light
+        if (mDataBlock->lightStartRadius != 0 || mDataBlock->lightEndRadius)
+        {
+            mLight.mType = LightInfo::Point;
+            mLight.mRadius = mDataBlock->lightStartRadius;
+            mLight.mColor = mDataBlock->lightStartColor;
+            Sim::getLightSet()->addObject(this);
+        }
     }
 
     return true;
@@ -721,10 +752,7 @@ void Explosion::onRemove()
         }
     }
 
-    if (mSceneManager != NULL)
-        mSceneManager->removeObjectFromScene(this);
-    if (getContainer() != NULL)
-        getContainer()->removeObject(this);
+    removeFromScene();
 
     Parent::onRemove();
 }
@@ -738,6 +766,60 @@ bool Explosion::onNewDataBlock(GameBaseData* dptr)
 
     scriptOnNewDataBlock();
     return true;
+}
+
+U32 Explosion::packUpdate(NetConnection *conn, U32 mask, BitStream *stream)
+{
+    U32 retMask = Parent::packUpdate(conn, mask, stream);
+
+    if(stream->writeFlag((mask & InitialUpdateMask)))
+    {
+        mathWrite(*stream, getTransform());
+
+        stream->write(mCurrMS);
+        stream->write(mEndingMS);
+        stream->write(mRandAngle);
+
+        mathWrite(*stream, mInitialPosition);
+        mathWrite(*stream, mInitialNormal);
+
+        stream->write(mFade);
+        stream->write(mFog);
+        stream->write(mActive);
+        stream->write(mDelayMS);
+        stream->write(mRandomVal);
+        stream->write(mCollideType);
+        stream->write(mInitialPosSet);
+    }
+
+    return retMask;
+}
+
+void Explosion::unpackUpdate(NetConnection *conn, BitStream *stream)
+{
+    Parent::unpackUpdate(conn, stream);
+
+    if (stream->readFlag())
+    {
+        MatrixF mat;
+        mathRead(*stream, &mat);
+        setTransform(mat);
+
+        stream->read(&mCurrMS);
+        stream->read(&mEndingMS);
+        stream->read(&mRandAngle);
+
+        mathRead(*stream, &mInitialPosition);
+        mathRead(*stream, &mInitialNormal);
+
+        stream->read(&mFade);
+        stream->read(&mFog);
+        stream->read(&mActive);
+        stream->read(&mDelayMS);
+        stream->read(&mRandomVal);
+        stream->read(&mCollideType);
+        stream->read(&mInitialPosSet);
+    }
 }
 
 
@@ -882,7 +964,7 @@ void Explosion::processTick(const Move*)
 {
     mCurrMS += TickMs;
 
-    if (mCurrMS >= mEndingMS)
+    if (mCurrMS >= mEndingMS && isServerObject())
         deleteObject();
 
     if ((mCurrMS > mDelayMS) && !mActive)
@@ -905,6 +987,9 @@ void Explosion::advanceTime(F32 dt)
 //----------------------------------------------------------------------------
 void Explosion::updateEmitters(F32 dt)
 {
+    if (!isGhost())
+        return;
+
     Point3F pos = getPosition();
 
     for (int i = 0; i < ExplosionData::EC_NUM_EMITTERS; i++)
@@ -918,10 +1003,49 @@ void Explosion::updateEmitters(F32 dt)
 }
 
 //----------------------------------------------------------------------------
+// Apply Impulse
+//----------------------------------------------------------------------------
+void Explosion::applyImpulse()
+{
+    if (isGhost())
+        return;
+
+    if (mDataBlock->impulseRadius == 0.0)
+        return;
+
+    SimpleQueryList sql;
+
+    Box3F queryBox(mInitialPosition - mDataBlock->impulseRadius, mInitialPosition + mDataBlock->impulseRadius);
+
+    if (isClientObject() || gSPMode)
+        gClientContainer.findObjects(queryBox, mDataBlock->impulseMask, SimpleQueryList::insertionCallback, &sql);
+    else
+        gServerContainer.findObjects(queryBox, mDataBlock->impulseMask, SimpleQueryList::insertionCallback, &sql);
+
+    for (S32 i = 0; i < sql.mList.size(); i++)
+    {
+        ShapeBase* obj = dynamic_cast<ShapeBase*>(sql.mList[i]);
+        if (obj == nullptr)
+            continue;
+
+        VectorF vec = obj->getPosition() - mInitialPosition;
+        F32 len = vec.len();
+        if (mDataBlock->impulseRadius > len)
+        {
+            vec *= ((1.0f - (len / mDataBlock->impulseRadius)) * mDataBlock->impulseForce);
+        }
+
+        obj->applyImpulse(mInitialPosition, vec);
+    }
+}
+
+//----------------------------------------------------------------------------
 // Launch Debris
 //----------------------------------------------------------------------------
 void Explosion::launchDebris(Point3F& axis)
 {
+    if (!isGhost())
+        return;
 
     bool hasDebris = false;
     for (int j = 0; j < ExplosionData::EC_NUM_DEBRIS_TYPES; j++)
@@ -978,6 +1102,8 @@ void Explosion::launchDebris(Point3F& axis)
 //----------------------------------------------------------------------------
 void Explosion::spawnSubExplosions()
 {
+    if (isGhost())
+        return;
 
     for (S32 i = 0; i < ExplosionData::EC_MAX_SUB_EXPLOSIONS; i++)
     {
@@ -1001,6 +1127,7 @@ bool Explosion::explode()
 {
     mActive = true;
 
+    applyImpulse();
     launchDebris(mInitialNormal);
     spawnSubExplosions();
 
@@ -1019,31 +1146,36 @@ bool Explosion::explode()
         resetWorldBox();
     }
 
-    if (mDataBlock->soundProfile)
-        SFX->playOnce(mDataBlock->soundProfile, &getTransform());
-
-    if (mDataBlock->particleEmitter) {
-        ParticleEmitter* emitter = new ParticleEmitter;
-        emitter->setDataBlock(mDataBlock->particleEmitter);
-        emitter->registerObject();
-
-        emitter->emitParticles(getPosition(), mInitialNormal, mDataBlock->particleRadius,
-            Point3F(0, 0, 0), U32(mDataBlock->particleDensity * mFade));
-    }
-
-    for (int i = 0; i < ExplosionData::EC_NUM_EMITTERS; i++)
+    if (isGhost() || gSPMode)
     {
-        if (mDataBlock->emitterList[i] != NULL)
+        if (mDataBlock->soundProfile)
+            SFX->playOnce(mDataBlock->soundProfile, &getTransform());
+
+        if (mDataBlock->particleEmitter)
         {
-            ParticleEmitter* pEmitter = new ParticleEmitter;
-            pEmitter->setDataBlock(mDataBlock->emitterList[i]);
-            if (!pEmitter->registerObject())
+            ParticleEmitter *emitter = new ParticleEmitter;
+            emitter->setDataBlock(mDataBlock->particleEmitter);
+            emitter->registerObject();
+
+            emitter->emitParticles(mInitialPosition, mInitialNormal, mDataBlock->particleRadius,
+                                   Point3F(0, 0, 0), U32(mDataBlock->particleDensity * mFade));
+        }
+
+        for (int i = 0; i < ExplosionData::EC_NUM_EMITTERS; i++)
+        {
+            if (mDataBlock->emitterList[i] != NULL)
             {
-                Con::warnf(ConsoleLogEntry::General, "Could not register emitter for particle of class: %s", mDataBlock->getName());
-                delete pEmitter;
-                pEmitter = NULL;
+                ParticleEmitter *pEmitter = new ParticleEmitter;
+                pEmitter->setDataBlock(mDataBlock->emitterList[i]);
+                if (!pEmitter->registerObject())
+                {
+                    Con::warnf(ConsoleLogEntry::General, "Could not register emitter for particle of class: %s",
+                               mDataBlock->getName());
+                    delete pEmitter;
+                    pEmitter = NULL;
+                }
+                mEmitterList[i] = pEmitter;
             }
-            mEmitterList[i] = pEmitter;
         }
     }
 

@@ -373,13 +373,16 @@ bool initGame(int argc, const char** argv)
     // Stuff game types into the console
     Con::setIntVariable("$TypeMasks::StaticObjectType", StaticObjectType);
     Con::setIntVariable("$TypeMasks::EnvironmentObjectType", EnvironmentObjectType);
-    Con::setIntVariable("$TypeMasks::AtlasObjectType", AtlasObjectType);
     Con::setIntVariable("$TypeMasks::TerrainObjectType", TerrainObjectType);
     Con::setIntVariable("$TypeMasks::InteriorObjectType", InteriorObjectType);
     Con::setIntVariable("$TypeMasks::WaterObjectType", WaterObjectType);
     Con::setIntVariable("$TypeMasks::TriggerObjectType", TriggerObjectType);
     Con::setIntVariable("$TypeMasks::MarkerObjectType", MarkerObjectType);
+    Con::setIntVariable("$TypeMasks::AtlasObjectType", AtlasObjectType);
+    Con::setIntVariable("$TypeMasks::InteriorMapObjectType", InteriorMapObjectType);
+    Con::setIntVariable("$TypeMasks::DecalManagerObjectType", DecalManagerObjectType);
     Con::setIntVariable("$TypeMasks::GameBaseObjectType", GameBaseObjectType);
+    Con::setIntVariable("$TypeMasks::GameBaseHiFiObjectType", GameBaseHiFiObjectType);
     Con::setIntVariable("$TypeMasks::ShapeBaseObjectType", ShapeBaseObjectType);
     Con::setIntVariable("$TypeMasks::CameraObjectType", CameraObjectType);
     Con::setIntVariable("$TypeMasks::StaticShapeObjectType", StaticShapeObjectType);
@@ -393,9 +396,15 @@ bool initGame(int argc, const char** argv)
     Con::setIntVariable("$TypeMasks::DebrisObjectType", DebrisObjectType);
     Con::setIntVariable("$TypeMasks::PhysicalZoneObjectType", PhysicalZoneObjectType);
     Con::setIntVariable("$TypeMasks::StaticTSObjectType", StaticTSObjectType);
+    Con::setIntVariable("$TypeMasks::AIObjectType", AIObjectType);
     Con::setIntVariable("$TypeMasks::StaticRenderedObjectType", StaticRenderedObjectType);
     Con::setIntVariable("$TypeMasks::DamagableItemObjectType", DamagableItemObjectType);
-    Con::setIntVariable("$TypeMasks::InteriorMapObjectType", InteriorMapObjectType);
+    Con::setIntVariable("$TypeMasks::ShadowCasterObjectType", ShadowCasterObjectType);
+
+#ifdef MARBLE_BLAST
+    Con::setIntVariable("$TypeMasks::ForceObjectType", ForceObjectType);
+    Con::setIntVariable("$TypeMasks::CastShadowOnShape", CastShadowOnShape);
+#endif
 
     //
  /*
