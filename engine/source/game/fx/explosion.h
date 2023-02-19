@@ -92,6 +92,10 @@ public:
     F32               camShakeRadius;
     F32               camShakeFalloff;
 
+    S32               impulseMask;
+    F32               impulseRadius;
+    F32               impulseForce;
+
     // Dynamic Lighting. The light is smoothly
     // interpolated from start to end time.
     F32               lightStartRadius;
@@ -129,6 +133,7 @@ private:
     LightInfo         mLight;
 
 protected:
+    Point3F  mInitialPosition;
     Point3F  mInitialNormal;
     F32      mFade;
     F32      mFog;
@@ -136,6 +141,8 @@ protected:
     S32      mDelayMS;
     F32      mRandomVal;
     U32      mCollideType;
+
+    bool mInitialPosSet;
 
 protected:
     bool onAdd();
@@ -145,6 +152,7 @@ protected:
     void processTick(const Move* move);
     void advanceTime(F32 dt);
     void updateEmitters(F32 dt);
+    void applyImpulse();
     void launchDebris(Point3F& axis);
     void spawnSubExplosions();
     void setCurrentScale();
@@ -163,6 +171,9 @@ public:
 
     bool onNewDataBlock(GameBaseData* dptr);
     void setCollideType(U32 cType) { mCollideType = cType; }
+
+    U32 packUpdate(NetConnection *conn, U32 mask, BitStream *stream) override;
+    void unpackUpdate(NetConnection *conn, BitStream *stream) override;
 
     DECLARE_CONOBJECT(Explosion);
     static void initPersistFields();

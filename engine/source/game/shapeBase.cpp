@@ -1527,6 +1527,10 @@ void ShapeBase::setDamageState(DamageState state)
     }
 
     mDamageState = state;
+    if (mDamageState == Destroyed && isServerObject())
+    {
+        blowUp();
+    }
     if (mDamageState != Enabled) {
         mRepairReserve = 0;
         mEnergy = 0;
@@ -1608,6 +1612,9 @@ void ShapeBase::blowUp()
             pExplosion = NULL;
         }
     }
+
+    if (!isGhost() && !gSPMode)
+        return;
 
     TSShapeInstance* debShape = NULL;
 
@@ -3196,8 +3203,8 @@ void ShapeBase::unpackUpdate(NetConnection* con, BitStream* stream)
         DamageState prevState = mDamageState;
         mDamageState = DamageState(stream->readInt(NumDamageStateBits));
         stream->readNormalVector(&damageDir, 8);
-        if (prevState != Destroyed && mDamageState == Destroyed && isProperlyAdded())
-            blowUp();
+        //if (prevState != Destroyed && mDamageState == Destroyed && isProperlyAdded())
+        //    blowUp();
         updateDamageLevel();
         updateDamageState();
     }
