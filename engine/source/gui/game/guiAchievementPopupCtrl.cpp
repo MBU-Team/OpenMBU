@@ -8,7 +8,8 @@ IMPLEMENT_CONOBJECT(GuiAchievementPopupCtrl);
 GuiAchievementPopupCtrl::GuiAchievementPopupCtrl()
 {
     mBitmapName = StringTable->insert("");
-    mTextureObject = NULL;
+    mBackgroundTextureObject = NULL;
+    mIconTextureObject = NULL;
     mTitle = StringTable->insert("");
 }
 
@@ -28,6 +29,7 @@ bool GuiAchievementPopupCtrl::onWake()
     if (!Parent::onWake())
         return false;
 
+    mBackgroundTextureObject.set("marble/client/ui/achievement/background", &GFXDefaultGUIProfile);
     setBitmap(mBitmapName);
 
     mProfile->constructBitmapArray();
@@ -39,9 +41,9 @@ void GuiAchievementPopupCtrl::setBitmap(const char *name)
 {
     mBitmapName = StringTable->insert(name);
     if (*mBitmapName)
-        mTextureObject.set(mBitmapName, &GFXDefaultGUIProfile);
+        mIconTextureObject.set(mBitmapName, &GFXDefaultGUIProfile);
     else
-        mTextureObject = NULL;
+        mIconTextureObject = NULL;
 
     setUpdate();
 }
@@ -56,20 +58,29 @@ void GuiAchievementPopupCtrl::setTitle(const char *title)
 
 void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
 {
-    if (mTextureObject)
+    if (mBackgroundTextureObject)
     {
         GFX->clearBitmapModulation();
 
-        RectI rect(offset.x + 6, offset.y + 4, 64, 64);
-        GFX->drawBitmapStretch(mTextureObject, rect);
+        RectI rect(offset, mBounds.extent);
+        GFX->drawBitmapStretch(mBackgroundTextureObject, rect);
     }
 
-    if (mProfile->mBorder || !mTextureObject)
+    if (mProfile->mBorder || !mBackgroundTextureObject)
     {
-        RectI rect(offset.x, offset.y, mBounds.extent.x, mBounds.extent.y);
+        RectI rect(offset, mBounds.extent);
         GFX->drawRect(rect, mProfile->mBorderColor);
     }
 
+    if (mIconTextureObject)
+    {
+        GFX->clearBitmapModulation();
+
+        RectI rect(offset.x + ACHIEVEMENT_ICON_OFFSET_X, offset.y + ACHIEVEMENT_ICON_OFFSET_Y, 64, 64);
+        GFX->drawBitmapStretch(mIconTextureObject, rect);
+    }
+
+    GFX->setBitmapModulation(mProfile->mFontColor);
     renderJustifiedText(offset, mBounds.extent, mTitle);
 
     renderChildControls(offset, updateRect);

@@ -415,9 +415,10 @@ new GuiControlProfile ("ControllerTextRightProfile" : ControllerTextProfile)
    justify = right;
 };
 
-new GuiControlProfile ("AchievementDlgProfile" : TextHeadingProfile)
+new GuiControlProfile ("AchievementDlgProfile")
 {
-   border = 2;
-   borderColor = "16 16 16";
+   fontType = $XBOX::Headerfont;
+   fontColor = "16 16 16";
+   fontSize = 32;
    justify = center;
 };

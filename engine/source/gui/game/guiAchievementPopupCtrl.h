@@ -3,13 +3,17 @@
 
 #include "gui/core/guiControl.h"
 
+#define ACHIEVEMENT_ICON_OFFSET_X 20
+#define ACHIEVEMENT_ICON_OFFSET_Y 17
+
 class GuiAchievementPopupCtrl : public GuiControl
 {
     typedef GuiControl Parent;
 
 protected:
     StringTableEntry mBitmapName;
-    GFXTexHandle mTextureObject;
+    GFXTexHandle mBackgroundTextureObject;
+    GFXTexHandle mIconTextureObject;
     StringTableEntry mTitle;
 
 public:
