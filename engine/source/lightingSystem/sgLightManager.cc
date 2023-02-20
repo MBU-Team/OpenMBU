@@ -748,7 +748,7 @@ void LightManager::setLightInfo(ProcessedMaterial* pmat, const Material* mat, co
     objTrans.mulV(lightDir);
     
     // TODO: FIGURE OUT MATH
-    if (strstr(mat->getName(), "ringglass")) {
+    if (dStrstr(mat->getName(), "ringglass")) {
         lightPos.set(-0.068099, 0.012973, -0.086792);
         lightAmbient *= ColorF(1 / 1.18f, 1 / 1.06f, 1 / 0.95f);
     }
