@@ -1,0 +1,232 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+
+   new ScriptObject(MissionInfo) {
+         desc = "Have fun in this gem park!";
+         gameType = "SinglePlayer";
+         level = "11";
+         difficulty = "4";
+         name = "Gem Park";
+         include = "1";
+         time = "90000";
+         type = "custom";
+		 customFilter = "Matt";
+		 customType = "beginner";
+		 artist = "Matthieu Parizeau";
+		 goldTime = "20000";
+		 proTime = "30000";
+   };
+   new MissionArea(MissionArea) {
+      area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new Sky(Sky) {
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      fogDistance = "1000";
+      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogVolume1 = "-1 1.84699e+025 3670.77";
+      fogVolume2 = "-1 7.22507e+028 5.10655e+028";
+      fogVolume3 = "-1 1.01124e+012 1.69273e+022";
+      materialList = "marble/data/skies/sky_beginner.dml";
+      windVelocity = "1 0 0";
+      windEffectPrecipitation = "0";
+      noRenderBans = "1";
+      fogVolumeColor1 = "128.000000 128.000000 128.000000 274952335980479310000000000.000000";
+      fogVolumeColor2 = "128.000000 128.000000 128.000000 11918.598633";
+      fogVolumeColor3 = "128.000000 128.000000 128.000000 1109264997360148200000000000.000000";
+         skyGlowColor = "-0.026242 -0.031545 0.999158 0.887938";
+         fogStorm2 = "0";
+         skyGlow = "0";
+         fogStorm1 = "0";
+         renderBanOffsetHeight = "50";
+         hidden = "0";
+         fogStorm3 = "0";
+   };
+   new StaticShape(Cloud_Shape) {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "astrolabeCloudsBeginnerShape";
+         hidden = "0";
+   };
+   new Sun() {
+      direction = "0.573201 0.275357 -0.771764";
+      color = "1.080000 1.030000 0.900000 1.000000";
+      ambient = "0.400000 0.400000 0.500000 1.000000";
+         shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new StaticShape() {
+      position = "0 0 -500";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "astrolabeShape";
+         hidden = "0";
+         canSaveDynamicFields = "1";
+   };
+   new SpawnSphere(CameraObj) {
+      position = "-15.7107 -13.117 10.6244";
+      rotation = "0.468686 -0.160109 0.868734 42.9325";
+      scale = "1 1 1";
+      dataBlock = "CameraSpawnSphereMarker";
+      radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+         hidden = "0";
+         reanderShadow = "1";
+   };
+   new InteriorInstance() {
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      interiorFile = "./gempark.dif";
+      showTerrainInside = "0";
+   };
+   new Item() {
+      position = "1 -8.5 5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         timeBonus = "5000";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-5 5 4.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "7 5 4.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         checkPointConfirmationNumber = "0";
+   };
+   new SimGroup(SpawnPoints) {
+
+      new StaticShape(StartPoint) {
+         position = "6 -6 -3.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         dataBlock = "StartPad";
+      };
+   };
+   new StaticShape(EndPoint) {
+      position = "-4 -6 -3.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "EndPad";
+   };
+   new Item() {
+      position = "-22.5 14 -0.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-22.5 20 -0.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-19 17 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         timeBonus = "5000";
+         checkPointConfirmationNumber = "0";
+   };
+   new StaticShape() {
+      position = "-15.5 17 -0.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "RoundBumper";
+   };
+   new StaticShape() {
+      position = "1 19.75 -1.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "glass_3shape";
+   };
+   new Item() {
+      position = "1 5 4.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "HelicopterItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-5 17 6.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         checkPointConfirmationNumber = "0";
+   };
+   new Item() {
+      position = "-5 17 12.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+         checkPointConfirmationNumber = "0";
+   };
+   new StaticShape() {
+      position = "1 -8.75 -3.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      dataBlock = "glass_3shape";
+   };
+   new Trigger(Bounds) {
+      position = "-26 23.5 -7";
+      rotation = "1 0 0 0";
+      scale = "39.5 35.5 36.5";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+};
+//--- OBJECT WRITE END ---

@@ -1,0 +1,208 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+   canSaveDynamicFields = "1";
+
+   new ScriptObject(MissionInfo) {
+      canSaveDynamicFields = "1";
+         artist = "Matthieu Parizeau";
+         desc = "Follow the Path!";
+         difficulty = "5";
+         gameType = "SinglePlayer";
+         include = "1";
+         level = "9";
+         name = "Path of Time";
+         time = "30000";
+         type = "custom";
+		 customfilter = "matt";
+		 customType = "intermediate";
+   };
+   new Sky(GlobalSky) {
+      canSaveDynamicFields = "1";
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "marble/data/skies/sky_intermediate.dml";
+      cloudHeightPer[0] = "0.349971";
+      cloudHeightPer[1] = "0.3";
+      cloudHeightPer[2] = "0.199973";
+      cloudSpeed1 = "0.0005";
+      cloudSpeed2 = "0.001";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.6 0.6 0.6 1";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "0 0 0";
+      fogVolume2 = "0 0 0";
+      fogVolume3 = "0 0 0";
+      windVelocity = "1 1 0";
+      SkySolidColor = "0.6 0.6 0.6 1";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "0 0 0 0";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 -222768174765569861149077900047473967104.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000000";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 -170698929442160049016675429178998259712.000000";
+         windEffectPrecipitation = "1";
+   };
+   new StaticShape() {
+      canSaveDynamicFields = "1";
+      position = "0 0 -600";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+   };
+   new StaticShape(Cloud_Shape) {
+      canSaveDynamicFields = "1";
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeCloudsIntermediateShape";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+   };
+   new Sun() {
+      canSaveDynamicFields = "1";
+      azimuth = "0";
+      elevation = "35";
+      color = "1 1 0.9 1";
+      ambient = "0.4 0.4 0.5 1";
+      castsShadows = "1";
+      useBloom = "0";
+      useToneMapping = "0";
+      useDynamicRangeLighting = "0";
+      DRLHighDynamicRange = "0";
+      DRLTarget = "0.5";
+      DRLMax = "1.4";
+      DRLMin = "0.5";
+      DRLMultiplier = "1.1";
+      bloomCutOff = "0.8";
+      bloomAmount = "0.25";
+      bloomSeedAmount = "1";
+         direction = "0.573201 0.275357 -0.771764";
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new SimGroup(SpawnPoints) {
+      canSaveDynamicFields = "1";
+
+      new StaticShape(StartPoint) {
+         canSaveDynamicFields = "1";
+         position = "-1 -1 0.25";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+      };
+   };
+   new StaticShape(EndPoint) {
+      canSaveDynamicFields = "1";
+      position = "-4 41 10.2";
+      rotation = "0 0 1 89.9544";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+   };
+   new Trigger(Bounds) {
+      canSaveDynamicFields = "1";
+      position = "-50 100 0";
+      rotation = "1 0 0 0";
+      scale = "100.052 259.883 300";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new InteriorInstance() {
+      canSaveDynamicFields = "1";
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./path.dif";
+      showTerrainInside = "0";
+   };
+   new Item() {
+      canSaveDynamicFields = "1";
+      position = "-23 52 2.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      rotate2 = "0";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+         foundOnCheckpointSeq = "0";
+         timeBonus = "5000";
+   };
+   new Item() {
+      canSaveDynamicFields = "1";
+      position = "-23 54 2.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "TimeTravelItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      rotate2 = "0";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+         foundOnCheckpointSeq = "0";
+         timeBonus = "5000";
+   };
+   new Item() {
+      canSaveDynamicFields = "1";
+      position = "-16 41 4.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "SuperJumpItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      rotate2 = "0";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+   new SpawnSphere(CameraObj) {
+      canSaveDynamicFields = "1";
+      position = "-26.9125 56.5222 5.41846";
+      rotation = "0.0184479 -0.0509721 0.99853 140.261";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      Radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+   };
+};
+//--- OBJECT WRITE END ---
+

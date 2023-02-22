@@ -1,0 +1,180 @@
+//--- OBJECT WRITE BEGIN ---
+new SimGroup(MissionGroup) {
+   canSaveDynamicFields = "1";
+
+   new ScriptObject(MissionInfo) {
+      canSaveDynamicFields = "1";
+         artist = "zzGreeDzz";
+         desc = "Build up some speed!";
+         difficulty = "4";
+         game = "Evolved";
+         gameType = "SinglePlayer";
+         goldTime = "7590";
+         include = "1";
+         level = "19";
+         name = "Momentum";
+         time = "49000";
+         type = "custom";
+         customType = "beginner";
+   };
+   new MissionArea(MissionArea) {
+      canSaveDynamicFields = "1";
+      Area = "-360 -648 720 1296";
+      flightCeiling = "300";
+      flightCeilingRange = "20";
+         locked = "true";
+   };
+   new Sky(GlobalSky) {
+      canSaveDynamicFields = "1";
+      position = "336 136 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      materialList = "marble/data/skies/sky_beginner.dml";
+      cloudHeightPer[0] = "0";
+      cloudHeightPer[1] = "0";
+      cloudHeightPer[2] = "0";
+      cloudSpeed1 = "0.0001";
+      cloudSpeed2 = "0.0002";
+      cloudSpeed3 = "0.0003";
+      visibleDistance = "1500";
+      fogDistance = "1000";
+      fogColor = "0.6 0.6 0.6 1";
+      fogStorm1 = "0";
+      fogStorm2 = "0";
+      fogStorm3 = "0";
+      fogVolume1 = "-1 1.84699e+025 3670.77";
+      fogVolume2 = "-1 7.22507e+028 5.10655e+028";
+      fogVolume3 = "-1 1.01124e+012 1.69273e+022";
+      windVelocity = "1 0 0";
+      SkySolidColor = "0.6 0.6 0.6 1";
+      useSkyTextures = "1";
+      renderBottomTexture = "1";
+      noRenderBans = "1";
+      renderBanOffsetHeight = "50";
+      skyGlow = "0";
+      skyGlowColor = "-0.026242 -0.031545 0.999158 0.887938";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 274952335980479310000000000.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 11918.598633";
+         fogVolumeColor3 = "128.000000 128.000000 128.000000 1109264997360148200000000000.000000";
+         windEffectPrecipitation = "0";
+   };
+   new StaticShape(Cloud_Shape) {
+      canSaveDynamicFields = "1";
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeCloudsBeginnerShape";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+   };
+   new Sun() {
+      canSaveDynamicFields = "1";
+      azimuth = "0";
+      elevation = "35";
+      color = "1 1 0.9 1";
+      ambient = "0.4 0.4 0.5 1";
+      castsShadows = "1";
+      useBloom = "0";
+      useToneMapping = "0";
+      useDynamicRangeLighting = "0";
+      DRLHighDynamicRange = "0";
+      DRLTarget = "0.5";
+      DRLMax = "1.4";
+      DRLMin = "0.5";
+      DRLMultiplier = "1.1";
+      bloomCutOff = "0.8";
+      bloomAmount = "0.25";
+      bloomSeedAmount = "1";
+         direction = "0.573201 0.275357 -0.771764";
+         shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   };
+   new StaticShape() {
+      canSaveDynamicFields = "1";
+      position = "0 0 -500";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeShape";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+   };
+   new SpawnSphere(CameraObj) {
+      canSaveDynamicFields = "1";
+      position = "-15.7107 -13.117 10.6244";
+      rotation = "0.468686 -0.160109 0.868734 42.9325";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "CameraSpawnSphereMarker";
+      Radius = "100";
+      sphereWeight = "100";
+      indoorWeight = "100";
+      outdoorWeight = "100";
+         reanderShadow = "1";
+   };
+   new InteriorInstance() {
+      canSaveDynamicFields = "1";
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      interiorFile = "./momentum.dif";
+      showTerrainInside = "0";
+   };
+   new StaticShape(EndPoint) {
+      canSaveDynamicFields = "1";
+      position = "-188 -2 34.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "EndPad";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+   };
+   new SimGroup(SpawnPoints) {
+      canSaveDynamicFields = "1";
+      new StaticShape(StartPoint) {
+         canSaveDynamicFields = "1";
+         position = "0 -2 0";
+         rotation = "0 0 1 -90";
+         scale = "1 1 1";
+         hidden = "0";
+         dataBlock = "StartPad";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+      };
+   };
+   new Trigger(Bounds) {
+      canSaveDynamicFields = "1";
+      position = "-197.5 7.5 -3.5";
+      rotation = "1 0 0 0";
+      scale = "205 19 65";
+      hidden = "0";
+      dataBlock = "InBoundsTrigger";
+      polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new Item() {
+      canSaveDynamicFields = "1";
+      position = "-2 -2 0.25";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "BlastItem";
+      collideable = "0";
+      static = "1";
+      rotate = "0";
+      rotate2 = "0";
+      permanent = "0";
+         checkPointConfirmationNumber = "0";
+   };
+};
+//--- OBJECT WRITE END ---
