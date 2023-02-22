@@ -231,6 +231,9 @@ function EditorGui::init(%this)
    EditorMenuBar.addMenuItem($sgEditorItemNames::sgMenu, $sgEditorItemNames::sgMenuItem[2], 4, "Alt F");
    EditorMenuBar.addMenuItem($sgEditorItemNames::sgMenu, $sgEditorItemNames::sgMenuItem[3], 5, "Alt L");
    
+   EditorMenuBar.addMenu("MBU", 8);
+   EditorMenuBar.addMenuItem("MBU", "Set Preview Camera", 2, "", 1);
+   
    EditorMenuBar.onActionMenuItemSelect(0, "Adjust Height");
    EditorMenuBar.onBrushMenuItemSelect(0, "Circle Brush");
    EditorMenuBar.onBrushMenuItemSelect(0, "Soft Brush");
@@ -474,6 +477,9 @@ function EditorMenuBar::onMenuItemSelect(%this, %menuId, %menu, %itemId, %item)
 
       case $sgEditorItemNames::sgMenu:
          %this.onToggleSGTools(%itemId, %item);
+         
+      case "MBU":
+         %this.onMBUMenuItemSelect(%itemId, %item);
    }
 }
 
@@ -500,6 +506,23 @@ function EditorMenuBar::onFileMenuItemSelect(%this, %itemId, %item)
       case "Quit":
          EditorQuitMission();
    }
+}
+
+function EditorMenuBar::onMBUMenuItemSelect(%this, %itemId, %item)
+{
+   switch$(%item)
+   {
+      case "Set Preview Camera":
+         EditorSetPreviewCamera();
+   }
+}
+
+function EditorSetPreviewCamera()
+{
+	CameraObj.setTransform(LocalClientConnection.camera.getTransform());
+	EWorldEditor.isDirty = true;
+	
+	echo("Preview Camera has been moved!");
 }
 
 function EditorMenuBar::onCameraMenuItemSelect(%this, %itemId, %item)
