@@ -98,6 +98,9 @@ private:
     U8                         mLastMouseClickCount;
     S32                        mLastMouseDownTime;
     bool                       mLeftMouseLast;
+    bool                       mRightMouseLast;
+    bool                       mCurrentlyProcessingLeftMousePress;
+    bool                       mCurrentlyProcessingRightMousePress;
 
     void findMouseControl(const GuiEvent& event);
     void refreshMouseControl();
@@ -314,6 +317,9 @@ public:
     void setDefaultFirstResponder();
 
     void RefreshAndRepaint();
+
+private:
+    bool MapRightMouseToXbox(bool release);
 };
 
 extern GuiCanvas* Canvas;
