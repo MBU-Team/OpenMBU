@@ -215,7 +215,7 @@ new GuiControl(RootCenterCtrl) {
          horizSizing = "left";
          vertSizing = "bottom";
          position = "320 0";
-         extent = "120 60";
+         extent = "160 94";
          minExtent = "8 2";
          bitmap = "./xbox/pad_button_a";
          bitmapAlign = "right";
@@ -229,7 +229,7 @@ new GuiControl(RootCenterCtrl) {
          horizSizing = "left";
          vertSizing = "bottom";
          position = "-200 0";
-         extent = "100 60";
+         extent = "120 94";
          minExtent = "8 2";
          bitmap = "./xbox/pad_button_b";
          bitmapAlign = "right";
@@ -243,7 +243,7 @@ new GuiControl(RootCenterCtrl) {
          horizSizing = "left";
          vertSizing = "bottom";
          position = "-80 0";
-         extent = "180 60";
+         extent = "200 94";
          minExtent = "8 2";
          bitmap = "./xbox/pad_button_x";
          bitmapAlign = "right";
@@ -257,7 +257,7 @@ new GuiControl(RootCenterCtrl) {
          horizSizing = "left";
          vertSizing = "bottom";
          position = "110 0";
-         extent = "200 60";
+         extent = "220 94";
          minExtent = "8 2";
          bitmap = "./xbox/pad_button_y";
          bitmapAlign = "right";

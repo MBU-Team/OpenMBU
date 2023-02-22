@@ -52,6 +52,8 @@ bool GuiXboxButtonCtrl::onWake()
     if (!Parent::onWake())
         return false;
 
+    mProfile->constructBitmapArray();
+
     if (mInitialTextID && *mInitialTextID != 0)
         setTextID(mInitialTextID);
 
@@ -156,35 +158,107 @@ void GuiXboxButtonCtrl::onRender(Point2I offset, const RectI &updateRect)
         return;
 
     S32 numBitmaps = mProfile->mBitmapArrayRects.size();
-    bool hasBitmap = numBitmaps > 0;
+    bool hasBitmap = numBitmaps > 4;
+
+    S32 unselectedBitmapLeftIndex = 0;
+    S32 unselectedBitmapMiddleIndex = 1;
+    S32 unselectedBitmapRightIndex = 2;
+    S32 selectedBitmapLeftIndex = 3;
+    S32 selectedBitmapMiddleIndex = 4;
+    S32 selectedBitmapRightIndex = 5;
 
     S32 bitmapHeight = 0;
 
-    if (numBitmaps > 0)
+    if (hasBitmap)
         bitmapHeight = mProfile->mBitmapArrayRects[0].extent.y;
 
     Point2I clickOffset(0, 0);
+
+    S32 leftBitmapIndex = unselectedBitmapLeftIndex;
+    S32 middleBitmapIndex = unselectedBitmapMiddleIndex;
+    S32 rightBitmapIndex = unselectedBitmapRightIndex;
 
     GFX->clearBitmapModulation();
     ColorI color(128, 128, 128);
 
     if (mButtonState == Down)
     {
-        color = ColorI(64, 64, 64, 255);
-        //clickOffset.set(1, 1);
+        if (hasBitmap)
+        {
+            leftBitmapIndex = selectedBitmapLeftIndex;
+            middleBitmapIndex = selectedBitmapMiddleIndex;
+            rightBitmapIndex = selectedBitmapRightIndex;
+            GFX->setBitmapModulation(ColorI(128, 128, 128, 255));
+            clickOffset.set(1, 1);
+        } else {
+            color = ColorI(64, 64, 64, 255);
+        }
     } else if (mButtonState == Hover)
     {
-        color = ColorI(200, 200, 200);
+        if (hasBitmap)
+        {
+            leftBitmapIndex = selectedBitmapLeftIndex;
+            middleBitmapIndex = selectedBitmapMiddleIndex;
+            rightBitmapIndex = selectedBitmapRightIndex;
+        } else
+        {
+            color = ColorI(200, 200, 200);
+        }
     }
 
-    RectI ctrlRect(offset + clickOffset, mBounds.extent);
-    GFX->drawRectFill(ctrlRect, color);
+    Point2I buttonPos = offset + clickOffset;
 
-    Point2I point(0, 0);
+    if (hasBitmap)
+    {
+        RectI leftImg = mProfile->mBitmapArrayRects[leftBitmapIndex];
+        //RectI leftCtrlRect(buttonPos, Point2I(leftImg.extent.x, leftImg.extent.y));
+        GFX->drawBitmapSR(mProfile->mTextureObject, buttonPos, leftImg);
 
+        RectI rightImg = mProfile->mBitmapArrayRects[rightBitmapIndex];
+        S32 ctrlWidthLeft = mBounds.extent.x - rightImg.extent.x;
+
+        RectI middleImg = mProfile->mBitmapArrayRects[middleBitmapIndex];
+        //RectI middleCtrlRect(buttonPos + Point2I(leftImg.extent.x, 0), Point2I(ctrlWidthLeft - leftImg.extent.x, middleImg.extent.y));
+        //GFX->drawBitmapStretchSR(mProfile->mTextureObject, middleCtrlRect, middleImg);
+
+        S32 midSrcWidth = middleImg.extent.x;
+        S32 midDestWidth = ctrlWidthLeft - leftImg.extent.x;
+
+        F32 pieceSize = 1.0f;//(F32)midDestWidth / (F32)midSrcWidth;
+
+        // Hack to deal with drawBitmapStretchSR giving visual bugs
+        for (S32 i = 0; i < midDestWidth; i++)//midSrcWidth; i++)
+        {
+            F32 srcIndex = ((F32)i * (F32)midSrcWidth / (F32)midDestWidth);//i;
+
+            RectF midPart(Point2F(middleImg.point.x + srcIndex, middleImg.point.y), Point2F(pieceSize, middleImg.extent.y));
+            Point2F midPos(buttonPos.x + leftImg.extent.x + i * pieceSize, buttonPos.y);
+            GFX->drawBitmapSR(mProfile->mTextureObject, midPos, midPart);
+        }
+
+        //RectI rightCtrlRect(buttonPos + Point2I(ctrlWidthLeft, 0), Point2I(rightImg.extent.x, rightImg.extent.y));
+        GFX->drawBitmapSR(mProfile->mTextureObject, buttonPos + Point2I(ctrlWidthLeft, 0), rightImg);
+    } else {
+        RectI ctrlRect(buttonPos, mBounds.extent);
+        GFX->drawRectFill(ctrlRect, color);
+    }
 
     GFX->clearBitmapModulation();
 
+    ColorI fontColor;
+    if (mButtonState == Hover)
+        fontColor = mProfile->mFontColors[1];
+    else
+        fontColor = mProfile->mFontColors[0];
+
+    fontColor.alpha = 255;
+
+    if (mButtonState == Down)
+        GFX->setBitmapModulation(fontColor * 0.5f);
+    else
+        GFX->setBitmapModulation(fontColor);
+
+    Point2I point(0, 0);
     point.x = offset.x;
     point.y = offset.y;
     //point += mProfile->mTextOffset;

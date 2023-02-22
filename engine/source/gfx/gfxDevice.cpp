@@ -1274,6 +1274,69 @@ void GFXDevice::drawBitmapStretchSR(GFXTextureObject* texture, const RectI& dstR
     setAlphaBlendEnable(true);
     setSrcBlend(GFXBlendSrcAlpha);
     setDestBlend(GFXBlendInvSrcAlpha);
+
+    setTextureStageColorOp(0, GFXTOPModulate);
+    setTextureStageColorOp(1, GFXTOPDisable);
+    setTexture(0, texture);
+    setupGenericShaders(GSModColorTexture);
+
+    drawPrimitive(GFXTriangleStrip, 0, 2);
+
+    setAlphaBlendEnable(false);
+}
+
+void GFXDevice::drawBitmapStretchSR(GFXTextureObject* texture, const RectF& dstRect, const RectF& srcRect, const GFXBitmapFlip in_flip)
+{
+    setBaseRenderState();
+
+    GFXVertexBufferHandle<GFXVertexPCT> verts(GFX, 4, GFXBufferTypeVolatile);
+    verts.lock();
+
+    F32 texLeft = (srcRect.point.x) / (texture->mTextureSize.x);
+    F32 texRight = (srcRect.point.x + srcRect.extent.x) / F32(texture->mTextureSize.x);
+    F32 texTop = (srcRect.point.y) / (texture->mTextureSize.y);
+    F32 texBottom = (srcRect.point.y + srcRect.extent.y) / (texture->mTextureSize.y);
+
+    F32 screenLeft = dstRect.point.x;
+    F32 screenRight = dstRect.point.x + dstRect.extent.x;
+    F32 screenTop = dstRect.point.y;
+    F32 screenBottom = dstRect.point.y + dstRect.extent.y;
+
+    if (in_flip & GFXBitmapFlip_X)
+    {
+        F32 temp = texLeft;
+        texLeft = texRight;
+        texRight = temp;
+    }
+    if (in_flip & GFXBitmapFlip_Y)
+    {
+        F32 temp = texTop;
+        texTop = texBottom;
+        texBottom = temp;
+    }
+
+    verts[0].point.set(screenLeft - getFillConventionOffset(), screenTop - getFillConventionOffset(), 0.f);
+    verts[1].point.set(screenRight - getFillConventionOffset(), screenTop - getFillConventionOffset(), 0.f);
+    verts[2].point.set(screenLeft - getFillConventionOffset(), screenBottom - getFillConventionOffset(), 0.f);
+    verts[3].point.set(screenRight - getFillConventionOffset(), screenBottom - getFillConventionOffset(), 0.f);
+
+    verts[0].color = verts[1].color = verts[2].color = verts[3].color = mBitmapModulation;
+
+    verts[0].texCoord.set(texLeft, texTop);
+    verts[1].texCoord.set(texRight, texTop);
+    verts[2].texCoord.set(texLeft, texBottom);
+    verts[3].texCoord.set(texRight, texBottom);
+
+    verts.unlock();
+
+    setVertexBuffer(verts);
+
+    setCullMode(GFXCullNone);
+    setLightingEnable(false);
+    setAlphaBlendEnable(true);
+    setSrcBlend(GFXBlendSrcAlpha);
+    setDestBlend(GFXBlendInvSrcAlpha);
+
     setTextureStageColorOp(0, GFXTOPModulate);
     setTextureStageColorOp(1, GFXTOPDisable);
     setTexture(0, texture);

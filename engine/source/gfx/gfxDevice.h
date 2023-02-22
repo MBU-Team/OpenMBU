@@ -956,8 +956,10 @@ public:
 
     void drawBitmap(GFXTextureObject* texture, const Point2I& in_rAt, const GFXBitmapFlip in_flip = GFXBitmapFlip_None);
     void drawBitmapSR(GFXTextureObject* texture, const Point2I& in_rAt, const RectI& srcRect, const GFXBitmapFlip in_flip = GFXBitmapFlip_None);
+    void drawBitmapSR(GFXTextureObject* texture, const Point2F& in_rAt, const RectF& srcRect, const GFXBitmapFlip in_flip = GFXBitmapFlip_None);
     void drawBitmapStretch(GFXTextureObject* texture, const RectI& dstRect, const GFXBitmapFlip in_flip = GFXBitmapFlip_None);
     void drawBitmapStretchSR(GFXTextureObject* texture, const RectI& dstRect, const RectI& srcRect, const GFXBitmapFlip in_flip = GFXBitmapFlip_None);
+    void drawBitmapStretchSR(GFXTextureObject* texture, const RectF& dstRect, const RectF& srcRect, const GFXBitmapFlip in_flip = GFXBitmapFlip_None);
 
     /// @}
 
@@ -1561,6 +1563,14 @@ inline void GFXDevice::drawBitmapSR(GFXTextureObject* texture, const Point2I& in
     AssertFatal(texture, "No texture specified for drawBitmapSR()");
 
     RectI stretch(in_rAt.x, in_rAt.y, srcRect.len_x(), srcRect.len_y());
+    drawBitmapStretchSR(texture, stretch, srcRect, in_flip);
+}
+
+inline void GFXDevice::drawBitmapSR(GFXTextureObject* texture, const Point2F& in_rAt, const RectF& srcRect, const GFXBitmapFlip in_flip)
+{
+    AssertFatal(texture, "No texture specified for drawBitmapSR()");
+
+    RectF stretch(in_rAt.x, in_rAt.y, srcRect.len_x(), srcRect.len_y());
     drawBitmapStretchSR(texture, stretch, srcRect, in_flip);
 }
 

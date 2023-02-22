@@ -240,7 +240,7 @@ new GuiControlProfile(TextOptionListInactiveSmallProfile : TextOptionListSmallPr
 new GuiControlProfile(TextMenuButtonProfile)
 {
 	fontType = "Arial Bold"; //$XBOX::MenuFont;
-	fontSize = 30;
+	fontSize = 24;
 	shadow = 0;
 	autoSizeWidth = true;
 	autoSizeHeight = true;

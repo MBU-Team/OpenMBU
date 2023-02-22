@@ -57,8 +57,8 @@ new GuiControl(XMessagePopupDlg) {
                profile = "TextMenuButtonProfile";
                horizSizing = "right";
                vertSizing = "bottom";
-               position = "330 30";
-               extent = "100 60";
+               position = "330 0";
+               extent = "120 94";
                minExtent = "8 2";
                bitmap = "./xbox/pad_button_a";
                bitmapAlign = "right";
@@ -71,8 +71,8 @@ new GuiControl(XMessagePopupDlg) {
                profile = "TextMenuButtonProfile";
                horizSizing = "right";
                vertSizing = "bottom";
-               position = "440 30";
-               extent = "100 60";
+               position = "440 0";
+               extent = "120 94";
                minExtent = "8 2";
                bitmap = "./xbox/pad_button_b";
                bitmapAlign = "right";
