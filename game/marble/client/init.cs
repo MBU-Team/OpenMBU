@@ -29,6 +29,9 @@ if ($testLevel)
    
 if ($buildMega)
    $EnableFMS = true;
+   
+if ($EnableFMS)
+   $buildMega = true; // Always use build mega, for custom support
 
 function initClient()
 {
