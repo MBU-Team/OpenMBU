@@ -2,16 +2,16 @@
 new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
-         difficulty = "4";
-         time = "180000";
          desc = "Gem Mania!";
-         level = "70";
          customType = "intermediate";
-         type = "custom";
          include = "1";
-         name = "Gem Mania";
          gameType = "SinglePlayer";
          artist = "Matthieu Parizeau";
+         type = "custom";
+         name = "Gem Mania";
+         level = "70";
+         difficulty = "4";
+         time = "180000";
    };
    new MissionArea(MissionArea) {
       Area = "-360 -648 720 1296";
@@ -49,10 +49,10 @@ new SimGroup(MissionGroup) {
       renderBanOffsetHeight = "50";
       skyGlow = "0";
       skyGlowColor = "0 0 0 0";
-         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
          fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
          windEffectPrecipitation = "0";
          fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
    };
    new StaticShape(Cloud_Shape) {
       position = "0 0 0";
@@ -431,6 +431,32 @@ new SimGroup(MissionGroup) {
       reanderShadow = "0";
       dataBlock = "InBoundsTrigger";
       polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+   };
+   new Item() {
+      position = "52 2 -3.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      rotate2 = "0";
+      permanent = "0";
+   };
+   new Item() {
+      position = "34 14 -3.5";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      reanderShadow = "0";
+      dataBlock = "GemItem";
+      collideable = "0";
+      static = "1";
+      rotate = "1";
+      rotate2 = "0";
+      permanent = "0";
    };
 };
 //--- OBJECT WRITE END ---
