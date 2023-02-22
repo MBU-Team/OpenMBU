@@ -50,6 +50,13 @@ new ShaderData( HalfTile )
    pixVersion = 2.0;
 };
 
+new ShaderData( HalfTileSmall )
+{
+   DXVertexShaderFile   = "shaders/halfTileSmallV.hlsl";
+   DXPixelShaderFile    = "shaders/halfTileSmallP.hlsl";
+   pixVersion = 2.0;
+};
+
 
 // Metal Plate random tile texture
 
@@ -68,6 +75,24 @@ new ShaderData( HalfTile )
    specularPower[0] = 8.0;
 
    shader = HalfTile;
+   version = 2.0;
+};
+
+%mat = new CustomMaterial( Material_Plate_Small )
+{
+   mapTo = plate_1_small;
+	baseTex[0] = "./textures/standard/plate.randomize";
+   texture[0] = "./textures/standard/plate.randomize";
+   texture[1] = "./textures/standard/plate.normal";
+
+   friction = 1;
+   restitution = 1;
+   force = 0;   
+
+   specular[0] = "1.0 1.0 0.8 1.0";
+   specularPower[0] = 8.0;
+
+   shader = HalfTileSmall;
    version = 2.0;
 };
 
@@ -572,6 +597,32 @@ new ShaderData( HalfTile )
    pixelSpecular[0] = true;
    specular[0] = "0.3 0.3 0.35 1.0";
    specularPower[0] = 128.0;
+};
+
+%mat = new Material(Material_UltraHighFriction : DefaultMaterial) {
+   friction = 6;
+   restitution = 0.1;
+   force = 0;
+  
+   specular[0] = "0.3 0.3 0.35 1.0";
+   specularPower[0] = 10.0;
+   
+   MAPTO = "friction_ultrahigh";
+   baseTex[0] = "./textures/extras/friction_ultrahigh";
+   //bumpTex[0] = "./textures/extras/friction_ultrahigh.normal";
+};
+
+%mat = new Material(Material_UltraHighFriction_shadow : DefaultMaterial) {
+   friction = 6;
+   restitution = 0.1;
+   force = 0;
+  
+   specular[0] = "0.15 0.15 0.16 1.0";
+   specularPower[0] = 10.0;
+   
+   MAPTO = "friction_ultrahigh_shadow";
+   baseTex[0] = "./textures/extras/friction_ultrahigh_shadow";
+   //bumpTex[0] = "./textures/extras/friction_ultrahigh.normal";
 };
 
 // Adding this back in

@@ -979,3 +979,15 @@ new CustomMaterial(Material_cube_glass)
 	sequenceSegmentSize[0] = 0.25;
     translucent[0] = true;
 };
+
+%mat = new Material (Material_landmine_grs)
+{
+	mapTo = landmine_grs;
+	baseTex = "~/data/shapes/hazards/landmine_grs";
+};
+
+%mat = new Material (Material_landmine_spikes)
+{
+	mapTo = landmine_spikes;
+	baseTex = "~/data/shapes/hazards/landmine_spikes";
+};
