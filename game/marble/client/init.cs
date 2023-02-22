@@ -24,7 +24,7 @@
 
 $EnableFMS = true;
 
-if ($testLevel)
+if ($testLevel || $disablePreviews)
    $EnableFMS = false;
    
 if ($buildMega)
