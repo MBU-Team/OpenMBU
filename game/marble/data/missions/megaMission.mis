@@ -2,16 +2,16 @@
 new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
-         difficulty = "1";
-         name = "Level Preview Mission";
-         type = "none";
-         isInDemoMode = "1";
          desc = "Level Preview Mission";
-         time = "50000";
+         level = "0";
          include = "1";
+         type = "none";
          artist = "Alex Swanson";
          gameType = "singleplayer";
-         level = "0";
+         time = "50000";
+         difficulty = "1";
+         isInDemoMode = "1";
+         name = "Level Preview Mission";
    };
    new MissionArea(MissionArea) {
       Area = "-360 -648 720 1296";
@@ -12642,6 +12642,82 @@ new SimGroup(MissionGroup) {
          indoorWeight = "100";
          outdoorWeight = "100";
             canSaveDynamicFields = "1";
+      };
+   };
+   new SimGroup(gem_maniaGroup) {
+
+      new InteriorInstance() {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "0";
+         interiorFile = "./custom/Gem_Mania/gem_mania.dif";
+         showTerrainInside = "0";
+      };
+      new SpawnSphere() {
+         position = "18.5885 15.5486 6.11109";
+         rotation = "0.0134289 -0.0304803 0.999445 132.469";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         Radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
+      };
+      new StaticShape() {
+         position = "56.25 -15 6";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "0";
+         dataBlock = "glass_6shape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+            className = "glass_6shape";
+      };
+      new StaticShape() {
+         position = "56.25 -1 -3.5";
+         rotation = "0 0 -1 90";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "0";
+         dataBlock = "glass_6shape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+            className = "glass_6shape";
+      };
+      new StaticShape() {
+         position = "31 18.25 -3.5";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "0";
+         dataBlock = "glass_6shape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+            className = "glass_6shape";
+      };
+      new StaticShape() {
+         position = "47 -18.25 6";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "1";
+         reanderShadow = "0";
+         dataBlock = "glass_6shape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+            className = "glass_6shape";
       };
    };
    new SimGroup(cyberfoxlevelGroup) {
