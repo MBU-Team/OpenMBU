@@ -82,6 +82,10 @@ function parseArgs()
             }
             else
                error("Error: Missing Command Line argument. Usage: -test <interior filename>");
+         case "-editor":
+            $disablePreviews = true;
+            $testCheats = true;
+            $argUsed[%i]++;
          //--------------------
          case "-buildMega":
             $buildMega = true;

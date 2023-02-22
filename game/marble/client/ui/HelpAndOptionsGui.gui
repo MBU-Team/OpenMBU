@@ -76,7 +76,8 @@ function HelpAndOptionsGui::show(%this, %backGui)
    HelpAndOptionsList.addRow($Text::HOInstructions, "", 0, 12);
    HelpAndOptionsList.addRow($Text::HOCredits, "", 0, 12);
   
-   RootGui.setA($Text::Go);
+   if ($pref::UI::LegacyUI)
+      RootGui.setA($Text::Go);
    RootGui.setB( $Text::Back );
    RootGui.setTitle( $Text::HOTitle );
 }

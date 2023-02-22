@@ -44,7 +44,8 @@ function aboutMenuOptionsGui::show(%this, %backGui)
    aboutMenuOptionsList.addRow($Text::AboutSP, "", 0, 12);
    aboutMenuOptionsList.addRow($Text::AboutMP, "", 0, 12);
    
-   RootGui.setA($Text::Go);
+   if ($pref::UI::LegacyUI)
+      RootGui.setA($Text::Go);
    RootGui.setB( $Text::Back );
    RootGui.setTitle( $Text::About2Title );
 }

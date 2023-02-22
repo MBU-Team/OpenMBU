@@ -2950,6 +2950,8 @@ function Editor::open(%this)
    // prevent the mission editor from opening while the GuiEditor is open.
    if(Canvas.getContent() == GuiEditorGui.getId())
       return;
+      
+   $Canvas::forceMouse = true;
 
    Canvas.setContent(EditorGui);
 }
@@ -2960,6 +2962,8 @@ function Editor::close(%this, %gui)
       %gui = RootGui;
    Canvas.setContent(%gui);
    MessageHud.close();
+   
+   $Canvas::forceMouse = false;
 }
 
 //------------------------------------------------------------------------------

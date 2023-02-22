@@ -24,11 +24,14 @@
 
 $EnableFMS = true;
 
-if ($testLevel)
+if ($testLevel || $disablePreviews)
    $EnableFMS = false;
    
 if ($buildMega)
    $EnableFMS = true;
+   
+if ($EnableFMS)
+   $buildMega = true; // Always use build mega, for custom support
 
 function initClient()
 {
