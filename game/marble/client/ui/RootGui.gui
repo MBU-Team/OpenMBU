@@ -228,8 +228,8 @@ new GuiControl(RootCenterCtrl) {
          profile = "TextMenuButtonProfile";
          horizSizing = "left";
          vertSizing = "bottom";
-         position = "-200 0";
-         extent = "120 94";
+         position = "-240 0";
+         extent = "160 94";
          minExtent = "8 2";
          bitmap = "./xbox/pad_button_b";
          bitmapAlign = "right";
