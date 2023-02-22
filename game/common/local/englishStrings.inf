@@ -212,6 +212,7 @@ $Text::RTArcadeMenu = "Return to Arcade";
 $Text::LevelsBeginner = "Beginner Levels";
 $Text::LevelsIntermediate = "Intermediate Levels";
 $Text::LevelsAdvanced = "Advanced Levels";
+$Text::LevelsCustom = "Custom Levels";
 $Text::Go = "Go";
 $Text::OK = "OK";
 $Text::Cancel = "Cancel";

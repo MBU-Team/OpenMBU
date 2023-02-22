@@ -181,7 +181,8 @@ function levelPreviewGui::onWake(%this)
    //RootGui.setLS($Text::ChangeLevels);
    RootGui.setTitle($Text::LevelPreview);
    
-   GameMissionInfo.setMode(GameMissionInfo.SPMode);
+   if (GameMissionInfo.getMode() !$= GameMissionInfo.CustomMode)
+      GameMissionInfo.setMode(GameMissionInfo.SPMode);
    GameMissionInfo.setDefaultMission();
    
    if ($EnableFMS)
@@ -417,13 +418,20 @@ function levelPreviewGui::populateLevelInfo(%this)
             LP_egg.setVisible( true );
       }
       
+      if (%mission.difficultySet $= "custom")
+      {
+         %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+      } else {
+         %theCachedTime = $CachedUserTime::levelTime[%mission.level];
+      }
+      
       if( XBLiveIsSignedInSilver() )
       {
          //%player = new LeaderboardEntry();
          //%player.loadThisPlayer();
          //%time = %player.getBestTime( %mission.level );
          
-         %cachedTime = $CachedUserTime::levelTime[%mission.level];
+         %cachedTime = %theCachedTime;
          
          if (XBLiveAreStatsLoaded(%mission.level))
             %time = XBLiveGetStatValue(%mission.level, "time");
@@ -443,9 +451,9 @@ function levelPreviewGui::populateLevelInfo(%this)
       }
       else
       {
-         if( $CachedUserTime::levelTime[%mission.level] )
+         if( %theCachedTime )
          {
-            %time = $CachedUserTime::levelTime[%mission.level];
+            %time = %theCachedTime;
              
             %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
             %time = %color @ formatTime( %time );

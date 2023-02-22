@@ -848,7 +848,14 @@ function clientCmdSetGameState(%state, %data)
       %elapsed = PlayGui.elapsedTime;
       %rating = calcRating( %elapsed, %mission.time, %mission.goldTime + $GoldTimeDelta, %mission.difficulty );
       
-      %cachedBestTime = $CachedUserTime::levelTime[%mission.level];
+      if (%mission.difficultySet $= "custom")
+      {
+         %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+      } else {
+         %theCachedTime = $CachedUserTime::levelTime[%mission.level];
+      }      
+      
+      %cachedBestTime = %theCachedTime;
        if( XBLiveAreStatsLoaded( %mission.level ) )
          %bestTime = XBLiveGetStatValue( %mission.level, "time" );
        else
@@ -861,7 +868,14 @@ function clientCmdSetGameState(%state, %data)
 		   %isNewBestTime = 1;
          
       if( %isNewBestTime && %allowOfflineStats )
-         $CachedUserTime::levelTime[%mission.level] = %elapsed;
+      {
+         if (%mission.difficultySet $= "custom")
+         {
+            $CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
+         } else {
+            $CachedUserTime::levelTime[%mission.level] = %elapsed;
+         }
+      }
 		
 		// Color coding based on difference from Par Time.
 		if (%elapsed < %mission.time) %elapColor = "\c1";
@@ -1079,12 +1093,20 @@ function doSPStatWrite()
       %oldRating = XBLiveGetStatValue(%mission.level, "rating");
       
       %elapsed = PlayGui.elapsedTime;
+      
+      if (%mission.difficultySet $= "custom")
+      {
+         %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+      } else {
+         %theCachedTime = $CachedUserTime::levelTime[%mission.level];
+      }      
+      
       // offline sync hack; used the cache time if its better
-      if ($CachedUserTime::levelTime[%mission.level] > 0 &&
-          $CachedUserTime::levelTime[%mission.level] < %elapsed)
+      if (%theCachedTime > 0 &&
+          %theCachedTime < %elapsed)
       {
          echo("Using cached profile time instead of level time because cached time is better");
-         %elapsed = $CachedUserTime::levelTime[%mission.level];
+         %elapsed = %theCachedTime;
       }
       
       XBLiveStartStatsSession();

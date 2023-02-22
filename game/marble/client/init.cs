@@ -618,6 +618,36 @@ function populatePreviewMission()
       // Then the glass
       loadObjectsFromMission(%mission, "StaticShape", "glass_18shape");
    }
+   
+   for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+   {
+      %info = CustomSinglePlayMissionGroup.getObject(%i);      
+      %mission = fileName(%info.file);
+
+      // First the InteriorInstance's
+      %info.missionGroup = loadObjectsFromMission(%mission);
+
+      // Then any camera markers
+      loadObjectsFromMission(%mission, "SpawnSphere", "CameraSpawnSphereMarker");
+
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_3shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_6shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_9shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_12shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_15shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_18shape");
+   }
 
    for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
    {
@@ -727,6 +757,13 @@ function setupCameras()
    for (%i = 0; %i < SinglePlayMissionGroup.getCount(); %i++)
    {
       %info = SinglePlayMissionGroup.getObject(%i);
+      %info.cameraPoint = getCameraObject(%info.missionGroup);
+      %info.cameraPos = getSpawnPosition(%info.cameraPoint);
+   }
+   
+   for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+   {
+      %info = CustomSinglePlayMissionGroup.getObject(%i);
       %info.cameraPoint = getCameraObject(%info.missionGroup);
       %info.cameraPos = getSpawnPosition(%info.cameraPoint);
    }

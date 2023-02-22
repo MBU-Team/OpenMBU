@@ -24,12 +24,14 @@ new ScriptObject(GameMissionInfo)
 {
    currentSPIndex = -1;
    currentMPIndex = -1;
+   currentCustomIndex = -1;
    
    // various "constants"
    MissionFileSpec = "*/missions/*.mis";
    SPMode = "SinglePlayer";
    MPMode = "MultiPlayer";
    SpecialMode = "Special";
+   CustomMode = "Custom";
 };
 
 function GameMissionInfo::filterDifficulty(%this)
@@ -84,6 +86,8 @@ function GameMissionInfo::getCurrentMissionGroup(%this)
       %missionGroup = MultiPlayMissionGroup;
    else if (%this.mode $= GameMissionInfo.SpecialMode)
       %missionGroup = SpecialMissionGroup;
+   else if (%this.mode $= GameMissionInfo.CustomMode)
+      %missionGroup = CustomSinglePlayMissionGroup;
    else 
       %missionGroup = SinglePlayMissionGroup;
       
@@ -171,6 +175,8 @@ function GameMissionInfo::setCurrentIndex(%this,%index)
       %this.currentMPIndex = %index;
    else if (%this.mode $= GameMissionInfo.SpecialMode)
       $this.currentSpecialIndex = %index;
+   else if (%this.mode $= GameMissionInfo.CustomMode)
+      %this.currentCustomIndex = %index;
    else
       %this.currentSPIndex = %index;
 }
@@ -181,6 +187,8 @@ function GameMissionInfo::getCurrentIndex(%this)
       return %this.currentMPIndex;
    else if (%this.mode $= GameMissionInfo.SpecialMode)
       return %this.currentSpecialIndex;
+   else if (%this.mode $= GameMissionInfo.CustomMode)
+      return %this.currentCustomIndex;
    else
       return %this.currentSPIndex;
 }
@@ -730,12 +738,18 @@ function buildLeaderboardList()
 
 function buildMissionList()
 {
-   if( !isObject( SinglePlayMissionGroup ) || !isObject( MultiPlayMissionGroup ) || !isObject( SpecialMissionGroup ) )
+   if( !isObject( SinglePlayMissionGroup ) || !isObject( CustomSinglePlayMissionGroup ) ||!isObject( MultiPlayMissionGroup ) || !isObject( SpecialMissionGroup ) )
    {
       if( !isObject( SinglePlayMissionGroup ) )
       {
          new SimGroup( SinglePlayMissionGroup );
          RootGroup.add( SinglePlayMissionGroup );
+      }
+      
+      if( !isObject( CustomSinglePlayMissionGroup ) )
+      {
+         new SimGroup( CustomSinglePlayMissionGroup );
+         RootGroup.add( CustomSinglePlayMissionGroup );
       }
       
       if( !isObject( MultiPlayMissionGroup ) )
@@ -760,11 +774,13 @@ function buildMissionList()
       }
 
       sortByLevel( SinglePlayMissionGroup );
+      sortByLevel( CustomSinglePlayMissionGroup );
       sortByLevel( MultiPlayMissionGroup );
       sortByLevel( SpecialMissionGroup );
       // hack, do this twice to get things into the proper order, don't have time to figure out why a 
       // single sort doesn't work
       sortByLevel( SinglePlayMissionGroup );
+      sortByLevel( CustomSinglePlayMissionGroup );
       sortByLevel( MultiPlayMissionGroup );
       sortByLevel( SpecialMissionGroup );
       
@@ -780,6 +796,16 @@ function buildMissionList()
          }
          %levelIds[%mis.level] = true;
       }
+      //for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+      //{
+         //%mis = CustomSinglePlayMissionGroup.getObject(%i);
+         //if (%levelIds[%mis.level] !$= "")
+         //{
+            //GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate mission Id for level:" SPC %mis.file @ "\n";
+            //GameMissionInfo.dupLevelIds[%mis.level] = true;
+         //}
+         //%levelIds[%mis.level] = true;
+      //}
       for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
       {
          %mis = MultiPlayMissionGroup.getObject(%i);
@@ -863,7 +889,8 @@ function sortByLevel(%grp)
       //{
          %grp.numAddedMissions++;
          %obj = %ngrp.getObject(%lowestIndex);
-         //%obj.level = %newLevelNum;
+         if (%obj.difficultySet $= "custom")
+            %obj.level = %newLevelNum;
          %grp.add(%obj);
       //}
    }
@@ -876,6 +903,10 @@ function getMissionObject( %missionFile )
    
    %missionInfoObject = "";
    %missionNameVar = "";
+   
+   %isCustom = false;
+   if( filePath(filePath(%missionFile)) $= "marble/data/missions/custom" )
+      %isCustom = true;
    
    if ( %file.openForRead( %missionFile ) ) {
 		%inInfoBlock = false;
@@ -903,7 +934,8 @@ function getMissionObject( %missionFile )
 			         (strpos(%line, "name =") != -1 || strpos(%line, "startHelpText =") != -1) &&
 			         strpos(%line, "$Text::") == -1)
 			   {
-			      GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Bad loc info in" SPC %missionFile @ "\n";
+			      if (!%isCustom)
+                  GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Bad loc info in" SPC %missionFile @ "\n";
 			   }
 			   
 			   %missionNameVarIndex = strpos(%line, "$Text::LevelName");
@@ -956,18 +988,28 @@ function getMissionObject( %missionFile )
       %missionInfoObject.difficultySet = "intermediate";
    else if( %misPath $= "marble/data/missions/advanced" )
       %missionInfoObject.difficultySet = "advanced";
+   else if( %misPath $= "marble/data/missions/custom" )
+      %missionInfoObject.difficultySet = "custom";
    else if( %misPath $= "marble/data/missions/special" )
       %missionInfoObject.difficultySet = "special";
    
    if (%missionInfoObject.gameType $= "")
       %missionInfoObject.gameType = GameMissionInfo.SPMode;
       
-   if (%missionInfoObject.gameType $= GameMissionInfo.SPMode)
+   if (%missionInfoObject.difficultySet $= "custom")
+      CustomSinglePlayMissionGroup.add(%missionInfoObject);
+   else if (%missionInfoObject.gameType $= GameMissionInfo.SPMode)
       SinglePlayMissionGroup.add(%missionInfoObject);
    else if (%missionInfoObject.gameType $= GameMissionInfo.MPMode)
       MultiPlayMissionGroup.add(%missionInfoObject);
    else if (%missionInfoObject.gameType $= GameMissionInfo.SpecialMode)
       SpecialMissionGroup.add(%missionInfoObject);
+      
+   if (%missionInfoObject.difficultySet $= "custom")
+   {
+      %missionInfoObject.customId = %missionInfoObject.name @ %path;
+      error("CustomID: " @ %missionInfoObject.customId);
+   }
 
    //%missionInfoObject.type = %groupTab;
    %missionInfoObject.setName("");
@@ -979,5 +1021,12 @@ function getMissionObject( %missionFile )
    if (%missionInfoObject.type $= "intermediate")
       %missionInfoObject.sky = $sky_intermediate;
    if (%missionInfoObject.type $= "advanced")
+      %missionInfoObject.sky = $sky_advanced;
+      
+   if (%missionInfoObject.customType $= "beginner")
+      %missionInfoObject.sky = $sky_beginner;
+   if (%missionInfoObject.customType $= "intermediate")
+      %missionInfoObject.sky = $sky_intermediate;
+   if (%missionInfoObject.customType $= "advanced")
       %missionInfoObject.sky = $sky_advanced;
 }

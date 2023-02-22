@@ -38,6 +38,10 @@ function DifficultySelectGui::onA(%this)
          GameMissionInfo.setMode(GameMissionInfo.SPMode);
          GameMissionInfo.setFilterDifficulty( advanced );
          RootGui.setContent(LevelPreviewGui);
+      case 3: 
+         GameMissionInfo.setMode(GameMissionInfo.CustomMode);
+         GameMissionInfo.setFilterDifficulty( custom );
+         RootGui.setContent(LevelPreviewGui);
    }
       
    return true;
@@ -58,6 +62,8 @@ function DifficultySelectGui::show(%this, %fromGui)
    DifficultyMenu.addRow($Text::LevelsBeginner, "", 0, 2);
    DifficultyMenu.addRow($Text::LevelsIntermediate, "", 0, 2);
    DifficultyMenu.addRow($Text::LevelsAdvanced, "", 0, 2);
+   if (CustomSinglePlayMissionGroup.getCount() > 0)
+      DifficultyMenu.addRow($Text::LevelsCustom, "", 0, 2);
                 
    RootGui.setTitle($Text::DifficultyMenu);
    if ($pref::UI::LegacyUI)
