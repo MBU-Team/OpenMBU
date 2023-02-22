@@ -488,6 +488,9 @@ function pauseOrEscape()
 		Editor.close("PlayGui");
 		Canvas.setContent(RootGui);
 		RootGui.setContent(PlayGui);
+	} else if (Canvas.getContent() == GuiEditorGui.getId())
+	{
+	   GuiEdit(0);
 	} else if (PlayGui.isAwake())
 	{
 		if (GamePauseGui.isAwake())

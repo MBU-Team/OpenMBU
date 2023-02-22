@@ -21,6 +21,8 @@ bool gEnableDatablockCanvasRepaint = false;
 
 extern bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl);
 
+bool GuiCanvas::smForceMouse = false;
+
 // We formerly kept all the GUI related IMPLEMENT_CONOBJECT macros here.
 // Now they belong with their implementations. -- BJG
 
@@ -194,6 +196,11 @@ ConsoleMethod(GuiCanvas, setCursorPos, void, 3, 4, "(Point2I pos)")
 ConsoleMethod(GuiCanvas, setDefaultFirstResponder, void, 2, 2, "()")
 {
     Canvas->setDefaultFirstResponder();
+}
+
+void GuiCanvas::consoleInit()
+{
+    Con::addVariable("$Canvas::forceMouse", TypeBool, &smForceMouse);
 }
 
 void GuiCanvas::initPersistFields()
@@ -422,7 +429,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             return true;
         }
     }
-    else if (event->deviceType == MouseDeviceType && (cursorON || mCurrentlyProcessingLeftMousePress || mCurrentlyProcessingRightMousePress))
+    else if (event->deviceType == MouseDeviceType && (cursorON || ((mCurrentlyProcessingLeftMousePress || mCurrentlyProcessingRightMousePress) && !smForceMouse)))
     {
         //copy the modifier into the new event
         mLastEvent.modifier = event->modifier;
@@ -894,7 +901,10 @@ void GuiCanvas::rootRightMouseDown(const GuiEvent& event)
     mMouseRightButtonDown = true;
 
     if (MapRightMouseToXbox(false))
-        return;
+    {
+        // Don't return because it breaks the editor!
+        //return;
+    }
 
     if (bool(mMouseCapturedControl))
         mMouseCapturedControl->onRightMouseDown(event);
@@ -915,7 +925,10 @@ void GuiCanvas::rootRightMouseUp(const GuiEvent& event)
     mMouseRightButtonDown = false;
 
     if (MapRightMouseToXbox(true))
-        return;
+    {
+        // Don't return because it breaks the editor!
+        //return;
+    }
 
     if (bool(mMouseCapturedControl))
         mMouseCapturedControl->onRightMouseUp(event);

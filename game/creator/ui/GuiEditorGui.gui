@@ -348,7 +348,7 @@ function GuiEdit(%val)
       
    %content = RootGui.contentGui;
    
-   if(%content == GuiEditorGui.getId())
+   if(Canvas.getContent() == GuiEditorGui.getId())
    {
       //GlobalActionMap.bind(mouse, button1, mouselook);
 
@@ -359,6 +359,7 @@ function GuiEdit(%val)
          //Canvas.setContent(%obj);
          Canvas.setContent(RootGui);
          RootGui.setContent($previousContent);
+         $Canvas::forceMouse = false;
       }
       echo("Exporting Gui Editor Prefs");
       export( "$Pref::GuiEditor::*", "./prefs.cs", false );
@@ -532,6 +533,8 @@ function GuiEditorOpen(%content)
 //   %content.resize(0,0,getWord(%ext,0), getWord(%ext, 1));
 
    GuiEditorTreeView.open(%content);
+   
+   $Canvas::forceMouse = true;
 
 }
 
