@@ -856,28 +856,29 @@ function createPreviewServer(%mission)
 function createEmptyMission(%interiorArg)
 {
    return new SimGroup(MissionGroup) {
-     new ScriptObject(MissionInfo) {
-           level = "001";
-            desc = "A preview mission";
-            time = "0";
-            include = "1";
-            difficulty = "4";
-            name = "Preview Mission";
-            type = "Intermediate";
-            goldTime = "0";
-            gameType = "SinglePlayer";
-     };
-     new MissionArea(MissionArea) {
-        area = "-360 -648 720 1296";
-        flightCeiling = "300";
-        flightCeilingRange = "20";
-        locked = "true";
-     };
-     new Sky(Sky) {
-        position = "336 136 0";
-        rotation = "1 0 0 0";
-        scale = "1 1 1";
-         materialList = "~/data/skies/sky_advanced.dml";
+      new ScriptObject(MissionInfo) {
+         level = "001";
+         desc = "A preview mission";
+         time = "0";
+         include = "1";
+         difficulty = "4";
+         name = "Preview Mission";
+         type = "custom";
+         customType = "intermediate";
+         goldTime = "0";
+         gameType = "SinglePlayer";
+      };
+      new MissionArea(MissionArea) {
+         area = "-360 -648 720 1296";
+         flightCeiling = "300";
+         flightCeilingRange = "20";
+         locked = "true";
+      };
+      new Sky(Sky) {
+         position = "336 136 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         materialList = "~/data/skies/sky_intermediate.dml";
          cloudHeightPer[0] = "0";
          cloudHeightPer[1] = "0";
          cloudHeightPer[2] = "0";
@@ -896,26 +897,50 @@ function createEmptyMission(%interiorArg)
          windVelocity = "1 0 0";
          windEffectPrecipitation = "0";
          SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
-        useSkyTextures = "1";
-        renderBottomTexture = "1";
-        noRenderBans = "1";
+         useSkyTextures = "1";
+         renderBottomTexture = "1";
+         noRenderBans = "1";
          renderBanOffsetHeight = "50";
          skyGlow = "0";
          skyGlowColor = "0.000000 0.000000 0.000000 0.000000";
             fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
             fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
             fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
-     };
-     new Sun() {
-         direction = "-0.614021 0.433884 -0.659336";
-         color = "1.400000 1.200000 0.400000 1.000000";
-        ambient = "0.400000 0.400000 0.400000 1.000000";
-     };
+      };
+      new StaticShape(Cloud_Shape) {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "0";
+         dataBlock = "astrolabeCloudsIntermediateShape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+      };
+      new Sun() {
+         direction = "-0.573201 -0.275357 -0.771764";
+         color = "1.08 1.03 0.9 1";
+         ambient = "0.4 0.4 0.5 1";
+      };
       new StaticShape() {
          position = "0 0 -500";
          rotation = "1 0 0 0";
          scale = "1 1 1";
          dataBlock = "astrolabeShape";
+      };
+      new SpawnSphere(CameraObj) {
+         position = "-15.7107 -13.117 10.6244";
+         rotation = "0.468686 -0.160109 0.868734 42.9325";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
       };
    };
 }
