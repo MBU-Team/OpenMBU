@@ -797,7 +797,7 @@ function FPSDisplay::update(%this)
 {
    // make sure periodic event is scheduled
    if (!isEventPending(%this.periodicUpdate))
-      %this.periodicUpdate = %this.schedule(10, update);
+      %this.periodicUpdate = %this.schedule(1000, update);
 
    if ($showFPS)
    {
