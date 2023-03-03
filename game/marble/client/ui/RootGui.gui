@@ -58,7 +58,18 @@ new GuiControl(RootGui) {
       };
    };
 
-	new GuiBitmapCtrl(HUD_FPS) {
+	new GuiBitmapCtrl(RootBackgroundOverlay) {
+	   profile = "GuiDefaultProfile";
+      horizSizing = "parent";
+      vertSizing = "parent";
+	   position = "-4 -4";
+	   extent = "648 488";
+	   minExtent = "8 8";
+		bitmap = "./xbox/BG_fadeOutSoftEdge";
+	   visible = "1";
+	};
+
+   new GuiBitmapCtrl(HUD_FPS) {
 	   profile = "GuiDefaultProfile";
       horizSizing = "right";
       vertSizing = "bottom";
@@ -72,37 +83,16 @@ new GuiControl(RootGui) {
 	};
 
    new GuiMLTextCtrl(FPSDisplay) {
-               Profile = "TextTitleProfile";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               position = "4 1";
-               extent = "116 24";
-               minExtent = "8 8";
-               text = "FPS: ";
-               Visible = "0";
-            }; 
-   
+      Profile = "TextTitleProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = "4 1";
+      extent = "116 24";
+      minExtent = "8 8";
+      text = "FPS: ";
+      Visible = "0";
+   }; 
 };
-
-
-
-   //new GuiBitmapCtrl(PFSHolder) {
-   //   profile = "GuiDefaultProfile";
-   //   horizSizing = "relativeHeight";
-   //   vertSizing = "relativeHeight";
-   //   position = "0 0";
-   //   extent = "128 20";
-   //   minExtent = "128 20";
-   //   visible = "1";
-   //   bitmap = "./game/fpsBG";
-   //   wrap = "0";
-   //   helpTag = "0";
-   //   border = "0";
-
-            
-
-     //    };
- 
 
 new GuiControl(RootCenterCtrl) {
    profile = "GuiDefaultProfile";
@@ -170,9 +160,7 @@ new GuiControl(RootCenterCtrl) {
 	   minExtent = "8 8";
 		bitmap = "./g";
 	   visible = "1";
-	};
-
-      
+	};  
 		
    new GuiTextCtrl(RootTitle) 
    {
@@ -253,8 +241,8 @@ new GuiControl(RootCenterCtrl) {
          profile = "TextMenuButtonProfile";
          horizSizing = "left";
          vertSizing = "bottom";
-         position = "-200 0";
-         extent = "120 94";
+         position = "-240 0";
+         extent = "160 94";
          minExtent = "8 2";
          bitmap = "./xbox/pad_button_b";
          bitmapAlign = "right";
