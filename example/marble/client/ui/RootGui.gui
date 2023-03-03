@@ -58,17 +58,51 @@ new GuiControl(RootGui) {
       };
    };
 
-	new GuiBitmapCtrl(RootBackgroundOverlay) {
+	new GuiBitmapCtrl(HUD_FPS) {
 	   profile = "GuiDefaultProfile";
-      horizSizing = "parent";
-      vertSizing = "parent";
-	   position = "-4 -4";
-	   extent = "648 488";
-	   minExtent = "8 8";
-		bitmap = "./xbox/BG_fadeOutSoftEdge";
-	   visible = "1";
+      horizSizing = "right";
+      vertSizing = "bottom";
+	   position = "-56 -40"; //"120 375";
+	   extent = "248 120";
+	   minExtent = "248 120";
+		bitmap = "./fpsHUD";
+	   visible = "0";
+      border = "0";
+
 	};
+
+   new GuiMLTextCtrl(FPSDisplay) {
+               Profile = "TextTitleProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "4 1";
+               extent = "116 24";
+               minExtent = "8 8";
+               text = "FPS: ";
+               Visible = "0";
+            }; 
+   
 };
+
+
+
+   //new GuiBitmapCtrl(PFSHolder) {
+   //   profile = "GuiDefaultProfile";
+   //   horizSizing = "relativeHeight";
+   //   vertSizing = "relativeHeight";
+   //   position = "0 0";
+   //   extent = "128 20";
+   //   minExtent = "128 20";
+   //   visible = "1";
+   //   bitmap = "./game/fpsBG";
+   //   wrap = "0";
+   //   helpTag = "0";
+   //   border = "0";
+
+            
+
+     //    };
+ 
 
 new GuiControl(RootCenterCtrl) {
    profile = "GuiDefaultProfile";
@@ -101,6 +135,7 @@ new GuiControl(RootCenterCtrl) {
       minExtent = "8 8";
       visible = "1";
       helpTag = "0";
+      UIMode = "LegacyOnly";
 				
 		new GuiBitmapCtrl(ab_bg) {
 		   profile = "GuiDefaultProfile";
@@ -135,7 +170,9 @@ new GuiControl(RootCenterCtrl) {
 	   minExtent = "8 8";
 		bitmap = "./g";
 	   visible = "1";
-	};  
+	};
+
+      
 		
    new GuiTextCtrl(RootTitle) 
    {
@@ -188,6 +225,73 @@ new GuiControl(RootCenterCtrl) {
       };
    };
    
+   new GuiControl(RootGuiBottomNavBarNew) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "relative";
+      vertSizing = "bottom";
+      position = isWidescreen()? "0 590" : "0 385";
+      extent = "640 200";
+      minExtent = "8 2";
+      visible = "1";
+      UIMode = "NewOnly";
+   
+      new GuiXboxButtonCtrl(RootGui_AButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "320 0";
+         extent = "160 94";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_a";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onA();";
+         visible = "1";
+      };
+      
+      new GuiXboxButtonCtrl(RootGui_BButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "-200 0";
+         extent = "120 94";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_b";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onB();";
+         visible = "1";
+      };
+      
+      new GuiXboxButtonCtrl(RootGui_XButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "-80 0";
+         extent = "200 94";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_x";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onX();";
+         visible = "1";
+      };
+      
+      new GuiXboxButtonCtrl(RootGui_YButtonNew) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "left";
+         vertSizing = "bottom";
+         position = "110 0";
+         extent = "220 94";
+         minExtent = "8 2";
+         bitmap = "./xbox/pad_button_y";
+         bitmapAlign = "right";
+         text = "";
+         command = "RootGui.contentGui.onY();";
+         visible = "1";
+      };
+   };
+   
    new GuiControl(RootGuiBottomNavBar) {
       profile = "GuiDefaultProfile";
       horizSizing = "relative";
@@ -196,6 +300,7 @@ new GuiControl(RootCenterCtrl) {
       extent = "640 200";
       minExtent = "8 2";
       visible = "1";
+      UIMode = "LegacyOnly";
 
       new GuiControl(RootGuiAButton) {
          profile = "GuiDefaultProfile";
@@ -229,19 +334,6 @@ new GuiControl(RootCenterCtrl) {
             visible = "1";
             text = "";
             maxLength = "255";
-         };
-         new GuiButtonBaseCtrl(RootGuiButtonA)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = isWidescreen() ? "235 27" : "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onA();";
          };
       };
       new GuiControl(RootGuiBButton) {
@@ -277,19 +369,6 @@ new GuiControl(RootCenterCtrl) {
             text = "";
             maxLength = "255";
          };
-         new GuiButtonBaseCtrl(RootGuiButtonB)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onB();";
-         };
       };
       new GuiControl(RootGuiYButton) {
          profile = "GuiDefaultProfile";
@@ -324,19 +403,6 @@ new GuiControl(RootCenterCtrl) {
             text = "";
             maxLength = "255";
          };
-         new GuiButtonBaseCtrl(RootGuiButtonY)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onY();";
-         };
       };
       new GuiControl(RootGuiXButton) {
          profile = "GuiDefaultProfile";
@@ -370,19 +436,6 @@ new GuiControl(RootCenterCtrl) {
             visible = "1";
             text = "";
             maxLength = "255";
-         };
-         new GuiButtonBaseCtrl(RootGuiButtonX)
-         {
-            Profile = "GuiDefaultProfile";
-            HorizSizing = "right";
-            VertSizing = "bottom";
-            position = "0 4";
-            Extent = "225 27";
-            MinExtent = "8 2";
-            Visible = 1;
-            wrap = 0;
-            buttonType = "pushButton";
-            Command = "RootGui.contentGui.onX();";
          };
       };
       new GuiControl(RootGuiLSButton) {
@@ -452,6 +505,8 @@ function RootGui::show(%this)
       %this.add(RootCenterCtrl);
       RootCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    }
+
+   FPSDisplay.update();
 }
 
 function RootGui::removeContent(%this)
@@ -547,7 +602,8 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
    %this.eventControl = %this.contentGui;
    
    // move the nav bar to the end.  this is only done so that its mouse on up commands work
-   %this.pushToBack(RootGuiBottomNavBar);
+   RootCenterCtrl.pushToBack(RootGuiBottomNavBar);
+   RootCenterCtrl.pushToBack(RootGuiBottomNavBarNew);
    
    // propogate nocursor attribute to RootGui
    %this.noCursor = %this.contentGui.noCursor;
@@ -561,57 +617,85 @@ function RootGui::setContent(%this, %gui, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8
 function RootGui::setA(%this,%text)
 {
    RootGuiAButtonText.setText(%text);
+   RootGui_AButtonNew.setText(%text);
+   
    if (%text $= "")
+   {
       RootGuiAButton.visible = false;
-   else
+      RootGui_AButtonNew.visible = false;
+   } else
+   {
       RootGuiAButton.visible = true;
+      RootGui_AButtonNew.visible = true;
+   }
 }
 
 function RootGui::AEnabled(%this)
 {
-   return RootGuiAButton.visible;
+   return RootGuiAButton.visible || RootGui_AButtonNew.visible;
 }
 
 function RootGui::setB(%this,%text)
 {
    RootGuiBButtonText.setText(%text);
+   RootGui_BButtonNew.setText(%text);
+   
    if (%text $= "")
+   {
       RootGuiBButton.visible = false;
-   else
+      RootGui_BButtonNew.visible = false;
+   } else
+   {
       RootGuiBButton.visible = true;
+      RootGui_BButtonNew.visible = true;
+   }
 }
 
 function RootGui::BEnabled(%this)
 {
-   return RootGuiBButton.visible;
+   return RootGuiBButton.visible || RootGui_BButtonNew.visible;
 }
 
 function RootGui::setY(%this,%text)
 {
    RootGuiYButtonText.setText(%text);
+   RootGui_YButtonNew.setText(%text);
+   
    if (%text $= "")
+   {
       RootGuiYButton.visible = false;
-   else
+      RootGui_YButtonNew.visible = false;
+   } else
+   {
       RootGuiYButton.visible = true;
+      RootGui_YButtonNew.visible = true;
+   }
 }
 
 function RootGui::YEnabled(%this)
 {
-   return RootGuiYButton.visible;
+   return RootGuiYButton.visible || RootGui_YButtonNew.visible;
 }
 
 function RootGui::setX(%this,%text)
 {
    RootGuiXButtonText.setText(%text);
+   RootGui_XButtonNew.setText(%text);
+   
    if (%text $= "")
+   {
       RootGuiXButton.visible = false;
-   else
+      RootGui_XButtonNew.visible = false;
+   } else
+   {
       RootGuiXButton.visible = true;
+      RootGui_XButtonNew.visible = true;
+   }
 }
 
 function RootGui::XEnabled(%this)
 {
-   return RootGuiXButton.visible;
+   return RootGuiXButton.visible || RootGui_XButtonNew.visible;
 }
 
 function RootGui::setLS(%this,%text)
@@ -707,4 +791,24 @@ function RootBackgroundBitmaps::setVisible(%this,%vis)
    }
    
    RootBackgroundOverlay.setVisible(%vis);
+}
+
+function FPSDisplay::update(%this)
+{
+   // make sure periodic event is scheduled
+   if (!isEventPending(%this.periodicUpdate))
+      %this.periodicUpdate = %this.schedule(10, update);
+
+   if ($showFPS)
+   {
+      %text = "<color:DDDDDD><font:Arial:22>FPS: <color:FFFFFF><font:Arial Bold:26>" @ $fps::real;
+      %this.setText(%text);
+      %this.setVisible(true);
+      HUD_FPS.setVisible(true);
+   }
+   else
+   {
+      %this.setVisible(false);
+      HUD_FPS.setVisible(false);
+   }
 }
