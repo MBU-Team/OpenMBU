@@ -58,28 +58,51 @@ new GuiControl(RootGui) {
       };
    };
 
-	new GuiBitmapCtrl(RootBackgroundOverlay) {
+	new GuiBitmapCtrl(HUD_FPS) {
 	   profile = "GuiDefaultProfile";
-      horizSizing = "parent";
-      vertSizing = "parent";
-	   position = "-4 -4";
-	   extent = "648 488";
-	   minExtent = "8 8";
-		bitmap = "./xbox/BG_fadeOutSoftEdge";
-	   visible = "1";
+      horizSizing = "right";
+      vertSizing = "bottom";
+	   position = "-56 -40"; //"120 375";
+	   extent = "248 120";
+	   minExtent = "248 120";
+		bitmap = "./fpsHUD";
+	   visible = "0";
+      border = "0";
+
 	};
 
-   new GuiTextCtrl(FPSDisplay) {
-      Profile = "TextTitleProfile";
-	   horizSizing = "right";
-	   vertSizing = "bottom";
-      position = "5 0";
-      extent = "1120 80";
-      minExtent = "8 8";
-      text = "FPS: ";
-      Visible = "0";
-   };
+   new GuiMLTextCtrl(FPSDisplay) {
+               Profile = "TextTitleProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "4 1";
+               extent = "116 24";
+               minExtent = "8 8";
+               text = "FPS: ";
+               Visible = "0";
+            }; 
+   
 };
+
+
+
+   //new GuiBitmapCtrl(PFSHolder) {
+   //   profile = "GuiDefaultProfile";
+   //   horizSizing = "relativeHeight";
+   //   vertSizing = "relativeHeight";
+   //   position = "0 0";
+   //   extent = "128 20";
+   //   minExtent = "128 20";
+   //   visible = "1";
+   //   bitmap = "./game/fpsBG";
+   //   wrap = "0";
+   //   helpTag = "0";
+   //   border = "0";
+
+            
+
+     //    };
+ 
 
 new GuiControl(RootCenterCtrl) {
    profile = "GuiDefaultProfile";
@@ -147,7 +170,9 @@ new GuiControl(RootCenterCtrl) {
 	   minExtent = "8 8";
 		bitmap = "./g";
 	   visible = "1";
-	};  
+	};
+
+      
 		
    new GuiTextCtrl(RootTitle) 
    {
@@ -228,8 +253,8 @@ new GuiControl(RootCenterCtrl) {
          profile = "TextMenuButtonProfile";
          horizSizing = "left";
          vertSizing = "bottom";
-         position = "-240 0";
-         extent = "160 94";
+         position = "-200 0";
+         extent = "120 94";
          minExtent = "8 2";
          bitmap = "./xbox/pad_button_b";
          bitmapAlign = "right";
@@ -772,16 +797,18 @@ function FPSDisplay::update(%this)
 {
    // make sure periodic event is scheduled
    if (!isEventPending(%this.periodicUpdate))
-      %this.periodicUpdate = %this.schedule(1000, update);
+      %this.periodicUpdate = %this.schedule(10, update);
 
    if ($showFPS)
    {
-      %text = "FPS: " @ $fps::real;
+      %text = "<color:DDDDDD><font:Arial:22>FPS: <color:FFFFFF><font:Arial Bold:26>" @ $fps::real;
       %this.setText(%text);
       %this.setVisible(true);
+      HUD_FPS.setVisible(true);
    }
    else
    {
       %this.setVisible(false);
+      HUD_FPS.setVisible(false);
    }
 }
