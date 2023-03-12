@@ -415,7 +415,7 @@ function levelScoresGui::show(%this,%mode,%missionId,%backGui)
    
    %this.updateLeaderboard();
    
-  	if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
+  	//if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
 }
 
 function levelScoresGui::hide(%this)
@@ -511,7 +511,7 @@ function levelScoresGui::doLoad(%this)
    
    ScoreboardList.clear();
    
-   XBLiveLoadLeaderboard(%this.lbId, %this.leaderboard, %this.entryStart, $MaxEntriesOnScreen, "levelScoresGui.setSelected();");  
+   XBLiveLoadLeaderboard(%this.lbId, %this.leaderboard, %this.entryStart, $MaxEntriesOnScreen, "levelScoresGui.setSelected();");
 }
 
 // update the visual indicator of what level is being viewed.  this can be done even if the load for the 
@@ -570,7 +570,7 @@ function levelScoresGui::setSelected(%this)
    LS_uparrow.setVisible( false );
    LS_Rank_Header.setVisible( true );
    
-	if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
+	//if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
 	%this.setLoadingDisplay();
 	
 	if (%this.lbId == $Leaderboard::MPScrumSkill)

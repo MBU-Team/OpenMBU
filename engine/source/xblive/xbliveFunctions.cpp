@@ -229,3 +229,73 @@ ConsoleFunction(getCPPVersion, const char*, 1, 1, "()")
 
     return ret;
 }
+
+// ---------------------------------------------------------------------------------
+// Leaderboards
+// ---------------------------------------------------------------------------------
+
+ConsoleFunction(XBLiveLoadLeaderboard, void, 6, 6, "()")
+{
+    S32 lbId = dAtoi(argv[1]);
+    S32 leaderboard = dAtoi(argv[2]);
+    S32 entryStart = dAtoi(argv[3]);
+    S32 maxEntries = dAtoi(argv[4]);
+    const char* callback = argv[5];
+
+    Con::evaluatef("%s", callback);
+}
+
+ConsoleFunction(XBLiveGetLeaderboardRowCount, S32, 3, 3, "()")
+{
+    S32 lbId = dAtoi(argv[1]);
+    S32 leaderboard = dAtoi(argv[2]);
+
+    return 8;
+}
+
+ConsoleFunction(XBLiveLeaderboardHasColumn, bool, 3, 3, "()")
+{
+    S32 lbId = dAtoi(argv[1]);
+    const char* name = argv[2];
+
+    if (dStrcmp(name, "time") == 0)
+        return true;
+    if (dStrcmp(name, "gems") == 0)
+        return false;
+    if (dStrcmp(name, "rankedskill") == 0)
+        return false;
+
+    return false;
+}
+
+ConsoleFunction(XBLiveGetLeaderboardRow, const char*, 4, 4, "()")
+{
+    S32 lbId = dAtoi(argv[1]);
+    S32 leaderboard = dAtoi(argv[2]);
+    S32 rowIndex = dAtoi(argv[3]);
+
+    char* gamerTag = "Test";
+
+    // For Testing
+    char gamerTagBuf[128];
+    dSprintf(gamerTagBuf, 128, "%s%d", gamerTag, rowIndex);
+
+    S32 xuid = 0;
+    S32 rank = 1;
+    S32 score = 100;
+    S32 data = 60000;
+
+    char* buf = Con::getReturnBuffer(1024);
+    dSprintf(buf, 128, "%s\t%d\t%d\t%d\t%d", gamerTagBuf, xuid, rank, score, data);
+    return buf;
+}
+
+ConsoleFunction(XBLiveClearLoadedLeaderboards, void, 1, 1, "()")
+{
+
+}
+
+ConsoleFunction(XBLiveCancelLoading, void, 1, 1, "()")
+{
+
+}
