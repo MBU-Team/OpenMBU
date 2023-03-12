@@ -230,6 +230,11 @@ ConsoleMethod(GuiTextListCtrl, isRowActive, bool, 3, 3, "(int rowNum)"
     return(object->isEntryActive(U32(dAtoi(argv[2]))));
 }
 
+ConsoleMethod(GuiTextListCtrl, setTopRow, void, 3, 3, "(int rowNum)")
+{
+    object->setTopRow(dAtoi(argv[2]));
+}
+
 bool GuiTextListCtrl::onWake()
 {
     if (!Parent::onWake())

@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 #include "console/console.h"
+#include "console/consoleTypes.h"
 #include "platform/event.h"
 #include "gui/containers/guiScrollCtrl.h"
 #include "gui/core/guiArrayCtrl.h"
@@ -21,6 +22,17 @@ GuiArrayCtrl::GuiArrayCtrl()
     mSelectedCell.set(-1, -1);
     mMouseOverCell.set(-1, -1);
     mHeaderDim.set(0, 0);
+
+    mTopRow = 0;
+    mRowsPerPage = -1;
+    mAllowUnselectedScroll = 1;
+}
+
+void GuiArrayCtrl::initPersistFields()
+{
+    Parent::initPersistFields();
+    addField("rowsPerPage", TypeS32, Offset(mRowsPerPage, GuiArrayCtrl));
+    addField("allowUnselectedScroll", TypeBool, Offset(mAllowUnselectedScroll, GuiArrayCtrl));
 }
 
 bool GuiArrayCtrl::onWake()
@@ -54,6 +66,23 @@ void GuiArrayCtrl::getScrollDimensions(S32& cell_size, S32& num_cells)
 {
     cell_size = mCellSize.y;
     num_cells = mSize.y;
+}
+
+void GuiArrayCtrl::setTopRow(S32 row)
+{
+    mTopRow = row;
+
+    if (row >= 0)
+    {
+        if (row >= mSize.y)
+            mTopRow = mSize.y - 1;
+    } else {
+        mTopRow = 0;
+    }
+
+    if (mSelectedCell.y != -1)
+        mSelectedCell.y = mTopRow;
+
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
@@ -160,7 +189,8 @@ void GuiArrayCtrl::onRender(Point2I offset, const RectI& updateRect)
 
     S32 i, j;
     RectI headerClip;
-    RectI clipRect(updateRect.point, updateRect.extent);
+    RectI newUpdateRect(updateRect.point, Point2I(updateRect.extent.x, updateRect.extent.y + mTopRow * mCellSize.y));
+    RectI clipRect(newUpdateRect.point, newUpdateRect.extent);
 
     Point2I parentOffset = parent->localToGlobalCoord(Point2I(0, 0));
 
@@ -187,21 +217,26 @@ void GuiArrayCtrl::onRender(Point2I offset, const RectI& updateRect)
     //if we have row headings
     if (mHeaderDim.x > 0)
     {
-        clipRect.point.x = getMax(clipRect.point.x, parentOffset.x + mHeaderDim.x);
+        clipRect.point.x = getMax(newUpdateRect.point.x, parentOffset.x + mHeaderDim.x);
         offset.x += mHeaderDim.x;
     }
 
     //save the original for clipping the row headers
     RectI origClipRect = clipRect;
+    origClipRect.extent.y = newUpdateRect.extent.y;
 
+    S32 rowsRendered = 0;
     for (j = 0; j < mSize.y; j++)
     {
+        if (mRowsPerPage != -1 && rowsRendered >= mRowsPerPage)
+            break;
+
         //skip until we get to a visible row
-        if ((j + 1) * mCellSize.y + offset.y < updateRect.point.y)
+        if ((j + 1) * mCellSize.y + offset.y < newUpdateRect.point.y)
             continue;
 
         //break once we've reached the last visible row
-        if (j * mCellSize.y + offset.y >= updateRect.point.y + updateRect.extent.y)
+        if (j * mCellSize.y + offset.y >= newUpdateRect.point.y + newUpdateRect.extent.y)
             break;
 
         //render the header
@@ -222,19 +257,21 @@ void GuiArrayCtrl::onRender(Point2I offset, const RectI& updateRect)
             }
         }
 
+        bool renderedCell = false;
+
         //render the cells for the row
         for (i = 0; i < mSize.x; i++)
         {
             //skip past columns off the left edge
-            if ((i + 1) * mCellSize.x + offset.x < updateRect.point.x)
+            if ((i + 1) * mCellSize.x + offset.x < newUpdateRect.point.x)
                 continue;
 
             //break once past the last visible column
-            if (i * mCellSize.x + offset.x >= updateRect.point.x + updateRect.extent.x)
+            if (i * mCellSize.x + offset.x >= newUpdateRect.point.x + newUpdateRect.extent.x)
                 break;
 
             S32 cellx = offset.x + i * mCellSize.x;
-            S32 celly = offset.y + j * mCellSize.y;
+            S32 celly = offset.y + (j - mTopRow) * mCellSize.y;
 
             RectI cellClip(cellx, celly, mCellSize.x, mCellSize.y);
 
@@ -248,8 +285,12 @@ void GuiArrayCtrl::onRender(Point2I offset, const RectI& updateRect)
                 onRenderCell(Point2I(cellx, celly), Point2I(i, j),
                     i == mSelectedCell.x && j == mSelectedCell.y,
                     i == mMouseOverCell.x && j == mMouseOverCell.y);
+                renderedCell = true;
             }
         }
+
+        if (renderedCell)
+            rowsRendered++;
     }
 }
 
@@ -415,5 +456,76 @@ void GuiArrayCtrl::onRightMouseDown(const GuiEvent& event)
         dSprintf(buf, sizeof(buf), "%d %d", event.mousePoint.x, event.mousePoint.y);
         // Pass it to the console:
         Con::executef(this, 4, "onRightMouseDown", Con::getIntArg(cell.x), Con::getIntArg(cell.y), buf);
+    }
+}
+
+bool GuiArrayCtrl::onGamepadButtonPressed(U32 button)
+{
+    if (button == XI_DPAD_UP)
+        moveUp();
+    else if (button == XI_DPAD_DOWN)
+        moveDown();
+    else
+        return Parent::onGamepadButtonPressed(button);
+
+    return true;
+}
+
+void GuiArrayCtrl::moveUp()
+{
+    if (mSelectedCell.y == -1)
+    {
+        if (mAllowUnselectedScroll && --mTopRow < 0)
+            mTopRow = mSize.y - 1;
+    } else {
+        S32 newY = mSelectedCell.y - 1;
+        if (newY < 0)
+        {
+            const char* res = Con::executef(this, 1, "onWrapToBottom");
+            if (!dStrlen(res) || (newY = dAtoi(res), newY == -1))
+                newY = mSize.y - 1;
+        }
+        if (newY > -1)
+        {
+            setSelectedCell(Point2I(mSelectedCell.x, newY));
+            if (newY >= mTopRow)
+            {
+                if (newY <= mRowsPerPage + mTopRow - 1)
+                    return;
+                newY = newY - mRowsPerPage + 1;
+            }
+            mTopRow = newY;
+        }
+    }
+}
+
+void GuiArrayCtrl::moveDown()
+{
+    if (mSelectedCell.y == -1)
+    {
+        if (mAllowUnselectedScroll && ++mTopRow >= mSize.y)
+            mTopRow = 0;
+    } else {
+        S32 newY = mSelectedCell.y + 1;
+        if (newY >= mSize.y)
+        {
+            S32 v6;
+            const char* res = Con::executef(this, 1, "onWrapToTop");
+            if (!dStrlen(res) || (v6 = dAtoi(res), v6 == -1))
+                newY = 0;
+            else
+                newY = v6;
+        }
+        if (newY > -1)
+        {
+            setSelectedCell(Point2I(mSelectedCell.x, newY));
+            if (newY >= mTopRow)
+            {
+                if (newY <= mRowsPerPage + mTopRow - 1)
+                    return;
+                newY = newY - mRowsPerPage + 1;
+            }
+            mTopRow = newY;
+        }
     }
 }

@@ -25,6 +25,9 @@ protected:
     Point2I mCellSize;
     Point2I mSelectedCell;
     Point2I mMouseOverCell;
+    S32 mTopRow;
+    S32 mRowsPerPage;
+    bool mAllowUnselectedScroll;
 
     Resource<GFont> mFont;
 
@@ -34,6 +37,7 @@ public:
 
     GuiArrayCtrl();
     DECLARE_CONOBJECT(GuiArrayCtrl);
+    static void initPersistFields();
 
     bool onWake();
     void onSleep();
@@ -45,6 +49,8 @@ public:
     void setHeaderDim(const Point2I& dim) { mHeaderDim = dim; }
     void getScrollDimensions(S32& cell_size, S32& num_cells);
     /// @}
+
+    void setTopRow(S32 row);
 
     /// @name Selected cell methods
     /// @{
@@ -73,6 +79,12 @@ public:
     bool onKeyDown(const GuiEvent& event);
     void onRightMouseDown(const GuiEvent& event);
     /// @}
+
+    bool onGamepadButtonPressed(U32 button) override;
+
+private:
+    void moveDown();
+    void moveUp();
 };
 
 #endif //_GUI_ARRAY_CTRL_H
