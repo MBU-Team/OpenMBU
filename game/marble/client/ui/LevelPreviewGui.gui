@@ -274,7 +274,7 @@ function levelPreviewGui::onY(%this)
       return;
    }
    else
-      RootGui.setContent(levelScoresGui, "", GameMissionInfo.getCurrentMission().level, levelPreviewGui);
+      RootGui.setContent(levelScoresGui, GameMissionInfo.getMode(), GameMissionInfo.getCurrentMission().level, levelPreviewGui);
       
    return true;
 }
