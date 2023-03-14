@@ -134,8 +134,6 @@ function initClient()
    exec("./ui/GameEndGui.gui");
    exec("./ui/StartupErrorGui.gui");
    exec("./ui/controlerDisplayGui.gui");
-   exec("./ui/AchievementDlg.gui");
-   exec("./ui/AchievementListGui.gui");
    
    //exec("./ui/AboutGui.gui");   
    //exec("./ui/LevelScoresGui.gui");
@@ -165,6 +163,9 @@ function initClient()
    exec("./scripts/playerList.cs");
    exec("./scripts/recordings.cs");
    exec("./scripts/achievements.cs");
+   
+   exec("./ui/AchievementDlg.gui");
+   exec("./ui/AchievementListGui.gui");
    
    exec("./scripts/xbLive.cs");
    
