@@ -11,9 +11,10 @@ class GuiAchievementPopupCtrl : public GuiControl
     typedef GuiControl Parent;
 
 protected:
-    StringTableEntry mBitmapName;
-    GFXTexHandle mBackgroundTextureObject;
+    StringTableEntry mIconBitmapName;
     GFXTexHandle mIconTextureObject;
+    StringTableEntry mBackgroundBitmapName;
+    GFXTexHandle mBackgroundTextureObject;
     StringTableEntry mTitle;
 
 public:
@@ -21,7 +22,8 @@ public:
     static void initPersistFields();
     void onRender(Point2I offset, const RectI &updateRect);
     bool onWake();
-    void setBitmap(const char *name);
+    void setIcon(const char *name);
+    void setBackground(const char *name);
     void setTitle(const char *title);
 
     DECLARE_CONOBJECT(GuiAchievementPopupCtrl);
