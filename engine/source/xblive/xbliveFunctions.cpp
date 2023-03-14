@@ -380,6 +380,11 @@ ConsoleFunction(XBLiveLoadLeaderboard, void, 6, 6, "()")
     S32 maxEntries = dAtoi(argv[4]);
     const char* callback = argv[5];
 
+    if (entryStart == -1)
+        entryStart = 0;
+
+    Con::setIntVariable("$XBLive::LeaderboardStartingIndex", entryStart);
+
     Con::evaluatef("%s", callback);
 }
 
@@ -416,10 +421,10 @@ ConsoleFunction(XBLiveGetLeaderboardRow, const char*, 4, 4, "()")
 
     // For Testing
     char gamerTagBuf[128];
-    dSprintf(gamerTagBuf, 128, "%s%d", gamerTag, rowIndex);
+    dSprintf(gamerTagBuf, 128, "%s%d", gamerTag, rowIndex + 1);
 
     S32 xuid = 0;
-    S32 rank = 1;
+    S32 rank = rowIndex + 1;
     S32 score = 100;
     S32 data = 60000;
 
