@@ -7886,6 +7886,10 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>trim</name>
         <args>string</args>
     </function>
+    <function>        <name>unscientific</name>
+        <args>value</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>updateVideoMode</name>
     </function>
     <function>        <name>ValidateMemory</name>
@@ -8004,6 +8008,10 @@ Creates a new sound source using a profile or a description and filename and pla
         <args>port</args>
         <desc>(only exists in Debug x64)</desc>
     </function>
+    <function>        <name>XBLiveSetStatsDirty</name>
+        <args>level</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>XBLiveShowGamercardUI</name>
         <args>port, xuid</args>
         <desc>(only exists in Debug x64)</desc>
@@ -8014,6 +8022,10 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveStartStatsSession</name>
     </function>
     <function>        <name>XBLiveUpdateSigninState</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveWriteStats</name>
+        <args>lbid, lb, score, callback</args>
         <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBShowMarketplaceUI</name>

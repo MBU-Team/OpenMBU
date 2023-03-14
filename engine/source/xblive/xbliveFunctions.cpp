@@ -211,55 +211,6 @@ ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
     }
 }
 
-bool xbliveSessionActive = false;
-
-ConsoleFunction(XBLiveIsStatsSessionActive, bool, 1, 1, "()")
-{
-    argc;
-
-    return xbliveSessionActive;
-}
-
-ConsoleFunction(XBLiveStartStatsSession, void, 1, 1, "()")
-{
-    argc;
-
-    xbliveSessionActive = true;
-}
-
-ConsoleFunction(XBLiveEndStatsSession, void, 1, 1, "()")
-{
-    argc;
-
-    xbliveSessionActive = false;
-}
-
-ConsoleFunction(XBLiveAreStatsLoaded, bool, 2, 2, "(level)")
-{
-    argc;
-
-    return false;
-}
-
-ConsoleFunction(XBLiveGetStatValue, S32, 3, 3, "(level, lb)")
-{
-    argc;
-
-    return 0;
-}
-
-ConsoleFunction(XBLiveReadStats, void, 6, 6, "()")
-{
-    argc;
-}
-
-ConsoleFunction(XBLiveIsRanked, bool, 1, 1, "()")
-{
-    argc;
-
-    return false;
-}
-
 ConsoleFunction(XBLiveLoadAchievements, void, 3, 3, "(port, callback)")
 {
     argc;
@@ -435,10 +386,75 @@ ConsoleFunction(XBLiveGetLeaderboardRow, const char*, 4, 4, "()")
 
 ConsoleFunction(XBLiveClearLoadedLeaderboards, void, 1, 1, "()")
 {
-
+    argc;
 }
 
 ConsoleFunction(XBLiveCancelLoading, void, 1, 1, "()")
 {
+    argc;
+}
 
+bool xbliveSessionActive = false;
+
+ConsoleFunction(XBLiveIsStatsSessionActive, bool, 1, 1, "()")
+{
+    argc;
+
+    return xbliveSessionActive;
+}
+
+ConsoleFunction(XBLiveStartStatsSession, void, 1, 1, "()")
+{
+    argc;
+
+    xbliveSessionActive = true;
+}
+
+ConsoleFunction(XBLiveEndStatsSession, void, 1, 1, "()")
+{
+    argc;
+
+    xbliveSessionActive = false;
+}
+
+ConsoleFunction(XBLiveAreStatsLoaded, bool, 2, 2, "(level)")
+{
+    argc;
+
+    return false;
+}
+
+ConsoleFunction(XBLiveSetStatsDirty, void, 2, 2, "(level)")
+{
+    argc;
+}
+
+ConsoleFunction(XBLiveGetStatValue, S32, 3, 3, "(level, lb)")
+{
+    argc;
+
+    return 0;
+}
+
+ConsoleFunction(XBLiveWriteStats, void, 5, 5, "(lbid, lb, score, callback)")
+{
+    argc;
+}
+
+ConsoleFunction(XBLiveReadStats, void, 6, 6, "()")
+{
+    argc;
+}
+
+ConsoleFunction(XBLiveIsRanked, bool, 1, 1, "()")
+{
+    argc;
+
+    return false;
+}
+
+ConsoleFunction(unscientific, const char*, 2, 2, "(value)")
+{
+    // TODO: Implement this function
+    return argv[1];
 }
