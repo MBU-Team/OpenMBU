@@ -187,45 +187,48 @@ datablock ParticleEmitterData(MarbleSuperSpeedEmitter)
 
 //-----------------------------------------------------------------------------
 
-datablock ParticleEmitterData(MarbleSuperBounceEmitter)
-{
-   ejectionPeriodMS = 20;
-   periodVarianceMS = 0;
-   ejectionVelocity = 3.0;
-   velocityVariance = 0.25;
-   thetaMin         = 80.0;
-   thetaMax         = 90.0;
-   lifetimeMS       = 250;
-   particles = "MarbleStar";
-};
+// Unused
+//datablock ParticleEmitterData(MarbleSuperBounceEmitter)
+//{
+   //ejectionPeriodMS = 20;
+   //periodVarianceMS = 0;
+   //ejectionVelocity = 3.0;
+   //velocityVariance = 0.25;
+   //thetaMin         = 80.0;
+   //thetaMax         = 90.0;
+   //lifetimeMS       = 250;
+   //particles = "MarbleStar";
+//};
 
 //-----------------------------------------------------------------------------
 
-datablock ParticleEmitterData(MarbleShockAbsorberEmitter)
-{
-   ejectionPeriodMS = 20;
-   periodVarianceMS = 0;
-   ejectionVelocity = 3.0;
-   velocityVariance = 0.25;
-   thetaMin         = 80.0;
-   thetaMax         = 90.0;
-   lifetimeMS       = 250;
-   particles = "MarbleStar";
-};
+// Unused
+//datablock ParticleEmitterData(MarbleShockAbsorberEmitter)
+//{
+   //ejectionPeriodMS = 20;
+   //periodVarianceMS = 0;
+   //ejectionVelocity = 3.0;
+   //velocityVariance = 0.25;
+   //thetaMin         = 80.0;
+   //thetaMax         = 90.0;
+   //lifetimeMS       = 250;
+   //particles = "MarbleStar";
+//};
 
 //-----------------------------------------------------------------------------
 
-datablock ParticleEmitterData(MarbleHelicopterEmitter)
-{
-   ejectionPeriodMS = 20;
-   periodVarianceMS = 0;
-   ejectionVelocity = 3.0;
-   velocityVariance = 0.25;
-   thetaMin         = 80.0;
-   thetaMax         = 90.0;
-   lifetimeMS       = 5000;
-   particles = "MarbleStar";
-};
+// Unused
+//datablock ParticleEmitterData(MarbleHelicopterEmitter)
+//{
+   //ejectionPeriodMS = 20;
+   //periodVarianceMS = 0;
+   //ejectionVelocity = 3.0;
+   //velocityVariance = 0.25;
+   //thetaMin         = 80.0;
+   //thetaMax         = 90.0;
+   //lifetimeMS       = 5000;
+   //particles = "MarbleStar";
+//};
 
 //-----------------------------------------------------------------------------
 // Superjump powerUp
@@ -594,49 +597,50 @@ datablock ItemData(TimeTravelItem_MP : TimeTravelItem)
 //-----------------------------------------------------------------------------
 // Random powerup
 
-datablock SFXProfile(PuRandomVoiceSfx)
-{
-   filename    = "~/data/sound/puRandomVoice.wav";
-   description = Audio2D;
-   preload = true;
-};
-
-datablock ItemData(RandomPowerUpItem)
-{
-   // Mission editor category
-   category = "Powerups";
-   className = "PowerUp";
-
-   // Basic Item properties
-   shapeFile = "~/data/shapes/items/random.dts";
-   mass = 1;
-   friction = 1;
-   elasticity = 0.3;
-   emap = false;
-
-   // Dynamic properties defined by the scripts
-   noRespawn = false;
-   maxInventory = 1;
-};
-
-function RandomPowerUpItem::onPickup(%this,%obj,%user,%amount)
-{
-   %pupIdx = getRandom(1,5);
-   switch (%pupIdx)
-   {
-      case 1:
-         %pup = SuperJumpItem;
-      case 2:
-         %pup = SuperSpeedItem;
-      case 3:
-         %pup = HelicopterItem;
-      case 4:
-         %pup = BlastItem;
-      case 5:
-         %pup = MegaMarbleItem;
-   }
-    return PowerUp::onPickup(%pup.getId(),%obj,%user,%amount);
-}
+// Unused
+//datablock SFXProfile(PuRandomVoiceSfx)
+//{
+   //filename    = "~/data/sound/puRandomVoice.wav";
+   //description = Audio2D;
+   //preload = true;
+//};
+//
+//datablock ItemData(RandomPowerUpItem)
+//{
+   //// Mission editor category
+   //category = "Powerups";
+   //className = "PowerUp";
+//
+   //// Basic Item properties
+   //shapeFile = "~/data/shapes/items/random.dts";
+   //mass = 1;
+   //friction = 1;
+   //elasticity = 0.3;
+   //emap = false;
+//
+   //// Dynamic properties defined by the scripts
+   //noRespawn = false;
+   //maxInventory = 1;
+//};
+//
+//function RandomPowerUpItem::onPickup(%this,%obj,%user,%amount)
+//{
+   //%pupIdx = getRandom(1,5);
+   //switch (%pupIdx)
+   //{
+      //case 1:
+         //%pup = SuperJumpItem;
+      //case 2:
+         //%pup = SuperSpeedItem;
+      //case 3:
+         //%pup = HelicopterItem;
+      //case 4:
+         //%pup = BlastItem;
+      //case 5:
+         //%pup = MegaMarbleItem;
+   //}
+    //return PowerUp::onPickup(%pup.getId(),%obj,%user,%amount);
+//}
 
 //-----------------------------------------------------------------------------
 // power-up parameters

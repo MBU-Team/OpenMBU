@@ -60,7 +60,7 @@ function PlayGui::onWake(%this)
    // hack city - these controls are floating around and need to be clamped
    schedule(0, 0, "refreshCenterTextCtrl");
    schedule(0, 0, "refreshBottomTextCtrl");
-   playGameMusic();
+   //playGameMusic();
    %this.setPowerUp( "" );
    %this.setBlastBar();
    
@@ -111,10 +111,10 @@ function PlayGui::onSleep(%this)
       
    // Terminate all playing sounds
    sfxStopAll($SimAudioType);
-   playShellMusic();
+   //playShellMusic();
    // pop the keymaps
    moveMap.pop();
-   demoMap.pop();
+   //demoMap.pop();
    
    // Fix inputs getting stuck
    clearInputs();

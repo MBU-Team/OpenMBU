@@ -569,6 +569,15 @@
         <field>            <name>faceViewer</name>
             <desc>bool faceViewer</desc>
         </field>
+        <field>            <name>impulseForce</name>
+            <desc>float impulseForce</desc>
+        </field>
+        <field>            <name>impulseMask</name>
+            <desc>int impulseMask</desc>
+        </field>
+        <field>            <name>impulseRadius</name>
+            <desc>float impulseRadius</desc>
+        </field>
         <field>            <name>lifetimeMS</name>
             <desc>int lifetimeMS</desc>
         </field>
@@ -1532,6 +1541,14 @@
     </class>
     <class>        <name>GuiArrayCtrl</name>
         <base>GuiControl</base>
+        <field>            <name>allowUnselectedScroll</name>
+            <desc>bool allowUnselectedScroll
+(only exists in Debug x64)</desc>
+        </field>
+        <field>            <name>rowsPerPage</name>
+            <desc>int rowsPerPage
+(only exists in Debug x64)</desc>
+        </field>
     </class>
     <class>        <name>GuiAutoScrollCtrl</name>
         <base>GuiTickCtrl</base>
@@ -1674,6 +1691,9 @@
         </method>
         <method>            <name>getCursorPos</name>
             <desc>Get the current position of the cursor.</desc>
+        </method>
+        <method>            <name>getLastDeviceInst</name>
+            <desc>(only exists in Debug x64)</desc>
         </method>
         <method>            <name>hideCursor</name>
         </method>
@@ -2909,6 +2929,10 @@ More of a helper function than anything.   If console access to the field list i
             <args>int rowNum</args>
             <desc>Selects the specified row.</desc>
         </method>
+        <method>            <name>setTopRow</name>
+            <args>int rowNum</args>
+            <desc>(only exists in Debug x64)</desc>
+        </method>
         <method>            <name>sort</name>
             <args>int columnID, bool increasing=false</args>
             <desc>Performs a standard (alphabetical) sort on the values in the specified column.</desc>
@@ -3112,6 +3136,23 @@ More of a helper function than anything.   If console access to the field list i
     </class>
     <class>        <name>GuiXboxButtonCtrl</name>
         <base>GuiControl</base>
+        <method>            <name>getText</name>
+            <desc>- returns the text of the button.</desc>
+        </method>
+        <method>            <name>setText</name>
+            <args>string text</args>
+            <desc>- sets the text of the button to the string.</desc>
+        </method>
+        <method>            <name>setTextID</name>
+            <args>string id</args>
+            <desc>- sets the text of the button to the localized string.</desc>
+        </method>
+        <field>            <name>text</name>
+            <desc>caseString text</desc>
+        </field>
+        <field>            <name>textID</name>
+            <desc>string textID</desc>
+        </field>
     </class>
     <class>        <name>GuiXboxListCtrl</name>
         <base>GuiControl</base>
@@ -3882,6 +3923,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getPacketLoss</name>
         </method>
         <method>            <name>getPing</name>
+        </method>
+        <method>            <name>getXnAddr</name>
+            <desc>(only exists in Debug x64)</desc>
         </method>
         <method>            <name>resolveGhostID</name>
             <args> S32 ghostID </args>
@@ -7096,6 +7140,9 @@ Real time is platform defined; typically time since the computer booted.</desc>
     <function>        <name>getRecords</name>
         <args>text, index [,endIndex]</args>
     </function>
+    <function>        <name>getRegion</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>getResolution</name>
         <desc>Returns screen resolution in form "width height bitdepth fullscreen"</desc>
     </function>
@@ -7204,6 +7251,10 @@ Sim time is time since the game started.</desc>
     <function>        <name>isPointInside</name>
         <args>Point3F pos</args>
         <desc>or (float x, float y, float z)</desc>
+    </function>
+    <function>        <name>isRelease</name>
+        <desc>- Returns true if the script is running in a release build of Torque
+(only exists in Debug x64)</desc>
     </function>
     <function>        <name>isResourceBGLoaded</name>
         <args>file</args>
@@ -7375,6 +7426,9 @@ Possible parameters are:
     <function>        <name>NextToken</name>
         <desc>nextToken(str,token,delim)</desc>
     </function>
+    <function>        <name>outputdebugline</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>panoramaScreenShot</name>
         <args>string file, string format</args>
         <desc>Take a panoramic screenshot.
@@ -7410,6 +7464,10 @@ Possible parameters are:
     <function>        <name>preloadClientDataBlocks</name>
         <args>Server parameter is set to false</args>
         <desc>.  This will take some time to complete.</desc>
+    </function>
+    <function>        <name>preloadTexture</name>
+        <args>filename</args>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>profilerDump</name>
         <desc>Dump the current state of the profiler.</desc>
@@ -7871,13 +7929,29 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
     </function>
+    <function>        <name>XBLiveCancelLoading</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveClearLoadedLeaderboards</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>XBLiveEndStatsSession</name>
+    </function>
+    <function>        <name>XBLiveGetLeaderboardRow</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveGetLeaderboardRowCount</name>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveGetSignInPort</name>
     </function>
     <function>        <name>XBLiveGetUserId</name>
     </function>
     <function>        <name>XBLiveGetUserName</name>
+    </function>
+    <function>        <name>XBLiveGetYAxisInversion</name>
+        <args>port</args>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveIsSignedIn</name>
         <args>[port]</args>
@@ -7888,6 +7962,26 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveIsStatsSessionActive</name>
     </function>
+    <function>        <name>XBLiveLeaderboardHasColumn</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveLoadLeaderboard</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveSetRichPresence</name>
+        <args>port, presence</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveSetSignInPort</name>
+        <args>port</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveShowSigninUI</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>XBLiveStartStatsSession</name>
+    </function>
+    <function>        <name>XBLiveUpdateSigninState</name>
+        <desc>(only exists in Debug x64)</desc>
     </function>
 </exports>

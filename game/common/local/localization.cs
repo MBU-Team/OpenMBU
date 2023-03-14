@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // Localization support scripts
 //------------------------------------------------------------------------------
-exec( "./controlerIcons.cs" );
+//exec( "./controlerIcons.cs" );
 
 function getLanguageList()
 {

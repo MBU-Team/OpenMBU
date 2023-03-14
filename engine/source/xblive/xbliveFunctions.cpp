@@ -2,6 +2,10 @@
 #include "console/console.h"
 #include "console/consoleInternal.h"
 
+#ifdef TORQUE_OS_WIN
+#include <Windows.h>
+#endif
+
 ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 {
     argc;
@@ -20,6 +24,11 @@ ConsoleFunction(isDemoLaunch, bool, 1, 1, "()")
 {
     argc;
     return false;
+}
+
+ConsoleFunction(stopDemoTimer, void, 1, 1, "()")
+{
+    argc;
 }
 
 const char* getSystemLanguage_forConsole()
@@ -86,6 +95,22 @@ ConsoleFunction(getLanguage, const char*, 1, 1, "()")
     return getSystemLanguage_forConsole();
 }
 
+ConsoleFunction(getRegion, const char*, 1, 1, "()")
+{
+    // Possible values:
+    // europe_aunz
+    // europ_rest (yes this one is spelt like this in MBU360)
+    // europe_all
+    // restofworld_all
+    // asia_all
+    // asia_japan
+    // asia_china
+    // na_all
+    // asia_rest
+
+    return "na_all";
+}
+
 ConsoleFunction(XBLiveIsSignedIn, bool, 1, 2, "([port])")
 {
     argc;
@@ -131,6 +156,42 @@ ConsoleFunction(XBLiveGetSignInPort, S32, 1, 1, "()")
     return 0;
 }
 
+ConsoleFunction(XBLiveSetSignInPort, void, 2, 2, "(port)")
+{
+    argc;
+}
+
+ConsoleFunction(XBLiveUpdateSigninState, void, 1, 1, "()")
+{
+    argc;
+}
+
+ConsoleFunction(XBLiveShowSigninUI, void, 1, 1, "()")
+{
+    argc;
+}
+
+ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
+{
+    argc;
+
+    S32 port = atoi(argv[1]);
+    S32 presence = atoi(argv[2]);
+
+    switch (presence)
+    {
+        case 0:
+            Con::printf("Setting Rich Presence to Menus");
+            break;
+        case 1:
+            Con::printf("Setting Rich Presence to Singleplayer");
+            break;
+        case 2:
+            Con::printf("Setting Rich Presence to Multiplayer");
+            break;
+    }
+}
+
 bool xbliveSessionActive = false;
 
 ConsoleFunction(XBLiveIsStatsSessionActive, bool, 1, 1, "()")
@@ -152,6 +213,55 @@ ConsoleFunction(XBLiveEndStatsSession, void, 1, 1, "()")
     argc;
 
     xbliveSessionActive = false;
+}
+
+ConsoleFunction(XBLiveAreStatsLoaded, bool, 2, 2, "(level)")
+{
+    argc;
+
+    return false;
+}
+
+ConsoleFunction(XBLiveGetStatValue, S32, 3, 3, "(level, lb)")
+{
+    argc;
+
+    return 0;
+}
+
+ConsoleFunction(XBLiveReadStats, void, 6, 6, "()")
+{
+    argc;
+}
+
+ConsoleFunction(XBLiveIsRanked, bool, 1, 1, "()")
+{
+    argc;
+
+    return false;
+}
+
+ConsoleFunction(XBLiveLoadAchievements, void, 3, 3, "(port, callback)")
+{
+    argc;
+}
+
+// Were not using this, and this function is only present for completion.
+ConsoleFunction(XBLiveGetYAxisInversion, S32, 2, 2, "(port)")
+{
+    argc;
+
+    return -1; // Not Implemented
+}
+
+ConsoleFunction(XBLiveCheckForInvite, void, 2, 2, "(port)")
+{
+    argc;
+}
+
+ConsoleFunction(checkForPDLC, void, 1, 1, "()")
+{
+    argc;
 }
 
 ConsoleFunction(PDLCAllowMission, bool, 2, 2, "(levelId)")
@@ -228,6 +338,15 @@ ConsoleFunction(getCPPVersion, const char*, 1, 1, "()")
     dSprintf(ret, 1024, "%s (%dL)", versionString, version);
 
     return ret;
+}
+
+ConsoleFunction(outputdebugline, void, 2, 2, "()")
+{
+#if TORQUE_DEBUG
+#ifdef TORQUE_OS_WIN
+    OutputDebugStringA(argv[1]);
+#endif
+#endif
 }
 
 // ---------------------------------------------------------------------------------

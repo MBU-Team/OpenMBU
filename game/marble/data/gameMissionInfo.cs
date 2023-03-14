@@ -394,7 +394,8 @@ function GameMissionInfo::selectMission(%this, %index)
 
 function GameMissionInfo::setCamera(%this)
 {
-   $previewCamera.setTransform(%this.getCurrentMission().cameraPos);
+   if (isObject($previewCamera))
+      $previewCamera.setTransform(%this.getCurrentMission().cameraPos);
 }
 
 function GameMissionInfo::currentMissionLocked(%this)

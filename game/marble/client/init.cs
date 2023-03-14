@@ -321,7 +321,7 @@ function fixSizing()
    RootCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    PauseCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    
-   if (PlayGui.isAwake() && !GamePauseGuiActive)
+   if (PlayGui.isAwake() && !$GamePauseGuiActive)
    {
       // TODO: Figure out why doing this sometimes causes BlastBar to offset from bitmap
       RootGui.setContent(PlayGui);

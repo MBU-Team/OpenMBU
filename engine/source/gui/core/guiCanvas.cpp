@@ -198,6 +198,14 @@ ConsoleMethod(GuiCanvas, setDefaultFirstResponder, void, 2, 2, "()")
     Canvas->setDefaultFirstResponder();
 }
 
+ConsoleMethod(GuiCanvas, getLastDeviceInst, S32, 2, 2, "()")
+{
+    // On Xbox Live this would return the device that sent the last input
+    //return object->mLastEvent.deviceInst;
+
+    return 0;
+}
+
 void GuiCanvas::consoleInit()
 {
     Con::addVariable("$Canvas::forceMouse", TypeBool, &smForceMouse);

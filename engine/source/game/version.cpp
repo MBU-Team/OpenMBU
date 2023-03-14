@@ -36,6 +36,15 @@ ConsoleFunction(isDebugBuild, bool, 1, 1, "isDebugBuild() - Returns true if the 
 #endif
 }
 
+ConsoleFunction(isRelease, bool, 1, 1, "isRelease() - Returns true if the script is running in a release build of Torque")
+{
+#ifdef TORQUE_DEBUG
+    return false;
+#else
+    return true;
+#endif
+}
+
 ConsoleFunction(getVersionNumber, S32, 1, 1, "Get the version of the build, as a string.")
 {
     return getVersionNumber();

@@ -483,12 +483,12 @@ function cycleDebugRenderMode(%val)
 
 function pauseOrEscape()
 {
-	if (Canvas.getContent() == EditorGui.getId())
+	if (isObject(EditorGui) && Canvas.getContent() == EditorGui.getId())
 	{
 		Editor.close("PlayGui");
 		Canvas.setContent(RootGui);
 		RootGui.setContent(PlayGui);
-	} else if (Canvas.getContent() == GuiEditorGui.getId())
+	} else if (isObject(GuiEditorGui) && Canvas.getContent() == GuiEditorGui.getId())
 	{
 	   GuiEdit(0);
 	} else if (PlayGui.isAwake())

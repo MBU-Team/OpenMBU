@@ -507,7 +507,7 @@ function levelPreviewGui::updateXOnline( %this, %code, %user )
       LP_scores_btn.setVisible( false );
    }
 }
-addXBLACallback( levelPreviewGui, "updateXOnline", 0 ); // Login callback = 0
+//addXBLACallback( levelPreviewGui, "updateXOnline", 0 ); // Login callback = 0
 
 function levelPreviewGui::loadedScores()
 {
@@ -517,7 +517,7 @@ function levelPreviewGui::loadedScores()
    levelPreviewGui.setSelected();
    levelScoresGui.updateLeaderboard();
 }
-addXBLACallback( levelPreviewGui, "loadedScores", 3 ); // user stat load callback = 3
+//addXBLACallback( levelPreviewGui, "loadedScores", 3 ); // user stat load callback = 3
 
 //------------------------------------------------------------------------------------------------
 function startSelectedMission()
