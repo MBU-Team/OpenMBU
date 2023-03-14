@@ -8004,6 +8004,10 @@ Creates a new sound source using a profile or a description and filename and pla
         <args>port</args>
         <desc>(only exists in Debug x64)</desc>
     </function>
+    <function>        <name>XBLiveShowGamercardUI</name>
+        <args>port, xuid</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>XBLiveShowSigninUI</name>
         <desc>(only exists in Debug x64)</desc>
     </function>

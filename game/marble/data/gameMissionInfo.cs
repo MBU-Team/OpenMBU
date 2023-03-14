@@ -4,10 +4,10 @@ $sky_intermediate = "marble/data/skies/sky_intermediate.dml";
 $sky_advanced = "marble/data/skies/sky_advanced.dml";
 
 // leaderboard ids
-$Leaderboard::SPOverall = 99;
-$Leaderboard::SPCompletion = 95;
-$Leaderboard::CustomSPOverall = 97;
-$Leaderboard::MPScrumOverall = 98;
+$Leaderboard::SPOverall = 99999;
+$Leaderboard::SPCompletion = 99995;
+//$Leaderboard::CustomSPOverall = 99997;
+$Leaderboard::MPScrumOverall = 99998;
 // skill leaderboard variables are defined in engine code (since they may be changed by xlast)
 // variables are:
 // $Leaderboard::MPScrumSkill
@@ -731,18 +731,21 @@ function buildLeaderboardList()
    SinglePlayMissionGroup.lbListCount = getFieldCount(%spList);
    
    // start spcustom list with overall leaderboard
-   %spcustomList = $Leaderboard::CustomSPOverall;
+   %spcustomList = "";//$Leaderboard::CustomSPOverall;
    
    // append all of the sp custom missions
    for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
    {
       %mis = CustomSinglePlayMissionGroup.getObject(%i);
-      %spcustomList = %spcustomList TAB %mis.level;
+      if (%spcustomList $= "")
+         %spcustomList = %mis.level;
+      else
+         %spcustomList = %spcustomList TAB %mis.level;
    }
    
    // store the list as a property of the mission group
-   CustomSinglePlayMissionGroup.lbList = %spList;
-   CustomSinglePlayMissionGroup.lbListCount = getFieldCount(%spList);
+   CustomSinglePlayMissionGroup.lbList = %spcustomList;
+   CustomSinglePlayMissionGroup.lbListCount = getFieldCount(%spcustomList);
    
    // start mp list with overall leaderboards
    %mpList = 

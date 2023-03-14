@@ -374,7 +374,7 @@ function levelScoresGui::show(%this,%mode,%missionId,%backGui)
    %this.currentMissionGroup = GameMissionInfo.getCurrentMissionGroup();
    
    // JMQ: disable MP level leaderboards
-   if (%this.missionId > 60)
+   if (%this.missionId > 60 && %mode !$= GameMissionInfo.CustomMode)
       %this.missionId = "";
       
    if (%missionId $= "")

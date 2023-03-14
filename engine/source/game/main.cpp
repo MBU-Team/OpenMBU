@@ -135,6 +135,8 @@ extern void processConnectedNotifyEvent(ConnectedNotifyEvent* event);
 extern void processConnectedAcceptEvent(ConnectedAcceptEvent* event);
 extern void ShowInit();
 
+extern void InitXBLive();
+
 /// Initalizes the components of the game like the TextureManager, ResourceManager
 /// console...etc.
 static bool initLibraries()
@@ -197,6 +199,7 @@ static bool initLibraries()
     SFXSystem::init();
 
     Autosplitter::init();
+    InitXBLive();
 
     return true;
 }

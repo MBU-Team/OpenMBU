@@ -6,6 +6,13 @@
 #include <Windows.h>
 #endif
 
+static S32 sgMPScrumSkill = 99996;
+
+void InitXBLive()
+{
+    Con::addVariable("$Leaderboard::MPScrumSkill", TypeS32, &sgMPScrumSkill);
+}
+
 ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 {
     argc;
@@ -176,6 +183,11 @@ ConsoleFunction(XBShowMarketplaceUI, bool, 4, 4, "(port, category, itemId)")
     argc;
 
     return false;
+}
+
+ConsoleFunction(XBLiveShowGamercardUI, void, 3, 3, "(port, xuid)")
+{
+    argc;
 }
 
 ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
