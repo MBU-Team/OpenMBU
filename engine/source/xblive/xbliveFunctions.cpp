@@ -171,6 +171,13 @@ ConsoleFunction(XBLiveShowSigninUI, void, 1, 1, "()")
     argc;
 }
 
+ConsoleFunction(XBShowMarketplaceUI, bool, 4, 4, "(port, category, itemId)")
+{
+    argc;
+
+    return false;
+}
+
 ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
 {
     argc;

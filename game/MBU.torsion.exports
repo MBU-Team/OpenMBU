@@ -6811,6 +6811,9 @@ More of a helper function than anything.   If console access to the field list i
     </function>
     <function>        <name>cancelServerQuery</name>
     </function>
+    <function>        <name>checkForPDLC</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>cleanDetailManager</name>
     </function>
     <function>        <name>clearClientPaths</name>
@@ -7792,6 +7795,9 @@ Creates a new sound source using a profile or a description and filename and pla
         <args>src string, target string</args>
         <desc>case insensitive</desc>
     </function>
+    <function>        <name>stopDemoTimer</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>stopHeartbeat</name>
     </function>
     <function>        <name>stopServerQuery</name>
@@ -7929,7 +7935,15 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
     </function>
+    <function>        <name>XBLiveAreStatsLoaded</name>
+        <args>level</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>XBLiveCancelLoading</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveCheckForInvite</name>
+        <args>port</args>
         <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveClearLoadedLeaderboards</name>
@@ -7945,12 +7959,19 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveGetSignInPort</name>
     </function>
+    <function>        <name>XBLiveGetStatValue</name>
+        <args>level, lb</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>XBLiveGetUserId</name>
     </function>
     <function>        <name>XBLiveGetUserName</name>
     </function>
     <function>        <name>XBLiveGetYAxisInversion</name>
         <args>port</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveIsRanked</name>
         <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveIsSignedIn</name>
@@ -7965,7 +7986,14 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveLeaderboardHasColumn</name>
         <desc>(only exists in Debug x64)</desc>
     </function>
+    <function>        <name>XBLiveLoadAchievements</name>
+        <args>port, callback</args>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
     <function>        <name>XBLiveLoadLeaderboard</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveReadStats</name>
         <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveSetRichPresence</name>
@@ -7982,6 +8010,10 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveStartStatsSession</name>
     </function>
     <function>        <name>XBLiveUpdateSigninState</name>
+        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBShowMarketplaceUI</name>
+        <args>port, category, itemId</args>
         <desc>(only exists in Debug x64)</desc>
     </function>
 </exports>
