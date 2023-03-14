@@ -6,20 +6,25 @@ $sky_advanced = "marble/data/skies/sky_advanced.dml";
 // leaderboard ids
 $Leaderboard::SPOverall = 99;
 $Leaderboard::SPCompletion = 95;
-$Leaderboard::CustomSPOverall = 99;
+$Leaderboard::CustomSPOverall = 97;
 $Leaderboard::MPScrumOverall = 98;
 // skill leaderboard variables are defined in engine code (since they may be changed by xlast)
 // variables are:
 // $Leaderboard::MPScrumSkill
 
-// titles for the overall leaderboards
-$LeaderboardTitles[$Leaderboard::SPOverall]     = $Text::LB_SPOverall;
-// not displayed --> //$LeaderboardTitles[$Leaderboard::SPCompletion]  = $Text::LB_SPCompletion; 
-$LeaderboardTitles[$Leaderboard::MPScrumOverall] = $Text::Standard;
-$LeaderboardTitles[$Leaderboard::MPScrumSkill] = $Text::Ranked;
+// Languages are no longer loaded at this point so we need to set this later
+function initLBText()
+{
+   // titles for the overall leaderboards
+   $LeaderboardTitles[$Leaderboard::SPOverall] = $Text::LB_SPOverall;
+   // not displayed --> //$LeaderboardTitles[$Leaderboard::SPCompletion]  = $Text::LB_SPCompletion; 
+   $LeaderboardTitles[$Leaderboard::MPScrumOverall] = $Text::Standard;
+   $LeaderboardTitles[$Leaderboard::MPScrumSkill] = $Text::Ranked;
+}
 
 // overall leaderboards for each game mode
 $OverallLeaderboards[0] = $Leaderboard::MPScrumOverall;
+
 
 new ScriptObject(GameMissionInfo)
 {
@@ -97,6 +102,10 @@ function GameMissionInfo::getCurrentMissionGroup(%this)
 
 function GameMissionInfo::getLeaderboardTitle(%this,%lbid)
 {
+   // Init Leaderboard Text here as this should ensure that
+   // the correct language text is used.
+   initLBText();
+   
    return $LeaderboardTitles[%lbid];
 }
 
