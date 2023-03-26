@@ -335,6 +335,17 @@ ConsoleFunction(XBLiveUpdateRemoteVoiceStatus, void, 3, 3, "(xbLiveId, xbLiveVoi
     Con::printf(" >> Updating remote voice status: %s, %s", xbLiveId, xbLiveVoice);
 }
 
+ConsoleFunction(XBLiveXnAddrToString, const char*, 2, 2, "(address)")
+{
+    argc;
+
+    const char *address = argv[1];
+
+    Con::printf(" >> Converting address to string: %s", address);
+
+    return address;
+}
+
 // TODO: This should probably be moved to a better place
 ConsoleFunction(getCPPVersion, const char*, 1, 1, "()")
 {

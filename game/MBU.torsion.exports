@@ -1542,12 +1542,10 @@
     <class>        <name>GuiArrayCtrl</name>
         <base>GuiControl</base>
         <field>            <name>allowUnselectedScroll</name>
-            <desc>bool allowUnselectedScroll
-(only exists in Debug x64)</desc>
+            <desc>bool allowUnselectedScroll</desc>
         </field>
         <field>            <name>rowsPerPage</name>
-            <desc>int rowsPerPage
-(only exists in Debug x64)</desc>
+            <desc>int rowsPerPage</desc>
         </field>
     </class>
     <class>        <name>GuiAutoScrollCtrl</name>
@@ -1693,7 +1691,6 @@
             <desc>Get the current position of the cursor.</desc>
         </method>
         <method>            <name>getLastDeviceInst</name>
-            <desc>(only exists in Debug x64)</desc>
         </method>
         <method>            <name>hideCursor</name>
         </method>
@@ -2931,7 +2928,6 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <method>            <name>setTopRow</name>
             <args>int rowNum</args>
-            <desc>(only exists in Debug x64)</desc>
         </method>
         <method>            <name>sort</name>
             <args>int columnID, bool increasing=false</args>
@@ -3925,7 +3921,6 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getPing</name>
         </method>
         <method>            <name>getXnAddr</name>
-            <desc>(only exists in Debug x64)</desc>
         </method>
         <method>            <name>resolveGhostID</name>
             <args> S32 ghostID </args>
@@ -6812,7 +6807,6 @@ More of a helper function than anything.   If console access to the field list i
     <function>        <name>cancelServerQuery</name>
     </function>
     <function>        <name>checkForPDLC</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>cleanDetailManager</name>
     </function>
@@ -7144,7 +7138,6 @@ Real time is platform defined; typically time since the computer booted.</desc>
         <args>text, index [,endIndex]</args>
     </function>
     <function>        <name>getRegion</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>getResolution</name>
         <desc>Returns screen resolution in form "width height bitdepth fullscreen"</desc>
@@ -7256,8 +7249,7 @@ Sim time is time since the game started.</desc>
         <desc>or (float x, float y, float z)</desc>
     </function>
     <function>        <name>isRelease</name>
-        <desc>- Returns true if the script is running in a release build of Torque
-(only exists in Debug x64)</desc>
+        <desc>- Returns true if the script is running in a release build of Torque</desc>
     </function>
     <function>        <name>isResourceBGLoaded</name>
         <args>file</args>
@@ -7430,7 +7422,6 @@ Possible parameters are:
         <desc>nextToken(str,token,delim)</desc>
     </function>
     <function>        <name>outputdebugline</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>panoramaScreenShot</name>
         <args>string file, string format</args>
@@ -7470,7 +7461,6 @@ Possible parameters are:
     </function>
     <function>        <name>preloadTexture</name>
         <args>filename</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>profilerDump</name>
         <desc>Dump the current state of the profiler.</desc>
@@ -7796,7 +7786,6 @@ Creates a new sound source using a profile or a description and filename and pla
         <desc>case insensitive</desc>
     </function>
     <function>        <name>stopDemoTimer</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>stopHeartbeat</name>
     </function>
@@ -7888,7 +7877,6 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>unscientific</name>
         <args>value</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>updateVideoMode</name>
     </function>
@@ -7941,31 +7929,24 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveAreStatsLoaded</name>
         <args>level</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveCancelLoading</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveCheckForInvite</name>
         <args>port</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveClearLoadedLeaderboards</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveEndStatsSession</name>
     </function>
     <function>        <name>XBLiveGetLeaderboardRow</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveGetLeaderboardRowCount</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveGetSignInPort</name>
     </function>
     <function>        <name>XBLiveGetStatValue</name>
         <args>level, lb</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveGetUserId</name>
     </function>
@@ -7973,10 +7954,8 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveGetYAxisInversion</name>
         <args>port</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveIsRanked</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveIsSignedIn</name>
         <args>[port]</args>
@@ -7988,48 +7967,62 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveIsStatsSessionActive</name>
     </function>
     <function>        <name>XBLiveLeaderboardHasColumn</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveLoadAchievements</name>
         <args>port, callback</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveLoadLeaderboard</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveReadStats</name>
-        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveRegisterLocalTalker</name>
+        <args>xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveRegisterPlayer</name>
+        <args>name, xbLiveId, invited</args>
+    </function>
+    <function>        <name>XBLiveRegisterRemoteTalker</name>
+        <args>xbLiveId, address</args>
     </function>
     <function>        <name>XBLiveSetRichPresence</name>
         <args>port, presence</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveSetSignInPort</name>
         <args>port</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveSetStatsDirty</name>
         <args>level</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveShowGamercardUI</name>
         <args>port, xuid</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveShowSigninUI</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveStartStatsSession</name>
     </function>
+    <function>        <name>XBLiveUnregisterLocalTalker</name>
+    </function>
+    <function>        <name>XBLiveUnregisterPlayer</name>
+        <args>name, xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveUnregisterRemoteTalker</name>
+        <args>xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveUpdateRemoteVoiceStatus</name>
+        <args>xbLiveId, xbLiveVoice</args>
+    </function>
     <function>        <name>XBLiveUpdateSigninState</name>
-        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>XBLiveWriteStats</name>
         <args>lbid, lb, score, callback</args>
-        <desc>(only exists in Debug x64)</desc>
+    </function>
+    <function>        <name>XBLiveWriteStatsXuid</name>
+        <args>xbLiveId, leaderboardId, type, score, callback</args>
+    </function>
+    <function>        <name>XBLiveXnAddrToString</name>
+        <args>address</args>
     </function>
     <function>        <name>XBShowMarketplaceUI</name>
         <args>port, category, itemId</args>
-        <desc>(only exists in Debug x64)</desc>
     </function>
 </exports>
