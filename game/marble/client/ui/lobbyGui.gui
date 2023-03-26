@@ -132,6 +132,23 @@ new GuiControl(LobbyGui)
 	      noDuplicates = "false";
 	   };   
 	};
+   
+   new GuiXboxOptionListCtrl(LobbyGuiSelection) {
+      profile = isWidescreen()? "TextOptionListInactiveProfile" : "TextOptionListInactiveSmallProfile";
+      position = isWidescreen()? "380 435" : "132 250";
+      extent = isWidescreen()? "815 400" : "510 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = isWidescreen()? "bottom" : "top";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "30 70" : "30 70";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+      
+      UIMode = "NewOnly";
+  	};
 };
 //--- OBJECT WRITE END ---
 
@@ -665,13 +682,6 @@ function LobbyGui::updateHostInfo(%this)
    %gameMode = GameMissionInfo.getGameModeDisplayName(ServerConnection.gameModeId);
    %missionName = GameMissionInfo.getMissionDisplayName(ServerConnection.missionId);
    
-   if (ServerConnection.isRanked)
-      %rankedStr = avar($Text::LobbyRankFormat, $Text::Ranked);
-   else
-      %rankedStr = avar($Text::LobbyRankFormat, $Text::Standard);
-      
-   %missionName = %missionName @ %rankedStr;
-   
    %this.setHostInfo(ServerConnection.hostName, %gameMode, %missionName, 
       ServerConnection.priSlotsUsed, ServerConnection.priSlotsFree, 
       ServerConnection.pubSlotsUsed, ServerConnection.pubSlotsFree);
@@ -679,16 +689,26 @@ function LobbyGui::updateHostInfo(%this)
 
 function LobbyGui::setHostInfo(%this, %hostName, %gameMode, %mapname, %priSlotsUsed, %priSlotsFree, %pubSlotsUsed, %pubSlotsFree)
 {	
+   if (ServerConnection.isRanked)
+      %rankedStr = avar($Text::LobbyRankFormat, $Text::Ranked);
+   else
+      %rankedStr = avar($Text::LobbyRankFormat, $Text::Standard);   
+   %missionName = %mapname @ %rankedStr;
+   
 	//%gamemodetag = (isEnglish()) ? $text::LM7 @ " " : ""; // hide "
 	%gamemodetag = $Text::LobbyHostName;
 	
    LobbyGuiHostGameInfo.setText( 
    			"<font:Arial Bold:22>" @ %gamemodetag SPC %hostName @ "\n" @
-   			$Text::LobbyHostLevel SPC %mapname @ "\n" @ 
+   			$Text::LobbyHostLevel SPC %missionName @ "\n" @ 
    			"<font:Arial Bold:18>" @ $Text::LobbyHostPrivateSlots @ $Text::Colon SPC
    			%priSlotsUsed @ $Text::Slash @ %priSlotsFree + %priSlotsUsed @ 
    			$Text::Comma SPC $Text::LobbyHostPublicSlots @ $Text::Colon SPC 
    			%pubSlotsUsed @ $Text::Slash @ %pubSlotsFree + %pubSlotsUsed @ "<font:Arial Bold:20> ");
+   			
+   LobbyGuiSelection.clear();
+   LobbyGuiSelection.setButtonsEnabled(%this.hosting);
+   LobbyGuiSelection.addRow($Text::Level, %mapname, 18);
 }
 
 function LobbyGui::findClientIdByXBLiveId(%this, %xbLiveId)

@@ -22,6 +22,7 @@ GuiXboxOptionListCtrl::GuiXboxOptionListCtrl()
     mMouseDown = false;
     mArrowHover = 0;
 #endif
+    mButtonsEnabled = true;
 }
 
 void GuiXboxOptionListCtrl::initPersistFields()
@@ -46,7 +47,27 @@ void GuiXboxOptionListCtrl::onSleep()
     Parent::onSleep();
 }
 
+bool GuiXboxOptionListCtrl::areButtonsEnabled()
+{
+    return mButtonsEnabled;
+}
+
+void GuiXboxOptionListCtrl::setButtonsEnabled(bool enabled)
+{
+    mButtonsEnabled = enabled;
+}
+
 //-----------------------------------------------------------------------------
+
+ConsoleMethod(GuiXboxOptionListCtrl, areButtonsEnabled, bool, 2, 2, "()")
+{
+    return object->areButtonsEnabled();
+}
+
+ConsoleMethod(GuiXboxOptionListCtrl, setButtonsEnabled, void, 3, 3, "(enabled)")
+{
+    object->setButtonsEnabled(dAtob(argv[2]));
+}
 
 ConsoleMethod(GuiXboxOptionListCtrl, getTopRow, S32, 2, 2, "()")
 {
@@ -415,22 +436,22 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
             GFX->clearBitmapModulation();
 #else
             ColorI arrowHighlightColor(255, 255, 255);
-            if (smLegacyUI)
+            if (smLegacyUI || !mButtonsEnabled)
                 arrowHighlightColor = ColorI(128, 128, 255);
 #endif
 
             S32 leftArrowIndex = unselectedLeftArrowIndex;
-            if (index == mSelected && smLegacyUI)
+            if (index == mSelected && (smLegacyUI || !mButtonsEnabled))
                 leftArrowIndex = selectedLeftArrowIndex;
 
             if (leftArrowIndex != -1)
             {
 #ifndef MBO_UNTOUCHED_MENUS
-                if (!smLegacyUI)
+                if (!smLegacyUI && mButtonsEnabled)
                 {
                     Point2I clickOffset(0, 0);
 
-                    if (mArrowHover == -1 && index == mSelected)
+                    if (mArrowHover == -1 && index == mSelected && mButtonsEnabled)
                     {
                         GFX->setBitmapModulation(arrowHighlightColor);
                         if (mMouseDown)
@@ -443,7 +464,7 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
                     //GFX->setBitmapModulation(ColorI(200, 200, 200, 255));
 
                     RectI srcRect = mProfile->mBitmapArrayRects[buttonIndex];
-                    if (mArrowHover == -1 && index == mSelected)
+                    if (mArrowHover == -1 && index == mSelected && mButtonsEnabled)
                         srcRect = mProfile->mBitmapArrayRects[hoverButtonIndex];
 
                     RectI dstRect;
@@ -457,7 +478,7 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
                     GFX->clearBitmapModulation();
                 } else
                 {
-                    if (mArrowHover == -1 && index == mSelected)
+                    if (mArrowHover == -1 && index == mSelected && mButtonsEnabled)
                         GFX->setBitmapModulation(arrowHighlightColor);
                     else
                         GFX->clearBitmapModulation();
@@ -465,7 +486,7 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 #endif
 
                 RectI rect;
-                if (smLegacyUI)
+                if (smLegacyUI || !mButtonsEnabled)
                 {
                     rect.point.set(rightRect.point.x, yPos + arrowOffset + rightRect.point.y);
                     rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
@@ -483,18 +504,18 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
             }
 
             S32 rightArrowIndex = unselectedRightArrowIndex;
-            if (index == mSelected && smLegacyUI)
+            if (index == mSelected && (smLegacyUI || !mButtonsEnabled))
                 rightArrowIndex = selectedRightArrowIndex;
 
             if (rightArrowIndex != -1)
             {
 #ifndef MBO_UNTOUCHED_MENUS
 
-                if (!smLegacyUI)
+                if (!smLegacyUI && mButtonsEnabled)
                 {
                     Point2I clickOffset(0, 0);
 
-                    if (mArrowHover == 1 && index == mSelected)
+                    if (mArrowHover == 1 && index == mSelected && mButtonsEnabled)
                     {
                         GFX->setBitmapModulation(arrowHighlightColor);
                         if (mMouseDown)
@@ -507,7 +528,7 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
                     //GFX->setBitmapModulation(ColorI(200, 200, 200, 255));
 
                     RectI srcRect = mProfile->mBitmapArrayRects[buttonIndex];
-                    if (mArrowHover == 1 && index == mSelected)
+                    if (mArrowHover == 1 && index == mSelected && mButtonsEnabled)
                         srcRect = mProfile->mBitmapArrayRects[hoverButtonIndex];
 
                     RectI dstRect;
@@ -520,7 +541,7 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
                     GFX->clearBitmapModulation();
                 } else {
-                    if (mArrowHover == 1 && index == mSelected)
+                    if (mArrowHover == 1 && index == mSelected && mButtonsEnabled)
                         GFX->setBitmapModulation(arrowHighlightColor);
                     else
                         GFX->clearBitmapModulation();
@@ -528,7 +549,7 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 #endif
 
                 RectI rect;
-                if (smLegacyUI)
+                if (smLegacyUI || !mButtonsEnabled)
                 {
                     rect.point.set(
                         rightRect.extent.x + rightRect.point.x - bitmapArrowWidth,

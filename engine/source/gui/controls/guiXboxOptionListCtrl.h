@@ -28,6 +28,7 @@ protected:
     bool mMouseDown;
     S32 mArrowHover;
 #endif
+    bool mButtonsEnabled;
 
 public:
     DECLARE_CONOBJECT(GuiXboxOptionListCtrl);
@@ -36,6 +37,9 @@ public:
 
     virtual bool onWake();
     virtual void onSleep();
+
+    bool areButtonsEnabled();
+    void setButtonsEnabled(bool enabled);
 
     S32 getTopRow();
     S32 getBottomRow();
