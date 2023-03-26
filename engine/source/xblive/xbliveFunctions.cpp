@@ -533,7 +533,7 @@ ConsoleFunction(XBLiveWriteStats, void, 5, 5, "(lbid, lb, score, callback)")
 
 }
 
-ConsoleFunction(XBLiveReadStats, void, 6, 6, "()")
+ConsoleFunction(XBLiveReadStats, void, 4, 6, "()")
 {
     argc;
 }
