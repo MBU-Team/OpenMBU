@@ -149,11 +149,13 @@ ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
     return Platform::getUserName(15); // X360 only supported at max 15 characters.
 }
 
-ConsoleFunction(XBLiveGetUserId, S32, 1, 1, "()")
+ConsoleFunction(XBLiveGetUserId, const char*, 1, 1, "()")
 {
     argc;
 
-    return 1;
+    // XBLiveGetUserID returns in the format "<xuid>\t0" according to the comments in LevelScoreGui.gui
+
+    return "1\t0";
 }
 
 ConsoleFunction(XBLiveGetSignInPort, S32, 1, 1, "()")
@@ -267,6 +269,72 @@ ConsoleFunction(ContentQuery, const char*, 1, 2, "([contentCategory])")
     return result;
 }
 
+ConsoleFunction(XBLiveRegisterPlayer, void, 4, 4, "(name, xbLiveId, invited)")
+{
+    argc;
+
+    const char* name = argv[1];
+    const char* xbLiveId = argv[2];
+    bool invited = dAtob(argv[3]);
+
+    Con::printf(" >> Registering player: %s, %s, %d", name, xbLiveId, invited);
+}
+
+ConsoleFunction(XBLiveUnregisterPlayer, void, 3, 3, "(name, xbLiveId)")
+{
+    argc;
+
+    const char* name = argv[1];
+    const char* xbLiveId = argv[2];
+
+    Con::printf(" >> Unregistering player: %s, %s", name, xbLiveId);
+}
+
+ConsoleFunction(XBLiveRegisterRemoteTalker, void, 3, 3, "(xbLiveId, address)")
+{
+    argc;
+
+    const char* xbLiveId = argv[1];
+    const char* address = argv[2];
+
+    Con::printf(" >> Registering remote talker: %s, %s", xbLiveId, address);
+}
+
+ConsoleFunction(XBLiveUnregisterRemoteTalker, void, 2, 2, "(xbLiveId)")
+{
+    argc;
+
+    const char* xbLiveId = argv[1];
+
+    Con::printf(" >> Unregistering remote talker: %s", xbLiveId);
+}
+
+ConsoleFunction(XBLiveRegisterLocalTalker, void, 2, 2, "(xbLiveId)")
+{
+    argc;
+
+    const char* xbLiveId = argv[1];
+
+    Con::printf(" >> Registering local talker: %s", xbLiveId);
+}
+
+ConsoleFunction(XBLiveUnregisterLocalTalker, void, 1, 1, "()")
+{
+    argc;
+
+    Con::printf(" >> Unregistering local talker");
+}
+
+ConsoleFunction(XBLiveUpdateRemoteVoiceStatus, void, 3, 3, "(xbLiveId, xbLiveVoice)")
+{
+    argc;
+
+    const char* xbLiveId = argv[1];
+    const char* xbLiveVoice = argv[2];
+
+    Con::printf(" >> Updating remote voice status: %s, %s", xbLiveId, xbLiveVoice);
+}
+
 // TODO: This should probably be moved to a better place
 ConsoleFunction(getCPPVersion, const char*, 1, 1, "()")
 {
@@ -325,7 +393,7 @@ ConsoleFunction(outputdebugline, void, 2, 2, "()")
 
 ConsoleFunction(XBLiveLoadLeaderboard, void, 6, 6, "()")
 {
-    S32 lbId = dAtoi(argv[1]);
+    const char* lbId = argv[1];
     S32 leaderboard = dAtoi(argv[2]);
     S32 entryStart = dAtoi(argv[3]);
     S32 maxEntries = dAtoi(argv[4]);
@@ -349,7 +417,7 @@ ConsoleFunction(XBLiveGetLeaderboardRowCount, S32, 3, 3, "()")
 
 ConsoleFunction(XBLiveLeaderboardHasColumn, bool, 3, 3, "()")
 {
-    S32 lbId = dAtoi(argv[1]);
+    const char* lbId = argv[1];
     const char* name = argv[2];
 
     if (dStrcmp(name, "time") == 0)
@@ -364,8 +432,8 @@ ConsoleFunction(XBLiveLeaderboardHasColumn, bool, 3, 3, "()")
 
 ConsoleFunction(XBLiveGetLeaderboardRow, const char*, 4, 4, "()")
 {
-    S32 lbId = dAtoi(argv[1]);
-    S32 leaderboard = dAtoi(argv[2]);
+    const char* lbId = argv[1];
+    S32 leaderboard = dAtoi(argv[2]); // 0 = global, 1 = mine, 2 = friends
     S32 rowIndex = dAtoi(argv[3]);
 
     char* gamerTag = "Test";
@@ -421,17 +489,24 @@ ConsoleFunction(XBLiveAreStatsLoaded, bool, 2, 2, "(level)")
 {
     argc;
 
+    const char* lbId = argv[1];
+
     return false;
 }
 
 ConsoleFunction(XBLiveSetStatsDirty, void, 2, 2, "(level)")
 {
     argc;
+
+    const char* lbId = argv[1];
 }
 
 ConsoleFunction(XBLiveGetStatValue, S32, 3, 3, "(level, lb)")
 {
     argc;
+
+    const char* lbId = argv[1];
+    const char* leaderboard = argv[2];
 
     return 0;
 }
@@ -439,6 +514,12 @@ ConsoleFunction(XBLiveGetStatValue, S32, 3, 3, "(level, lb)")
 ConsoleFunction(XBLiveWriteStats, void, 5, 5, "(lbid, lb, score, callback)")
 {
     argc;
+
+    const char* lbId = argv[1];
+    const char* leaderboard = argv[2];
+    S32 score = dAtoi(argv[3]);
+    const char* callback = argv[4];
+
 }
 
 ConsoleFunction(XBLiveReadStats, void, 6, 6, "()")
@@ -451,6 +532,19 @@ ConsoleFunction(XBLiveIsRanked, bool, 1, 1, "()")
     argc;
 
     return false;
+}
+
+ConsoleFunction(XBLiveWriteStatsXuid, void, 6, 6, "(xbLiveId, leaderboardId, type, score, callback)")
+{
+    argc;
+
+    const char* xbLiveId = argv[1];
+    const char* leaderboardId = argv[2];
+    const char* type = argv[3];
+    S32 score = dAtoi(argv[4]);
+    const char* callback = argv[5];
+
+
 }
 
 ConsoleFunction(unscientific, const char*, 2, 2, "(value)")
