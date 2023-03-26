@@ -27,7 +27,7 @@ function PlayGui::onWake(%this)
    // Fix inputs getting stuck
    clearInputs();
 
-   if (ServerConnection.isMultiplayer)
+   if (ServerConnection.isMultiplayer || $Game::SPGemHunt)
    {
       Canvas.pushDialog(PlayerListGui);
       

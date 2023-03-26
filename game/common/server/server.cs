@@ -71,6 +71,7 @@ function startMultiplayerMode()
       
    // we are now considered to be connected to a multiplayer server (our own)
    $Client::connectedMultiplayer = true;
+   $Game::SPGemHunt = false;
    
    // update the data for the local client connection
    LocalClientConnection.updateClientData($Player::Name, $Player::XBLiveId, XBLiveGetVoiceStatus(), false);

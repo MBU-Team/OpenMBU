@@ -111,8 +111,10 @@ $Text::PurchasedThanks = "Thank you for purchasing Marble Blast Ultra!";
 ;-------------------------------------------------------------------------------
 $Text::None = "None";
 $Text::BestTime = "My Best Time:";
+$Text::BestScore = "My Best Score:";
 $Text::EndTime = "Time:";
 $Text::EndScore = "Rating:";
+$Text::EndScore2 = "Score:";
 $Text::LevelComplete = "LEVEL COMPLETE!";
 $Text::NewBestTime = "New Best Time!";
 $Text::NewHighScore = "New High Score!";
@@ -213,6 +215,7 @@ $Text::LevelsBeginner = "Beginner Levels";
 $Text::LevelsIntermediate = "Intermediate Levels";
 $Text::LevelsAdvanced = "Advanced Levels";
 $Text::LevelsCustom = "Custom Levels";
+$Text::SPGemHunt = "Gem Hunt";
 $Text::Go = "Go";
 $Text::OK = "OK";
 $Text::Cancel = "Cancel";
@@ -659,4 +662,4 @@ $Text::TriggerTextTornado = "Beware of the tornado's pull!";
 $Text::TriggerTextFans = "Beware of the wind from the fans.";
 $Text::TriggerTextBumpers = "Bumpers push back when you collide with them.";
 $Text::TriggerTextAirMove = "You can change the direction of your spin even while in the air.";
-
+$Text::MultiplayerStartup = "Collect the most gems to win!";

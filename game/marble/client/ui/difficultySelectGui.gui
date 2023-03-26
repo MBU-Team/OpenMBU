@@ -23,8 +23,10 @@ function DifficultySelectGui::onA(%this)
    
    if (!%this.menuEnabled)
       return true;
+      
+   $Game::SPGemHunt = false;
      
-   switch$ ( DifficultyMenu.getSelectedIndex() )
+   switch$ ( DifficultyMenu.getSelectedData() )
    {
       case 0:
          GameMissionInfo.setMode(GameMissionInfo.SPMode);
@@ -42,6 +44,9 @@ function DifficultySelectGui::onA(%this)
          GameMissionInfo.setMode(GameMissionInfo.CustomMode);
          GameMissionInfo.setFilterDifficulty( custom );
          RootGui.setContent(LevelPreviewGui);
+      case 4: 
+         $Game::SPGemHunt = true;
+         RootGui.setContent(LevelPreviewGui);
    }
       
    return true;
@@ -58,12 +63,18 @@ function DifficultySelectGui::show(%this, %fromGui)
 {
    %this.menuEnabled = true;
    
+   %hasCustom = CustomSinglePlayMissionGroup.getCount() > 0;
+   
    DifficultyMenu.clear();
-   DifficultyMenu.addRow($Text::LevelsBeginner, "", 0, 2);
-   DifficultyMenu.addRow($Text::LevelsIntermediate, "", 0, 2);
-   DifficultyMenu.addRow($Text::LevelsAdvanced, "", 0, 2);
-   if (CustomSinglePlayMissionGroup.getCount() > 0)
-      DifficultyMenu.addRow($Text::LevelsCustom, "", 0, 2);
+   DifficultyMenu.addRow($Text::LevelsBeginner, 0, 0, 2);
+   DifficultyMenu.addRow($Text::LevelsIntermediate, 1, 0, 2);
+   if (%hasCustom)
+      DifficultyMenu.addRow($Text::LevelsAdvanced, 2, 0, 2);
+   else
+      DifficultyMenu.addRow($Text::LevelsAdvanced, 2, 20, 2);
+   if (%hasCustom)
+      DifficultyMenu.addRow($Text::LevelsCustom, 3, 20, 2);
+   DifficultyMenu.addRow($Text::SPGemHunt, 4, 0, 2);
                 
    RootGui.setTitle($Text::DifficultyMenu);
    if ($pref::UI::LegacyUI)

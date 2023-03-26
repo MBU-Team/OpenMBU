@@ -3187,6 +3187,8 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>addRow</name>
             <args>text, [data], [bitmapIndex]</args>
         </method>
+        <method>            <name>areButtonsEnabled</name>
+        </method>
         <method>            <name>clear</name>
         </method>
         <method>            <name>getBottomRow</name>
@@ -3203,6 +3205,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getSelectedText</name>
         </method>
         <method>            <name>getTopRow</name>
+        </method>
+        <method>            <name>setButtonsEnabled</name>
+            <args>enabled</args>
         </method>
         <method>            <name>setOptionIndex</name>
             <args>row, idx</args>
@@ -7069,6 +7074,10 @@ If filePath is , this function writes the resource descriptions to the console</
     <function>        <name>getDesktopResolution</name>
         <desc>Get the width, height, and bitdepth of the screen.</desc>
     </function>
+    <function>        <name>getDetermRandom</name>
+        <args>int a=1, int b=0</args>
+        <desc>Get a random number between a and b.</desc>
+    </function>
     <function>        <name>getDisplayDeviceList</name>
         <desc>Returns a tab-seperated string of the detected devices.</desc>
     </function>
@@ -7593,6 +7602,10 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     <function>        <name>setDefaultFov</name>
         <args>defaultFov</args>
         <desc>- Set the default FOV for a camera.</desc>
+    </function>
+    <function>        <name>setDetermRandomSeed</name>
+        <args>int seed=-1</args>
+        <desc>Set the current determ random seed. If no seed is provided, then the current time in ms is used.</desc>
     </function>
     <function>        <name>setEchoFileLoads</name>
         <args>bool</args>

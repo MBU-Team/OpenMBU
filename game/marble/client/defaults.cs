@@ -18,6 +18,7 @@ $pref::ChatHudLength = 1;
 $pref::useStencilShadows = true;
 $pref::Input::LinkMouseSensitivity = 1;
 // DInput keyboard, mouse, and joystick prefs
+$pref::displayMPHelpText = false;
 $pref::Input::KeyboardEnabled = 1;
 $pref::Input::MouseEnabled = 1;
 $pref::Input::JoystickEnabled = 0;
@@ -119,6 +120,8 @@ $Demo::TimeRemaining = $Demo::DefaultStartingTime;
 //$Demo::TimeRemaining = 10 * 1000; // 10 seconds for testing
 
 $Client::gracePeroidMS = 45 * 1000; // 45 seconds?
+
+$pref::DoNewHighScoreSFX = false;
 
 if (!isPCBuild() && !$Client::UseXBLiveMatchMaking)
 {

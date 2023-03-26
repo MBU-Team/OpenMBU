@@ -370,6 +370,13 @@ function EditorDoLoadMission(%file)
    Editor.close();
 
    loadMission( %file, true ) ;
+   
+   if(MissionInfo.gameType $= "MultiPlayer")
+      $Game::SPGemHunt = true;
+   else
+      $Game::SPGemHunt = false;
+      
+   $Server::ServerType = "SinglePlayer";
 
    // recreate and open the editor
    Editor::create();

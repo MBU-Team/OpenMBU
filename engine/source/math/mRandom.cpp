@@ -9,6 +9,7 @@
 #include "math/mRandom.h"
 
 MRandomLCG gRandGen;
+MRandomLCG gRandGenDeterm;
 U32 gRandGenSeed = 1376312589;
 
 void MRandomLCG::setGlobalRandSeed(U32 seed)

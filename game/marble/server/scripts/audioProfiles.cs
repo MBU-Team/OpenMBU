@@ -200,6 +200,13 @@ datablock SFXProfile(GetRollingVoiceSfx)
    preload = true;
 };
 
+datablock SFXProfile(NewHighScoreSfx)
+{
+   filename    = "~/data/sound/new_high_score";
+   description = Audio2D;
+   preload = true;
+};
+
 datablock SFXProfile(AchievementSfx)
 {
    filename    = "~/data/sound/new_achievement";

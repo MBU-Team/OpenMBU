@@ -250,6 +250,20 @@ function addHelpLine(%message, %playBeep, %fade)
       serverplay2d(HelpDingSfx);
    }
 }
+function addStartMessage(%message)
+{
+   %fontSize = "<font:Arial Bold:30>";
+      
+   if (getWordCount(%message)) 
+   {
+      %text = "<just:center>" @ %fontSize @ %message;
+      HelpTextForeground.setText("<color:ebebeb>" @ %text @ "\n ");
+      cancel($HelpFadeTimer);
+      HelpTextForeground.setAlpha(1.0);
+      HelpTextForeground.setVisible(true);
+      $HelpFadeTimer = schedule(5000, 0, helpFade, 1.0);
+   }
+}
 function onServerMessage(%message)
 {
    // See if there's a sound at the end of the message, and play it.

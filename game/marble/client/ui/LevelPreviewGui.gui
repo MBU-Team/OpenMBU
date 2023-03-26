@@ -182,7 +182,12 @@ function levelPreviewGui::onWake(%this)
    RootGui.setTitle($Text::LevelPreview);
    
    if (GameMissionInfo.getMode() !$= GameMissionInfo.CustomMode)
-      GameMissionInfo.setMode(GameMissionInfo.SPMode);
+   {
+      if ($Game::SPGemHunt)
+         GameMissionInfo.setMode(GameMissionInfo.MPMode);
+      else
+         GameMissionInfo.setMode(GameMissionInfo.SPMode);
+   }
    GameMissionInfo.setDefaultMission();
    
    if ($EnableFMS)
@@ -425,6 +430,7 @@ function levelPreviewGui::populateLevelInfo(%this)
          %theCachedTime = $CachedUserTime::levelTime[%mission.level];
       }
       
+      %time = 0;
       if( XBLiveIsSignedInSilver() )
       {
          //%player = new LeaderboardEntry();
@@ -438,16 +444,6 @@ function levelPreviewGui::populateLevelInfo(%this)
             
          if( ( %time > %cachedTime && %cachedTime != 0 ) || %time == 0 )
             %time = %cachedTime;
-         
-         if( %time <= 0 )
-         {
-            %time = $Text::None;
-         }
-         else
-         {
-            %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
-            %time = %color @ formatTime( %time );
-         }
       }
       else
       {
@@ -458,14 +454,37 @@ function levelPreviewGui::populateLevelInfo(%this)
             %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
             %time = %color @ formatTime( %time );
          }
+      }
+         
+      if( %time <= 0 )
+      {
+         %time = $Text::None;
+      }
+      else
+      {
+         if ($Game::SPGemHunt)
+         {
+            %time = %colorBetter @ %time;
+         }
          else
-            %time = $Text::None;
+         {
+            %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
+            %time = %color @ formatTime( %time );
+         }
       }
       
-      %descText = "<just:right>" @ %lineSpacingHack @ $Text::BestTime
-                                  @ "\n" @ %lineSpacingHack @ $Text::ParTime;
-                                  
-      %timeText = %biggerFont @ %time @ "\n" @ %timeText;
+      if ($Game::SPGemHunt)
+      {
+         %descText = "<just:right>" @ %lineSpacingHack @ $Text::BestScore;
+         %timeText = %biggerFont @ %time;
+      }
+      else
+      {
+         %descText = "<just:right>" @ %lineSpacingHack @ $Text::BestTime
+                                     @ "\n" @ %lineSpacingHack @ $Text::ParTime;
+                                     
+         %timeText = %biggerFont @ %time @ "\n" @ %timeText;
+      }
    }
    
    levelPreviewGui.setLevelText( %mission.level, getMissionNameFromNameVar(%mission) );

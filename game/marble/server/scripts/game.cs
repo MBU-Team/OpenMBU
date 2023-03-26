@@ -241,7 +241,7 @@ function endGame()
    if (!$playingDemo && $Game::Qualified && (MissionInfo.level + 1) > $Pref::QualifiedLevel[MissionInfo.type])
          $Pref::QualifiedLevel[MissionInfo.type] = MissionInfo.level + 1;
          
-   if ($Server::ServerType $= "MultiPlayer")
+   if (serverGetGameMode() $= "scrum")
    {
       // decrement rounds remaining
       $Server::NumRounds--;
@@ -249,7 +249,10 @@ function endGame()
       if ($Server::NumRounds <= 0)
       {
          // all done, return to lobby
-         enterLobbyMode();
+         if (!$Server::Dedicated)
+            enterLobbyMode();
+         else
+            GameMissionInfo.selectNextMission();
          return;
       }
       
@@ -348,7 +351,7 @@ function destroyGame()
 function faceGems( %player )
 {
    // In multi-player, set the position, and face gems
-   if( $Server::ServerType $= "MultiPlayer" &&
+   if( serverGetGameMode() $= "scrum" &&
        isObject( $LastFilledGemSpawnGroup ) &&
        $LastFilledGemSpawnGroup.getCount() )
    {
@@ -508,7 +511,7 @@ function removeGem(%gem)
    freeGem(%gem);
    
    // refill gem groups if necessary
-   if ($Server::ServerType $= "MultiPlayer")
+   if (serverGetGameMode() $= "scrum")
       refillGemGroups();
 }
 
@@ -628,11 +631,14 @@ function spawnGemAt(%spawnPoint, %includeLight)
    return %gem;
 }
 
-function getRandomObject(%groupName)
+function getRandomObject(%groupName,%randFunction)
 {
    %group = nameToID(%groupName);
 
    %object = 0;
+
+   if (%randFunction $= "")
+      %randFunction = getRandom;
    
    if (%group != -1)
    {
@@ -640,7 +646,7 @@ function getRandomObject(%groupName)
 
       if (%count > 0)
       {
-         %index = getRandom(%count - 1);
+         %index = call(%randFunction, %count - 1);
          %object = %group.getObject(%index);
       }
    }
@@ -650,13 +656,13 @@ function getRandomObject(%groupName)
 // returns a random gem spawn point
 function findGemSpawn()
 {
-   return getRandomObject("MissionGroup/GemSpawns");
+   return getRandomObject("MissionGroup/GemSpawns", $Game::SpawnRandFunction);
 }
 
 // returns a random gem spawn group
 function findGemSpawnGroup()
 {
-   return getRandomObject("GemSpawnGroups");
+   return getRandomObject("GemSpawnGroups", $Game::SpawnRandFunction);
 }
 
 // test function
@@ -761,6 +767,11 @@ function refillGemGroups()
       
       if (%gemGroup.getCount() == 0)
       {
+         // current gem group is dead, inform everyone
+         if ($Server::CurrentGemGroup != 0)
+            messageAll('MsgGemGroupCollected', "Gem Group " @ $Server::CurrentGemGroup @ " completed!"); // JMQMERGE: localize
+         $Server::CurrentGemGroup++;
+         
          // pick a new spawnGroup for the group
          %spawnGroup = pickGemSpawnGroup();
          if (!isObject(%spawnGroup))
@@ -845,6 +856,17 @@ function SetupGems(%numGemGroups)
    // set up the gem spawn groups (this is done in engine code to improve performance).
    // it will create a GemSpawnGroups object that contains groups of clustered spawn points
    SetupGemSpawnGroups(%gemGroupRadius, %maxGemsPerGroup);
+   $Game::UseDetermSpawn = $Game::SPGemHunt;
+   if ($Game::UseDetermSpawn)
+   {
+      $Game::SpawnRandFunction = getDetermRandom;
+      setDetermRandomSeed(100);
+   }
+   else
+   {
+      $Game::SpawnRandFunction = getRandom;
+   }
+   $Server::CurrentGemGroup = 0;
    
    // ActiveGemGroups contains groups of spawned gems.  the groups are populated using the spawn point
    // information from the ActiveGemGroups object.  when a group is empty, a new gem spawn group is 
@@ -962,6 +984,9 @@ function GameConnection::onClientJoinGame(%this)
    
    // keep Lobby status updated   
    messageClient(%this, 'MsgClientUpdateLobbyStatus', "", serverIsInLobby() );
+
+   if (MissionInfo.gameMode $= "Scrum")
+      commandToClient(%this,'addStartMessage',$Text::MultiplayerStartup,true);
 }
 
 function GameConnection::enterWaitState(%this)
@@ -1045,11 +1070,13 @@ function GameConnection::resetStats(%this)
    %this.points = 0;
    %this.rank = 0;
    %this.finishTime = 0;
-   if (isObject(%this.player) && $Server::ServerType $= "SinglePlayer")
+   if (isObject(%this.player) && serverGetGameMode() $= "race")
       %this.player.setMarbleTime(0);
 
    // Reset the checkpoint, except in single player modes
-   if ($Server::ServerType !$= "SinglePlayer" && isObject(%this.checkPoint))
+   // JMQ: not even sure why this is here, there are no checkpoints in
+   // multiplayer...
+   if (serverGetGameMode() !$= "race" && isObject(%this.checkPoint))
    {
       %this.checkPoint = 0;
       %this.checkPointPowerUp = 0;
@@ -1066,7 +1093,7 @@ function GameConnection::resetStats(%this)
 function GameConnection::onEnterPad(%this)
 {
    // Handle level ending
-   if (MissionInfo.gameType $= "SinglePlayer")
+   if (serverGetGameMode() $= "race")
    {
       if (%this.player.getPad() == $Game::EndPad) {
 
@@ -1345,7 +1372,7 @@ function GameConnection::onFoundGem(%this,%amount,%gem,%points)
    
    // If we are in single player mode, keep track of the gems we have found
    // with regard to checkpoint status so you can't cheat with checkpoints
-   if( MissionInfo.gameType $= "Singleplayer" && isObject( %this.checkPoint ) )
+   if( serverGetGameMode() $= "race" && isObject( %this.checkPoint ) )
    {
       %gem.checkPointConfirmationNumber = %this.checkPointGemConfirm + 1;
    }
@@ -1375,6 +1402,8 @@ function GameConnection::spawnPlayer(%this)
 
 function restartLevel()
 {
+   commandToClient(LocalClientConnection, 'SPRestarting', true);
+   
    if( isObject( LocalClientConnection.checkPointShape ) )
       LocalClientConnection.checkPointShape.stopThread( 0 );
    
@@ -1384,7 +1413,32 @@ function restartLevel()
    LocalClientConnection.CheckPointGemCount = 0;
    LocalClientConnection.checkPointBlastEnergy = 0.0;
    LocalClientConnection.checkPointGemConfirm = 0;
-   LocalClientConnection.respawnPlayer();
+
+   if (serverGetGameMode() $= "scrum")
+   {
+      // tear down the whole game and player so that we don't have any
+      // wacky left over state
+      //LocalClientConnection.setControlObject(LocalClientConnection.camera);
+      //LocalClientConnection.player.delete();
+      //LocalClientConnection.player.schedule(0, delete);
+      //LocalClientConnection.player = 0;
+      destroyGame();
+      LocalClientConnection.player.setMarbleTime(0);
+      LocalClientConnection.player.setMarbleBonusTime(0);
+      LocalClientConnection.player.setOOB(false);
+      LocalClientConnection.player.setVelocity("0 0 0");
+      LocalClientConnection.player.setVelocityRot("0 0 0");
+      LocalClientConnection.player.setBlastEnergy( 0.0 );
+      LocalClientConnection.player.setPowerUp("");
+      LocalClientConnection.player.clearLastContactPosition();
+      LocalClientConnection.onClientJoinGame();
+      LocalClientConnection.respawnPlayer();
+      setGameState("start");
+   }
+   else
+      LocalClientConnection.respawnPlayer();
+
+   commandToClient(LocalClientConnection, 'SPRestarting', false);
 }
 
 function GameConnection::respawnPlayer(%this)
@@ -1395,7 +1449,7 @@ function GameConnection::respawnPlayer(%this)
    // clear any messages being displayed to client
    commandToClient(%this, 'setMessage',"");
 
-   if ($Server::ServerType $= "SinglePlayer")
+   if (serverGetGameMode() $= "race")
    {
       // if the player has no checkpoint, assume a full mission restart is occuring
       if (!isObject(%this.checkPoint))
@@ -1427,16 +1481,16 @@ function GameConnection::respawnPlayer(%this)
    
    %powerUp = %this.player.getPowerUp();
    %this.player.setPowerUp(0, true);
-   if ($Server::ServerType $= "MultiPlayer")
+   if (serverGetGameMode() $= "scrum")
       %this.player.setPowerUp(%powerUp);
-   else if( $Server::ServerType $= "SinglePlayer" && isObject( %this.checkPoint ) && isObject( %this.checkPointPowerUp ) )
+   else if( serverGetGameMode() $= "race" && isObject( %this.checkPoint ) && isObject( %this.checkPointPowerUp ) )
       %this.player.setPowerUp( %this.checkPointPowerUp );
 
    %this.player.setOOB(false);
    %this.player.setVelocity("0 0 0");
    %this.player.setVelocityRot("0 0 0");
    
-   if (($Server::ServerType $= "SinglePlayer" || MissionInfo.gameMode $= "Race") && isObject(%this.checkPoint))
+   if ((serverGetGameMode() $= "race") && isObject(%this.checkPoint))
    {
       // Check and if there is a checkpoint shape, use that instead so the marble gets centered
       // on it properly. Mantis bug: 0000819
@@ -1450,7 +1504,7 @@ function GameConnection::respawnPlayer(%this)
       // in multiplayer mode, try to use the spawn point closest to the 
       // marble's last contact position.  if this position is invalid 
       // the findClosest function will defer to pickSpawnPoint()
-      if ($Server::ServerType $= "MultiPlayer")
+      if (serverGetGameMode() $= "scrum")
          %spawnPoint = findClosestSpawnPoint(%this.player.getLastContactPosition());
       else
       {
@@ -1573,7 +1627,7 @@ function GameConnection::createPlayer(%this, %spawnPoint)
    %player.setEnergyLevel(60);
    %player.setShapeName(%this.name);
    %player.client.status = 1;
-   if ($Server::ServerType $= "MultiPlayer")
+   if (serverGetGameMode() $= "scrum")
       %player.setUseFullMarbleTime(true);
    setGravity(%player, %spawnPoint);
    
@@ -1879,7 +1933,7 @@ function setGoState(%client)
    if ($Game::Duration)
       commandToClient(%client, 'setGameDuration', $Game::Duration, 0);
 
-   if (MissionInfo.gameType $= "SinglePlayer")
+   if (serverGetGameMode() $= "race")
       %client.player.setPad($Game::EndPad);
 
    %client.player.setMode(Normal);
@@ -2057,9 +2111,31 @@ function GameConnection::updateGameState(%this)
 // Support functions
 //-----------------------------------------------------------------------------
 
+// return a string describing the current game mode
+//  this can be "race", which is the single player "time" mode
+//  or it can be "scrum", which is the multiplayer mode (also available
+//   as a single player mode now).  note the game mode by itself doesn't
+// specify whether it is a multiplayer game or not.
+// note that the mode is also stored in the missionInfo, but that approach
+// prevents playing the same mission in different modes, so we might want
+// to drop that eventually
+function serverGetGameMode()
+{
+   if ($Game::SPGemHunt || $Server::ServerType $= "MultiPlayer")
+      return "scrum";
+   if ($Server::ServerType $= "SinglePlayer")
+      return "race";
+   // if we get here, oops
+   error("server: unknown game mode!");
+   return "";
+}
+
 function serverCmdJoinGame(%client)
 {
    %client.onClientJoinGame();
+// this should not be necessary and it may cause a double sound play bug (spawn sfx)
+//   if (serverGetGameMode() $= "scrum")
+//      %client.respawnPlayer();
 }
 
 function serverCmdSetWaitState(%client)

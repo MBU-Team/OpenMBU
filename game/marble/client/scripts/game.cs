@@ -144,6 +144,12 @@ function clientCmdSetHelpLine(%helpLine,%beep)
    addHelpLine(%helpLine,%beep);
 }
 
+function clientCmdAddStartMessage(%message,%isOptional)
+{
+   if (!%isOptional || $pref::displayMPHelpText)
+      addStartMessage(%message);
+}
+
 function clientCmdSetTimer(%cmd,%time)
 {
    switch$ (%cmd)
@@ -768,6 +774,12 @@ function onMultiplayerStatsLoaded()
    echo("Updating Rating on server:" SPC %levelRating SPC %overallRating);
 }
 
+function clientCmdSPRestarting(%restarting)
+{
+   $Client::SPRestarting = %restarting;
+   error("SP restarting:" SPC $Client::SPRestarting);
+}
+
 function clientCmdSetGameState(%state, %data)
 {
    //echo("@@@@@@@@@@@@ got" SPC %state SPC "state");
@@ -843,53 +855,115 @@ function clientCmdSetGameState(%state, %data)
    // Update the end game gui here
    if( !$Client::connectedMultiplayer && %state $= "end" )
    {
-      %mission = GameMissionInfo.getCurrentMission();
-      
-      %elapsed = PlayGui.elapsedTime;
-      %rating = calcRating( %elapsed, %mission.time, %mission.goldTime + $GoldTimeDelta, %mission.difficulty );
-      
-      if (%mission.difficultySet $= "custom")
+      if (!$Game::SPGemHunt)
       {
-         %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
-      } else {
-         %theCachedTime = $CachedUserTime::levelTime[%mission.level];
-      }      
-      
-      %cachedBestTime = %theCachedTime;
-       if( XBLiveAreStatsLoaded( %mission.level ) )
-         %bestTime = XBLiveGetStatValue( %mission.level, "time" );
-       else
-         %bestTime = %cachedBestTime;
-      
-      if( %bestTime > %cachedBestTime || %bestTime == 0 )
-          %bestTime = %cachedBestTime;
-      
-      if( %elapsed < %bestTime || %bestTime == 0 )
-		   %isNewBestTime = 1;
+         %mission = GameMissionInfo.getCurrentMission();
          
-      if( %isNewBestTime && %allowOfflineStats )
-      {
+         %elapsed = PlayGui.elapsedTime;
+         %rating = calcRating( %elapsed, %mission.time, %mission.goldTime + $GoldTimeDelta, %mission.difficulty );
+         
          if (%mission.difficultySet $= "custom")
          {
-            $CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
+            %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
          } else {
-            $CachedUserTime::levelTime[%mission.level] = %elapsed;
+            %theCachedTime = $CachedUserTime::levelTime[%mission.level];
+         }      
+         
+         %cachedBestTime = %theCachedTime;
+          if( XBLiveAreStatsLoaded( %mission.level ) )
+            %bestTime = XBLiveGetStatValue( %mission.level, "time" );
+          else
+            %bestTime = %cachedBestTime;
+         
+         if( %bestTime > %cachedBestTime || %bestTime == 0 )
+             %bestTime = %cachedBestTime;
+         
+         if( %elapsed < %bestTime || %bestTime == 0 )
+            %isNewBestTime = 1;
+            
+         if( %isNewBestTime && %allowOfflineStats )
+         {
+            if (%mission.difficultySet $= "custom")
+            {
+               $CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
+            } else {
+               $CachedUserTime::levelTime[%mission.level] = %elapsed;
+            }
          }
+         
+         // Color coding based on difference from Par Time.
+         if (%elapsed < %mission.time) %elapColor = "\c1";
+         else if (%elapsed == %mission.time) %elapColor = "\c3";
+         else %elapColor = "\c2";
+         
+         GE_Stats.clear();
+         // Format: "Centered `yay` column for `New Best Time!`" TAB "Time Column" TAB "Tag Column" 
+         GE_Stats.addRow(-1, " " TAB %elapColor @ formatTime( %elapsed ) TAB $Text::EndTime );
+         GE_Stats.addRow(-1, " " TAB "\c3" @ formatTime( %mission.time ) TAB $Text::ParTime );
+         GE_Stats.addRow(-1, " " TAB %rating TAB $Text::EndScore );
+         if (%isNewBestTime)
+            GE_Stats.addRow(-1, $Text::NewBestTime SPC " ");
+         else GE_Stats.addRow(-1, " " TAB formatTime( %bestTime ) TAB $Text::BestTime );
       }
-		
-		// Color coding based on difference from Par Time.
-		if (%elapsed < %mission.time) %elapColor = "\c1";
-		else if (%elapsed == %mission.time) %elapColor = "\c3";
-		else %elapColor = "\c2";
-		
-		GE_Stats.clear();
- 		// Format: "Centered `yay` column for `New Best Time!`" TAB "Time Column" TAB "Tag Column" 
-      GE_Stats.addRow(-1, " " TAB %elapColor @ formatTime( %elapsed ) TAB $Text::EndTime );
-      GE_Stats.addRow(-1, " " TAB "\c3" @ formatTime( %mission.time ) TAB $Text::ParTime );
-      GE_Stats.addRow(-1, " " TAB %rating TAB $Text::EndScore );
+      else
+      {
+         // update scrum mode text (uses score, not time)
+         %mission = GameMissionInfo.getCurrentMission();
+         if (%mission.difficultySet $= "custom")
+         {
+            %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+         } else {
+            %theCachedTime = $CachedUserTime::levelTime[%mission.level];
+         }
+         %cachedBestTime = %theCachedTime;
+         if( XBLiveAreStatsLoaded( %mission.level ) )
+            %bestTime = XBLiveGetStatValue( %mission.level, "time" );
+         else
+            %bestTime = %cachedBestTime;
+
+         if( %bestTime < %cachedBestTime || %bestTime == 0 )
+             %bestTime = %cachedBestTime;
+
+         %elapsed = LocalClientConnection.points;
+
+         if( %elapsed  > %bestTime || %bestTime == 0 )
+            %isNewBestTime = 1;
+
+         if( %isNewBestTime && %allowOfflineStats )
+         {
+            if (%mission.difficultySet $= "custom")
+            {
+               $CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
+            } else {
+               $CachedUserTime::levelTime[%mission.level] = %elapsed;
+            }
+         }
+
+         // Color coding based on difference from best time
+         if (%elapsed > %bestTime) %elapColor = "\c1";
+         else if (%elapsed == %bestTime) %elapColor = "\c3";
+         else %elapColor = "\c2";
+
+         GE_Stats.clear();
+         // Format: "Centered `yay` column for `New Best Time!`" TAB "Time Column" TAB "Tag Column"
+         GE_Stats.addRow(-1, " " TAB %elapColor @ %elapsed TAB $Text::EndScore2 );
+         //GE_Stats.addRow(-1, " " TAB "\c3" @ %bestScore TAB $Text::BestScore2 );
+         //GE_Stats.addRow(-1, " " TAB %rating TAB $Text::EndScore );
+         if (%isNewBestTime)
+            GE_Stats.addRow(-1, $Text::NewHighScore SPC " ");
+         else
+            GE_Stats.addRow(-1, " " TAB %bestTime TAB $Text::BestScore );
+      }
+
       if (%isNewBestTime)
-      	GE_Stats.addRow(-1, $Text::NewBestTime SPC " ");
-	  	else GE_Stats.addRow(-1, " " TAB formatTime( %bestTime ) TAB $Text::BestTime );
+      {
+         // schedule this out a bit, so that we don't compete with end pad sound
+         if ($newhighScoreDelay $= "")
+            $newhighScoreDelay = 2500;
+         //if ($localhighscores)
+         if ($pref::DoNewHighScoreSFX)
+            schedule($newhighScoreDelay, 0, sfxPlay, NewHighScoreSfx);
+      }
    }
    
    // Do stat write
@@ -1076,11 +1150,33 @@ function SPUpsellCallback()
 }
 
 //------------------------------------------------------------------------------
+function getCurrentSPScore()
+{
+   if ($Game::SPGemHunt)
+      return LocalClientConnection.points;
+   else
+      return PlayGui.elapsedTime;
+}
+
+function isScoreBetter(%oldScore, %newScore)
+{
+   if ($Game::SPGemHunt)
+      return %newScore > %oldScore; // point values, higher is better
+   else
+      return %newScore < %oldScore; // time values, lower is better
+}
 
 function doSPStatWrite()
 {
    // get our time for current mission
    %mission = GameMissionInfo.getCurrentMission();
+
+   // store the best score on the player object so that we can report it in the 
+   // SessionScores notification.     
+   LocalClientConnection.player.score = getCurrentSPScore();
+   LocalClientConnection.player.bestScore = "";
+   LocalClientConnection.player.bestRating = "";
+   LocalClientConnection.player.overallRating = "";
    
    if (!XBLiveAreStatsLoaded(%mission.level))
    {
@@ -1089,10 +1185,19 @@ function doSPStatWrite()
    }
    else
    {
-      %time = XBLiveGetStatValue(%mission.level, "time");
+      %scoreColumn = "time";
+      if ($Game::SPGemHunt)
+         %scoreColumn = "score";
+         
+      %oldScore = XBLiveGetStatValue(%mission.level, %scoreColumn);
       %oldRating = XBLiveGetStatValue(%mission.level, "rating");
+      if (%oldRating $= "")
+         %oldRating = 0;
+      if (%oldScore $= "")
+         %oldScore = 0;
       
-      %elapsed = PlayGui.elapsedTime;
+      %newScore = getCurrentSPScore();
+      //%elapsed = PlayGui.elapsedTime;
       
       if (%mission.difficultySet $= "custom")
       {
@@ -1102,24 +1207,29 @@ function doSPStatWrite()
       }      
       
       // offline sync hack; used the cache time if its better
-      if (%theCachedTime > 0 &&
-          %theCachedTime < %elapsed)
+      if (%theCachedScore > 0 && isScoreBetter(%newScore, %theCachedScore))
       {
-         echo("Using cached profile time instead of level time because cached time is better");
-         %elapsed = %theCachedTime;
+         echo("Using cached profile score instead of level score because cached score is better");
+         %newScore = %theCachedScore;
       }
+
+      %updated = false;
+      LocalClientConnection.player.bestScore = %oldScore;
+      LocalClientConnection.player.bestRating = %oldRating;
       
       XBLiveStartStatsSession();
       
       %updated = false;
-      if (%time == 0 || %elapsed < %time)
+      if (%oldScore == 0 || isScoreBetter(%oldScore, %newScore))
       {
          %updated = true;
          //%elapsed = $Game::ScoreTime;
-         %rating = calcRating( %elapsed, %mission.time, %mission.goldTime + $GoldTimeDelta, %mission.difficulty );
-         error("new score:" SPC %elapsed SPC %rating);
+         %newRating = calcRating( %newScore, %mission.time, %mission.goldTime + $GoldTimeDelta, %mission.difficulty );
+         error("new score:" SPC %newScore SPC %rating);
+         LocalClientConnection.player.bestScore = %newScore;
+         LocalClientConnection.player.bestRating = %newRating;
          
-         XBLiveWriteStats(%mission.level, "time", %elapsed, "");
+         XBLiveWriteStats(%mission.level, %scoreColumn, %elapsed, "");
          XBLiveWriteStats(%mission.level, "rating", %rating, "");
          
          // update score on the overall leaderboard
@@ -1145,6 +1255,7 @@ function doSPStatWrite()
             }
             unscientific( %overall += %rating );
             error("new overall rating:" SPC unscientific( %overall ) );
+            LocalClientConnection.player.overallRating = unscientific( %overall );
             XBLiveWriteStats($Leaderboard::SPOverall, "rating", unscientific( %overall ), "");
          }
       }
@@ -1285,6 +1396,9 @@ function TrapDoor::onClientCollision(%this,%obj,%col)
 
 function calcRating( %time, %parTime, %goldTime, %difficulty )
 {
+   if ($Game::SPGemHunt)
+      return %time * 10; // time will be points in this case 
+      
    // Mask out the lowest two digits of the times for the improvement time so that roundoff
    // doesn't make the math look wrong
    %time = %time - ( %time % 10 );

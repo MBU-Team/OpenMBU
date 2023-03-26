@@ -506,6 +506,7 @@ function connectToServer(%address,%invited)
          portInit($Pref::Server::Port);
       }
       $Client::connectedMultiplayer = true;
+      $Game::SPGemHunt = false;
       %conn.connect(%address);
    }
 
@@ -565,7 +566,10 @@ function establishConnection(%address, %mp, %invited)
    if (%address $= "")
    {
       if (%mp)
+      {
          $Client::connectedMultiplayer = true;
+         $Game::SPGemHunt = false;
+      }
       else
          $Client::connectedMultiplayer = false;
       %conn.connectLocal();
@@ -581,6 +585,7 @@ function establishConnection(%address, %mp, %invited)
          portInit($Pref::Server::Port);
       }
       $Client::connectedMultiplayer = true;
+      $Game::SPGemHunt = false;
       %conn.connect(%address);
    }
 
