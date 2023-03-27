@@ -45,6 +45,7 @@ function DifficultySelectGui::onA(%this)
          GameMissionInfo.setFilterDifficulty( custom );
          RootGui.setContent(LevelPreviewGui);
       case 4: 
+         GameMissionInfo.setMode(GameMissionInfo.SPMode);
          $Game::SPGemHunt = true;
          RootGui.setContent(LevelPreviewGui);
    }

@@ -354,6 +354,8 @@ function levelPreviewGui::setSelected(%this)
    
    %mission = GameMissionInfo.getCurrentMission();
    
+   $Game::SPGemHunt = %mission.gameMode $= "scrum";
+   
    // if we haven't loaded stats for this level, load them and call populateLevelInfo function when load completes
 //   if (XBLiveIsSignedInSilver() && !XBLiveAreStatsLoaded(%mission.level))
 //   {
