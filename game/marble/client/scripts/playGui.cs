@@ -8,6 +8,16 @@
 // PlayGui is the main TSControl through which the game is viewed.
 // The PlayGui also contains the hud controls.
 //-----------------------------------------------------------------------------
+function PlayGui::AddSubDialog(%this, %dialog)
+{
+   if (!isObject(%this.subDialogs))
+   {
+      %this.subDialogs = new SimSet();
+      RootGroup.add(%this.subDialogs); // beware $instantGroup !
+   }
+   %this.subDialogs.add(%dialog);
+}
+
 function PlayGui::onWake(%this)
 {
    // Turn off any shell sounds...
@@ -23,6 +33,10 @@ function PlayGui::onWake(%this)
       demoMap.push();
    else
       moveMap.push();
+
+   if (isObject(%this.subDialogs))
+      for (%i = 0; %i < %this.subDialogs.getCount(); %i++)
+         Canvas.pushDialog(%this.subDialogs.getObject(%i));
    
    // Fix inputs getting stuck
    clearInputs();
@@ -108,6 +122,10 @@ function PlayGui::onSleep(%this)
       Canvas.popDialog(PlayerListGui);
    if (GamePauseGui.isAwake())
       Canvas.popDialog(GamePauseGui);
+
+   if (isObject(%this.subDialogs))
+      for (%i = 0; %i < %this.subDialogs.getCount(); %i++)
+         Canvas.popDialog(%this.subDialogs.getObject(%i));
       
    // Terminate all playing sounds
    sfxStopAll($SimAudioType);

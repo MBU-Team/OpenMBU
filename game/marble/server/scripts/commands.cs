@@ -111,4 +111,12 @@ function serverCmdSelectObject(%client, %mouseVec, %cameraPoint)
    }
 }
 
+function serverCmdStartTalking(%client)
+{
+   
+}
 
+function serverCmdStopTalking(%client)
+{
+   
+}

@@ -22,7 +22,7 @@ private:
     typedef GuiControl Parent;
 
 public:
-    enum Constants { MAX_STRING_LENGTH = 255 };
+    enum Constants { MAX_STRING_LENGTH = 1024 };
 
 
 protected:

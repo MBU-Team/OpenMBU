@@ -169,6 +169,8 @@ function initClient()
    
    exec("./scripts/xbLive.cs");
    
+   exec("./ui/chathud/init.cs");
+   
    // Default player key bindings
    exec("./scripts/default.bind.cs");
    exec("./scripts/xbControler.cs");

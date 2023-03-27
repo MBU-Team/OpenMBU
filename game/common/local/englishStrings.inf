@@ -20,6 +20,8 @@ $Text::More = "More";
 $Text::Level = "Level";
 $Text::Start = "Start";
 $Text::PressAToStart = "Press A to start.";
+$Text::ClickToContinue = "Click to continue";
+$Text::Chat = "Chat";
 
 ;-------------------------------------------------------------------------------
 ; Live
