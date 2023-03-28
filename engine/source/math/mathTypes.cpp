@@ -589,3 +589,41 @@ ConsoleFunction(getDetermRandom, F32, 1, 3, "(int a=1, int b=0)"
 
 ConsoleFunctionGroupEnd(RandomNumbers);
 //------------------------------------------------------------------------------
+
+ConsoleFunction(unscientific, const char*, 2, 2, "(value)")
+{
+    Con::setVariable("$unscientific_hack_variable_hope_nobody_uses_this_name", "");
+
+    char buf[4096];
+    dSprintf(buf, 4096, "%s = %s;", "$unscientific_hack_variable_hope_nobody_uses_this_name", argv[1]);
+    Con::evaluate(buf);
+
+    const char* var = Con::getVariable("$unscientific_hack_variable_hope_nobody_uses_this_name");
+
+    F32 f;
+    if (var && *var && dSscanf(var, "%g", &f))
+    {
+        char* ret = Con::getReturnBuffer(256);
+
+        dSprintf(ret, 256, "%g", (F64)f);
+        char* num;
+        for (dsize_t i = dStrlen(ret) - 1; i >= 0; *num = 0)
+        {
+            num = &ret[i];
+            int c = ret[i];
+            if (c == '.')
+                break;
+            if (c != '0')
+                break;
+            i--;
+        }
+
+        S32 len = dStrlen(ret);
+        if (ret[len - 1] == '.')
+            ret[len - 1] = 0;
+
+        return ret;
+    }
+
+    return "";
+}
