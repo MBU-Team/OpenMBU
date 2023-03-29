@@ -21,6 +21,7 @@ DefineConsoleType(TypeRectI)
 DefineConsoleType(TypeRectF)
 DefineConsoleType(TypeMatrixPosition)
 DefineConsoleType(TypeMatrixRotation)
+DefineConsoleType(TypeMatrixEulerRotation)
 DefineConsoleType(TypeBox3F)
 
 
