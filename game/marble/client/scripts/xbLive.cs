@@ -920,7 +920,10 @@ function savePCUserProfile()
 {
    export("$pref*", "prefs.cs");
    export("$CachedUserScore*", "scores.cs");
-   export("$CachedUserTime*", "old_scores.cs");
+   if (variablesExist("$CachedUserTime*"))
+      export("$CachedUserTime*", "old_scores.cs");
+   else
+      deletePrefs("old_scores.cs");
    export("$UserAchievements*", "achievements.cs");
 }
 
@@ -931,11 +934,75 @@ function loadPCUserProfile()
    execPrefs("old_scores.cs");
    execPrefs("achievements.cs");
    
+   convertScores(); // Update from old index/path format to new guid format
+   
    xbSetMusicVolume($pref::Option::MusicVolume * 0.01);
    xbSetFXVolume($pref::Option::FXVolume * 0.01);
    
    // Set the new marble biscuit
    commandToServer('SetMarble', $pref::marbleIndex);
+}
+
+// Update from old index/path format to new guid format
+function convertScores()
+{
+   if (!variablesExist("$CachedUserTime*"))
+      return;
+   //%oldMode = GameMissionInfo.getMode();
+   //%oldFilter = GameMissionInfo.filterDifficulty();
+   //%oldIndex = GameMissionInfo.getCurrentIndex();
+   
+   //GameMissionInfo.setMode(GameMissionInfo.SPMode);
+   for (%i = 0; %i < 100; %i++)
+   {
+      if ($CachedUserTime::levelTime[%i] !$= "")
+      {
+         %mission = GameMissionInfo.findMissionById(%i, SinglePlayMissionGroup);
+         if (!isObject(%mission))
+            continue;
+         
+         if ($CachedUserScore::LevelScore[%mission.guid] $= "")
+         {
+            error("Converting score format for" SPC %mission.file);
+            $CachedUserScore::LevelScore[%mission.guid] = $CachedUserTime::levelTime[%i];
+            
+            $CachedUserTime::levelTime[%i] = "";
+            //deleteVariables("$CachedUserTime::levelTime[" @ %i @ "]");
+         }
+      }
+   }
+   
+   //GameMissionInfo.setMode(GameMissionInfo.CustomMode);
+   
+   %count = CustomSinglePlayMissionGroup.numAddedMissions;
+   for (%i = 0; %i < %count; %i++)
+   {
+      %mission = GameMissionInfo.findMissionById(%i, CustomSinglePlayMissionGroup);
+      if (!isObject(%mission))
+         continue;
+      
+      if ($CachedUserTime::customLevelTime[%mission.customId] !$= "")
+      {
+         if ($CachedUserScore::LevelScore[%mission.guid] $= "")
+         {
+            error("Converting score format for" SPC %mission.file);
+            $CachedUserScore::LevelScore[%mission.guid] = $CachedUserTime::customLevelTime[%mission.customId];
+            
+            //deleteVariables("$CachedUserTime::customLevelTime[" @ %mission.customId @ "]");
+            $CachedUserTime::customLevelTime[%mission.customId] = "";
+         }
+      }
+   }
+   
+   deleteEmptyVariables("$CachedUserTime*");
+   if (variablesExist("$CachedUserTime*"))
+      error("There are old scores that could not be mapped!");
+   
+   //GameMissionInfo.setMode(%oldMode);
+   //GameMissionInfo.setFilterDifficulty(%oldFilter);
+   //GameMissionInfo.setCurrentIndex(%oldIndex);
+   
+   savePCUserProfile();
 }
 
 function xbSetMusicVolume(%volume)

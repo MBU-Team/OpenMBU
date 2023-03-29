@@ -253,7 +253,8 @@ public:
     void reset();
 
     void exportVariables(const char* varString, const char* fileName, bool append);
-    void deleteVariables(const char* varString);
+    void deleteVariables(const char* varString, bool emptyOnly = false);
+    bool variablesExist(const char* varString);
 
     void setVariable(StringTableEntry name, const char* value);
     const char* getVariable(StringTableEntry name, bool* valid = NULL);

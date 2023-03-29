@@ -132,9 +132,10 @@ function GameMissionInfo::findIndexByPath(%this, %missionFile)
    return %index;
 }
 
-function GameMissionInfo::findMissionById(%this,%missionId)
+function GameMissionInfo::findMissionById(%this,%missionId, %group)
 {
-   %group = %this.getCurrentMissionGroup();
+   if (%group $= "")
+      %group = %this.getCurrentMissionGroup();
    for (%i = 0; %i < %group.getCount(); %i++)
    {
       %mission = %group.getObject(%i);

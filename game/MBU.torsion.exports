@@ -4726,6 +4726,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>rotation</name>
             <desc>MatrixRotation rotation</desc>
         </field>
+        <field>            <name>rotationEuler</name>
+            <desc>MatrixEulerRotation rotationEuler</desc>
+        </field>
         <field>            <name>scale</name>
             <desc>Point3F scale</desc>
         </field>
@@ -6906,6 +6909,9 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>deleteDataBlocks</name>
         <desc>Delete all the datablocks we've downloaded. This is usually done in preparation of downloading a new set of datablocks,  such as occurs on a mission change, but it's also good post-mission cleanup.</desc>
     </function>
+    <function>        <name>deleteEmptyVariables</name>
+        <desc>deleteVariables(wildCard)</desc>
+    </function>
     <function>        <name>deleteVariables</name>
         <args>wildCard</args>
     </function>
@@ -7045,6 +7051,9 @@ If filePath is , this function writes the resource descriptions to the console</
         <desc>Flush the texture cache.</desc>
     </function>
     <function>        <name>FreeMemoryDump</name>
+    </function>
+    <function>        <name>GenerateGUID</name>
+        <desc>- Generates a new GUID and returns it as a string.</desc>
     </function>
     <function>        <name>getBoxCenter</name>
         <args>Box b</args>
@@ -7894,6 +7903,9 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>updateVideoMode</name>
     </function>
     <function>        <name>ValidateMemory</name>
+    </function>
+    <function>        <name>variablesExist</name>
+        <args>wildCard</args>
     </function>
     <function>        <name>VectorAdd</name>
         <args>Vector3F a, Vector3F b</args>
