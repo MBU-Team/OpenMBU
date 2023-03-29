@@ -134,12 +134,18 @@ function GamePauseGui::onA()
       case 6:
          // leaderboards
          %unpause = false;
-         %level = GameMissionInfo.getCurrentMission().level;
+         //%level = GameMissionInfo.getCurrentMission().level;
+         %level = GameMissionInfo.getCurrentMission().guid;
          
          if( ServerConnection.isMultiplayer )
+         {
             RootGui.setContent( LevelScoresGui, GameMissionInfo.MPMode, %level, PlayGui );
+         }
          else
-            RootGui.setContent( LevelScoresGui, GameMissionInfo.SPMode, %level, PlayGui );
+         {
+            //RootGui.setContent( LevelScoresGui, GameMissionInfo.SPMode, %level, PlayGui );
+            RootGui.setContent( LevelScoresGui, GameMissionInfo.getMode(), %level, PlayGui );
+         }
       case 7:
          // achievements
          %unpause = false;

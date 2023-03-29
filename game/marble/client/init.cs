@@ -875,6 +875,7 @@ function createEmptyMission(%interiorArg)
          customType = "intermediate";
          goldTime = "0";
          gameType = "SinglePlayer";
+         guid = GenerateGuid();
       };
       new MissionArea(MissionArea) {
          area = "-360 -648 720 1296";

@@ -919,7 +919,8 @@ function XBGamerProfile::packProfile(%this)
 function savePCUserProfile()
 {
    export("$pref*", "prefs.cs");
-   export("$CachedUserTime*", "scores.cs");
+   export("$CachedUserScore*", "scores.cs");
+   export("$CachedUserTime*", "old_scores.cs");
    export("$UserAchievements*", "achievements.cs");
 }
 
@@ -927,6 +928,7 @@ function loadPCUserProfile()
 {
    execPrefs("prefs.cs");
    execPrefs("scores.cs");
+   execPrefs("old_scores.cs");
    execPrefs("achievements.cs");
    
    xbSetMusicVolume($pref::Option::MusicVolume * 0.01);

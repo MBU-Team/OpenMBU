@@ -862,12 +862,14 @@ function clientCmdSetGameState(%state, %data)
          %elapsed = PlayGui.elapsedTime;
          %rating = calcRating( %elapsed, %mission.time, %mission.goldTime + $GoldTimeDelta, %mission.difficulty );
          
-         if (%mission.difficultySet $= "custom")
-         {
-            %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
-         } else {
-            %theCachedTime = $CachedUserTime::levelTime[%mission.level];
-         }      
+         //if (%mission.difficultySet $= "custom")
+         //{
+         //   %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+         //} else {
+         //   %theCachedTime = $CachedUserTime::levelTime[%mission.level];
+         //}
+         
+         %theCachedTime = $CachedUserScore::LevelScore[%mission.guid];
          
          %cachedBestTime = %theCachedTime;
           if( XBLiveAreStatsLoaded( %mission.level ) )
@@ -883,12 +885,14 @@ function clientCmdSetGameState(%state, %data)
             
          if( %isNewBestTime && %allowOfflineStats )
          {
-            if (%mission.difficultySet $= "custom")
-            {
-               $CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
-            } else {
-               $CachedUserTime::levelTime[%mission.level] = %elapsed;
-            }
+            //if (%mission.difficultySet $= "custom")
+            //{
+               //$CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
+            //} else {
+               //$CachedUserTime::levelTime[%mission.level] = %elapsed;
+            //}
+            
+            $CachedUserScore::LevelScore[%mission.guid] = %elapsed;
          }
          
          // Color coding based on difference from Par Time.
@@ -909,12 +913,13 @@ function clientCmdSetGameState(%state, %data)
       {
          // update scrum mode text (uses score, not time)
          %mission = GameMissionInfo.getCurrentMission();
-         if (%mission.difficultySet $= "custom")
-         {
-            %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
-         } else {
-            %theCachedTime = $CachedUserTime::levelTime[%mission.level];
-         }
+         //if (%mission.difficultySet $= "custom")
+         //{
+            //%theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+         //} else {
+            //%theCachedTime = $CachedUserTime::levelTime[%mission.level];
+         //}
+         %theCachedTime = $CachedUserScore::LevelScore[%mission.guid];
          %cachedBestTime = %theCachedTime;
          if( XBLiveAreStatsLoaded( %mission.level ) )
             %bestTime = XBLiveGetStatValue( %mission.level, "time" );
@@ -931,12 +936,13 @@ function clientCmdSetGameState(%state, %data)
 
          if( %isNewBestTime && %allowOfflineStats )
          {
-            if (%mission.difficultySet $= "custom")
-            {
-               $CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
-            } else {
-               $CachedUserTime::levelTime[%mission.level] = %elapsed;
-            }
+            //if (%mission.difficultySet $= "custom")
+            //{
+               //$CachedUserTime::customLevelTime[%mission.customId] = %elapsed;
+            //} else {
+               //$CachedUserTime::levelTime[%mission.level] = %elapsed;
+            //}
+            $CachedUserScore::LevelScore[%mission.guid] = %elapsed;
          }
 
          // Color coding based on difference from best time
@@ -1199,12 +1205,14 @@ function doSPStatWrite()
       %newScore = getCurrentSPScore();
       //%elapsed = PlayGui.elapsedTime;
       
-      if (%mission.difficultySet $= "custom")
-      {
-         %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
-      } else {
-         %theCachedTime = $CachedUserTime::levelTime[%mission.level];
-      }      
+      //if (%mission.difficultySet $= "custom")
+      //{
+         //%theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+      //} else {
+         //%theCachedTime = $CachedUserTime::levelTime[%mission.level];
+      //}      
+      
+      %theCachedScore = $CachedUserScore::LevelScore[%mission.guid];
       
       // offline sync hack; used the cache time if its better
       if (%theCachedScore > 0 && isScoreBetter(%newScore, %theCachedScore))

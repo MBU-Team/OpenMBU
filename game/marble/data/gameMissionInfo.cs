@@ -4,10 +4,10 @@ $sky_intermediate = "marble/data/skies/sky_intermediate.dml";
 $sky_advanced = "marble/data/skies/sky_advanced.dml";
 
 // leaderboard ids
-$Leaderboard::SPOverall = 99999;
-$Leaderboard::SPCompletion = 99995;
-//$Leaderboard::CustomSPOverall = 99997;
-$Leaderboard::MPScrumOverall = 99998;
+$Leaderboard::SPOverall = "{D8785EA3-2188-4BCC-89D1-B77CB8DF9A54}";
+$Leaderboard::SPCompletion = "{09B491BA-BC32-44E9-AF1F-92C02031BB5E}";
+//$Leaderboard::CustomSPOverall = "{C591744D-DE67-43B4-A4E0-D0EC781B7418}";
+$Leaderboard::MPScrumOverall = "{B7E841BE-AAA7-4054-AE9D-729C13937037}";
 // skill leaderboard variables are defined in engine code (since they may be changed by xlast)
 // variables are:
 // $Leaderboard::MPScrumSkill
@@ -139,6 +139,18 @@ function GameMissionInfo::findMissionById(%this,%missionId)
    {
       %mission = %group.getObject(%i);
       if (%mission.level == %missionId)
+         return %mission;
+   }
+   return 0;
+}
+
+function GameMissionInfo::findMissionByGuid(%this,%guid)
+{
+   %group = %this.getCurrentMissionGroup();
+   for (%i = 0; %i < %group.getCount(); %i++)
+   {
+      %mission = %group.getObject(%i);
+      if (%mission.guid $= %guid)
          return %mission;
    }
    return 0;
@@ -723,7 +735,7 @@ function buildLeaderboardList()
    for (%i = 0; %i < SinglePlayMissionGroup.getCount(); %i++)
    {
       %mis = SinglePlayMissionGroup.getObject(%i);
-      %spList = %spList TAB %mis.level;
+      %spList = %spList TAB %mis.guid;//%mis.level;
    }
    
    // store the list as a property of the mission group
@@ -738,9 +750,9 @@ function buildLeaderboardList()
    {
       %mis = CustomSinglePlayMissionGroup.getObject(%i);
       if (%spcustomList $= "")
-         %spcustomList = %mis.level;
+         %spcustomList = %mis.guid;//%mis.level;
       else
-         %spcustomList = %spcustomList TAB %mis.level;
+         %spcustomList = %spcustomList TAB %mis.guid;//%mis.level;
    }
    
    // store the list as a property of the mission group
@@ -756,7 +768,7 @@ function buildLeaderboardList()
 //   for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
 //   {
 //      %mis = MultiPlayMissionGroup.getObject(%i);
-//      %mpList = %mpList TAB %mis.level;
+//      %mpList = %mpList TAB %mis.guid;//%mis.level;
 //   }
    
    // store the list as a property of the mission group
@@ -823,17 +835,29 @@ function buildMissionList()
             GameMissionInfo.dupLevelIds[%mis.level] = true;
          }
          %levelIds[%mis.level] = true;
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
       }
-      //for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
-      //{
-         //%mis = CustomSinglePlayMissionGroup.getObject(%i);
+      for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+      {
+         %mis = CustomSinglePlayMissionGroup.getObject(%i);
          //if (%levelIds[%mis.level] !$= "")
          //{
             //GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate mission Id for level:" SPC %mis.file @ "\n";
             //GameMissionInfo.dupLevelIds[%mis.level] = true;
          //}
          //%levelIds[%mis.level] = true;
-      //}
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
+      }
       for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
       {
          %mis = MultiPlayMissionGroup.getObject(%i);
@@ -843,6 +867,12 @@ function buildMissionList()
             GameMissionInfo.dupLevelIds[%mis.level] = true;
          }
          %levelIds[%mis.level] = true;
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
       }
       
       for (%i = 0; %i < SpecialMissionGroup.getCount(); %i++)
@@ -854,6 +884,12 @@ function buildMissionList()
             GameMissionInfo.dupLevelIds[%mis.level] = true;
          }
          %levelIds[%mis.level] = true;
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
       }
       
       if (GameMissionInfo.dupErrors !$= "")
@@ -982,6 +1018,9 @@ function getMissionObject( %missionFile )
 	echo("checking mission" SPC %missionFile);
 	%missionInfoObject = "%missionInfoObject = " @ %missionInfoObject;
 	eval( %missionInfoObject );
+	
+	if (%missionInfoObject.guid $= "")
+	   GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Missing GUID in" SPC %missionFile @ "\n";
    
    if (%missionNameVar !$= "")
       %missionInfoObject.nameVar = %missionNameVar;
