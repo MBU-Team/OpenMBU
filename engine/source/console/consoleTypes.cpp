@@ -8,6 +8,7 @@
 #include "core/stringTable.h"
 #include "core/color.h"
 #include "console/simBase.h"
+#include "core/Guid.hpp"
 
 //////////////////////////////////////////////////////////////////////////
 // TypeString
@@ -487,4 +488,39 @@ ConsoleGetType(TypeSimObjectPtr)
     char* returnBuffer = Con::getReturnBuffer(256);
     dSprintf(returnBuffer, 256, "%s", *obj ? (*obj)->getName() : "");
     return returnBuffer;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// TypeGUID
+//////////////////////////////////////////////////////////////////////////
+ConsoleType(xg::Guid, TypeGUID, sizeof(xg::Guid))
+
+ConsoleGetType(TypeGUID)
+{
+    xg::Guid guid = *(xg::Guid*)dptr;
+    char* retBuffer = Con::getReturnBuffer(256);
+    dSprintf(retBuffer, 256, "{%s}", guid.str().c_str());
+    return retBuffer;
+}
+
+ConsoleSetType(TypeGUID)
+{
+    if (argc == 1)
+    {
+        if (argv[0][0] == '{' && argv[0][dStrlen(argv[0]) - 1] == '}')
+        {
+            char s[256];
+            dStrcpy(s, argv[0] + 1);
+            s[dStrlen(s) - 1] = '\0';
+            *((xg::Guid *) dptr) = xg::Guid(s);
+        } else {
+            *((xg::Guid *) dptr) = xg::Guid(argv[0]);
+            //Con::printf("(TypeGUID) GUID must be in the format {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}.");
+            //return;
+        }
+    }
+    else
+    {
+        Con::printf("(TypeGUID) Cannot set multiple args to a single GUID.");
+    }
 }
