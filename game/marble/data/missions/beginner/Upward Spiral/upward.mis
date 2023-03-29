@@ -13,6 +13,7 @@ startHelpText  =  $Text::LevelStartHelp48;
          difficulty = "4";
 name  =  $Text::LevelName48;
          hasEggIndex = "5";
+         guid = "{2BFE62B4-D91A-4C9B-B81B-55EABB01C311}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

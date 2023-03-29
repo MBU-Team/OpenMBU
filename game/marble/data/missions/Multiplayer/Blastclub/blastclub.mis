@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          desc = "Blast Club";
          numgems = "1";
          include = "1";
+         guid = "{B65ACF73-A6C5-48A0-BEEC-D4C6D1E9D33E}";
    };
    new Sky(Sky) {
       position = "336 136 0";

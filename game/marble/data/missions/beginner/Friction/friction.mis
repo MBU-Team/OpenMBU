@@ -11,6 +11,7 @@ startHelpText  =  $Text::LevelStartHelp4;
          name = $Text::LevelName4;
          gameType = "singlePlayer";
          desc = "A test mission for an interior";
+         guid = "{0AB4B5D7-7B42-46D1-9257-33E68942F0EC}";
    };
    new Sky(Sky) {
       position = "336 136 0";

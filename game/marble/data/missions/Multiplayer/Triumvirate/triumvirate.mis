@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          gemGroupRadius = "25";
          goldTime = "0";
          numgems = "1";
+         guid = "{E7FED2CC-6FD2-4D4A-A62F-D6D7EFEBC582}";
    };
    new SpawnSphere() {
       position = "-36.405 12.6613 26.8892";

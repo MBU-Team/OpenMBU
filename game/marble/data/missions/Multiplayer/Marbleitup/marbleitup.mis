@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          numgems = "1";
          gameType = "MultiPlayer";
          desc = "Marble It Up!";
+         guid = "{87206CA6-73AC-483B-B220-954FE3BE2E8A}";
    };
    new Item() {
       position = "-5.88496 -7.27892 1.03111";

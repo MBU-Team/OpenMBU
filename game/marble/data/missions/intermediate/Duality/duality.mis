@@ -9,6 +9,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          artist = "Alex Swanson";
          type = "intermediate";
+         guid = "{129746F6-F695-4DCE-89A6-817AF582EA3A}";
    };
    new Sky(Sky) {
       position = "336 136 0";

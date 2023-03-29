@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          desc = "Daedalus";
          hasEggIndex = "14";
+         guid = "{0CD63D0D-D29B-4F2A-A8D8-2B8B5AB85635}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

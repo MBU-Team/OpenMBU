@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          desc = "Playground";
          numgems = "1";
          include = "1";
+         guid = "{41268C4B-7DAD-4972-B4CC-0A39F008FD4E}";
    };
    new Sky(Sky) {
       position = "336 136 0";

@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          artist = "Alex Swanson";
          difficulty = "2";
          desc = "Change gravity to solve this puzzle.";
+         guid = "{10C05077-25FA-42CA-8D85-9D1A7A55CD8E}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

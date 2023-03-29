@@ -520,7 +520,8 @@ function levelScoresGui::doLoad(%this)
 function levelScoresGui::setSelectedInfo(%this)
 {
    //%mission = LevelScoresGui.currentMissionGroup.getObject( LevelScoresGui.currentMission );
-   %mission = GameMissionInfo.findMissionById(%this.lbId);
+   //%mission = GameMissionInfo.findMissionById(%this.lbId);
+   %mission = GameMissionInfo.findMissionByGuid(%this.lbId);
    if (isObject(%mission))
    {
       %isOverall = false;
@@ -578,7 +579,8 @@ function levelScoresGui::setSelected(%this)
 	else
 	   LS_Score_Header.setText("<font:Arial Bold:18><just:right>" @ $Text::Score);
 	
-	%mission = GameMissionInfo.findMissionById(%this.lbId);
+	//%mission = GameMissionInfo.findMissionById(%this.lbId);
+	%mission = GameMissionInfo.findMissionByGuid(%this.lbId);
 	%isOverall = %this.setSelectedInfo();
    
    %rowCount = XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard);

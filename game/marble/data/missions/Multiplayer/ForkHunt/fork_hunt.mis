@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          difficulty = "4";
          gemGroupRadius = "20";
          numgems = "1";
+         guid = "{2D001C28-8D65-46D4-98F3-93C16CFD9477}";
    };
    new Sky(Sky) {
       position = "336 136 0";

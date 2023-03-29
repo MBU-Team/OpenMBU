@@ -12,6 +12,7 @@ name  =  $Text::LevelName34;
          artist = "Alex Swanson";
          gameType = "SinglePlayer";
          desc = "Early Frost";
+         guid = "{84402A6C-C9DE-44F4-A025-A229A736FA27}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

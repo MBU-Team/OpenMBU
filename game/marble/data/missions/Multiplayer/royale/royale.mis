@@ -13,6 +13,7 @@ new SimGroup(MissionGroup) {
          gameMode = "Scrum";
          difficulty = "7";
          numgems = "1";
+         guid = "{917B670B-2DB1-4746-A345-A8EF799DB682}";
    };
    new Sky(Sky) {
       position = "336 136 0";

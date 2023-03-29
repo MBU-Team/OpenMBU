@@ -279,7 +279,10 @@ function levelPreviewGui::onY(%this)
       return;
    }
    else
-      RootGui.setContent(levelScoresGui, GameMissionInfo.getMode(), GameMissionInfo.getCurrentMission().level, levelPreviewGui);
+   {
+      //RootGui.setContent(levelScoresGui, GameMissionInfo.getMode(), GameMissionInfo.getCurrentMission().level, levelPreviewGui);
+      RootGui.setContent(levelScoresGui, GameMissionInfo.getMode(), GameMissionInfo.getCurrentMission().guid, levelPreviewGui);
+   }
       
    return true;
 }
@@ -425,12 +428,14 @@ function levelPreviewGui::populateLevelInfo(%this)
             LP_egg.setVisible( true );
       }
       
-      if (%mission.difficultySet $= "custom")
-      {
-         %theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
-      } else {
-         %theCachedTime = $CachedUserTime::levelTime[%mission.level];
-      }
+      //if (%mission.difficultySet $= "custom")
+      //{
+         //%theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+      //} else {
+         //%theCachedTime = $CachedUserTime::levelTime[%mission.level];
+      //}
+      
+      %theCachedTime = $CachedUserScore::LevelScore[%mission.guid];
       
       %time = 0;
       if( XBLiveIsSignedInSilver() )

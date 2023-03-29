@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          desc = "Marble It Up!";
          numgems = "1";
          include = "1";
+         guid = "{C015BB57-FC15-4A76-A31C-544402339670}";
    };
    new Trigger(Bounds) {
       position = "-203 171 -36";

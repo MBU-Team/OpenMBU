@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName55;
          difficulty = "6";
          hasEggIndex = "8";
+         guid = "{5FDB0AE3-A9E5-45F2-B43B-0969E7809FA7}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

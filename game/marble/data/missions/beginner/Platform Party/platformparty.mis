@@ -13,6 +13,7 @@ new SimGroup(MissionGroup) {
          artist = "Alex Swanson";
          desc = "Practice with moving platforms.";
          type = "Beginner";
+         guid = "{706F5ABB-04FD-4C95-A71E-802D59277329}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

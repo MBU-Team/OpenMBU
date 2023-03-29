@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          desc = "Concentric";
          include = "1";
          gemGroupRadius = "12";
+         guid = "{63096AD7-D99D-4E96-8E58-2789AB73ADF7}";
    };
    new Item() {
       position = "-1.46378 -22.1295 2";

@@ -13,6 +13,7 @@ new SimGroup(MissionGroup) {
          artist = "Alex Swanson";
          desc = "Built by the lowest bidder.";
          hasEggIndex = "17";
+         guid = "{FC86DD0D-3646-4565-BCCC-ED24BDAFFCA2}";
    };
    new Sky(Sky) {
       position = "336 136 0";

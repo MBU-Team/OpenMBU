@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
 name  =  $Text::LevelNameMP6;
          numgems = "1";
          gameType = "Multiplayer";
+         guid = "{7DEF697A-3F76-43A9-BF7D-A16B2D913250}";
    };
    new Sky(Sky) {
       position = "336 136 0";

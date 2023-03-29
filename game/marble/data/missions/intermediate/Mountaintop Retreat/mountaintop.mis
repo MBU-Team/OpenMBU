@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName108;
          desc = "Climb the spiral path.";
          hasEggIndex = "6";
+         guid = "{AF781BFC-B941-4335-86C6-B7CE542AA4CE}";
    };
    new SimGroup(check2) {
 

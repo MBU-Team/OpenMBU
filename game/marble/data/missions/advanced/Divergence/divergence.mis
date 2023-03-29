@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          desc = "divergence";
          name = $Text::LevelName104;
          gameType = "SinglePlayer";
+         guid = "{BA97253E-1B1D-40BF-9F4E-938FCC1DCDAC}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

@@ -50,6 +50,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName101;
          difficulty = "5";
          isInDemoMode = "1";
+         guid = "{C375FCB5-1203-4BDC-AFDA-F8C22B463DA9}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

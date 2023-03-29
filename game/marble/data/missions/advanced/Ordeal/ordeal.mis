@@ -28,6 +28,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          desc = "Can you survive the challenges?";
          hasEggIndex = "15";
+         guid = "{25193471-D1F7-4A31-B30F-792891C35558}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

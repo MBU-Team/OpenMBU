@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          level = "16";
          name = $Text::LevelName27;
          desc = "Skate for the gems.";
+         guid = "{1682115C-88F2-44B1-8DC1-0E28A000DEB2}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

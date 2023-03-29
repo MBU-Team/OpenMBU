@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          artist = "Alex Swanson";
          desc = "Timely Ascent";
          type = "intermediate";
+         guid = "{9648B38D-880B-4EAD-8443-E9DFBE17B273}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

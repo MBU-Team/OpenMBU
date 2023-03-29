@@ -10,6 +10,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName61;
          time = "35000";
          include = "1";
+         guid = "{2E115F91-3CD4-49F9-B36E-5901B95D4107}";
    };
    new Sky(Sky) {
       position = "336 136 0";

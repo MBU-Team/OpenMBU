@@ -13,6 +13,7 @@ name  =  $Text::LevelNameMP8;
          gameType = "MultiPlayer";
          desc = "Gem Hunt!";
          maxGemsPerGroup = "6";
+         guid = "{5D7CFB46-1657-4121-BE0A-1BB9D551A17E}";
    };
    new Sky(Sky) {
       position = "336 136 0";

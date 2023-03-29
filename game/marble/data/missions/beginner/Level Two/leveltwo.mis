@@ -12,6 +12,7 @@ startHelpText  =  $Text::LevelStartHelp2;
 name  =  $Text::LevelName2;
          gameType = "singlePlayer";
          desc = "Learn about the Super Jump, Super Speed, and Elevators.";
+         guid = "{4340C070-D0C3-464D-BC4A-E5AB6F63BEE9}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

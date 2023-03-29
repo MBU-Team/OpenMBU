@@ -10,6 +10,7 @@ new SimGroup(MissionGroup) {
          desc = "A test mission for an interior";
          type = "intermediate";
          difficulty = "6";
+         guid = "{05EFFBDF-75CA-4107-AB93-7865F4383107}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

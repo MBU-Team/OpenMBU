@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          startHelpText = $Text::LevelStartHelp81;
          difficulty = "5";
          artist = "Alex Swanson";
+         guid = "{8BAAA76E-ADF2-4337-BB89-8885D8E4188F}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

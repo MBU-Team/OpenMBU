@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          artist = "Alex Swanson";
          name = $Text::LevelName40;
          gameType = "SinglePlayer";
+         guid = "{8F284E76-0C97-4D44-93A6-287DC35F4DD2}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

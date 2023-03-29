@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          level = "39";
 name  =  $Text::LevelName36;
          hasEggIndex = "10";
+         guid = "{435771D3-BC67-4B48-B353-1D8C280DD7CF}";
    };
    new Sky(Sky) {
       position = "336 136 0";

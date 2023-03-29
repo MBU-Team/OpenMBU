@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          include = "1";
          name = "Level Preview Mission";
          difficulty = "1";
+         guid = "{487E10B5-3378-4945-BFE5-00464E484250}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

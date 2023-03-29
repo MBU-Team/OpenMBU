@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName70;
          artist = "Alex Swanson";
          hasEggIndex = "18";
+         guid = "{A57A2C49-DE68-41B8-B01E-4A6776990F32}";
    };
    new Sky(Sky) {
       position = "336 136 0";
