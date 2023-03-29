@@ -283,10 +283,13 @@ function pauseGame()
    {
       // we only actually halt the game events in single player games
       $gamePaused = true;
-      //if ($timeScale > $pauseTimescale)
-      //   $saveTimescale = $timescale;
+      if (serverGetGameMode() $= "scrum")
+      {
+         if ($timeScale > $pauseTimescale)
+            $saveTimescale = $timescale;
 
-      //$timescale = $pauseTimescale;
+         $timescale = $pauseTimescale;
+      }
    }
 }
 
@@ -302,9 +305,12 @@ function resumeGame()
    if (ServerConnection.gameState $= "play" && $Client::connectedMultiplayer)
       startDemoTimer();
       
-   //if ($saveTimescale $= "")
-   //   $saveTimescale = 1.0;
-   //$timescale = $saveTimescale;
+   if (serverGetGameMode() $= "scrum")
+   {
+      if ($saveTimescale $= "")
+         $saveTimescale = 1.0;
+      $timescale = $saveTimescale;
+   }
 }
 
 function destroyGame()
