@@ -6,6 +6,8 @@
 #define ACHIEVEMENT_ICON_OFFSET_X 20
 #define ACHIEVEMENT_ICON_OFFSET_Y 17
 
+#define HEADER_OFFSET_Y 30
+
 class GuiAchievementPopupCtrl : public GuiControl
 {
     typedef GuiControl Parent;

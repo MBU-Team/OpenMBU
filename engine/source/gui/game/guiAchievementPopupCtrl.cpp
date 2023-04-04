@@ -94,11 +94,15 @@ void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
         GFX->drawBitmapStretch(mIconTextureObject, rect);
     }
 
-    GFX->setBitmapModulation(mProfile->mFontColor);
-    renderJustifiedText(offset, mBounds.extent, mTitle);
+    // I can't quite find an easy way to change the font size within this method, so both the achievement unlocked and
+    // actual achievement text are the same size.
 
-    //Point2I headerExtent(mBounds.extent.x, mBounds.extent.y / 2);
-    //renderJustifiedText(offset, headerExtent, "Achievement Unlocked");
+    GFX->setBitmapModulation(mProfile->mFontColor);
+    Point2I textExtent(mBounds.extent.x, mBounds.extent.y - HEADER_OFFSET_Y);
+    renderJustifiedText(offset, textExtent, "Achievement Unlocked");
+
+    Point2I titleOffset(offset.x, offset.y + (mBounds.extent.y - textExtent.y));
+    renderJustifiedText(titleOffset, textExtent, mTitle);
 
     renderChildControls(offset, updateRect);
 }
