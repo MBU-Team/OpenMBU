@@ -947,6 +947,11 @@ U32 Item::packUpdate(NetConnection* connection, U32 mask, BitStream* stream)
         }
         stream->writeFlag(!(mask & NoWarpMask));
     }
+
+#ifdef ITEM_FIX_SET_HIDDEN
+    if (stream->writeFlag(mask & HiddenMask))
+        stream->writeFlag(mHidden);
+#endif
     return retMask;
 }
 
@@ -1038,6 +1043,12 @@ void Item::unpackUpdate(NetConnection* connection, BitStream* stream)
             mat.setColumn(3, pos);
         }
     }
+
+#ifdef ITEM_FIX_SET_HIDDEN
+    if (stream->readFlag())
+        mHidden = stream->readFlag();
+#endif
+
     Parent::setTransform(mat);
 
 #ifdef MB_ULTRA
