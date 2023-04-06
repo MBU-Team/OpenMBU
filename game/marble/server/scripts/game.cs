@@ -618,7 +618,7 @@ function spawnGemAt(%spawnPoint, %includeLight)
    if (isObject(%spawnPoint.gem) && !%spawnPoint.gem.isHidden())
    {
       error("Gem spawn point already has an active gem on it");
-      return %spawnPoint.gem;
+      //return %spawnPoint.gem;
    }
      
    // see if the spawn point has a custom gem datablock
@@ -818,8 +818,8 @@ function fillGemGroup(%gemGroup)
       %spawn = %spawnGroup.getObject(%i);
       
       // don't spawn duplicate gems
-      if (isObject(%spawn.gem) && !%spawn.gem.isHidden())
-         continue;
+      //if (isObject(%spawn.gem) && !%spawn.gem.isHidden())
+      //   continue;
       
       // spawn a gem and light at the spawn point
       %gem = spawnGemAt(%spawn,true);
