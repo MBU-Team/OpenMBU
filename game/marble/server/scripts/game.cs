@@ -617,8 +617,18 @@ function spawnGemAt(%spawnPoint, %includeLight)
    // if it has a gem on it, that is not good
    if (isObject(%spawnPoint.gem) && !%spawnPoint.gem.isHidden())
    {
-      error("Gem spawn point already has an active gem on it");
-      return %spawnPoint.gem;
+      // TODO: So currently some gems don't spawn when they should.
+      // This makes singleplayer gem hunt inconsistent.
+      // For now we can do this but this could cause issues, we need to
+      // double check and implement a proper fix.
+      $TempFix::BadGems = $Game::SPGemHunt;
+      if ($TempFix::BadGems)
+      {
+         error("Gem spawn point already has an active gem on it (" @ %spawnPoint.gem @ "), ignoring due to tempfix");
+      } else {
+         error("Gem spawn point already has an active gem on it");
+         return %spawnPoint.gem;
+      }
    }
      
    // see if the spawn point has a custom gem datablock
@@ -819,7 +829,21 @@ function fillGemGroup(%gemGroup)
       
       // don't spawn duplicate gems
       if (isObject(%spawn.gem) && !%spawn.gem.isHidden())
-         continue;
+      {
+         // TODO: So currently some gems don't spawn when they should.
+         // This makes singleplayer gem hunt inconsistent.
+         // For now we can do this but this could cause issues, we need to
+         // double check and implement a proper fix.
+         $TempFix::BadGems = $Game::SPGemHunt;
+         if ($TempFix::BadGems)
+         {
+            error("There appears to be a valid gem already (" @ %spawn.gem @ "), but it might not be the case, ignoring due to tempfix.");
+         }
+         else
+         {
+            continue;
+         }
+      }
       
       // spawn a gem and light at the spawn point
       %gem = spawnGemAt(%spawn,true);
