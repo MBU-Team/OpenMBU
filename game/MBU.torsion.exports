@@ -6817,6 +6817,7 @@ More of a helper function than anything.   If console access to the field list i
     <function>        <name>checkForPDLC</name>
     </function>
     <function>        <name>cleanDetailManager</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>clearClientPaths</name>
     </function>
@@ -6905,12 +6906,16 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
         <args>packageName</args>
     </function>
     <function>        <name>debug</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>deleteDataBlocks</name>
         <desc>Delete all the datablocks we've downloaded. This is usually done in preparation of downloading a new set of datablocks,  such as occurs on a mission change, but it's also good post-mission cleanup.</desc>
     </function>
     <function>        <name>deleteEmptyVariables</name>
         <desc>deleteVariables(wildCard)</desc>
+    </function>
+    <function>        <name>deletePrefs</name>
+        <args>relativeFileName</args>
     </function>
     <function>        <name>deleteVariables</name>
         <args>wildCard</args>
@@ -6945,22 +6950,27 @@ If filePath is , this function writes the resource descriptions to the console</
     </function>
     <function>        <name>dumpMemSnapshot</name>
         <args>string fileName</args>
-        <desc>Dump a snapshot of current memory to a file.</desc>
+        <desc>Dump a snapshot of current memory to a file.
+(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>dumpNetStats</name>
     </function>
     <function>        <name>dumpNetStringTable</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>dumpProcessList</name>
     </function>
     <function>        <name>dumpResourceStats</name>
-        <desc>Dump information about resources. Debug only!</desc>
+        <desc>Dump information about resources. Debug only!
+(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>dumpTextureStats</name>
-        <desc>Dump texture manager statistics. Debug only!</desc>
+        <desc>Dump texture manager statistics. Debug only!
+(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>DumpUnflaggedAllocs</name>
         <args>filename [optional, if not specified dumps to console]</args>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>duplicateCachedFont</name>
         <args>oldFontName, oldFontSize, newFontName</args>
@@ -7044,6 +7054,7 @@ If filePath is , this function writes the resource descriptions to the console</
         <args>text</args>
     </function>
     <function>        <name>FlagCurrentAllocs</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>flagCurrentGFXResources</name>
     </function>
@@ -7087,6 +7098,10 @@ If filePath is , this function writes the resource descriptions to the console</
         <args>int a=1, int b=0</args>
         <desc>Get a random number between a and b.</desc>
     </function>
+    <function>        <name>getDetermRandom2</name>
+        <args>int a=1, int b=0</args>
+        <desc>Get a random number between a and b.</desc>
+    </function>
     <function>        <name>getDisplayDeviceList</name>
         <desc>Returns a tab-seperated string of the detected devices.</desc>
     </function>
@@ -7124,6 +7139,7 @@ If filePath is , this function writes the resource descriptions to the console</
     <function>        <name>getLanguage</name>
     </function>
     <function>        <name>getMaxFrameAllocation</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>getModPaths</name>
         <desc>Return the mod paths the resource manager is using.</desc>
@@ -7612,6 +7628,10 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
         <args>defaultFov</args>
         <desc>- Set the default FOV for a camera.</desc>
     </function>
+    <function>        <name>setDetermRandom2Seed</name>
+        <args>int seed=-1</args>
+        <desc>Set the current determ random seed. If no seed is provided, then the current time in ms is used.</desc>
+    </function>
     <function>        <name>setDetermRandomSeed</name>
         <args>int seed=-1</args>
         <desc>Set the current determ random seed. If no seed is provided, then the current time in ms is used.</desc>
@@ -7628,9 +7648,11 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     </function>
     <function>        <name>setInteriorFocusedDebug</name>
         <args>bool enable</args>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>setInteriorRenderMode</name>
         <args>int modeNum</args>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>setLogMode</name>
         <args>mode</args>
@@ -7903,6 +7925,7 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>updateVideoMode</name>
     </function>
     <function>        <name>ValidateMemory</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>variablesExist</name>
         <args>wildCard</args>

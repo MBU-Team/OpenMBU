@@ -126,6 +126,8 @@ function onMissionLoaded()
       $Game::GemCount = MissionInfo.maxGems;
    else
       $Game::GemCount = countGems(MissionGroup);
+      
+   initRandomSpawnPoints();
 
    // JMQ: don't start mission yet, wait for command from Lobby 
    // (Also note that serverIsInLobby check may not be valid at this point; its possible that the 
@@ -161,11 +163,38 @@ function onMissionReset()
       commandToClient(%cl, 'GameStart');
       %cl.resetStats();
    }
+   
+   initRandomSpawnPoints();
 
    if (MissionInfo.gameMode $= "Scrum")
       SetupGems(MissionInfo.numGems);
 
    $Game::Running = true;
+}
+
+function initRandomSpawnPoints()
+{
+   $Game::UseDetermSpawn = $Game::SPGemHunt && MissionInfo.gameMode $= "Scrum";
+
+   if ($Game::UseDetermSpawn)
+   {
+      $Game::SpawnRandFunction = getDetermRandom;
+      setDetermRandomSeed(100);
+   }
+   else
+   {
+      $Game::SpawnRandFunction = getRandom;
+   }   
+   
+   if ($Game::UseDetermSpawn)
+   {
+      $Game::PlayerSpawnRandFunction = getDetermRandom2;
+      setDetermRandom2Seed(100);
+   }
+   else
+   {
+      $Game::PlayerSpawnRandFunction = getRandom;
+   }
 }
 
 function SimGroup::onMissionReset(%this, %checkpointConfirmNum )
@@ -886,16 +915,6 @@ function SetupGems(%numGemGroups)
    // set up the gem spawn groups (this is done in engine code to improve performance).
    // it will create a GemSpawnGroups object that contains groups of clustered spawn points
    SetupGemSpawnGroups(%gemGroupRadius, %maxGemsPerGroup);
-   $Game::UseDetermSpawn = $Game::SPGemHunt;
-   if ($Game::UseDetermSpawn)
-   {
-      $Game::SpawnRandFunction = getDetermRandom;
-      setDetermRandomSeed(100);
-   }
-   else
-   {
-      $Game::SpawnRandFunction = getRandom;
-   }
    $Server::CurrentGemGroup = 0;
    
    // ActiveGemGroups contains groups of spawned gems.  the groups are populated using the spawn point
@@ -1021,7 +1040,7 @@ function GameConnection::onClientJoinGame(%this)
 
 function GameConnection::enterWaitState(%this)
 {
-   %spawnPoint = pickSpawnPoint();
+   %spawnPoint = pickSpawnPointRandom();
    %spawnPos = getSpawnPosition(%spawnPoint);
    
    if (isSinglePlayerMode())
@@ -1845,6 +1864,14 @@ function echoClosestMarble()
 
 function pickSpawnPoint()
 {
+   return pickSpawnPointRandom($Game::PlayerSpawnRandFunction);
+}
+
+function pickSpawnPointRandom(%randFunction)
+{
+   if (%randFunction $= "")
+      %randFunction = getRandom;   
+   
    %group = nameToID("MissionGroup/SpawnPoints");
 
    if (%group != -1)
@@ -1855,7 +1882,7 @@ function pickSpawnPoint()
       {
          for (%i = 0; %i < %count; %i++)
          {
-            %index = getRandom(%count-1);
+            %index = call(%randFunction, %count-1);
             %spawn = %group.getObject(%index);
             %spawnpos = %spawn.getPosition();
 
@@ -1863,12 +1890,12 @@ function pickSpawnPoint()
             // within the spawn radius.
             InitContainerRadiusSearch(%spawnpos, $Server::PlayerSpawnMinDist, $TypeMasks::PlayerObjectType);
 
-            if (!containerSearchNext())
+            if (!containerSearchNext() || $Game::UseDetermSpawn)
                return %spawn;
          }
 
          // Unable to find an empty pad so spawn at a random one
-         %index = getRandom(%count-1);
+         %index = call(%randFunction, %count-1);
          %spawn = %group.getObject(%index);
 
          return %spawn;

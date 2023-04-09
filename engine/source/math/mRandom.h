@@ -116,6 +116,7 @@ typedef MRandomLCG MRandom;
 
 extern MRandomLCG gRandGen;
 extern MRandomLCG gRandGenDeterm;
+extern MRandomLCG gRandGenDeterm2;
 
 
 #endif //_MRANDOM_H_

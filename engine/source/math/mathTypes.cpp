@@ -578,6 +578,21 @@ ConsoleFunction(setDetermRandomSeed, void, 1, 2, "(int seed=-1) Set the current 
     gRandGenDeterm.setSeed(seed);
 }
 
+ConsoleFunction(setDetermRandom2Seed, void, 1, 2, "(int seed=-1) Set the current determ random seed. If no seed is provided, then the current time in ms is used.")
+{
+    U32 seed = Platform::getRealMilliseconds();
+    if (argc == 2)
+        seed = dAtoi(argv[1]);
+
+    // TODO: Deal with journaling
+//    if (Journal::_State == PlayState)
+//        Journal::mFile->read(&seed);
+//    else if (Journal::_State == RecordState)
+//        Journal::mFile->write(seed);
+
+    gRandGenDeterm2.setSeed(seed);
+}
+
 ConsoleFunction(getRandomSeed, S32, 1, 1, "Return the current random seed.")
 {
     return gRandGen.getSeed();
@@ -633,6 +648,27 @@ ConsoleFunction(getDetermRandom, F32, 1, 3, "(int a=1, int b=0)"
         }
     }
     return gRandGenDeterm.randF();
+}
+
+ConsoleFunction(getDetermRandom2, F32, 1, 3, "(int a=1, int b=0)"
+                                            "Get a random number between a and b.")
+{
+    if (argc == 2)
+        return F32(gRandGenDeterm2.randI(0, dAtoi(argv[1])));
+    else
+    {
+        if (argc == 3) {
+            S32 min = dAtoi(argv[1]);
+            S32 max = dAtoi(argv[2]);
+            if (min > max) {
+                S32 t = min;
+                min = max;
+                max = t;
+            }
+            return F32(gRandGenDeterm2.randI(min, max));
+        }
+    }
+    return gRandGenDeterm2.randF();
 }
 
 ConsoleFunctionGroupEnd(RandomNumbers);
