@@ -1368,7 +1368,7 @@ function GameConnection::onFoundGem(%this,%amount,%gem,%points)
       // send message to everybody except client telling them that he scored
       messageAllExcept(%this, -1, 'MsgClientScoreChanged', "", %this, false, %this.points, %oldPoints);
       
-      //commandToClient(%this, 'setPoints', %this, %this.points);
+      commandToClient(%this, 'setPoints', %this, %this.points);
       //if (%points == 1)
       //   messageClient(%this, 'MsgItemPickup', $Text::Tagged::GemPickupOnePoint);
       //else
@@ -1936,6 +1936,8 @@ function setWaitState(%client)
 // server is in a "start" state
 function setStartState(%client)
 {
+   if (serverGetGameMode() $= "scrum")
+      commandToClient(%client, 'setPoints', 0);
    commandToClient(%client, 'setGemCount', 0, $Game::GemCount);
    %help = MissionInfo.startHelpText;
    if (%help !$= "")

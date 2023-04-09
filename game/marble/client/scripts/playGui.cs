@@ -41,7 +41,7 @@ function PlayGui::onWake(%this)
    // Fix inputs getting stuck
    clearInputs();
 
-   if (ServerConnection.isMultiplayer || $Game::SPGemHunt)
+   if (ServerConnection.isMultiplayer)// || $Game::SPGemHunt)
    {
       Canvas.pushDialog(PlayerListGui);
       
@@ -107,6 +107,7 @@ function PlayGui::show(%this)
 	  	%this.resizeGemSlots();	
 	    %this.setGemCount(%this.gemCount);
 	    %this.setMaxGems(%this.maxGems);
+	    %this.setPoints(%this.points);
 	    %this.scaleGemArrows();
 	   
 		// recenter center things
@@ -243,6 +244,8 @@ function PlayGui::resizeGemSlots(%this)
 
 function PlayGui::setMaxGems(%this,%count)
 {
+   if ($Game::SPGemHunt)
+      return;
    %this.maxGems = %count;
    %one = %count % 10;
    %ten = (%count - %one) % 100;
@@ -326,6 +329,8 @@ function PlayGui::setMaxGems(%this,%count)
 
 function PlayGui::setGemCount(%this,%count)
 {
+   if ($Game::SPGemHunt)
+      return;
    %this.gemCount = %count;
    %one = %count % 10;
    %ten = (%count - %one) % 100;
@@ -340,6 +345,9 @@ function PlayGui::setGemCount(%this,%count)
 //-----------------------------------------------------------------------------
 function PlayGui::setPoints(%this, %clientid, %points)
 {
+   if (!$Game::SPGemHunt)
+      return;
+   %this.points = %points;
    %pts = %points;
 
    %drawNeg = false;
@@ -360,7 +368,7 @@ function PlayGui::setPoints(%this, %clientid, %points)
    GemsFoundTen.setNumber(%ten);
    GemsFoundOne.setNumber(%one);
 
-   %visible = %pts != 0;
+   %visible = true;//%pts != 0;
 
    GemsSlash.setVisible(false);
    HUD_ShowGem.setVisible(false);
@@ -379,6 +387,9 @@ function PlayGui::setPoints(%this, %clientid, %points)
       GemsFoundHundred.setVisible(false);
 
       GemsFoundOne.position = $gemsFoundThirdSlot - %negOffset SPC $gemsVertPos;
+      
+      //HUD_ShowGem.setVisible(%visible);
+      //HUD_ShowGem.position = $showGemFirstSlot - 48 SPC $showGemVertPos;
    }
    else if (%pts < 100)
    {
@@ -388,6 +399,9 @@ function PlayGui::setPoints(%this, %clientid, %points)
 
       GemsFoundOne.position = $gemsFoundThirdSlot SPC $gemsVertPos;
       GemsFoundTen.position = $gemsFoundSecondSlot SPC $gemsVertPos;
+      
+      //HUD_ShowGem.setVisible(%visible);
+      //HUD_ShowGem.position = $showGemSecondSlot - 24 SPC $showGemVertPos;
    }
    else
    {
@@ -398,7 +412,17 @@ function PlayGui::setPoints(%this, %clientid, %points)
       GemsFoundOne.position = $gemsFoundThirdSlot + %negOffset SPC $gemsVertPos;
       GemsFoundTen.position = $gemsFoundSecondSlot + %negOffset SPC $gemsVertPos;
       GemsFoundHundred.position = $gemsFoundFirstSlot + %negOffset SPC $gemsVertPos;
+
+     //%width = getWord(getResolution(), 0);
+     //if (%width > 640)
+        //HUD_ShowGem.setVisible(%visible);
+     //else
+        //HUD_ShowGem.setVisible(false);
+     //HUD_ShowGem.position = $showGemThirdSlot SPC $showGemVertPos;
    }
+   
+   HUD_ShowGem.setVisible(%visible);
+   HUD_ShowGem.position = $showGemFirstSlot - 48 SPC $showGemVertPos;
 }
 
 //-----------------------------------------------------------------------------
