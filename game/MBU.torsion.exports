@@ -7975,21 +7975,40 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
     </function>
+    <function>        <name>XBLiveAddPolledHost</name>
+        <args>index</args>
+    </function>
     <function>        <name>XBLiveAreStatsLoaded</name>
         <args>level</args>
     </function>
     <function>        <name>XBLiveCancelLoading</name>
+    </function>
+    <function>        <name>XBLiveCancelQoSPoll</name>
     </function>
     <function>        <name>XBLiveCheckForInvite</name>
         <args>port</args>
     </function>
     <function>        <name>XBLiveClearLoadedLeaderboards</name>
     </function>
+    <function>        <name>XBLiveConnect</name>
+        <args>index, invited, callback</args>
+    </function>
+    <function>        <name>XBLiveCreateHostedMatch</name>
+        <args>name, gamemode, mission, maxplayers, privateslots, callback</args>
+    </function>
     <function>        <name>XBLiveEndStatsSession</name>
+    </function>
+    <function>        <name>XBLiveGetGamerZone</name>
+        <args>port</args>
     </function>
     <function>        <name>XBLiveGetLeaderboardRow</name>
     </function>
     <function>        <name>XBLiveGetLeaderboardRowCount</name>
+    </function>
+    <function>        <name>XBLiveGetLocalQoSInfo</name>
+    </function>
+    <function>        <name>XBLiveGetMatchResultsEntry</name>
+        <args>index</args>
     </function>
     <function>        <name>XBLiveGetSignInPort</name>
     </function>
@@ -8002,6 +8021,14 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveGetYAxisInversion</name>
         <args>port</args>
+    </function>
+    <function>        <name>XBLiveIsArbRegistered</name>
+    </function>
+    <function>        <name>XBLiveIsFriend</name>
+        <args>port, xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveIsPlayerMuted</name>
+        <args>xbLiveId</args>
     </function>
     <function>        <name>XBLiveIsRanked</name>
     </function>
@@ -8021,6 +8048,9 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveLoadLeaderboard</name>
     </function>
+    <function>        <name>XBLiveProbeLocalQoS</name>
+        <args>callback</args>
+    </function>
     <function>        <name>XBLiveReadStats</name>
     </function>
     <function>        <name>XBLiveRegisterLocalTalker</name>
@@ -8032,6 +8062,12 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveRegisterRemoteTalker</name>
         <args>xbLiveId, address</args>
     </function>
+    <function>        <name>XBLiveSearchForMatches</name>
+        <args>gamemode, mission, maxplayers, unknown, callback</args>
+    </function>
+    <function>        <name>XBLiveSetEnabled</name>
+        <args>enabled</args>
+    </function>
     <function>        <name>XBLiveSetRichPresence</name>
         <args>port, presence</args>
     </function>
@@ -8041,10 +8077,18 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveSetStatsDirty</name>
         <args>level</args>
     </function>
+    <function>        <name>XBLiveShowFriendRequestUI</name>
+        <args>port, xuid</args>
+    </function>
     <function>        <name>XBLiveShowGamercardUI</name>
         <args>port, xuid</args>
     </function>
+    <function>        <name>XBLiveShowPlayerReviewUI</name>
+        <args>port, xuid</args>
+    </function>
     <function>        <name>XBLiveShowSigninUI</name>
+    </function>
+    <function>        <name>XBLiveStartQoSPoll</name>
     </function>
     <function>        <name>XBLiveStartStatsSession</name>
     </function>

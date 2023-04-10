@@ -17,6 +17,8 @@ ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 {
     argc;
 
+    // TODO: Implement BZA loading
+
     const char* zipName = argv[2];
     Con::executef(3, "onZipLoaded", zipName, Con::getIntArg(0));
 }
@@ -24,6 +26,9 @@ ConsoleFunction(loadZip, void, 2, 2, "(zipName)")
 ConsoleFunction(isResourceBGLoaded, bool, 2, 2, "(file)")
 {
     argc;
+
+    // TODO: Implement BZA loading
+
     return true;
 }
 
@@ -153,6 +158,8 @@ ConsoleFunction(XBLiveGetUserId, const char*, 1, 1, "()")
 {
     argc;
 
+    // TODO: Implement
+
     // XBLiveGetUserID returns in the format "<xuid>\t0" according to the comments in LevelScoreGui.gui
 
     return "1\t0";
@@ -162,22 +169,30 @@ ConsoleFunction(XBLiveGetSignInPort, S32, 1, 1, "()")
 {
     argc;
 
+    // TODO: Implement
+
     return 0;
 }
 
 ConsoleFunction(XBLiveSetSignInPort, void, 2, 2, "(port)")
 {
     argc;
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveUpdateSigninState, void, 1, 1, "()")
 {
     argc;
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveShowSigninUI, void, 1, 1, "()")
 {
     argc;
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBShowMarketplaceUI, bool, 4, 4, "(port, category, itemId)")
@@ -190,6 +205,33 @@ ConsoleFunction(XBShowMarketplaceUI, bool, 4, 4, "(port, category, itemId)")
 ConsoleFunction(XBLiveShowGamercardUI, void, 3, 3, "(port, xuid)")
 {
     argc;
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveShowPlayerReviewUI, void, 3, 3, "(port, xuid)")
+{
+    argc;
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveShowFriendRequestUI, void, 3, 3, "(port, xuid)")
+{
+    argc;
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveGetGamerZone, const char*, 1, 1, "(port)")
+{
+    argc;
+
+    int port = atoi(argv[1]);
+
+    // TODO: Implement
+
+    return "";
 }
 
 ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
@@ -278,6 +320,8 @@ ConsoleFunction(XBLiveRegisterPlayer, void, 4, 4, "(name, xbLiveId, invited)")
     bool invited = dAtob(argv[3]);
 
     Con::printf(" >> Registering player: %s, %s, %d", name, xbLiveId, invited);
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveUnregisterPlayer, void, 3, 3, "(name, xbLiveId)")
@@ -288,6 +332,8 @@ ConsoleFunction(XBLiveUnregisterPlayer, void, 3, 3, "(name, xbLiveId)")
     const char* xbLiveId = argv[2];
 
     Con::printf(" >> Unregistering player: %s, %s", name, xbLiveId);
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveRegisterRemoteTalker, void, 3, 3, "(xbLiveId, address)")
@@ -298,6 +344,8 @@ ConsoleFunction(XBLiveRegisterRemoteTalker, void, 3, 3, "(xbLiveId, address)")
     const char* address = argv[2];
 
     Con::printf(" >> Registering remote talker: %s, %s", xbLiveId, address);
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveUnregisterRemoteTalker, void, 2, 2, "(xbLiveId)")
@@ -307,6 +355,8 @@ ConsoleFunction(XBLiveUnregisterRemoteTalker, void, 2, 2, "(xbLiveId)")
     const char* xbLiveId = argv[1];
 
     Con::printf(" >> Unregistering remote talker: %s", xbLiveId);
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveRegisterLocalTalker, void, 2, 2, "(xbLiveId)")
@@ -316,6 +366,8 @@ ConsoleFunction(XBLiveRegisterLocalTalker, void, 2, 2, "(xbLiveId)")
     const char* xbLiveId = argv[1];
 
     Con::printf(" >> Registering local talker: %s", xbLiveId);
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveUnregisterLocalTalker, void, 1, 1, "()")
@@ -323,6 +375,8 @@ ConsoleFunction(XBLiveUnregisterLocalTalker, void, 1, 1, "()")
     argc;
 
     Con::printf(" >> Unregistering local talker");
+
+    // TODO: Implement
 }
 
 ConsoleFunction(XBLiveUpdateRemoteVoiceStatus, void, 3, 3, "(xbLiveId, xbLiveVoice)")
@@ -333,6 +387,35 @@ ConsoleFunction(XBLiveUpdateRemoteVoiceStatus, void, 3, 3, "(xbLiveId, xbLiveVoi
     const char* xbLiveVoice = argv[2];
 
     Con::printf(" >> Updating remote voice status: %s, %s", xbLiveId, xbLiveVoice);
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveIsPlayerMuted, bool, 2, 2, "(xbLiveId)")
+{
+    argc;
+
+    const char *xbLiveId = argv[1];
+
+    Con::printf(" >> Checking if player is muted: %s", xbLiveId);
+
+    // TODO: Implement
+
+    return false;
+}
+
+ConsoleFunction(XBLiveIsFriend, bool, 2, 2, "(port, xbLiveId)")
+{
+    argc;
+
+    int port = dAtoi(argv[1]);
+    const char *xbLiveId = argv[2];
+
+    Con::printf(" >> Checking if player is a friend: %s", xbLiveId);
+
+    // TODO: Implement
+
+    return false;
 }
 
 ConsoleFunction(XBLiveXnAddrToString, const char*, 2, 2, "(address)")
@@ -343,7 +426,145 @@ ConsoleFunction(XBLiveXnAddrToString, const char*, 2, 2, "(address)")
 
     Con::printf(" >> Converting address to string: %s", address);
 
+    // TODO: Implement
+
     return address;
+}
+
+ConsoleFunction(XBLiveAddPolledHost, void, 2, 2, "(index)")
+{
+    argc;
+
+    int index = dAtoi(argv[1]);
+
+    Con::printf(" >> Adding polled host: %d", index);
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveIsArbRegistered, bool, 1, 1, "()")
+{
+    argc;
+
+    Con::printf(" >> Checking if ARB is registered");
+
+    // TODO: Implement
+
+    return true;
+}
+
+ConsoleFunction(XBLiveCreateHostedMatch, void, 6, 6, "(name, gamemode, mission, maxplayers, privateslots, callback)")
+{
+    argc;
+
+    const char* name = argv[1];
+    const char* gamemode = argv[2];
+    const char* mission = argv[3];
+    const char* maxplayers = argv[4];
+    const char* privateslots = argv[5];
+    const char* callback = argv[6];
+
+    Con::printf(" >> Creating hosted match: %s, %s, %s, %s, %s", name, gamemode, mission, maxplayers, privateslots);
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveSearchForMatches, void, 6, 6, "(gamemode, mission, maxplayers, unknown, callback)")
+{
+    argc;
+
+    // TODO: most likely calls onXBLiveQoSPollComplete when done
+
+    const char* gamemode = argv[1];
+    const char* mission = argv[2];
+    const char* maxplayers = argv[3];
+    const char* unknown = argv[4]; // TODO: figure out unknown argument
+    const char* callback = argv[5];
+
+    Con::printf(" >> Searching for matches");
+    // TODO: Implement
+
+    Con::evaluatef("%s", callback);
+}
+
+ConsoleFunction(XBLiveProbeLocalQoS, void, 2, 2, "(callback)")
+{
+    argc;
+
+    const char *callback = argv[1];
+
+    Con::printf(" >> Probing local QoS");
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveGetLocalQoSInfo, const char*, 1, 1, "()")
+{
+    argc;
+
+    Con::printf(" >> Getting local QoS info");
+
+    // TODO: Implement
+
+    return "";
+}
+
+ConsoleFunction(XBLiveStartQoSPoll, void, 1, 1, "()")
+{
+    argc;
+
+    Con::printf(" >> Starting QoS poll");
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveCancelQoSPoll, void, 1, 1, "()")
+{
+    argc;
+
+    Con::printf(" >> Cancelling QoS poll");
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveGetMatchResultsEntry, const char*, 3, 3, "(index)")
+{
+    argc;
+
+    S32 index = dAtoi(argv[1]);
+
+    Con::printf(" >> Getting match results entry: %d", index);
+
+    // TODO: Implement
+
+    return "";
+}
+
+ConsoleFunction(XBLiveSetEnabled, void, 2, 2, "(enabled)")
+{
+    argc;
+
+    bool enabled = dAtob(argv[1]);
+
+    Con::printf(" >> Setting enabled: %d", enabled);
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveConnect, void, 2, 2, "(index, invited, callback)")
+{
+    argc;
+
+    S32 index = dAtoi(argv[1]);
+    bool invited = dAtob(argv[2]);
+    const char* callback = argv[3];
+
+    Con::printf(" >> Connecting to match: %d, %d", index, invited);
+
+    // TODO: Implement
+    // TODO: XBLiveConnect sets $XBLive::secureHostAddress
+
+    Con::evaluatef("%s", callback);
 }
 
 ConsoleFunction(outputdebugline, void, 2, 2, "()")
