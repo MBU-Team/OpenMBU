@@ -65,6 +65,10 @@ NetConnection* NetInterface::findPendingConnection(const NetAddress* address, U3
     return NULL;
 }
 
+//-----------------------------------------------------------------------------
+// NetInterface incoming packet dispatch
+//-----------------------------------------------------------------------------
+
 void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
 {
 
@@ -109,11 +113,14 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
             case ConnectChallengeRequest:
                 handleConnectChallengeRequest(addr, &pStream);
                 break;
+            case ConnectChallengeResponse:
+                handleConnectChallengeResponse(addr, &pStream);
+                break;
             case ConnectRequest:
                 handleConnectRequest(addr, &pStream);
                 break;
-            case ConnectChallengeResponse:
-                handleConnectChallengeResponse(addr, &pStream);
+            case ConnectReject:
+                handleConnectReject(addr, &pStream);
                 break;
             case ConnectAccept:
                 handleConnectAccept(addr, &pStream);
@@ -121,13 +128,18 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
             case Disconnect:
                 handleDisconnect(addr, &pStream);
                 break;
-            case ConnectReject:
-                handleConnectReject(addr, &pStream);
-                break;
             }
         }
     }
 }
+
+void NetInterface::handleInfoPacket(const NetAddress* address, U8 packetType, BitStream* stream)
+{
+}
+
+//-----------------------------------------------------------------------------
+// NetInterface connection handshake initiaton and processing
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -159,6 +171,21 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
+void NetInterface::startConnection(NetConnection* conn)
+{
+    addPendingConnection(conn);
+    conn->mConnectionSendCount = 0;
+    conn->setConnectSequence(Platform::getVirtualMilliseconds());
+    conn->setConnectionState(NetConnection::AwaitingChallengeResponse);
+
+    // This is a the client side of the connection, so set the connection to
+    // server flag. We need to set this early so that if the connection times
+    // out, its onRemove() will handle the cleanup properly.
+    conn->setIsConnectionToServer();
+
+    // Everything set, so send off the request.
+    sendConnectChallengeRequest(conn);
+}
 
 void NetInterface::sendConnectChallengeRequest(NetConnection* conn)
 {
@@ -225,6 +252,8 @@ void NetInterface::handleConnectChallengeResponse(const NetAddress* address, Bit
     sendConnectRequest(conn);
 }
 
+//-----------------------------------------------------------------------------
+// NetInterface connect request
 //-----------------------------------------------------------------------------
 
 void NetInterface::sendConnectRequest(NetConnection* conn)
@@ -319,6 +348,8 @@ void NetInterface::handleConnectRequest(const NetAddress* address, BitStream* st
 }
 
 //-----------------------------------------------------------------------------
+// NetInterface connection acceptance and handling
+//-----------------------------------------------------------------------------
 
 void NetInterface::sendConnectAccept(NetConnection* conn)
 {
@@ -352,6 +383,10 @@ void NetInterface::handleConnectAccept(const NetAddress* address, BitStream* str
     conn->setConnectSequence(connectSequence);
 }
 
+//-----------------------------------------------------------------------------
+// NetInterface connection rejection and handling
+//-----------------------------------------------------------------------------
+
 void NetInterface::sendConnectReject(NetConnection* conn, const char* reason)
 {
     if (!reason)
@@ -379,6 +414,16 @@ void NetInterface::handleConnectReject(const NetAddress* address, BitStream* str
     conn->deleteObject();
 }
 
+//-----------------------------------------------------------------------------
+// NetInterface arranged connection process
+//-----------------------------------------------------------------------------
+
+// TODO: Add hole punching stuff here...
+
+//-----------------------------------------------------------------------------
+// NetInterface disconnection and handling
+//-----------------------------------------------------------------------------
+
 void NetInterface::handleDisconnect(const NetAddress* address, BitStream* stream)
 {
     NetConnection* conn = NetConnection::lookup(address);
@@ -396,10 +441,6 @@ void NetInterface::handleDisconnect(const NetAddress* address, BitStream* stream
 
     conn->onDisconnect(reason);
     conn->deleteObject();
-}
-
-void NetInterface::handleInfoPacket(const NetAddress* address, U8 packetType, BitStream* stream)
-{
 }
 
 void NetInterface::processClient()
@@ -422,22 +463,6 @@ void NetInterface::processServer()
         if (!walk->isConnectionToServer() && (walk->isLocalConnection() || walk->isNetworkConnection()))
             walk->checkPacketSend(false);
     }
-}
-
-void NetInterface::startConnection(NetConnection* conn)
-{
-    addPendingConnection(conn);
-    conn->mConnectionSendCount = 0;
-    conn->setConnectSequence(Platform::getVirtualMilliseconds());
-    conn->setConnectionState(NetConnection::AwaitingChallengeResponse);
-
-    // This is a the client side of the connection, so set the connection to
-    // server flag. We need to set this early so that if the connection times
-    // out, its onRemove() will handle the cleanup properly.
-    conn->setIsConnectionToServer();
-
-    // Everything set, so send off the request.
-    sendConnectChallengeRequest(conn);
 }
 
 void NetInterface::sendDisconnectPacket(NetConnection* conn, const char* reason)
