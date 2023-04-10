@@ -66,7 +66,8 @@ function startMultiplayerMode()
    portInit($Pref::Server::Port);
    allowConnections(true);
 
-   if ($pref::Server::DisplayOnMaster !$= "Never" )
+   //if ($pref::Server::DisplayOnMaster !$= "Never" )
+   if ($Server::DisplayOnMaster !$= "Never" )
       schedule(0,0,startHeartbeat);
       
    // we are now considered to be connected to a multiplayer server (our own)

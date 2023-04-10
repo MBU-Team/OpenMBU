@@ -331,6 +331,8 @@ function CreateGameGui::createGame(%this)
    //createServer("MultiPlayer", "game/data/missions/lobby.mis");
    
    // %JMQ: put params in server
+   //$Server::GameType = GameMissionInfo.getCurrentMission().gameMode;//$Server::GameModeId;
+   $Server::MissionType = GameMissionInfo.getCurrentMission().guid; //$pref::Server::missionId;
    
    $disconnectGui = CreateGameGui;
    startMultiplayerMode();

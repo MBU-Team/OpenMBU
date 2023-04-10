@@ -140,21 +140,34 @@ function PC_XBLiveSearchForMatches(%gamemodefilter, %missionfilter, %maxplayersf
    if (!isPCBuild() && $Client::UseXBLiveMatchMaking)
       %filterFlags |= 1 << 6;
       
-   queryLanServers(
-         1000,      // lanPort for local queries
-         0,          // Query flags
-         "any",      // gameTypes
-         "any",      // missionType
-         0,          // minPlayers
-         100,        // maxPlayers
-         100,        // maxBots
-         2,          // regionMask
-         1000,       // maxPing
-         0,          // minCPU
-         %filterFlags,// filterFlags
-         1           ,// Do clear the server info list
-         $pcsearchusefilters            // Use filters (LAN servers are normally not filtered)
-   );  
+   //queryLanServers(
+         //1000,      // lanPort for local queries
+         //0,          // Query flags
+         //"any",      // gameTypes
+         //"any",      // missionType
+         //0,          // minPlayers
+         //100,        // maxPlayers
+         //100,        // maxBots
+         //2,          // regionMask
+         //1000,       // maxPing
+         //0,          // minCPU
+         //%filterFlags,// filterFlags
+         //1           ,// Do clear the server info list
+         //$pcsearchusefilters            // Use filters (LAN servers are normally not filtered)
+   //);  
+   
+   %mis = %missionfilter;
+   if (%mis $= "-1")
+      %mis = "any";
+   
+   if (FindGameGui.useMaster)
+   {
+      queryMasterServer(0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags);
+   }
+   else
+   {
+      queryLanServers(1000, 0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags, 1, $pcsearchusefilters);
+   }
 }
 
 // ----------------------------------------------------------------------------
@@ -427,6 +440,15 @@ function FindGameGui::onSearchComplete(%this,%type)
    if (isPCBuild() || !$Client::UseXBLiveMatchMaking)
    {
       %sc = getServerCount();
+      if (%sc == 0 && %this.useMaster)
+      {
+         %this.useMaster = false;
+         
+         %this.pcSearchActive = true;
+         PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 
+         %this.maxplayersfilter, -1, "FindGameGui.onSearchComplete(pc);");
+         return;
+      }
       echo(%sc @ " games returned from LAN search.");
       for (%i = 0; %i < %sc; %i++)
       {
@@ -598,7 +620,7 @@ function FindGameGui::startSearch(%this)
          
          // get the Id of the mission that we are filtering for.  
          %filterPref--; // so that we can index the zero-based mission id list
-         %list = GameMissionInfo.getMissionIdList();
+         %list = GameMissionInfo.getMissionGuidList();
          %id = getField(%list, %filterPref);
          if (%id !$= "")
          {
@@ -647,6 +669,7 @@ function FindGameGui::continueSearch(%this)
       
       if (!isRelease() && !$Client::UseXBLiveMatchMaking) 
       {
+         %this.useMaster = true;
          %this.pcSearchActive = true;
          PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 
             %this.maxplayersfilter, -1, "FindGameGui.onSearchComplete(pc);");
@@ -655,6 +678,7 @@ function FindGameGui::continueSearch(%this)
    else
    {
       // pc build, do PC search only
+      %this.useMaster = true;
       %this.pcSearchActive = true;
       PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 
          %this.maxplayersfilter, -1, "FindGameGui.onSearchComplete(pc);");

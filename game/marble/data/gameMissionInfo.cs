@@ -202,6 +202,9 @@ function GameMissionInfo::setCurrentIndex(%this,%index)
       %this.currentCustomIndex = %index;
    else
       %this.currentSPIndex = %index;
+      
+   //$Server::GameType = GameMissionInfo.getCurrentMission().gameMode;
+   $Server::MissionType = GameMissionInfo.getCurrentMission().guid;
 }
 
 function GameMissionInfo::getCurrentIndex(%this)
@@ -633,6 +636,25 @@ function GameMissionInfo::getMissionDisplayNameList(%this)
       if( %this.filterDifficulty() $= "" || %this.filterDifficulty() $= %mission.difficultySet )
       {
          %list = %list @ getMissionNameFromNameVar(%mission);
+         if (%i < %group.getCount() - 1)
+            %list = %list @ "\t";
+      }
+   }
+   return %list;
+}
+
+// the ordering of the list returned by this function must match getMissionDisplayNameList above
+function GameMissionInfo::getMissionGuidList(%this)
+{
+   %group = %this.getCurrentMissionGroup();
+   %list = "";
+   for (%i = 0; %i < %group.getCount(); %i++)
+   {
+      %mission = %group.getObject(%i);
+      
+      if( %this.filterDifficulty() $= "" || %this.filterDifficulty() $= %mission.difficultySet )
+      {
+         %list = %list @ %mission.guid;
          if (%i < %group.getCount() - 1)
             %list = %list @ "\t";
       }
