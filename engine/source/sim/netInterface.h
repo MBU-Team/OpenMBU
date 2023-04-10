@@ -1,6 +1,8 @@
 #ifndef _H_NETINTERFACE
 #define _H_NETINTERFACE
 
+#include "core/torqueConfig.h"
+
 /// NetInterface class.  Manages all valid and pending notify protocol connections.
 ///
 /// @see NetConnection, GameConnection, NetObject, NetEvent
@@ -32,6 +34,10 @@ public:
         ConnectReject = 34,
         ConnectAccept = 36,
         Disconnect = 38,
+#ifdef TORQUE_NET_HOLEPUNCHING
+        Punch = 40,
+        ArrangedConnectRequest = 42,
+#endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:
 
@@ -76,6 +82,25 @@ protected:
 
     void   sendConnectReject(NetConnection* conn, const char* reason);
     void handleConnectReject(const NetAddress* address, BitStream* stream);
+
+#ifdef TORQUE_NET_HOLEPUNCHING
+
+    /// Begins the connection handshaking process for an arranged connection.
+    void startArrangedConnection(NetConnection *conn);
+
+    /// Sends Punch packets to each address in the possible connection address list.
+    void sendPunchPackets(NetConnection *conn);
+
+    /// Handles an incoming Punch packet from a remote host.
+    void handlePunch(const NetAddress* theAddress, BitStream *stream);
+
+    /// Sends an arranged connect request.
+    void sendArrangedConnectRequest(NetConnection *conn);
+
+    /// Handles an incoming connect request from an arranged connection.
+    void handleArrangedConnectRequest(const NetAddress* theAddress, BitStream *stream);
+
+#endif // TORQUE_NET_HOLEPUNCHING
 
     void handleDisconnect(const NetAddress* address, BitStream* stream);
 

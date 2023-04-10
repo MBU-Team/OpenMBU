@@ -128,6 +128,14 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
             case Disconnect:
                 handleDisconnect(addr, &pStream);
                 break;
+#ifdef TORQUE_NET_HOLEPUNCHING
+            case Punch:
+                handlePunch(addr, &pStream);
+                break;
+            case ArrangedConnectRequest:
+                handleArrangedConnectRequest(addr, &pStream);
+                break;
+#endif // TORQUE_NET_HOLEPUNCHING
             }
         }
     }
@@ -414,11 +422,333 @@ void NetInterface::handleConnectReject(const NetAddress* address, BitStream* str
     conn->deleteObject();
 }
 
+#ifdef TORQUE_NET_HOLEPUNCHING
 //-----------------------------------------------------------------------------
 // NetInterface arranged connection process
 //-----------------------------------------------------------------------------
 
-// TODO: Add hole punching stuff here...
+void NetInterface::startArrangedConnection(NetConnection *conn)
+{
+    conn->setConnectionState(NetConnection::SendingPunchPackets);
+    addPendingConnection(conn);
+    conn->mConnectSendCount = 0;
+
+    // TODO: Figure out which to use
+    //conn->setConnectSequence(Platform::getVirtualMilliseconds());
+    conn->mConnectLastSendTime = Platform::getVirtualMilliseconds();
+
+    sendPunchPackets(conn);
+}
+
+void NetInterface::sendPunchPackets(NetConnection *conn)
+{
+    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
+
+    /*ConnectionParameters &theParams = conn->getConnectionParameters();
+    PacketStream out;
+    out.write(U8(Punch));
+
+    if(theParams.mIsInitiator)
+        theParams.mNonce.write(&out);
+    else
+        theParams.mServerNonce.write(&out);
+
+    U32 encryptPos = out.getBytePosition();
+    out.setBytePosition(encryptPos);
+
+    if(theParams.mIsInitiator)
+        theParams.mServerNonce.write(&out);
+    else
+    {
+        theParams.mNonce.write(&out);
+        if(out.writeFlag(mRequiresKeyExchange || (theParams.mRequestKeyExchange && !mPrivateKey.isNull())))
+        {
+            if(out.writeFlag(theParams.mRequestCertificate && !mCertificate.isNull()))
+                out.write(mCertificate);
+            else
+                out.write(mPrivateKey->getPublicKey());
+        }
+    }
+    SymmetricCipher theCipher(theParams.mArrangedSecret);
+    out.hashAndEncrypt(NetConnection::MessageSignatureBytes, encryptPos, &theCipher);
+
+    for(S32 i = 0; i < theParams.mPossibleAddresses.size(); i++)
+    {
+        out.sendto(mSocket, theParams.mPossibleAddresses[i]);
+
+        TNLLogMessageV(LogNetInterface, ("Sending punch packet (%s, %s) to %s",
+            ByteBuffer(theParams.mNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
+            ByteBuffer(theParams.mServerNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
+            theParams.mPossibleAddresses[i].toString()));
+    }
+    conn->mConnectSendCount++;
+    conn->mConnectLastSendTime = getCurrentTime();*/
+}
+
+void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
+{
+    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
+
+    /*S32 i, j;
+    NetConnection *conn;
+
+    Nonce firstNonce;
+    firstNonce.read(stream);
+
+    ByteBuffer b(firstNonce.data, Nonce::NonceSize);
+
+    TNLLogMessageV(LogNetInterface, ("Received punch packet from %s - %s", theAddress.toString(), b.encodeBase64()->getBuffer()));
+
+    for(i = 0; i < mPendingConnections.size(); i++)
+    {
+        conn = mPendingConnections[i];
+        ConnectionParameters &theParams = conn->getConnectionParameters();
+
+        if(conn->getConnectionState() != NetConnection::SendingPunchPackets)
+            continue;
+
+        if((theParams.mIsInitiator && firstNonce != theParams.mServerNonce) ||
+           (!theParams.mIsInitiator && firstNonce != theParams.mNonce))
+            continue;
+
+        // first see if the address is in the possible addresses list:
+
+        for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
+            if(theAddress == theParams.mPossibleAddresses[j])
+                break;
+
+        // if there was an exact match, just exit the loop, or
+        // continue on to the next pending if this is not an initiator:
+        if(j != theParams.mPossibleAddresses.size())
+        {
+            if(theParams.mIsInitiator)
+                break;
+            else
+                continue;
+        }
+
+        // if there was no exact match, we may have a funny NAT in the
+        // middle.  But since a packet got through from the remote host
+        // we'll want to send a punch to the address it came from, as long
+        // as only the port is not an exact match:
+        for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
+            if(theAddress.isEqualAddress(theParams.mPossibleAddresses[j]))
+                break;
+
+        // if the address wasn't even partially in the list, just exit out
+        if(j == theParams.mPossibleAddresses.size())
+            continue;
+
+        // otherwise, as long as we don't have too many ping addresses,
+        // add this one to the list:
+        if(theParams.mPossibleAddresses.size() < 5)
+            theParams.mPossibleAddresses.push_back(theAddress);
+
+        // if this is the initiator of the arranged connection, then
+        // process the punch packet from the remote host by issueing a
+        // connection request.
+        if(theParams.mIsInitiator)
+            break;
+    }
+    if(i == mPendingConnections.size())
+        return;
+
+    ConnectionParameters &theParams = conn->getConnectionParameters();
+    SymmetricCipher theCipher(theParams.mArrangedSecret);
+    if(!stream->decryptAndCheckHash(NetConnection::MessageSignatureBytes, stream->getBytePosition(), &theCipher))
+        return;
+
+    Nonce nextNonce;
+    nextNonce.read(stream);
+
+    if(nextNonce != theParams.mNonce)
+        return;
+
+    // see if the connection needs to be authenticated or uses key exchange
+    if(stream->readFlag())
+    {
+        if(stream->readFlag())
+        {
+            theParams.mCertificate = new Certificate(stream);
+            if(!theParams.mCertificate->isValid() || !conn->validateCertficate(theParams.mCertificate, true))
+                return;
+            theParams.mPublicKey = theParams.mCertificate->getPublicKey();
+        }
+        else
+        {
+            theParams.mPublicKey = new AsymmetricKey(stream);
+            if(!theParams.mPublicKey->isValid() || !conn->validatePublicKey(theParams.mPublicKey, true))
+                return;
+        }
+        if(mPrivateKey.isNull() || mPrivateKey->getKeySize() != theParams.mPublicKey->getKeySize())
+        {
+            // we don't have a private key, so generate one for this connection
+            theParams.mPrivateKey = new AsymmetricKey(theParams.mPublicKey->getKeySize());
+        }
+        else
+            theParams.mPrivateKey = mPrivateKey;
+        theParams.mSharedSecret = theParams.mPrivateKey->computeSharedSecretKey(theParams.mPublicKey);
+        //logprintf("shared secret (client) %s", theParams.mSharedSecret->encodeBase64()->getBuffer());
+        Random::read(theParams.mSymmetricKey, SymmetricCipher::KeySize);
+        theParams.mUsingCrypto = true;
+    }
+    conn->setNetAddress(theAddress);
+    TNLLogMessageV(LogNetInterface, ("Punch from %s matched nonces - connecting...", theAddress.toString()));
+
+    conn->setConnectionState(NetConnection::AwaitingConnectResponse);
+    conn->mConnectSendCount = 0;
+    conn->mConnectLastSendTime = getCurrentTime();
+
+    sendArrangedConnectRequest(conn);*/
+}
+
+void NetInterface::sendArrangedConnectRequest(NetConnection *conn)
+{
+    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
+
+    /*TNLLogMessageV(LogNetInterface, ("Sending Arranged Connect Request"));
+    PacketStream out;
+
+    ConnectionParameters &theParams = conn->getConnectionParameters();
+
+    out.write(U8(ArrangedConnectRequest));
+    theParams.mNonce.write(&out);
+    U32 encryptPos = out.getBytePosition();
+    U32 innerEncryptPos = 0;
+
+    out.setBytePosition(encryptPos);
+
+    theParams.mServerNonce.write(&out);
+    if(out.writeFlag(theParams.mUsingCrypto))
+    {
+        out.write(theParams.mPrivateKey->getPublicKey());
+        innerEncryptPos = out.getBytePosition();
+        out.setBytePosition(innerEncryptPos);
+        out.write(SymmetricCipher::KeySize, theParams.mSymmetricKey);
+    }
+    out.writeFlag(theParams.mDebugObjectSizes);
+    out.write(conn->getInitialSendSequence());
+    conn->writeConnectRequest(&out);
+
+    if(innerEncryptPos)
+    {
+        SymmetricCipher theCipher(theParams.mSharedSecret);
+        out.hashAndEncrypt(NetConnection::MessageSignatureBytes, innerEncryptPos, &theCipher);
+    }
+    SymmetricCipher theCipher(theParams.mArrangedSecret);
+    out.hashAndEncrypt(NetConnection::MessageSignatureBytes, encryptPos, &theCipher);
+
+    conn->mConnectSendCount++;
+    conn->mConnectLastSendTime = getCurrentTime();
+
+    out.sendto(mSocket, conn->getNetAddress());*/
+}
+
+void NetInterface::handleArrangedConnectRequest(const NetAddress* theAddress, BitStream *stream)
+{
+    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
+
+    /*S32 i, j;
+    NetConnection *conn;
+    Nonce nonce, serverNonce;
+    nonce.read(stream);
+
+    // see if the connection is in the main connection table.
+    // If the connection is in the connection table and it has
+    // the same initiatorSequence, we'll just resend the connect
+    // acceptance packet, assuming that the last time we sent it
+    // it was dropped.
+    NetConnection *oldConnection = findConnection(theAddress);
+    if(oldConnection)
+    {
+        ConnectionParameters &cp = oldConnection->getConnectionParameters();
+        if(cp.mNonce == nonce)
+        {
+            sendConnectAccept(oldConnection);
+            return;
+        }
+    }
+
+    for(i = 0; i < mPendingConnections.size(); i++)
+    {
+        conn = mPendingConnections[i];
+        ConnectionParameters &theParams = conn->getConnectionParameters();
+
+        if(conn->getConnectionState() != NetConnection::SendingPunchPackets || theParams.mIsInitiator)
+            continue;
+
+        if(nonce != theParams.mNonce)
+            continue;
+
+        for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
+            if(theAddress.isEqualAddress(theParams.mPossibleAddresses[j]))
+                break;
+        if(j != theParams.mPossibleAddresses.size())
+            break;
+    }
+    if(i == mPendingConnections.size())
+        return;
+
+    ConnectionParameters &theParams = conn->getConnectionParameters();
+    SymmetricCipher theCipher(theParams.mArrangedSecret);
+    if(!stream->decryptAndCheckHash(NetConnection::MessageSignatureBytes, stream->getBytePosition(), &theCipher))
+        return;
+
+    stream->setBytePosition(stream->getBytePosition());
+
+    serverNonce.read(stream);
+    if(serverNonce != theParams.mServerNonce)
+        return;
+
+    if(stream->readFlag())
+    {
+        if(mPrivateKey.isNull())
+            return;
+        theParams.mUsingCrypto = true;
+        theParams.mPublicKey = new AsymmetricKey(stream);
+        theParams.mPrivateKey = mPrivateKey;
+
+        U32 decryptPos = stream->getBytePosition();
+        stream->setBytePosition(decryptPos);
+        theParams.mSharedSecret = theParams.mPrivateKey->computeSharedSecretKey(theParams.mPublicKey);
+        SymmetricCipher theCipher(theParams.mSharedSecret);
+
+        if(!stream->decryptAndCheckHash(NetConnection::MessageSignatureBytes, decryptPos, &theCipher))
+            return;
+
+        // now read the first part of the connection's session (symmetric) key
+        stream->read(SymmetricCipher::KeySize, theParams.mSymmetricKey);
+        Random::read(theParams.mInitVector, SymmetricCipher::KeySize);
+    }
+
+    U32 connectSequence;
+    theParams.mDebugObjectSizes = stream->readFlag();
+    stream->read(&connectSequence);
+    TNLLogMessageV(LogNetInterface, ("Received Arranged Connect Request"));
+
+    if(oldConnection)
+        disconnect(oldConnection, NetConnection::ReasonSelfDisconnect, "");
+
+    conn->setNetAddress(theAddress);
+    conn->setInitialRecvSequence(connectSequence);
+    if(theParams.mUsingCrypto)
+        conn->setSymmetricCipher(new SymmetricCipher(theParams.mSymmetricKey, theParams.mInitVector));
+
+    const char *errorString = NULL;
+    if(!conn->readConnectRequest(stream, &errorString))
+    {
+        sendConnectReject(&theParams, theAddress, errorString);
+        removePendingConnection(conn);
+        return;
+    }
+    addConnection(conn);
+    removePendingConnection(conn);
+    conn->setConnectionState(NetConnection::Connected);
+    conn->onConnectionEstablished();
+    sendConnectAccept(conn);*/
+}
+
+#endif // TORQUE_NET_HOLEPUNCHING
 
 //-----------------------------------------------------------------------------
 // NetInterface disconnection and handling
