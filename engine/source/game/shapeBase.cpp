@@ -2874,7 +2874,7 @@ void ShapeBase::queueCollision(ShapeBase* obj, const VectorF& vec)
 
     while (ptr) {
         if (ptr->objectNumber == num) {
-            if (ptr->expireTime < time) {
+            if (ptr->expireTime < time || (obj->getTypeMask() & ItemObjectType) != 0) {
                 ptr->expireTime = time + CollisionTimeoutValue;
                 ptr->object = obj;
                 ptr->vector = vec;
