@@ -29,6 +29,7 @@ function AchievementDlg::onWake(%this)
 	enableGamepad();
 	moveMap.push();
 	//AchievementFrame.setPosition("70", "0");
+	AchievementFrame.setHeader($Text::AchievementUnlocked);
 	AchievementFrame.setIcon("./achievement/" @ $AchievementId);
 	%title = "Unknown Achievement";
 	switch$ ($AchievementId)

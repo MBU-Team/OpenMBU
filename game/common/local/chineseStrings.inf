@@ -458,6 +458,8 @@ $Text::LocCredits="<spush><font:Arial Bold:%1>Localization<spop>\n\n<spush><font
 ;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
 ;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
 
+$Text::AchievementUnlocked = "成就解锁";
+
 $Text::AchievementName01="時光彈珠";
 $Text::AchievementName02="新手勳章";
 $Text::AchievementName03="老手勳章";

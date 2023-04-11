@@ -18,6 +18,7 @@ protected:
     StringTableEntry mBackgroundBitmapName;
     GFXTexHandle mBackgroundTextureObject;
     StringTableEntry mTitle;
+    StringTableEntry mHeader;
 
 public:
     GuiAchievementPopupCtrl();
@@ -27,6 +28,7 @@ public:
     void setIcon(const char *name);
     void setBackground(const char *name);
     void setTitle(const char *title);
+    void setHeader(const char *header);
 
     DECLARE_CONOBJECT(GuiAchievementPopupCtrl);
 };

@@ -12,6 +12,7 @@ GuiAchievementPopupCtrl::GuiAchievementPopupCtrl()
     mBackgroundBitmapName = StringTable->insert("marble/client/ui/achievement/background");
     mBackgroundTextureObject = NULL;
     mTitle = StringTable->insert("");
+    mHeader = StringTable->insert("Achievement Unlocked");
 }
 
 //------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ void GuiAchievementPopupCtrl::initPersistFields()
     addField("icon", TypeFilename, Offset(mIconBitmapName, GuiAchievementPopupCtrl));
     addField("background", TypeFilename, Offset(mBackgroundBitmapName, GuiAchievementPopupCtrl));
     addField("title", TypeString, Offset(mTitle, GuiAchievementPopupCtrl));
+    addField("header", TypeString, Offset(mHeader, GuiAchievementPopupCtrl));
 }
 
 //------------------------------------------------------------------------------
@@ -34,6 +36,7 @@ bool GuiAchievementPopupCtrl::onWake()
 
     setIcon(mIconBitmapName);
     setBackground(mBackgroundBitmapName);
+    setHeader(mHeader);
 
     mProfile->constructBitmapArray();
 
@@ -68,6 +71,12 @@ void GuiAchievementPopupCtrl::setTitle(const char *title)
     setUpdate();
 }
 
+void GuiAchievementPopupCtrl::setHeader(const char *header)
+{
+    mHeader = StringTable->insert(header);
+    setUpdate();
+}
+
 //------------------------------------------------------------------------------
 
 void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
@@ -99,7 +108,7 @@ void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
 
     GFX->setBitmapModulation(mProfile->mFontColor);
     Point2I textExtent(mBounds.extent.x, mBounds.extent.y - HEADER_OFFSET_Y);
-    renderJustifiedText(offset, textExtent, "Achievement Unlocked");
+    renderJustifiedText(offset, textExtent, mHeader);
 
     Point2I titleOffset(offset.x, offset.y + (mBounds.extent.y - textExtent.y));
     renderJustifiedText(titleOffset, textExtent, mTitle);
@@ -127,4 +136,10 @@ ConsoleMethod(GuiAchievementPopupCtrl, setTitle, void, 3, 3, "(string title)"
     "Set the title of the achievement.")
 {
     object->setTitle(argv[2]);
+}
+
+ConsoleMethod(GuiAchievementPopupCtrl, setHeader, void, 3, 3, "(string title)"
+    "Set the title of the achievement.")
+{
+    object->setHeader(argv[2]);
 }
