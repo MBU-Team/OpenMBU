@@ -36,11 +36,11 @@ endif()
 
 if(WIN32)
     # warning C4800: 'XXX' : forcing value to bool 'true' or 'false' (performance warning)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4800")
     # warning C4018: '<' : signed/unsigned mismatch
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4018")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4018")
     # warning C4244: 'initializing' : conversion from 'XXX' to 'XXX', possible loss of data
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4244")
 
     if( TORQUE_CPU_X64 )
         link_directories("${libDir}/directx9/Lib/x64")
