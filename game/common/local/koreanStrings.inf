@@ -471,9 +471,6 @@ $Text::AchievementName09 = "에그 바구니";
 $Text::AchievementName10 = "1등 하기";
 $Text::AchievementName11 = "보석 수집가";
 $Text::AchievementName12 = "베테랑 배틀러";
-$Text::AchievementName13 = "블루 젬 헌트";
-$Text::AchievementName14 = "지도 팩 도미네이터";
-$Text::AchievementName15 = "첨탑의 주인";
 
 $Text::AchievementDescription01 = "기본 시간 이내로 한 코스 이상을 정복하십시오.";
 $Text::AchievementDescription02 = "모든 초급 코스를 정복하십시오.";
@@ -487,9 +484,6 @@ $Text::AchievementDescription09 = "20개의 이스터 에그를 모두 찾아 �
 $Text::AchievementDescription10 = "멀티 플레이 매치에서 1위를 달성하십시오.";
 $Text::AchievementDescription11 = "멀티 플레이 매치 한 경기에서 75포인트를 획득하십시오.";
 $Text::AchievementDescription12 = "멀티 플레이 매치에서 총 2,000포인트를 획득하십시오.";
-$Text::AchievementDescription13 = "Marble It Up에서 파란 보석을 모으세요! 멀티플레이어 매치.";
-$Text::AchievementDescription14 = "Playground, Bowl, Concentric, Vortex Effect, Blast Club(Marble Fu 팩) 중 3개에서 보석 40개를 받으세요.";
-$Text::AchievementDescription15 = "Spiers(광장 공포증 팩)에서 50개의 보석을 수집하십시오.";
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings

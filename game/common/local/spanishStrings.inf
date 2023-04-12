@@ -472,9 +472,6 @@ $Text::AchievementName09 = "Cesta de huevos";
 $Text::AchievementName10 = "Primer puesto";
 $Text::AchievementName11 = "Recolector de gemas";
 $Text::AchievementName12 = "Luchador veterano";
-$Text::AchievementName13 = "Búsqueda de gemas azules";
-$Text::AchievementName14 = "Dominador del paquete de mapas";
-$Text::AchievementName15 = "Maestro de las agujas";
 
 $Text::AchievementDescription01 = "Acaba cualquier nivel con tiempo bajo par.";
 $Text::AchievementDescription02 = "Completa todos los niveles de principiante.";
@@ -488,9 +485,6 @@ $Text::AchievementDescription09 = "Encuentra los veinte huevos de pascua.";
 $Text::AchievementDescription10 = "Obtén el primer lugar en una partida multijugador.";
 $Text::AchievementDescription11 = "Obtén 75 puntos en una partida multijugador.";
 $Text::AchievementDescription12 = "Consigue 2.000 puntos en total en multijugador.";
-$Text::AchievementDescription13 = "¡Recoge una gema azul en un Marble It Up! partida multijugador.";
-$Text::AchievementDescription14 = "Consigue 40 gemas en 3 cualquiera de Playground, Bowl, Concentric, Vortex Effect, Blast Club (paquete Marble Fu).";
-$Text::AchievementDescription15 = "Recoge 50 gemas en Spires (paquete de agorafobia).";
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings

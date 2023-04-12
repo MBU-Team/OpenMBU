@@ -471,9 +471,6 @@ $Text::AchievementName09 = "Egg Basket";
 $Text::AchievementName10 = "First Place";
 $Text::AchievementName11 = "Gem Collector";
 $Text::AchievementName12 = "Veteran Battler";
-$Text::AchievementName13 = "Blue Gem Hunt";
-$Text::AchievementName14 = "Map Pack Dominator";
-$Text::AchievementName15 = "Master of the Spires";
 
 $Text::AchievementDescription01 = "任意のレベルをパー タイム内でゴールしましょう。";
 $Text::AchievementDescription02 = "ビギナー レベルをすべてクリアしましょう。";
@@ -487,9 +484,6 @@ $Text::AchievementDescription09 = "隠しアイテムを 20 個すべて見つ�
 $Text::AchievementDescription10 = "マルチプレイヤー マッチで 1 位になりましょう。";
 $Text::AchievementDescription11 = "マルチプレイヤー マッチで 75 ポイント獲得しましょう。";
 $Text::AchievementDescription12 = "マルチプレイヤーで合計 2,000 ポイント獲得しましょう。";
-$Text::AchievementDescription13 = "マーブルイットアップで青い宝石を集めよう！ マルチプレイヤーマッチ。";
-$Text::AchievementDescription14 = "Playground、Bowl、Concentric、Vortex Effect、Blast Club (Marble Fu pack) のいずれかで 40 ジェムを獲得します。";
-$Text::AchievementDescription15 = "Spiers (広場恐怖症パック) で宝石を 50 個集める。";
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings
