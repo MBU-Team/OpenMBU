@@ -317,6 +317,8 @@ public:
     bool readVehicleCollision(Stream& stream);
     bool writeVehicleCollision(Stream& stream) const;
 
+    void readCompressedVector(Stream& stream, Vector<U32>& vec);
+
 private:
     static const U32 smFileVersion;
     bool writePlaneVector(Stream&) const;

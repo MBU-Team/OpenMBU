@@ -1753,3 +1753,53 @@ void Interior::setupZonePlanes()
 
     delete[] temp;
 }
+
+void Interior::readCompressedVector(Stream &stream, Vector<U32> &vec)
+{
+    U32 size;
+    stream.read(&size);
+    if ((size & 0x80000000) != 0)
+    {
+        // Compressed
+        size &= 0x7FFFFFFF;
+        vec.setSize(size);
+        U8 dummy;
+        stream.read(1, &dummy);
+        if ((dummy & 1) != 0)
+        {
+            for (U32 i = 0; i < size; i++)
+            {
+                U8 val;
+                stream.read(1, &val);
+                vec[i] = val;
+            }
+        } else if ((dummy & 2) != 0)
+        {
+            for (U32 i = 0; i < size; i++)
+            {
+                U16 val;
+                stream.read(&val);
+                vec[i] = val;
+            }
+        } else if ((dummy & 4) != 0)
+        {
+            for (U32 i = 0; i < size; i++)
+            {
+                U32 val;
+                stream.read(&val);
+                vec[i] = val;
+            }
+        }
+    }
+    else
+    {
+        // Uncompressed
+        vec.setSize(size);
+        for (U32 i = 0; i < size; i++)
+        {
+            U32 val;
+            stream.read(&val);
+            vec[i] = val;
+        }
+    }
+}
