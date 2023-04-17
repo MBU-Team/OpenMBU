@@ -776,7 +776,7 @@ function FPSDisplay::update(%this)
 
    if ($showFPS)
    {
-      %text = "FPS: " @ $fps::real;
+      %text = "FPS: " @ $fps::virtual;
       %this.setText(%text);
       %this.setVisible(true);
    }
