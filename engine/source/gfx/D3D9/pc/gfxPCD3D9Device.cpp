@@ -112,11 +112,12 @@ D3DPRESENT_PARAMETERS GFXPCD3D9Device::setupPresentParams( const GFXVideoMode &m
    d3dpp.Flags            = 0;
    d3dpp.FullScreen_RefreshRateInHz = (mode.refreshRate == 0 || !mode.fullScreen) ? 
                                        D3DPRESENT_RATE_DEFAULT : mode.refreshRate;
-   d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
-   if( Con::getBoolVariable( "$pref::Video::disableVerticalSync", true ) )
+   d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;	// This does NOT wait for vsync
+
+   if( Con::getBoolVariable( "$pref::Video::VSync", true ) )
    {
-      d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;	// This does NOT wait for vsync
+       d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
    }
 
    return d3dpp;

@@ -94,7 +94,13 @@ void GFXPCD3D9WindowTarget::initPresentationParams()
    mPresentationParams.Flags            = 0;
    mPresentationParams.FullScreen_RefreshRateInHz = (vm.refreshRate == 0 || !vm.fullScreen) ? 
                                                      D3DPRESENT_RATE_DEFAULT : vm.refreshRate;
-   mPresentationParams.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;	// This does NOT wait for vsync
+
+    mPresentationParams.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;	// This does NOT wait for vsync
+
+    if( Con::getBoolVariable( "$pref::Video::VSync", true ) )
+    {
+        mPresentationParams.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+    }
 }
 
 /*PlatformWindow * GFXPCD3D9WindowTarget::getWindow()

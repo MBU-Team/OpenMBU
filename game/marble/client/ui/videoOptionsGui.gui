@@ -37,6 +37,7 @@ function videoOptionsGui::show(%this, %backGui)
    $Option::initialRes = $pref::Video::resolution;
    $Option::initialWindowedRes = $pref::Video::windowedRes;
    $Option::initialDisplayMode = $pref::Video::fullScreen;
+   $Option::initialVSync = $pref::Video::VSync;
    
    $Option::resList = getResolutionList("1280 720");
    
@@ -103,6 +104,8 @@ function videoOptionsGui::show(%this, %backGui)
    //videoOptionsList.addRow($Text::DisplayMode, $Text::DisplayModeOptions, 8); // display mode
    
    videoOptionsList.addRow($Text::ReflectionDetailLevel, $Text::ReflectionDetailLevelOptions, 8); // reflection detail level
+   
+   videoOptionsList.addRow($Text::VSync, $Text::VSyncOptions, 8); // framerate limit
 
    for (%i = 0; %i < getFieldCount($Option::resList); %i++)
    {
@@ -129,11 +132,14 @@ function videoOptionsGui::show(%this, %backGui)
       $Option::fullScreen = 1;
       
    $Option::reflection = $pref::Video::ReflectionDetailLevel;
+   
+   $Option::vsync = $pref::Video::VSync;
 
    videoOptionsList.setOptionIndex(0, $Option::resolution);
    videoOptionsList.setOptionIndex(1, $Option::windowedRes);
    videoOptionsList.setOptionIndex(2, $Option::fullScreen);
    videoOptionsList.setOptionIndex(3, $Option::reflection);
+   videoOptionsList.setOptionIndex(4, $Option::vsync);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOVideoOptions) );
@@ -172,6 +178,11 @@ function videoOptionsList::onOptionChange(%this, %increase)
          $pref::Video::ReflectionDetailLevel = $Option::reflection;
          
          echo("Reflection Detail Level = " @ $pref::Video::ReflectionDetailLevel);
+      case 4:
+         $Option::vsync = %val;
+         $pref::Video::VSync = $Option::vsync;
+         
+         echo("VSync = " @ $pref::Video::VSync);
    }  
 }
 
@@ -183,6 +194,8 @@ function videoOptionsGui::onA(%this)
    if ($pref::Video::windowedRes !$= $Option::initialWindowedRes)
       %videoChanged = true;
    if ($pref::Video::fullScreen !$= $Option::initialDisplayMode)
+      %videoChanged = true;
+   if ($pref::Video::VSync !$= $Option::initialVSync)
       %videoChanged = true;
    
    if (%videoChanged)

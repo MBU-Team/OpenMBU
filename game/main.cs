@@ -352,7 +352,7 @@ function initVideo()
    $pref::Video::allowD3D = 1;
    $pref::Video::preferOpenGL = 1;
    $pref::Video::appliedPref = 0;
-   $pref::Video::disableVerticalSync = 1;
+   $pref::Video::VSync = 1;
    $pref::Video::monitorNum = 0;
    $pref::Video::fullScreen = "0";
 
