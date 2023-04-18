@@ -526,10 +526,12 @@ private:
     /// a pointer to the other side.
     SimObjectPtr<NetConnection> mRemoteConnection;
 
+#ifdef TORQUE_NET_HOLEPUNCHING
     ConnectionParameters mConnectionParameters;
 public:
     ConnectionParameters &getConnectionParameters() { return mConnectionParameters; }
 private:
+#endif
 
     NetAddress mNetAddress;
 
