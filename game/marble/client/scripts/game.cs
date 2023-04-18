@@ -106,7 +106,7 @@ function clientCmdSetGemCount(%gems,%maxGems)
 
 function clientCmdSetPoints(%clientid, %points)
 {
-   PlayGui.setPoints(%clientid, %points);
+   PlayGui.setPoints(%points);
 }
 
 function clientCmdSetGameDuration(%duration, %playStart)

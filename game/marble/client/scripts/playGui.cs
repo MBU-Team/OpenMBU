@@ -343,7 +343,7 @@ function PlayGui::setGemCount(%this,%count)
 }
 
 //-----------------------------------------------------------------------------
-function PlayGui::setPoints(%this, %clientid, %points)
+function PlayGui::setPoints(%this, %points)
 {
    if (!$Game::SPGemHunt)
       return;

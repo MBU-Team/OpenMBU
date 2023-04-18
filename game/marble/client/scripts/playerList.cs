@@ -206,7 +206,7 @@ function zeroMyClientScoreCuzICheat()
 function handleClientScoreChanged(%msgType, %msgString, %clientId, %isMe, %newScore, %oldScore)
 {
 //    if (%isMe)
-//       PlayGui.setPoints(%clientId, %newScore);
+//       PlayGui.setPoints(%newScore);
    %delta = %newScore - %oldScore;
    if(%isMe && %delta != 0)
    {
