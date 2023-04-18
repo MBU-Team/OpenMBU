@@ -85,9 +85,11 @@ protected:
 
 #ifdef TORQUE_NET_HOLEPUNCHING
 
+public:
     /// Begins the connection handshaking process for an arranged connection.
     void startArrangedConnection(NetConnection *conn);
 
+protected:
     /// Sends Punch packets to each address in the possible connection address list.
     void sendPunchPackets(NetConnection *conn);
 

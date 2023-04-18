@@ -1031,6 +1031,24 @@ void NetConnection::connect(const NetAddress* address)
     GNet->startConnection(this);
 }
 
+#ifdef TORQUE_NET_HOLEPUNCHING
+void NetConnection::connectArranged(const Vector<NetAddress*> &possibleAddresses, bool isInitiator)
+{
+    //mConnectionParameters.mRequestKeyExchange = requestsKeyExchange;
+    //mConnectionParameters.mRequestCertificate = requestsCertificate;
+    mConnectionParameters.mPossibleAddresses = possibleAddresses;
+    mConnectionParameters.mIsInitiator = isInitiator;
+    mConnectionParameters.mIsArranged = true;
+    //mConnectionParameters.mNonce = nonce;
+    //mConnectionParameters.mServerNonce = serverNonce;
+    //mConnectionParameters.mArrangedSecret = sharedSecret;
+    //mConnectionParameters.mArrangedSecret->takeOwnership();
+
+    //setInterface(connectionInterface);
+    GNet->startArrangedConnection(this);
+}
+#endif
+
 void NetConnection::onConnectTimedOut()
 {
 

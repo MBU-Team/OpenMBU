@@ -444,45 +444,46 @@ void NetInterface::sendPunchPackets(NetConnection *conn)
 {
     // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
 
-    /*ConnectionParameters &theParams = conn->getConnectionParameters();
-    PacketStream out;
-    out.write(U8(Punch));
+    ConnectionParameters &theParams = conn->getConnectionParameters();
+    BitStream* out = BitStream::getPacketStream();
+    //PacketStream out;
+    out->write(U8(Punch));
 
-    if(theParams.mIsInitiator)
-        theParams.mNonce.write(&out);
-    else
-        theParams.mServerNonce.write(&out);
+    //if(theParams.mIsInitiator)
+    //    theParams.mNonce.write(&out);
+    //else
+    //    theParams.mServerNonce.write(&out);
 
-    U32 encryptPos = out.getBytePosition();
-    out.setBytePosition(encryptPos);
+    //U32 encryptPos = out.getBytePosition();
+    //out->setBytePosition(encryptPos);
 
-    if(theParams.mIsInitiator)
-        theParams.mServerNonce.write(&out);
-    else
-    {
-        theParams.mNonce.write(&out);
-        if(out.writeFlag(mRequiresKeyExchange || (theParams.mRequestKeyExchange && !mPrivateKey.isNull())))
-        {
-            if(out.writeFlag(theParams.mRequestCertificate && !mCertificate.isNull()))
-                out.write(mCertificate);
-            else
-                out.write(mPrivateKey->getPublicKey());
-        }
-    }
-    SymmetricCipher theCipher(theParams.mArrangedSecret);
-    out.hashAndEncrypt(NetConnection::MessageSignatureBytes, encryptPos, &theCipher);
+    //if(theParams.mIsInitiator)
+    //    theParams.mServerNonce.write(&out);
+    //else
+    //{
+    //    theParams.mNonce.write(&out);
+//        if(out->writeFlag(mRequiresKeyExchange || (theParams.mRequestKeyExchange && !mPrivateKey.isNull())))
+//        {
+//            if(out->writeFlag(theParams.mRequestCertificate && !mCertificate.isNull()))
+//                out->write(mCertificate);
+//            else
+//                out->write(mPrivateKey->getPublicKey());
+//        }
+    //}
+    //SymmetricCipher theCipher(theParams.mArrangedSecret);
+    //out->hashAndEncrypt(NetConnection::MessageSignatureBytes, encryptPos, &theCipher);
 
     for(S32 i = 0; i < theParams.mPossibleAddresses.size(); i++)
     {
-        out.sendto(mSocket, theParams.mPossibleAddresses[i]);
+        BitStream::sendPacketStream(theParams.mPossibleAddresses[i]);
 
-        TNLLogMessageV(LogNetInterface, ("Sending punch packet (%s, %s) to %s",
-            ByteBuffer(theParams.mNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
-            ByteBuffer(theParams.mServerNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
-            theParams.mPossibleAddresses[i].toString()));
+//        TNLLogMessageV(LogNetInterface, ("Sending punch packet (%s, %s) to %s",
+//            ByteBuffer(theParams.mNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
+//            ByteBuffer(theParams.mServerNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
+//            theParams.mPossibleAddresses[i].toString()));
     }
     conn->mConnectSendCount++;
-    conn->mConnectLastSendTime = getCurrentTime();*/
+    conn->mConnectLastSendTime = Platform::getVirtualMilliseconds(); //getCurrentTime();
 }
 
 void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
