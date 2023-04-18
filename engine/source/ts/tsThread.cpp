@@ -330,7 +330,7 @@ void TSThread::setTimeScale(F32 ts)
 
 void TSThread::advancePos(F32 delta)
 {
-    if (mFabs(delta) > 0.00001f)
+    if (mFabs(delta) > 0.000001f)
     {
         // make dirty what this thread changes
         U32 dirtyFlags = sequence->dirtyFlags | (transitionData.inTransition ? TSShapeInstance::TransformDirty : 0);
