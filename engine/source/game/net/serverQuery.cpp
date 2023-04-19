@@ -522,6 +522,36 @@ ConsoleFunction(queryMasterServer, void, 11, 11, "queryMasterServer(...);")
     dFree(missionType);
 }
 
+
+#ifdef TORQUE_NET_HOLEPUNCHING
+static void sendMasterArrangedConnectRequest(NetAddress* address)
+{
+    // Send a request to the master server for the server list:
+    BitStream* out = BitStream::getPacketStream();
+    out->write(U8(NetInterface::MasterServerArrangedConnectRequest));
+
+    char addr[256];
+    Net::addressToString(address, addr);
+
+    out->writeString(addr);
+
+    BitStream::sendPacketStream(&gMasterServerPing.address);
+}
+
+ConsoleFunction(arrangeConnection, void, 2, 2, "arrangeConnection(ip);")
+{
+    argc;
+
+    NetAddress addr;
+    char* addrText;
+
+    addrText = dStrdup(argv[1]);
+    Net::stringToAddress(addrText, &addr);
+
+    sendMasterArrangedConnectRequest(&addr);
+}
+#endif
+
 //-----------------------------------------------------------------------------
 
 ConsoleFunction(querySingleServer, void, 3, 3, "querySingleServer(address, flags);")
@@ -2015,6 +2045,31 @@ static void handleGameInfoResponse(const NetAddress* address, BitStream* stream,
     gServerBrowserDirty = true;
 }
 
+#ifdef TORQUE_NET_HOLEPUNCHING
+static void handleMasterServerArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+{
+    Con::printf("Received arranged connect response from the master server.");
+
+    // TODO: If not hosting then reject the connection
+
+    // TODO: Implement arranged connection
+}
+
+static void handleMasterServerAcceptArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+{
+    Con::printf("Received accept arranged connect response from the master server.");
+
+    // TODO: Implement accepted arranged connection
+}
+
+static void handleMasterServerRejectArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+{
+    Con::printf("Received reject arranged connect response from the master server.");
+
+    // TODO: Implement rejected arranged connection
+}
+#endif
+
 //-----------------------------------------------------------------------------
 // Packet Dispatch
 
@@ -2055,6 +2110,18 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
     case GameMasterInfoRequest:
         handleGameMasterInfoRequest(address, key, flags);
         break;
+
+#ifdef TORQUE_NET_HOLEPUNCHING
+    case MasterServerArrangedConnectResponse:
+        handleMasterServerArrangedConnectResponse(stream, key, flags);
+        break;
+    case MasterServerAcceptArrangedConnectResponse:
+        handleMasterServerAcceptArrangedConnectResponse(stream, key, flags);
+        break;
+    case MasterServerRejectArrangedConnectResponse:
+        handleMasterServerRejectArrangedConnectResponse(stream, key, flags);
+        break;
+#endif
     }
 }
 

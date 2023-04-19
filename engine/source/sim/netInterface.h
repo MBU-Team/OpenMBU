@@ -37,6 +37,13 @@ public:
 #ifdef TORQUE_NET_HOLEPUNCHING
         Punch = 40,
         ArrangedConnectRequest = 42,
+
+        MasterServerArrangedConnectRequest = 46,
+        MasterServerArrangedConnectResponse = 48,
+        MasterServerAcceptArrangedConnectRequest = 50,
+        MasterServerAcceptArrangedConnectResponse = 52,
+        MasterServerRejectArrangedConnectRequest = 54,
+        MasterServerRejectArrangedConnectResponse = 56,
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:
