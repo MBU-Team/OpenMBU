@@ -526,16 +526,30 @@ ConsoleFunction(queryMasterServer, void, 11, 11, "queryMasterServer(...);")
 #ifdef TORQUE_NET_HOLEPUNCHING
 static void sendMasterArrangedConnectRequest(NetAddress* address)
 {
-    // Send a request to the master server for the server list:
-    BitStream* out = BitStream::getPacketStream();
-    out->write(U8(NetInterface::MasterServerArrangedConnectRequest));
+    // send to all of the master servers:
+    Vector<MasterInfo>* masterList = getMasterServerList();
+    for (U32 i = 0; i < masterList->size(); i++)
+    {
+        char buffer[256];
+        Net::addressToString(&(*masterList)[i].address, buffer);
+        Con::printf("Sending arranged connect request to master server [%s]", buffer);
 
-    char addr[256];
-    Net::addressToString(address, addr);
+        // Send a request to the master server to set up an arranged connection:
+        BitStream* out = BitStream::getPacketStream();
+        out->write(U8(NetInterface::MasterServerArrangedConnectRequest));
 
-    out->writeString(addr);
+        //char addr[256];
+        //Net::addressToString(address, addr);
+        //out->writeString(addr);
 
-    BitStream::sendPacketStream(&gMasterServerPing.address);
+        out->write(address->netNum[0]);
+        out->write(address->netNum[1]);
+        out->write(address->netNum[2]);
+        out->write(address->netNum[3]);
+        //out->write(address->port);
+
+        BitStream::sendPacketStream(&(*masterList)[i].address);
+    }
 }
 
 ConsoleFunction(arrangeConnection, void, 2, 2, "arrangeConnection(ip);")
@@ -2053,6 +2067,43 @@ static void handleMasterServerArrangedConnectResponse(BitStream* stream, U32 /*k
     // TODO: If not hosting then reject the connection
 
     // TODO: Implement arranged connection
+
+    /*if(!gIsServer || Random::readF() > 0.75)
+    {
+        // We reject connections about 75% of the time...
+
+        logprintf("Rejecting arranged connection from %s", Address(possibleAddresses[0]).toString());
+        c2mRejectArrangedConnection(requestId, connectionParameters);
+    }
+    else
+    {
+        // Ok, let's do the arranged connection!
+
+        U8 data[Nonce::NonceSize * 2 + SymmetricCipher::KeySize * 2];
+        Random::read(data, sizeof(data));
+        IPAddress localAddress = getInterface()->getFirstBoundInterfaceAddress().toIPAddress();
+
+        ByteBufferPtr b = new ByteBuffer(data, sizeof(data));
+        b->takeOwnership();
+        c2mAcceptArrangedConnection(requestId, localAddress, b);
+        GameConnection *conn = new GameConnection();
+
+        Vector<Address> fullPossibleAddresses;
+        for(S32 i = 0; i < possibleAddresses.size(); i++)
+            fullPossibleAddresses.push_back(Address(possibleAddresses[i]));
+
+        logprintf("Accepting arranged connection from %s", Address(fullPossibleAddresses[0]).toString());
+
+        logprintf("  Generated shared secret data: %s", b->encodeBase64()->getBuffer());
+
+        ByteBufferPtr theSharedData = new ByteBuffer(data + 2 * Nonce::NonceSize, sizeof(data) - 2 * Nonce::NonceSize);
+        theSharedData->takeOwnership();
+        Nonce nonce(data);
+        Nonce serverNonce(data + Nonce::NonceSize);
+
+        conn->connectArranged(getInterface(), fullPossibleAddresses,
+                              nonce, serverNonce, theSharedData,false);
+    }*/
 }
 
 static void handleMasterServerAcceptArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
@@ -2060,6 +2111,30 @@ static void handleMasterServerAcceptArrangedConnectResponse(BitStream* stream, U
     Con::printf("Received accept arranged connect response from the master server.");
 
     // TODO: Implement accepted arranged connection
+
+    /*if(!gIsServer && requestId == mCurrentQueryId && connectionData->getBufferSize() >= Nonce::NonceSize * 2 + SymmetricCipher::KeySize * 2)
+    {
+        logprintf("Remote host accepted arranged connection.");
+        logprintf("  Shared secret data: %s", connectionData->encodeBase64()->getBuffer());
+        GameConnection *conn = new GameConnection();
+
+        Vector<Address> fullPossibleAddresses;
+        for(S32 i = 0; i < possibleAddresses.size(); i++)
+            fullPossibleAddresses.push_back(Address(possibleAddresses[i]));
+
+        ByteBufferPtr theSharedData =
+            new ByteBuffer(
+                (U8 *) connectionData->getBuffer() + Nonce::NonceSize * 2,
+                connectionData->getBufferSize() - Nonce::NonceSize * 2
+            );
+        theSharedData->takeOwnership();
+
+        Nonce nonce(connectionData->getBuffer());
+        Nonce serverNonce(connectionData->getBuffer() + Nonce::NonceSize);
+
+        conn->connectArranged(getInterface(), fullPossibleAddresses,
+                              nonce, serverNonce, theSharedData,true);
+    }*/
 }
 
 static void handleMasterServerRejectArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
@@ -2067,6 +2142,13 @@ static void handleMasterServerRejectArrangedConnectResponse(BitStream* stream, U
     Con::printf("Received reject arranged connect response from the master server.");
 
     // TODO: Implement rejected arranged connection
+
+    /*if(!gIsServer && requestId == mCurrentQueryId)
+    {
+        logprintf("Remote host rejected arranged connection...");
+        logprintf("Requesting new game types list.");
+        startGameTypesQuery();
+    }*/
 }
 #endif
 
