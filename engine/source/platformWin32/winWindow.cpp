@@ -1123,6 +1123,8 @@ S32 PASCAL WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, S32)
     return retVal;
 }
 
+extern U32 gFixedFramerate;
+
 //--------------------------------------
 void TimeManager::process()
 {
@@ -1132,6 +1134,7 @@ void TimeManager::process()
 //#ifndef TORQUE_NVPERFHUD
 //    if (event.elapsedTime > 2)
 //#endif
+    if (gFixedFramerate == 0 || event.elapsedTime > (1000 / gFixedFramerate))
     {
         gTimer.advance();
         Game->postEvent(event);

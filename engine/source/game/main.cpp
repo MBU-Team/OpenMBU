@@ -307,6 +307,7 @@ static U32 gTimeAdvance = 0;
 static U32 gFrameSkip = 0;
 static U32 gFrameCount = 0;
 static bool gGamePaused = false;
+U32 gFixedFramerate = 0;
 
 #ifdef MBU_FINISH_PAD_FIX
 // TODO: Figure out how to remove this global variable and access dt from Marble::getCameraTransform
@@ -372,6 +373,7 @@ bool initGame(int argc, const char** argv)
     Con::addVariable("frameSkip", TypeS32, &gFrameSkip);
     Con::addVariable("gamePaused", TypeBool, &gGamePaused);
     Con::addVariable("pref::Video::noRenderAstrolabe", TypeBool, &gNoRenderAstrolabe);
+    Con::addVariable("pref::Video::Framerate", TypeS32, &gFixedFramerate);
 
     // Stuff game types into the console
     Con::setIntVariable("$TypeMasks::StaticObjectType", StaticObjectType);
