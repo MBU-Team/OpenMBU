@@ -37,7 +37,8 @@ function videoOptionsGui::show(%this, %backGui)
    $Option::initialRes = $pref::Video::resolution;
    $Option::initialWindowedRes = $pref::Video::windowedRes;
    $Option::initialDisplayMode = $pref::Video::fullScreen;
-   $Option::initialVSync = $pref::Video::VSync;
+   $Option::initialVsync = $pref::Video::Vsync;
+   $Option::initialFramerate = $pref::Video::Framerate;
    
    $Option::resList = getResolutionList("1280 720");
    
@@ -105,7 +106,7 @@ function videoOptionsGui::show(%this, %backGui)
    
    videoOptionsList.addRow($Text::ReflectionDetailLevel, $Text::ReflectionDetailLevelOptions, 8); // reflection detail level
    
-   videoOptionsList.addRow($Text::VSync, $Text::VSyncOptions, 8); // framerate limit
+   videoOptionsList.addRow($Text::Framerate, $Text::FramerateOptions, 8); // framerate limit
 
    for (%i = 0; %i < getFieldCount($Option::resList); %i++)
    {
@@ -133,13 +134,30 @@ function videoOptionsGui::show(%this, %backGui)
       
    $Option::reflection = $pref::Video::ReflectionDetailLevel;
    
-   $Option::vsync = $pref::Video::VSync;
+   if ($pref::Video::VSync) {
+      $Option::framerate = 1;
+   } else {
+      if ($pref::Video::Framerate == 0)
+         $Option::framerate = 0;
+      else if ($pref::Video::Framerate == 30)
+        $Option::framerate = 2;
+      else if ($pref::Video::Framerate == 60)
+        $Option::framerate = 3;
+      else if ($pref::Video::Framerate == 75)
+        $Option::framerate = 4;
+      else if ($pref::Video::Framerate == 120)
+        $Option::framerate = 5;
+      else if ($pref::Video::Framerate == 200)
+        $Option::framerate = 6;
+      else 
+        $Option::framerate = 7;
+   }
 
    videoOptionsList.setOptionIndex(0, $Option::resolution);
    videoOptionsList.setOptionIndex(1, $Option::windowedRes);
    videoOptionsList.setOptionIndex(2, $Option::fullScreen);
    videoOptionsList.setOptionIndex(3, $Option::reflection);
-   videoOptionsList.setOptionIndex(4, $Option::vsync);
+   videoOptionsList.setOptionIndex(4, $Option::framerate);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOVideoOptions) );
@@ -179,10 +197,44 @@ function videoOptionsList::onOptionChange(%this, %increase)
          
          echo("Reflection Detail Level = " @ $pref::Video::ReflectionDetailLevel);
       case 4:
-         $Option::vsync = %val;
-         $pref::Video::VSync = $Option::vsync;
+         if (%val == 0 || %val == 7) {
+            $pref::Video::VSync = false;
+            $pref::Video::Framerate = 0;
+            if (%val == 7 && ($Option::initialFramerate == 0 
+                || $Option::initialFramerate == 30 
+                || $Option::initialFramerate == 60 
+                || $Option::initialFramerate == 75 
+                || $Option::initialFramerate == 120
+                || $Option::initialFramerate == 200)) { 
+                %this.setOptionIndex(4, 0);
+                %val = 0;
+            }
+         } else if (%val == 1) {
+            $pref::Video::VSync = true;
+			$pref::Video::Framerate = 0;
+         } else {
+            $pref::Video::VSync = false;
+         }
+         if (%val == 2) {
+            $pref::Video::Framerate = 30;
+         }
+         if (%val == 3) {
+            $pref::Video::Framerate = 60;
+         }
+         if (%val == 4) {
+            $pref::Video::Framerate = 75;
+         }
+         if (%val == 5) {
+            $pref::Video::Framerate = 120;
+         }
+         if (%val == 6) {
+            $pref::Video::Framerate = 200;
+         }
+         $Option::framerate = %val;
+         $Option::initialFramerate = $pref::Video::Framerate;
          
          echo("VSync = " @ $pref::Video::VSync);
+         echo("Framerate = " @ $pref::Video::Framerate);
    }  
 }
 
