@@ -134,6 +134,12 @@ void Move::unclamp()
 
 void Move::clamp()
 {
+    // clamp before FANG2IANG, or else angles can become negative
+    const F32 angleClamp = M_PI_F - 0.000001f;
+    yaw = mClampF(yaw, -angleClamp, angleClamp);
+    pitch = mClampF(pitch, -angleClamp, angleClamp);
+    roll = mClampF(roll, -angleClamp, angleClamp);
+
     // angles are all 16 bit.
     pyaw = FANG2IANG(yaw);
     ppitch = FANG2IANG(pitch);
