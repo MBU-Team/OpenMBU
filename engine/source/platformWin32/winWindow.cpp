@@ -211,6 +211,12 @@ static bool cursorInWindow()
     if (Win32Window == NULL)
         return false;
 
+    if (!windowActive)
+        return false;
+
+    if (Win32Window->mBorderless)
+        return true;
+
     RECT cRect;
     GetClientRect(winState.appWindow, &cRect);
 
@@ -253,7 +259,19 @@ static void updateCursorVisibility()
 {
     bool show = cursorVisibleWanted || !cursorInWindow();
     if (show != IsCursorVisible())
+    {
         ShowCursor(show);
+//        int counter = ShowCursor(show);
+//        if (counter < -1)
+//        {
+//            Con::errorf("Negative counter!! %d", counter);
+//        }
+//        if (counter > 0 && !show)
+//        {
+//            Con::errorf("Failed to hide cursor, counter is %d, trying again.", counter);
+//            //while (ShowCursor(false) >= 0);
+//        }
+    }
 }
 //**********************************************************************************************
 
