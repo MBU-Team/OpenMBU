@@ -638,7 +638,7 @@ void NetInterface::sendArrangedConnectRequest(NetConnection *conn)
 //    }
     out->writeFlag(theParams.mDebugObjectSizes);
     //out->write(conn->getInitialSendSequence());
-    out->write(conn->getSequence());
+    //out->write(conn->getSequence());
     conn->writeConnectRequest(out);
 
 //    if(innerEncryptPos)

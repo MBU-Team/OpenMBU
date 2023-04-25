@@ -2064,6 +2064,31 @@ static void handleMasterServerArrangedConnectResponse(BitStream* stream, U32 /*k
 {
     Con::printf("Received arranged connect response from the master server.");
 
+    Vector<const NetAddress*> possibleAddresses;
+
+    U8 possibleAddressCount;
+    stream->read(&possibleAddressCount);
+    for (int i = 0; i < possibleAddressCount; i++) {
+        U8 ipbits[4];
+        U16 port;
+        stream->read(&ipbits[0]);
+        stream->read(&ipbits[1]);
+        stream->read(&ipbits[2]);
+        stream->read(&ipbits[3]);
+        stream->read(&port);
+        NetAddress* addr = new NetAddress();
+        addr->port = port;
+        addr->netNum[0] = ipbits[0];
+        addr->netNum[1] = ipbits[1];
+        addr->netNum[2] = ipbits[2];
+        addr->netNum[3] = ipbits[3];
+        possibleAddresses.push_back(addr);
+    }
+
+    GameConnection* conn = new GameConnection();
+    conn->connectArranged(possibleAddresses, false);
+    
+
     // TODO: If not hosting then reject the connection
 
     // TODO: Implement arranged connection
