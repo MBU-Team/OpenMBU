@@ -536,7 +536,7 @@ static void sendMasterArrangedConnectRequest(NetAddress* address)
 
         // Send a request to the master server to set up an arranged connection:
         BitStream* out = BitStream::getPacketStream();
-        out->write(U8(NetInterface::MasterServerArrangedConnectRequest));
+        out->write(U8(NetInterface::MasterServerRequestArrangedConnection));
 
         //char addr[256];
         //Net::addressToString(address, addr);
@@ -552,14 +552,17 @@ static void sendMasterArrangedConnectRequest(NetAddress* address)
     }
 }
 
-ConsoleFunction(arrangeConnection, void, 2, 2, "arrangeConnection(ip);")
+NetConnection* arrangeNetConnection = NULL;
+
+ConsoleMethod(NetConnection, arrangeConnection, void, 3, 3, "NetConnection.arrangeConnection(ip);")
 {
+    arrangeNetConnection = object;
     argc;
 
     NetAddress addr;
     char* addrText;
 
-    addrText = dStrdup(argv[1]);
+    addrText = dStrdup(argv[2]);
     Net::stringToAddress(addrText, &addr);
 
     sendMasterArrangedConnectRequest(&addr);
@@ -2060,11 +2063,13 @@ static void handleGameInfoResponse(const NetAddress* address, BitStream* stream,
 }
 
 #ifdef TORQUE_NET_HOLEPUNCHING
-static void handleMasterServerArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+static void handleMasterServerClientRequestedArrangedConnection(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
 {
-    Con::printf("Received arranged connect response from the master server.");
-
+    Con::printf("Received MasterServerClientRequestedArrangedConnection");
     Vector<const NetAddress*> possibleAddresses;
+
+    U16 clientId;
+    stream->read(&clientId);
 
     U8 possibleAddressCount;
     stream->read(&possibleAddressCount);
@@ -2085,9 +2090,16 @@ static void handleMasterServerArrangedConnectResponse(BitStream* stream, U32 /*k
         possibleAddresses.push_back(addr);
     }
 
-    GameConnection* conn = new GameConnection();
-    conn->connectArranged(possibleAddresses, false);
-    
+    BitStream* out = BitStream::getPacketStream();
+    out->write(U8(NetInterface::MasterServerAcceptArrangedConnection));
+    out->write(clientId);
+    BitStream::sendPacketStream(address);
+
+    // Do connectArranged to client
+    NetConnection* conn = dynamic_cast<NetConnection*>(Sim::findObject("ServerConnection"));
+    if (conn != NULL) {
+        conn->connectArranged(possibleAddresses, false);
+    }
 
     // TODO: If not hosting then reject the connection
 
@@ -2131,10 +2143,34 @@ static void handleMasterServerArrangedConnectResponse(BitStream* stream, U32 /*k
     }*/
 }
 
-static void handleMasterServerAcceptArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+static void handleMasterServerArrangedConnectionAccepted(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
 {
+    Vector<const NetAddress*> possibleAddresses;
+
     Con::printf("Received accept arranged connect response from the master server.");
 
+    U8 possibleAddressCount;
+    stream->read(&possibleAddressCount);
+    for (int i = 0; i < possibleAddressCount; i++) {
+        U8 ipbits[4];
+        U16 port;
+        stream->read(&ipbits[0]);
+        stream->read(&ipbits[1]);
+        stream->read(&ipbits[2]);
+        stream->read(&ipbits[3]);
+        stream->read(&port);
+        NetAddress* addr = new NetAddress();
+        addr->port = port;
+        addr->netNum[0] = ipbits[0];
+        addr->netNum[1] = ipbits[1];
+        addr->netNum[2] = ipbits[2];
+        addr->netNum[3] = ipbits[3];
+        possibleAddresses.push_back(addr);
+    }
+
+    // Do connectArranged to server
+    arrangeNetConnection->connectArranged(possibleAddresses, true);
+    
     // TODO: Implement accepted arranged connection
 
     /*if(!gIsServer && requestId == mCurrentQueryId && connectionData->getBufferSize() >= Nonce::NonceSize * 2 + SymmetricCipher::KeySize * 2)
@@ -2219,11 +2255,11 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
         break;
 
 #ifdef TORQUE_NET_HOLEPUNCHING
-    case MasterServerArrangedConnectResponse:
-        handleMasterServerArrangedConnectResponse(stream, key, flags);
+    case MasterServerClientRequestedArrangedConnection:
+        handleMasterServerClientRequestedArrangedConnection(address, stream, key, flags);
         break;
-    case MasterServerAcceptArrangedConnectResponse:
-        handleMasterServerAcceptArrangedConnectResponse(stream, key, flags);
+    case MasterServerArrangedConnectionAccepted:
+        handleMasterServerArrangedConnectionAccepted(address, stream, key, flags);
         break;
     case MasterServerRejectArrangedConnectResponse:
         handleMasterServerRejectArrangedConnectResponse(stream, key, flags);

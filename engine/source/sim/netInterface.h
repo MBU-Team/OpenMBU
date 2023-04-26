@@ -38,10 +38,10 @@ public:
         Punch = 40,
         ArrangedConnectRequest = 42,
 
-        MasterServerArrangedConnectRequest = 46,
-        MasterServerArrangedConnectResponse = 48,
-        MasterServerAcceptArrangedConnectRequest = 50,
-        MasterServerAcceptArrangedConnectResponse = 52,
+        MasterServerRequestArrangedConnection = 46,
+        MasterServerClientRequestedArrangedConnection = 48,
+        MasterServerAcceptArrangedConnection = 50,
+        MasterServerArrangedConnectionAccepted = 52,
         MasterServerRejectArrangedConnectRequest = 54,
         MasterServerRejectArrangedConnectResponse = 56,
 #endif // TORQUE_NET_HOLEPUNCHING
