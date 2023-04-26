@@ -2198,10 +2198,18 @@ static void handleMasterServerArrangedConnectionAccepted(const NetAddress* addre
     }*/
 }
 
-static void handleMasterServerRejectArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+static void handleMasterServerArrangedConnectionRejected(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
 {
     Con::printf("Received reject arranged connect response from the master server.");
 
+    U8 reason;
+    stream->read(&reason);
+
+    // Reject??
+    if (reason == 0)
+        arrangeNetConnection->onConnectionRejected("No such server");
+    if (reason == 1)
+        arrangeNetConnection->onConnectionRejected("Server rejected");
     // TODO: Implement rejected arranged connection
 
     /*if(!gIsServer && requestId == mCurrentQueryId)
@@ -2261,8 +2269,8 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
     case MasterServerArrangedConnectionAccepted:
         handleMasterServerArrangedConnectionAccepted(address, stream, key, flags);
         break;
-    case MasterServerRejectArrangedConnectResponse:
-        handleMasterServerRejectArrangedConnectResponse(stream, key, flags);
+    case MasterServerArrangedConnectionRejected:
+        handleMasterServerArrangedConnectionRejected(address, stream, key, flags);
         break;
 #endif
     }

@@ -42,8 +42,8 @@ public:
         MasterServerClientRequestedArrangedConnection = 48,
         MasterServerAcceptArrangedConnection = 50,
         MasterServerArrangedConnectionAccepted = 52,
-        MasterServerRejectArrangedConnectRequest = 54,
-        MasterServerRejectArrangedConnectResponse = 56,
+        MasterServerRejectArrangedConnection = 54,
+        MasterServerArrangedConnectionRejected = 56,
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:

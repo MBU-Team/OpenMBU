@@ -765,9 +765,15 @@ void NetInterface::checkTimeouts()
             {
                 if (pending->mConnectSendCount > ConnectRetryCount)
                 {
-                    pending->onConnectTimedOut();
+                    if (pending->mConnectionParameters.mIsInitiator) {
+                        pending->onConnectTimedOut();
+                        pending->deleteObject();
+                    }
+                    else 
+                    {
+                        pending->setConnectionState(NetConnection::NotConnected);
+                    }
                     removePendingConnection(pending);
-                    pending->deleteObject();
                     continue;
                 }
                 else
