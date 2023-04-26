@@ -471,6 +471,7 @@ function connectManual(%address, %invited)
 // connect to a server.  if address is empty a local connect is assumed
 function connectToServer(%address,%invited)
 {
+    echo("CONNECT TO SERVER" SPC %address SPC %invited);
    if (isObject(ServerConnection))
       ServerConnection.delete();
       
@@ -509,7 +510,8 @@ function connectToServer(%address,%invited)
       }
       $Client::connectedMultiplayer = true;
       $Game::SPGemHunt = false;
-      %conn.connect(%address);
+    echo("CONNECT ARRANGED??");
+      %conn.arrangeConnection(%address);
    }
 
    clearClientGracePeroid();
@@ -546,6 +548,7 @@ function connectToPreviewServer()
 // connect to a server.  if address is empty a local connect is assumed
 function establishConnection(%address, %mp, %invited)
 {
+    echo("ESTABLISH CONNECTION" SPC %address SPC %mp SPC %invited);
    if (isObject(ServerConnection))
       ServerConnection.delete();
       
@@ -588,7 +591,7 @@ function establishConnection(%address, %mp, %invited)
       }
       $Client::connectedMultiplayer = true;
       $Game::SPGemHunt = false;
-      %conn.connect(%address);
+      %conn.arrangeConnection(%address);
    }
 
    clearClientGracePeroid();
