@@ -689,7 +689,7 @@ ConsoleFunction(unscientific, const char*, 2, 2, "(value)")
     {
         char* ret = Con::getReturnBuffer(256);
 
-        dSprintf(ret, 256, "%g", (F64)f);
+        dSprintf(ret, 256, "%f", (F64)f);
         char* num;
         for (dsize_t i = dStrlen(ret) - 1; i >= 0; *num = 0)
         {
