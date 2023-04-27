@@ -1288,6 +1288,19 @@ static void processPingsAndQueries(U32 session, bool schedule)
                 else
                     Con::printf("Pinging Server %s (%d)...", addressString, p.tryCount);
                 sendPacket(NetInterface::GamePingRequest, &p.address, p.key, p.session, flags);
+                
+                BitStream* out = BitStream::getPacketStream();
+                out->write(U8(NetInterface::MasterServerGamePingRequest));
+                out->write(p.address.netNum[0]);
+                out->write(p.address.netNum[1]);
+                out->write(p.address.netNum[2]);
+                out->write(p.address.netNum[3]);
+                out->write(p.key);
+                out->write(p.session);
+                out->write(flags);
+                for (int i = 0; i < gMasterServerList.size(); i++)
+                    BitStream::sendPacketStream(&gMasterServerList[i].address);
+
                 i++;
             }
         }
@@ -1328,6 +1341,19 @@ static void processPingsAndQueries(U32 session, bool schedule)
 
                     Con::printf("Querying Server %s (%d)...", addressString, p.tryCount);
                     sendPacket(NetInterface::GameInfoRequest, &p.address, p.key, p.session, flags);
+
+                    BitStream* out = BitStream::getPacketStream();
+                    out->write(U8(NetInterface::MasterServerGameInfoRequest));
+                    out->write(p.address.netNum[0]);
+                    out->write(p.address.netNum[1]);
+                    out->write(p.address.netNum[2]);
+                    out->write(p.address.netNum[3]);
+                    out->write(p.key);
+                    out->write(p.session);
+                    out->write(flags);
+                    for (int i = 0; i < gMasterServerList.size(); i++)
+                        BitStream::sendPacketStream(&gMasterServerList[i].address);
+                    
                     if (!si->isQuerying())
                     {
                         si->status |= ServerInfo::Status_Querying;
@@ -2219,6 +2245,40 @@ static void handleMasterServerArrangedConnectionRejected(const NetAddress* addre
         startGameTypesQuery();
     }*/
 }
+
+static void handleMasterServerGamePingResponse(const NetAddress* address, BitStream* stream) {
+    NetAddress theAddress;
+    stream->read(&theAddress.netNum[0]);
+    stream->read(&theAddress.netNum[1]);
+    stream->read(&theAddress.netNum[2]);
+    stream->read(&theAddress.netNum[3]);
+    stream->read(&theAddress.port);
+    U8 cmd;
+    stream->read(&cmd);
+    U8 flags;
+    U32 key;
+
+    stream->read(&flags);
+    stream->read(&key);
+    handleGamePingResponse(&theAddress, stream, key, flags);
+}
+
+static void handleMasterServerGameInfoResponse(const NetAddress* address, BitStream* stream) {
+    NetAddress theAddress;
+    stream->read(&theAddress.netNum[0]);
+    stream->read(&theAddress.netNum[1]);
+    stream->read(&theAddress.netNum[2]);
+    stream->read(&theAddress.netNum[3]);
+    stream->read(&theAddress.port);
+    U8 cmd;
+    stream->read(&cmd);
+    U8 flags;
+    U32 key;
+
+    stream->read(&flags);
+    stream->read(&key);
+    handleGameInfoResponse(&theAddress, stream, key, flags);
+}
 #endif
 
 //-----------------------------------------------------------------------------
@@ -2271,6 +2331,12 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
         break;
     case MasterServerArrangedConnectionRejected:
         handleMasterServerArrangedConnectionRejected(address, stream, key, flags);
+        break;
+    case MasterServerGamePingResponse:
+        handleMasterServerGamePingResponse(address, stream);
+        break;
+    case MasterServerGameInfoResponse:
+        handleMasterServerGameInfoResponse(address, stream);
         break;
 #endif
     }

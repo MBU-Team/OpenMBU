@@ -44,6 +44,10 @@ public:
         MasterServerArrangedConnectionAccepted = 52,
         MasterServerRejectArrangedConnection = 54,
         MasterServerArrangedConnectionRejected = 56,
+        MasterServerGamePingRequest = 58,
+        MasterServerGamePingResponse = 60,
+        MasterServerGameInfoRequest = 62,
+        MasterServerGameInfoResponse = 64
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:
