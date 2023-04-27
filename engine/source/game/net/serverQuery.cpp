@@ -2247,6 +2247,7 @@ static void handleMasterServerArrangedConnectionRejected(const NetAddress* addre
 
 static void handleMasterServerGamePingResponse(const NetAddress* address, BitStream* stream) {
     NetAddress theAddress;
+    theAddress.type = 0;
     stream->read(&theAddress.netNum[0]);
     stream->read(&theAddress.netNum[1]);
     stream->read(&theAddress.netNum[2]);
@@ -2264,6 +2265,7 @@ static void handleMasterServerGamePingResponse(const NetAddress* address, BitStr
 
 static void handleMasterServerGameInfoResponse(const NetAddress* address, BitStream* stream) {
     NetAddress theAddress;
+    theAddress.type = 0;
     stream->read(&theAddress.netNum[0]);
     stream->read(&theAddress.netNum[1]);
     stream->read(&theAddress.netNum[2]);
