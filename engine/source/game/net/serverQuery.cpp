@@ -568,6 +568,23 @@ ConsoleMethod(NetConnection, arrangeConnection, void, 3, 3, "NetConnection.arran
 
     sendMasterArrangedConnectRequest(&addr);
 }
+
+NetConnection* relayNetConnection = NULL;
+static void getRelayServer(const NetAddress* address);
+
+ConsoleMethod(NetConnection, relayConnection, void, 3, 3, "NetConnection.relayConnection(ip);")
+{
+    relayNetConnection = object;
+    argc;
+
+    NetAddress addr;
+    char* addrText;
+
+    addrText = dStrdup(argv[2]);
+    Net::stringToAddress(addrText, &addr);
+
+    getRelayServer(&addr);
+}
 #endif
 
 //-----------------------------------------------------------------------------
@@ -2100,6 +2117,36 @@ static void handleGameInfoResponse(const NetAddress* address, BitStream* stream,
 }
 
 #ifdef TORQUE_NET_HOLEPUNCHING
+
+static void getRelayServer(const NetAddress* address) 
+{
+    BitStream* stream = BitStream::getPacketStream();
+    stream->write(U8(NetInterface::MasterServerRelayRequest));
+    stream->write(address->netNum[0]);
+    stream->write(address->netNum[1]);
+    stream->write(address->netNum[2]);
+    stream->write(address->netNum[3]);
+
+    for (int i = 0; i < gMasterServerList.size(); i++)
+    {
+        BitStream::sendPacketStream(&gMasterServerList[i].address);
+    }
+}
+
+static void handleMasterServerRelayResponse(const NetAddress* address, BitStream* stream)
+{
+    Con::printf("Received MasterServerRelayResponse");
+    NetAddress theAddress;
+    theAddress.type = 0;
+    stream->read(&theAddress.netNum[0]);
+    stream->read(&theAddress.netNum[1]);
+    stream->read(&theAddress.netNum[2]);
+    stream->read(&theAddress.netNum[3]);
+    stream->read(&theAddress.port);
+
+    relayNetConnection->connect(&theAddress);
+}
+
 static void handleMasterServerClientRequestedArrangedConnection(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
 {
     Con::printf("Received MasterServerClientRequestedArrangedConnection");
@@ -2283,6 +2330,9 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
         break;
     case MasterServerGameInfoResponse:
         handleMasterServerGameInfoResponse(address, stream);
+        break;
+    case MasterServerRelayResponse:
+        handleMasterServerRelayResponse(address, stream);
         break;
 #endif
     }

@@ -47,7 +47,9 @@ public:
         MasterServerGamePingRequest = 58,
         MasterServerGamePingResponse = 60,
         MasterServerGameInfoRequest = 62,
-        MasterServerGameInfoResponse = 64
+        MasterServerGameInfoResponse = 64,
+        MasterServerRelayRequest = 66,
+        MasterServerRelayResponse = 68,
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:
