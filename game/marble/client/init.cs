@@ -444,6 +444,61 @@ function waitForPreviewLevel()
    $Client::GameLoaded = true;
 }
 
+
+// Connect to a server using a chosen %method
+// Methods:
+// 0: Direct Connect
+// 1: Arranged Connect through NAT hole punching
+// 2: Relay Connect using a relay server
+function connectUsing(%address, %method)
+{
+   $disconnectGui = RootGui.contentGui;
+   GameMissionInfo.setMode(GameMissionInfo.MPMode);
+
+   if ($EnableFMS)
+   {
+      %missionIndex = GameMissionInfo.getCurrentIndex();
+      if (%missionIndex == -1)
+         %missionIndex = 0;
+   
+      GameMissionInfo.selectMission(%missionIndex);
+   }
+   RootGui.setContent(MissionLoadingGui);
+    
+   echo("ESTABLISH CONNECTION" SPC %address SPC %mp SPC %invited);
+   if (isObject(ServerConnection))
+      ServerConnection.delete();
+      
+   // clear the scores gui here so that our the client id from the preview server doesn't
+   // show up in the scores list.
+   PlayerListGui.clear();
+   // reset client Id since we are connecting to a different server
+   $Player::ClientId = 0;
+   
+   %conn = new GameConnection(ServerConnection);
+   RootGroup.add(ServerConnection);
+
+   %xbLiveVoice = 0; // XBLiveGetVoiceStatus();
+   
+   // we expect $Player:: variables to be properly populated at this point   
+   %isDemoLaunch = isDemoLaunch();
+   %conn.setConnectArgs($Player::Name, $Player::XBLiveId, %xbLiveVoice, %invited, %isDemoLaunch);
+   %conn.setJoinPassword($Client::Password);
+
+   $Client::connectedMultiplayer = true;
+   $Game::SPGemHunt = false;
+
+   if (%method == 0) { 
+      %conn.connect(%address);
+   } else if (%method == 1) {
+      %conn.arrangeConnection(%address);
+   } else if (%method == 2) { 
+      %conn.relayConnection(%address);
+   }
+
+   clearClientGracePeroid();
+}
+
 // Manually connect to server by ip
 function connectManual(%address, %local, %invited)
 {
