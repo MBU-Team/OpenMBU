@@ -95,8 +95,11 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
         U8 packetType;
         pStream.read(&packetType);
         NetAddress* addr = &prEvent->sourceAddress;
-
+#ifdef TORQUE_NET_HOLEPUNCHING
         if (packetType <= GameHeartbeat || packetType >= MasterServerRequestArrangedConnection)
+#else
+        if (packetType <= GameHeartbeat)
+#endif
             handleInfoPacket(addr, packetType, &pStream);
 #ifdef GGC_PLUGIN
         else if (packetType == GGCPacket)
@@ -766,6 +769,7 @@ void NetInterface::checkTimeouts()
                 else
                     sendConnectRequest(pending);
             }
+#ifdef TORQUE_NET_HOLEPUNCHING
             else if (pending->getConnectionState() == NetConnection::SendingPunchPackets &&
                 time > pending->mConnectLastSendTime + ConnectRetryTime)
             {
@@ -785,6 +789,7 @@ void NetInterface::checkTimeouts()
                 else
                     sendPunchPackets(pending);
             }
+#endif
             i++;
         }
         mLastTimeoutCheckTime = time;

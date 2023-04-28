@@ -1310,6 +1310,7 @@ static void processPingsAndQueries(U32 session, bool schedule)
                     Con::printf("Pinging Server %s (%d)...", addressString, p.tryCount);
                 sendPacket(NetInterface::GamePingRequest, &p.address, p.key, p.session, flags);
                 
+#ifdef TORQUE_NET_HOLEPUNCHING
                 if (!p.broadcast) {
                     BitStream* out = BitStream::getPacketStream();
                     out->write(U8(NetInterface::MasterServerGamePingRequest));
@@ -1322,6 +1323,7 @@ static void processPingsAndQueries(U32 session, bool schedule)
                     for (int i = 0; i < gMasterServerList.size(); i++)
                         BitStream::sendPacketStream(&gMasterServerList[i].address);
                 }
+#endif
 
                 i++;
             }
@@ -1364,6 +1366,7 @@ static void processPingsAndQueries(U32 session, bool schedule)
                     Con::printf("Querying Server %s (%d)...", addressString, p.tryCount);
                     sendPacket(NetInterface::GameInfoRequest, &p.address, p.key, p.session, flags);
 
+#ifdef TORQUE_NET_HOLEPUNCHING
                     if (!p.broadcast) {
                         BitStream* out = BitStream::getPacketStream();
                         out->write(U8(NetInterface::MasterServerGameInfoRequest));
@@ -1377,6 +1380,7 @@ static void processPingsAndQueries(U32 session, bool schedule)
                         for (int i = 0; i < gMasterServerList.size(); i++)
                             BitStream::sendPacketStream(&gMasterServerList[i].address);
                     }
+#endif
                     
                     if (!si->isQuerying())
                     {
