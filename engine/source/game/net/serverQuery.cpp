@@ -2137,47 +2137,6 @@ static void handleMasterServerClientRequestedArrangedConnection(const NetAddress
     if (conn != NULL) {
         conn->connectArranged(possibleAddresses, false);
     }
-
-    // TODO: If not hosting then reject the connection
-
-    // TODO: Implement arranged connection
-
-    /*if(!gIsServer || Random::readF() > 0.75)
-    {
-        // We reject connections about 75% of the time...
-
-        logprintf("Rejecting arranged connection from %s", Address(possibleAddresses[0]).toString());
-        c2mRejectArrangedConnection(requestId, connectionParameters);
-    }
-    else
-    {
-        // Ok, let's do the arranged connection!
-
-        U8 data[Nonce::NonceSize * 2 + SymmetricCipher::KeySize * 2];
-        Random::read(data, sizeof(data));
-        IPAddress localAddress = getInterface()->getFirstBoundInterfaceAddress().toIPAddress();
-
-        ByteBufferPtr b = new ByteBuffer(data, sizeof(data));
-        b->takeOwnership();
-        c2mAcceptArrangedConnection(requestId, localAddress, b);
-        GameConnection *conn = new GameConnection();
-
-        Vector<Address> fullPossibleAddresses;
-        for(S32 i = 0; i < possibleAddresses.size(); i++)
-            fullPossibleAddresses.push_back(Address(possibleAddresses[i]));
-
-        logprintf("Accepting arranged connection from %s", Address(fullPossibleAddresses[0]).toString());
-
-        logprintf("  Generated shared secret data: %s", b->encodeBase64()->getBuffer());
-
-        ByteBufferPtr theSharedData = new ByteBuffer(data + 2 * Nonce::NonceSize, sizeof(data) - 2 * Nonce::NonceSize);
-        theSharedData->takeOwnership();
-        Nonce nonce(data);
-        Nonce serverNonce(data + Nonce::NonceSize);
-
-        conn->connectArranged(getInterface(), fullPossibleAddresses,
-                              nonce, serverNonce, theSharedData,false);
-    }*/
 }
 
 static void handleMasterServerArrangedConnectionAccepted(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
@@ -2207,32 +2166,6 @@ static void handleMasterServerArrangedConnectionAccepted(const NetAddress* addre
 
     // Do connectArranged to server
     arrangeNetConnection->connectArranged(possibleAddresses, true);
-    
-    // TODO: Implement accepted arranged connection
-
-    /*if(!gIsServer && requestId == mCurrentQueryId && connectionData->getBufferSize() >= Nonce::NonceSize * 2 + SymmetricCipher::KeySize * 2)
-    {
-        logprintf("Remote host accepted arranged connection.");
-        logprintf("  Shared secret data: %s", connectionData->encodeBase64()->getBuffer());
-        GameConnection *conn = new GameConnection();
-
-        Vector<Address> fullPossibleAddresses;
-        for(S32 i = 0; i < possibleAddresses.size(); i++)
-            fullPossibleAddresses.push_back(Address(possibleAddresses[i]));
-
-        ByteBufferPtr theSharedData =
-            new ByteBuffer(
-                (U8 *) connectionData->getBuffer() + Nonce::NonceSize * 2,
-                connectionData->getBufferSize() - Nonce::NonceSize * 2
-            );
-        theSharedData->takeOwnership();
-
-        Nonce nonce(connectionData->getBuffer());
-        Nonce serverNonce(connectionData->getBuffer() + Nonce::NonceSize);
-
-        conn->connectArranged(getInterface(), fullPossibleAddresses,
-                              nonce, serverNonce, theSharedData,true);
-    }*/
 }
 
 static void handleMasterServerArrangedConnectionRejected(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)

@@ -452,6 +452,12 @@ void NetInterface::sendPunchPackets(NetConnection *conn)
     for(S32 i = 0; i < theParams.mPossibleAddresses.size(); i++)
     {
         BitStream::sendPacketStream(theParams.mPossibleAddresses[i]);
+        Con::printf("Sending punch packets to %d.%d.%d.%d:%d",
+            theParams.mPossibleAddresses[i]->netNum[0],
+            theParams.mPossibleAddresses[i]->netNum[1],
+            theParams.mPossibleAddresses[i]->netNum[2],
+            theParams.mPossibleAddresses[i]->netNum[3],
+            theParams.mPossibleAddresses[i]->port);
     }
     conn->mConnectSendCount++;
     conn->mConnectLastSendTime = Platform::getVirtualMilliseconds(); //getCurrentTime();
@@ -615,11 +621,11 @@ void NetInterface::handleArrangedConnectRequest(const NetAddress* theAddress, Bi
     theParams.mDebugObjectSizes = stream->readFlag();
     //stream->read(&connectSequence);
     //TNLLogMessageV(LogNetInterface, ("Received Arranged Connect Request"));
-    Con::printf("Received Arranged Connect Request");
+    Con::printf("Received Arranged Connect Request: Initiator: %d", theParams.mIsInitiator);
     conn->setConnectionState(NetConnection::Connected);
-
+    removePendingConnection(conn);
+    
     if (theParams.mIsInitiator) {
-        removePendingConnection(conn);
         conn->connect(theAddress);
     }
     else 
