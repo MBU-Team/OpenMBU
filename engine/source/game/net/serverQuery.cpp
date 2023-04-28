@@ -1289,16 +1289,18 @@ static void processPingsAndQueries(U32 session, bool schedule)
                     Con::printf("Pinging Server %s (%d)...", addressString, p.tryCount);
                 sendPacket(NetInterface::GamePingRequest, &p.address, p.key, p.session, flags);
                 
-                BitStream* out = BitStream::getPacketStream();
-                out->write(U8(NetInterface::MasterServerGamePingRequest));
-                out->write(p.address.netNum[0]);
-                out->write(p.address.netNum[1]);
-                out->write(p.address.netNum[2]);
-                out->write(p.address.netNum[3]);
-                out->write(flags);
-                out->write((p.session << 16) | (p.key & 0xFFFF));
-                for (int i = 0; i < gMasterServerList.size(); i++)
-                    BitStream::sendPacketStream(&gMasterServerList[i].address);
+                if (!p.broadcast) {
+                    BitStream* out = BitStream::getPacketStream();
+                    out->write(U8(NetInterface::MasterServerGamePingRequest));
+                    out->write(p.address.netNum[0]);
+                    out->write(p.address.netNum[1]);
+                    out->write(p.address.netNum[2]);
+                    out->write(p.address.netNum[3]);
+                    out->write(flags);
+                    out->write((p.session << 16) | (p.key & 0xFFFF));
+                    for (int i = 0; i < gMasterServerList.size(); i++)
+                        BitStream::sendPacketStream(&gMasterServerList[i].address);
+                }
 
                 i++;
             }
@@ -1341,17 +1343,19 @@ static void processPingsAndQueries(U32 session, bool schedule)
                     Con::printf("Querying Server %s (%d)...", addressString, p.tryCount);
                     sendPacket(NetInterface::GameInfoRequest, &p.address, p.key, p.session, flags);
 
-                    BitStream* out = BitStream::getPacketStream();
-                    out->write(U8(NetInterface::MasterServerGameInfoRequest));
-                    out->write(p.address.netNum[0]);
-                    out->write(p.address.netNum[1]);
-                    out->write(p.address.netNum[2]);
-                    out->write(p.address.netNum[3]);
-                    out->write(flags);
-                    out->write((p.session << 16) | (p.key & 0xFFFF));
-                    
-                    for (int i = 0; i < gMasterServerList.size(); i++)
-                        BitStream::sendPacketStream(&gMasterServerList[i].address);
+                    if (!p.broadcast) {
+                        BitStream* out = BitStream::getPacketStream();
+                        out->write(U8(NetInterface::MasterServerGameInfoRequest));
+                        out->write(p.address.netNum[0]);
+                        out->write(p.address.netNum[1]);
+                        out->write(p.address.netNum[2]);
+                        out->write(p.address.netNum[3]);
+                        out->write(flags);
+                        out->write((p.session << 16) | (p.key & 0xFFFF));
+
+                        for (int i = 0; i < gMasterServerList.size(); i++)
+                            BitStream::sendPacketStream(&gMasterServerList[i].address);
+                    }
                     
                     if (!si->isQuerying())
                     {
