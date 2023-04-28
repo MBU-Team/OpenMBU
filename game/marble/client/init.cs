@@ -445,7 +445,7 @@ function waitForPreviewLevel()
 }
 
 // Manually connect to server by ip
-function connectManual(%address, %invited)
+function connectManual(%address, %local, %invited)
 {
    $disconnectGui = RootGui.contentGui;
    
@@ -463,7 +463,7 @@ function connectManual(%address, %invited)
 
    RootGui.setContent(MissionLoadingGui);
    if ($EnableFMS)
-      establishConnection(%address, true, %invited);
+      establishConnection(%address, true, %local, %invited);
    else
       connectToServer(%address, %invited);
 }
@@ -546,7 +546,7 @@ function connectToPreviewServer()
 }
 
 // connect to a server.  if address is empty a local connect is assumed
-function establishConnection(%address, %mp, %invited)
+function establishConnection(%address, %mp, %isLocal, %invited)
 {
     echo("ESTABLISH CONNECTION" SPC %address SPC %mp SPC %invited);
    if (isObject(ServerConnection))
@@ -591,7 +591,10 @@ function establishConnection(%address, %mp, %invited)
       }
       $Client::connectedMultiplayer = true;
       $Game::SPGemHunt = false;
-      %conn.arrangeConnection(%address);
+      if (%isLocal)
+         %conn.connect(%address);
+      else
+         %conn.arrangeConnection(%address);
    }
 
    clearClientGracePeroid();

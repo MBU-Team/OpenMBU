@@ -730,9 +730,12 @@ function FindGameGui::joinGame(%this, %index, %invited)
             
          %this.joiningGame = true;
          RootGui.setContent(MissionLoadingGui);
-         if ($EnableFMS)
-            establishConnection($ServerInfo::Address, true);
-         else
+         if ($EnableFMS) {
+            if ($ServerInfo::IsLocal)
+              establishConnection($ServerInfo::Address, true, true);
+            else
+              establishConnection($ServerInfo::Address, true);
+         } else
             connectToServer($ServerInfo::Address);
          return;
       }
@@ -796,7 +799,7 @@ function FindGameGui::onConnectComplete(%this)
 
    RootGui.setContent(MissionLoadingGui);
    if ($EnableFMS)
-      establishConnection($XBLive::secureHostAddress, true, $Client::Invited);
+      establishConnection($XBLive::secureHostAddress, true, false, $Client::Invited);
    else
       connectToServer($XBLive::secureHostAddress, $Client::Invited);
 }

@@ -135,6 +135,7 @@ struct Ping
     U32 time;
     U32 tryCount;
     bool broadcast;
+    bool isLocal;
 };
 
 static Ping gMasterServerPing;
@@ -751,6 +752,7 @@ ConsoleFunction(setServerInfo, bool, 2, 2, "setServerInfo(index);")
         Con::setBoolVariable("ServerInfo::Favorite", info.isFavorite);
         Con::setBoolVariable("ServerInfo::Dedicated", info.isDedicated());
         Con::setBoolVariable("ServerInfo::Password", info.isPassworded());
+        Con::setBoolVariable("ServerInfo::IsLocal", info.isLocal);
         return true;
     }
     return false;
@@ -904,6 +906,7 @@ static void pushPingRequest(const NetAddress* addr)
     p.time = 0;
     p.tryCount = gPingRetryCount;
     p.broadcast = false;
+    p.isLocal = false;
     gPingList.push_back(p);
     gServerPingCount++;
 }
@@ -922,6 +925,7 @@ static void pushPingBroadcast(const NetAddress* addr)
     p.time = 0;
     p.tryCount = 1; // only try this once
     p.broadcast = true;
+    p.isLocal = true;
     gPingList.push_back(p);
     // Don't increment gServerPingCount, broadcasts are not
     // counted as requests.
@@ -1752,8 +1756,11 @@ static void handleGamePingResponse(const NetAddress* address, BitStream* stream,
     {
         // an anonymous ping response - if it's not already timed
         // out or finished, ping it.  Probably from a broadcast
-        if (!addressFinished(address))
+        if (!addressFinished(address)) {
             pushPingRequest(address);
+            S32 index = findPingEntry(gPingList, address);
+            gPingList[index].isLocal = true;
+        }
         return;
     }
     Ping& p = gPingList[index];
@@ -1864,6 +1871,7 @@ static void handleGamePingResponse(const NetAddress* address, BitStream* stream,
         si = findOrCreateServerInfo(address);
     si->ping = ping;
     si->version = temp32;
+    si->isLocal = p.isLocal;
 
     // Get the server name:
     stream->readString(buf);
