@@ -547,7 +547,7 @@ static void sendMasterArrangedConnectRequest(NetAddress* address)
         out->write(address->netNum[1]);
         out->write(address->netNum[2]);
         out->write(address->netNum[3]);
-        //out->write(address->port);
+        out->write(address->port);
 
         BitStream::sendPacketStream(&(*masterList)[i].address);
     }
@@ -1318,6 +1318,7 @@ static void processPingsAndQueries(U32 session, bool schedule)
                     out->write(p.address.netNum[1]);
                     out->write(p.address.netNum[2]);
                     out->write(p.address.netNum[3]);
+                    out->write(p.address.port);
                     out->write(flags);
                     out->write((p.session << 16) | (p.key & 0xFFFF));
                     for (int i = 0; i < gMasterServerList.size(); i++)
@@ -1374,6 +1375,7 @@ static void processPingsAndQueries(U32 session, bool schedule)
                         out->write(p.address.netNum[1]);
                         out->write(p.address.netNum[2]);
                         out->write(p.address.netNum[3]);
+                        out->write(p.address.port);
                         out->write(flags);
                         out->write((p.session << 16) | (p.key & 0xFFFF));
 
@@ -2130,6 +2132,7 @@ static void getRelayServer(const NetAddress* address)
     stream->write(address->netNum[1]);
     stream->write(address->netNum[2]);
     stream->write(address->netNum[3]);
+    stream->write(address->port);
 
     Vector<MasterInfo>* serverList = getMasterServerList();
 
