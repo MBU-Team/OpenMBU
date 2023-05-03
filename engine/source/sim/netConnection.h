@@ -327,6 +327,7 @@ struct ConnectionParameters
     //bool mIsLocal;                    ///< True if this is a connectLocal connection.
     //ByteBufferPtr mArrangedSecret;    ///< The shared secret as arranged by the connection intermediary.
     bool mDebugObjectSizes;           ///< This connection's initiator requested debugging size information during packet writes.
+    NetAddress mToConnectAddress;
 
     ConnectionParameters()
     {
@@ -659,6 +660,7 @@ public:
         Connected,                 ///< We've accepted a connect request, or we've received a connect response accept.
 #ifdef TORQUE_NET_HOLEPUNCHING
         SendingPunchPackets,
+        TryingRelay
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 

@@ -566,6 +566,9 @@ ConsoleMethod(NetConnection, arrangeConnection, void, 3, 3, "NetConnection.arran
     addrText = dStrdup(argv[2]);
     Net::stringToAddress(addrText, &addr);
 
+    ConnectionParameters& params = arrangeNetConnection->getConnectionParameters();
+    params.mToConnectAddress = addr;
+
     sendMasterArrangedConnectRequest(&addr);
 }
 
@@ -2168,7 +2171,7 @@ static void handleMasterServerRelayResponse(const NetAddress* address, BitStream
 static void handleMasterServerRelayReady(const NetAddress* address) 
 {
     // Connect to it!
-    relayNetConnection->connect(address);
+    GNet->startRelayConnection(arrangeNetConnection, address);
 }
 
 static void handleMasterServerClientRequestedArrangedConnection(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)

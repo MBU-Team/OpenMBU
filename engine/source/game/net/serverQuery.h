@@ -107,6 +107,7 @@ struct ServerInfo
 
 extern Vector<ServerInfo> gServerList;
 extern bool gServerBrowserDirty;
+extern NetConnection* relayNetConnection;
 extern void clearServerList(bool clearServerInfo = true);
 extern void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missionType,
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing, U16 minCPU,
@@ -119,6 +120,7 @@ extern void queryFavoriteServers(U8 flags);
 extern void querySingleServer(const NetAddress* addr, U8 flags);
 extern void startHeartbeat();
 extern void sendHeartbeat(U8 flags);
+extern Vector<MasterInfo>* getMasterServerList();
 
 #ifdef TORQUE_DEBUG
 extern void addFakeServers(S32 howMany);

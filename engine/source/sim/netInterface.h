@@ -103,6 +103,9 @@ public:
     /// Begins the connection handshaking process for an arranged connection.
     void startArrangedConnection(NetConnection *conn);
 
+    /// Begins connecting to the relay server.
+    void startRelayConnection(NetConnection* conn, const NetAddress* theAddress);
+    
 protected:
     /// Sends Punch packets to each address in the possible connection address list.
     void sendPunchPackets(NetConnection *conn);
@@ -115,6 +118,9 @@ protected:
 
     /// Handles an incoming connect request from an arranged connection.
     void handleArrangedConnectRequest(const NetAddress* theAddress, BitStream *stream);
+
+    /// Sends relay requests
+    void sendRelayPackets(NetConnection* conn);
 
 #endif // TORQUE_NET_HOLEPUNCHING
 
