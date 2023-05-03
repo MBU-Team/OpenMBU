@@ -50,6 +50,7 @@ public:
         MasterServerGameInfoResponse = 64,
         MasterServerRelayRequest = 66,
         MasterServerRelayResponse = 68,
+        MasterServerRelayReady = 72,
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:

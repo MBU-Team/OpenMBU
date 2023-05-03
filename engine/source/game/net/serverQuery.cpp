@@ -2131,24 +2131,41 @@ static void getRelayServer(const NetAddress* address)
     stream->write(address->netNum[2]);
     stream->write(address->netNum[3]);
 
-    for (int i = 0; i < gMasterServerList.size(); i++)
+    Vector<MasterInfo>* serverList = getMasterServerList();
+
+    for (int i = 0; i < serverList->size(); i++)
     {
-        BitStream::sendPacketStream(&gMasterServerList[i].address);
+        BitStream::sendPacketStream(&(*serverList)[i].address);
     }
 }
 
 static void handleMasterServerRelayResponse(const NetAddress* address, BitStream* stream)
 {
     Con::printf("Received MasterServerRelayResponse");
+
+    bool isHost;
+    stream->read(&isHost);
+    
     NetAddress theAddress;
-    theAddress.type = 0;
+    theAddress.type = NetAddress::IPAddress;
     stream->read(&theAddress.netNum[0]);
     stream->read(&theAddress.netNum[1]);
     stream->read(&theAddress.netNum[2]);
     stream->read(&theAddress.netNum[3]);
     stream->read(&theAddress.port);
+    
+    // Attempt connection to relay
+    BitStream* out = BitStream::getPacketStream();
+    out->write(isHost);
+    BitStream::sendPacketStream(&theAddress);
 
-    relayNetConnection->connect(&theAddress);
+    // relayNetConnection->connect(&theAddress);
+}
+
+static void handleMasterServerRelayReady(const NetAddress* address) 
+{
+    // Connect to it!
+    relayNetConnection->connect(address);
 }
 
 static void handleMasterServerClientRequestedArrangedConnection(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
@@ -2337,6 +2354,9 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
         break;
     case MasterServerRelayResponse:
         handleMasterServerRelayResponse(address, stream);
+        break;
+    case MasterServerRelayReady:
+        handleMasterServerRelayReady(address);
         break;
 #endif
     }
