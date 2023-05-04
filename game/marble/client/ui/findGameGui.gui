@@ -122,6 +122,11 @@ function onServerQueryStatus(%status, %msg, %value)
 {
    if (%status !$= "done" && %status !$= "error")
       return;
+
+   if (%value == 0) // No master servers found
+      $queryOffline = true;
+   else
+      $queryOffline = false;
       
    eval($pcsearchcallback);
 }
@@ -440,7 +445,7 @@ function FindGameGui::onSearchComplete(%this,%type)
    if (isPCBuild() || !$Client::UseXBLiveMatchMaking)
    {
       %sc = getServerCount();
-      if (%sc == 0 && %this.useMaster)
+      if ($queryOffline && %this.useMaster)
       {
          %this.useMaster = false;
          
@@ -461,7 +466,10 @@ function FindGameGui::onSearchComplete(%this,%type)
          // for testing
          //%ping = 120;
          %gameIcon = "";
-         %rowText =  %playerStr TAB %gameIcon TAB %ping TAB "1" TAB %i TAB "\c1" @ "LAN:" SPC $ServerInfo::Name; // 1 == is pc result
+         if ($ServerInfo::IsLocal)
+            %rowText =  %playerStr TAB %gameIcon TAB %ping TAB "1" TAB %i TAB "\c1" @ "LAN:" SPC $ServerInfo::Name; // 1 == is pc result
+         else
+            %rowText =  %playerStr TAB %gameIcon TAB %ping TAB "1" TAB %i TAB "\c1" @ $ServerInfo::Name; // 1 == is pc result
          FindGameServerList.addRow(%count, %rowText);
          %this.updatePingIcon(%count);
          %count++;
