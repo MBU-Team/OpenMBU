@@ -94,6 +94,7 @@
 // This is basically the server query protocol version now:
 static const char* versionString = "VER1";
 
+Vector<NetAddress> localNetAddresses;
 Vector<ServerInfo> gServerList(__FILE__, __LINE__);
 static Vector<MasterInfo> gMasterServerList(__FILE__, __LINE__);
 static Vector<NetAddress> gFinishedList(__FILE__, __LINE__); // timed out servers and finished servers go here
@@ -569,6 +570,8 @@ ConsoleMethod(NetConnection, arrangeConnection, void, 3, 3, "NetConnection.arran
     if (!dStrchr(addrText, ':'))
         addr.port = 0;
 
+    dFree(addrText);
+
     ConnectionParameters& params = arrangeNetConnection->getConnectionParameters();
     params.mToConnectAddress = addr;
 
@@ -586,15 +589,35 @@ ConsoleMethod(NetConnection, relayConnection, void, 3, 3, "NetConnection.relayCo
     NetAddress addr;
     char* addrText;
 
+    addrText = dStrdup(argv[2]);
+    
+    Net::stringToAddress(addrText, &addr);
+    
     if (!dStrchr(addrText, ':'))
         addr.port = 0;
 
-    addrText = dStrdup(argv[2]);
-    Net::stringToAddress(addrText, &addr);
+    dFree(addrText);
 
     getRelayServer(&addr);
 }
 #endif
+
+ConsoleFunction(isLocalAddress, bool, 2, 2, "isLocalAddress(addr);")
+{
+    NetAddress addr;
+    Net::stringToAddress(argv[1], &addr);
+    
+    bool found = false;
+    for (U32 i = 0; i < localNetAddresses.size(); i++)
+    {
+        if (Net::compareAddresses(&localNetAddresses[i], &addr))
+        {
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -610,6 +633,9 @@ ConsoleFunction(querySingleServer, void, 3, 3, "querySingleServer(address, flags
 
 
     Net::stringToAddress(addrText, &addr);
+
+    dFree(addrText);
+
     querySingleServer(&addr, flags);
 }
 
@@ -898,6 +924,7 @@ void clearServerList(bool clearServerInfo)
     gPingList.clear();
     gQueryList.clear();
     gServerPingCount = gServerQueryCount = 0;
+    localNetAddresses.clear();
 
     gPingSession++;
 }
@@ -1069,6 +1096,25 @@ static void removeServerInfo(const NetAddress* addr)
             gServerList.erase(i);
             gServerBrowserDirty = true;
         }
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+static void addLocalAddress(const NetAddress* addr)
+{
+    bool found = false;
+    for (U32 i = 0; i < localNetAddresses.size(); i++)
+    {
+        if (Net::compareAddresses(addr, &localNetAddresses[i]))
+        {
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+    {
+        localNetAddresses.push_back(*addr);
     }
 }
 
@@ -1575,7 +1621,7 @@ static void handleMasterServerGameTypesResponse(BitStream* stream, U32 /*key*/, 
 
 //-----------------------------------------------------------------------------
 
-static void handleMasterServerListResponse(BitStream* stream, U32 key, U8 /*flags*/)
+static void handleMasterServerListResponse(BitStream* stream, U32 key, U8 flags)
 {
     U8 packetIndex, packetTotal;
     U32 i;
@@ -1619,6 +1665,13 @@ static void handleMasterServerListResponse(BitStream* stream, U32 key, U8 /*flag
 
         dSprintf(addressBuffer, sizeof(addressBuffer), "IP:%d.%d.%d.%d:%d", netNum[0], netNum[1], netNum[2], netNum[3], port);
         Net::stringToAddress(addressBuffer, &addr);
+
+        if (flags)
+        {
+            // This is *our* own public IP
+            addLocalAddress(&addr);
+        }
+
         pushPingRequest(&addr);
     }
 

@@ -646,7 +646,7 @@ function establishConnection(%address, %mp, %isLocal, %invited)
       }
       $Client::connectedMultiplayer = true;
       $Game::SPGemHunt = false;
-      if (%isLocal)
+      if (%isLocal || isLocalAddress(%address))
          %conn.connect(%address);
       else
          %conn.arrangeConnection(%address);
