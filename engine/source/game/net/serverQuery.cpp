@@ -566,6 +566,9 @@ ConsoleMethod(NetConnection, arrangeConnection, void, 3, 3, "NetConnection.arran
     addrText = dStrdup(argv[2]);
     Net::stringToAddress(addrText, &addr);
 
+    if (!dStrchr(addrText, ':'))
+        addr.port = 0;
+
     ConnectionParameters& params = arrangeNetConnection->getConnectionParameters();
     params.mToConnectAddress = addr;
 
@@ -582,6 +585,9 @@ ConsoleMethod(NetConnection, relayConnection, void, 3, 3, "NetConnection.relayCo
 
     NetAddress addr;
     char* addrText;
+
+    if (!dStrchr(addrText, ':'))
+        addr.port = 0;
 
     addrText = dStrdup(argv[2]);
     Net::stringToAddress(addrText, &addr);
