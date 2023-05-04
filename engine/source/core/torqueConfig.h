@@ -46,7 +46,7 @@
 #define TORQUE_HIFI_NET
 
 /// Define me to enable Torque Hole Punching support
-//#define TORQUE_NET_HOLEPUNCHING
+#define TORQUE_NET_HOLEPUNCHING
 
 /// Define me to enable shader caching support (Unfinished and really only needed for some versions of Wine or Proton)
 //#define TORQUE_SHADER_CACHING

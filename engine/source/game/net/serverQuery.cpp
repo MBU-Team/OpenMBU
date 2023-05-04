@@ -2171,7 +2171,10 @@ static void handleMasterServerRelayResponse(const NetAddress* address, BitStream
 static void handleMasterServerRelayReady(const NetAddress* address) 
 {
     // Connect to it!
-    GNet->startRelayConnection(arrangeNetConnection, address);
+    if (relayNetConnection)
+        GNet->startRelayConnection(relayNetConnection, address);
+    else if (arrangeNetConnection)
+        GNet->startRelayConnection(arrangeNetConnection, address);
 }
 
 static void handleMasterServerClientRequestedArrangedConnection(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
