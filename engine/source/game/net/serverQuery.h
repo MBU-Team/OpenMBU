@@ -45,6 +45,7 @@ struct ServerInfo
         Status_Dedicated = BIT(0),
         Status_Passworded = BIT(1),
         Status_Linux = BIT(2),
+        Status_Private = BIT(3),
 
         // Status flags:
         Status_New = 0,

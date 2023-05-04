@@ -1756,6 +1756,8 @@ static void handleGameMasterInfoRequest(const NetAddress* address, U32 key, U8 f
             temp8 |= ServerInfo::Status_Dedicated;
         if (dStrlen(Con::getVariable("Pref::Server::Password")) > 0)
             temp8 |= ServerInfo::Status_Passworded;
+        if (Con::getBoolVariable("Server::IsPrivate"))
+            temp8 |= ServerInfo::Status_Private;
         out->write(temp8);
         temp8 = U8(Con::getIntVariable("Server::BotCount"));
         out->write(temp8);

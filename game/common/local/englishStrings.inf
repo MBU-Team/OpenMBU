@@ -259,6 +259,7 @@ $Text::FGG_Players = "Players";
 $Text::Mission = "Level";
 $Text::MaxPlayers = "Max Players";
 $Text::PrivateSlots = "Private Slots";
+$Text::IsPrivate = "Private Game";
 
 ;-------------------------------------------------------------------------------
 ; Leaderboard Select Menu
