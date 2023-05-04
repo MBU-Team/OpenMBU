@@ -19,6 +19,7 @@
 #include "renderTranslucentMgr.h"
 #include "renderGlowMgr.h"
 #include "renderZOnlyMgr.h"
+#include "renderMarbleShadowMgr.h"
 
 #define POOL_GROW_SIZE 2048
 #define HIGH_NUM ((U32(-1)/2) - 1)
@@ -118,6 +119,8 @@ void RenderInstManager::initBins()
     mRenderBins[Interior] = new RenderInteriorMgr;
     mRenderBins[InteriorDynamicLighting] = new RenderInteriorMgr;
     mRenderBins[Mesh] = new RenderMeshMgr;
+    mRenderBins[MarbleShadow] = new RenderMarbleShadowMgr;
+    mRenderBins[Marble] = new RenderMeshMgr;
     mRenderBins[Shadow] = new RenderObjectMgr;
     mRenderBins[MiscObject] = new RenderObjectMgr;
     mRenderBins[Decal] = new RenderObjectMgr;
@@ -169,6 +172,11 @@ void RenderInstManager::addInst(RenderInst* inst)
 {
     AssertISV(mInitialized, "RenderInstManager not initialized - call console function 'initRenderInstManager()'");
     AssertFatal(inst != NULL, "doh, null instance");
+
+    if (inst->type == RIT_MarbleShadow) {
+        mRenderBins[MarbleShadow]->addElement(inst);
+        return;
+    }
 
     PROFILE_START(RenderInstManager_addInst);
 

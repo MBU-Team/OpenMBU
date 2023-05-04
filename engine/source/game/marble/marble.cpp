@@ -927,6 +927,81 @@ void Marble::readPacketData(GameConnection* conn, BitStream* stream)
     Parent::setTransform(mObjToWorld);
 }
 
+void Marble::prepShadows()
+{
+    const U32 circleVerts = 32;
+    const U32 numPrims = circleVerts * 2 - 2;
+    const F32 radius = mRadius / mDataBlock->size;
+
+    U16* idx;
+    mPrimBuff.set(GFX, numPrims * 3, numPrims, GFXBufferTypeStatic);
+    mPrimBuff.lock(&idx);
+
+    // slanted part of cone
+    for (U32 i = 1; i < circleVerts; i++) {
+        idx[0] = 0;
+        idx[1] = i + 1;
+        idx[2] = i;
+        idx += 3;
+    }
+
+    // connect to start
+    idx[0] = 0;
+    idx[1] = 1;
+    idx[2] = circleVerts;
+    idx += 3;
+
+    // base of cone
+    for (U32 i = 1; i < circleVerts - 1; i++) {
+        idx[0] = 1;
+        idx[1] = i + 1;
+        idx[2] = i + 2;
+        idx += 3;
+    }
+
+    mPrimBuff.unlock();
+
+    // calc vertices of cone
+    mVertBuff.set(GFX, circleVerts + 1, GFXBufferTypeStatic);
+    mVertBuff.lock();
+
+    mVertBuff[0].point.set(0.0f, 0.0f, -7.0f);
+    for (U32 i = 0; i < circleVerts; i++) {
+        F32 x = F32(i) / F32(circleVerts - 1) * M_2PI_F;
+        mVertBuff[i + 1].point.set(mCos(x) * radius, -mSin(x) * radius, 0.0f);
+    }
+
+    mVertBuff.unlock();
+    mShadowGenerated = true;
+}
+
+void Marble::calcClassRenderData()
+{
+    if (!mShadowGenerated || isHidden())
+        return;
+
+    RenderInst* ri = gRenderInstManager.allocInst();
+    ri->type = RenderInstManager::RIT_MarbleShadow;
+    ri->vertBuff = &mVertBuff;
+    ri->primBuff = &mPrimBuff;
+
+    MatrixF mat;
+    mat.mul(GFX->getProjectionMatrix(), GFX->getWorldMatrix());
+    mat.mul(this->getShadowTransform());
+    mat.scale(this->getShadowScale());
+    mat.transpose();
+
+    ri->worldXform = gRenderInstManager.allocXform();
+    *ri->worldXform = mat;
+
+    gRenderInstManager.addInst(ri);
+}
+
+void Marble::renderShadow(SceneState* state, RenderInst* ri)
+{
+    // Empty
+}
+
 void Marble::renderShadowVolumes(SceneState* state)
 {
     // Empty
@@ -1750,12 +1825,6 @@ void Marble::doPowerUp(S32 powerUpId)
     doPowerUpPower(powerUpId);
 }
 
-void Marble::prepShadows()
-{
-    // Serves no purpose in MBO but was left over from MBU
-    // Not really worth decompiling at this time.
-}
-
 bool Marble::onAdd()
 {
     if (!Parent::onAdd())
@@ -1772,8 +1841,8 @@ bool Marble::onAdd()
         mSlipHandle = SFX->createSource(mDataBlock->sound[3], &getTransform(), &velocity);
         mMegaHandle = SFX->createSource(mDataBlock->sound[1], &getTransform(), &velocity);
 
-        this->mVertBuff.set(GFX, 33, GFXBufferTypeStatic);
-        this->mPrimBuff.set(GFX, 33, 2, GFXBufferTypeStatic);
+        //this->mVertBuff.set(GFX, 33, GFXBufferTypeStatic);
+        //this->mPrimBuff.set(GFX, 33, 2, GFXBufferTypeStatic);
         prepShadows();
     }
 

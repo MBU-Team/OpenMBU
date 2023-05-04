@@ -74,6 +74,8 @@ static EnumTable::Enums gRenderBinEnums[] =
    { RenderInstManager::RenderBinTypes::Interior,    "Interior" },
    { RenderInstManager::RenderBinTypes::InteriorDynamicLighting,    "InteriorDynamicLighting" },
    { RenderInstManager::RenderBinTypes::Mesh,    "Mesh" },
+   { RenderInstManager::RenderBinTypes::MarbleShadow,    "MarbleShadow" },
+   { RenderInstManager::RenderBinTypes::Marble,    "Marble" },
    { RenderInstManager::RenderBinTypes::Sky,    "Sky" },
    { RenderInstManager::RenderBinTypes::SkyShape,    "SkyShape" },
    { RenderInstManager::RenderBinTypes::MiscObject,    "MiscObject" },

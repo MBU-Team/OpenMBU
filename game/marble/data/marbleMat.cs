@@ -96,7 +96,7 @@ new ShaderData( ClassicMarb3 )
    specular[0] = "0.5 0.6 0.5 0.6";
    specularPower[0] = 12.0;
    //cubemap = sky_environment;
-
+   renderBin = "Marble";
 };
 
 //function defineBasicMarbleMaterial(%id, %shader, %bump, %diff, %mapTo)
@@ -130,6 +130,7 @@ function defineBasicMarbleMaterial(%id, %shader, %bump, %diff, %mapTo, %specular
         "    dynamicCubemap = true;\n" @ 
         "    shader = \"" @ %shader @ "\";\n" @
         "    version = 2.0;\n" @ 
+        "    renderBin = \"Marble\";\n" @
         "};\n";
         
 //   echo(%tmp); // <-- I'm good for debugging.
@@ -196,6 +197,7 @@ new CustomMaterial(ReflectMarble01)
    
    shader = BumpMarb; 
    version = 2.0;
+   renderBin = "Marble";
 };
 
 new CustomMaterial(ReflectMarble02)
@@ -214,6 +216,7 @@ new CustomMaterial(ReflectMarble02)
    
    shader = BumpMarb; 
    version = 2.0;
+   renderBin = "Marble";
 };
 
 new CustomMaterial(ReflectMarble03)
@@ -227,4 +230,5 @@ new CustomMaterial(ReflectMarble03)
    
    shader = DiffMarb; 
    version = 2.0;
+   renderBin = "Marble";
 };
