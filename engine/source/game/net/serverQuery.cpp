@@ -2180,7 +2180,7 @@ static void handleMasterServerRelayReady(const NetAddress* address)
 static void handleMasterServerClientRequestedArrangedConnection(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
 {
     Con::printf("Received MasterServerClientRequestedArrangedConnection");
-    Vector<const NetAddress*> possibleAddresses;
+    Vector<NetAddress> possibleAddresses;
 
     U16 clientId;
     stream->read(&clientId);
@@ -2195,12 +2195,12 @@ static void handleMasterServerClientRequestedArrangedConnection(const NetAddress
         stream->read(&ipbits[2]);
         stream->read(&ipbits[3]);
         stream->read(&port);
-        NetAddress* addr = new NetAddress();
-        addr->port = port;
-        addr->netNum[0] = ipbits[0];
-        addr->netNum[1] = ipbits[1];
-        addr->netNum[2] = ipbits[2];
-        addr->netNum[3] = ipbits[3];
+        NetAddress addr;
+        addr.port = port;
+        addr.netNum[0] = ipbits[0];
+        addr.netNum[1] = ipbits[1];
+        addr.netNum[2] = ipbits[2];
+        addr.netNum[3] = ipbits[3];
         possibleAddresses.push_back(addr);
     }
 
@@ -2218,7 +2218,7 @@ static void handleMasterServerClientRequestedArrangedConnection(const NetAddress
 
 static void handleMasterServerArrangedConnectionAccepted(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
 {
-    Vector<const NetAddress*> possibleAddresses;
+    Vector<NetAddress> possibleAddresses;
 
     Con::printf("Received accept arranged connect response from the master server.");
 
@@ -2232,12 +2232,12 @@ static void handleMasterServerArrangedConnectionAccepted(const NetAddress* addre
         stream->read(&ipbits[2]);
         stream->read(&ipbits[3]);
         stream->read(&port);
-        NetAddress* addr = new NetAddress();
-        addr->port = port;
-        addr->netNum[0] = ipbits[0];
-        addr->netNum[1] = ipbits[1];
-        addr->netNum[2] = ipbits[2];
-        addr->netNum[3] = ipbits[3];
+        NetAddress addr;
+        addr.port = port;
+        addr.netNum[0] = ipbits[0];
+        addr.netNum[1] = ipbits[1];
+        addr.netNum[2] = ipbits[2];
+        addr.netNum[3] = ipbits[3];
         possibleAddresses.push_back(addr);
     }
 

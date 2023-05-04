@@ -1032,7 +1032,7 @@ void NetConnection::connect(const NetAddress* address)
 }
 
 #ifdef TORQUE_NET_HOLEPUNCHING
-void NetConnection::connectArranged(const Vector<const NetAddress*> &possibleAddresses, bool isInitiator)
+void NetConnection::connectArranged(const Vector<NetAddress> &possibleAddresses, bool isInitiator)
 {
     //mConnectionParameters.mRequestKeyExchange = requestsKeyExchange;
     //mConnectionParameters.mRequestCertificate = requestsCertificate;

@@ -482,13 +482,13 @@ void NetInterface::sendPunchPackets(NetConnection *conn)
 
     for(S32 i = 0; i < theParams.mPossibleAddresses.size(); i++)
     {
-        BitStream::sendPacketStream(theParams.mPossibleAddresses[i]);
+        BitStream::sendPacketStream(&theParams.mPossibleAddresses[i]);
         Con::printf("Sending punch packets to %d.%d.%d.%d:%d",
-            theParams.mPossibleAddresses[i]->netNum[0],
-            theParams.mPossibleAddresses[i]->netNum[1],
-            theParams.mPossibleAddresses[i]->netNum[2],
-            theParams.mPossibleAddresses[i]->netNum[3],
-            theParams.mPossibleAddresses[i]->port);
+            theParams.mPossibleAddresses[i].netNum[0],
+            theParams.mPossibleAddresses[i].netNum[1],
+            theParams.mPossibleAddresses[i].netNum[2],
+            theParams.mPossibleAddresses[i].netNum[3],
+            theParams.mPossibleAddresses[i].port);
     }
     conn->mConnectSendCount++;
     conn->mConnectLastSendTime = Platform::getVirtualMilliseconds(); //getCurrentTime();
@@ -514,7 +514,7 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
         // first see if the address is in the possible addresses list:
 
         for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
-            if(theAddress == theParams.mPossibleAddresses[j])
+            if(theAddress == &theParams.mPossibleAddresses[j])
                 break;
 
         // if there was an exact match, just exit the loop, or
@@ -533,7 +533,7 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
         // as only the port is not an exact match:
 
         for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
-            if(Net::compareAddresses(theAddress, theParams.mPossibleAddresses[j]))
+            if(Net::compareAddresses(theAddress, &theParams.mPossibleAddresses[j]))
                 break;
 
         // if the address wasn't even partially in the list, just exit out
@@ -543,7 +543,7 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
         // otherwise, as long as we don't have too many ping addresses,
         // add this one to the list:
         if(theParams.mPossibleAddresses.size() < 5)
-            theParams.mPossibleAddresses.push_back(theAddress);
+            theParams.mPossibleAddresses.push_back(*theAddress);
 
         // if this is the initiator of the arranged connection, then
         // process the punch packet from the remote host by issueing a
@@ -597,7 +597,7 @@ void NetInterface::handleArrangedConnectRequest(const NetAddress* theAddress, Bi
         ConnectionParameters &theParams = conn->getConnectionParameters();
 
         for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
-            if(Net::compareAddresses(theAddress, theParams.mPossibleAddresses[j]))
+            if(Net::compareAddresses(theAddress, &theParams.mPossibleAddresses[j]))
                 break;
         if(j != theParams.mPossibleAddresses.size())
             break;
