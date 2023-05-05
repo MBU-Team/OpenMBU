@@ -39,6 +39,7 @@ public:
     VectorF     mDirection;
     ColorF      mColor;
     ColorF      mAmbient;
+    ColorF      mShadowColor;
     F32         mRadius;
 
     //private:
@@ -103,6 +104,7 @@ public:
         light->mDirection = mDirection;
         light->mColor = mColor;
         light->mAmbient = mAmbient;
+        light->mShadowColor = mShadowColor;
         light->mRadius = mRadius;
         light->sgSpotAngle = sgSpotAngle;
     }
