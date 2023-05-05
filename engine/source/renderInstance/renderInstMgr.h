@@ -114,6 +114,7 @@ public:
         RIT_Astrolabe,
         RIT_Glass,
         RIT_Refraction,
+        RIT_MarbleShadow,
         RIT_Marble,
         RIT_Glow,
         RIT_Object,      // terrain, water, etc. objects that do their own rendering
@@ -137,6 +138,8 @@ public:
         Interior,
         InteriorDynamicLighting,
         Mesh,
+        MarbleShadow,
+        Marble,
 #ifdef MB_FLIP_SKY
         Sky,
         SkyShape,

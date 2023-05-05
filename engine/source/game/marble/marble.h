@@ -265,6 +265,8 @@ public:
     virtual void writePacketData(GameConnection* conn, BitStream* stream);
     virtual void readPacketData(GameConnection* conn, BitStream* stream);
     void renderShadow(F32 dist, F32 fogAmount);
+    void renderShadow(SceneState* state, RenderInst* ri);
+    void calcClassRenderData(); // used for marble shadow
     virtual void renderImage(SceneState* state);
     void bounceEmitter(F32 speed, const Point3F& normal);
     virtual void setVelocity(const Point3F& vel);
