@@ -230,6 +230,7 @@ $Text::Select = "Select";
 $Text::QuickMatch = "Quick Match";
 $Text::OptiMatch = "Custom Match";
 $Text::CreateMatch = "Create Match";
+$Text::JoinMatch = "Join Match";
 $Text::Players = "Players";
 $Text::Ready = "Ready";
 $Text::ExitGame = "Exit";
@@ -274,6 +275,7 @@ $Text::LobbyHostName = "Host:";
 $Text::LobbyHostLevel = "Level:"; 
 $Text::LobbyHostPrivateSlots = "Private Slots"; 
 $Text::LobbyHostPublicSlots = "Public Slots"; 
+$Text::LobbyHostInviteCode = "Invite Code";
 
 ; separators
 $Text::Colon  = ":";

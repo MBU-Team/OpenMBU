@@ -83,6 +83,11 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
          return "CR_DEMOREJECT";
       }
    }
+
+   if (%invited !$= "" && %invited !$= $Server::InviteCode)
+   {
+        return "CHR_PASSWORD";
+   }
    
    // kick any players with this xblive id
    //if (%xbLiveId !$= "") // TODO: uncomment when this is set up in the engine

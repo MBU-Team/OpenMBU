@@ -182,6 +182,27 @@ new GuiControlProfile(TextMenuListProfile)
    hitArea = "20 76";
 };
 
+new GuiControlProfile(TextEditProfile)
+{
+    fontType = "Arial Bold";
+    opaque = true;
+	fillColor = "0 0 0 0";
+	fillColorHL = "0 0 0 0";
+	border = false;
+	borderThickness = 2;
+	borderColor = "0 0 0";
+	fontColor = $XBOX::MenuTextColor;
+	fontColorHL = $XBOX::MenuTextColorSelected;
+    fontColorNA = $XBOX::MenuTextColorDisabled;
+    textOffset = "0 2";
+	autoSizeWidth = false;
+	autoSizeHeight = true;
+	tab = true;
+	canKeyFocus = true;
+
+    fontSize = 24;
+};
+
 new GuiControlProfile(TextMenuListSmallProfile : TextMenuListProfile)
 {
 	fontSize = 24;

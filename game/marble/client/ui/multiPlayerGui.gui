@@ -49,10 +49,13 @@ function MultiPlayerGui::onA(%this)
          }
          
          RootGui.setContent(CreateGameGui);
+
       case 3:
+         RootGui.setContent(JoinGameGui);
+      case 4:
          // Auto enter the MP leaderboards
          RootGui.setContent( LevelScoresGui, GameMissionInfo.MPMode, $Leaderboard::MPScrumOverall, %this );
-      case 4:
+      case 5:
          // Show marketplace UI, this is kinda hacked since it's not a demo launch
          clientShowMarketplaceUI();
          $PDLCMarketView = true;
@@ -133,6 +136,7 @@ function MultiPlayerGui::show(%this)
    MultiPlayerMenu.addRow($Text::QuickMatch, "", 0, 2);
    MultiPlayerMenu.addRow($Text::OptiMatch, "", 0, 2);
    MultiPlayerMenu.addRow($Text::CreateMatch, "", 0, 2);
+   MultiPlayerMenu.addRow($Text::JoinMatch, "", 0, 2);
    MultiPlayerMenu.addRow($Text::LeaderBoards, "", 0, 6);
 
    RootGui.setTitle($Text::MultiplayerMenu);

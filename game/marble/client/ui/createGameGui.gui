@@ -294,6 +294,17 @@ function CreateGameGui::onGameCreated(%this)
    RootGui.setContent(LobbyGui);
 }
 
+function generateInviteCode()
+{
+   %availableChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+   %code = "";
+   for (%i = 0; %i < 6; %i++)
+   {
+      %code = %code @ getSubStr(%availableChars, getRandom(0, 35), 1);
+   }
+   return %code;
+}
+
 function CreateGameGui::createGame(%this)
 {
    %this.creatingGame = true;
@@ -314,6 +325,8 @@ function CreateGameGui::createGame(%this)
    $pref::Server::missionId = $Server::MissionId;
    $pref::Server::MaxPlayers = CreateGameOptionList.getOptionIndex(%this.maxPlayersIndex) + CreateGameGui.maxPlayersMin;
    $Server::IsPrivate = CreateGameOptionList.getOptionIndex(%this.privateGameIndex);
+   
+   $Server::InviteCode = generateInviteCode();
 
    if( allowPrivateSlots() )
       $pref::Server::PrivateSlots = CreateGameOptionList.getOptionIndex(%this.privateSlotsIndex);

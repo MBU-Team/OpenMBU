@@ -1,0 +1,245 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(JoinGameGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   extent = "640 480";
+   minExtent = "8 8";
+   position = "0 0";  
+
+    new GuiXboxOptionListCtrl(InviteCodeMenuCtrl) {
+      profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallWideProfile";
+      position = isWidescreen()? "360 211" : "-30 100";
+      extent = isWidescreen()? "835 400" : "672 250";
+      horizSizing = isWidescreen()? "right" : "left";
+      vertSizing = "center";
+      // there can only be two columns; these values are percentages of total extent
+      columns = isWidescreen()? "40 60" : "49 51";
+      // each column can have a left and right margin, specified here.  order is 
+      // C1L C1R C2L C2R.  amount is in pixels
+      columnMargins = isWidescreen()? "0 0 3 35" : "0 0 2 25";
+      // for debugging, show the region update rect and column rects (with margins)
+      showRects = 0;
+      
+      // data is dynamically added to this option list in the show() function
+      
+       new GuiTextCtrl(InviteCodeInput) {
+          Profile = "TextEditProfile";
+          HorizSizing = "right";
+          VertSizing = "top";
+          position = "640 33";
+          Extent = "235 18";
+          MinExtent = "8 2";
+          Visible = "1";
+          text = "";
+       };
+
+       new GuiControl(NumpadCtrl) {
+           profile = "GuiDefaultProfile";
+           horizSizing = "right";
+           vertSizing = "top";
+           extent = "800 300";
+           minExtent = "8 8";
+           position = "0 60";  
+
+       	   new GuiXboxButtonCtrl(Numpad1) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "240 150";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "1";
+               command = "JoinGameGui.textInput(1);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad2) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "320 150";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "2";
+               command = "JoinGameGui.textInput(2);";
+               visible = "1";
+            };
+            
+       	   new GuiXboxButtonCtrl(Numpad3) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "400 150";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "3";
+               command = "JoinGameGui.textInput(3);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad4) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "240 80";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "4";
+               command = "JoinGameGui.textInput(4);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad5) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "320 80";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "5";
+               command = "JoinGameGui.textInput(5);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad6) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "400 80";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "6";
+               command = "JoinGameGui.textInput(6);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad7) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "240 10";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "7";
+               command = "JoinGameGui.textInput(7);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad8) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "320 10";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "8";
+               command = "JoinGameGui.textInput(8);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad9) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "400 10";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "9";
+               command = "JoinGameGui.textInput(9);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(Numpad0) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "240 220";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "0";
+               command = "JoinGameGui.textInput(0);";
+               visible = "1";
+            };
+
+       	   new GuiXboxButtonCtrl(NumpadDel) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "400 220";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "Delete";
+               command = "JoinGameGui.textInput(D);";
+               visible = "1";
+            };
+       };
+   };
+};
+
+function JoinGameGui::show(%this)
+{
+	RootGui.setTitle($Text::JoinGame);
+    RootGui.setB($Text::Back);
+    RootGui.setA($Text::Go);
+
+    JoinGameGui.inviteCode = "";
+    InviteCodeInput.setText(JoinGameGui.inviteCode);
+
+    InviteCodeMenuCtrl.clear();
+    InviteCodeMenuCtrl.addRow("Invite Code", "", 8);
+    InviteCodeMenuCtrl.setButtonsEnabled(false);
+}
+
+function JoinGameGui::onA(%this)
+{
+}
+
+function JoinGameGui::onB(%this)
+{
+   sfxPlay( AudioButtonDown );
+   %this.exit();
+   return true;
+}
+
+function JoinGameGui::exit(%this)
+{
+   RootGui.setContent(MultiPlayerGui);
+}
+
+function JoinGameGui::textInput(%this, %chr)
+{
+   if (%chr !$= "D")
+   {
+       if (strlen(JoinGameGui.inviteCode) < 6) 
+          JoinGameGui.inviteCode = JoinGameGui.inviteCode @ %chr;
+   }
+   else
+   {
+       if (strlen(JoinGameGui.inviteCode) > 0)
+          JoinGameGui.inviteCode = getSubStr(JoinGameGui.inviteCode, 0, strlen(JoinGameGui.inviteCode) - 1);
+   }
+   InviteCodeInput.setText(JoinGameGui.inviteCode);
+}
