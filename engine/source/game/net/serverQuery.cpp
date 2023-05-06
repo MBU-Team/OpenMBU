@@ -1743,6 +1743,7 @@ static void handleGameMasterInfoRequest(const NetAddress* address, U32 key, U8 f
         writeCString(out, Con::getVariable("Server::GameType"));
         writeCString(out, Con::getVariable("Server::MissionType"));
         writeCString(out, Con::getVariable("Server::InviteCode"));
+
         temp8 = U8(Con::getIntVariable("Pref::Server::MaxPlayers"));
         out->write(temp8);
         temp32 = Con::getIntVariable("Server::RegionMask");//"Pref::Server::RegionMask");
@@ -2287,6 +2288,7 @@ static void handleMasterServerClientRequestedArrangedConnection(const NetAddress
         stream->read(&ipbits[3]);
         stream->read(&port);
         NetAddress addr;
+        addr.type = NetAddress::IPAddress;
         addr.port = port;
         addr.netNum[0] = ipbits[0];
         addr.netNum[1] = ipbits[1];
@@ -2324,6 +2326,7 @@ static void handleMasterServerArrangedConnectionAccepted(const NetAddress* addre
         stream->read(&ipbits[3]);
         stream->read(&port);
         NetAddress addr;
+        addr.type = NetAddress::IPAddress;
         addr.port = port;
         addr.netNum[0] = ipbits[0];
         addr.netNum[1] = ipbits[1];
@@ -2360,7 +2363,7 @@ static void handleMasterServerArrangedConnectionRejected(const NetAddress* addre
 
 static void handleMasterServerGamePingResponse(const NetAddress* address, BitStream* stream) {
     NetAddress theAddress;
-    theAddress.type = 0;
+    theAddress.type = NetAddress::IPAddress;
     stream->read(&theAddress.netNum[0]);
     stream->read(&theAddress.netNum[1]);
     stream->read(&theAddress.netNum[2]);
@@ -2378,7 +2381,7 @@ static void handleMasterServerGamePingResponse(const NetAddress* address, BitStr
 
 static void handleMasterServerGameInfoResponse(const NetAddress* address, BitStream* stream) {
     NetAddress theAddress;
-    theAddress.type = 0;
+    theAddress.type = NetAddress::IPAddress;
     stream->read(&theAddress.netNum[0]);
     stream->read(&theAddress.netNum[1]);
     stream->read(&theAddress.netNum[2]);

@@ -51,6 +51,8 @@ public:
         MasterServerRelayRequest = 66,
         MasterServerRelayResponse = 68,
         MasterServerRelayReady = 72,
+        MasterServerJoinInvite = 74,
+        MasterServerJoinInviteResponse = 76,
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:
