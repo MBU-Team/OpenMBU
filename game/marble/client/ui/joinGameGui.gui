@@ -266,6 +266,22 @@ function JoinGameGui::exit(%this)
 function JoinGameGui::joinGame(%this)
 {
    echo("Joining game with invite code " @ JoinGameGui.inviteCode);
+   joinGameByInvite(JoinGameGui.inviteCode, "joinGameFound", "joinGameNotFound");
+   cancel(JoinGameGui.joinTimeout);
+   JoinGameGui.joinTimeout = schedule(5000, 0, "joinGameNotFound");
+   RootGui.setContent(MissionLoadingGui);
+}
+
+function joinGameFound(%ip)
+{
+   cancel(JoinGameGui.joinTimeout);
+   establishConnection(%ip, true, false, JoinGameGui.inviteCode);
+}
+
+function joinGameNotFound()
+{
+   echo("Not Found");
+   RootGui.setContent(JoinGameGui);
 }
 
 function JoinGameGui::textInput(%this, %chr)

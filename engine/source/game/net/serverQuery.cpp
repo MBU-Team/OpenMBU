@@ -1742,6 +1742,7 @@ static void handleGameMasterInfoRequest(const NetAddress* address, U32 key, U8 f
 
         writeCString(out, Con::getVariable("Server::GameType"));
         writeCString(out, Con::getVariable("Server::MissionType"));
+        writeCString(out, Con::getVariable("Server::InviteCode"));
         temp8 = U8(Con::getIntVariable("Pref::Server::MaxPlayers"));
         out->write(temp8);
         temp32 = Con::getIntVariable("Server::RegionMask");//"Pref::Server::RegionMask");
@@ -2188,6 +2189,35 @@ static void handleGameInfoResponse(const NetAddress* address, BitStream* stream,
 
 #ifdef TORQUE_NET_HOLEPUNCHING
 
+static char* joinGameAcceptCb = NULL;
+static char* joinGameRejectCb = NULL;
+
+static void joinGameByInvite(const char* inviteCode)
+{
+    BitStream* stream = BitStream::getPacketStream();
+    stream->write(U8(NetInterface::MasterServerJoinInvite));
+    writeCString(stream, inviteCode);
+
+    Vector<MasterInfo>* serverList = getMasterServerList();
+
+    for (int i = 0; i < serverList->size(); i++)
+    {
+        BitStream::sendPacketStream(&(*serverList)[i].address);
+    }
+}
+
+ConsoleFunction(joinGameByInvite, void, 4, 4, "joinGameByInvite(inviteCode, acceptCb(%ip), rejectCb)")
+{
+    if (joinGameAcceptCb)
+        dFree(joinGameAcceptCb);
+    if (joinGameRejectCb)
+        dFree(joinGameRejectCb);
+
+    joinGameAcceptCb = dStrdup(argv[2]);
+    joinGameRejectCb = dStrdup(argv[3]);
+    joinGameByInvite(argv[1]);
+}
+
 static void getRelayServer(const NetAddress* address) 
 {
     BitStream* stream = BitStream::getPacketStream();
@@ -2363,6 +2393,35 @@ static void handleMasterServerGameInfoResponse(const NetAddress* address, BitStr
     stream->read(&key);
     handleGameInfoResponse(&theAddress, stream, key, flags);
 }
+
+static void handleMasterServerJoinInviteResponse(const NetAddress* address, BitStream* stream) {
+    U8 found;
+    stream->read(&found);
+    if (found) 
+    {
+        NetAddress theAddress;
+        theAddress.type = NetAddress::IPAddress;
+        stream->read(&theAddress.netNum[0]);
+        stream->read(&theAddress.netNum[1]);
+        stream->read(&theAddress.netNum[2]);
+        stream->read(&theAddress.netNum[3]);
+        stream->read(&theAddress.port);
+
+        char evalbuf[128];
+        dSprintf(evalbuf, 128, "%s(\"%d.%d.%d.%d:%d\");", joinGameAcceptCb, theAddress.netNum[0], theAddress.netNum[1], theAddress.netNum[2], theAddress.netNum[3], theAddress.port);
+        Con::evaluatef(evalbuf);
+    }
+    else 
+    {
+        char evalbuf[64];
+        dSprintf(evalbuf, 64, "%s();", joinGameRejectCb);
+        Con::evaluatef(evalbuf);
+    }
+    dFree(joinGameAcceptCb);
+    dFree(joinGameRejectCb);
+    joinGameAcceptCb = NULL;
+    joinGameRejectCb = NULL;
+}
 #endif
 
 //-----------------------------------------------------------------------------
@@ -2428,6 +2487,8 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
     case MasterServerRelayReady:
         handleMasterServerRelayReady(address);
         break;
+    case MasterServerJoinInviteResponse:
+        handleMasterServerJoinInviteResponse(address, stream);
 #endif
     }
 }
