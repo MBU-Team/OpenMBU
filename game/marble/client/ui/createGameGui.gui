@@ -296,11 +296,11 @@ function CreateGameGui::onGameCreated(%this)
 
 function generateInviteCode()
 {
-   %availableChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+   %availableChars = "0123456789";
    %code = "";
    for (%i = 0; %i < 6; %i++)
    {
-      %code = %code @ getSubStr(%availableChars, getRandom(0, 35), 1);
+      %code = %code @ getSubStr(%availableChars, getRandom(0, 9), 1);
    }
    return %code;
 }

@@ -182,6 +182,20 @@ new GuiControl(JoinGameGui) {
                visible = "1";
             };
 
+            new GuiXboxButtonCtrl(NumpadOK) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "320 220";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "";
+               bitmapAlign = "right";
+               text = "Ok";
+               command = "JoinGameGui.joinGame();";
+               visible = "1";
+            };
+            
        	   new GuiXboxButtonCtrl(NumpadDel) {
                profile = "TextMenuButtonProfile";
                horizSizing = "right";
@@ -203,18 +217,38 @@ function JoinGameGui::show(%this)
 {
 	RootGui.setTitle($Text::JoinGame);
     RootGui.setB($Text::Back);
-    RootGui.setA($Text::Go);
-
+    
     JoinGameGui.inviteCode = "";
     InviteCodeInput.setText(JoinGameGui.inviteCode);
 
     InviteCodeMenuCtrl.clear();
     InviteCodeMenuCtrl.addRow("Invite Code", "", 8);
     InviteCodeMenuCtrl.setButtonsEnabled(false);
+
+    $NumpadGrid[0, -1] = Numpad0;
+    $NumpadGrid[0, 0] = Numpad1;
+    $NumpadGrid[1, 0] = Numpad2;
+    $NumpadGrid[2, 0] = Numpad3;
+    $NumpadGrid[0, 1] = Numpad4;
+    $NumpadGrid[1, 1] = Numpad5;
+    $NumpadGrid[2, 1] = Numpad6;
+    $NumpadGrid[0, 2] = Numpad7;
+    $NumpadGrid[1, 2] = Numpad8;
+    $NumpadGrid[2, 2] = Numpad9;
+    $NumpadGrid[2, -1] = NumpadDel;
+    $NumpadGrid[1, -1] = NumpadOk;
+
+    $NumpadCoordX = 0;
+    $NumpadCoordY = 0;
+
+    $NumpadCtrl = Numpad1;
 }
 
 function JoinGameGui::onA(%this)
 {
+   sfxPlay( AudioButtonDown );
+   eval($NumpadCtrl.command);
+   return true;
 }
 
 function JoinGameGui::onB(%this)
@@ -227,6 +261,11 @@ function JoinGameGui::onB(%this)
 function JoinGameGui::exit(%this)
 {
    RootGui.setContent(MultiPlayerGui);
+}
+
+function JoinGameGui::joinGame(%this)
+{
+   echo("Joining game with invite code " @ JoinGameGui.inviteCode);
 }
 
 function JoinGameGui::textInput(%this, %chr)
@@ -242,4 +281,41 @@ function JoinGameGui::textInput(%this, %chr)
           JoinGameGui.inviteCode = getSubStr(JoinGameGui.inviteCode, 0, strlen(JoinGameGui.inviteCode) - 1);
    }
    InviteCodeInput.setText(JoinGameGui.inviteCode);
+}
+
+function JoinGameGui::moveDir(%this, %x, %y)
+{
+   $NumpadCoordX += %x;
+   $NumpadCoordY += %y;
+   if ($NumpadCoordX > 2) $NumpadCoordX = 0;
+   if ($NumpadCoordX < 0) $NumpadCoordX = 2;
+   if ($NumpadCoordY > 2) $NumpadCoordY = -1;
+   if ($NumpadCoordY < -1) $NumpadCoordY = 2;
+   $NumpadCtrl.setHover(false);
+   $NumpadCtrl = $NumpadGrid[$NumpadCoordX, $NumpadCoordY];
+   $NumpadCtrl.setHover(true);
+}
+
+function InviteCodeInput::onLeft(%this, %pressed)
+{
+   JoinGameGui.moveDir(-1, 0);
+   return true;
+}
+
+function InviteCodeInput::onRight(%this, %pressed)
+{
+   JoinGameGui.moveDir(1, 0);
+   return true;
+}
+
+function InviteCodeInput::onUp(%this, %pressed)
+{
+   JoinGameGui.moveDir(0, 1);
+   return true;
+}
+
+function InviteCodeInput::onDown(%this, %pressed)
+{
+   JoinGameGui.moveDir(0, -1);
+   return true;
 }

@@ -32,6 +32,7 @@ public:
     static void initPersistFields();
 
     //void setVisible(bool value) override;
+    void setButtonHover(bool hover);
     void setText(const char* text);
     void setTextID(S32 id);
     void setTextID(const char* id);

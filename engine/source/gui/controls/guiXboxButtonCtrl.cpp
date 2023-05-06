@@ -89,6 +89,12 @@ ConsoleMethod(GuiXboxButtonCtrl, getText, const char*, 2, 2, "() - returns the t
     return object->getText();
 }
 
+ConsoleMethod(GuiXboxButtonCtrl, setHover, void, 3, 3, "(hover) - sets the button hover state.")
+{
+    argc; argv;
+    object->setButtonHover(atoi(argv[2]));
+}
+
 //--------------------------------------------------------
 // Misc
 //--------------------------------------------------------
@@ -103,6 +109,20 @@ ConsoleMethod(GuiXboxButtonCtrl, getText, const char*, 2, 2, "() - returns the t
 //        mHovering = false;
 //    }
 //}
+
+void GuiXboxButtonCtrl::setButtonHover(bool hover)
+{
+    if (hover)
+    {
+        mButtonState = Hover;
+        mHovering = true;
+    }
+    else
+    {
+        mButtonState = Normal;
+        mHovering = false;
+    }
+}
 
 void GuiXboxButtonCtrl::setText(const char* text)
 {
