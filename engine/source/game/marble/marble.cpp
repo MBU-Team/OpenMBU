@@ -2398,7 +2398,7 @@ MarbleData::MarbleData()
     stopModeTime = 32;
 
     // Enable Shadows
-    shadowEnable = true;
+    //shadowEnable = true;
 }
 
 void MarbleData::initPersistFields()
