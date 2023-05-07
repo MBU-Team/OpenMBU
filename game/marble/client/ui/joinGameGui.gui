@@ -275,6 +275,7 @@ function JoinGameGui::joinGame(%this)
 function joinGameFound(%ip)
 {
    cancel(JoinGameGui.joinTimeout);
+   setNetPort(0); // Get random port pls
    establishConnection(%ip, true, false, JoinGameGui.inviteCode);
 }
 
