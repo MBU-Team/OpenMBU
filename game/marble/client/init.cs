@@ -647,7 +647,10 @@ function establishConnection(%address, %mp, %isLocal, %invited)
       }
       $Client::connectedMultiplayer = true;
       $Game::SPGemHunt = false;
-      %conn.arrangeConnection(%address);
+      if (%isLocal)
+         %conn.connect(%address);
+      else
+         %conn.arrangeConnection(%address);
    }
 
    clearClientGracePeroid();

@@ -343,7 +343,7 @@ void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missi
     U8 filterFlags, bool clearServerInfo, bool useFilters)
 {
     sgServerQueryActive = true;
-    clearServerList(clearServerInfo);
+    // clearServerList(clearServerInfo);
     pushServerFavorites();
 
     sActiveFilter.type = useFilters ? ServerFilter::OfflineFiltered : ServerFilter::Offline;
@@ -380,7 +380,7 @@ void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missi
 #endif
 
     Con::executef(4, "onServerQueryStatus", "start", "Querying LAN servers", "0");
-    processPingsAndQueries(gPingSession);
+    // processPingsAndQueries(gPingSession);
 }
 
 //-----------------------------------------------------------------------------
@@ -408,6 +408,8 @@ ConsoleFunction(queryLanServers, void, 13, 14, "queryLanServers(...);")
     if (argc >= 14)
         useFilters = dAtoi(argv[13]) != 0;
 
+    clearServerList();
+
     queryLanServers(lanPort, flags, gameType, missionType, minPlayers, maxPlayers, maxBots,
         regionMask, maxPing, minCPU, filterFlags, clearServerInfo, useFilters);
 
@@ -431,14 +433,14 @@ void queryMasterGameTypes()
 
 //-----------------------------------------------------------------------------
 
-void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
+void queryMasterServer(U16 lanPort, U8 flags, const char* gameType, const char* missionType,
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing,
     U16 minCPU, U8 filterFlags, U8 buddyCount, U32* buddyList)
 {
     // Reset the list packet flag:
     gGotFirstListPacket = false;
     sgServerQueryActive = true;
-    clearServerList();
+    // clearServerList();
 
     Con::executef(4, "onServerQueryStatus", "start", "Querying master server", "0");
 
@@ -470,6 +472,7 @@ void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
         sActiveFilter.buddyCount = buddyCount;
         dFree(sActiveFilter.buddyList);
         sActiveFilter.buddyList = NULL;
+        queryLanServers(lanPort, flags, gameType, missionType, minPlayers, maxPlayers, maxBots, regionMask, maxPing, minCPU, filterFlags, false, false);
     }
     else
     {
@@ -496,28 +499,31 @@ void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
         processMasterServerQuery(gPingSession);
 }
 
-ConsoleFunction(queryMasterServer, void, 11, 11, "queryMasterServer(...);")
+ConsoleFunction(queryMasterServer, void, 12, 12, "queryMasterServer(...);")
 {
     argc;
 
-    U8 flags = dAtoi(argv[1]);
+    U16 lanPort = dAtoi(argv[1]);
+    U8 flags = dAtoi(argv[2]);
 
     // It's not a good idea to hold onto args, recursive calls to
     // console exec will trash them.
-    char* gameType = dStrdup(argv[2]);
-    char* missionType = dStrdup(argv[3]);
+    char* gameType = dStrdup(argv[3]);
+    char* missionType = dStrdup(argv[4]);
 
-    U8 minPlayers = dAtoi(argv[4]);
-    U8 maxPlayers = dAtoi(argv[5]);
-    U8 maxBots = dAtoi(argv[6]);
-    U32 regionMask = dAtoi(argv[7]);
-    U32 maxPing = dAtoi(argv[8]);
-    U16 minCPU = dAtoi(argv[9]);
-    U8 filterFlags = dAtoi(argv[10]);
+    U8 minPlayers = dAtoi(argv[5]);
+    U8 maxPlayers = dAtoi(argv[6]);
+    U8 maxBots = dAtoi(argv[7]);
+    U32 regionMask = dAtoi(argv[8]);
+    U32 maxPing = dAtoi(argv[9]);
+    U16 minCPU = dAtoi(argv[10]);
+    U8 filterFlags = dAtoi(argv[11]);
     U8 buddyCount = 0;
     U32 buddyList = 0;
 
-    queryMasterServer(flags, gameType, missionType, minPlayers, maxPlayers,
+    clearServerList();
+
+    queryMasterServer(lanPort, flags, gameType, missionType, minPlayers, maxPlayers,
         maxBots, regionMask, maxPing, minCPU, filterFlags, 0, &buddyList);
 
     dFree(gameType);

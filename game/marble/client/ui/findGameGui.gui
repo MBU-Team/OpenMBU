@@ -165,14 +165,7 @@ function PC_XBLiveSearchForMatches(%gamemodefilter, %missionfilter, %maxplayersf
    if (%mis $= "-1")
       %mis = "any";
    
-   if (FindGameGui.useMaster)
-   {
-      queryMasterServer(0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags);
-   }
-   else
-   {
-      queryLanServers(1000, 0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags, 1, $pcsearchusefilters);
-   }
+   queryMasterServer(1000, 0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags);
 }
 
 // ----------------------------------------------------------------------------
@@ -445,16 +438,7 @@ function FindGameGui::onSearchComplete(%this,%type)
    if (isPCBuild() || !$Client::UseXBLiveMatchMaking)
    {
       %sc = getServerCount();
-      if ($queryOffline && %this.useMaster)
-      {
-         %this.useMaster = false;
-         
-         %this.pcSearchActive = true;
-         PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 
-         %this.maxplayersfilter, -1, "FindGameGui.onSearchComplete(pc);");
-         return;
-      }
-      echo(%sc @ " games returned from LAN search.");
+      echo(%sc @ " games returned from search.");
       for (%i = 0; %i < %sc; %i++)
       {
          // no filtering in PC build, we just add everything

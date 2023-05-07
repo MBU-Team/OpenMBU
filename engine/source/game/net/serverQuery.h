@@ -114,7 +114,7 @@ extern void queryLanServers(U32 port, U8 flags, const char* gameType, const char
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing, U16 minCPU,
     U8 filterFlags, bool clearServerInfo, bool useFilters);
 extern void queryMasterGameTypes();
-extern void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
+extern void queryMasterServer(U16 port, U8 flags, const char* gameType, const char* missionType,
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing, U16 minCPU,
     U8 filterFlags, U8 buddyCount, U32* buddyList);
 extern void queryFavoriteServers(U8 flags);
