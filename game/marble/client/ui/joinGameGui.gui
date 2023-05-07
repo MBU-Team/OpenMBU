@@ -261,6 +261,7 @@ function JoinGameGui::onB(%this)
 function JoinGameGui::exit(%this)
 {
    RootGui.setContent(MultiPlayerGui);
+   cancel(JoinGameGui.joinTimeout);
 }
 
 function JoinGameGui::joinGame(%this)
@@ -282,7 +283,8 @@ function joinGameFound(%ip)
 function joinGameNotFound()
 {
    echo("Not Found");
-   RootGui.setContent(JoinGameGui);
+   if (RootGui.contentGui == MissionLoadingGui)
+      RootGui.setContent(JoinGameGui);
 }
 
 function JoinGameGui::textInput(%this, %chr)
