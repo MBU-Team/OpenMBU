@@ -1745,6 +1745,7 @@ static void handleGameMasterInfoRequest(const NetAddress* address, U32 key, U8 f
         writeCString(out, Con::getVariable("Server::InviteCode"));
 
         temp8 = U8(Con::getIntVariable("Pref::Server::MaxPlayers"));
+        temp8 -= U8(Con::getIntVariable("Pref::Server::PrivateSlots")); // Actual count
         out->write(temp8);
         temp32 = Con::getIntVariable("Server::RegionMask");//"Pref::Server::RegionMask");
         out->write(temp32);

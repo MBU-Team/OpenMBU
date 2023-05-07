@@ -705,8 +705,8 @@ function LobbyGui::setHostInfo(%this, %hostName, %gameMode, %mapname, %priSlotsU
    			%priSlotsUsed @ $Text::Slash @ %priSlotsFree + %priSlotsUsed @ 
    			$Text::Comma SPC $Text::LobbyHostPublicSlots @ $Text::Colon SPC 
    			%pubSlotsUsed @ $Text::Slash @ %pubSlotsFree + %pubSlotsUsed @ 
-            $Text::Comma SPC $Text::LobbyHostInviteCode @ $Text::Colon SPC
-            $Server::InviteCode @ "<font:Arial Bold:20> ");
+            ($Server::Hosting ? ($Text::Comma SPC $Text::LobbyHostInviteCode @ $Text::Colon SPC
+            $Server::InviteCode @ "<font:Arial Bold:20> ") : ""));
    			
    LobbyGuiSelection.clear();
    LobbyGuiSelection.setButtonsEnabled(%this.hosting);
