@@ -798,6 +798,10 @@ ConsoleFunction(exec, bool, 2, 4, "exec(fileName [, nocalls [,journalScript]])")
     // Determine the filename we actually want...
     Con::expandScriptFilename(scriptFilenameBuffer, sizeof(scriptFilenameBuffer), argv[1]);
 
+
+    if (Con::isFunction("loaderCallback"))
+        Con::executef(4, "loaderCallback", "Loading Script", scriptFilenameBuffer, "");
+
     const char* ext = dStrrchr(scriptFilenameBuffer, '.');
 
     if (!ext)

@@ -47,6 +47,39 @@ new GuiBitmapCtrl(loadingGui) {
             wrap = "0";
          };
       };
+      new GuiTextCtrl(LG_loadingtextStatus) {
+         profile = "TextLoadingProfile";
+         horizSizing = "center";
+         vertSizing = "bottom";
+         position = "0 0";
+         extent = "640 50";
+         minExtent = "8 8";
+         visible = "1";
+         text = "Loading";
+         maxLength = "2048";
+      };
+      new GuiTextCtrl(LG_loadingtextTask) {
+         profile = "TextLoadingProfile";
+         horizSizing = "center";
+         vertSizing = "bottom";
+         position = "0 50";
+         extent = "640 50";
+         minExtent = "8 8";
+         visible = "1";
+         text = "None";
+         maxLength = "2048";
+      };
+      new GuiTextCtrl(LG_loadingtextProgress) {
+         profile = "TextLoadingProfile";
+         horizSizing = "center";
+         vertSizing = "bottom";
+         position = "0 100";
+         extent = "640 50";
+         minExtent = "8 8";
+         visible = "1";
+         text = "0%";
+         maxLength = "4";
+      };
       new GuiTextCtrl(LG_loadingtext2) {
          profile = "TextTitleRightProfile";
          horizSizing = "right";

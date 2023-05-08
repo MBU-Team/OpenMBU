@@ -79,6 +79,22 @@ new GuiControlProfile ( "GameStartTitle" : TextTitleProfile)
    fontColor = "235 235 235 255";
 };
 
+//-----------------------------------------------------------------------------
+
+new GuiControlProfile ("TextLoadingProfile")
+{
+   fontType = "ColiseumRR Medium"; //$XBOX::Headerfont;
+   fontSize = 48;
+   justify = center;
+   opaque = true;
+   border = false;
+   fontColor = "255 255 255 255";
+   autoSizeWidth = false;
+   shadow = 1;
+};
+
+//-----------------------------------------------------------------------------
+
 new GuiControlProfile ("TextHeadingProfile")
 {
    fontType = $XBOX::Headerfont;

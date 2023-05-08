@@ -158,6 +158,9 @@ void GFXD3D9Shader::initShader( const char *file, const char *target )
    if( !file || !file[0] ) 
       return;
 
+    if (Con::isFunction("loaderCallback"))
+        Con::executef(4, "loaderCallback", "Compiling Shader", file, "");
+
    HRESULT res = D3DERR_INVALIDCALL;
    LPD3DXBUFFER code;
    LPD3DXBUFFER errorBuff;
