@@ -433,6 +433,7 @@ void NetInterface::handleConnectReject(const NetAddress* address, BitStream* str
 
 void NetInterface::sendRelayPackets(NetConnection* conn)
 {
+    Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(4));
     relayNetConnection = conn;
     BitStream* out = BitStream::getPacketStream();
 
@@ -476,6 +477,8 @@ void NetInterface::startArrangedConnection(NetConnection *conn)
 
 void NetInterface::sendPunchPackets(NetConnection *conn)
 {
+    Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(1));
+    
     ConnectionParameters &theParams = conn->getConnectionParameters();
     BitStream* out = BitStream::getPacketStream();
     out->write(U8(Punch));
@@ -559,6 +562,8 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
     conn->setNetAddress(theAddress);
     Con::printf("Punch from %s matched nonces - connecting...", addr);
 
+    Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(2));
+
     conn->setConnectionState(NetConnection::AwaitingConnectResponse);
     conn->mConnectSendCount = 0;
     conn->mConnectLastSendTime = Platform::getVirtualMilliseconds();//getCurrentTime();
@@ -613,6 +618,7 @@ void NetInterface::handleArrangedConnectRequest(const NetAddress* theAddress, Bi
     removePendingConnection(conn);
     
     if (theParams.mIsInitiator) {
+        Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(3));
         conn->connect(theAddress);
     }
     else 

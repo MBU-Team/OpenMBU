@@ -1811,6 +1811,12 @@ static void handleGamePingRequest(const NetAddress* address, U32 key, U8 flags)
         if (flags & ServerFilter::OfflineQuery)
             return;
 
+        int maxCount = Con::getIntVariable("Pref::Server::MaxPlayers");
+        maxCount -= Con::getIntVariable("Pref::Server::PrivateSlots"); // Actual count
+
+        if (Con::getIntVariable("Server::PlayerCount") >= maxCount)
+            return; // Don't reply
+
         // some banning code here (?)
 
         BitStream* out = BitStream::getPacketStream();
