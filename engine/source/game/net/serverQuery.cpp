@@ -1309,7 +1309,8 @@ static void processMasterServerQuery(U32 session)
         else
         {
             Con::errorf("There are no more master servers to try!");
-            Con::executef(4, "onServerQueryStatus", "done", "No master servers found.", "0");
+            // Con::executef(4, "onServerQueryStatus", "done", "No master servers found.", "0");
+            processPingsAndQueries(gPingSession); // Do the LAN ping query??
         }
     }
 }

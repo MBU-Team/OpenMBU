@@ -114,8 +114,10 @@ function escapeFromGame(%forcePreviewMode) // its ok for this to be empty, defau
          enterPreviewMode();
    }
    // client's just disconnect
-   else if ($Client::connectedMultiplayer) // this is also true for hosts so we check hosting first
+   else if ($Client::connectedMultiplayer) { // this is also true for hosts so we check hosting first
       disconnect();
+      RootGui.setContent(MultiPlayerGui);
+   }
    // if play gui is awake, return to Level Preview.  Otherwise Quit
    else if (PlayGui.isAwake() || MissionLoadingGui.isAwake())
    {
