@@ -120,6 +120,9 @@ void GuiBitmapCtrl::onRender(Point2I offset, const RectI& updateRect)
 {
     if (mTextureObject)
     {
+        GFX->setTextureStageMagFilter(0, GFXTextureFilterLinear);
+        GFX->setTextureStageMinFilter(0, GFXTextureFilterLinear);
+
         GFX->clearBitmapModulation();
         if (mWrap)
         {
