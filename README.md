@@ -11,9 +11,12 @@ A reverse engineered version of Marble Blast Ultra that is based on Torque Shade
 - [DirectX 9 Runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=8109)
 
 # Contributors
-- [HumanGamer](https://github.com/HumanGamer)
-- [NeoLightning](https://github.com/neolightning)
-- [thearst3rd](https://github.com/thearst3rd)
+- [HumanGamer](https://github.com/HumanGamer) - Leader
+- [NeoLightning](https://github.com/neolightning) - Website Maintainer
+- [thearst3rd](https://github.com/thearst3rd) - Developer
+- [RandomityGuy](https://github.com/RandomityGuy) - Developer
+- [AJ Ferguson](https://github.com/AJ-Ferguson) - Developer
+- [Hailey Eira](https://github.com/HaileyEira) - Tester & Contributed Official Dev Builds
 
 # License
 You may use this to make mods, but your mods must be released for free.
