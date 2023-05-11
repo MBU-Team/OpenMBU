@@ -69,6 +69,20 @@ function miscOptionsGui::show(%this, %backGui)
 
    miscOptionsList.setOptionIndex(1, %uiStyleIndex);
 
+   // -----------
+   // Thousandths
+   // -----------
+
+   $Option::initialThousandths = $pref::Thousandths;
+  
+   miscOptionsList.addRow($Text::Thousandths, $Text::ThousandthsOptions, 8); // thousandths
+
+   %thousandthsIndex = 0;
+   if ($pref::Thousandths)
+      %thousandthsIndex = 1;
+
+   miscOptionsList.setOptionIndex(2, %thousandthsIndex);
+
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOMiscOptions) );
 }
@@ -90,6 +104,9 @@ function miscOptionsList::onOptionChange(%this, %increase)
          // ui style
          $pref::UI::LegacyUI = %val;
          echo("UIStyle = " @ $pref::UI::LegacyUI);
+      case 2:
+         $pref::Thousandths = %val;
+         echo("Thousandths = " @ $pref::Thousandths);
    }  
 }
 

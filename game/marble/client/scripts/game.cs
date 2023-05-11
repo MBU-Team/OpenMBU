@@ -1320,10 +1320,12 @@ function formatTime(%time)
    %minutesTen   = (%minutes - %minutesOne) / 10;
    %hundredthOne = %hundredth % 10; 
    %hundredthTen = (%hundredth - %hundredthOne) / 10;
+   %thousandth   = %time % 10;
    
    return %isNeg @ %minutesTen @ %minutesOne @ ":" @
        %secondsTen @ %secondsOne @ %secondSeperator @
-       %hundredthTen @ %hundredthOne;
+       %hundredthTen @ %hundredthOne @
+       ($pref::Thousandths ? %thousandth : "");
 }
 
 $Game::clientHiddenTime = 800;

@@ -494,6 +494,7 @@ function PlayGui::updateControls(%this)
    %minutesTen      = (%minutes - %minutesOne) / 10;
    %hundredthOne    = %hundredth % 10; 
    %hundredthTen    = (%hundredth - %hundredthOne) / 10;
+   %thousandth      = %et % 10;
    // Update the controls
    Min_Ten.setNumber(%minutesTen);
    Min_One.setNumber(%minutesOne);
@@ -501,6 +502,7 @@ function PlayGui::updateControls(%this)
    Sec_One.setNumber(%secondsOne);
    Sec_Tenth.setNumber(%hundredthTen);
    Sec_Hundredth.setNumber(%hundredthOne);
+   Sec_Thousandth.setNumber(%thousandth);
    PG_NegSign.setVisible(%drawNeg);
    
    if (%this.lastHundredth != %hundredth) 

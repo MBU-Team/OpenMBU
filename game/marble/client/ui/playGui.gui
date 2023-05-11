@@ -268,6 +268,18 @@ new GuiControl(PlayGui) {
 	         wrap = "0";
 	            helpTag = "0";
 	      };
+	      new GuiBitmapCtrl(Sec_Thousandth) {
+	         profile = "GuiDefaultProfile";
+	         horizSizing = "relative";
+	         vertSizing = "relative";
+	         position = "160 4";
+	         extent = "43 55";
+	         minExtent = "8 8";
+	         visible = "1";
+	         bitmap = "./game/numbers/5.png";
+	         wrap = "0";
+	            helpTag = "0";
+	      };
 	      new GuiBitmapCtrl(PG_NegSign) {
 	         profile = "GuiDefaultProfile";
 	         horizSizing = "relative";
@@ -646,6 +658,7 @@ new GuiControl(PlayGui) {
 function setHudVisible( %visible )
 {
    HUD_ShowPowerUp.setVisible( %visible );
+   Sec_Thousandth.setVisible( %visible && $pref::Thousandths );
    Sec_Hundredth.setVisible( %visible );
    Sec_Tenth.setVisible( %visible );
    MinSec_Point.setVisible( %visible );
