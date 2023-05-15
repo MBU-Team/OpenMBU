@@ -2223,7 +2223,7 @@ static void joinGameByInvite(const char* inviteCode)
     int netPort = Con::getIntVariable("pref::Net::Port");
 
     // Now for LAN
-    BitStream* stream = BitStream::getPacketStream();
+    stream = BitStream::getPacketStream();
     stream->write(U8(NetInterface::MasterServerJoinInvite));
     U8 flags = 0;
     U32 key = 0;
