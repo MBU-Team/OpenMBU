@@ -2219,6 +2219,26 @@ static void joinGameByInvite(const char* inviteCode)
     {
         BitStream::sendPacketStream(&(*serverList)[i].address);
     }
+
+    int netPort = Con::getIntVariable("pref::Net::Port");
+
+    // Now for LAN
+    BitStream* stream = BitStream::getPacketStream();
+    stream->write(U8(NetInterface::MasterServerJoinInvite));
+    U8 flags = 0;
+    U32 key = 0;
+
+    stream->write(flags);
+    stream->write(key);
+    writeCString(stream, inviteCode);
+
+
+    NetAddress addr;
+    char addrText[256];
+    dSprintf(addrText, sizeof(addrText), "IP:BROADCAST:%d", netPort);
+    Net::stringToAddress(addrText, &addr);
+
+    BitStream::sendPacketStream(&addr);
 }
 
 ConsoleFunction(joinGameByInvite, void, 4, 4, "joinGameByInvite(inviteCode, acceptCb(%ip), rejectCb)")
@@ -2411,6 +2431,38 @@ static void handleMasterServerGameInfoResponse(const NetAddress* address, BitStr
     handleGameInfoResponse(&theAddress, stream, key, flags);
 }
 
+static void handleMasterServerJoinInvite(const NetAddress* address, BitStream* stream) {
+    char inv[32];
+    readCString(stream, (char*) &inv);
+    const char* ourInv = Con::getVariable("Server::InviteCode");
+    if (strcmp(ourInv, inv) == 0) {
+        // RESPOND
+        U16 netPort = Con::getIntVariable("pref::Net::Port");
+
+        BitStream* stream = BitStream::getPacketStream();
+        stream->write(U8(NetInterface::MasterServerJoinInviteResponse));
+        U8 flags = 0;
+        U32 key = 0;
+
+        stream->write(flags);
+        stream->write(key);
+
+        // We just replace the netNum with 255.255.255.255 and filter that out on client side
+        NetAddress theAddress;
+        theAddress.netNum[0] = 255;
+        theAddress.netNum[1] = 255;
+        theAddress.netNum[2] = 255;
+        theAddress.netNum[3] = 255;
+        stream->write(theAddress.netNum[0]);
+        stream->write(theAddress.netNum[1]);
+        stream->write(theAddress.netNum[2]);
+        stream->write(theAddress.netNum[3]);
+        stream->write(netPort);
+
+        BitStream::sendPacketStream(address);
+    }
+}
+
 static void handleMasterServerJoinInviteResponse(const NetAddress* address, BitStream* stream) {
     U8 found;
     stream->read(&found);
@@ -2423,6 +2475,13 @@ static void handleMasterServerJoinInviteResponse(const NetAddress* address, BitS
         stream->read(&theAddress.netNum[2]);
         stream->read(&theAddress.netNum[3]);
         stream->read(&theAddress.port);
+
+        if (theAddress.netNum[0] == 255 && theAddress.netNum[1] == 255 && theAddress.netNum[2] == 255 && theAddress.netNum[3] == 255) {
+            theAddress.netNum[0] = address->netNum[0];
+            theAddress.netNum[1] = address->netNum[1];
+            theAddress.netNum[2] = address->netNum[2];
+            theAddress.netNum[3] = address->netNum[3];
+        }
 
         char evalbuf[128];
         dSprintf(evalbuf, 128, "%s(\"%d.%d.%d.%d:%d\");", joinGameAcceptCb, theAddress.netNum[0], theAddress.netNum[1], theAddress.netNum[2], theAddress.netNum[3], theAddress.port);
@@ -2504,8 +2563,12 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
     case MasterServerRelayReady:
         handleMasterServerRelayReady(address);
         break;
+    case MasterServerJoinInvite:
+        handleMasterServerJoinInvite(address, stream);
+        break;
     case MasterServerJoinInviteResponse:
         handleMasterServerJoinInviteResponse(address, stream);
+        break;
 #endif
     }
 }
