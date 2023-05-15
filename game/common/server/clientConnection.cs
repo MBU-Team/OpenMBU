@@ -51,10 +51,15 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
 {
    echo("Connect request from: " @ %netAddress);
 
-   if(%invited $= "" && $Server::PlayerCount >= ($pref::Server::MaxPlayers - $Pref::Server::PrivateSlots))
+   %flag = $Server::PlayerCount >= ($pref::Server::MaxPlayers - $Pref::Server::PrivateSlots);
+
+   if (%invited $= "" && %flag)
       return "CR_SERVERFULL";
 
-   if ((%invited !$= "" && %invited != 0) && $Server::PrivatePlayerCount >= $Pref::Server::PrivateSlots)
+   if ((%invited !$= "" && %invited != 0) && $Server::PrivatePlayerCount >= $Pref::Server::PrivateSlots && %flag)
+      return "CR_SERVERFULL";
+
+   if (%invited $= "" && $Server::IsPrivate)
       return "CR_SERVERFULL";
 
 
