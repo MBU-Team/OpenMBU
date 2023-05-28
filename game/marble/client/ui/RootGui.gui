@@ -417,7 +417,7 @@ new GuiControl(RootCenterCtrl) {
          profile = "GuiDefaultProfile";
          horizSizing = "right";
          vertSizing = "top";
-         position = isWidescreen()? "262 50" : "102 34";
+         position = isWidescreen()? "235 5" : "95 4";
          extent = "500 60";
          minExtent = "8 2";
          bitmap = "./xbox/roundedBG";

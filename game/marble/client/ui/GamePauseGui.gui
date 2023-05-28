@@ -71,7 +71,7 @@ function GamePauseGui::onWake(%this)
    
    RootGui.setTitle($Text::Paused);
 
-   if ($Server::Hosting)
+   if ($Server::Hosting && $pref::Lobby::InviteVisibility)
       LevelTitle.setText($Text::LobbyHostInviteCode @ $Text::Colon SPC $Server::InviteCode);
       
    if ($pref::UI::LegacyUI)
