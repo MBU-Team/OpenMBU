@@ -69,6 +69,11 @@ function miscOptionsGui::show(%this, %backGui)
 
    miscOptionsList.setOptionIndex(1, %uiStyleIndex);
 
+   // Invite visibility
+   
+   miscOptionsList.addRow($Text::LobbyHostInviteCode, $Text::InviteVisibilityOptions, 8);
+   miscOptionsList.setOptionIndex(2, $pref::Lobby::InviteVisibility);
+
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOMiscOptions) );
 }
@@ -90,6 +95,9 @@ function miscOptionsList::onOptionChange(%this, %increase)
          // ui style
          $pref::UI::LegacyUI = %val;
          echo("UIStyle = " @ $pref::UI::LegacyUI);
+      case 2:
+         $pref::Lobby::InviteVisibility = %val;
+         echo("InviteVisibility = " @ $pref::Lobby::InviteVisibility);
    }  
 }
 

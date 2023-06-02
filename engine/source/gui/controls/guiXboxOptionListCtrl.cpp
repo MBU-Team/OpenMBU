@@ -500,7 +500,8 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
                     rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
                 }
 
-                GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[leftArrowIndex]);
+                if (mButtonsEnabled)
+                    GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[leftArrowIndex]);
             }
 
             S32 rightArrowIndex = unselectedRightArrowIndex;
@@ -563,7 +564,8 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
                     rect.extent.set(bitmapArrowWidth, bitmapArrowHeight);
                 }
 
-                GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[rightArrowIndex]);
+                if (mButtonsEnabled)
+                    GFX->drawBitmapStretchSR(mProfile->mTextureObject, rect, mProfile->mBitmapArrayRects[rightArrowIndex]);
             }
 
 #ifndef MBO_UNTOUCHED_MENUS

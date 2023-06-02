@@ -15,6 +15,7 @@
 #include "GGCNatTunnel.h"
 extern void HandleGGCPacket(NetAddress* addr, unsigned char* data, U32 dataSize);
 #endif
+#include <game/net/serverQuery.h>
 
 NetInterface* GNet = NULL;
 
@@ -95,8 +96,11 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
         U8 packetType;
         pStream.read(&packetType);
         NetAddress* addr = &prEvent->sourceAddress;
-
+#ifdef TORQUE_NET_HOLEPUNCHING
+        if (packetType <= GameHeartbeat || packetType >= MasterServerRequestArrangedConnection)
+#else
         if (packetType <= GameHeartbeat)
+#endif
             handleInfoPacket(addr, packetType, &pStream);
 #ifdef GGC_PLUGIN
         else if (packetType == GGCPacket)
@@ -427,14 +431,45 @@ void NetInterface::handleConnectReject(const NetAddress* address, BitStream* str
 // NetInterface arranged connection process
 //-----------------------------------------------------------------------------
 
+void NetInterface::sendRelayPackets(NetConnection* conn)
+{
+    Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(4));
+    relayNetConnection = conn;
+    BitStream* out = BitStream::getPacketStream();
+
+    ConnectionParameters& params = conn->getConnectionParameters();
+    
+    out->write(U8(NetInterface::MasterServerRelayRequest));
+    out->write(params.mToConnectAddress.netNum[0]);
+    out->write(params.mToConnectAddress.netNum[1]);
+    out->write(params.mToConnectAddress.netNum[2]);
+    out->write(params.mToConnectAddress.netNum[3]);
+    out->write(params.mToConnectAddress.port);
+
+    Vector<MasterInfo>* serverList = getMasterServerList();
+
+    for (int i = 0; i < serverList->size(); i++)
+    {
+        BitStream::sendPacketStream(&(*serverList)[i].address);
+    }
+
+    conn->mConnectSendCount++;
+    conn->mConnectLastSendTime = Platform::getVirtualMilliseconds(); //getCurrentTime();
+}
+
+void NetInterface::startRelayConnection(NetConnection* conn, const NetAddress* theAddress)
+{
+    conn->setConnectionState(NetConnection::NotConnected);
+    removePendingConnection(conn); // Remove this pls
+    
+    conn->connect(theAddress); // Just do it *normally*
+}
+
 void NetInterface::startArrangedConnection(NetConnection *conn)
 {
     conn->setConnectionState(NetConnection::SendingPunchPackets);
     addPendingConnection(conn);
     conn->mConnectSendCount = 0;
-
-    // TODO: Figure out which to use
-    //conn->setConnectSequence(Platform::getVirtualMilliseconds());
     conn->mConnectLastSendTime = Platform::getVirtualMilliseconds();
 
     sendPunchPackets(conn);
@@ -442,45 +477,21 @@ void NetInterface::startArrangedConnection(NetConnection *conn)
 
 void NetInterface::sendPunchPackets(NetConnection *conn)
 {
-    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
-
+    Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(1));
+    
     ConnectionParameters &theParams = conn->getConnectionParameters();
     BitStream* out = BitStream::getPacketStream();
-    //PacketStream out;
     out->write(U8(Punch));
-
-    //if(theParams.mIsInitiator)
-    //    theParams.mNonce.write(&out);
-    //else
-    //    theParams.mServerNonce.write(&out);
-
-    //U32 encryptPos = out.getBytePosition();
-    //out->setBytePosition(encryptPos);
-
-    //if(theParams.mIsInitiator)
-    //    theParams.mServerNonce.write(&out);
-    //else
-    //{
-    //    theParams.mNonce.write(&out);
-//        if(out->writeFlag(mRequiresKeyExchange || (theParams.mRequestKeyExchange && !mPrivateKey.isNull())))
-//        {
-//            if(out->writeFlag(theParams.mRequestCertificate && !mCertificate.isNull()))
-//                out->write(mCertificate);
-//            else
-//                out->write(mPrivateKey->getPublicKey());
-//        }
-    //}
-    //SymmetricCipher theCipher(theParams.mArrangedSecret);
-    //out->hashAndEncrypt(NetConnection::MessageSignatureBytes, encryptPos, &theCipher);
 
     for(S32 i = 0; i < theParams.mPossibleAddresses.size(); i++)
     {
-        BitStream::sendPacketStream(theParams.mPossibleAddresses[i]);
-
-//        TNLLogMessageV(LogNetInterface, ("Sending punch packet (%s, %s) to %s",
-//            ByteBuffer(theParams.mNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
-//            ByteBuffer(theParams.mServerNonce.data, Nonce::NonceSize).encodeBase64()->getBuffer(),
-//            theParams.mPossibleAddresses[i].toString()));
+        BitStream::sendPacketStream(&theParams.mPossibleAddresses[i]);
+        Con::printf("Sending punch packets to %d.%d.%d.%d:%d",
+            theParams.mPossibleAddresses[i].netNum[0],
+            theParams.mPossibleAddresses[i].netNum[1],
+            theParams.mPossibleAddresses[i].netNum[2],
+            theParams.mPossibleAddresses[i].netNum[3],
+            theParams.mPossibleAddresses[i].port);
     }
     conn->mConnectSendCount++;
     conn->mConnectLastSendTime = Platform::getVirtualMilliseconds(); //getCurrentTime();
@@ -488,18 +499,9 @@ void NetInterface::sendPunchPackets(NetConnection *conn)
 
 void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
 {
-    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
-
     S32 i, j;
     NetConnection *conn;
 
-    //Nonce firstNonce;
-    //firstNonce.read(stream);
-
-    //ByteBuffer b(firstNonce.data, Nonce::NonceSize);
-
-    //TNLLogMessageV(LogNetInterface, ("Received punch packet from %s - %s", theAddress.toString(), b.encodeBase64()->getBuffer()));
-    //Con::printf("Received punch packet from %d.%d.%d.%d:%d", theAddress->netNum[0], theAddress->netNum[1], theAddress->netNum[2], theAddress->netNum[3], theAddress->port);
     char addr[256];
     Net::addressToString(theAddress, addr);
     Con::printf("Received punch packet from %s", addr);
@@ -512,14 +514,10 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
         if(conn->getConnectionState() != NetConnection::SendingPunchPackets)
             continue;
 
-//        if((theParams.mIsInitiator && firstNonce != theParams.mServerNonce) ||
-//           (!theParams.mIsInitiator && firstNonce != theParams.mNonce))
-//            continue;
-
         // first see if the address is in the possible addresses list:
 
         for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
-            if(theAddress == theParams.mPossibleAddresses[j])
+            if(theAddress == &theParams.mPossibleAddresses[j])
                 break;
 
         // if there was an exact match, just exit the loop, or
@@ -538,7 +536,7 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
         // as only the port is not an exact match:
 
         for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
-            if(Net::compareAddresses(theAddress, theParams.mPossibleAddresses[j]))
+            if(Net::compareAddresses(theAddress, &theParams.mPossibleAddresses[j]))
                 break;
 
         // if the address wasn't even partially in the list, just exit out
@@ -548,7 +546,7 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
         // otherwise, as long as we don't have too many ping addresses,
         // add this one to the list:
         if(theParams.mPossibleAddresses.size() < 5)
-            theParams.mPossibleAddresses.push_back(theAddress);
+            theParams.mPossibleAddresses.push_back(*theAddress);
 
         // if this is the initiator of the arranged connection, then
         // process the punch packet from the remote host by issueing a
@@ -560,47 +558,11 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
         return;
 
     ConnectionParameters &theParams = conn->getConnectionParameters();
-//    SymmetricCipher theCipher(theParams.mArrangedSecret);
-//    if(!stream->decryptAndCheckHash(NetConnection::MessageSignatureBytes, stream->getBytePosition(), &theCipher))
-//        return;
-//
-//    Nonce nextNonce;
-//    nextNonce.read(stream);
-//
-//    if(nextNonce != theParams.mNonce)
-//        return;
 
-    // see if the connection needs to be authenticated or uses key exchange
-//    if(stream->readFlag())
-//    {
-//        if(stream->readFlag())
-//        {
-//            theParams.mCertificate = new Certificate(stream);
-//            if(!theParams.mCertificate->isValid() || !conn->validateCertficate(theParams.mCertificate, true))
-//                return;
-//            theParams.mPublicKey = theParams.mCertificate->getPublicKey();
-//        }
-//        else
-//        {
-//            theParams.mPublicKey = new AsymmetricKey(stream);
-//            if(!theParams.mPublicKey->isValid() || !conn->validatePublicKey(theParams.mPublicKey, true))
-//                return;
-//        }
-//        if(mPrivateKey.isNull() || mPrivateKey->getKeySize() != theParams.mPublicKey->getKeySize())
-//        {
-//            // we don't have a private key, so generate one for this connection
-//            theParams.mPrivateKey = new AsymmetricKey(theParams.mPublicKey->getKeySize());
-//        }
-//        else
-//            theParams.mPrivateKey = mPrivateKey;
-//        theParams.mSharedSecret = theParams.mPrivateKey->computeSharedSecretKey(theParams.mPublicKey);
-//        //logprintf("shared secret (client) %s", theParams.mSharedSecret->encodeBase64()->getBuffer());
-//        Random::read(theParams.mSymmetricKey, SymmetricCipher::KeySize);
-//        theParams.mUsingCrypto = true;
-//    }
     conn->setNetAddress(theAddress);
-    //TNLLogMessageV(LogNetInterface, ("Punch from %s matched nonces - connecting...", theAddress.toString()));
     Con::printf("Punch from %s matched nonces - connecting...", addr);
+
+    Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(2));
 
     conn->setConnectionState(NetConnection::AwaitingConnectResponse);
     conn->mConnectSendCount = 0;
@@ -611,43 +573,14 @@ void NetInterface::handlePunch(const NetAddress* theAddress, BitStream *stream)
 
 void NetInterface::sendArrangedConnectRequest(NetConnection *conn)
 {
-    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
-
-    //TNLLogMessageV(LogNetInterface, ("Sending Arranged Connect Request"));
     Con::printf("Sending Arranged Connect Request");
     BitStream* out = BitStream::getPacketStream();
-    //PacketStream out;
 
     ConnectionParameters &theParams = conn->getConnectionParameters();
 
     out->write(U8(ArrangedConnectRequest));
     out->write(conn->getSequence());
-    //theParams.mNonce.write(&out);
-    //U32 encryptPos = out.getBytePosition();
-    //U32 innerEncryptPos = 0;
-
-    //out.setBytePosition(encryptPos);
-
-    //theParams.mServerNonce.write(&out);
-//    if(out.writeFlag(theParams.mUsingCrypto))
-//    {
-//        out.write(theParams.mPrivateKey->getPublicKey());
-//        innerEncryptPos = out.getBytePosition();
-//        out.setBytePosition(innerEncryptPos);
-//        out.write(SymmetricCipher::KeySize, theParams.mSymmetricKey);
-//    }
     out->writeFlag(theParams.mDebugObjectSizes);
-    //out->write(conn->getInitialSendSequence());
-    out->write(conn->getSequence());
-    conn->writeConnectRequest(out);
-
-//    if(innerEncryptPos)
-//    {
-//        SymmetricCipher theCipher(theParams.mSharedSecret);
-//        out.hashAndEncrypt(NetConnection::MessageSignatureBytes, innerEncryptPos, &theCipher);
-//    }
-//    SymmetricCipher theCipher(theParams.mArrangedSecret);
-//    out.hashAndEncrypt(NetConnection::MessageSignatureBytes, encryptPos, &theCipher);
 
     conn->mConnectSendCount++;
     conn->mConnectLastSendTime = Platform::getVirtualMilliseconds();//getCurrentTime();
@@ -658,41 +591,18 @@ void NetInterface::sendArrangedConnectRequest(NetConnection *conn)
 
 void NetInterface::handleArrangedConnectRequest(const NetAddress* theAddress, BitStream *stream)
 {
-    // TODO: The following code is from OpenTNL, it needs to be updated to work with Torque/OpenMBU
-
     S32 i, j;
     NetConnection *conn;
-    //Nonce nonce, serverNonce;
-    //nonce.read(stream);
     U32 connectSequence;
     stream->read(&connectSequence);
-
-    // see if the connection is in the main connection table.
-    // If the connection is in the connection table and it has
-    // the same initiatorSequence, we'll just resend the connect
-    // acceptance packet, assuming that the last time we sent it
-    // it was dropped.
-    //NetConnection *oldConnection = findConnection(theAddress);
-    NetConnection* connect = NetConnection::lookup(theAddress);
-    if (connect && connect->getSequence() == connectSequence)
-    {
-        sendConnectAccept(connect);
-        return;
-    }
 
     for(i = 0; i < mPendingConnections.size(); i++)
     {
         conn = mPendingConnections[i];
         ConnectionParameters &theParams = conn->getConnectionParameters();
 
-        if(conn->getConnectionState() != NetConnection::SendingPunchPackets || theParams.mIsInitiator)
-            continue;
-
-        //if(nonce != theParams.mNonce)
-        //    continue;
-
         for(j = 0; j < theParams.mPossibleAddresses.size(); j++)
-            if(Net::compareAddresses(theAddress, theParams.mPossibleAddresses[j]))
+            if(Net::compareAddresses(theAddress, &theParams.mPossibleAddresses[j]))
                 break;
         if(j != theParams.mPossibleAddresses.size())
             break;
@@ -701,71 +611,26 @@ void NetInterface::handleArrangedConnectRequest(const NetAddress* theAddress, Bi
         return;
 
     ConnectionParameters &theParams = conn->getConnectionParameters();
-//    SymmetricCipher theCipher(theParams.mArrangedSecret);
-//    if(!stream->decryptAndCheckHash(NetConnection::MessageSignatureBytes, stream->getBytePosition(), &theCipher))
-//        return;
-//
-//    stream->setBytePosition(stream->getBytePosition());
-//
-//    serverNonce.read(stream);
-//    if(serverNonce != theParams.mServerNonce)
-//        return;
 
-//    if(stream->readFlag())
-//    {
-//        if(mPrivateKey.isNull())
-//            return;
-//        theParams.mUsingCrypto = true;
-//        theParams.mPublicKey = new AsymmetricKey(stream);
-//        theParams.mPrivateKey = mPrivateKey;
-//
-//        U32 decryptPos = stream->getBytePosition();
-//        stream->setBytePosition(decryptPos);
-//        theParams.mSharedSecret = theParams.mPrivateKey->computeSharedSecretKey(theParams.mPublicKey);
-//        SymmetricCipher theCipher(theParams.mSharedSecret);
-//
-//        if(!stream->decryptAndCheckHash(NetConnection::MessageSignatureBytes, decryptPos, &theCipher))
-//            return;
-//
-//        // now read the first part of the connection's session (symmetric) key
-//        stream->read(SymmetricCipher::KeySize, theParams.mSymmetricKey);
-//        Random::read(theParams.mInitVector, SymmetricCipher::KeySize);
-//    }
-
-    //U32 connectSequence;
     theParams.mDebugObjectSizes = stream->readFlag();
-    //stream->read(&connectSequence);
-    //TNLLogMessageV(LogNetInterface, ("Received Arranged Connect Request"));
-    Con::printf("Received Arranged Connect Request");
-
-    if(connect)
-    {
-        //connect->disconnect(NetConnection::ReasonSelfDisconnect, "");
-
-        connect->onDisconnect("SelfDisconnect");
-        connect->deleteObject();
-    }
-
-    conn->setNetAddress(theAddress);
-    //conn->setInitialRecvSequence(connectSequence);
-
-    conn->setConnectSequence(connectSequence);
-    //if(theParams.mUsingCrypto)
-    //    conn->setSymmetricCipher(new SymmetricCipher(theParams.mSymmetricKey, theParams.mInitVector));
-
-    const char *errorString = NULL;
-    if(!conn->readConnectRequest(stream, &errorString))
-    {
-        //sendConnectReject(&theParams, theAddress);//, errorString);
-        sendConnectReject(conn, errorString);
-        removePendingConnection(conn);
-        return;
-    }
-    //addConnection(conn);
-    removePendingConnection(conn);
+    Con::printf("Received Arranged Connect Request: Initiator: %d", theParams.mIsInitiator);
     conn->setConnectionState(NetConnection::Connected);
-    conn->onConnectionEstablished(theParams.mIsInitiator);
-    sendConnectAccept(conn);
+    removePendingConnection(conn);
+    
+    if (theParams.mIsInitiator) {
+        Con::executef(conn, 2, "onConnectStatus", Con::getIntArg(3));
+        conn->connect(theAddress);
+    }
+    else 
+    {
+        // Send connect request to *client*
+        BitStream* out = BitStream::getPacketStream();
+
+        out->write(U8(ArrangedConnectRequest));
+        out->write(conn->getSequence());
+        
+        BitStream::sendPacketStream(theAddress);
+    }
 }
 
 #endif // TORQUE_NET_HOLEPUNCHING
@@ -865,6 +730,49 @@ void NetInterface::checkTimeouts()
                 else
                     sendConnectRequest(pending);
             }
+#ifdef TORQUE_NET_HOLEPUNCHING
+            else if (pending->getConnectionState() == NetConnection::SendingPunchPackets &&
+                time > pending->mConnectLastSendTime + ConnectRetryTime)
+            {
+                if (pending->mConnectSendCount > ConnectRetryCount)
+                {
+                    // Try relay
+                    if (pending->mConnectionParameters.mIsInitiator) {
+                        pending->setConnectionState(NetConnection::TryingRelay);
+                        pending->mConnectSendCount = 0;
+                        pending->mConnectLastSendTime = time;
+                        sendRelayPackets(pending);
+                    }
+                    else 
+                    {
+                        pending->setConnectionState(NetConnection::NotConnected);
+                        removePendingConnection(pending);
+                        continue;
+                    }
+                }
+                else
+                    sendPunchPackets(pending);
+            }
+            else if (pending->getConnectionState() == NetConnection::TryingRelay &&
+                time > pending->mConnectLastSendTime + ConnectRetryTime)
+            {
+                if (pending->mConnectSendCount > ConnectRetryCount)
+                {
+                    if (pending->mConnectionParameters.mIsInitiator) {
+                        pending->onConnectTimedOut();
+                        pending->deleteObject();
+                    }
+                    else
+                    {
+                        pending->setConnectionState(NetConnection::NotConnected);
+                    }
+                    removePendingConnection(pending);
+                    continue;
+                }
+                else
+                    sendRelayPackets(pending);
+            }
+#endif
             i++;
         }
         mLastTimeoutCheckTime = time;

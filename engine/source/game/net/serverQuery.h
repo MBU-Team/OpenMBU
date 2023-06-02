@@ -45,6 +45,7 @@ struct ServerInfo
         Status_Dedicated = BIT(0),
         Status_Passworded = BIT(1),
         Status_Linux = BIT(2),
+        Status_Private = BIT(3),
 
         // Status flags:
         Status_New = 0,
@@ -69,6 +70,7 @@ struct ServerInfo
     U32         cpuSpeed;
     bool        isFavorite;
     BitSet32    status;
+    bool        isLocal;
 
     ServerInfo()
     {
@@ -86,6 +88,7 @@ struct ServerInfo
         cpuSpeed = 0;
         isFavorite = false;
         status = Status_New;
+        isLocal = false;
     }
     ~ServerInfo();
 
@@ -105,18 +108,20 @@ struct ServerInfo
 
 extern Vector<ServerInfo> gServerList;
 extern bool gServerBrowserDirty;
+extern NetConnection* relayNetConnection;
 extern void clearServerList(bool clearServerInfo = true);
 extern void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missionType,
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing, U16 minCPU,
     U8 filterFlags, bool clearServerInfo, bool useFilters);
 extern void queryMasterGameTypes();
-extern void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
+extern void queryMasterServer(U16 port, U8 flags, const char* gameType, const char* missionType,
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing, U16 minCPU,
     U8 filterFlags, U8 buddyCount, U32* buddyList);
 extern void queryFavoriteServers(U8 flags);
 extern void querySingleServer(const NetAddress* addr, U8 flags);
 extern void startHeartbeat();
 extern void sendHeartbeat(U8 flags);
+extern Vector<MasterInfo>* getMasterServerList();
 
 #ifdef TORQUE_DEBUG
 extern void addFakeServers(S32 howMany);

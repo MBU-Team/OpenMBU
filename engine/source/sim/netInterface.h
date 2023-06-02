@@ -38,12 +38,21 @@ public:
         Punch = 40,
         ArrangedConnectRequest = 42,
 
-        MasterServerArrangedConnectRequest = 46,
-        MasterServerArrangedConnectResponse = 48,
-        MasterServerAcceptArrangedConnectRequest = 50,
-        MasterServerAcceptArrangedConnectResponse = 52,
-        MasterServerRejectArrangedConnectRequest = 54,
-        MasterServerRejectArrangedConnectResponse = 56,
+        MasterServerRequestArrangedConnection = 46,
+        MasterServerClientRequestedArrangedConnection = 48,
+        MasterServerAcceptArrangedConnection = 50,
+        MasterServerArrangedConnectionAccepted = 52,
+        MasterServerRejectArrangedConnection = 54,
+        MasterServerArrangedConnectionRejected = 56,
+        MasterServerGamePingRequest = 58,
+        MasterServerGamePingResponse = 60,
+        MasterServerGameInfoRequest = 62,
+        MasterServerGameInfoResponse = 64,
+        MasterServerRelayRequest = 66,
+        MasterServerRelayResponse = 68,
+        MasterServerRelayReady = 72,
+        MasterServerJoinInvite = 74,
+        MasterServerJoinInviteResponse = 76,
 #endif // TORQUE_NET_HOLEPUNCHING
     };
 protected:
@@ -96,6 +105,9 @@ public:
     /// Begins the connection handshaking process for an arranged connection.
     void startArrangedConnection(NetConnection *conn);
 
+    /// Begins connecting to the relay server.
+    void startRelayConnection(NetConnection* conn, const NetAddress* theAddress);
+    
 protected:
     /// Sends Punch packets to each address in the possible connection address list.
     void sendPunchPackets(NetConnection *conn);
@@ -108,6 +120,9 @@ protected:
 
     /// Handles an incoming connect request from an arranged connection.
     void handleArrangedConnectRequest(const NetAddress* theAddress, BitStream *stream);
+
+    /// Sends relay requests
+    void sendRelayPackets(NetConnection* conn);
 
 #endif // TORQUE_NET_HOLEPUNCHING
 

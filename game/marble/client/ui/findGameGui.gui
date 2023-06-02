@@ -122,6 +122,11 @@ function onServerQueryStatus(%status, %msg, %value)
 {
    if (%status !$= "done" && %status !$= "error")
       return;
+
+   if (%value == 0) // No master servers found
+      $queryOffline = true;
+   else
+      $queryOffline = false;
       
    eval($pcsearchcallback);
 }
@@ -159,15 +164,10 @@ function PC_XBLiveSearchForMatches(%gamemodefilter, %missionfilter, %maxplayersf
    %mis = %missionfilter;
    if (%mis $= "-1")
       %mis = "any";
+
+   %filterFlags |= 1 << 7; // Current version only
    
-   if (FindGameGui.useMaster)
-   {
-      queryMasterServer(0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags);
-   }
-   else
-   {
-      queryLanServers(1000, 0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags, 1, $pcsearchusefilters);
-   }
+   queryMasterServer(28000, 0, "OpenMBU", %mis, 0, %maxplayersfilter, 100, 2, 1000, 0, %filterFlags);
 }
 
 // ----------------------------------------------------------------------------
@@ -440,16 +440,7 @@ function FindGameGui::onSearchComplete(%this,%type)
    if (isPCBuild() || !$Client::UseXBLiveMatchMaking)
    {
       %sc = getServerCount();
-      if (%sc == 0 && %this.useMaster)
-      {
-         %this.useMaster = false;
-         
-         %this.pcSearchActive = true;
-         PC_XBLiveSearchForMatches(%this.gamemodefilter, %this.missionfilter, 
-         %this.maxplayersfilter, -1, "FindGameGui.onSearchComplete(pc);");
-         return;
-      }
-      echo(%sc @ " games returned from LAN search.");
+      echo(%sc @ " games returned from search.");
       for (%i = 0; %i < %sc; %i++)
       {
          // no filtering in PC build, we just add everything
@@ -461,7 +452,10 @@ function FindGameGui::onSearchComplete(%this,%type)
          // for testing
          //%ping = 120;
          %gameIcon = "";
-         %rowText =  %playerStr TAB %gameIcon TAB %ping TAB "1" TAB %i TAB "\c1" @ "LAN:" SPC $ServerInfo::Name; // 1 == is pc result
+         if ($ServerInfo::IsLocal)
+            %rowText =  %playerStr TAB %gameIcon TAB %ping TAB "1" TAB %i TAB "\c1" @ "LAN:" SPC $ServerInfo::Name; // 1 == is pc result
+         else
+            %rowText =  %playerStr TAB %gameIcon TAB %ping TAB "1" TAB %i TAB "\c1" @ $ServerInfo::Name; // 1 == is pc result
          FindGameServerList.addRow(%count, %rowText);
          %this.updatePingIcon(%count);
          %count++;
@@ -730,9 +724,12 @@ function FindGameGui::joinGame(%this, %index, %invited)
             
          %this.joiningGame = true;
          RootGui.setContent(MissionLoadingGui);
-         if ($EnableFMS)
-            establishConnection($ServerInfo::Address, true);
-         else
+         if ($EnableFMS) {
+            if ($ServerInfo::IsLocal)
+              establishConnection($ServerInfo::Address, true, true);
+            else
+              establishConnection($ServerInfo::Address, true);
+         } else
             connectToServer($ServerInfo::Address);
          return;
       }
@@ -796,7 +793,7 @@ function FindGameGui::onConnectComplete(%this)
 
    RootGui.setContent(MissionLoadingGui);
    if ($EnableFMS)
-      establishConnection($XBLive::secureHostAddress, true, $Client::Invited);
+      establishConnection($XBLive::secureHostAddress, true, false, $Client::Invited);
    else
       connectToServer($XBLive::secureHostAddress, $Client::Invited);
 }

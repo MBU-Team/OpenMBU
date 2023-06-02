@@ -293,8 +293,10 @@ function LobbyGui::updateHostingStatus(%this)
          }
 	   //}
 	   
-	   if (%this.hosting && !isDemoLaunch() && !XBLiveIsRanked()) 
+	   if (%this.hosting && !isDemoLaunch() && !XBLiveIsRanked()) {
 	      RootGui.setLS($Text::ChangeLevels);
+          RootGui.setX($Text::LobbyHostInviteVisibility);
+       }
    }
 }
 
@@ -698,14 +700,21 @@ function LobbyGui::setHostInfo(%this, %hostName, %gameMode, %mapname, %priSlotsU
 	//%gamemodetag = (isEnglish()) ? $text::LM7 @ " " : ""; // hide "
 	%gamemodetag = $Text::LobbyHostName;
 	
-   LobbyGuiHostGameInfo.setText( 
-   			"<font:Arial Bold:22>" @ %gamemodetag SPC %hostName @ "\n" @
+
+   LobbyGuiHostGameInfo.beforeText = "<font:Arial Bold:22>" @ %gamemodetag SPC %hostName @ "\n" @
    			$Text::LobbyHostLevel SPC %missionName @ "\n" @ 
    			"<font:Arial Bold:18>" @ $Text::LobbyHostPrivateSlots @ $Text::Colon SPC
    			%priSlotsUsed @ $Text::Slash @ %priSlotsFree + %priSlotsUsed @ 
    			$Text::Comma SPC $Text::LobbyHostPublicSlots @ $Text::Colon SPC 
-   			%pubSlotsUsed @ $Text::Slash @ %pubSlotsFree + %pubSlotsUsed @ "<font:Arial Bold:20> ");
-   			
+   			%pubSlotsUsed @ $Text::Slash @ %pubSlotsFree + %pubSlotsUsed;
+            
+   if ($pref::Lobby::InviteVisibility)
+       LobbyGuiHostGameInfo.setText(LobbyGuiHostGameInfo.beforeText @ 
+                ($Server::Hosting ? ($Text::Comma SPC $Text::LobbyHostInviteCode @ $Text::Colon SPC
+                $Server::InviteCode @ "<font:Arial Bold:20> ") : ""));
+   else
+   	   LobbyGuiHostGameInfo.setText(LobbyGuiHostGameInfo.beforeText);
+  
    LobbyGuiSelection.clear();
    LobbyGuiSelection.setButtonsEnabled(%this.hosting);
    LobbyGuiSelection.addRow($Text::Level, %mapname, 18);
@@ -954,6 +963,18 @@ function LobbyGuiPlayerList::onSelect( %this, %id, %text )
       RootGui.setY( "" );//$Text::GamerCard );
    else
       RootGui.setY( $Text::SelectPlayer );
+}
+
+function LobbyGui::onX(%this)
+{
+    $pref::Lobby::InviteVisibility = !$pref::Lobby::InviteVisibility;
+
+   if ($pref::Lobby::InviteVisibility)
+       LobbyGuiHostGameInfo.setText(LobbyGuiHostGameInfo.beforeText @ 
+                ($Server::Hosting ? ($Text::Comma SPC $Text::LobbyHostInviteCode @ $Text::Colon SPC
+                $Server::InviteCode @ "<font:Arial Bold:20> ") : ""));
+   else
+   	   LobbyGuiHostGameInfo.setText(LobbyGuiHostGameInfo.beforeText);
 }
 
 function LobbyGui::onY(%this)

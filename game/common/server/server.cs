@@ -11,7 +11,7 @@ function portInit(%port)
    %failCount = 0;
    while(%failCount < 10 && !setNetPort(%port)) {
       echo("Port init failed on port " @ %port @ " trying next port.");
-      %port++; %failCount++;
+      %port += 3; %failCount++;
    }
 }
  

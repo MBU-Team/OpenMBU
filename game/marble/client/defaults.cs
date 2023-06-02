@@ -16,6 +16,7 @@ $pref::shadows = "2";
 $pref::HudMessageLogSize = 40;
 $pref::ChatHudLength = 1;
 $pref::useStencilShadows = true;
+$pref::forceDirectConnect = false;
 $pref::Input::LinkMouseSensitivity = 1;
 // DInput keyboard, mouse, and joystick prefs
 $pref::displayMPHelpText = false;
@@ -48,6 +49,7 @@ $pref::OpenGL::force16BitTexture = "0";
 $pref::OpenGL::forcePalettedTexture = "0";
 $pref::OpenGL::maxHardwareLights = 3;
 $pref::VisibleDistanceMod = 1.0;
+$pref::Lobby::InviteVisibility = true;
 
 /// The sound provider to select at startup.  Typically
 /// this is DirectSound, OpenAL, or XACT.  There is also 

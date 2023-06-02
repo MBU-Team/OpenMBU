@@ -29,7 +29,7 @@ function serverAreAllPlayersReady()
 
 function serverGetPublicSlotsUsed()
 {
-   return $Server::PlayerCount - $Server::PrivatePlayerCount;
+   return $Server::PlayerCount;
 }
 
 function serverGetPrivateSlotsUsed()

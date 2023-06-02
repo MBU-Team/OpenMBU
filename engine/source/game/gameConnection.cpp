@@ -149,8 +149,10 @@ void GameConnection::onConnectionEstablished(bool isInitiator)
     {
         setGhostFrom(false);
         setGhostTo(true);
-        setSendingEvents(true);
-        setTranslatesStrings(true);
+        if (!isEstablished()) {
+            setSendingEvents(true);
+            setTranslatesStrings(true);
+        }
         setIsConnectionToServer();
         mServerConnection = this;
         Con::printf("Connection established %d", getId());
@@ -160,8 +162,10 @@ void GameConnection::onConnectionEstablished(bool isInitiator)
     {
         setGhostFrom(true);
         setGhostTo(false);
-        setSendingEvents(true);
-        setTranslatesStrings(true);
+        if (!isEstablished()) {
+            setSendingEvents(true);
+            setTranslatesStrings(true);
+        }
         Sim::getClientGroup()->addObject(this);
         mTotalServerTicks = ServerTicksUninitialized;
 

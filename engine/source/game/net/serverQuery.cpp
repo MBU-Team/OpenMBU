@@ -94,6 +94,7 @@
 // This is basically the server query protocol version now:
 static const char* versionString = "VER1";
 
+Vector<NetAddress> localNetAddresses;
 Vector<ServerInfo> gServerList(__FILE__, __LINE__);
 static Vector<MasterInfo> gMasterServerList(__FILE__, __LINE__);
 static Vector<NetAddress> gFinishedList(__FILE__, __LINE__); // timed out servers and finished servers go here
@@ -135,6 +136,7 @@ struct Ping
     U32 time;
     U32 tryCount;
     bool broadcast;
+    bool isLocal;
 };
 
 static Ping gMasterServerPing;
@@ -341,7 +343,7 @@ void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missi
     U8 filterFlags, bool clearServerInfo, bool useFilters)
 {
     sgServerQueryActive = true;
-    clearServerList(clearServerInfo);
+    // clearServerList(clearServerInfo);
     pushServerFavorites();
 
     sActiveFilter.type = useFilters ? ServerFilter::OfflineFiltered : ServerFilter::Offline;
@@ -378,7 +380,7 @@ void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missi
 #endif
 
     Con::executef(4, "onServerQueryStatus", "start", "Querying LAN servers", "0");
-    processPingsAndQueries(gPingSession);
+    // processPingsAndQueries(gPingSession);
 }
 
 //-----------------------------------------------------------------------------
@@ -406,6 +408,8 @@ ConsoleFunction(queryLanServers, void, 13, 14, "queryLanServers(...);")
     if (argc >= 14)
         useFilters = dAtoi(argv[13]) != 0;
 
+    clearServerList();
+
     queryLanServers(lanPort, flags, gameType, missionType, minPlayers, maxPlayers, maxBots,
         regionMask, maxPing, minCPU, filterFlags, clearServerInfo, useFilters);
 
@@ -429,14 +433,14 @@ void queryMasterGameTypes()
 
 //-----------------------------------------------------------------------------
 
-void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
+void queryMasterServer(U16 lanPort, U8 flags, const char* gameType, const char* missionType,
     U8 minPlayers, U8 maxPlayers, U8 maxBots, U32 regionMask, U32 maxPing,
     U16 minCPU, U8 filterFlags, U8 buddyCount, U32* buddyList)
 {
     // Reset the list packet flag:
     gGotFirstListPacket = false;
     sgServerQueryActive = true;
-    clearServerList();
+    // clearServerList();
 
     Con::executef(4, "onServerQueryStatus", "start", "Querying master server", "0");
 
@@ -468,6 +472,7 @@ void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
         sActiveFilter.buddyCount = buddyCount;
         dFree(sActiveFilter.buddyList);
         sActiveFilter.buddyList = NULL;
+        queryLanServers(lanPort, flags, gameType, missionType, minPlayers, maxPlayers, maxBots, regionMask, maxPing, minCPU, filterFlags, false, false);
     }
     else
     {
@@ -494,28 +499,31 @@ void queryMasterServer(U8 flags, const char* gameType, const char* missionType,
         processMasterServerQuery(gPingSession);
 }
 
-ConsoleFunction(queryMasterServer, void, 11, 11, "queryMasterServer(...);")
+ConsoleFunction(queryMasterServer, void, 12, 12, "queryMasterServer(...);")
 {
     argc;
 
-    U8 flags = dAtoi(argv[1]);
+    U16 lanPort = dAtoi(argv[1]);
+    U8 flags = dAtoi(argv[2]);
 
     // It's not a good idea to hold onto args, recursive calls to
     // console exec will trash them.
-    char* gameType = dStrdup(argv[2]);
-    char* missionType = dStrdup(argv[3]);
+    char* gameType = dStrdup(argv[3]);
+    char* missionType = dStrdup(argv[4]);
 
-    U8 minPlayers = dAtoi(argv[4]);
-    U8 maxPlayers = dAtoi(argv[5]);
-    U8 maxBots = dAtoi(argv[6]);
-    U32 regionMask = dAtoi(argv[7]);
-    U32 maxPing = dAtoi(argv[8]);
-    U16 minCPU = dAtoi(argv[9]);
-    U8 filterFlags = dAtoi(argv[10]);
+    U8 minPlayers = dAtoi(argv[5]);
+    U8 maxPlayers = dAtoi(argv[6]);
+    U8 maxBots = dAtoi(argv[7]);
+    U32 regionMask = dAtoi(argv[8]);
+    U32 maxPing = dAtoi(argv[9]);
+    U16 minCPU = dAtoi(argv[10]);
+    U8 filterFlags = dAtoi(argv[11]);
     U8 buddyCount = 0;
     U32 buddyList = 0;
 
-    queryMasterServer(flags, gameType, missionType, minPlayers, maxPlayers,
+    clearServerList();
+
+    queryMasterServer(lanPort, flags, gameType, missionType, minPlayers, maxPlayers,
         maxBots, regionMask, maxPing, minCPU, filterFlags, 0, &buddyList);
 
     dFree(gameType);
@@ -536,7 +544,7 @@ static void sendMasterArrangedConnectRequest(NetAddress* address)
 
         // Send a request to the master server to set up an arranged connection:
         BitStream* out = BitStream::getPacketStream();
-        out->write(U8(NetInterface::MasterServerArrangedConnectRequest));
+        out->write(U8(NetInterface::MasterServerRequestArrangedConnection));
 
         //char addr[256];
         //Net::addressToString(address, addr);
@@ -546,25 +554,76 @@ static void sendMasterArrangedConnectRequest(NetAddress* address)
         out->write(address->netNum[1]);
         out->write(address->netNum[2]);
         out->write(address->netNum[3]);
-        //out->write(address->port);
+        out->write(address->port);
 
         BitStream::sendPacketStream(&(*masterList)[i].address);
     }
 }
 
-ConsoleFunction(arrangeConnection, void, 2, 2, "arrangeConnection(ip);")
+NetConnection* arrangeNetConnection = NULL;
+
+ConsoleMethod(NetConnection, arrangeConnection, void, 3, 3, "NetConnection.arrangeConnection(ip);")
 {
+    arrangeNetConnection = object;
     argc;
 
     NetAddress addr;
     char* addrText;
 
-    addrText = dStrdup(argv[1]);
+    addrText = dStrdup(argv[2]);
     Net::stringToAddress(addrText, &addr);
+
+    if (!dStrchr(addrText, ':'))
+        addr.port = 0;
+
+    dFree(addrText);
+
+    ConnectionParameters& params = arrangeNetConnection->getConnectionParameters();
+    params.mToConnectAddress = addr;
 
     sendMasterArrangedConnectRequest(&addr);
 }
+
+NetConnection* relayNetConnection = NULL;
+static void getRelayServer(const NetAddress* address);
+
+ConsoleMethod(NetConnection, relayConnection, void, 3, 3, "NetConnection.relayConnection(ip);")
+{
+    relayNetConnection = object;
+    argc;
+
+    NetAddress addr;
+    char* addrText;
+
+    addrText = dStrdup(argv[2]);
+    
+    Net::stringToAddress(addrText, &addr);
+    
+    if (!dStrchr(addrText, ':'))
+        addr.port = 0;
+
+    dFree(addrText);
+
+    getRelayServer(&addr);
+}
 #endif
+
+ConsoleFunction(isLocalAddress, bool, 2, 2, "isLocalAddress(addr);")
+{
+    NetAddress addr;
+    Net::stringToAddress(argv[1], &addr);
+    
+    bool found = false;
+    for (U32 i = 0; i < localNetAddresses.size(); i++)
+    {
+        if (Net::compareAddresses(&localNetAddresses[i], &addr))
+        {
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -580,6 +639,9 @@ ConsoleFunction(querySingleServer, void, 3, 3, "querySingleServer(address, flags
 
 
     Net::stringToAddress(addrText, &addr);
+
+    dFree(addrText);
+
     querySingleServer(&addr, flags);
 }
 
@@ -748,6 +810,7 @@ ConsoleFunction(setServerInfo, bool, 2, 2, "setServerInfo(index);")
         Con::setBoolVariable("ServerInfo::Favorite", info.isFavorite);
         Con::setBoolVariable("ServerInfo::Dedicated", info.isDedicated());
         Con::setBoolVariable("ServerInfo::Password", info.isPassworded());
+        Con::setBoolVariable("ServerInfo::IsLocal", info.isLocal);
         return true;
     }
     return false;
@@ -867,6 +930,7 @@ void clearServerList(bool clearServerInfo)
     gPingList.clear();
     gQueryList.clear();
     gServerPingCount = gServerQueryCount = 0;
+    localNetAddresses.clear();
 
     gPingSession++;
 }
@@ -901,6 +965,7 @@ static void pushPingRequest(const NetAddress* addr)
     p.time = 0;
     p.tryCount = gPingRetryCount;
     p.broadcast = false;
+    p.isLocal = false;
     gPingList.push_back(p);
     gServerPingCount++;
 }
@@ -919,6 +984,7 @@ static void pushPingBroadcast(const NetAddress* addr)
     p.time = 0;
     p.tryCount = 1; // only try this once
     p.broadcast = true;
+    p.isLocal = true;
     gPingList.push_back(p);
     // Don't increment gServerPingCount, broadcasts are not
     // counted as requests.
@@ -1036,6 +1102,25 @@ static void removeServerInfo(const NetAddress* addr)
             gServerList.erase(i);
             gServerBrowserDirty = true;
         }
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+static void addLocalAddress(const NetAddress* addr)
+{
+    bool found = false;
+    for (U32 i = 0; i < localNetAddresses.size(); i++)
+    {
+        if (Net::compareAddresses(addr, &localNetAddresses[i]))
+        {
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+    {
+        localNetAddresses.push_back(*addr);
     }
 }
 
@@ -1199,7 +1284,8 @@ static void processMasterServerQuery(U32 session)
                 out->write(sActiveFilter.minPlayers);
                 out->write(sActiveFilter.maxPlayers);
                 out->write(sActiveFilter.regionMask);
-                U32 version = (sActiveFilter.filterFlags & ServerFilter::CurrentVersion) ? getVersionNumber() : 0;
+                //U32 version = (sActiveFilter.filterFlags & ServerFilter::CurrentVersion) ? getVersionNumber() : 0;
+                U32 version = getVersionNumber();
                 out->write(version);
                 out->write(sActiveFilter.filterFlags);
                 out->write(sActiveFilter.maxBots);
@@ -1224,7 +1310,8 @@ static void processMasterServerQuery(U32 session)
         else
         {
             Con::errorf("There are no more master servers to try!");
-            Con::executef(4, "onServerQueryStatus", "done", "No master servers found.", "0");
+            // Con::executef(4, "onServerQueryStatus", "done", "No master servers found.", "0");
+            processPingsAndQueries(gPingSession); // Do the LAN ping query??
         }
     }
 }
@@ -1285,6 +1372,23 @@ static void processPingsAndQueries(U32 session, bool schedule)
                 else
                     Con::printf("Pinging Server %s (%d)...", addressString, p.tryCount);
                 sendPacket(NetInterface::GamePingRequest, &p.address, p.key, p.session, flags);
+                
+#ifdef TORQUE_NET_HOLEPUNCHING
+                if (!p.broadcast) {
+                    BitStream* out = BitStream::getPacketStream();
+                    out->write(U8(NetInterface::MasterServerGamePingRequest));
+                    out->write(p.address.netNum[0]);
+                    out->write(p.address.netNum[1]);
+                    out->write(p.address.netNum[2]);
+                    out->write(p.address.netNum[3]);
+                    out->write(p.address.port);
+                    out->write(flags);
+                    out->write((p.session << 16) | (p.key & 0xFFFF));
+                    for (int i = 0; i < gMasterServerList.size(); i++)
+                        BitStream::sendPacketStream(&gMasterServerList[i].address);
+                }
+#endif
+
                 i++;
             }
         }
@@ -1325,6 +1429,24 @@ static void processPingsAndQueries(U32 session, bool schedule)
 
                     Con::printf("Querying Server %s (%d)...", addressString, p.tryCount);
                     sendPacket(NetInterface::GameInfoRequest, &p.address, p.key, p.session, flags);
+
+#ifdef TORQUE_NET_HOLEPUNCHING
+                    if (!p.broadcast) {
+                        BitStream* out = BitStream::getPacketStream();
+                        out->write(U8(NetInterface::MasterServerGameInfoRequest));
+                        out->write(p.address.netNum[0]);
+                        out->write(p.address.netNum[1]);
+                        out->write(p.address.netNum[2]);
+                        out->write(p.address.netNum[3]);
+                        out->write(p.address.port);
+                        out->write(flags);
+                        out->write((p.session << 16) | (p.key & 0xFFFF));
+
+                        for (int i = 0; i < gMasterServerList.size(); i++)
+                            BitStream::sendPacketStream(&gMasterServerList[i].address);
+                    }
+#endif
+                    
                     if (!si->isQuerying())
                     {
                         si->status |= ServerInfo::Status_Querying;
@@ -1507,7 +1629,7 @@ static void handleMasterServerGameTypesResponse(BitStream* stream, U32 /*key*/, 
 
 //-----------------------------------------------------------------------------
 
-static void handleMasterServerListResponse(BitStream* stream, U32 key, U8 /*flags*/)
+static void handleMasterServerListResponse(BitStream* stream, U32 key, U8 flags)
 {
     U8 packetIndex, packetTotal;
     U32 i;
@@ -1551,6 +1673,13 @@ static void handleMasterServerListResponse(BitStream* stream, U32 key, U8 /*flag
 
         dSprintf(addressBuffer, sizeof(addressBuffer), "IP:%d.%d.%d.%d:%d", netNum[0], netNum[1], netNum[2], netNum[3], port);
         Net::stringToAddress(addressBuffer, &addr);
+
+        if (flags)
+        {
+            // This is *our* own public IP
+            addLocalAddress(&addr);
+        }
+
         pushPingRequest(&addr);
     }
 
@@ -1621,7 +1750,10 @@ static void handleGameMasterInfoRequest(const NetAddress* address, U32 key, U8 f
 
         writeCString(out, Con::getVariable("Server::GameType"));
         writeCString(out, Con::getVariable("Server::MissionType"));
+        writeCString(out, Con::getVariable("Server::InviteCode"));
+
         temp8 = U8(Con::getIntVariable("Pref::Server::MaxPlayers"));
+        temp8 -= U8(Con::getIntVariable("Pref::Server::PrivateSlots")); // Actual count
         out->write(temp8);
         temp32 = Con::getIntVariable("Server::RegionMask");//"Pref::Server::RegionMask");
         out->write(temp32);
@@ -1635,6 +1767,8 @@ static void handleGameMasterInfoRequest(const NetAddress* address, U32 key, U8 f
             temp8 |= ServerInfo::Status_Dedicated;
         if (dStrlen(Con::getVariable("Pref::Server::Password")) > 0)
             temp8 |= ServerInfo::Status_Passworded;
+        if (Con::getBoolVariable("Server::IsPrivate"))
+            temp8 |= ServerInfo::Status_Private;
         out->write(temp8);
         temp8 = U8(Con::getIntVariable("Server::BotCount"));
         out->write(temp8);
@@ -1679,6 +1813,12 @@ static void handleGamePingRequest(const NetAddress* address, U32 key, U8 flags)
         if (flags & ServerFilter::OfflineQuery)
             return;
 
+        int maxCount = Con::getIntVariable("Pref::Server::MaxPlayers");
+        maxCount -= Con::getIntVariable("Pref::Server::PrivateSlots"); // Actual count
+
+        if (Con::getIntVariable("Server::PlayerCount") >= maxCount)
+            return; // Don't reply
+
         // some banning code here (?)
 
         BitStream* out = BitStream::getPacketStream();
@@ -1720,8 +1860,11 @@ static void handleGamePingResponse(const NetAddress* address, BitStream* stream,
     {
         // an anonymous ping response - if it's not already timed
         // out or finished, ping it.  Probably from a broadcast
-        if (!addressFinished(address))
+        if (!addressFinished(address)) {
             pushPingRequest(address);
+            S32 index = findPingEntry(gPingList, address);
+            gPingList[index].isLocal = true;
+        }
         return;
     }
     Ping& p = gPingList[index];
@@ -1813,9 +1956,10 @@ static void handleGamePingResponse(const NetAddress* address, BitStream* stream,
 
     // Get the server build version:
     stream->read(&temp32);
-    if (applyFilter
-        && (sActiveFilter.filterFlags & ServerFilter::CurrentVersion)
-        && (temp32 != getVersionNumber()))
+//    if (applyFilter
+//        && (sActiveFilter.filterFlags & ServerFilter::CurrentVersion)
+//        && (temp32 != getVersionNumber()))
+    if (temp32 != getVersionNumber())
     {
         Con::printf("Server %s filtered out by version number.", addrString);
         gFinishedList.push_back(*address);
@@ -1832,6 +1976,7 @@ static void handleGamePingResponse(const NetAddress* address, BitStream* stream,
         si = findOrCreateServerInfo(address);
     si->ping = ping;
     si->version = temp32;
+    si->isLocal = p.isLocal;
 
     // Get the server name:
     stream->readString(buf);
@@ -2060,87 +2205,188 @@ static void handleGameInfoResponse(const NetAddress* address, BitStream* stream,
 }
 
 #ifdef TORQUE_NET_HOLEPUNCHING
-static void handleMasterServerArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+
+static char* joinGameAcceptCb = NULL;
+static char* joinGameRejectCb = NULL;
+
+static void joinGameByInvite(const char* inviteCode)
 {
-    Con::printf("Received arranged connect response from the master server.");
+    BitStream* stream = BitStream::getPacketStream();
+    stream->write(U8(NetInterface::MasterServerJoinInvite));
+    writeCString(stream, inviteCode);
 
-    // TODO: If not hosting then reject the connection
+    Vector<MasterInfo>* serverList = getMasterServerList();
 
-    // TODO: Implement arranged connection
-
-    /*if(!gIsServer || Random::readF() > 0.75)
+    for (int i = 0; i < serverList->size(); i++)
     {
-        // We reject connections about 75% of the time...
-
-        logprintf("Rejecting arranged connection from %s", Address(possibleAddresses[0]).toString());
-        c2mRejectArrangedConnection(requestId, connectionParameters);
+        BitStream::sendPacketStream(&(*serverList)[i].address);
     }
-    else
-    {
-        // Ok, let's do the arranged connection!
 
-        U8 data[Nonce::NonceSize * 2 + SymmetricCipher::KeySize * 2];
-        Random::read(data, sizeof(data));
-        IPAddress localAddress = getInterface()->getFirstBoundInterfaceAddress().toIPAddress();
+    int netPort = Con::getIntVariable("pref::Server::Port");
 
-        ByteBufferPtr b = new ByteBuffer(data, sizeof(data));
-        b->takeOwnership();
-        c2mAcceptArrangedConnection(requestId, localAddress, b);
-        GameConnection *conn = new GameConnection();
+    // Now for LAN
+    stream = BitStream::getPacketStream();
+    stream->write(U8(NetInterface::MasterServerJoinInvite));
+    U8 flags = 0;
+    U32 key = 0;
 
-        Vector<Address> fullPossibleAddresses;
-        for(S32 i = 0; i < possibleAddresses.size(); i++)
-            fullPossibleAddresses.push_back(Address(possibleAddresses[i]));
+    stream->write(flags);
+    stream->write(key);
+    writeCString(stream, inviteCode);
 
-        logprintf("Accepting arranged connection from %s", Address(fullPossibleAddresses[0]).toString());
 
-        logprintf("  Generated shared secret data: %s", b->encodeBase64()->getBuffer());
+    NetAddress addr;
+    char addrText[256];
+    dSprintf(addrText, sizeof(addrText), "IP:BROADCAST:%d", netPort);
+    Net::stringToAddress(addrText, &addr);
 
-        ByteBufferPtr theSharedData = new ByteBuffer(data + 2 * Nonce::NonceSize, sizeof(data) - 2 * Nonce::NonceSize);
-        theSharedData->takeOwnership();
-        Nonce nonce(data);
-        Nonce serverNonce(data + Nonce::NonceSize);
-
-        conn->connectArranged(getInterface(), fullPossibleAddresses,
-                              nonce, serverNonce, theSharedData,false);
-    }*/
+    BitStream::sendPacketStream(&addr);
 }
 
-static void handleMasterServerAcceptArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+ConsoleFunction(joinGameByInvite, void, 4, 4, "joinGameByInvite(inviteCode, acceptCb(%ip), rejectCb)")
 {
+    if (joinGameAcceptCb)
+        dFree(joinGameAcceptCb);
+    if (joinGameRejectCb)
+        dFree(joinGameRejectCb);
+
+    joinGameAcceptCb = dStrdup(argv[2]);
+    joinGameRejectCb = dStrdup(argv[3]);
+    joinGameByInvite(argv[1]);
+}
+
+static void getRelayServer(const NetAddress* address) 
+{
+    BitStream* stream = BitStream::getPacketStream();
+    stream->write(U8(NetInterface::MasterServerRelayRequest));
+    stream->write(address->netNum[0]);
+    stream->write(address->netNum[1]);
+    stream->write(address->netNum[2]);
+    stream->write(address->netNum[3]);
+    stream->write(address->port);
+
+    Vector<MasterInfo>* serverList = getMasterServerList();
+
+    for (int i = 0; i < serverList->size(); i++)
+    {
+        BitStream::sendPacketStream(&(*serverList)[i].address);
+    }
+}
+
+static void handleMasterServerRelayResponse(const NetAddress* address, BitStream* stream)
+{
+    Con::printf("Received MasterServerRelayResponse");
+
+    bool isHost;
+    stream->read(&isHost);
+    
+    NetAddress theAddress;
+    theAddress.type = NetAddress::IPAddress;
+    stream->read(&theAddress.netNum[0]);
+    stream->read(&theAddress.netNum[1]);
+    stream->read(&theAddress.netNum[2]);
+    stream->read(&theAddress.netNum[3]);
+    stream->read(&theAddress.port);
+    
+    // Attempt connection to relay
+    BitStream* out = BitStream::getPacketStream();
+    out->write(isHost);
+    BitStream::sendPacketStream(&theAddress);
+
+    // relayNetConnection->connect(&theAddress);
+}
+
+static void handleMasterServerRelayReady(const NetAddress* address) 
+{
+    // Connect to it!
+    if (relayNetConnection)
+        GNet->startRelayConnection(relayNetConnection, address);
+    else if (arrangeNetConnection)
+        GNet->startRelayConnection(arrangeNetConnection, address);
+}
+
+static void handleMasterServerClientRequestedArrangedConnection(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
+{
+    Con::printf("Received MasterServerClientRequestedArrangedConnection");
+    Vector<NetAddress> possibleAddresses;
+
+    U16 clientId;
+    stream->read(&clientId);
+
+    U8 possibleAddressCount;
+    stream->read(&possibleAddressCount);
+    for (int i = 0; i < possibleAddressCount; i++) {
+        U8 ipbits[4];
+        U16 port;
+        stream->read(&ipbits[0]);
+        stream->read(&ipbits[1]);
+        stream->read(&ipbits[2]);
+        stream->read(&ipbits[3]);
+        stream->read(&port);
+        NetAddress addr;
+        addr.type = NetAddress::IPAddress;
+        addr.port = port;
+        addr.netNum[0] = ipbits[0];
+        addr.netNum[1] = ipbits[1];
+        addr.netNum[2] = ipbits[2];
+        addr.netNum[3] = ipbits[3];
+        possibleAddresses.push_back(addr);
+    }
+
+    BitStream* out = BitStream::getPacketStream();
+    out->write(U8(NetInterface::MasterServerAcceptArrangedConnection));
+    out->write(clientId);
+    BitStream::sendPacketStream(address);
+
+    // Do connectArranged to client
+    NetConnection* conn = dynamic_cast<NetConnection*>(Sim::findObject("ServerConnection"));
+    if (conn != NULL) {
+        conn->connectArranged(possibleAddresses, false);
+    }
+}
+
+static void handleMasterServerArrangedConnectionAccepted(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
+{
+    Vector<NetAddress> possibleAddresses;
+
     Con::printf("Received accept arranged connect response from the master server.");
 
-    // TODO: Implement accepted arranged connection
+    U8 possibleAddressCount;
+    stream->read(&possibleAddressCount);
+    for (int i = 0; i < possibleAddressCount; i++) {
+        U8 ipbits[4];
+        U16 port;
+        stream->read(&ipbits[0]);
+        stream->read(&ipbits[1]);
+        stream->read(&ipbits[2]);
+        stream->read(&ipbits[3]);
+        stream->read(&port);
+        NetAddress addr;
+        addr.type = NetAddress::IPAddress;
+        addr.port = port;
+        addr.netNum[0] = ipbits[0];
+        addr.netNum[1] = ipbits[1];
+        addr.netNum[2] = ipbits[2];
+        addr.netNum[3] = ipbits[3];
+        possibleAddresses.push_back(addr);
+    }
 
-    /*if(!gIsServer && requestId == mCurrentQueryId && connectionData->getBufferSize() >= Nonce::NonceSize * 2 + SymmetricCipher::KeySize * 2)
-    {
-        logprintf("Remote host accepted arranged connection.");
-        logprintf("  Shared secret data: %s", connectionData->encodeBase64()->getBuffer());
-        GameConnection *conn = new GameConnection();
-
-        Vector<Address> fullPossibleAddresses;
-        for(S32 i = 0; i < possibleAddresses.size(); i++)
-            fullPossibleAddresses.push_back(Address(possibleAddresses[i]));
-
-        ByteBufferPtr theSharedData =
-            new ByteBuffer(
-                (U8 *) connectionData->getBuffer() + Nonce::NonceSize * 2,
-                connectionData->getBufferSize() - Nonce::NonceSize * 2
-            );
-        theSharedData->takeOwnership();
-
-        Nonce nonce(connectionData->getBuffer());
-        Nonce serverNonce(connectionData->getBuffer() + Nonce::NonceSize);
-
-        conn->connectArranged(getInterface(), fullPossibleAddresses,
-                              nonce, serverNonce, theSharedData,true);
-    }*/
+    // Do connectArranged to server
+    arrangeNetConnection->connectArranged(possibleAddresses, true);
 }
 
-static void handleMasterServerRejectArrangedConnectResponse(BitStream* stream, U32 /*key*/, U8 /*flags*/)
+static void handleMasterServerArrangedConnectionRejected(const NetAddress* address, BitStream* stream, U32 /*key*/, U8 /*flags*/)
 {
     Con::printf("Received reject arranged connect response from the master server.");
 
+    U8 reason;
+    stream->read(&reason);
+
+    // Reject??
+    if (reason == 0)
+        arrangeNetConnection->onConnectionRejected("No such server");
+    if (reason == 1)
+        arrangeNetConnection->onConnectionRejected("Server rejected");
     // TODO: Implement rejected arranged connection
 
     /*if(!gIsServer && requestId == mCurrentQueryId)
@@ -2149,6 +2395,117 @@ static void handleMasterServerRejectArrangedConnectResponse(BitStream* stream, U
         logprintf("Requesting new game types list.");
         startGameTypesQuery();
     }*/
+}
+
+static void handleMasterServerGamePingResponse(const NetAddress* address, BitStream* stream) {
+    NetAddress theAddress;
+    theAddress.type = NetAddress::IPAddress;
+    stream->read(&theAddress.netNum[0]);
+    stream->read(&theAddress.netNum[1]);
+    stream->read(&theAddress.netNum[2]);
+    stream->read(&theAddress.netNum[3]);
+    stream->read(&theAddress.port);
+    U8 cmd;
+    stream->read(&cmd);
+    U8 flags;
+    U32 key;
+
+    stream->read(&flags);
+    stream->read(&key);
+    handleGamePingResponse(&theAddress, stream, key, flags);
+}
+
+static void handleMasterServerGameInfoResponse(const NetAddress* address, BitStream* stream) {
+    NetAddress theAddress;
+    theAddress.type = NetAddress::IPAddress;
+    stream->read(&theAddress.netNum[0]);
+    stream->read(&theAddress.netNum[1]);
+    stream->read(&theAddress.netNum[2]);
+    stream->read(&theAddress.netNum[3]);
+    stream->read(&theAddress.port);
+    U8 cmd;
+    stream->read(&cmd);
+    U8 flags;
+    U32 key;
+
+    stream->read(&flags);
+    stream->read(&key);
+    handleGameInfoResponse(&theAddress, stream, key, flags);
+}
+
+static void handleMasterServerJoinInvite(const NetAddress* address, BitStream* stream) {
+    char inv[32];
+    readCString(stream, (char*) &inv);
+    const char* ourInv = Con::getVariable("Server::InviteCode");
+    if (strcmp(ourInv, inv) == 0) {
+        // RESPOND
+        U16 netPort = Con::getIntVariable("pref::Server::Port");
+
+        BitStream* stream = BitStream::getPacketStream();
+        stream->write(U8(NetInterface::MasterServerJoinInviteResponse));
+        U8 flags = 0;
+        U32 key = 0;
+        U8 found = 1;
+
+        stream->write(flags);
+        stream->write(key);
+
+        stream->write(found);
+
+        // We just replace the netNum with 255.255.255.255 and filter that out on client side
+        NetAddress theAddress;
+        theAddress.netNum[0] = 255;
+        theAddress.netNum[1] = 255;
+        theAddress.netNum[2] = 255;
+        theAddress.netNum[3] = 255;
+        stream->write(theAddress.netNum[0]);
+        stream->write(theAddress.netNum[1]);
+        stream->write(theAddress.netNum[2]);
+        stream->write(theAddress.netNum[3]);
+        stream->write(netPort);
+
+        BitStream::sendPacketStream(address);
+    }
+}
+
+static void handleMasterServerJoinInviteResponse(const NetAddress* address, BitStream* stream) {
+    U8 found = true;
+    stream->read(&found);
+    if (found) 
+    {
+        NetAddress theAddress;
+        theAddress.type = NetAddress::IPAddress;
+        stream->read(&theAddress.netNum[0]);
+        stream->read(&theAddress.netNum[1]);
+        stream->read(&theAddress.netNum[2]);
+        stream->read(&theAddress.netNum[3]);
+        stream->read(&theAddress.port);
+
+        bool isLocal = false;
+        if (theAddress.netNum[0] == 255 && theAddress.netNum[1] == 255 && theAddress.netNum[2] == 255 && theAddress.netNum[3] == 255) {
+            theAddress.netNum[0] = address->netNum[0];
+            theAddress.netNum[1] = address->netNum[1];
+            theAddress.netNum[2] = address->netNum[2];
+            theAddress.netNum[3] = address->netNum[3];
+
+            isLocal = true;
+        }
+
+
+        char evalbuf[128];
+        dSprintf(evalbuf, 128, "%s(\"%d.%d.%d.%d:%d\",%s);", joinGameAcceptCb, theAddress.netNum[0], theAddress.netNum[1], theAddress.netNum[2], theAddress.netNum[3], theAddress.port, isLocal ? "true" : "false");
+        Con::evaluatef(evalbuf);
+    }
+    else
+    {
+        char evalbuf[64];
+        dSprintf(evalbuf, 64, "%s();", joinGameRejectCb);
+        Con::evaluatef(evalbuf);
+    }
+    //dFree(joinGameAcceptCb);
+    //dFree(joinGameRejectCb);
+    //joinGameAcceptCb = NULL;
+    //joinGameRejectCb = NULL;
 }
 #endif
 
@@ -2194,14 +2551,32 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
         break;
 
 #ifdef TORQUE_NET_HOLEPUNCHING
-    case MasterServerArrangedConnectResponse:
-        handleMasterServerArrangedConnectResponse(stream, key, flags);
+    case MasterServerClientRequestedArrangedConnection:
+        handleMasterServerClientRequestedArrangedConnection(address, stream, key, flags);
         break;
-    case MasterServerAcceptArrangedConnectResponse:
-        handleMasterServerAcceptArrangedConnectResponse(stream, key, flags);
+    case MasterServerArrangedConnectionAccepted:
+        handleMasterServerArrangedConnectionAccepted(address, stream, key, flags);
         break;
-    case MasterServerRejectArrangedConnectResponse:
-        handleMasterServerRejectArrangedConnectResponse(stream, key, flags);
+    case MasterServerArrangedConnectionRejected:
+        handleMasterServerArrangedConnectionRejected(address, stream, key, flags);
+        break;
+    case MasterServerGamePingResponse:
+        handleMasterServerGamePingResponse(address, stream);
+        break;
+    case MasterServerGameInfoResponse:
+        handleMasterServerGameInfoResponse(address, stream);
+        break;
+    case MasterServerRelayResponse:
+        handleMasterServerRelayResponse(address, stream);
+        break;
+    case MasterServerRelayReady:
+        handleMasterServerRelayReady(address);
+        break;
+    case MasterServerJoinInvite:
+        handleMasterServerJoinInvite(address, stream);
+        break;
+    case MasterServerJoinInviteResponse:
+        handleMasterServerJoinInviteResponse(address, stream);
         break;
 #endif
     }

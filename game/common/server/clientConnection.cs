@@ -51,9 +51,18 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
 {
    echo("Connect request from: " @ %netAddress);
 
-   if($Server::PlayerCount >= $pref::Server::MaxPlayers)
+   %flag = $Server::PlayerCount >= ($pref::Server::MaxPlayers - $Pref::Server::PrivateSlots);
+
+   if (%invited $= "" && %flag)
       return "CR_SERVERFULL";
-      
+
+   if ((%invited !$= "" && %invited != 0) && $Server::PrivatePlayerCount >= $Pref::Server::PrivateSlots && %flag)
+      return "CR_SERVERFULL";
+
+   if (%invited $= "" && $Server::IsPrivate)
+      return "CR_SERVERFULL";
+
+
    %banEntry = $banlist[%xbLiveId];
    if (%banEntry !$= "")
    {
@@ -82,6 +91,11 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
          echo("   Connect request rejected: client is not a demo and we are");
          return "CR_DEMOREJECT";
       }
+   }
+
+   if (%invited !$= "" && %invited !$= $Server::InviteCode)
+   {
+        return "CHR_PASSWORD";
    }
    
    // kick any players with this xblive id
@@ -145,14 +159,16 @@ function GameConnection::updateClientData(%client, %name, %xbLiveId, %xbLiveVoic
       // note the time that this client joined 
       %client.joinTime = getSimTime();
       %client.joinInProgress = $Game::State $= "play";
-      
-      $Server::PlayerCount++;
    
       // the client was invited and we have a free private slot for them, stick them into it
       if (%client.invited && $Server::PrivatePlayerCount < $Pref::Server::PrivateSlots)
       {
          %client.usingPrivateSlot = true;
          $Server::PrivatePlayerCount++;
+      }
+      else
+      {
+         $Server::PlayerCount++;
       }
    }
 
@@ -345,13 +361,15 @@ function GameConnection::onDrop(%client, %reason)
    
    echo("CDROP: " @ %client @ " " @ %client.getAddress());
    
-   $Server::PlayerCount--;
+   
    
    if (%client.usingPrivateSlot)
       $Server::PrivatePlayerCount--;
-         
+   else
+      $Server::PlayerCount--;
+
    // Reset the server if everyone has left the game
-   if( $Server::PlayerCount == 0 && $Server::Dedicated)
+   if ($Server::PlayerCount == 0 && $Server::Dedicated)
       schedule(0, 0, "resetServerDefaults");
       
    // If everyone has left game, destroy it

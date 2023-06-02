@@ -385,3 +385,21 @@ function enterPreviewMode(%clientDropCode)
          RootGui.setContent($disconnectGui);
    }
 }
+
+function GameConnection::onConnectStatus(%this, %statusCode)
+{
+    if (RootGui.contentGui == MissionLoadingGui && !$Server::Hosting)
+    {
+        switch (%statusCode)
+        {
+            case 1:
+                RootGui.setCenterText("Punching hole in NAT.");
+            case 2:
+                RootGui.setCenterText("Hole punching successful, trying to connect.");
+            case 3:
+                RootGui.setCenterText("Connecting..");
+            case 4:
+                RootGui.setCenterText("Trying relay.");
+        }
+    }
+}
