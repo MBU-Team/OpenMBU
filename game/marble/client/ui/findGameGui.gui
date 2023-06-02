@@ -164,6 +164,8 @@ function PC_XBLiveSearchForMatches(%gamemodefilter, %missionfilter, %maxplayersf
    %mis = %missionfilter;
    if (%mis $= "-1")
       %mis = "any";
+
+   %filterFlags |= 1 << 7; // Current version only
    
    queryMasterServer(28000, 0, "OpenMBU", %mis, 0, %maxplayersfilter, 100, 2, 1000, 0, %filterFlags);
 }

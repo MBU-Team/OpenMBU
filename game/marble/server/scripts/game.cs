@@ -91,7 +91,7 @@ function onServerCreated()
 {
    // Server::GameType is sent to the master server.
    // This variable should uniquely identify your game and/or mod.
-   $Server::GameType = "Marble Game";
+   $Server::GameType = "OpenMBU";
 
    // Server::MissionType sent to the master server.  Clients can
    // filter servers based on mission type.
