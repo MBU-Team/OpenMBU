@@ -2502,10 +2502,10 @@ static void handleMasterServerJoinInviteResponse(const NetAddress* address, BitS
         dSprintf(evalbuf, 64, "%s();", joinGameRejectCb);
         Con::evaluatef(evalbuf);
     }
-    dFree(joinGameAcceptCb);
-    dFree(joinGameRejectCb);
-    joinGameAcceptCb = NULL;
-    joinGameRejectCb = NULL;
+    //dFree(joinGameAcceptCb);
+    //dFree(joinGameRejectCb);
+    //joinGameAcceptCb = NULL;
+    //joinGameRejectCb = NULL;
 }
 #endif
 
