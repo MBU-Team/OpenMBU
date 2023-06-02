@@ -165,7 +165,7 @@ function PC_XBLiveSearchForMatches(%gamemodefilter, %missionfilter, %maxplayersf
    if (%mis $= "-1")
       %mis = "any";
    
-   queryMasterServer(28000, 0, "any", %mis, 0, 100, 100, 2, 1000, 0, %filterFlags);
+   queryMasterServer(28000, 0, "OpenMBU", %mis, 0, %maxplayersfilter, 100, 2, 1000, 0, %filterFlags);
 }
 
 // ----------------------------------------------------------------------------

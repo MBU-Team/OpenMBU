@@ -45,7 +45,7 @@ function initClient()
    // Make sure this variable reflects the correct state.
    $Server::Dedicated = false;
    // Game information used to query the master server
-   $Client::GameTypeQuery = "Marble Game";
+   $Client::GameTypeQuery = "OpenMBU";
    $Client::MissionTypeQuery = "Any";
    // Default level qualification
    if (!$pref::QualifiedLevel["Beginner"])
