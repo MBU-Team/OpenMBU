@@ -3135,6 +3135,10 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getText</name>
             <desc>- returns the text of the button.</desc>
         </method>
+        <method>            <name>setHover</name>
+            <args>hover</args>
+            <desc>- sets the button hover state.</desc>
+        </method>
         <method>            <name>setText</name>
             <args>string text</args>
             <desc>- sets the text of the button to the string.</desc>
@@ -3900,6 +3904,9 @@ More of a helper function than anything.   If console access to the field list i
     </class>
     <class>        <name>NetConnection</name>
         <base>SimGroup</base>
+        <method>            <name>arrangeConnection</name>
+            <args>ip</args>
+        </method>
         <method>            <name>checkMaxRate</name>
         </method>
         <method>            <name>clearPaths</name>
@@ -3926,6 +3933,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getPing</name>
         </method>
         <method>            <name>getXnAddr</name>
+        </method>
+        <method>            <name>relayConnection</name>
+            <args>ip</args>
         </method>
         <method>            <name>resolveGhostID</name>
             <args> S32 ghostID </args>
@@ -5814,6 +5824,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>DRLTarget</name>
             <desc>float DRLTarget</desc>
         </field>
+        <field>            <name>shadowColor</name>
+            <desc>ColorF shadowColor</desc>
+        </field>
         <field>            <name>useBloom</name>
             <desc>bool useBloom</desc>
         </field>
@@ -7272,6 +7285,9 @@ Sim time is time since the game started.</desc>
     </function>
     <function>        <name>isKoreanBuild</name>
     </function>
+    <function>        <name>isLocalAddress</name>
+        <args>addr</args>
+    </function>
     <function>        <name>isObject</name>
         <args>object</args>
     </function>
@@ -7303,6 +7319,10 @@ Sim time is time since the game started.</desc>
     </function>
     <function>        <name>isXInputConnected</name>
         <args> int controllerID </args>
+    </function>
+    <function>        <name>joinGameByInvite</name>
+        <args>inviteCode, acceptCb(%ip</args>
+        <desc>, rejectCb)</desc>
     </function>
     <function>        <name>lightScene</name>
         <args>script_function completeCallback=NULL, string mode=""</args>

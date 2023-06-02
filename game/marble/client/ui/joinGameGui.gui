@@ -217,6 +217,12 @@ function JoinGameGui::show(%this)
 {
 	RootGui.setTitle($Text::JoinGame);
     RootGui.setB($Text::Back);
+   
+   if (GameMissionInfo.getMode() !$= GameMissionInfo.MPMode)
+   {
+      GameMissionInfo.setMode(GameMissionInfo.MPMode);
+      GameMissionInfo.setDefaultMission();
+   }
     
     JoinGameGui.inviteCode = "";
     InviteCodeInput.setText(JoinGameGui.inviteCode);
@@ -273,15 +279,16 @@ function JoinGameGui::joinGame(%this)
    RootGui.setContent(MissionLoadingGui);
 }
 
-function joinGameFound(%ip)
+function joinGameFound(%ip, %isLocal)
 {
    cancel(JoinGameGui.joinTimeout);
    setNetPort(0); // Get random port pls
-   establishConnection(%ip, true, false, JoinGameGui.inviteCode);
+   establishConnection(%ip, true, %isLocal, JoinGameGui.inviteCode);
 }
 
 function joinGameNotFound()
 {
+   cancel(JoinGameGui.joinTimeout);
    echo("Not Found");
    if (RootGui.contentGui == MissionLoadingGui)
       RootGui.setContent(JoinGameGui);
@@ -289,6 +296,7 @@ function joinGameNotFound()
 
 function JoinGameGui::textInput(%this, %chr)
 {
+   cancel(JoinGameGui.joinTimeout);
    if (%chr !$= "D")
    {
        if (strlen(JoinGameGui.inviteCode) < 6) 

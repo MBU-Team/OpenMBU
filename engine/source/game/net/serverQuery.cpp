@@ -1284,7 +1284,8 @@ static void processMasterServerQuery(U32 session)
                 out->write(sActiveFilter.minPlayers);
                 out->write(sActiveFilter.maxPlayers);
                 out->write(sActiveFilter.regionMask);
-                U32 version = (sActiveFilter.filterFlags & ServerFilter::CurrentVersion) ? getVersionNumber() : 0;
+                //U32 version = (sActiveFilter.filterFlags & ServerFilter::CurrentVersion) ? getVersionNumber() : 0;
+                U32 version = getVersionNumber();
                 out->write(version);
                 out->write(sActiveFilter.filterFlags);
                 out->write(sActiveFilter.maxBots);
@@ -1955,9 +1956,10 @@ static void handleGamePingResponse(const NetAddress* address, BitStream* stream,
 
     // Get the server build version:
     stream->read(&temp32);
-    if (applyFilter
-        && (sActiveFilter.filterFlags & ServerFilter::CurrentVersion)
-        && (temp32 != getVersionNumber()))
+//    if (applyFilter
+//        && (sActiveFilter.filterFlags & ServerFilter::CurrentVersion)
+//        && (temp32 != getVersionNumber()))
+    if (temp32 != getVersionNumber())
     {
         Con::printf("Server %s filtered out by version number.", addrString);
         gFinishedList.push_back(*address);
@@ -2220,7 +2222,7 @@ static void joinGameByInvite(const char* inviteCode)
         BitStream::sendPacketStream(&(*serverList)[i].address);
     }
 
-    int netPort = Con::getIntVariable("pref::Net::Port");
+    int netPort = Con::getIntVariable("pref::Server::Port");
 
     // Now for LAN
     stream = BitStream::getPacketStream();
@@ -2437,15 +2439,18 @@ static void handleMasterServerJoinInvite(const NetAddress* address, BitStream* s
     const char* ourInv = Con::getVariable("Server::InviteCode");
     if (strcmp(ourInv, inv) == 0) {
         // RESPOND
-        U16 netPort = Con::getIntVariable("pref::Net::Port");
+        U16 netPort = Con::getIntVariable("pref::Server::Port");
 
         BitStream* stream = BitStream::getPacketStream();
         stream->write(U8(NetInterface::MasterServerJoinInviteResponse));
         U8 flags = 0;
         U32 key = 0;
+        U8 found = 1;
 
         stream->write(flags);
         stream->write(key);
+
+        stream->write(found);
 
         // We just replace the netNum with 255.255.255.255 and filter that out on client side
         NetAddress theAddress;
@@ -2464,7 +2469,7 @@ static void handleMasterServerJoinInvite(const NetAddress* address, BitStream* s
 }
 
 static void handleMasterServerJoinInviteResponse(const NetAddress* address, BitStream* stream) {
-    U8 found;
+    U8 found = true;
     stream->read(&found);
     if (found) 
     {
@@ -2476,18 +2481,22 @@ static void handleMasterServerJoinInviteResponse(const NetAddress* address, BitS
         stream->read(&theAddress.netNum[3]);
         stream->read(&theAddress.port);
 
+        bool isLocal = false;
         if (theAddress.netNum[0] == 255 && theAddress.netNum[1] == 255 && theAddress.netNum[2] == 255 && theAddress.netNum[3] == 255) {
             theAddress.netNum[0] = address->netNum[0];
             theAddress.netNum[1] = address->netNum[1];
             theAddress.netNum[2] = address->netNum[2];
             theAddress.netNum[3] = address->netNum[3];
+
+            isLocal = true;
         }
 
+
         char evalbuf[128];
-        dSprintf(evalbuf, 128, "%s(\"%d.%d.%d.%d:%d\");", joinGameAcceptCb, theAddress.netNum[0], theAddress.netNum[1], theAddress.netNum[2], theAddress.netNum[3], theAddress.port);
+        dSprintf(evalbuf, 128, "%s(\"%d.%d.%d.%d:%d\",%s);", joinGameAcceptCb, theAddress.netNum[0], theAddress.netNum[1], theAddress.netNum[2], theAddress.netNum[3], theAddress.port, isLocal ? "true" : "false");
         Con::evaluatef(evalbuf);
     }
-    else 
+    else
     {
         char evalbuf[64];
         dSprintf(evalbuf, 64, "%s();", joinGameRejectCb);
