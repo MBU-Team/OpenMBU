@@ -20,7 +20,7 @@
 
 /// Version number is major * 1000 + minor * 100 + revision * 10.
 /// Different engines (TGE, T2D, etc.) will have different version numbers.
-#define TORQUE_VERSION              900 // version 0.9 
+#define TORQUE_VERSION              901 // version 0.9
 
 /// What engine are we running? The presence and value of this define are
 /// used to determine what engine (TGE, T2D, etc.) and version thereof we're
