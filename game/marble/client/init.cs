@@ -566,8 +566,10 @@ function connectToServer(%address,%invited)
       }
       $Client::connectedMultiplayer = true;
       $Game::SPGemHunt = false;
-    echo("CONNECT ARRANGED??");
-      %conn.arrangeConnection(%address);
+      if ($pref::forceDirectConnect)
+         %conn.connect(%address);
+      else
+         %conn.arrangeConnection(%address);
    }
 
    clearClientGracePeroid();
@@ -647,7 +649,7 @@ function establishConnection(%address, %mp, %isLocal, %invited)
       }
       $Client::connectedMultiplayer = true;
       $Game::SPGemHunt = false;
-      if (%isLocal)
+      if (%isLocal || $pref::forceDirectConnect)
          %conn.connect(%address);
       else
          %conn.arrangeConnection(%address);
