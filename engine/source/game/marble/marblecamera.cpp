@@ -410,16 +410,20 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
         startCam.z = padMat[10];
 
         position += startCam;
-
+     
+#ifdef MBU_FINISH_PAD_FIX
         extern F32 gTimeDelta;
         static F32 sAnimAccumulator = 0.0;
         sAnimAccumulator += gTimeDelta;
         while (sAnimAccumulator >= 1 / 60.0f) 
         {
             sAnimAccumulator -= (1 / 60.0f);
+#endif // MBU_FINISH_PAD_FIX
             position *= 0.02500000037252903;
             position += mEffect.lastCamFocus * 0.9750000238418579;
+#ifdef MBU_FINISH_PAD_FIX
         }
+#endif // MBU_FINISH_PAD_FIX
     }
 #endif
 

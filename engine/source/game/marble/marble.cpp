@@ -1598,12 +1598,14 @@ void Marble::findRenderPos(F32 dt)
 
         Point3F offset = mLastRenderPos - around;
 
+#ifdef MBU_FINISH_PAD_FIX
         static F32 sAnimTimeAccumulator = 0.0;
-
         sAnimTimeAccumulator += dt;
 
-        while (sAnimTimeAccumulator >= 1 / 60.0f) {
+        while (sAnimTimeAccumulator >= 1 / 60.0f) 
+        {
             sAnimTimeAccumulator -= 1 / 60.0f;
+#endif // MBU_FINISH_PAD_FIX
 
             mLastRenderVel *= 0.949999988079071f;
 
@@ -1645,10 +1647,18 @@ void Marble::findRenderPos(F32 dt)
                 mSin(mEffect.effectTime * 3.0f + 2.450442179918352f),
                 mSin(mEffect.effectTime * 1.5f + 1.19380519338384f));
 
+#ifdef MBU_FINISH_PAD_FIX
             mLastRenderVel += addVel * 2.5f * (1 / 60.0f);
+#else
+            mLastRenderVel += addVel * 2.5f * dt;
+#endif // MBU_FINISH_PAD_FIX
 
             pos = mLastRenderPos;
+#ifdef MBU_FINISH_PAD_FIX
             pos += mLastRenderVel * (1 / 60.0f);
+#else
+            pos += mLastRenderVel * dt;
+#endif // MBU_FINISH_PAD_FIX
 
             disableCollision();
 
@@ -1684,8 +1694,12 @@ void Marble::findRenderPos(F32 dt)
             enableCollision();
 
             mLastRenderPos = pos;
+#ifdef MBU_FINISH_PAD_FIX
             mEffect.effectTime += (1 / 60.0f);
         }
+#else
+            mEffect.effectTime += dt;
+#endif // MBU_FINISH_PAD_FIX
     }
     else
 #endif
