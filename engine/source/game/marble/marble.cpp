@@ -1595,114 +1595,97 @@ void Marble::findRenderPos(F32 dt)
         Point3F around(trans[3], trans[7], trans[11]);
         Point3F forceEffect(trans[2], trans[6], trans[10]);
         around += forceEffect;
-        
-        Point3F* pLastRenderVel = &mLastRenderVel;
 
         Point3F offset = mLastRenderPos - around;
 
-#ifdef MBU_FINISH_PAD_FIX
-        *pLastRenderVel *= 1 - 0.05f * (60.0f * dt);
-#else
-        *pLastRenderVel *= 0.949999988079071f;
-#endif // MBU_FINISH_PAD_FIX
+        static F32 sAnimTimeAccumulator = 0.0;
 
-        Point3F thing2 = forceEffect * 0.2000000029802322f;
+        sAnimTimeAccumulator += dt;
 
-#ifdef MBU_FINISH_PAD_FIX
-        *pLastRenderVel += thing2 * (60.0f * dt);
-#else
-        *pLastRenderVel += thing2;
-#endif // MBU_FINISH_PAD_FIX
+        while (sAnimTimeAccumulator >= 1 / 60.0f) {
+            sAnimTimeAccumulator -= 1 / 60.0f;
 
-        F32 dist = offset.len();
+            mLastRenderVel *= 0.949999988079071f;
 
-#ifdef MBU_FINISH_PAD_FIX
-        *pLastRenderVel -= offset * 0.3499999940395355f * (60.0f * dt);
-#else
-        *pLastRenderVel -= offset * 0.3499999940395355f;
-#endif // MBU_FINISH_PAD_FIX
+            Point3F thing2 = forceEffect * 0.2000000029802322f;
 
-        if (dist > 1.5f)
-        {
-            Point3F unk = offset * (1.0f / dist);
-            Point3F outward = unk;
-            F32 outforce = mDot(outward, *pLastRenderVel);
-            if (outforce > 0.0f)
+            mLastRenderVel += thing2;
+
+            F32 dist = offset.len();
+
+            mLastRenderVel -= offset * 0.3499999940395355f;
+
+            if (dist > 1.5f)
             {
-#ifdef MBU_FINISH_PAD_FIX
-                *pLastRenderVel -= unk * outforce * 0.75f * (60.0f * dt);
-#else
-                *pLastRenderVel -= unk * outforce * 0.75f;
-#endif // MBU_FINISH_PAD_FIX
+                Point3F unk = offset * (1.0f / dist);
+                Point3F outward = unk;
+                F32 outforce = mDot(outward, mLastRenderVel);
+                if (outforce > 0.0f)
+                {
+                    mLastRenderVel -= unk * outforce * 0.75f;
 
-                Point3F noodles = offset * outforce * 0.5f;
-                noodles = *pLastRenderVel - noodles;
-                
-                if (mDot(noodles, noodles) <= 0.1000000014901161f &&
-                    (mCross(outward, forceEffect, &noodles), mDot(noodles, noodles) <= 0.1000000014901161f))
-                {
-                    noodles.set(trans[0], trans[4], trans[8]);
-                } else
-                {
-                    m_point3F_normalize(noodles);
+                    Point3F noodles = offset * outforce * 0.5f;
+                    noodles = mLastRenderVel - noodles;
+
+                    if (mDot(noodles, noodles) <= 0.1000000014901161f &&
+                        (mCross(outward, forceEffect, &noodles), mDot(noodles, noodles) <= 0.1000000014901161f))
+                    {
+                        noodles.set(trans[0], trans[4], trans[8]);
+                    }
+                    else
+                    {
+                        m_point3F_normalize(noodles);
+                    }
+
+                    mLastRenderVel += noodles * outforce * 0.25f;
                 }
-
-#ifdef MBU_FINISH_PAD_FIX
-                *pLastRenderVel += noodles * outforce * 0.25f * (60.0f * dt);
-#else
-                *pLastRenderVel += noodles * outforce * 0.25f;
-#endif // MBU_FINISH_PAD_FIX
             }
+
+            Point3F addVel(mSin(mEffect.effectTime * 3.0f),
+                mSin(mEffect.effectTime * 3.0f + 2.450442179918352f),
+                mSin(mEffect.effectTime * 1.5f + 1.19380519338384f));
+
+            mLastRenderVel += addVel * 2.5f * (1 / 60.0f);
+
+            pos = mLastRenderPos;
+            pos += mLastRenderVel * (1 / 60.0f);
+
+            disableCollision();
+
+            Point3D position = mLastRenderPos;
+            Point3F velocity = pos - mLastRenderPos;
+
+            F64 time = 1.0;
+            F64 totalTime = time;
+
+            S32 i = 0;
+            do
+            {
+                if (totalTime <= 0.0)
+                    break;
+                if (!testMove(velocity, position, time, mRadius, sCameraCollisionMask, true))
+                    break;
+
+                ++i;
+                totalTime -= time;
+                time = totalTime;
+
+                pos = position;
+
+                Point3F normal = mLastContact.normal;
+
+                Point3F newAround = normal * 1.5f;
+                newAround *= mDot(mLastRenderVel, normal);
+
+                mLastRenderVel -= newAround;
+
+            } while (i < 4);
+
+            enableCollision();
+
+            mLastRenderPos = pos;
+            mEffect.effectTime += (1 / 60.0f);
         }
-
-        Point3F addVel(mSin(mEffect.effectTime * 3.0f),
-                     mSin(mEffect.effectTime * 3.0f + 2.450442179918352f),
-                     mSin(mEffect.effectTime * 1.5f + 1.19380519338384f));
-
-        *pLastRenderVel += addVel * 2.5f * dt;
-        
-        pos = mLastRenderPos;
-        pos += *pLastRenderVel * dt;
-
-        disableCollision();
-
-        Point3D position = mLastRenderPos;
-        Point3F velocity = pos - mLastRenderPos;
-
-        F64 time = 1.0;
-        F64 totalTime = time;
-
-        S32 i = 0;
-        do
-        {
-            if (totalTime <= 0.0)
-                break;
-            if (!testMove(velocity, position, time, mRadius, sCameraCollisionMask, true))
-                break;
-
-            ++i;
-            totalTime -= time;
-            time = totalTime;
-
-            pos = position;
-
-            Point3F normal = mLastContact.normal;
-
-            Point3F newAround = normal * 1.5f;
-            newAround *= mDot(*pLastRenderVel, normal);
-
-#ifdef MBU_FINISH_PAD_FIX
-            *pLastRenderVel -= newAround * (60.0f * dt);
-#else
-            *pLastRenderVel -= newAround;
-#endif // MBU_FINISH_PAD_FIX
-
-        } while (i < 4);
-
-        enableCollision();
-
-        mLastRenderPos = pos;
-        mEffect.effectTime += dt;
     }
     else
 #endif
