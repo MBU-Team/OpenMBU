@@ -9,11 +9,18 @@
 #ifndef _GAMEINTERFACE_H_
 #include "platform/gameInterface.h"
 #endif
+#include "game/moveManager.h"
 
 /// Implementation of GameInterface for the demo app.
 class DemoGame : public GameInterface
 {
 public:
+    Stream* mDemoWriteStream = NULL;
+    Stream* mDemoReadStream = NULL;
+    Move mLastMove;
+    Move mCurrentMove;
+    U32 mDemoTimeDelta = 0;
+
     void textureKill();
     void textureResurrect();
     void refreshWindow();
@@ -29,6 +36,10 @@ public:
     void processConnectedAcceptEvent(ConnectedAcceptEvent* event);
     void processConnectedReceiveEvent(ConnectedReceiveEvent* event);
     void processConnectedNotifyEvent(ConnectedNotifyEvent* event);
+    void processElapsedTime(U32 elapsedTime);
+    void playDemo(const char* path);
+    void stopDemo();
+    void recordDemo(const char* path, const char* mispath);
 };
 
 #endif

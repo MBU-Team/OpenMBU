@@ -772,3 +772,10 @@ void ProcessList::clientCatchup(GameConnection* connection, S32 catchup)
     Con::printf("---------");
 #endif
 }
+
+void ProcessList::timeReset()
+{
+    mLastTick = 0;
+    mLastTime = 0;
+    mLastDelta = 0;
+}
