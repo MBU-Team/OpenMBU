@@ -1608,10 +1608,7 @@ void Marble::findRenderPos(F32 dt)
 #endif // MBU_FINISH_PAD_FIX
 
             mLastRenderVel *= 0.949999988079071f;
-
-            Point3F thing2 = forceEffect * 0.2000000029802322f;
-
-            mLastRenderVel += thing2;
+            mLastRenderVel += forceEffect * 0.2000000029802322f;
 
             F32 dist = offset.len();
 
@@ -1619,12 +1616,11 @@ void Marble::findRenderPos(F32 dt)
 
             if (dist > 1.5f)
             {
-                Point3F unk = offset * (1.0f / dist);
-                Point3F outward = unk;
+                Point3F outward = offset * (1.0f / dist);
                 F32 outforce = mDot(outward, mLastRenderVel);
                 if (outforce > 0.0f)
                 {
-                    mLastRenderVel -= unk * outforce * 0.75f;
+                    mLastRenderVel -= outward * outforce * 0.75f;
 
                     Point3F noodles = offset * outforce * 0.5f;
                     noodles = mLastRenderVel - noodles;

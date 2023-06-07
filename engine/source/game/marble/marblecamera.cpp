@@ -396,41 +396,25 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     Point3F camUpDir = -getGravityRenderDir();
     Point3F position(mRenderObjToWorld[3], mRenderObjToWorld[7], mRenderObjToWorld[11]);
 
-    Point3F startCam;
 #ifndef MBG_PHYSICS
     if (!Marble::smEndPad.isNull() && (mMode & StoppingMode) != 0)
     {
         MatrixF padMat = Marble::smEndPad->getTransform();
-        position.x = padMat[3];
-        position.y = padMat[7];
-        position.z = padMat[11];
-        
-        startCam.x = padMat[2];
-        startCam.y = padMat[6];
-        startCam.z = padMat[10];
+        Point3F offset;
+        padMat.getColumn(3, &position);
+        padMat.getColumn(2, &offset);
 
-        position += startCam;
+        position += offset;
      
-#ifdef MBU_FINISH_PAD_FIX
-        extern F32 gTimeDelta;
-        static F32 sAnimAccumulator = 0.0;
-        sAnimAccumulator += gTimeDelta;
-        while (sAnimAccumulator >= 1 / 60.0f) 
-        {
-            sAnimAccumulator -= (1 / 60.0f);
-#endif // MBU_FINISH_PAD_FIX
-            position *= 0.02500000037252903;
-            position += mEffect.lastCamFocus * 0.9750000238418579;
-#ifdef MBU_FINISH_PAD_FIX
-        }
-#endif // MBU_FINISH_PAD_FIX
+        position *= 0.02500000037252903;
+        position += mEffect.lastCamFocus * 0.9750000238418579;
     }
 #endif
 
     F64 verticalOffset = mRadius + RADIUS_FOR_CAMERA;
     mEffect.lastCamFocus = position;
 
-    startCam = camUpDir * verticalOffset + position;
+    Point3F startCam = camUpDir * verticalOffset + position;
     
     Point3F endPos = startCam - forwardDir * mDataBlock->cameraDistance;
     if (!Marble::smEndPad.isNull() && (mMode & StoppingMode) != 0)
@@ -443,9 +427,7 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
 
         effectTime *= 0.5f * mDataBlock->cameraDistance;
 
-        endPos.x -= effectTime * forwardDir.x;
-        endPos.y -= effectTime * forwardDir.y;
-        endPos.z -= effectTime * forwardDir.z;
+        endPos -= forwardDir * effectTime;
     }
 
     setPlatformsForCamera(position, startCam, endPos);
