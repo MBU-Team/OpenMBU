@@ -43,10 +43,25 @@ body:
     multiple: false
     options:
       - Windows
-      - Mac
-      - Linux
+      - Mac (Not Supported)
+      - Linux (Partial Support)
   validations:
-    required: true     
+    required: true
+- type: dropdown
+  attributes:
+    label: OS Version
+    description: What OS are you on?
+    multiple: false
+    options:
+      - Windows 11
+      - Windows 10
+      - Windows 8.1 (Not Supported)
+      - Windows 8 (Not Supported)
+      - Windows 7 (Not Supported)
+      - Windows Vista (Not Supported)
+      - Windows XP (Not Supported)
+  validations:
+    required: true  
 - type: textarea
   attributes:
     label: Description
