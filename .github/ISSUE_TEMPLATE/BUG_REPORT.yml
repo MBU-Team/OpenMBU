@@ -1,4 +1,4 @@
-name: Bug Report
+name: New Bug
 description: Report a bug in OpenMBU
 labels: ["Type: Bug", "NEW ISSUE"]
 body:
