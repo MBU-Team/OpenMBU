@@ -51,17 +51,6 @@ body:
     description: What OS are you on?
     multiple: false
     options:
-      - Windows
-      - Mac (Not Supported)
-      - Linux (Partial Support)
-  validations:
-    required: true
-- type: dropdown
-  attributes:
-    label: OS Version
-    description: What OS are you on?
-    multiple: false
-    options:
       - Windows 11
       - Windows 10
       - Windows 8.1 (Not Supported)
@@ -72,7 +61,7 @@ body:
       - Linux (Proton)
       - Linux (Wine)
       - Linux (Native)
-      - MacOS (unsupported)
+      - MacOS (Not Supported)
   validations:
     required: true  
 - type: textarea
