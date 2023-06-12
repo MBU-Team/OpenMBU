@@ -11,12 +11,13 @@ body:
       Otherwise make a bug report
       
       Try to create a very concise title that's straight to the point
+      ##
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
     description: Please search to see if an issue already exists for the bug you encountered.
     options:
-    - label: '## I have searched the existing issues'
+    - label: I have searched the existing issues
       required: true
 - type: dropdown
   attributes:
