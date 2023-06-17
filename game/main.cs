@@ -362,7 +362,7 @@ function initVideo()
       execPrefs("prefs.cs");   
       
       if ($pref::Video::resolution $= "")
-         $pref::Video::resolution = "800 600 32";
+         $pref::Video::resolution = "1280 720 32";
          
       if ($pref::Video::windowedRes $= "")
          $pref::Video::windowedRes = "1280 720";
