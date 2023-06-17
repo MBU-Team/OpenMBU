@@ -708,6 +708,11 @@ ConsoleFunction(getResolutionList, const char*, 1, 2, "getResolutionList([minimu
             continue;
         if (minHeight > 0 && (*modelist)[k].resolution.y < minHeight)
             continue;
+        if (k > 0
+            && (*modelist)[k].resolution.x == (*modelist)[k-1].resolution.x
+            && (*modelist)[k].resolution.y == (*modelist)[k-1].resolution.y
+            && (*modelist)[k].bitDepth == (*modelist)[k-1].bitDepth)
+            continue;
 
         if ((*modelist)[k].resolution.x >= 1000)
             stringLen += 5;//4 digits + space
@@ -729,6 +734,11 @@ ConsoleFunction(getResolutionList, const char*, 1, 2, "getResolutionList([minimu
         if (minWidth > 0 && (*modelist)[k].resolution.x < minWidth)
             continue;
         if (minHeight > 0 && (*modelist)[k].resolution.y < minHeight)
+            continue;
+        if (k > 0
+            && (*modelist)[k].resolution.x == (*modelist)[k-1].resolution.x
+            && (*modelist)[k].resolution.y == (*modelist)[k-1].resolution.y
+            && (*modelist)[k].bitDepth == (*modelist)[k-1].bitDepth)
             continue;
 
         if (SFXBBCOPY_SIZE > (*modelist)[k].resolution.x ||
