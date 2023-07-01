@@ -573,8 +573,10 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
     else if (event->deviceType == XInputDeviceType)
     {
         // Do NOT PUT THE gLastEventTime change here, it will pick up the analog stick noise
+
         //copy the modifier into the new event
         mLastEvent.modifier = event->modifier;
+        
         bool retval = false;
 
         if (event->objType == SI_BUTTON || event->objType == SI_POV)
@@ -589,7 +591,8 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             
             return retval;
         }
-        else if ((event->objType == XI_THUMBLY || event->objType == XI_THUMBLX || event->objType == XI_LEFT_TRIGGER || event->objType == XI_RIGHT_TRIGGER) &&
+        else if ((event->objType == XI_THUMBLY || event->objType == XI_THUMBLX || 
+            event->objType == XI_LEFT_TRIGGER || event->objType == XI_RIGHT_TRIGGER) &&
             event->action == SI_MOVE && event->deviceInst < 4)
         {
             F32 incomingValue = mFabs(event->fValue);
@@ -674,6 +677,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                 }
                 else if (event->objType == XI_LEFT_TRIGGER)
                 {
+                    // Neither triggers care about the actual analog value, only if depressed
                     retval = responder->onGamepadButtonPressed(XI_LEFT_TRIGGER);  
                 }
                 else if (event->objType == XI_RIGHT_TRIGGER)
