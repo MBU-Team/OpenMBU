@@ -581,7 +581,6 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
 
         if (event->objType == SI_BUTTON || event->objType == SI_POV)
         {
-            Con::printf("Type was SI_BUTTON etc");
             if (event->action == SI_MAKE)
                 retval = responder->onGamepadButtonPressed(event->objInst);
             else if (event->action == SI_BREAK)
