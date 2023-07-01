@@ -590,7 +590,8 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             
             return retval;
         }
-        else if ((event->objType == XI_THUMBLY || event->objType == XI_THUMBLX) &&
+        else if ((event->objType == XI_THUMBLY || event->objType == XI_THUMBLX || 
+            event->objType == XI_LEFT_TRIGGER || event->objType == XI_RIGHT_TRIGGER) &&
             event->action == SI_MOVE && event->deviceInst < 4)
         {
             F32 incomingValue = mFabs(event->fValue);
@@ -601,19 +602,37 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             static F32 yDecay[] = { 1.0f, 1.0f, 1.0f, 1.0f };
             static U32 xLastClickTime[] = { 0, 0, 0, 0 };
             static U32 yLastClickTime[] = { 0, 0, 0, 0 };
+
+            // Each trigger also needs decay/click logic
+            static F32 lDecay[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            static F32 rDecay[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            static U32 lLastClickTime[] = { 0, 0, 0, 0 };
+            static U32 rLastClickTime[] = { 0, 0, 0, 0 };
+
             U32 curTime = Platform::getRealMilliseconds();
             F32* decay;
             U32* lastClickTime;
 
+            // Determine the state for the respective analog value
             if (event->objType == XI_THUMBLX)
             {
                 decay = &xDecay[event->deviceInst];
                 lastClickTime = &xLastClickTime[event->deviceInst];
             }
-            else
+            else if (event->objType == XI_THUMBLY)
             {
                 decay = &yDecay[event->deviceInst];
                 lastClickTime = &yLastClickTime[event->deviceInst];
+            } 
+            else if (event->objType == XI_LEFT_TRIGGER) 
+            {
+                decay = &lDecay[event->deviceInst];
+                lastClickTime = &lLastClickTime[event->deviceInst];
+            } 
+            else if (event->objType == XI_RIGHT_TRIGGER) 
+            {
+                decay = &rDecay[event->deviceInst];
+                lastClickTime = &rLastClickTime[event->deviceInst];
             }
 
             //bool down = event->fValue < 0.f;
@@ -648,17 +667,28 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                     else
                         retval = responder->onGamepadButtonPressed(XI_DPAD_UP);
                 }
-                else
+                else if (event->objType == XI_THUMBLX)
                 {
                     if (down)
                         retval = responder->onGamepadButtonPressed(XI_DPAD_RIGHT);
                     else
                         retval = responder->onGamepadButtonPressed(XI_DPAD_LEFT);
                 }
+                else if (event->objType == XI_LEFT_TRIGGER)
+                {
+                    // Neither triggers care about the actual analog value, only if depressed
+                    retval = responder->onGamepadButtonPressed(XI_LEFT_TRIGGER);  
+                }
+                else if (event->objType == XI_RIGHT_TRIGGER)
+                {
+                    retval = responder->onGamepadButtonPressed(XI_RIGHT_TRIGGER);  
+                }
                 gLastEventTime = curTime;
             }
 
             return retval;
+        } else {
+            Con::warnf("Input fell outside current logic. Event type: %d", event->objType);
         }
     }
 
