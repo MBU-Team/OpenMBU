@@ -688,7 +688,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
 
             return retval;
         } else {
-            Con::printf("Input fell outside current logic. Maybe theres a bug!");
+            Con::warnf("Input fell outside current logic. Event type: %d", event->objType);
         }
     }
 
