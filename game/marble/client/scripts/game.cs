@@ -1452,13 +1452,7 @@ addMessageCallBack( 'MsgRaceOver', clientTaggedMessageHandler );
 
 function clientTaggedMessageHandler(%msgType, %msgString, %id, %data)
 {
-   if (%msgType == 'MsgItemPickup') 
-   {
-      addChatLine(avar(detag(%msgString),%data));
-   } 
-   else 
-   {
-      addChatLine(detag(%msgString));
-   }
-
+   // Detag the message and try to load any data into it as required. For strings not requiring config
+   // like "You've finished!" etc, avar is a no-op
+   addChatLine(avar(detag(%msgString),%data));
 }
