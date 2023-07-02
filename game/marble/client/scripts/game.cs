@@ -1440,3 +1440,25 @@ function clientLocalizedItemPickupHandler( %msgType, %msgString, %id, %data )
    %message = powerupIdToString( %id,%data );
    addChatLine( %message );
 }
+
+//-------------------------------------------------------------------------------
+
+// Gem related msgs, also handles easter eggs
+
+addMessageCallback( 'MsgMissingGems', clientTaggedMessageHandler );
+addMessageCallBack( 'MsgItemPickup', clientTaggedMessageHandler );
+addMessageCallBack( 'MsgHaveAllGems', clientTaggedMessageHandler );
+addMessageCallBack( 'MsgRaceOver', clientTaggedMessageHandler );
+
+function clientTaggedMessageHandler(%msgType, %msgString, %id, %data)
+{
+   if (%msgType == 'MsgItemPickup') 
+   {
+      addChatLine(avar(detag(%msgString),%data));
+   } 
+   else 
+   {
+      addChatLine(detag(%msgString));
+   }
+
+}
