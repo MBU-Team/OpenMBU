@@ -264,9 +264,13 @@ function initClient()
          };
          MissionGroup.add(Bounds);
 
-         %missionFile = "marble/data/missions/testMission.mis";
+         //%missionFile = "marble/data/missions/testMission.mis";
+         %missionFile = strreplace(%file, ".dif", ".mis");
          %missionGroup.save(%missionFile);
          %missionGroup.delete();
+         
+         schedule(0,0,loadTestLevel,%missionFile);
+         return;
       }
    }
    
@@ -275,6 +279,31 @@ function initClient()
    schedule(0,0,loadMainMenu,%missionFile);
    
    //makeFonts();
+}
+
+function loadTestLevel(%missionFile)
+{
+   $Host::QuickLoad = true;
+   createServer("SinglePlayer", %missionFile);
+   connectToServer("");
+   waitTestLevel();
+}
+
+function waitTestLevel()
+{
+   cancel($Client::TestWaitSched);
+   if (ServerConnection.getControlObject() == 0)
+   {
+      $Client::TestWaitSched = schedule(100,0,waitTestLevel);
+      return;
+   }
+   
+   $EnableDatablockCanvasRepaint = false;
+   
+   RootGui.show();
+   RootGui.setContent(PlayGui);
+   
+   commandToServer('JoinGame');
 }
 
 function initCanvasSize()
