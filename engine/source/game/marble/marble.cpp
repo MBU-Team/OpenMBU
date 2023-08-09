@@ -1064,7 +1064,11 @@ Point3F Marble::getVelocity() const
 
 Point3F Marble::getShadowScale() const
 {
+#ifdef MB_FORCE_MARBLE_SIZE
+    return Point3F(mPowerUpParams.sizeScale, mPowerUpParams.sizeScale, mPowerUpParams.sizeScale);
+#else
     return mRenderScale;
+#endif
 }
 
 Point3F Marble::getGravityRenderDir()
@@ -1321,6 +1325,35 @@ void Marble::updateMass()
     mMass = mPowerUpParams.massScale * mMass;
     mOneOverMass = 1.0f / mMass;
 
+#ifdef MB_FORCE_MARBLE_SIZE
+    F32 intendedRadius = 0.2f;
+
+    TSShape* shape = mDataBlock->shape;
+
+    Box3F bounds = shape->bounds;
+    Point3F extents(bounds.max.x + bounds.min.x, bounds.max.y + bounds.min.y, bounds.max.z + bounds.min.z);
+    Point3F scale(bounds.max.x - bounds.min.x, bounds.max.y - bounds.min.y, bounds.max.z - bounds.min.z);
+
+    F32 averageRadius = (scale.x + scale.y + scale.z) / 6;
+
+    F32 forcedScaleF = mPowerUpParams.sizeScale * (intendedRadius / averageRadius);
+    Point3F forcedScale(forcedScaleF, forcedScaleF, forcedScaleF);
+    setScale(forcedScale);
+
+    scale = Point3F(intendedRadius, intendedRadius, intendedRadius);
+    scale *= 2;
+
+    Point3F center = extents * 0.5f;
+    extents = scale * 0.5f;
+
+    extents *= mPowerUpParams.sizeScale;
+
+    mObjBox.min = center - extents;
+    mObjBox.max = extents + center;
+
+    //mRadius = getMax(getMax(mObjBox.max.x, mObjBox.max.y), mObjBox.max.z);
+    mRadius = intendedRadius * mPowerUpParams.sizeScale;
+#else
     setScale(Point3F(mPowerUpParams.sizeScale, mPowerUpParams.sizeScale, mPowerUpParams.sizeScale));
 
     TSShape* shape = mDataBlock->shape;
@@ -1337,6 +1370,7 @@ void Marble::updateMass()
     mObjBox.max = extents + center;
 
     mRadius = getMax(getMax(mObjBox.max.x, mObjBox.max.y), mObjBox.max.z);
+#endif
 
     resetWorldBox();
 }
@@ -1411,7 +1445,11 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
         }
 
         float scale = mDataBlock->size;
+#ifdef MB_FORCE_MARBLE_SIZE
+        float megaAmt = (this->mPowerUpParams.sizeScale - scale) / (mDataBlock->megaSize - scale);
+#else
         float megaAmt = (this->mRenderScale.x - scale) / (mDataBlock->megaSize - scale);
+#endif
         float regAmt = 1.0 - megaAmt;
 
         Point3D rollVel = mVelocity - mBestContact.surfaceVelocity;
@@ -1465,7 +1503,11 @@ void Marble::playBounceSound(Marble::Contact& contactSurface, F64 contactVel)
     F32 softBounceSpeed;
 
     F32 minSize = mDataBlock->size;
+#ifdef MB_FORCE_MARBLE_SIZE
+    if ((mPowerUpParams.sizeScale - minSize) / (mDataBlock->megaSize - minSize) <= 0.5f)
+#else
     if ((mRenderScale.x - minSize) / (mDataBlock->megaSize - minSize) <= 0.5f)
+#endif
     {
         softBounceSpeed = mDataBlock->minVelocityBounceSoft;
         mega = false;

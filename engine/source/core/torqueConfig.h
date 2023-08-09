@@ -80,6 +80,9 @@
 // Define me to use MBG physics
 //#define MBG_PHYSICS
 
+// Define me to force marble to correct size
+#define MB_FORCE_MARBLE_SIZE
+
 // Define me to use a framerate-independent finish pad animation
 #define MBU_FINISH_PAD_FIX
 
