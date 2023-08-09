@@ -301,6 +301,7 @@ function waitTestLevel()
    $EnableDatablockCanvasRepaint = false;
    
    RootGui.show();
+   RootGui.setContent(ESRBGui);
    RootGui.setContent(PlayGui);
    
    commandToServer('JoinGame');
