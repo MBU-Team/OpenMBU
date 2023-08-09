@@ -1423,13 +1423,14 @@ void InteriorInstance::addChildren()
                     gbObj->setField("dataBlock", entity->mDataBlock);
 
                 obj->setModStaticFields(true);
-                F32 angle = 0.0f;
+                EulerF angles(0.0f, 0.0f, 0.0f);
                 for (auto& entry : entity->mDictionary)
                 {
-                    if (dStricmp(entry.name, "angle") == 0)
+                    if (dStricmp(entry.name, "angles") == 0)
                     {
-                        angle = dAtof(entry.value);
-                        Con::printf("Angle: %f", angle);
+                        // TrenchBroom uses X, -Z, Y. Torque uses X, Y, Z
+                        dSscanf(entry.value, "%g %g %g", &angles.x, &angles.z, &angles.y);
+                        angles.z *= -1; // flipped in trench broom
                     }
                     else
                     {
@@ -1441,16 +1442,21 @@ void InteriorInstance::addChildren()
                 Point3F origin = entity->mPos;
                 origin *= this->mObjScale;
 
-                MatrixF rotMat;
-                AngAxisF rot(Point3F(0.0f, 0.0f, 1.0f), mDegToRad(angle));
-                rot.setMatrix(&rotMat);
+                angles.x = mDegToRad(angles.x);
+                angles.y = mDegToRad(angles.y);
+                angles.z = mDegToRad(angles.z);
+
+                MatrixF rotMat(angles);
+
+                //AngAxisF rot(Point3F(0.0f, 0.0f, 1.0f), mDegToRad(angle));
+                //rot.setMatrix(&rotMat);
 
                 MatrixF trans = this->getTransform();
                 trans.mulP(origin);
 
                 MatrixF xform(true);
-                xform.setPosition(origin);
                 xform.mul(rotMat);
+                xform.setPosition(origin);
 
                 obj->setTransform(xform);
 
