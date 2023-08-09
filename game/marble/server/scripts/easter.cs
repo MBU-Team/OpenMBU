@@ -58,6 +58,13 @@ function clientCmdOnEasterEggPickup( %index )
       return;
    }
    
+   if ($testLevel || GameMissionInfo.getCurrentMission().difficultySet $= "custom" || GameMissionInfo.getMode() $= GameMissionInfo.CustomMode)
+   {
+      serverPlay2d(easterNewSfx);
+      addHelpLine( $Text::FoundNewEgg, false );
+      return;
+   }
+   
    sendAutosplitterData("egg" SPC %index);
    
    if( hasFoundEgg( %index ) )
