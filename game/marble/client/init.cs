@@ -176,6 +176,8 @@ function initClient()
    exec("./scripts/default.bind.cs");
    exec("./scripts/xbControler.cs");
    
+   exec("./scripts/interiorTest.cs");
+   
    if (isObject(MusicPlayer))
       MusicPlayer.activate();
 
@@ -207,67 +209,69 @@ function initClient()
          // hack - need the server scripts now
          execServerScripts();
          
-         %missionGroup = createEmptyMission($interiorArg);
-         %interior = new InteriorInstance() {
-                        position = "0 0 0";
-                        rotation = "1 0 0 0";
-                        scale = "1 1 1";
-                        interiorFile = %file;
-                     };
-         %missionGroup.add(%interior);
-         %interior.magicButton();
-
-         if (!isObject(SpawnPoints))
-            %spawnPointsGroup = new SimGroup(SpawnPoints);
-         MissionGroup.add(%spawnPointsGroup);
-
-         if (!isObject(StartPoint))
-         {
-            // create spawn points group
-            new StaticShape(StartPoint) {
-               position = "0 -5 25";
-               rotation = "1 0 0 0";
-               scale = "1 1 1";
-               dataBlock = "StartPad";
-            };
-         }
-         %spawnPointsGroup.add(StartPoint);
-
-         if(!isObject(EndPoint))
-         {
-            %pt = new StaticShape(EndPoint) {
-               position = "0 5 100";
-               rotation = "1 0 0 0";
-               scale = "1 1 1";
-               dataBlock = "EndPad";
-            };
-            MissionGroup.add(%pt);
-         }
-         %box = %interior.getWorldBox();
-         %mx = getWord(%box, 0);
-         %my = getWord(%box, 1);
-         %mz = getWord(%box, 2);
-         %MMx = getWord(%box, 3);
-         %MMy = getWord(%box, 4);
-         %MMz = getWord(%box, 5);
-         %pos = (%mx - 3) SPC (%MMy + 3) SPC (%mz - 3);
-         %scale = (%MMx - %mx + 6) SPC (%MMy - %my + 6) SPC (%MMz - %mz + 20);
-         echo(%box);
-         echo(%pos);
-         echo(%scale);
-         new Trigger(Bounds) {
-            position = %pos;
-            scale = %scale;
-            rotation = "1 0 0 0";
-            dataBlock = "InBoundsTrigger";
-            polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
-         };
-         MissionGroup.add(Bounds);
-
-         //%missionFile = "marble/data/missions/testMission.mis";
-         %missionFile = strreplace(%file, ".dif", ".mis");
-         %missionGroup.save(%missionFile);
-         %missionGroup.delete();
+         //%missionGroup = createEmptyMission($interiorArg);
+         //%interior = new InteriorInstance() {
+                        //position = "0 0 0";
+                        //rotation = "1 0 0 0";
+                        //scale = "1 1 1";
+                        //interiorFile = %file;
+                     //};
+         //%missionGroup.add(%interior);
+         //%interior.magicButton();
+//
+         //if (!isObject(SpawnPoints))
+            //%spawnPointsGroup = new SimGroup(SpawnPoints);
+         //MissionGroup.add(%spawnPointsGroup);
+//
+         //if (!isObject(StartPoint))
+         //{
+            //// create spawn points group
+            //new StaticShape(StartPoint) {
+               //position = "0 -5 25";
+               //rotation = "1 0 0 0";
+               //scale = "1 1 1";
+               //dataBlock = "StartPad";
+            //};
+         //}
+         //%spawnPointsGroup.add(StartPoint);
+//
+         //if(!isObject(EndPoint))
+         //{
+            //%pt = new StaticShape(EndPoint) {
+               //position = "0 5 100";
+               //rotation = "1 0 0 0";
+               //scale = "1 1 1";
+               //dataBlock = "EndPad";
+            //};
+            //MissionGroup.add(%pt);
+         //}
+         //%box = %interior.getWorldBox();
+         //%mx = getWord(%box, 0);
+         //%my = getWord(%box, 1);
+         //%mz = getWord(%box, 2);
+         //%MMx = getWord(%box, 3);
+         //%MMy = getWord(%box, 4);
+         //%MMz = getWord(%box, 5);
+         //%pos = (%mx - 3) SPC (%MMy + 3) SPC (%mz - 3);
+         //%scale = (%MMx - %mx + 6) SPC (%MMy - %my + 6) SPC (%MMz - %mz + 20);
+         //echo(%box);
+         //echo(%pos);
+         //echo(%scale);
+         //new Trigger(Bounds) {
+            //position = %pos;
+            //scale = %scale;
+            //rotation = "1 0 0 0";
+            //dataBlock = "InBoundsTrigger";
+            //polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+         //};
+         //MissionGroup.add(Bounds);
+//
+         ////%missionFile = "marble/data/missions/testMission.mis";
+         //%missionFile = strreplace(%file, ".dif", ".mis");
+         //%missionGroup.save(%missionFile);
+         //%missionGroup.delete();
+         
+         %missionFile = createMissionFromDif(%file);
          
          schedule(0,0,loadTestLevel,%missionFile);
          return;
@@ -1047,4 +1051,3 @@ function createEmptyMission(%interiorArg)
       };
    };
 }
-
