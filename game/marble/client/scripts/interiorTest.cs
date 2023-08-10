@@ -76,7 +76,7 @@ function createMissionFromDif(%file)//,%isMultiplayer)
                %gemGroup.add(%obj);
                continue;
             }
-            else
+            else if (%obj.getDataBlock().getName() $= "SpawnSphereMarker")
             {
                %spawnGroup.add(%obj);
                continue;
