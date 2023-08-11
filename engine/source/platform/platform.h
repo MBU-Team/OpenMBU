@@ -507,6 +507,18 @@ extern dsize_t     dStrcspn(const char* str, const char* set);
 extern char* dStrstr(char* str1, char* str2);
 extern char* dStrstr(const char* str1, const char* str2);
 
+
+extern bool dStrEqual(const char* str1, const char* str2);
+extern bool dStrStartsWith(const char* str1, const char* str2);
+extern bool dStrEndsWith(const char* str1, const char* str2);
+extern char* dStripPath(const char* filename);
+extern char* dChopTrailingNumber(const char* name, S32& number);
+
+/// Like ChopTrailingNumber but doesn't initialize the passed number 
+/// to a default value of 2.
+extern char* dGetTrailingNumber(const char* name, S32& number);
+
+
 extern char* dStrtok(char* str, const char* sep);
 
 extern int         dAtoi(const char* str);
