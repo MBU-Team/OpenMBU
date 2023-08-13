@@ -265,6 +265,7 @@ addLib(libqslim)
 addLib(tinyxml)
 addLib(opcode)
 addLib(collada)
+addLib(pcre)
 
 
 
@@ -322,6 +323,7 @@ addDef(ICE_NO_DLL)
 addDef(TORQUE_OPCODE)
 addDef(TORQUE_COLLADA)
 addDef(DOM_INCLUDE_TINYXML)
+addDef(PCRE_STATIC)
 
 if(UNIX AND NOT APPLE)
 	addDef(LINUX)
