@@ -13,7 +13,6 @@
 
 class domCOLLADA;
 class domAnimation;
-typedef enum domUpAxisType;
 
 //-----------------------------------------------------------------------------
 class ColladaShapeLoader : public TSShapeLoader
@@ -21,8 +20,6 @@ class ColladaShapeLoader : public TSShapeLoader
    friend TSShape* loadColladaShape(const Torque::Path &path);
 
    domCOLLADA*             root;
-   static Point3F          unitScale;
-   static domUpAxisType    upAxis;
    Vector<AnimChannels*>   animations;       ///< Holds all animation channels for deletion after loading
 
    void processAnimation(const domAnimation* anim, F32& maxEndTime);
@@ -34,8 +31,12 @@ public:
    ~ColladaShapeLoader();
 
    void enumerateScene();
-   static const Point3F& getUnitScale() { return unitScale; }
-   static domUpAxisType getUpAxis() { return upAxis; }
+   bool ignore(const String& name);
+   void computeShapeOffset();
+
+   static bool canLoadCachedDTS(const Torque::Path& path);
+   static bool checkAndMountSketchup(const Torque::Path& path, String& mountPoint, Torque::Path& daePath);
+   static domCOLLADA* getDomCOLLADA(const Torque::Path& path);
 };
 
 #endif // _COLLADA_SHAPELOADER_H_

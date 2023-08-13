@@ -120,7 +120,7 @@ public:
    //bool double_sided;
 
    //----------------------------------
-   // <effect>.<profile_COMMON>.<diffuse>.<texture>
+   // <effect>.<profile_COMMON>.<technique>.<blinn/phong/lambert>.<diffuse>.<texture>
    // MAYA profile elements
    bool           wrapU, wrapV;
    bool           mirrorU, mirrorV;
@@ -133,9 +133,14 @@ public:
    AnimatedFloat  rotateUV;
    AnimatedFloat  noiseU, noiseV;
 
+   //----------------------------------
+   // <effect>.<profile_COMMON>.<technique>
+   // FCOLLADA profile elements
+   domFx_sampler2D_common_complexType*   bumpSampler;
+
 public:
    ColladaExtension_effect(const domEffect* effect)
-      : lastAnimTime(-1), textureTransform(true)
+      : lastAnimTime(-1), textureTransform(true), bumpSampler(0)
    {
       //----------------------------------
       // <effect>
@@ -152,10 +157,9 @@ public:
       GET_EXTRA_PARAM(double_sided, double_sided);
 
       //----------------------------------
-      // <effect>.<profile_COMMON>.<diffuse>.<texture>
-      const domCommon_color_or_texture_type_complexType* diffuse = ColladaUtils::findEffectDiffuse(effect);
-      const domCommon_color_or_texture_type_complexType::domTexture* texture = diffuse ? diffuse->getTexture() : 0;
-      const domFx_sampler2D_common_complexType* sampler2D = ColladaUtils::getSampler2D(effect);
+      // <effect>.<profile_COMMON>.<technique>.<blinn/phong/lambert>.<diffuse>.<texture>
+      const domCommon_color_or_texture_type_complexType* domDiffuse = ColladaUtils::findEffectDiffuse(effect);
+      const domFx_sampler2D_common_complexType* sampler2D = ColladaUtils::getTextureSampler(effect, domDiffuse);
 
       // Use the sampler2D to set default values for wrap/mirror flags
       wrapU = wrapV = true;
@@ -171,7 +175,7 @@ public:
       }
 
       // MAYA profile
-      pTechnique = findExtraTechnique(texture, "MAYA");
+      pTechnique = findExtraTechnique(domDiffuse ? domDiffuse->getTexture() : 0, "MAYA");
       GET_EXTRA_PARAM(wrapU, wrapU);            GET_EXTRA_PARAM(wrapV, wrapV);
       GET_EXTRA_PARAM(mirrorU, mirrorU);        GET_EXTRA_PARAM(mirrorV, mirrorV);
       GET_EXTRA_PARAM(coverageU, 1.0);          GET_EXTRA_PARAM(coverageV, 1.0);
@@ -182,6 +186,23 @@ public:
       GET_EXTRA_PARAM(offsetU, 0.0);            GET_EXTRA_PARAM(offsetV, 0.0);
       GET_EXTRA_PARAM(rotateUV, 0.0);
       GET_EXTRA_PARAM(noiseU, 0.0);             GET_EXTRA_PARAM(noiseV, 0.0);
+
+      // FCOLLADA profile
+      if (profileCommon) {
+         pTechnique = findExtraTechnique((const domProfile_COMMON::domTechnique*)profileCommon->getTechnique(), "FCOLLADA");
+         if (pTechnique) {
+            domAny* bump = daeSafeCast<domAny>(const_cast<domTechnique*>(pTechnique)->getChild("bump"));
+            if (bump) {
+               domAny* bumpTexture = daeSafeCast<domAny>(bump->getChild("texture"));
+               if (bumpTexture) {
+                  daeSIDResolver resolver(const_cast<domEffect*>(effect), bumpTexture->getAttribute("texture").c_str());
+                  domCommon_newparam_type* param = daeSafeCast<domCommon_newparam_type>(resolver.getElement());
+                  if (param)
+                     bumpSampler = param->getSampler2D();
+               }
+            }
+         }
+      }
    }
 
    /// Check if any of the MAYA texture transform elements are animated within

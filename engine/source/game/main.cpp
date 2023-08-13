@@ -178,6 +178,7 @@ static bool initLibraries()
     ResourceManager->registerExtension(".ter", constructTerrainFile);
 #endif
     ResourceManager->registerExtension(".dts", constructTSShape);
+    // ResourceManager->registerExtension(".dae", constructColladaShape);
     //   ResourceManager->registerExtension(".dml", constructMaterialList);
     ResourceManager->registerExtension(".map", constructInteriorMAP);
 #ifdef TORQUE_TERRAIN

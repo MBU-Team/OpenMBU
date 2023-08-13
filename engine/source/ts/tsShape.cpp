@@ -9,6 +9,8 @@
 #include "console/console.h"
 #include "ts/tsShapeInstance.h"
 #include "collision/convex.h"
+#include <string>
+#include "collada/colladaShapeLoader.h"
 
 /// most recent version -- this is the version we write
 S32 TSShape::smVersion = 24;
@@ -176,6 +178,128 @@ S32 TSShape::findSequence(S32 nameIndex) const
             return i;
     return -1;
 }
+
+bool TSShape::findMeshIndex(const char* meshName, S32& objIndex, S32& meshIndex)
+{
+    // Determine the object name and detail size from the mesh name
+    S32 detailSize = 999;
+    objIndex = findObject(dGetTrailingNumber(meshName, detailSize));
+    if (objIndex < 0)
+        return false;
+
+    // Determine the subshape this object belongs to
+    S32 subShapeIndex = getSubShapeForObject(objIndex);
+    AssertFatal(subShapeIndex < subShapeFirstObject.size(), "Could not find subshape for object!");
+
+    // Get the detail levels for the subshape
+    Vector<S32> validDetails;
+    getSubShapeDetails(subShapeIndex, validDetails);
+
+    // Find the detail with the correct size
+    for (meshIndex = 0; meshIndex < validDetails.size(); meshIndex++)
+    {
+        const TSShape::Detail& det = details[validDetails[meshIndex]];
+        if (detailSize == det.size)
+            return true;
+    }
+
+    return false;
+}
+
+TSMesh* TSShape::findMesh(const char* meshName)
+{
+    S32 objIndex, meshIndex;
+    if (!findMeshIndex(meshName, objIndex, meshIndex))
+        return 0;
+    return meshes[objects[objIndex].startMeshIndex + meshIndex];
+}
+
+S32 TSShape::getSubShapeForNode(S32 nodeIndex)
+{
+    for (S32 i = 0; i < subShapeFirstNode.size(); i++)
+    {
+        S32 start = subShapeFirstNode[i];
+        S32 end = start + subShapeNumNodes[i];
+        if ((nodeIndex >= start) && (nodeIndex < end))
+            return i;;
+    }
+    return -1;
+}
+
+S32 TSShape::getSubShapeForObject(S32 objIndex)
+{
+    for (S32 i = 0; i < subShapeFirstObject.size(); i++)
+    {
+        S32 start = subShapeFirstObject[i];
+        S32 end = start + subShapeNumObjects[i];
+        if ((objIndex >= start) && (objIndex < end))
+            return i;
+    }
+    return -1;
+}
+
+void TSShape::getSubShapeDetails(S32 subShapeIndex, Vector<S32>& validDetails)
+{
+    validDetails.clear();
+    for (S32 i = 0; i < details.size(); i++)
+    {
+        if ((details[i].subShapeNum == subShapeIndex) ||
+            (details[i].subShapeNum < 0))
+            validDetails.push_back(i);
+    }
+}
+
+void TSShape::getNodeWorldTransform(S32 nodeIndex, MatrixF* mat) const
+{
+    // Calculate the world transform of the given node
+    defaultRotations[nodeIndex].getQuatF().setMatrix(mat);
+    mat->setPosition(defaultTranslations[nodeIndex]);
+
+    S32 parentIndex = nodes[nodeIndex].parentIndex;
+    while (parentIndex != -1)
+    {
+        MatrixF mat2(*mat);
+        defaultRotations[parentIndex].getQuatF().setMatrix(mat);
+        mat->setPosition(defaultTranslations[parentIndex]);
+        mat->mul(mat2);
+
+        parentIndex = nodes[parentIndex].parentIndex;
+    }
+}
+
+void TSShape::getNodeObjects(S32 nodeIndex, Vector<S32>& nodeObjects)
+{
+    for (S32 i = 0; i < objects.size(); i++)
+    {
+        if ((nodeIndex == -1) || (objects[i].nodeIndex == nodeIndex))
+            nodeObjects.push_back(i);
+    }
+}
+
+void TSShape::getNodeChildren(S32 nodeIndex, Vector<S32>& nodeChildren)
+{
+    for (S32 i = 0; i < nodes.size(); i++)
+    {
+        if (nodes[i].parentIndex == nodeIndex)
+            nodeChildren.push_back(i);
+    }
+}
+
+void TSShape::getObjectDetails(S32 objIndex, Vector<S32>& objDetails)
+{
+    // Get the detail levels for this subshape
+    Vector<S32> validDetails;
+    getSubShapeDetails(getSubShapeForObject(objIndex), validDetails);
+
+    // Get the non-null details for this object
+    const TSShape::Object& obj = objects[objIndex];
+    for (S32 i = 0; i < obj.numMeshes; i++)
+    {
+        if (meshes[obj.startMeshIndex + i])
+            objDetails.push_back(validDetails[i]);
+    }
+}
+
 
 void TSShape::init()
 {
@@ -1090,10 +1214,16 @@ void TSShape::disassembleShape()
     alloc.setGuard();
     alloc.copyToBuffer32((S32*)subShapeFirstNode.address(), numSubShapes);
     alloc.copyToBuffer32((S32*)subShapeFirstObject.address(), numSubShapes);
+    if (subShapeFirstDecal.address() == NULL) {
+        subShapeFirstDecal.reserve(1);
+    }
     alloc.copyToBuffer32((S32*)subShapeFirstDecal.address(), numSubShapes);
     alloc.setGuard();
     alloc.copyToBuffer32((S32*)subShapeNumNodes.address(), numSubShapes);
     alloc.copyToBuffer32((S32*)subShapeNumObjects.address(), numSubShapes);
+    if (subShapeNumDecals.address() == NULL) {
+        subShapeNumDecals.reserve(1);
+    }
     alloc.copyToBuffer32((S32*)subShapeNumDecals.address(), numSubShapes);
     alloc.setGuard();
 
@@ -1459,6 +1589,20 @@ ResourceInstance* constructTSShape(Stream& stream)
 
     return ret;
 }
+
+//ResourceInstance* constructColladaShape(Stream& stream)
+//{
+//    FileStream& fs = static_cast<FileStream&>(stream);
+//    loadColladaShape(stream);
+//    TSShape* ret = new TSShape;
+//    if (!ret->read(&stream))
+//    {
+//        delete ret;
+//        ret = NULL;
+//    }
+//
+//    return ret;
+//}
 
 #if 1
 TSShape::ConvexHullAccelerator* TSShape::getAccelerator(S32 dl)

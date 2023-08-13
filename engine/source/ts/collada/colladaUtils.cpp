@@ -6,7 +6,6 @@
 #include <algorithm>
 #include "console/console.h"
 #include "ts/collada/colladaUtils.h"
-#include "ts/collada/colladaShapeLoader.h"
 
 using namespace ColladaUtils;
 
@@ -16,17 +15,22 @@ using namespace ColladaUtils;
 #define CREATE_ELEMENT(container, name, type)   \
    type* name = daeSafeCast<type>(container->createAndPlace(#name));
 
+ColladaUtils::ImportOptions& ColladaUtils::getOptions()
+{
+   static ImportOptions options;
+   return options;
+}
+
 //------------------------------------------------------------------------------
 // Utility functions
 
 // Convert a transform from the Collada model coordinate system to the DTS coordinate
 // system
-MatrixF ColladaUtils::convertTransform(const MatrixF& m)
+void ColladaUtils::convertTransform(MatrixF& mat)
 {
-   MatrixF mat(m);
    MatrixF rot(true);
 
-   switch (ColladaShapeLoader::getUpAxis())
+   switch (ColladaUtils::getOptions().upAxis)
    {
       case UPAXISTYPE_X_UP:
          // rotate 90 around Y-axis, then 90 around Z-axis
@@ -49,14 +53,10 @@ MatrixF ColladaUtils::convertTransform(const MatrixF& m)
          break;
 
       case UPAXISTYPE_Z_UP:
+      default:
          // nothing to do
          break;
-
-      default:
-         AssertFatal(false, "ColladaUtils::convertTransform - Unrecognized UpAxis Type");
-         break;
    }
-   return mat;
 }
 
 /// Find the COMMON profile element in an effect
@@ -76,40 +76,136 @@ const domProfile_COMMON* ColladaUtils::findEffectCommonProfile(const domEffect* 
 /// Find the <diffuse> element in the COMMON profile of an effect
 const domCommon_color_or_texture_type_complexType* ColladaUtils::findEffectDiffuse(const domEffect* effect)
 {
-   // Find the <diffuse> element
    const domProfile_COMMON* profile = findEffectCommonProfile(effect);
-   if (!profile)
-      return NULL;
+   if (profile) {
 
-   if (profile->getTechnique()->getLambert()) {
-      const domProfile_COMMON::domTechnique::domLambert* lambert = profile->getTechnique()->getLambert();
-      return lambert->getDiffuse();
+      if (profile->getTechnique()->getLambert())
+         return profile->getTechnique()->getLambert()->getDiffuse();
+      else if (profile->getTechnique()->getPhong())
+         return profile->getTechnique()->getPhong()->getDiffuse();
+      else if (profile->getTechnique()->getBlinn())
+         return profile->getTechnique()->getBlinn()->getDiffuse();
    }
-   else if (profile->getTechnique()->getPhong()) {
-      const domProfile_COMMON::domTechnique::domPhong* phong = profile->getTechnique()->getPhong();
-      return phong->getDiffuse();
-   }
-   else if (profile->getTechnique()->getBlinn()) {
-      const domProfile_COMMON::domTechnique::domBlinn* blinn = profile->getTechnique()->getBlinn();
-      return blinn->getDiffuse();
-   }
+
    return NULL;
 }
 
-/// Get the <sampler2D> element with the given ID
-const domFx_sampler2D_common_complexType* ColladaUtils::getSampler2D(const domEffect* effect)
+/// Find the <specular> element in the COMMON profile of an effect
+const domCommon_color_or_texture_type_complexType* ColladaUtils::findEffectSpecular(const domEffect* effect)
 {
-   const domCommon_color_or_texture_type_complexType* diffuse = ColladaUtils::findEffectDiffuse(effect);
-   if (diffuse) {
-      const domCommon_color_or_texture_type_complexType::domTexture* texture = diffuse->getTexture();
-      if (texture && texture->getTexture()) {
-         daeSIDResolver resolver(const_cast<domEffect*>(effect), texture->getTexture());
+   const domProfile_COMMON* profile = findEffectCommonProfile(effect);
+   if (profile) {
+
+      if (profile->getTechnique()->getLambert())
+         return NULL;      // no <specular> element for Lambert shader
+      else if (profile->getTechnique()->getPhong())
+         return profile->getTechnique()->getPhong()->getSpecular();
+      else if (profile->getTechnique()->getBlinn())
+         return profile->getTechnique()->getBlinn()->getSpecular();
+   }
+
+   return NULL;
+}
+
+const domFx_sampler2D_common_complexType* ColladaUtils::getTextureSampler(const domEffect* effect,
+                                                                          const domCommon_color_or_texture_type_complexType* texture)
+{
+   // <texture texture="new_param_SID">.<newparam>.<sampler2D>
+   if (texture) {
+      const domCommon_color_or_texture_type_complexType::domTexture* domTex = texture->getTexture();
+      if (domTex && domTex->getTexture()) {
+         daeSIDResolver resolver(const_cast<domEffect*>(effect), domTex->getTexture());
          const domCommon_newparam_type* param = daeSafeCast<domCommon_newparam_type>(resolver.getElement());
          if (param)
             return param->getSampler2D();
       }
    }
+
    return NULL;
+}
+
+String ColladaUtils::getSamplerImagePath(const domEffect* effect,
+                                         const domFx_sampler2D_common_complexType* sampler2D)
+{
+   // <sampler2D>.<source>.<newparam>.<surface>.<init_from>.<image>.<init_from>
+   const domProfile_COMMON* profile = findEffectCommonProfile(effect);
+   if (profile && sampler2D && sampler2D->getSource()) {
+
+      // Resolve the SID to get the <surface> param
+      daeSIDResolver resolver(const_cast<domProfile_COMMON*>(profile), sampler2D->getSource()->getValue());
+      domCommon_newparam_type* surfaceParam = daeSafeCast<domCommon_newparam_type>(resolver.getElement());
+
+      // Get the surface <init_from> element
+      if (surfaceParam && surfaceParam->getSurface()) {
+
+         const domFx_surface_init_common* surfaceInit = surfaceParam->getSurface()->getFx_surface_init_common();
+         if (surfaceInit && surfaceInit->getInit_from_array().getCount()) {
+            // Resolve the ID to get the <image>, then read the texture path
+            xsIDREF& idRef = surfaceInit->getInit_from_array()[0]->getValue();
+            const domImage* image = daeSafeCast<domImage>(idRef.getElement());
+            if (image && image->getInit_from())
+               return resolveImagePath(image);
+         }
+      }
+   }
+
+   return "";
+}
+
+// Resolve image path into something we can use.
+String ColladaUtils::resolveImagePath(const domImage* image)
+{
+   // 1. If the URI string contains an absolute path, use it if
+   //    it is inside the Torque folder, otherwise force textures
+   //    to be in the same folder as the shape.
+   // 2. If the URI string contains a relative path, append it
+   //    to the shape path (since materials.cs cannot handle
+   //    relative paths).
+
+   Torque::Path imagePath;
+   String imageStr(image->getInit_from()->getValue().originalStr().c_str());
+
+   // Trim leading "file://"
+   if (imageStr.substr(0, 7) == "file://")
+      imageStr.erase(0, 7);
+
+   // Trim leading slash from absolute windows paths. eg. /D:/
+   if ((imageStr[0] == '/') && (imageStr.find(':') == 2))
+      imageStr.erase(0, 1);
+
+   // Replace %20 with space
+	//imageStr.replace("%20", " ");
+
+   //if (Platform::isFullPath(imageStr))
+   //{
+   //   // Absolute path => check for outside the Torque game folder
+   //   imagePath = String( Platform::makeRelativePathName(imageStr, Platform::getMainDotCsDir()) );
+   //   if ( !imagePath.getRoot().empty()       ||    // different drive (eg. C:/ vs D:/)
+   //        (imagePath.getPath().find("/") == 0) ||    // different OS (eg. /home vs C:/home)
+   //        (imagePath.getPath().find("../") == 0) )   // same drive, outside Torque game folder
+   //   {
+   //      // Force these to the shape folder
+   //      imagePath.setRoot("");
+   //      imagePath.setPath("");
+   //   }
+   //}
+   //else
+   //{
+      // Relative path => prepend with shape path
+      Torque::Path tempPath(imageStr);
+      imagePath = TSShapeLoader::getShapePath();
+      imagePath.appendPath(tempPath);
+      imagePath.setFileName(tempPath.getFileName());
+   // }
+
+   // No need to specify the path if it is in the same folder as the model
+   if (imagePath.getPath() == TSShapeLoader::getShapePath().getPath())
+      imagePath.setPath("");
+
+   // Don't care about the extension
+   imagePath.setExtension("");
+
+   return imagePath.getFullPath();
 }
 
 //-----------------------------------------------------------------------------
@@ -796,573 +892,567 @@ void ColladaUtils::applyConditioners(domCOLLADA* root)
 //
 //   return String::EmptyString;
 //}
-
-void ColladaUtils::exportColladaHeader(TiXmlElement* rootNode)
-{
-    Con::printf("Not implemented yet!");
-   //TiXmlElement* assetNode = new TiXmlElement("asset");
-   //rootNode->LinkEndChild(assetNode);
-
-   //TiXmlElement* contributorNode = new TiXmlElement("contributor");
-   //assetNode->LinkEndChild(contributorNode);
-
-   //TiXmlElement* authorNode = new TiXmlElement("author");
-   //contributorNode->LinkEndChild(authorNode);
-
-   //TiXmlElement* authoringToolNode = new TiXmlElement("authoring_tool");
-   //contributorNode->LinkEndChild(authoringToolNode);
-   //TiXmlText* authorText = new TiXmlText(avar("%s %s Interior Exporter", getEngineProductString(), getVersionString()));
-   //authoringToolNode->LinkEndChild(authorText);
-
-   //TiXmlElement* commentsNode = new TiXmlElement("comments");
-   //contributorNode->LinkEndChild(commentsNode);
-
-   //// Get the current time
-   //Platform::LocalTime lt;
-   //Platform::getLocalTime(lt);
-   //String localTime = Platform::localTimeToString(lt);
-
-   //localTime.replace('\t', ' ');
-
-   //TiXmlElement* createdNode = new TiXmlElement("created");
-   //assetNode->LinkEndChild(createdNode);
-   //TiXmlText* createdText = new TiXmlText(avar("%s", localTime.c_str()));
-   //createdNode->LinkEndChild(createdText);
-
-   //TiXmlElement* modifiedNode = new TiXmlElement("modified");
-   //assetNode->LinkEndChild(modifiedNode);
-   //TiXmlText* modifiedText = new TiXmlText(avar("%s", localTime.c_str()));
-   //modifiedNode->LinkEndChild(modifiedText);
-
-   //TiXmlElement* revisionNode = new TiXmlElement("revision");
-   //assetNode->LinkEndChild(revisionNode);
-
-   //TiXmlElement* titleNode = new TiXmlElement("title");
-   //assetNode->LinkEndChild(titleNode);
-
-   //TiXmlElement* subjectNode = new TiXmlElement("subject");
-   //assetNode->LinkEndChild(subjectNode);
-
-   //TiXmlElement* keywordsNode = new TiXmlElement("keywords");
-   //assetNode->LinkEndChild(keywordsNode);
-
-   //// Torque uses Z_UP with 1 unit equal to 1 meter by default
-   //TiXmlElement* unitNode = new TiXmlElement("unit");
-   //assetNode->LinkEndChild(unitNode);
-   //unitNode->SetAttribute("meter", "1.000000");
-
-   //TiXmlElement* axisNode = new TiXmlElement("up_axis");
-   //assetNode->LinkEndChild(axisNode);
-   //TiXmlText* axisText = new TiXmlText("Z_UP");
-   //axisNode->LinkEndChild(axisText);
-}
-
-void ColladaUtils::exportColladaMaterials(TiXmlElement* rootNode, const OptimizedPolyList& mesh, Vector<String>& matNames, const Torque::Path& colladaFile)
-{
-    Con::printf("Not implemented yet!");
-   //// First the image library
-   //TiXmlElement* imgLibNode = new TiXmlElement("library_images");
-   //rootNode->LinkEndChild(imgLibNode);
-
-   //for (U32 i = 0; i < mesh.mMaterialList.size(); i++)
-   //{
-   //   BaseMatInstance* baseInst = mesh.mMaterialList[i];
-
-   //   matNames.push_back(String::ToString("Material%d", i));
-
-   //   Material* mat = dynamic_cast<Material*>(baseInst->getMaterial());
-   //   if (!mat)
-   //      continue;
-
-   //   String diffuseMap;
-
-   //   if (mat->getName() && mat->getName()[0])
-   //      matNames.last() = String(mat->getName());
-
-   //   // Handle an auto-generated "Default Material" specially
-   //   if (mat->isAutoGenerated())
-   //   {
-   //      Torque::Path diffusePath;
-
-   //      if (mat->mDiffuseMapFilename[0].isNotEmpty())
-   //         diffusePath = mat->mDiffuseMapFilename[0];
-   //      else if (mat->mBaseTexFilename[0].isNotEmpty())
-   //         diffusePath = mat->mBaseTexFilename[0];
-   //      else
-   //         diffusePath = String("warningMat");
-
-   //      matNames.last() = diffusePath.getFileName();
-   //      diffuseMap += diffusePath.getFullFileName();
-   //   }
-   //   else
-   //   {
-   //      if (mat->mDiffuseMapFilename[0].isNotEmpty())
-   //         diffuseMap += mat->mDiffuseMapFilename[0];
-   //      else if (mat->mBaseTexFilename[0].isNotEmpty())
-   //         diffuseMap += mat->mBaseTexFilename[0];
-   //      else
-   //         diffuseMap += "warningMat";
-   //   }
-
-   //   Torque::Path diffusePath = findTexture(colladaFile.getPath() + "/" + diffuseMap);
-
-   //   // If we didn't get a path
-   //   if (diffusePath.getFullPath().isNotEmpty())
-   //      diffuseMap = Torque::Path::MakeRelativePath(diffusePath, colladaFile);
-
-   //   TiXmlElement* imageNode = new TiXmlElement("image");
-   //   imgLibNode->LinkEndChild(imageNode);
-   //   imageNode->SetAttribute("id", avar("%s-Diffuse", matNames.last().c_str()));
-   //   imageNode->SetAttribute("name", avar("%s-Diffuse", matNames.last().c_str()));
-
-   //   TiXmlElement* initNode = new TiXmlElement("init_from");
-   //   imageNode->LinkEndChild(initNode);
-   //   TiXmlText* initText = new TiXmlText(avar("file://%s", diffuseMap.c_str()));
-   //   initNode->LinkEndChild(initText);
-   //}
-
-   //// Next the material library
-   //TiXmlElement* matLibNode = new TiXmlElement("library_materials");
-   //rootNode->LinkEndChild(matLibNode);
-
-   //for (U32 i = 0; i < mesh.mMaterialList.size(); i++)
-   //{
-   //   BaseMatInstance* baseInst = mesh.mMaterialList[i];
-
-   //   Material* mat = dynamic_cast<Material*>(baseInst->getMaterial());
-   //   if (!mat)
-   //      continue;
-
-   //   TiXmlElement* materialNode = new TiXmlElement("material");
-   //   matLibNode->LinkEndChild(materialNode);
-   //   materialNode->SetAttribute("id", matNames[i].c_str());
-   //   materialNode->SetAttribute("name", matNames[i].c_str());
-
-   //   TiXmlElement* instEffectNode = new TiXmlElement("instance_effect");
-   //   materialNode->LinkEndChild(instEffectNode);
-   //   instEffectNode->SetAttribute("url", avar("#%s-fx", matNames[i].c_str()));
-   //}
-
-   //// Finally the effects library
-   //TiXmlElement* effectLibNode = new TiXmlElement("library_effects");
-   //rootNode->LinkEndChild(effectLibNode);
-
-   //for (U32 i = 0; i < mesh.mMaterialList.size(); i++)
-   //{
-   //   BaseMatInstance* baseInst = mesh.mMaterialList[i];
-
-   //   Material* mat = dynamic_cast<Material*>(baseInst->getMaterial());
-   //   if (!mat)
-   //      continue;
-
-   //   TiXmlElement* effectNode = new TiXmlElement("effect");
-   //   effectLibNode->LinkEndChild(effectNode);
-   //   effectNode->SetAttribute("id", avar("%s-fx", matNames[i].c_str()));
-   //   effectNode->SetAttribute("name", avar("%s-fx", matNames[i].c_str()));
-
-   //   TiXmlElement* profileNode = new TiXmlElement("profile_COMMON");
-   //   effectNode->LinkEndChild(profileNode);
-
-   //   TiXmlElement* techniqueNode = new TiXmlElement("technique");
-   //   profileNode->LinkEndChild(techniqueNode);
-   //   techniqueNode->SetAttribute("sid", "standard");
-
-   //   TiXmlElement* phongNode = new TiXmlElement("phong");
-   //   techniqueNode->LinkEndChild(phongNode);
-
-   //   TiXmlElement* diffuseNode = new TiXmlElement("diffuse");
-   //   phongNode->LinkEndChild(diffuseNode);
-
-   //   TiXmlElement* textureNode = new TiXmlElement("texture");
-   //   diffuseNode->LinkEndChild(textureNode);
-   //   textureNode->SetAttribute("texture", avar("%s-Diffuse", matNames[i].c_str()));
-   //   textureNode->SetAttribute("texcoord", "CHANNEL0");
-
-   //   // Extra info useful for getting the texture to show up correctly in some apps
-   //   TiXmlElement* extraNode = new TiXmlElement("extra");
-   //   textureNode->LinkEndChild(extraNode);
-
-   //   TiXmlElement* extraTechNode = new TiXmlElement("technique");
-   //   extraNode->LinkEndChild(extraTechNode);
-   //   extraTechNode->SetAttribute("profile", "MAYA");
-
-   //   TiXmlElement* extraWrapUNode = new TiXmlElement("wrapU");
-   //   extraTechNode->LinkEndChild(extraWrapUNode);
-   //   extraWrapUNode->SetAttribute("sid", "wrapU0");
-
-   //   TiXmlText* extraWrapUText = new TiXmlText("TRUE");
-   //   extraWrapUNode->LinkEndChild(extraWrapUText);
-
-   //   TiXmlElement* extraWrapVNode = new TiXmlElement("wrapV");
-   //   extraTechNode->LinkEndChild(extraWrapVNode);
-   //   extraWrapVNode->SetAttribute("sid", "wrapV0");
-
-   //   TiXmlText* extraWrapVText = new TiXmlText("TRUE");
-   //   extraWrapVNode->LinkEndChild(extraWrapVText);
-
-   //   TiXmlElement* extraBlendNode = new TiXmlElement("blend_mode");
-   //   extraTechNode->LinkEndChild(extraBlendNode);
-
-   //   TiXmlText* extraBlendText = new TiXmlText("ADD");
-   //   extraBlendNode->LinkEndChild(extraBlendText);
-   //}
-}
-
-void ColladaUtils::exportColladaTriangles(TiXmlElement* meshNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames)
-{
-    Con::printf("Not implemented yet!");
-   //for (U32 i = 0; i < matNames.size(); i++)
-   //{
-   //   // Calculate the number of triangles that uses this Material
-   //   U32 triangleCount = 0;
-
-   //   for (U32 j = 0; j < mesh.mPolyList.size(); j++)
-   //   {
-   //      const OptimizedPolyList::Poly& poly = mesh.mPolyList[j];
-
-   //      if (poly.material != i)
-   //         continue;
-
-   //      if (poly.vertexCount < 3)
-   //         continue;
-
-   //      if (poly.type == OptimizedPolyList::TriangleList ||
-   //          poly.type == OptimizedPolyList::TriangleFan ||
-   //          poly.type == OptimizedPolyList::TriangleStrip)
-   //      {
-   //         triangleCount += poly.vertexCount - 2;
-   //      }
-   //      else
-   //         AssertISV(false, "ColladaUtils::exportColladaTriangles(): Unknown Poly type!");
-   //   }
-
-   //   // Make sure that we are actually using this Material
-   //   if (triangleCount == 0)
-   //      continue;
-
-   //   TiXmlElement* trianglesNode = new TiXmlElement("triangles");
-   //   meshNode->LinkEndChild(trianglesNode);
-   //   trianglesNode->SetAttribute("material", matNames[i].c_str());
-   //   trianglesNode->SetAttribute("count", avar("%d", triangleCount));
-
-   //   TiXmlElement* trianglesVertInputNode = new TiXmlElement("input");
-   //   trianglesNode->LinkEndChild(trianglesVertInputNode);
-   //   trianglesVertInputNode->SetAttribute("semantic", "VERTEX");
-   //   trianglesVertInputNode->SetAttribute("offset", "0");
-   //   trianglesVertInputNode->SetAttribute("source", avar("#%s-Vertex", meshName.c_str()));
-
-   //   TiXmlElement* trianglesNormalInputNode = new TiXmlElement("input");
-   //   trianglesNode->LinkEndChild(trianglesNormalInputNode);
-   //   trianglesNormalInputNode->SetAttribute("semantic", "NORMAL");
-   //   trianglesNormalInputNode->SetAttribute("offset", "1");
-   //   trianglesNormalInputNode->SetAttribute("source", avar("#%s-Normal", meshName.c_str()));
-
-   //   TiXmlElement* trianglesUV0InputNode = new TiXmlElement("input");
-   //   trianglesNode->LinkEndChild(trianglesUV0InputNode);
-   //   trianglesUV0InputNode->SetAttribute("semantic", "TEXCOORD");
-   //   trianglesUV0InputNode->SetAttribute("offset", "2");
-   //   trianglesUV0InputNode->SetAttribute("set", "0");
-   //   trianglesUV0InputNode->SetAttribute("source", avar("#%s-UV0", meshName.c_str()));
-
-   //   TiXmlElement* polyNode = new TiXmlElement("p");
-   //   trianglesNode->LinkEndChild(polyNode);
-
-   //   Vector<U32> tempIndices;
-   //   tempIndices.reserve(4);
-
-   //   for (U32 j = 0; j < mesh.mPolyList.size(); j++)
-   //   {
-   //      const OptimizedPolyList::Poly& poly = mesh.mPolyList[j];
-
-   //      if (poly.vertexCount < 3)
-   //         continue;
-
-   //      if (poly.material != i)
-   //         continue;
-
-   //      tempIndices.setSize(poly.vertexCount);
-   //      dMemset(tempIndices.address(), 0, poly.vertexCount);
-
-   //      if (poly.type == OptimizedPolyList::TriangleStrip)
-   //      {
-   //         tempIndices[0] = 0;
-   //         U32 idx = 1;
-   //         
-   //         for (U32 k = 1; k < poly.vertexCount; k += 2)
-   //            tempIndices[idx++] = k;
-
-   //         for (U32 k = ((poly.vertexCount - 1) & (~0x1)); k > 0; k -= 2)
-   //            tempIndices[idx++] = k;
-   //      }
-   //      else if (poly.type == OptimizedPolyList::TriangleList ||
-   //               poly.type == OptimizedPolyList::TriangleFan)
-   //      {
-   //         for (U32 k = 0; k < poly.vertexCount; k++)
-   //            tempIndices[k] = k;
-   //      }
-   //      else
-   //         AssertISV(false, "ColladaUtils::exportColladaTriangles(): Unknown Poly type!");
-
-   //      const U32& firstIdx = mesh.mIndexList[poly.vertexStart];
-   //      const OptimizedPolyList::VertIndex& firstVertIdx = mesh.mVertexList[firstIdx];
-
-   //      for (U32 k = 1; k < poly.vertexCount - 1; k++)
-   //      {
-   //         const U32& secondIdx = mesh.mIndexList[poly.vertexStart + tempIndices[k]];
-   //         const U32& thirdIdx  = mesh.mIndexList[poly.vertexStart + tempIndices[k + 1]];
-
-   //         const OptimizedPolyList::VertIndex& secondVertIdx = mesh.mVertexList[secondIdx];
-   //         const OptimizedPolyList::VertIndex& thirdVertIdx = mesh.mVertexList[thirdIdx];
-
-   //         // Note the reversed winding on the triangles
-   //         const char* tri = avar("%d %d %d %d %d %d %d %d %d",
-   //                                thirdVertIdx.vertIdx, thirdVertIdx.normalIdx, thirdVertIdx.uv0Idx,
-   //                                secondVertIdx.vertIdx, secondVertIdx.normalIdx, secondVertIdx.uv0Idx,
-   //                                firstVertIdx.vertIdx, firstVertIdx.normalIdx, firstVertIdx.uv0Idx);
-
-   //         TiXmlText* triangleText = new TiXmlText(tri);
-   //         polyNode->LinkEndChild(triangleText);
-   //      }
-   //   }
-   //}
-}
-
-void ColladaUtils::exportColladaMesh(TiXmlElement* rootNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames)
-{
-    Con::printf("Not implemented yet!");
-   //TiXmlElement* libGeomsNode = new TiXmlElement("library_geometries");
-   //rootNode->LinkEndChild(libGeomsNode);
-
-   //TiXmlElement* geometryNode = new TiXmlElement("geometry");
-   //libGeomsNode->LinkEndChild(geometryNode);
-   //geometryNode->SetAttribute("id", avar("%s-lib", meshName.c_str()));
-   //geometryNode->SetAttribute("name", avar("%sMesh", meshName.c_str()));
-
-   //TiXmlElement* meshNode = new TiXmlElement("mesh");
-   //geometryNode->LinkEndChild(meshNode);
-
-   //// Save out the vertices
-   //TiXmlElement* vertsSourceNode = new TiXmlElement("source");
-   //meshNode->LinkEndChild(vertsSourceNode);
-   //vertsSourceNode->SetAttribute("id", avar("%s-Position", meshName.c_str()));
-
-   //TiXmlElement* vertsNode = new TiXmlElement("float_array");
-   //vertsSourceNode->LinkEndChild(vertsNode);
-   //vertsNode->SetAttribute("id", avar("%s-Position-array", meshName.c_str()));
-   //vertsNode->SetAttribute("count", avar("%d", mesh.mPoints.size() * 3));
-
-   //for (U32 i = 0; i < mesh.mPoints.size(); i++)
-   //{
-   //   const Point3F& vert = mesh.mPoints[i];
-
-   //   TiXmlText* vertText = new TiXmlText(avar("%.4f %.4f %.4f", vert.x, vert.y, vert.z));
-   //   vertsNode->LinkEndChild(vertText);
-   //}
-
-   //// Save the vertex accessor
-   //TiXmlElement* vertsTechNode = new TiXmlElement("technique_common");
-   //vertsSourceNode->LinkEndChild(vertsTechNode);
-
-   //TiXmlElement* vertsAccNode = new TiXmlElement("accessor");
-   //vertsTechNode->LinkEndChild(vertsAccNode);
-   //vertsAccNode->SetAttribute("source", avar("#%s-Position-array", meshName.c_str()));
-   //vertsAccNode->SetAttribute("count", avar("%d", mesh.mPoints.size()));
-   //vertsAccNode->SetAttribute("stride", "3");
-
-   //TiXmlElement* vertsAccXNode = new TiXmlElement("param");
-   //vertsAccNode->LinkEndChild(vertsAccXNode);
-   //vertsAccXNode->SetAttribute("name", "X");
-   //vertsAccXNode->SetAttribute("type", "float");
-
-   //TiXmlElement* vertsAccYNode = new TiXmlElement("param");
-   //vertsAccNode->LinkEndChild(vertsAccYNode);
-   //vertsAccYNode->SetAttribute("name", "Y");
-   //vertsAccYNode->SetAttribute("type", "float");
-
-   //TiXmlElement* vertsAccZNode = new TiXmlElement("param");
-   //vertsAccNode->LinkEndChild(vertsAccZNode);
-   //vertsAccZNode->SetAttribute("name", "Z");
-   //vertsAccZNode->SetAttribute("type", "float");
-
-   //// Save out the normals
-   //TiXmlElement* normalsSourceNode = new TiXmlElement("source");
-   //meshNode->LinkEndChild(normalsSourceNode);
-   //normalsSourceNode->SetAttribute("id", avar("%s-Normal", meshName.c_str()));
-
-   //TiXmlElement* normalsNode = new TiXmlElement("float_array");
-   //normalsSourceNode->LinkEndChild(normalsNode);
-   //normalsNode->SetAttribute("id", avar("%s-Normal-array", meshName.c_str()));
-   //normalsNode->SetAttribute("count", avar("%d", mesh.mNormals.size() * 3));
-
-   //for (U32 i = 0; i < mesh.mNormals.size(); i++)
-   //{
-   //   const Point3F& normal = mesh.mNormals[i];
-
-   //   TiXmlText* normalText = new TiXmlText(avar("%.4f %.4f %.4f", normal.x, normal.y, normal.z));
-   //   normalsNode->LinkEndChild(normalText);
-   //}
-
-   //// Save the normals accessor
-   //TiXmlElement* normalsTechNode = new TiXmlElement("technique_common");
-   //normalsSourceNode->LinkEndChild(normalsTechNode);
-
-   //TiXmlElement* normalsAccNode = new TiXmlElement("accessor");
-   //normalsTechNode->LinkEndChild(normalsAccNode);
-   //normalsAccNode->SetAttribute("source", avar("#%s-Normal-array", meshName.c_str()));
-   //normalsAccNode->SetAttribute("count", avar("%d", mesh.mNormals.size()));
-   //normalsAccNode->SetAttribute("stride", "3");
-
-   //TiXmlElement* normalsAccXNode = new TiXmlElement("param");
-   //normalsAccNode->LinkEndChild(normalsAccXNode);
-   //normalsAccXNode->SetAttribute("name", "X");
-   //normalsAccXNode->SetAttribute("type", "float");
-
-   //TiXmlElement* normalsAccYNode = new TiXmlElement("param");
-   //normalsAccNode->LinkEndChild(normalsAccYNode);
-   //normalsAccYNode->SetAttribute("name", "Y");
-   //normalsAccYNode->SetAttribute("type", "float");
-
-   //TiXmlElement* normalsAccZNode = new TiXmlElement("param");
-   //normalsAccNode->LinkEndChild(normalsAccZNode);
-   //normalsAccZNode->SetAttribute("name", "Z");
-   //normalsAccZNode->SetAttribute("type", "float");
-
-   //// Save out the uvs
-   //TiXmlElement* uv0SourceNode = new TiXmlElement("source");
-   //meshNode->LinkEndChild(uv0SourceNode);
-   //uv0SourceNode->SetAttribute("id", avar("%s-UV0", meshName.c_str()));
-
-   //TiXmlElement* uv0Node = new TiXmlElement("float_array");
-   //uv0SourceNode->LinkEndChild(uv0Node);
-   //uv0Node->SetAttribute("id", avar("%s-UV0-array", meshName.c_str()));
-   //uv0Node->SetAttribute("count", avar("%d", mesh.mUV0s.size() * 2));
-
-   //for (U32 i = 0; i < mesh.mUV0s.size(); i++)
-   //{
-   //   const Point2F& uv0 = mesh.mUV0s[i];
-
-   //   TiXmlText* uv0Text = new TiXmlText(avar("%.4f %.4f", uv0.x, uv0.y));
-   //   uv0Node->LinkEndChild(uv0Text);
-   //}
-
-   //// Save the uv0 accessor
-   //TiXmlElement* uv0TechNode = new TiXmlElement("technique_common");
-   //uv0SourceNode->LinkEndChild(uv0TechNode);
-
-   //TiXmlElement* uv0AccNode = new TiXmlElement("accessor");
-   //uv0TechNode->LinkEndChild(uv0AccNode);
-   //uv0AccNode->SetAttribute("source", avar("#%s-UV0-array", meshName.c_str()));
-   //uv0AccNode->SetAttribute("count", avar("%d", mesh.mUV0s.size()));
-   //uv0AccNode->SetAttribute("stride", "2");
-
-   //TiXmlElement* uv0AccSNode = new TiXmlElement("param");
-   //uv0AccNode->LinkEndChild(uv0AccSNode);
-   //uv0AccSNode->SetAttribute("name", "S");
-   //uv0AccSNode->SetAttribute("type", "float");
-
-   //TiXmlElement* uv0AccTNode = new TiXmlElement("param");
-   //uv0AccNode->LinkEndChild(uv0AccTNode);
-   //uv0AccTNode->SetAttribute("name", "T");
-   //uv0AccTNode->SetAttribute("type", "float");
-
-   //// Define the vertices position array
-   //TiXmlElement* verticesNode = new TiXmlElement("vertices");
-   //meshNode->LinkEndChild(verticesNode);
-   //verticesNode->SetAttribute("id", avar("%s-Vertex", meshName.c_str()));
-
-   //TiXmlElement* verticesInputNode = new TiXmlElement("input");
-   //verticesNode->LinkEndChild(verticesInputNode);
-   //verticesInputNode->SetAttribute("semantic", "POSITION");
-   //verticesInputNode->SetAttribute("source", avar("#%s-Position", meshName.c_str()));
-
-   //exportColladaTriangles(meshNode, mesh, meshName, matNames);
-}
-
-void ColladaUtils::exportColladaScene(TiXmlElement* rootNode, const String& meshName, const Vector<String>& matNames)
-{
-    Con::printf("Not implemented yet!");
-   //TiXmlElement* libSceneNode = new TiXmlElement("library_visual_scenes");
-   //rootNode->LinkEndChild(libSceneNode);
-
-   //TiXmlElement* visSceneNode = new TiXmlElement("visual_scene");
-   //libSceneNode->LinkEndChild(visSceneNode);
-   //visSceneNode->SetAttribute("id", "RootNode");
-   //visSceneNode->SetAttribute("name", "RootNode");
-
-   //TiXmlElement* nodeNode = new TiXmlElement("node");
-   //visSceneNode->LinkEndChild(nodeNode);
-   //nodeNode->SetAttribute("id", avar("%s", meshName.c_str()));
-   //nodeNode->SetAttribute("name", avar("%s", meshName.c_str()));
-
-   //TiXmlElement* instanceGeomNode = new TiXmlElement("instance_geometry");
-   //nodeNode->LinkEndChild(instanceGeomNode);
-   //instanceGeomNode->SetAttribute("url", avar("#%s-lib", meshName.c_str()));
-
-   //TiXmlElement* bindMatNode = new TiXmlElement("bind_material");
-   //instanceGeomNode->LinkEndChild(bindMatNode);
-
-   //TiXmlElement* techniqueNode = new TiXmlElement("technique_common");
-   //bindMatNode->LinkEndChild(techniqueNode);
-
-   //// Bind the materials
-   //for (U32 i = 0; i < matNames.size(); i++)
-   //{
-   //   TiXmlElement* instMatNode = new TiXmlElement("instance_material");
-   //   techniqueNode->LinkEndChild(instMatNode);
-   //   instMatNode->SetAttribute("symbol", avar("%s", matNames[i].c_str()));
-   //   instMatNode->SetAttribute("target", avar("#%s", matNames[i].c_str()));
-   //}
-
-   //TiXmlElement* sceneNode = new TiXmlElement("scene");
-   //rootNode->LinkEndChild(sceneNode);
-
-   //TiXmlElement* instVisSceneNode = new TiXmlElement("instance_visual_scene");
-   //sceneNode->LinkEndChild(instVisSceneNode);
-   //instVisSceneNode->SetAttribute("url", "#RootNode");
-}
-
-void ColladaUtils::exportToCollada(const Torque::Path& colladaFile, const OptimizedPolyList& mesh, const String& meshName)
-{
-    Con::printf("Not implemented yet!");
-   //// Get the mesh name
-   //String outMeshName = meshName;
-
-   //if (outMeshName.isEmpty())
-   //   outMeshName = colladaFile.getFileName();
-
-   //// The XML document that will hold all of our data
-   //TiXmlDocument doc;
-
-   //// Add a standard XML declaration to the top
-   //TiXmlDeclaration* xmlDecl = new TiXmlDeclaration("1.0", "utf-8", "");
-   //doc.LinkEndChild(xmlDecl);
-
-   //// Create our Collada root node and populate a couple standard attributes
-   //TiXmlElement* rootNode = new TiXmlElement("COLLADA");
-   //rootNode->SetAttribute("xmlns", "http://www.collada.org/2005/11/COLLADASchema");
-   //rootNode->SetAttribute("version", "1.4.0");
-
-   //// Add the root node to the document
-   //doc.LinkEndChild(rootNode);
-
-   //// Save out our header info
-   //exportColladaHeader(rootNode);
-
-   //// Save out the materials
-   //Vector<String> mapNames;
-
-   //exportColladaMaterials(rootNode, mesh, mapNames, colladaFile);
-
-   //// Save out our geometry
-   //exportColladaMesh(rootNode, mesh, outMeshName, mapNames);
-
-   //// Save out our scene nodes
-   //exportColladaScene(rootNode, outMeshName, mapNames);
-
-   //// Write out the actual Collada file
-   //char fullPath[MAX_PATH_LENGTH];
-   //Platform::makeFullPathName(colladaFile.getFullPath().c_str(), fullPath, MAX_PATH_LENGTH);
-
-   //if (!doc.SaveFile(fullPath))
-   //   Con::errorf("ColladaUtils::exportToCollada(): Unable to export to %s", fullPath);
-}
+//
+//void ColladaUtils::exportColladaHeader(TiXmlElement* rootNode)
+//{
+//   TiXmlElement* assetNode = new TiXmlElement("asset");
+//   rootNode->LinkEndChild(assetNode);
+//
+//   TiXmlElement* contributorNode = new TiXmlElement("contributor");
+//   assetNode->LinkEndChild(contributorNode);
+//
+//   TiXmlElement* authorNode = new TiXmlElement("author");
+//   contributorNode->LinkEndChild(authorNode);
+//
+//   TiXmlElement* authoringToolNode = new TiXmlElement("authoring_tool");
+//   contributorNode->LinkEndChild(authoringToolNode);
+//   TiXmlText* authorText = new TiXmlText(avar("%s %s Interior Exporter", getEngineProductString(), getVersionString()));
+//   authoringToolNode->LinkEndChild(authorText);
+//
+//   TiXmlElement* commentsNode = new TiXmlElement("comments");
+//   contributorNode->LinkEndChild(commentsNode);
+//
+//   // Get the current time
+//   Platform::LocalTime lt;
+//   Platform::getLocalTime(lt);
+//   String localTime = Platform::localTimeToString(lt);
+//
+//   localTime.replace('\t', ' ');
+//
+//   TiXmlElement* createdNode = new TiXmlElement("created");
+//   assetNode->LinkEndChild(createdNode);
+//   TiXmlText* createdText = new TiXmlText(avar("%s", localTime.c_str()));
+//   createdNode->LinkEndChild(createdText);
+//
+//   TiXmlElement* modifiedNode = new TiXmlElement("modified");
+//   assetNode->LinkEndChild(modifiedNode);
+//   TiXmlText* modifiedText = new TiXmlText(avar("%s", localTime.c_str()));
+//   modifiedNode->LinkEndChild(modifiedText);
+//
+//   TiXmlElement* revisionNode = new TiXmlElement("revision");
+//   assetNode->LinkEndChild(revisionNode);
+//
+//   TiXmlElement* titleNode = new TiXmlElement("title");
+//   assetNode->LinkEndChild(titleNode);
+//
+//   TiXmlElement* subjectNode = new TiXmlElement("subject");
+//   assetNode->LinkEndChild(subjectNode);
+//
+//   TiXmlElement* keywordsNode = new TiXmlElement("keywords");
+//   assetNode->LinkEndChild(keywordsNode);
+//
+//   // Torque uses Z_UP with 1 unit equal to 1 meter by default
+//   TiXmlElement* unitNode = new TiXmlElement("unit");
+//   assetNode->LinkEndChild(unitNode);
+//   unitNode->SetAttribute("meter", "1.000000");
+//
+//   TiXmlElement* axisNode = new TiXmlElement("up_axis");
+//   assetNode->LinkEndChild(axisNode);
+//   TiXmlText* axisText = new TiXmlText("Z_UP");
+//   axisNode->LinkEndChild(axisText);
+//}
+//
+//void ColladaUtils::exportColladaMaterials(TiXmlElement* rootNode, const OptimizedPolyList& mesh, Vector<String>& matNames, const Torque::Path& colladaFile)
+//{
+//   // First the image library
+//   TiXmlElement* imgLibNode = new TiXmlElement("library_images");
+//   rootNode->LinkEndChild(imgLibNode);
+//
+//   for (U32 i = 0; i < mesh.mMaterialList.size(); i++)
+//   {
+//      BaseMatInstance* baseInst = mesh.mMaterialList[i];
+//
+//      matNames.push_back(String::ToString("Material%d", i));
+//
+//      Material* mat = dynamic_cast<Material*>(baseInst->getMaterial());
+//      if (!mat)
+//         continue;
+//
+//      String diffuseMap;
+//
+//      if (mat->getName() && mat->getName()[0])
+//         matNames.last() = String(mat->getName());
+//
+//      // Handle an auto-generated "Default Material" specially
+//      if (mat->isAutoGenerated())
+//      {
+//         Torque::Path diffusePath;
+//
+//         if (mat->mDiffuseMapFilename[0].isNotEmpty())
+//            diffusePath = mat->mDiffuseMapFilename[0];
+//         else if (mat->mBaseTexFilename[0].isNotEmpty())
+//            diffusePath = mat->mBaseTexFilename[0];
+//         else
+//            diffusePath = String("warningMat");
+//
+//         matNames.last() = diffusePath.getFileName();
+//         diffuseMap += diffusePath.getFullFileName();
+//      }
+//      else
+//      {
+//         if (mat->mDiffuseMapFilename[0].isNotEmpty())
+//            diffuseMap += mat->mDiffuseMapFilename[0];
+//         else if (mat->mBaseTexFilename[0].isNotEmpty())
+//            diffuseMap += mat->mBaseTexFilename[0];
+//         else
+//            diffuseMap += "warningMat";
+//      }
+//
+//      Torque::Path diffusePath = findTexture(colladaFile.getPath() + "/" + diffuseMap);
+//
+//      // If we didn't get a path
+//      if (diffusePath.getFullPath().isNotEmpty())
+//         diffuseMap = Torque::Path::MakeRelativePath(diffusePath, colladaFile);
+//
+//      TiXmlElement* imageNode = new TiXmlElement("image");
+//      imgLibNode->LinkEndChild(imageNode);
+//      imageNode->SetAttribute("id", avar("%s-Diffuse", matNames.last().c_str()));
+//      imageNode->SetAttribute("name", avar("%s-Diffuse", matNames.last().c_str()));
+//
+//      TiXmlElement* initNode = new TiXmlElement("init_from");
+//      imageNode->LinkEndChild(initNode);
+//      TiXmlText* initText = new TiXmlText(avar("file://%s", diffuseMap.c_str()));
+//      initNode->LinkEndChild(initText);
+//   }
+//
+//   // Next the material library
+//   TiXmlElement* matLibNode = new TiXmlElement("library_materials");
+//   rootNode->LinkEndChild(matLibNode);
+//
+//   for (U32 i = 0; i < mesh.mMaterialList.size(); i++)
+//   {
+//      BaseMatInstance* baseInst = mesh.mMaterialList[i];
+//
+//      Material* mat = dynamic_cast<Material*>(baseInst->getMaterial());
+//      if (!mat)
+//         continue;
+//
+//      TiXmlElement* materialNode = new TiXmlElement("material");
+//      matLibNode->LinkEndChild(materialNode);
+//      materialNode->SetAttribute("id", matNames[i].c_str());
+//      materialNode->SetAttribute("name", matNames[i].c_str());
+//
+//      TiXmlElement* instEffectNode = new TiXmlElement("instance_effect");
+//      materialNode->LinkEndChild(instEffectNode);
+//      instEffectNode->SetAttribute("url", avar("#%s-fx", matNames[i].c_str()));
+//   }
+//
+//   // Finally the effects library
+//   TiXmlElement* effectLibNode = new TiXmlElement("library_effects");
+//   rootNode->LinkEndChild(effectLibNode);
+//
+//   for (U32 i = 0; i < mesh.mMaterialList.size(); i++)
+//   {
+//      BaseMatInstance* baseInst = mesh.mMaterialList[i];
+//
+//      Material* mat = dynamic_cast<Material*>(baseInst->getMaterial());
+//      if (!mat)
+//         continue;
+//
+//      TiXmlElement* effectNode = new TiXmlElement("effect");
+//      effectLibNode->LinkEndChild(effectNode);
+//      effectNode->SetAttribute("id", avar("%s-fx", matNames[i].c_str()));
+//      effectNode->SetAttribute("name", avar("%s-fx", matNames[i].c_str()));
+//
+//      TiXmlElement* profileNode = new TiXmlElement("profile_COMMON");
+//      effectNode->LinkEndChild(profileNode);
+//
+//      TiXmlElement* techniqueNode = new TiXmlElement("technique");
+//      profileNode->LinkEndChild(techniqueNode);
+//      techniqueNode->SetAttribute("sid", "standard");
+//
+//      TiXmlElement* phongNode = new TiXmlElement("phong");
+//      techniqueNode->LinkEndChild(phongNode);
+//
+//      TiXmlElement* diffuseNode = new TiXmlElement("diffuse");
+//      phongNode->LinkEndChild(diffuseNode);
+//
+//      TiXmlElement* textureNode = new TiXmlElement("texture");
+//      diffuseNode->LinkEndChild(textureNode);
+//      textureNode->SetAttribute("texture", avar("%s-Diffuse", matNames[i].c_str()));
+//      textureNode->SetAttribute("texcoord", "CHANNEL0");
+//
+//      // Extra info useful for getting the texture to show up correctly in some apps
+//      TiXmlElement* extraNode = new TiXmlElement("extra");
+//      textureNode->LinkEndChild(extraNode);
+//
+//      TiXmlElement* extraTechNode = new TiXmlElement("technique");
+//      extraNode->LinkEndChild(extraTechNode);
+//      extraTechNode->SetAttribute("profile", "MAYA");
+//
+//      TiXmlElement* extraWrapUNode = new TiXmlElement("wrapU");
+//      extraTechNode->LinkEndChild(extraWrapUNode);
+//      extraWrapUNode->SetAttribute("sid", "wrapU0");
+//
+//      TiXmlText* extraWrapUText = new TiXmlText("TRUE");
+//      extraWrapUNode->LinkEndChild(extraWrapUText);
+//
+//      TiXmlElement* extraWrapVNode = new TiXmlElement("wrapV");
+//      extraTechNode->LinkEndChild(extraWrapVNode);
+//      extraWrapVNode->SetAttribute("sid", "wrapV0");
+//
+//      TiXmlText* extraWrapVText = new TiXmlText("TRUE");
+//      extraWrapVNode->LinkEndChild(extraWrapVText);
+//
+//      TiXmlElement* extraBlendNode = new TiXmlElement("blend_mode");
+//      extraTechNode->LinkEndChild(extraBlendNode);
+//
+//      TiXmlText* extraBlendText = new TiXmlText("ADD");
+//      extraBlendNode->LinkEndChild(extraBlendText);
+//   }
+//}
+//
+//void ColladaUtils::exportColladaTriangles(TiXmlElement* meshNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames)
+//{
+//   for (U32 i = 0; i < matNames.size(); i++)
+//   {
+//      // Calculate the number of triangles that uses this Material
+//      U32 triangleCount = 0;
+//
+//      for (U32 j = 0; j < mesh.mPolyList.size(); j++)
+//      {
+//         const OptimizedPolyList::Poly& poly = mesh.mPolyList[j];
+//
+//         if (poly.material != i)
+//            continue;
+//
+//         if (poly.vertexCount < 3)
+//            continue;
+//
+//         if (poly.type == OptimizedPolyList::TriangleList ||
+//             poly.type == OptimizedPolyList::TriangleFan ||
+//             poly.type == OptimizedPolyList::TriangleStrip)
+//         {
+//            triangleCount += poly.vertexCount - 2;
+//         }
+//         else
+//            AssertISV(false, "ColladaUtils::exportColladaTriangles(): Unknown Poly type!");
+//      }
+//
+//      // Make sure that we are actually using this Material
+//      if (triangleCount == 0)
+//         continue;
+//
+//      TiXmlElement* trianglesNode = new TiXmlElement("triangles");
+//      meshNode->LinkEndChild(trianglesNode);
+//      trianglesNode->SetAttribute("material", matNames[i].c_str());
+//      trianglesNode->SetAttribute("count", avar("%d", triangleCount));
+//
+//      TiXmlElement* trianglesVertInputNode = new TiXmlElement("input");
+//      trianglesNode->LinkEndChild(trianglesVertInputNode);
+//      trianglesVertInputNode->SetAttribute("semantic", "VERTEX");
+//      trianglesVertInputNode->SetAttribute("offset", "0");
+//      trianglesVertInputNode->SetAttribute("source", avar("#%s-Vertex", meshName.c_str()));
+//
+//      TiXmlElement* trianglesNormalInputNode = new TiXmlElement("input");
+//      trianglesNode->LinkEndChild(trianglesNormalInputNode);
+//      trianglesNormalInputNode->SetAttribute("semantic", "NORMAL");
+//      trianglesNormalInputNode->SetAttribute("offset", "1");
+//      trianglesNormalInputNode->SetAttribute("source", avar("#%s-Normal", meshName.c_str()));
+//
+//      TiXmlElement* trianglesUV0InputNode = new TiXmlElement("input");
+//      trianglesNode->LinkEndChild(trianglesUV0InputNode);
+//      trianglesUV0InputNode->SetAttribute("semantic", "TEXCOORD");
+//      trianglesUV0InputNode->SetAttribute("offset", "2");
+//      trianglesUV0InputNode->SetAttribute("set", "0");
+//      trianglesUV0InputNode->SetAttribute("source", avar("#%s-UV0", meshName.c_str()));
+//
+//      TiXmlElement* polyNode = new TiXmlElement("p");
+//      trianglesNode->LinkEndChild(polyNode);
+//
+//      Vector<U32> tempIndices;
+//      tempIndices.reserve(4);
+//
+//      for (U32 j = 0; j < mesh.mPolyList.size(); j++)
+//      {
+//         const OptimizedPolyList::Poly& poly = mesh.mPolyList[j];
+//
+//         if (poly.vertexCount < 3)
+//            continue;
+//
+//         if (poly.material != i)
+//            continue;
+//
+//         tempIndices.setSize(poly.vertexCount);
+//         dMemset(tempIndices.address(), 0, poly.vertexCount);
+//
+//         if (poly.type == OptimizedPolyList::TriangleStrip)
+//         {
+//            tempIndices[0] = 0;
+//            U32 idx = 1;
+//            
+//            for (U32 k = 1; k < poly.vertexCount; k += 2)
+//               tempIndices[idx++] = k;
+//
+//            for (U32 k = ((poly.vertexCount - 1) & (~0x1)); k > 0; k -= 2)
+//               tempIndices[idx++] = k;
+//         }
+//         else if (poly.type == OptimizedPolyList::TriangleList ||
+//                  poly.type == OptimizedPolyList::TriangleFan)
+//         {
+//            for (U32 k = 0; k < poly.vertexCount; k++)
+//               tempIndices[k] = k;
+//         }
+//         else
+//            AssertISV(false, "ColladaUtils::exportColladaTriangles(): Unknown Poly type!");
+//
+//         const U32& firstIdx = mesh.mIndexList[poly.vertexStart];
+//         const OptimizedPolyList::VertIndex& firstVertIdx = mesh.mVertexList[firstIdx];
+//
+//         for (U32 k = 1; k < poly.vertexCount - 1; k++)
+//         {
+//            const U32& secondIdx = mesh.mIndexList[poly.vertexStart + tempIndices[k]];
+//            const U32& thirdIdx  = mesh.mIndexList[poly.vertexStart + tempIndices[k + 1]];
+//
+//            const OptimizedPolyList::VertIndex& secondVertIdx = mesh.mVertexList[secondIdx];
+//            const OptimizedPolyList::VertIndex& thirdVertIdx = mesh.mVertexList[thirdIdx];
+//
+//            // Note the reversed winding on the triangles
+//            const char* tri = avar("%d %d %d %d %d %d %d %d %d",
+//                                   thirdVertIdx.vertIdx, thirdVertIdx.normalIdx, thirdVertIdx.uv0Idx,
+//                                   secondVertIdx.vertIdx, secondVertIdx.normalIdx, secondVertIdx.uv0Idx,
+//                                   firstVertIdx.vertIdx, firstVertIdx.normalIdx, firstVertIdx.uv0Idx);
+//
+//            TiXmlText* triangleText = new TiXmlText(tri);
+//            polyNode->LinkEndChild(triangleText);
+//         }
+//      }
+//   }
+//}
+//
+//void ColladaUtils::exportColladaMesh(TiXmlElement* rootNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames)
+//{
+//   TiXmlElement* libGeomsNode = new TiXmlElement("library_geometries");
+//   rootNode->LinkEndChild(libGeomsNode);
+//
+//   TiXmlElement* geometryNode = new TiXmlElement("geometry");
+//   libGeomsNode->LinkEndChild(geometryNode);
+//   geometryNode->SetAttribute("id", avar("%s-lib", meshName.c_str()));
+//   geometryNode->SetAttribute("name", avar("%sMesh", meshName.c_str()));
+//
+//   TiXmlElement* meshNode = new TiXmlElement("mesh");
+//   geometryNode->LinkEndChild(meshNode);
+//
+//   // Save out the vertices
+//   TiXmlElement* vertsSourceNode = new TiXmlElement("source");
+//   meshNode->LinkEndChild(vertsSourceNode);
+//   vertsSourceNode->SetAttribute("id", avar("%s-Position", meshName.c_str()));
+//
+//   TiXmlElement* vertsNode = new TiXmlElement("float_array");
+//   vertsSourceNode->LinkEndChild(vertsNode);
+//   vertsNode->SetAttribute("id", avar("%s-Position-array", meshName.c_str()));
+//   vertsNode->SetAttribute("count", avar("%d", mesh.mPoints.size() * 3));
+//
+//   for (U32 i = 0; i < mesh.mPoints.size(); i++)
+//   {
+//      const Point3F& vert = mesh.mPoints[i];
+//
+//      TiXmlText* vertText = new TiXmlText(avar("%.4f %.4f %.4f", vert.x, vert.y, vert.z));
+//      vertsNode->LinkEndChild(vertText);
+//   }
+//
+//   // Save the vertex accessor
+//   TiXmlElement* vertsTechNode = new TiXmlElement("technique_common");
+//   vertsSourceNode->LinkEndChild(vertsTechNode);
+//
+//   TiXmlElement* vertsAccNode = new TiXmlElement("accessor");
+//   vertsTechNode->LinkEndChild(vertsAccNode);
+//   vertsAccNode->SetAttribute("source", avar("#%s-Position-array", meshName.c_str()));
+//   vertsAccNode->SetAttribute("count", avar("%d", mesh.mPoints.size()));
+//   vertsAccNode->SetAttribute("stride", "3");
+//
+//   TiXmlElement* vertsAccXNode = new TiXmlElement("param");
+//   vertsAccNode->LinkEndChild(vertsAccXNode);
+//   vertsAccXNode->SetAttribute("name", "X");
+//   vertsAccXNode->SetAttribute("type", "float");
+//
+//   TiXmlElement* vertsAccYNode = new TiXmlElement("param");
+//   vertsAccNode->LinkEndChild(vertsAccYNode);
+//   vertsAccYNode->SetAttribute("name", "Y");
+//   vertsAccYNode->SetAttribute("type", "float");
+//
+//   TiXmlElement* vertsAccZNode = new TiXmlElement("param");
+//   vertsAccNode->LinkEndChild(vertsAccZNode);
+//   vertsAccZNode->SetAttribute("name", "Z");
+//   vertsAccZNode->SetAttribute("type", "float");
+//
+//   // Save out the normals
+//   TiXmlElement* normalsSourceNode = new TiXmlElement("source");
+//   meshNode->LinkEndChild(normalsSourceNode);
+//   normalsSourceNode->SetAttribute("id", avar("%s-Normal", meshName.c_str()));
+//
+//   TiXmlElement* normalsNode = new TiXmlElement("float_array");
+//   normalsSourceNode->LinkEndChild(normalsNode);
+//   normalsNode->SetAttribute("id", avar("%s-Normal-array", meshName.c_str()));
+//   normalsNode->SetAttribute("count", avar("%d", mesh.mNormals.size() * 3));
+//
+//   for (U32 i = 0; i < mesh.mNormals.size(); i++)
+//   {
+//      const Point3F& normal = mesh.mNormals[i];
+//
+//      TiXmlText* normalText = new TiXmlText(avar("%.4f %.4f %.4f", normal.x, normal.y, normal.z));
+//      normalsNode->LinkEndChild(normalText);
+//   }
+//
+//   // Save the normals accessor
+//   TiXmlElement* normalsTechNode = new TiXmlElement("technique_common");
+//   normalsSourceNode->LinkEndChild(normalsTechNode);
+//
+//   TiXmlElement* normalsAccNode = new TiXmlElement("accessor");
+//   normalsTechNode->LinkEndChild(normalsAccNode);
+//   normalsAccNode->SetAttribute("source", avar("#%s-Normal-array", meshName.c_str()));
+//   normalsAccNode->SetAttribute("count", avar("%d", mesh.mNormals.size()));
+//   normalsAccNode->SetAttribute("stride", "3");
+//
+//   TiXmlElement* normalsAccXNode = new TiXmlElement("param");
+//   normalsAccNode->LinkEndChild(normalsAccXNode);
+//   normalsAccXNode->SetAttribute("name", "X");
+//   normalsAccXNode->SetAttribute("type", "float");
+//
+//   TiXmlElement* normalsAccYNode = new TiXmlElement("param");
+//   normalsAccNode->LinkEndChild(normalsAccYNode);
+//   normalsAccYNode->SetAttribute("name", "Y");
+//   normalsAccYNode->SetAttribute("type", "float");
+//
+//   TiXmlElement* normalsAccZNode = new TiXmlElement("param");
+//   normalsAccNode->LinkEndChild(normalsAccZNode);
+//   normalsAccZNode->SetAttribute("name", "Z");
+//   normalsAccZNode->SetAttribute("type", "float");
+//
+//   // Save out the uvs
+//   TiXmlElement* uv0SourceNode = new TiXmlElement("source");
+//   meshNode->LinkEndChild(uv0SourceNode);
+//   uv0SourceNode->SetAttribute("id", avar("%s-UV0", meshName.c_str()));
+//
+//   TiXmlElement* uv0Node = new TiXmlElement("float_array");
+//   uv0SourceNode->LinkEndChild(uv0Node);
+//   uv0Node->SetAttribute("id", avar("%s-UV0-array", meshName.c_str()));
+//   uv0Node->SetAttribute("count", avar("%d", mesh.mUV0s.size() * 2));
+//
+//   for (U32 i = 0; i < mesh.mUV0s.size(); i++)
+//   {
+//      const Point2F& uv0 = mesh.mUV0s[i];
+//
+//      TiXmlText* uv0Text = new TiXmlText(avar("%.4f %.4f", uv0.x, uv0.y));
+//      uv0Node->LinkEndChild(uv0Text);
+//   }
+//
+//   // Save the uv0 accessor
+//   TiXmlElement* uv0TechNode = new TiXmlElement("technique_common");
+//   uv0SourceNode->LinkEndChild(uv0TechNode);
+//
+//   TiXmlElement* uv0AccNode = new TiXmlElement("accessor");
+//   uv0TechNode->LinkEndChild(uv0AccNode);
+//   uv0AccNode->SetAttribute("source", avar("#%s-UV0-array", meshName.c_str()));
+//   uv0AccNode->SetAttribute("count", avar("%d", mesh.mUV0s.size()));
+//   uv0AccNode->SetAttribute("stride", "2");
+//
+//   TiXmlElement* uv0AccSNode = new TiXmlElement("param");
+//   uv0AccNode->LinkEndChild(uv0AccSNode);
+//   uv0AccSNode->SetAttribute("name", "S");
+//   uv0AccSNode->SetAttribute("type", "float");
+//
+//   TiXmlElement* uv0AccTNode = new TiXmlElement("param");
+//   uv0AccNode->LinkEndChild(uv0AccTNode);
+//   uv0AccTNode->SetAttribute("name", "T");
+//   uv0AccTNode->SetAttribute("type", "float");
+//
+//   // Define the vertices position array
+//   TiXmlElement* verticesNode = new TiXmlElement("vertices");
+//   meshNode->LinkEndChild(verticesNode);
+//   verticesNode->SetAttribute("id", avar("%s-Vertex", meshName.c_str()));
+//
+//   TiXmlElement* verticesInputNode = new TiXmlElement("input");
+//   verticesNode->LinkEndChild(verticesInputNode);
+//   verticesInputNode->SetAttribute("semantic", "POSITION");
+//   verticesInputNode->SetAttribute("source", avar("#%s-Position", meshName.c_str()));
+//
+//   exportColladaTriangles(meshNode, mesh, meshName, matNames);
+//}
+//
+//void ColladaUtils::exportColladaScene(TiXmlElement* rootNode, const String& meshName, const Vector<String>& matNames)
+//{
+//   TiXmlElement* libSceneNode = new TiXmlElement("library_visual_scenes");
+//   rootNode->LinkEndChild(libSceneNode);
+//
+//   TiXmlElement* visSceneNode = new TiXmlElement("visual_scene");
+//   libSceneNode->LinkEndChild(visSceneNode);
+//   visSceneNode->SetAttribute("id", "RootNode");
+//   visSceneNode->SetAttribute("name", "RootNode");
+//
+//   TiXmlElement* nodeNode = new TiXmlElement("node");
+//   visSceneNode->LinkEndChild(nodeNode);
+//   nodeNode->SetAttribute("id", avar("%s", meshName.c_str()));
+//   nodeNode->SetAttribute("name", avar("%s", meshName.c_str()));
+//
+//   TiXmlElement* instanceGeomNode = new TiXmlElement("instance_geometry");
+//   nodeNode->LinkEndChild(instanceGeomNode);
+//   instanceGeomNode->SetAttribute("url", avar("#%s-lib", meshName.c_str()));
+//
+//   TiXmlElement* bindMatNode = new TiXmlElement("bind_material");
+//   instanceGeomNode->LinkEndChild(bindMatNode);
+//
+//   TiXmlElement* techniqueNode = new TiXmlElement("technique_common");
+//   bindMatNode->LinkEndChild(techniqueNode);
+//
+//   // Bind the materials
+//   for (U32 i = 0; i < matNames.size(); i++)
+//   {
+//      TiXmlElement* instMatNode = new TiXmlElement("instance_material");
+//      techniqueNode->LinkEndChild(instMatNode);
+//      instMatNode->SetAttribute("symbol", avar("%s", matNames[i].c_str()));
+//      instMatNode->SetAttribute("target", avar("#%s", matNames[i].c_str()));
+//   }
+//
+//   TiXmlElement* sceneNode = new TiXmlElement("scene");
+//   rootNode->LinkEndChild(sceneNode);
+//
+//   TiXmlElement* instVisSceneNode = new TiXmlElement("instance_visual_scene");
+//   sceneNode->LinkEndChild(instVisSceneNode);
+//   instVisSceneNode->SetAttribute("url", "#RootNode");
+//}
+//
+//void ColladaUtils::exportToCollada(const Torque::Path& colladaFile, const OptimizedPolyList& mesh, const String& meshName)
+//{
+//   // Get the mesh name
+//   String outMeshName = meshName;
+//
+//   if (outMeshName.isEmpty())
+//      outMeshName = colladaFile.getFileName();
+//
+//   // The XML document that will hold all of our data
+//   TiXmlDocument doc;
+//
+//   // Add a standard XML declaration to the top
+//   TiXmlDeclaration* xmlDecl = new TiXmlDeclaration("1.0", "utf-8", "");
+//   doc.LinkEndChild(xmlDecl);
+//
+//   // Create our Collada root node and populate a couple standard attributes
+//   TiXmlElement* rootNode = new TiXmlElement("COLLADA");
+//   rootNode->SetAttribute("xmlns", "http://www.collada.org/2005/11/COLLADASchema");
+//   rootNode->SetAttribute("version", "1.4.0");
+//
+//   // Add the root node to the document
+//   doc.LinkEndChild(rootNode);
+//
+//   // Save out our header info
+//   exportColladaHeader(rootNode);
+//
+//   // Save out the materials
+//   Vector<String> mapNames;
+//
+//   exportColladaMaterials(rootNode, mesh, mapNames, colladaFile);
+//
+//   // Save out our geometry
+//   exportColladaMesh(rootNode, mesh, outMeshName, mapNames);
+//
+//   // Save out our scene nodes
+//   exportColladaScene(rootNode, outMeshName, mapNames);
+//
+//   // Write out the actual Collada file
+//   char fullPath[MAX_PATH_LENGTH];
+//   Platform::makeFullPathName(colladaFile.getFullPath(), fullPath, MAX_PATH_LENGTH);
+//
+//   if (!doc.SaveFile(fullPath))
+//      Con::errorf("ColladaUtils::exportToCollada(): Unable to export to %s", fullPath);
+//}

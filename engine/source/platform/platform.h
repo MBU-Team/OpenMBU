@@ -651,6 +651,19 @@ extern void* dRealloc(void* in_pResize, dsize_t in_size);
 extern void* dRealMalloc(dsize_t);
 extern void  dRealFree(void*);
 
+// Helper function to copy one array into another of different type
+template<class T, class S> void dCopyArray(T* dst, const S* src, dsize_t size)
+{
+    for (dsize_t i = 0; i < size; i++)
+        dst[i] = (T)src[i];
+}
+
+// Special case of the above function when the arrays are the same type (use memcpy)
+template<class T> void dCopyArray(T* dst, const T* src, dsize_t size)
+{
+    dMemcpy(dst, src, size * sizeof(T));
+}
+
 extern void* dMemcpy(void* dst, const void* src, dsize_t size);
 extern void* dMemmove(void* dst, const void* src, dsize_t size);
 extern void* dMemset(void* dst, int c, dsize_t size);

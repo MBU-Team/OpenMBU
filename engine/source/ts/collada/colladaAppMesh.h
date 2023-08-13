@@ -114,7 +114,7 @@ public:
    /// Get the name of this mesh
    ///
    /// @return A string containing the name of this mesh
-   const char *getName(bool allowFixed = true);
+   const char *getName(bool allowFixed=true);
 
    //-----------------------------------------------------------------------
 

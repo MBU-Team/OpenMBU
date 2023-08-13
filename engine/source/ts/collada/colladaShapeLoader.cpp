@@ -11,36 +11,49 @@
 
 //-----------------------------------------------------------------------------
 
-#include "math/mMath.h"
-#include "core/tDictionary.h"
 #include "core/tVector.h"
-#include "core/resManager.h"
+#include "core/findMatch.h"
 #include "core/fileStream.h"
 #include "core/fileObject.h"
 #include "ts/tsShape.h"
 #include "ts/tsShapeInstance.h"
-#include "materials/matInstance.h"
-#include "materials/materialList.h"
 #include "ts/tsShapeConstruct.h"
 #include "ts/collada/colladaUtils.h"
 #include "ts/collada/colladaShapeLoader.h"
 #include "ts/collada/colladaAppNode.h"
 #include "ts/collada/colladaAppMesh.h"
+#include "ts/collada/colladaAppMaterial.h"
 #include "ts/collada/colladaAppSequence.h"
+#include "gfx/gBitmap.h"
 
-using namespace ColladaUtils;
+// 
+static DAE sDAE;                 // Collada model database (holds the last loaded file)
+static Torque::Path sLastPath;   // Path of the last loaded Collada file
+static FileTime sLastModTime;    // Modification time of the last loaded Collada file
 
 //-----------------------------------------------------------------------------
+// Custom warning/error message handler
+class myErrorHandler : public daeErrorHandler
+{
+	void handleError( daeString msg )
+   {
+      Con::errorf("Error: %s", msg);
+   }
 
-Point3F ColladaShapeLoader::unitScale;
-domUpAxisType ColladaShapeLoader::upAxis;
+	void handleWarning( daeString msg )
+   {
+      Con::errorf("Warning: %s", msg);
+   }
+} sErrorHandler;
+
+//-----------------------------------------------------------------------------
 
 ColladaShapeLoader::ColladaShapeLoader(domCOLLADA* _root)
    : root(_root)
 {
    // Extract the global scale and up_axis from the top level <asset> element,
    F32 unit = 1.0f;
-   upAxis = UPAXISTYPE_Z_UP;
+   domUpAxisType upAxis = UPAXISTYPE_Z_UP;
    if (root->getAsset()) {
       if (root->getAsset()->getUnit())
          unit = root->getAsset()->getUnit()->getMeter();
@@ -48,8 +61,12 @@ ColladaShapeLoader::ColladaShapeLoader(domCOLLADA* _root)
          upAxis = root->getAsset()->getUp_axis()->getValue();
    }
 
-   // Store global scale
-   unitScale.set(unit, unit, unit);
+   // Set import options (if they are not set to override)
+   if (ColladaUtils::getOptions().unit <= 0.0f)
+      ColladaUtils::getOptions().unit = unit;
+
+   if (ColladaUtils::getOptions().upAxis == UPAXISTYPE_COUNT)
+      ColladaUtils::getOptions().upAxis = upAxis;
 }
 
 ColladaShapeLoader::~ColladaShapeLoader()
@@ -88,11 +105,19 @@ void ColladaShapeLoader::processAnimation(const domAnimation* anim, F32& maxEndT
             "target: %s", channel->getTarget()));
          continue;
       }
-
+/*
+      // If the target is a <source>, point it at the array instead
+      // @todo:Only support targeting float arrays for now...
+      if (target->getElementType() == COLLADA_TYPE::SOURCE)
+      {
+         domSource* source = daeSafeCast<domSource>(target);
+         if (source->getFloat_array())
+            target = source->getFloat_array();
+      }
+*/
       // Get the target's animation channels (create them if not already)
       if (!AnimData::getAnimChannels(target)) {
-         animations.push_back(new AnimChannels);
-         target->setUserData(animations.last());
+         animations.push_back(new AnimChannels(target));
       }
       AnimChannels* targetChannels = AnimData::getAnimChannels(target);
 
@@ -166,274 +191,325 @@ void ColladaShapeLoader::enumerateScene()
       }
    }
 
-   // Need to be able to handle scenes that don't use the normal DTS layout, so
-   // detect if there is a baseXX->startXX hierarchy, and if not, just add a dummy
-   // subshape with the whole scene inside.
-
    // First grab all of the top-level nodes
-   Vector<ColladaAppNode*> sceneNodes;
+   Vector<domNode*> sceneNodes;
    for (int iSceneLib = 0; iSceneLib < root->getLibrary_visual_scenes_array().getCount(); iSceneLib++) {
       const domLibrary_visual_scenes* libScenes = root->getLibrary_visual_scenes_array()[iSceneLib];
       for (int iScene = 0; iScene < libScenes->getVisual_scene_array().getCount(); iScene++) {
          const domVisual_scene* visualScene = libScenes->getVisual_scene_array()[iScene];
          for (int iNode = 0; iNode < visualScene->getNode_array().getCount(); iNode++)
-            sceneNodes.push_back(new ColladaAppNode(visualScene->getNode_array()[iNode], 0));
+            sceneNodes.push_back(visualScene->getNode_array()[iNode]);
       }
    }
 
-   // Check if we have a baseXX->startXX hierarchy at the top-level
-   bool isDTSScene = false;
-   for (int iNode = 0; !isDTSScene && (iNode < sceneNodes.size()); iNode++) {
-      ColladaAppNode *node = sceneNodes[iNode];
-      if (dStrStartsWith(node->getName(), "base")) {
-         for (int iChild = 0; iChild < node->getNumChildNodes(); iChild++) {
-            if (dStrStartsWith(node->getChildNode(iChild)->getName(), "start")) {
-               isDTSScene = true;
-               break;
+   // Set LOD option
+   bool singleDetail = true;
+   switch (ColladaUtils::getOptions().lodType)
+   {
+      case ColladaUtils::ImportOptions::DetectDTS:
+         // Check for a baseXX->startXX hierarchy at the top-level, if we find
+         // one, use trailing numbers for LOD, otherwise use a single size
+         for (int iNode = 0; singleDetail && (iNode < sceneNodes.size()); iNode++) {
+            domNode* node = sceneNodes[iNode];
+            if (dStrStartsWith(_GetNameOrId(node), "base")) {
+               for (int iChild = 0; iChild < node->getNode_array().getCount(); iChild++) {
+                  domNode* child = node->getNode_array()[iChild];
+                  if (dStrStartsWith(_GetNameOrId(child), "start")) {
+                     singleDetail = false;
+                     break;
+                  }
+               }
             }
          }
-      }
+         break;
+
+      case ColladaUtils::ImportOptions::SingleSize:
+         singleDetail = true;
+         break;
+
+      case ColladaUtils::ImportOptions::TrailingNumber:
+         singleDetail = false;
+         break;
+         
+      default:
+         break;
    }
 
-   if (isDTSScene) {
-      // Process the scene as normal
-      ColladaAppMesh::fixDetailSize(false);
+   ColladaAppMesh::fixDetailSize( singleDetail, ColladaUtils::getOptions().singleDetailSize );
 
-      for (U32 iNode = 0; iNode < sceneNodes.size(); iNode++)
-      {
-         ColladaAppNode *node = sceneNodes[iNode];
-
-         // Only allow a single subshape (the baseXXX one)
-         if (node->isParentRoot() && node->getNumChildNodes() &&
-             !dStrStartsWith(node->getName(), "base"))
-             continue;
-
-         if ( !processNode( sceneNodes[iNode] ) )
-            delete sceneNodes[iNode];
-      }
+   // Process the top level nodes
+   for (S32 iNode = 0; iNode < sceneNodes.size(); iNode++) {
+      ColladaAppNode* node = new ColladaAppNode(sceneNodes[iNode], 0);
+      if (!processNode(node))
+         delete node;
    }
-   else
+
+   // Make sure that the scene has a bounds node (for getting the root scene transform)
+   if (!boundsNode)
    {
-      // Handle a non-DTS hierarchy
-      daeErrorHandler::get()->handleWarning( "Non-DTS scene detected: creating "
-         "dummy node to hold subshape" );
       domVisual_scene* visualScene = root->getLibrary_visual_scenes_array()[0]->getVisual_scene_array()[0];
+      domNode* dombounds = daeSafeCast<domNode>( visualScene->createAndPlace( "node" ) );
+      dombounds->setName( "bounds" );
+      ColladaAppNode *appBounds = new ColladaAppNode(dombounds, 0);
+      if (!processNode(appBounds))
+         delete appBounds;
+   }
+}
 
-      // Load the rest of the geometry with LOD size forced to 2
-      ColladaAppMesh::fixDetailSize( true, 2 );
+bool ColladaShapeLoader::ignore(const String& name)
+{
+   if (FindMatch::isMatchMultipleExprs(ColladaUtils::getOptions().alwaysImport.c_str(), name.c_str(), false))
+      return false;
+   else
+      return FindMatch::isMatchMultipleExprs(ColladaUtils::getOptions().neverImport.c_str(), name.c_str(), false);
+}
 
-      // Create a dummy node in the Collada model to hold the subshape
-      domNode* dummyNode = daeSafeCast<domNode>( visualScene->createAndPlace( "node" ) );
-      dummyNode->setName( "dummy" );
+void ColladaShapeLoader::computeShapeOffset()
+{
+   shapeOffset = Point3F(0, 0, 0);
 
-      // Create a dummy subshape and add the whole scene to it. The only
-      // exception is the bounds node, which can be processed as normal
-      subshapes.push_back( new TSShapeLoader::Subshape );
-      subshapes.last()->node = new ColladaAppNode( dummyNode );
-      for ( U32 iNode = 0; iNode < sceneNodes.size(); iNode++ )
+   // Check if the model origin needs adjusting
+   if (ColladaUtils::getOptions().adjustCenter ||
+       ColladaUtils::getOptions().adjustFloor)
+   {
+      Box3F bounds;
+      computeBounds(bounds);
+
+      // Set the shape offset accordingly
+      if (bounds.isValidBox())
       {
-         ColladaAppNode *node = sceneNodes[iNode];
-
-         // Skip Collision and LOS meshes
-         if ( dStrStartsWith( node->getName(), "Collision" ) )
-            continue;
-
-         if ( dStrStartsWith( node->getName(), "LOS" ) )
-            continue;
-
-         if (node->isBounds())
+         if (ColladaUtils::getOptions().adjustCenter)
          {
-            if (!processNode(node))
-               delete node;
+            bounds.getCenter(&shapeOffset);
+            shapeOffset = -shapeOffset;
          }
-         else
-            subshapes.last()->branches.push_back(node);
-      }
-
-      // If this shape has collision meshes then create details for them
-      for ( U32 iNode = 0; iNode < sceneNodes.size(); iNode++ )
-      {
-         ColladaAppNode *node = sceneNodes[iNode];
-
-         if ( !dStrStartsWith( node->getName(), "collision" ) &&
-              !dStrStartsWith( node->getName(), "LOS" ) )
-            continue;
-
-         domNode* collisionNode = daeSafeCast<domNode>( visualScene->createAndPlace( "node" ) );
-
-         collisionNode->setName( node->getName() );
-
-         // Create a dummy subshape and add the whole scene to it. The only
-         // exception is the bounds node, which can be processed as normal
-         subshapes.push_back(new TSShapeLoader::Subshape);
-         subshapes.last()->node = new ColladaAppNode(collisionNode);
-
-         subshapes.last()->branches.push_back(node);
+         if (ColladaUtils::getOptions().adjustFloor)
+            shapeOffset.z = -bounds.min.z;
       }
    }
+}
+
+//-----------------------------------------------------------------------------
+/// Find the file extension for an extensionless texture
+String findTextureExtension(const Torque::Path &texPath)
+{
+   ResourceObject* bmp =  GBitmap::findBmpResource(texPath.getFullPath().c_str());
+    if (bmp)
+        return Torque::Path(bmp->path).getExtension();
+
+   return String();
+}
+
+//-----------------------------------------------------------------------------
+/// Copy a texture from a KMZ to a cache. Note that the texture filename is modified
+void copySketchupTexture(const Torque::Path &path, String &textureFilename)
+{
+    Con::errorf("Not implemented!");
+   //if (textureFilename.empty())
+   //   return;
+
+   //Torque::Path texturePath(textureFilename);
+   //texturePath.setExtension(findTextureExtension(texturePath));
+
+   //String cachedTexFilename = String::ToString("%s_%s.cached",
+   //   TSShapeLoader::getShapePath().getFileName().c_str(), texturePath.getFileName().c_str());
+
+   //Torque::Path cachedTexPath;
+   //cachedTexPath.setRoot(path.getRoot());
+   //cachedTexPath.setPath(path.getPath());
+   //cachedTexPath.setFileName(cachedTexFilename);
+   //cachedTexPath.setExtension(texturePath.getExtension());
+
+   //FileStream *source;
+   //FileStream *dest;
+   //ResourceManager->openStream(texturePath.getFullPath().c_str())
+   //if ((source = FileStream::open(texturePath.getFullPath(), Torque::FS::File::Read)) == NULL)
+   //   return;
+
+   //if ((dest = FileStream::open(cachedTexPath.getFullPath(), Torque::FS::File::Write)) == NULL)
+   //{
+   //   delete source;
+   //   return;
+   //}
+
+   //dest->copyFrom(source);
+
+   //delete dest;
+   //delete source;
+
+   //// Update the filename in the material
+   //cachedTexPath.setExtension("");
+   //textureFilename = cachedTexPath.getFullPath();
 }
 
 //-----------------------------------------------------------------------------
 /// Add collada materials to materials.cs
-
-#define writeLine(stream, str) { stream.write((int)dStrlen(str), str); stream.write(2, "\r\n"); }
-
-void updateMaterialsScript(const Torque::Path &path)
+void updateMaterialsScript(const Torque::Path &path, bool copyTextures = false)
 {
-    Con::printf("Not implemented yet");
-   //// First see what materials we need to add... if one already
-   //// exists then we can ignore it.
-   //Vector<ColladaAppMaterial*> materials;
-   //for ( U32 iMat = 0; iMat < AppMesh::appMaterials.size(); iMat++ )
-   //{
-   //   ColladaAppMaterial *mat = dynamic_cast<ColladaAppMaterial*>( AppMesh::appMaterials[iMat] );
-   //   if ( MATMGR->getMapEntry( mat->getName() ).isEmpty() )
-   //      materials.push_back( mat );      
-   //}
+   // First see what materials we need to add... if one already
+   // exists then we can ignore it.
+   Vector<ColladaAppMaterial*> materials;
+   for ( U32 iMat = 0; iMat < AppMesh::appMaterials.size(); iMat++ )
+   {
+      ColladaAppMaterial *mat = dynamic_cast<ColladaAppMaterial*>( AppMesh::appMaterials[iMat] );
+      if (ColladaUtils::getOptions().forceUpdateMaterials )
+         materials.push_back( mat );      
+   }
 
-   //if ( materials.empty() )
-   //   return;
+   if ( materials.empty() )
+      return;
 
-   //Torque::Path scriptPath(path);
-   //scriptPath.setFileName("materials");
-   //scriptPath.setExtension("cs");
+   Torque::Path scriptPath(path);
+   scriptPath.setFileName("materials");
+   scriptPath.setExtension("cs");
 
-   //// Read the current script (if any) into memory
-   //FileObject f;
-   //f.readMemory(scriptPath.getFullPath().c_str());
+   // Read the current script (if any) into memory
+   FileObject f;
+   f.readMemory(scriptPath.getFullPath().c_str());
 
-   //FileStream stream;
-   //if (stream.open(scriptPath.getFullPath().c_str(), FileStream::AccessMode::Write)) {
+   FileStream stream;
+   if (stream.open(scriptPath.getFullPath().c_str(), FileStream::Write)) {
 
-   //   String shapeName = TSShapeLoader::getShapePath().getFullFileName();
-   //   const char *beginMsg = avar("//--- %s MATERIALS BEGIN ---", shapeName.c_str());
+      String shapeName = TSShapeLoader::getShapePath().getFullFileName();
+      const char *beginMsg = avar("//--- %s MATERIALS BEGIN ---", shapeName.c_str());
 
-   //   // Write existing file contents up to start of auto-generated materials
-   //   while(!f.isEOF()) {
-   //      const char *buffer = (const char *)f.readLine();
-   //      if (dStricmp(buffer, beginMsg) == 0)
-   //         break;
-   //      writeLine(stream, buffer);
-   //   }
+      // Write existing file contents up to start of auto-generated materials
+      while(!f.isEOF()) {
+         const char *buffer = (const char *)f.readLine();
+         if (dStricmp(buffer, beginMsg) == 0)
+            break;
+         stream.writeLine((U8*)buffer);
+      }
 
-   //   // Write new auto-generated materials
-   //   writeLine(stream, beginMsg);
-   //   for (int iMat = 0; iMat < AppMesh::appMaterials.size(); iMat++)
-   //      dynamic_cast<ColladaAppMaterial*>(AppMesh::appMaterials[iMat])->write(stream);
+      // Write new auto-generated materials
+      stream.writeLine((U8*)beginMsg);
+      for (int iMat = 0; iMat < AppMesh::appMaterials.size(); iMat++)
+      {
+         ColladaAppMaterial *mat = dynamic_cast<ColladaAppMaterial*>(AppMesh::appMaterials[iMat]);
+         if (mat == NULL)
+            continue;
 
-   //   const char *endMsg = avar("//--- %s MATERIALS END ---", shapeName.c_str());
-   //   writeLine(stream, endMsg);
-   //   writeLine(stream, "");
+         if (copyTextures)
+         {
+            // If importing a sketchup file, the paths will point inside the KMZ so we need to cache them.
+            copySketchupTexture(path, mat->diffuseMap);
+            copySketchupTexture(path, mat->normalMap);
+            copySketchupTexture(path, mat->specularMap);
+         }
+         mat->write(stream);
+      }
 
-   //   // Write existing file contents after end of auto-generated materials
-   //   while (!f.isEOF()) {
-   //      const char *buffer = (const char *) f.readLine();
-   //      if (dStricmp(buffer, endMsg) == 0)
-   //         break;
-   //   }
+      const char *endMsg = avar("//--- %s MATERIALS END ---", shapeName.c_str());
+      stream.writeLine((U8*)endMsg);
+      stream.writeLine((U8*)"");
 
-   //   // Want at least one blank line after the autogen block, but need to
-   //   // be careful not to write it twice, or another blank will be added
-   //   // each time the file is written!
-   //   if (!f.isEOF()) {
-   //      const char *buffer = (const char *) f.readLine();
-   //      if (!dStrEqual(buffer, ""))
-   //         writeLine(stream, buffer);
-   //   }
-   //   while (!f.isEOF()) {
-   //      const char *buffer = (const char *) f.readLine();
-   //      writeLine(stream, buffer);
-   //   }
-   //   f.close();
-   //   stream.close();
+      // Write existing file contents after end of auto-generated materials
+      while (!f.isEOF()) {
+         const char *buffer = (const char *) f.readLine();
+         if (dStricmp(buffer, endMsg) == 0)
+            break;
+      }
 
-   //   // Execute the new script to apply the material settings
-   //   if (f.readMemory(scriptPath.getFullPath().c_str()))
-   //   {
-   //      String instantGroup = Con::getVariable("InstantGroup");
-   //      Con::setIntVariable("InstantGroup", RootGroupId);
-   //      Con::evaluate((const char*)f, false, scriptPath.getFullPath());
-   //      Con::setVariable("InstantGroup", instantGroup.c_str());
-   //   }
-   //}
+      // Want at least one blank line after the autogen block, but need to
+      // be careful not to write it twice, or another blank will be added
+      // each time the file is written!
+      if (!f.isEOF()) {
+         const char *buffer = (const char *) f.readLine();
+         if (!dStrEqual(buffer, ""))
+            stream.writeLine((U8*)buffer);
+      }
+      while (!f.isEOF()) {
+         const char *buffer = (const char *) f.readLine();
+         stream.writeLine((U8*)buffer);
+      }
+      f.close();
+      stream.close();
+
+      // Execute the new script to apply the material settings
+      if (f.readMemory(scriptPath.getFullPath().c_str()))
+      {
+         String instantGroup = Con::getVariable("InstantGroup");
+         Con::setIntVariable("InstantGroup", RootGroupId);
+         Con::evaluate((const char*)f.buffer(), false, scriptPath.getFullPath().c_str());
+         Con::setVariable("InstantGroup", instantGroup.c_str());
+      }
+   }
 }
 
 //-----------------------------------------------------------------------------
-// Custom warning/error message handler
-class myErrorHandler : public daeErrorHandler
+/// Check if an up-to-date cached DTS is available for this DAE file
+bool ColladaShapeLoader::canLoadCachedDTS(const Torque::Path& path)
 {
-	void handleError( daeString msg )
-   {
-      Con::errorf("Error: %s", msg);
-   }
-
-	void handleWarning( daeString msg )
-   {
-      Con::errorf("Warning: %s", msg);
-   }
-};
-
-//-----------------------------------------------------------------------------
-/// This function is invoked by the resource manager based on file extension.
-TSShape* loadColladaShape(const Torque::Path &path)
-{
-   myErrorHandler errorHandler;
-   daeErrorHandler::setErrorHandler(&errorHandler);
-
-   // Check if a up-to-date cached DTS version of this file exists, and
-   // if so, use that instead.
-
-   // If we are inside a zip file, use the path to the zip itself, rather than
-   // the internal path, so we don't have to write into the archive.
-   Torque::Path objPath(path);
-   ResourceObject *ro = ResourceManager->find(path.getFullPath().c_str());
-   if (!ro)
-   {
-      // File doesn't exist, bail.
-      return NULL;
-   }
-   if (ro->zipPath != NULL)
-      objPath.setPath(ro->zipPath);
-
    // Generate the cached filename
    Torque::Path cachedPath(path);
    cachedPath.setExtension("cached.dts");
 
-   // Check the modification times of the DAE and cached DTS files
+   // Check if a cached DTS newer than this file is available
    FileTime cachedModifyTime;
    if (Platform::getFileTimes(cachedPath.getFullPath().c_str(), NULL, &cachedModifyTime))
    {
+      bool forceLoadDAE = Con::getBoolVariable("$collada::forceLoadDAE", false);
+
       FileTime daeModifyTime;
-      Platform::getFileTimes(path.getFullPath().c_str(), NULL, &daeModifyTime);
-      if (Platform::compareFileTimes(cachedModifyTime, daeModifyTime) >= 0)
+      if (!Platform::getFileTimes(path.getFullPath().c_str(), NULL, &daeModifyTime) ||
+         (!forceLoadDAE && (Platform::compareFileTimes(cachedModifyTime, daeModifyTime) >= 0) ))
       {
-         // Cached DTS is newer => attempt to load shape from there instead
-         FileStream cachedStream;
-         cachedStream.open(cachedPath.getFullPath().c_str(), FileStream::Read);
-         if (cachedStream.getStatus() == Stream::Ok)
-         {
-            TSShape *shape = new TSShape;
-            bool readSuccess = shape->read(&cachedStream);
-            cachedStream.close();
-
-            if (readSuccess)
-            {
-            #ifdef TORQUE_DEBUG
-               Con::printf("Loaded cached Collada shape from %s", cachedPath.getFullPath().c_str());
-            #endif
-               return shape;
-            }
-            else
-               delete shape;
-         }
-
-         daeErrorHandler::get()->handleWarning(avar("Failed to load cached COLLADA "
-            "shape from %s", cachedPath.getFullPath().c_str()));
+         // DAE not found, or cached DTS is newer
+         return true;
       }
    }
 
-   // Load the Collada file into memory
+   return false;
+}
+
+bool ColladaShapeLoader::checkAndMountSketchup(const Torque::Path& path, String& mountPoint, Torque::Path& daePath)
+{
+   //bool isSketchup = path.getExtension().equal("kmz", String::NoCase);
+   //if (isSketchup)
+   //{
+   //   // Mount the zip so files can be found (it will be unmounted before we return)
+   //   mountPoint = String("sketchup_") + path.getFileName();
+   //   String zipPath = path.getFullPath();
+   //   if (!Torque::FS::Mount(mountPoint, new Torque::ZipFileSystem(zipPath)))
+   //      return false;
+
+   //   Vector<String> daeFiles;
+   //   Torque::Path findPath;
+   //   findPath.setRoot(mountPoint);
+   //   S32 results = Torque::FS::FindByPattern(findPath, "*.dae", true, daeFiles);
+   //   if (results == 0 || daeFiles.size() == 0)
+   //   {
+   //      Torque::FS::Unmount(mountPoint);
+   //      return false;
+   //   }
+
+   //   daePath = daeFiles[0];
+   //}
+   //else
+   //{
+      daePath = path;
+   // }
+
+   return false;
+}
+
+//-----------------------------------------------------------------------------
+/// Get the root collada DOM element for the given DAE file
+domCOLLADA* ColladaShapeLoader::getDomCOLLADA(const Torque::Path& path)
+{
+   daeErrorHandler::setErrorHandler(&sErrorHandler);
+
    TSShapeLoader::updateProgress(TSShapeLoader::Load_ReadFile, path.getFullFileName().c_str());
+
+   // Check if we can use the last loaded file
+   FileTime daeModifyTime;
+   if (Platform::getFileTimes(path.getFullPath().c_str(), NULL, &daeModifyTime))
+   {
+      if ((path == sLastPath) && (Platform::compareFileTimes(sLastModTime, daeModifyTime) >= 0))
+         return sDAE.getRoot(path.getFullPath().c_str());
+   }
+
+   // Load the Collada file into memory
    FileObject fo;
    if (!fo.readMemory(path.getFullPath().c_str()))
    {
@@ -444,71 +520,119 @@ TSShape* loadColladaShape(const Torque::Path &path)
 
    // Read the XML document into the Collada DOM
    TSShapeLoader::updateProgress(TSShapeLoader::Load_ParseFile, "Parsing XML...");
-   DAE dae;
-   domCOLLADA* root = dae.openFromMemory(path.getFullPath().c_str(), (const char*)fo.buffer());
+   sDAE.clear();
+   domCOLLADA* root = sDAE.openFromMemory(path.getFullPath().c_str(), (const char*)fo.buffer());
    if (!root || !root->getLibrary_visual_scenes_array().getCount()) {
       daeErrorHandler::get()->handleError(avar("Could not parse %s", path.getFullPath().c_str()));
       TSShapeLoader::updateProgress(TSShapeLoader::Load_Complete, "Import failed");
       return NULL;
    }
 
-   // Load the collada shape
+   // Fixup issues in the model
    ColladaUtils::applyConditioners(root);
-   ColladaShapeLoader loader(root);
+
+   sLastPath = path;
+   sLastModTime = daeModifyTime;
+
+   return root;
+}
+
+//-----------------------------------------------------------------------------
+/// This function is invoked by the resource manager based on file extension.
+TSShape* loadColladaShape(const Torque::Path &path)
+{
+   // Generate the cached filename
+   Torque::Path cachedPath(path);
+   cachedPath.setExtension("cached.dts");
+
+   // Check if an up-to-date cached DTS version of this file exists, and
+   // if so, use that instead.
+   if (ColladaShapeLoader::canLoadCachedDTS(path))
+   {
+      FileStream cachedStream;
+      cachedStream.open(cachedPath.getFullPath().c_str(), FileStream::Read);
+      if (cachedStream.getStatus() == Stream::Ok)
+      {
+         TSShape *shape = new TSShape;
+         bool readSuccess = shape->read(&cachedStream);
+         cachedStream.close();
+
+         if (readSuccess)
+         {
+         #ifdef TORQUE_DEBUG
+            Con::printf("Loaded cached Collada shape from %s", cachedPath.getFullPath().c_str());
+         #endif
+            return shape;
+         }
+         else
+            delete shape;
+      }
+
+      Con::warnf("Failed to load cached COLLADA shape from %s", cachedPath.getFullPath().c_str());
+   }
+
+  
+   if (!Platform::isFile(path.getFullPath().c_str()))
+   {
+      // DAE file does not exist, bail.
+      return NULL;
+   }
 
    // Allow TSShapeConstructor object to override properties
-   TSShapeConstructor* tscon = TSShapeConstructor::findShapeConstructor(path.getFullPath());
-   if (tscon)
+   ColladaUtils::getOptions().reset();
+   TSShapeConstructor* tscon = TSShapeConstructor::findShapeConstructor(path.getFullPath().c_str());
+   //if (tscon)
+  //  ColladaUtils::getOptions() = tscon->mOptions;
+   ColladaUtils::getOptions().neverImport += "\tdummy";
+
+   // Check if this is a Sketchup file (.kmz) and if so, mount the zip filesystem
+   // and get the path to the DAE file.
+   String mountPoint;
+   Torque::Path daePath;
+   bool isSketchup = ColladaShapeLoader::checkAndMountSketchup(path, mountPoint, daePath);
+
+   // Load Collada model and convert to 3space
+   TSShape* tss = 0;
+   domCOLLADA* root = ColladaShapeLoader::getDomCOLLADA(daePath);
+   if (root)
    {
-      switch (tscon->mUpAxis)
-      {
-      case TSShapeConstructor::X_AXIS:    loader.upAxis = UPAXISTYPE_X_UP;    break;
-      case TSShapeConstructor::Y_AXIS:    loader.upAxis = UPAXISTYPE_Y_UP;    break;
-      case TSShapeConstructor::Z_AXIS:    loader.upAxis = UPAXISTYPE_Z_UP;    break;
-      default:                            /* No override */                   break;
-      }
+      ColladaShapeLoader loader(root);
+      tss = loader.generateShape(daePath);
 
-      if (tscon->mUnit > 0)
-         loader.unitScale = Point3F(tscon->mUnit, tscon->mUnit, tscon->mUnit);
-
-      ColladaAppMaterial::setPrefix(tscon->mMatNamePrefix);
-   }
-   else
-   {
-      ColladaAppMaterial::setPrefix("");
-   }
-
-   TSShape* tss = loader.generateShape(path);
-
-#if 0
-   // Dump the imported Collada model structure to a text file
-   {
-      FileStream dumpStream;
-      if (dumpStream.open("dump.txt", Torque::FS::File::Write)) {
-         TSShapeInstance* tsi = new TSShapeInstance(tss, false);
-         tsi->dump(dumpStream);
-         delete tsi;
-      }
-   }
-#endif
-
-   // Cache the Collada model to a DTS file for faster loading next time.
-   if (Con::getBoolVariable("$pref::collada::cacheDts", true))
-   {
+      // Cache the Collada model to a DTS file for faster loading next time.
       FileStream dtsStream;
       if (dtsStream.open(cachedPath.getFullPath().c_str(), FileStream::Write))
       {
          Con::printf("Writing cached COLLADA shape to %s", cachedPath.getFullPath().c_str());
          tss->write(&dtsStream);
       }
-   }
 
-   // Add collada materials to materials.cs
-   if (Con::getBoolVariable("$pref::collada::updateMaterials", true))
-      updateMaterialsScript(path);
+      // Add collada materials to materials.cs
+      updateMaterialsScript(path, isSketchup);
+   }
 
    // Close progress dialog
    TSShapeLoader::updateProgress(TSShapeLoader::Load_Complete, "Import complete");
 
    return tss;
+}
+
+ConsoleFunction(convertCollada, const char*, 2, 2, "convertCollada(path)")
+{
+    Torque::Path p = argv[1];
+    TSShape* shape = loadColladaShape(p);
+    if (shape)
+    {
+        Torque::Path dtsPath = p;
+        dtsPath.setExtension("dts");
+        FileStream dtsStream;
+        if (dtsStream.open(dtsPath.getFullPath().c_str(), FileStream::Write))
+        {
+            shape->write(&dtsStream);
+            dtsStream.close();
+        }
+        delete shape;
+        return dtsPath.getFullPath().c_str();
+    }
+    return "";
 }

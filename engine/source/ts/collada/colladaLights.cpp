@@ -1,30 +1,14 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) 2012 GarageGames, LLC
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to
-// deal in the Software without restriction, including without limitation the
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-// sell copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-// IN THE SOFTWARE.
+// Collada-2-DTS
+// Copyright (C) 2009 GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
-
-#include "platform/platform.h"
 
 #include "ts/collada/colladaUtils.h"
 #include "ts/collada/colladaAppNode.h"
 #include "ts/collada/colladaShapeLoader.h"
+
+//#include "T3D/pointLight.h"
+// #include "T3D/spotlight.h"
 
 
 //-----------------------------------------------------------------------------
@@ -55,7 +39,7 @@ template<class T> static void resolveLightAttenuation(T* light, Point3F& attenua
 // Recurse through the collada scene to add <light>s to the Torque scene
 static void processNodeLights(AppNode* appNode, const MatrixF& offset, SimGroup* group)
 {
-   Con::warnf("No light support yet");
+    Con::errorf("Collada Lighting not implemented!");
    //const domNode* node = dynamic_cast<ColladaAppNode*>(appNode)->getDomNode();
 
    //for (S32 iLight = 0; iLight < node->getInstance_light_array().getCount(); iLight++) {
@@ -131,36 +115,15 @@ static void processNodeLights(AppNode* appNode, const MatrixF& offset, SimGroup*
    //      group->addObject(pLight);
    //}
 
-   // Recurse child nodes
-   for (S32 iChild = 0; iChild < appNode->getNumChildNodes(); iChild++)
-      processNodeLights(appNode->getChildNode(iChild), offset, group);
+   //// Recurse child nodes
+   //for (S32 iChild = 0; iChild < appNode->getNumChildNodes(); iChild++)
+   //   processNodeLights(appNode->getChildNode(iChild), offset, group);
 }
 
 // Load lights from a collada file and add to the scene.
-ConsoleFunction( loadColladaLights, bool, 2, 4,
-   "(string filename, SimGroup parentGroup=MissionGroup, SimObject baseObject=-1)"
-   "Load all light instances from a COLLADA (.dae) file and add to the scene.\n"
-   "@param filename COLLADA filename to load lights from\n"
-   "@param parentGroup (optional) name of an existing simgroup to add the new "
-   "lights to (defaults to MissionGroup)\n"
-   "@param baseObject (optional) name of an object to use as the origin (useful "
-   "if you are loading the lights for a collada scene and have moved or rotated "
-   "the geometry)\n"
-   "@return true if successful, false otherwise\n\n"
-   "@tsexample\n"
-   "// load the lights in room.dae\n"
-   "loadColladaLights( \"art/shapes/collada/room.dae\" );\n\n"
-   "// load the lights in room.dae and add them to the RoomLights group\n"
-   "loadColladaLights( \"art/shapes/collada/room.dae\", \"RoomLights\" );\n\n"
-   "// load the lights in room.dae and use the transform of the \"Room\"\n"
-   "object as the origin\n"
-   "loadColladaLights( \"art/shapes/collada/room.dae\", \"\", \"Room\" );\n"
-   "@endtsexample\n\n"
-   "@note Currently for editor use only\n"
-   "@ingroup Editors\n"
-   "@internal")
+ConsoleFunction(loadColladaLights, bool, 2, 4, "(string filename, [parentGroup], [baseObject])")
 {
-    Con::printf("Not implemented yet!");
+    Con::errorf("Collada Lighting not implemented!");
    //Torque::Path path(argv[1]);
 
    //// Optional group to add the lights to. Create if it does not exist, and use

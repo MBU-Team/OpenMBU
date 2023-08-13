@@ -71,7 +71,9 @@ String Path::_join() const
 
 String Path::CleanSeparators(String path)
 {
-   return path.replace( path.begin(), path.end(), '\\', '/' );
+   String changed = path;
+   std::replace(changed.begin(), changed.end(), '\\', '/' );
+   return changed;
 }
 
 String Path::CompressPath(String path)

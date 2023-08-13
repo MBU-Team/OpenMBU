@@ -21,7 +21,7 @@
 #include "math/mQuat.h"
 #endif
 #ifndef _TVECTOR_H_
-#include "core/tVector.h"
+#include "core/util/tVector.h"
 #endif
 #ifndef _TSSHAPE_LOADER_H_
 #include "ts/loader/tsShapeLoader.h"
@@ -33,8 +33,6 @@
 #include "tinyxml.h"
 #endif
 
-#include <string>
-#include "core/path.h"
 #include "dae.h"
 #include "dae/daeErrorHandler.h"
 #include "dae/domAny.h"
@@ -44,32 +42,80 @@
 #include "dom/domMorph.h"
 #include "dom/domNode.h"
 #include "dom/domCOLLADA.h"
+#include "core/path.h"
 typedef std::string String;
-
 
 namespace ColladaUtils
 {
-   MatrixF convertTransform(const MatrixF& m);
+   struct ImportOptions
+   {
+      enum eLodType
+      {
+         DetectDTS = 0,
+         SingleSize,
+         TrailingNumber,
+         NumLodTypes
+      };
 
-   // void collapsePath(const Torque::Path& path);
+      domUpAxisType  upAxis;           // Override for the collada <up_axis> element
+      F32            unit;             // Override for the collada <unit> element
+      eLodType       lodType;          // LOD type option
+      S32            singleDetailSize; // Detail size for all meshes in the model
+      String         matNamePrefix;    // Prefix to apply to collada material names
+      String         alwaysImport;     // List of node names (with wildcards) to import, even if in the neverImport list
+      String         neverImport;      // List of node names (with wildcards) to ignore on loading
+      bool           ignoreNodeScale;  // Ignore <scale> elements in <node>s
+      bool           adjustCenter;     // Translate model so origin is at the center
+      bool           adjustFloor;      // Translate model so origin is at the bottom
+      bool           forceUpdateMaterials;   // Force update of materials.cs
+
+      ImportOptions()
+      {
+         reset();
+      }
+
+      void reset()
+      {
+         upAxis = UPAXISTYPE_COUNT;
+         unit = -1.0f;
+         lodType = DetectDTS;
+         singleDetailSize = 2;
+         matNamePrefix = "";
+         alwaysImport = "";
+         neverImport = "";
+         ignoreNodeScale = false;
+         adjustCenter = false;
+         adjustFloor = false;
+         forceUpdateMaterials = false;
+      }
+   };
+
+   ImportOptions& getOptions();
+
+   void convertTransform(MatrixF& m);
+
+   void collapsePath(std::string& path);
 
    // Apply the set of Collada conditioners (suited for loading Collada models into Torque)
    void applyConditioners(domCOLLADA* root);
 
    const domProfile_COMMON* findEffectCommonProfile(const domEffect* effect);
    const domCommon_color_or_texture_type_complexType* findEffectDiffuse(const domEffect* effect);
-   const domFx_sampler2D_common_complexType* getSampler2D(const domEffect* effect);
+   const domCommon_color_or_texture_type_complexType* findEffectSpecular(const domEffect* effect);
+   const domFx_sampler2D_common_complexType* getTextureSampler(const domEffect* effect, const domCommon_color_or_texture_type_complexType* texture);
+   String getSamplerImagePath(const domEffect* effect, const domFx_sampler2D_common_complexType* sampler2D);
+   String resolveImagePath(const domImage* image);
 
-   // Collada export helper functions, not implemented yet for OpenMBU
-   // const char* findTexture(const Torque::Path& diffuseMap); 
-   void exportColladaHeader(TiXmlElement* rootNode);
-   void exportColladaMaterials(TiXmlElement* rootNode, const OptimizedPolyList& mesh, Vector<String>& matNames, const Torque::Path& colladaFile);
-   void exportColladaTriangles(TiXmlElement* meshNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames);
-   void exportColladaMesh(TiXmlElement* rootNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames);
-   void exportColladaScene(TiXmlElement* rootNode, const String& meshName, const Vector<String>& matNames);
+   // Collada export helper functions
+  // Torque::Path findTexture(const Torque::Path& diffuseMap);
+  // void exportColladaHeader(TiXmlElement* rootNode);
+  // void exportColladaMaterials(TiXmlElement* rootNode, const OptimizedPolyList& mesh, Vector<String>& matNames, const Torque::Path& colladaFile);
+  // void exportColladaTriangles(TiXmlElement* meshNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames);
+  // void exportColladaMesh(TiXmlElement* rootNode, const OptimizedPolyList& mesh, const String& meshName, const Vector<String>& matNames);
+   //void exportColladaScene(TiXmlElement* rootNode, const String& meshName, const Vector<String>& matNames);
 
    // Export an OptimizedPolyList to a simple Collada file
-   void exportToCollada(const Torque::Path& colladaFile, const OptimizedPolyList& mesh, const String& meshName = "");
+   // void exportToCollada(const Torque::Path& colladaFile, const OptimizedPolyList& mesh, const String& meshName = "");
 };
 
 //-----------------------------------------------------------------------------
@@ -252,7 +298,7 @@ public:
          offsets.push_back(0);
          for (U32 iParam = 0; iParam < accessor->getParam_array().getCount(); iParam++) {
             if (accessor->getParam_array()[iParam]->getName() &&
-               dStrcmp(accessor->getParam_array()[iParam]->getName(), paramNames[paramCount]) == 0) {
+               dStrEqual(accessor->getParam_array()[iParam]->getName(), paramNames[paramCount])) {
                offsets.last() = iParam;
                break;
             }
@@ -440,7 +486,7 @@ public:
 template<> inline const domListOfUInts *ColladaPrimitive<domTriangles>::getTriangleData()
 {
    // Return the <p> integer list directly
-   return &(primitive->getP()->getValue());
+   return (primitive->getP() ? &(primitive->getP()->getValue()) : NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -455,6 +501,11 @@ template<> inline const domListOfUInts *ColladaPrimitive<domPolygons>::getTriang
       for (int iPoly = 0; iPoly < primitive->getCount(); iPoly++) {
 
          domP* P = primitive->getP_array()[iPoly];
+
+         // Ignore invalid P arrays
+         if (!P || !P->getValue().getCount())
+            continue;
+
          domUint* pSrcData = &(P->getValue()[0]);
          S32 numPoints = P->getValue().getCount() / stride;
 
@@ -481,22 +532,23 @@ template<> inline const domListOfUInts *ColladaPrimitive<domPolylist>::getTriang
       // Convert polygons to triangles
       pTriangleData = new domListOfUInts();
 
-      domUint* pSrcData = &(primitive->getP()->getValue()[0]);
-      const domListOfUInts& vcount = primitive->getVcount()->getValue();
-
       // Check that the P element has the right number of values (this
       // has been seen with certain models exported using COLLADAMax)
+      const domListOfUInts& vcount = primitive->getVcount()->getValue();
+
       U32 expectedCount = 0;
       for (int iPoly = 0; iPoly < vcount.getCount(); iPoly++)
          expectedCount += vcount[iPoly];
       expectedCount *= stride;
 
-      if (primitive->getP()->getValue().getCount() != expectedCount)
+      if (!primitive->getP() || !primitive->getP()->getValue().getCount() ||
+         (primitive->getP()->getValue().getCount() != expectedCount) )
       {
          Con::warnf("<polylist> element found with invalid <p> array. This primitive will be ignored.");
          return pTriangleData;
       }
 
+      domUint* pSrcData = &(primitive->getP()->getValue()[0]);
       for (int iPoly = 0; iPoly < vcount.getCount(); iPoly++) {
 
          // Use a simple tri-fan (centered at the first point) method of
@@ -525,7 +577,20 @@ template<> inline F32 convert(const char* value) { return convert<double>(value)
 
 //-----------------------------------------------------------------------------
 /// Collada animation data
-typedef Vector<struct AnimData*> AnimChannels;
+struct AnimChannels : public Vector<struct AnimData*>
+{
+   daeElement  *element;
+   AnimChannels(daeElement* el) : element(el)
+   {
+      element->setUserData(this);
+   }
+   ~AnimChannels()
+   {
+      if (element)
+         element->setUserData(0);
+   }
+};
+
 struct AnimData
 {
    _SourceReader  input;
@@ -609,7 +674,6 @@ struct AnimatedElement
                F32 curveEnd = animData->input.getFloatValue(animData->input.size()-1);
                if ((time >= curveStart) && (time <= curveEnd)) {
                   animData->interpValue(time, 0, &value);
-                  break;
                }
             }
          }
@@ -620,21 +684,22 @@ struct AnimatedElement
 
 template<class T> struct AnimatedElementList : public AnimatedElement<T>
 {
-   const daeElement* element;    ///< The Collada element (can be NULL)
-   T defaultVal;                 ///< Default value (used when element is NULL)
-   
    AnimatedElementList(const daeElement* e=0) : AnimatedElement<T>(e) { }
+
+   // @todo: Disable morph animations for now since they are not supported by T3D
+   bool isAnimated() { return false; }
+   bool isAnimated(F32 start, F32 end) { return false; }
 
    // Get the value of the element list at the specified time
    T getValue(F32 time)
    {
-      T vec(defaultVal);
-      if (element) {
+      T vec(this->defaultVal);
+      if (this->element) {
          // Get a copy of the vector
-         vec = *(T*)const_cast<daeElement*>(element)->getValuePointer();
+         vec = *(T*)const_cast<daeElement*>(this->element)->getValuePointer();
 
          // Animate the vector
-         if (const AnimChannels* channels = AnimData::getAnimChannels(element)) {
+         if (const AnimChannels* channels = AnimData::getAnimChannels(this->element)) {
             for (int iChannel = 0; iChannel < channels->size(); iChannel++) {
                const AnimData* animData = (*channels)[iChannel];
                F32 curveStart = animData->input.getFloatValue(0);
@@ -642,7 +707,6 @@ template<class T> struct AnimatedElementList : public AnimatedElement<T>
                if ((time >= curveStart) && (time <= curveEnd)) {
                   for (int iValue = 0; iValue < animData->targetValueCount; iValue++)
                      animData->interpValue(time, iValue, &vec[animData->targetValueOffset + iValue]);
-                  break;
                }
             }
          }

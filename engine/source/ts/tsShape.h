@@ -275,30 +275,30 @@ public:
     /// @name Shape Vector Data
     /// @{
 
-    ToolVector<Node> nodes;
-    ToolVector<Object> objects;
-    ToolVector<Decal> decals;
-    ToolVector<IflMaterial> iflMaterials;
-    ToolVector<ObjectState> objectStates;
-    ToolVector<DecalState> decalStates;
-    ToolVector<S32> subShapeFirstNode;
-    ToolVector<S32> subShapeFirstObject;
-    ToolVector<S32> subShapeFirstDecal;
-    ToolVector<S32> detailFirstSkin;
-    ToolVector<S32> subShapeNumNodes;
-    ToolVector<S32> subShapeNumObjects;
-    ToolVector<S32> subShapeNumDecals;
-    ToolVector<Detail> details;
-    ToolVector<Quat16> defaultRotations;
-    ToolVector<Point3F> defaultTranslations;
+    Vector<Node> nodes;
+    Vector<Object> objects;
+    Vector<Decal> decals;
+    Vector<IflMaterial> iflMaterials;
+    Vector<ObjectState> objectStates;
+    Vector<DecalState> decalStates;
+    Vector<S32> subShapeFirstNode;
+    Vector<S32> subShapeFirstObject;
+    Vector<S32> subShapeFirstDecal;
+    Vector<S32> detailFirstSkin;
+    Vector<S32> subShapeNumNodes;
+    Vector<S32> subShapeNumObjects;
+    Vector<S32> subShapeNumDecals;
+    Vector<Detail> details;
+    Vector<Quat16> defaultRotations;
+    Vector<Point3F> defaultTranslations;
 
     /// @}
 
     /// These are set up at load time, but memory is allocated along with loaded data
     /// @{
 
-    ToolVector<S32> subShapeFirstTranslucentObject;
-    ToolVector<TSMesh*> meshes;
+    Vector<S32> subShapeFirstTranslucentObject;
+    Vector<TSMesh*> meshes;
 
     /// @}
 
@@ -312,8 +312,8 @@ public:
     ///   - intraDL is at 0 when if shape were any farther away we'd be at dl+1
     /// @{
 
-    ToolVector<F32> alphaIn;
-    ToolVector<F32> alphaOut
+    Vector<F32> alphaIn;
+    Vector<F32> alphaOut
         ;
     /// @}
 
@@ -433,6 +433,20 @@ public:
     S32 findSequence(S32 nameIndex) const;
     S32 findSequence(const char* name) const { return findSequence(findName(name)); }
 
+    S32 getSubShapeForNode(S32 nodeIndex);
+    S32 getSubShapeForObject(S32 objIndex);
+    void getSubShapeDetails(S32 subShapeIndex, Vector<S32>& validDetails);
+
+    void getNodeWorldTransform(S32 nodeIndex, MatrixF* mat) const;
+    void getNodeKeyframe(S32 nodeIndex, const TSShape::Sequence& seq, S32 keyframe, MatrixF* mat) const;
+    void getNodeObjects(S32 nodeIndex, Vector<S32>& nodeObjects);
+    void getNodeChildren(S32 nodeIndex, Vector<S32>& nodeChildren);
+
+    void getObjectDetails(S32 objIndex, Vector<S32>& objDetails);
+
+    bool findMeshIndex(const char* meshName, S32& objIndex, S32& meshIndex);
+    TSMesh* findMesh(const char* meshName);
+
     bool hasTranslucency() const { return (mFlags & HasTranslucency) != 0; }
     /// @}
 
@@ -503,6 +517,46 @@ public:
     void rearrangeStates(S32 start, S32 rows, S32 cols, U8* data, S32 size);
 
     void fixupOldSkins(S32 numMeshes, S32 numSkins, S32 numDetails, S32* detailFirstSkin, S32* detailNumSkins);
+
+    /// @name Shape Editing
+/// @{
+    S32 addName(const char* name);
+    bool removeName(const char* name);
+    S32 addDetail(const char* dname, S32 size, S32 subShapeNum);
+
+    S32 addBillboardDetail(const char* dname,
+        S32 size);
+
+    static TSMesh* createMeshCube(const Point3F& center, const Point3F& extents);
+
+    bool renameNode(const char* oldName, const char* newName);
+    bool renameObject(const char* oldName, const char* newName);
+    bool renameSequence(const char* oldName, const char* newName);
+
+    bool setNodeTransform(const char* name, const Point3F& pos, const QuatF& rot);
+    bool addNode(const char* name, const char* parentName, const Point3F& pos, const QuatF& rot);
+    bool removeNode(const char* name);
+
+    S32 addObject(const char* objName, S32 subShapeIndex);
+    void addMeshToObject(S32 objIndex, S32 meshIndex, TSMesh* mesh);
+    void removeMeshFromObject(S32 objIndex, S32 meshIndex);
+    bool setObjectNode(const char* objName, const char* nodeName);
+    bool removeObject(const char* objName);
+
+    bool addMesh(TSShape* srcShape, const char* srcMeshName, const char* meshName);
+    bool addMesh(TSMesh* mesh, const char* meshName);
+    bool setMeshSize(const char* meshName, S32 size);
+    bool removeMesh(const char* meshName);
+
+    bool addSequence(const char* path, const char* fromSeq, const char* name, S32 startFrame, S32 endFrame, S32* totalFrames = NULL);
+    bool removeSequence(const char* name);
+
+    bool addTrigger(const char* seqName, S32 keyframe, S32 state);
+    bool removeTrigger(const char* seqName, S32 keyframe, S32 state);
+
+    bool setSequenceBlend(const char* seqName, bool blend, const char* blendRefSeqName, S32 blendRefFrame);
+    bool setSequenceGroundSpeed(const char* seqName, const Point3F& trans, const Point3F& rot);
+    /// @}
 };
 
 /// Specialized material list for 3space objects

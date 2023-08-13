@@ -49,6 +49,8 @@ public:
       mProps.clear();
    }
 
+   const domNode* getDomNode() const { return p_domNode; }
+
    //-----------------------------------------------------------------------
    const char *getName() { return mName; }
    const char *getParentName() { return mParentName; }

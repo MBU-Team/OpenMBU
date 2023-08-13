@@ -12,6 +12,14 @@ void Quat16::identity()
     w = MAX_VAL;
 }
 
+QuatF Quat16::getQuatF() const
+{
+    return QuatF(F32(x) / F32(MAX_VAL),
+        F32(y) / F32(MAX_VAL),
+        F32(z) / F32(MAX_VAL),
+        F32(w) / F32(MAX_VAL));
+}
+
 QuatF& Quat16::getQuatF(QuatF* q) const
 {
     q->x = float(x) / float(MAX_VAL);

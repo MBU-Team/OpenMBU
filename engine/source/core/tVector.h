@@ -137,6 +137,7 @@ public:
     void increment(U32);
     void decrement(U32);
     void insert(U32);
+    void insert(U32, const T&);
     void erase(U32);
     void erase_fast(U32);
     void erase_fast(iterator);
@@ -327,6 +328,13 @@ template<class T> inline void Vector<T>::insert(U32 index)
         (mElementCount - index - 1) * sizeof(value_type));
     constructInPlace(&mArray[index]);
 }
+
+template<class T> inline void Vector<T>::insert(U32 index, const T& x)
+{
+    insert(index);
+    mArray[index] = x;
+}
+
 
 template<class T> inline void Vector<T>::erase(U32 index)
 {

@@ -11,7 +11,6 @@
 #include "ts/collada/colladaExtensions.h"
 #include "ts/collada/colladaAppNode.h"
 #include "ts/collada/colladaAppMesh.h"
-#include "ts/collada/colladaShapeLoader.h"
 
 
 ColladaAppNode::ColladaAppNode(const domNode* node, ColladaAppNode* parent)
@@ -36,7 +35,7 @@ ColladaAppNode::ColladaAppNode(const domNode* node, ColladaAppNode* parent)
          mProps.insert(StringTable->insert(name), dAtof(token));
    } while ( (token = dStrtok(NULL, delims)) );
 
-   delete [] properties;
+   dFree( properties );
 
    // Create vector of transform elements
    for (int iChild = 0; iChild < node->getContents().getCount(); iChild++) {
@@ -158,8 +157,8 @@ MatrixF ColladaAppNode::getTransform(F32 time)
    else {
       // no parent (ie. root level) => scale by global shape <unit>
       transform.identity();
-      transform.scale(ColladaShapeLoader::getUnitScale());
-      transform = ColladaUtils::convertTransform(transform);
+      transform.scale(Point3F(ColladaUtils::getOptions().unit, ColladaUtils::getOptions().unit, ColladaUtils::getOptions().unit));
+      ColladaUtils::convertTransform(transform);
    }
 
    // Multiply by local node transform elements
@@ -175,6 +174,16 @@ MatrixF ColladaAppNode::getTransform(F32 time)
          case COLLADA_TYPE::MATRIX:    mat = vecToMatrixF<domMatrix>(nodeTransforms[iTxfm].getValue(time));     break;
          case COLLADA_TYPE::SKEW:      mat = vecToMatrixF<domSkew>(nodeTransforms[iTxfm].getValue(time));       break;
          case COLLADA_TYPE::LOOKAT:    mat = vecToMatrixF<domLookat>(nodeTransforms[iTxfm].getValue(time));     break;
+      }
+
+      // Remove node scaling (but keep reflections) if desired
+      if (ColladaUtils::getOptions().ignoreNodeScale)
+      {
+         Point3F invScale = mat.getScale();
+         invScale.x = invScale.x ? (1.0f / invScale.x) : 0;
+         invScale.y = invScale.y ? (1.0f / invScale.y) : 0;
+         invScale.z = invScale.z ? (1.0f / invScale.z) : 0;
+         mat.scale(invScale);
       }
 
       // Post multiply the animated transform

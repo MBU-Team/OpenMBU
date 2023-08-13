@@ -2,10 +2,7 @@
 // GarageGames Library
 // Copyright (c) GarageGames, All Rights Reserved
 //-----------------------------------------------------------------------------
-
-#ifndef _PATH_H_
-#define _PATH_H_
-
+#pragma once
 #include <string>
 #include <platform/types.h>
 typedef std::string String;
@@ -120,5 +117,4 @@ String PathToPlatform(String file);
 String PathToOS(String file);
 
 } // Namespace
-#endif
 
