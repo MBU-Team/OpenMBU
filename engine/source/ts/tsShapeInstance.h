@@ -115,6 +115,9 @@ public:
         virtual void support(S32 od, const Point3F& v, F32* currMaxDP, Point3F* currSupport);
         /// Ray cast for collision detection
         virtual bool castRay(S32 objectDetail, const Point3F& start, const Point3F& end, RayInfo*);
+
+        virtual bool buildPolyListOpcode(S32 objectDetail, AbstractPolyList* polyList, U32& surfaceKey, TSMaterialList* materials);
+        virtual bool castRayOpcode(S32 objectDetail, const Point3F& start, const Point3F& end, RayInfo* info, TSMaterialList* materials);
         /// @}
     };
 
@@ -164,6 +167,9 @@ public:
         bool getFeatures(S32 objectDetail, const MatrixF& mat, const Point3F& n, ConvexFeature*, U32& surfaceKey);
         void support(S32 od, const Point3F& v, F32* currMaxDP, Point3F* currSupport);
         bool castRay(S32 objectDetail, const Point3F& start, const Point3F& end, RayInfo*);
+        
+        bool buildPolyListOpcode(S32 objectDetail, AbstractPolyList* polyList, const Box3F& box, TSMaterialList* materials, U32& surfaceKey);
+        bool castRayOpcode(S32 objectDetail, const Point3F& start, const Point3F& end, RayInfo* info, TSMaterialList* materials);
         /// @}
     };
 
@@ -658,6 +664,9 @@ public:
     void computeBounds(S32 dl, Box3F& bounds); ///< uses current transforms to compute bounding box around a detail level
                                                 ///< see like named method on shape if you want to use default transforms
 
+    bool buildPolyListOpcode(S32 dl, AbstractPolyList* polyList, const Box3F& box);
+    bool castRayOpcode(S32 objectDetail, const Point3F& start, const Point3F& end, RayInfo*);
+
  //-------------------------------------------------------------------------------------
  // Thread Control
  //-------------------------------------------------------------------------------------
@@ -738,6 +747,8 @@ public:
     void dumpDecals(Stream&, S32 indent, MeshObjectInstance*);
 
     void* mData; ///< available for use by app...initialized to 0
+
+    void prepCollision();
 };
 
 inline MatrixF* TSShapeInstance::ObjectInstance::getTransform()

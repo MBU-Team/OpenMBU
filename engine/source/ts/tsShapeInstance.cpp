@@ -2205,3 +2205,17 @@ U32 TSShapeInstance::getNumDetails()
 
     return 0;
 }
+
+void TSShapeInstance::prepCollision()
+{
+    PROFILE_SCOPE(TSShapeInstance_PrepCollision);
+
+    setStatics(0);
+    // Iterate over all our meshes and call prepCollision on them...
+    for (S32 i = 0; i < mShape->meshes.size(); i++)
+    {
+        if (mShape->meshes[i])
+            mShape->meshes[i]->prepOpcodeCollision();
+    }
+    clearStatics();
+}

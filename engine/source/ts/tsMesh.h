@@ -46,6 +46,9 @@ public:
 };
 #endif
 
+namespace Opcode { class Model; class MeshInterface; }
+namespace IceMaths { class IndexedTriangle; class Point; }
+
 class TSMaterialList;
 class TSShapeInstance;
 struct RayInfo;
@@ -290,6 +293,15 @@ public:
         mVisibility = 1.0f;
     }
     virtual ~TSMesh();
+
+    Opcode::Model* mOptTree = NULL;
+    Opcode::MeshInterface* mOpMeshInterface = NULL;
+    IceMaths::IndexedTriangle* mOpTris = NULL;
+    IceMaths::Point* mOpPoints = NULL;
+
+    void prepOpcodeCollision();
+    bool buildPolyListOpcode(const S32 od, AbstractPolyList* polyList, const Box3F& nodeBox, TSMaterialList* materials, U32& surfaceKey);
+    bool castRayOpcode(const Point3F& start, const Point3F& end, RayInfo* rayInfo, TSMaterialList* materials);
 };
 
 inline const Point3F& TSMesh::decodeNormal(U8 ncode) { return smU8ToNormalTable[ncode]; }

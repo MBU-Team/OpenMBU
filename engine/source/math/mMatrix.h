@@ -158,6 +158,9 @@ public:
     friend MatrixF operator * (const MatrixF& m1, const MatrixF& m2);
     MatrixF& operator *= (const MatrixF& m);
 
+    // Static identity matrix
+    const static MatrixF Identity;
+
 };
 
 //--------------------------------------

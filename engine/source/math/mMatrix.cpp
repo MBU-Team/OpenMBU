@@ -9,6 +9,7 @@
 #include "core/frameAllocator.h"
 
 // idx(i,j) is index to element in column i, row j
+const MatrixF MatrixF::Identity(true);
 
 void MatrixF::transposeTo(F32* matrix) const
 {

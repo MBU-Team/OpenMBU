@@ -36,6 +36,8 @@ TSStatic::TSStatic()
     mShadow = NULL;
 
     mConvexList = new Convex;
+
+    mCollisionType = CollisionMesh;
 }
 
 TSStatic::~TSStatic()
@@ -44,6 +46,16 @@ TSStatic::~TSStatic()
     mConvexList = NULL;
     delete mShadow;
 }
+
+static EnumTable::Enums collisionTypeEnums[] =
+{
+    { TSStatic::None,          "None"           },
+   { TSStatic::Bounds,        "Bounds"         },
+    { TSStatic::CollisionMesh, "Collision Mesh" },
+   { TSStatic::VisibleMesh,   "Visible Mesh"   },
+};
+
+static EnumTable gCollisionTypeEnum(4, &collisionTypeEnums[0]);
 
 //--------------------------------------------------------------------------
 void TSStatic::initPersistFields()
@@ -63,12 +75,20 @@ void TSStatic::initPersistFields()
     addField("customAmbientLighting", TypeColorF, Offset(customAmbientLighting, SceneObject));
     addField("lightGroupName", TypeString, Offset(lightGroupName, SceneObject));
     endGroup("Lighting");
+    addGroup("Collision");
+    addField("collisionType", TypeEnum, Offset(mCollisionType, TSStatic), 1, &gCollisionTypeEnum);
+    endGroup("Collision");
 }
 
 void TSStatic::inspectPostApply()
 {
-    if (isServerObject()) {
-        setMaskBits(0xffffffff);
+    // Apply any transformations set in the editor
+    Parent::inspectPostApply();
+
+    if (isServerObject())
+    {
+        setMaskBits(MaskBits::advancedStaticOptionsMask);
+        prepCollision();
     }
 }
 
@@ -101,62 +121,135 @@ bool TSStatic::onAdd()
 
     mShapeInstance = new TSShapeInstance(mShape, isClientObject() || gSPMode);
 
-    // Scan out the collision hulls...
-    U32 i;
-    for (i = 0; i < mShape->details.size(); i++)
-    {
-        char* name = (char*)mShape->names[mShape->details[i].nameIndex];
-
-        if (dStrstr((const char*)dStrlwr(name), "collision-"))
-        {
-            mCollisionDetails.push_back(i);
-
-            // The way LOS works is that it will check to see if there is a LOS detail that matches
-            // the the collision detail + 1 + MaxCollisionShapes (this variable name should change in
-            // the future). If it can't find a matching LOS it will simply use the collision instead.
-            // We check for any "unmatched" LOS's further down
-            mLOSDetails.increment();
-
-            char buff[128];
-            dSprintf(buff, sizeof(buff), "LOS-%d", i + 1 + MaxCollisionShapes);
-            U32 los = mShape->findDetail(buff);
-            if (los == -1)
-                mLOSDetails.last() = i;
-            else
-                mLOSDetails.last() = los;
-        }
-    }
-
-    // Snag any "unmatched" LOS details
-    for (i = 0; i < mShape->details.size(); i++)
-    {
-        char* name = (char*)mShape->names[mShape->details[i].nameIndex];
-
-        if (dStrstr((const char*)dStrlwr(name), "los-"))
-        {
-            // See if we already have this LOS
-            bool found = false;
-            for (U32 j = 0; j < mLOSDetails.size(); j++)
-            {
-                if (mLOSDetails[j] == i)
-                {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found)
-                mLOSDetails.push_back(i);
-        }
-    }
-
-    // Compute the hull accelerators (actually, just force the shape to compute them)
-    for (i = 0; i < mCollisionDetails.size(); i++)
-        mShapeInstance->getShape()->getAccelerator(mCollisionDetails[i]);
+    prepCollision();
 
     addToScene();
 
     return true;
+}
+
+void TSStatic::prepCollision()
+{
+    // Let the client know that the collision was updated
+    setMaskBits(UpdateCollisionMask);
+
+    // Allow the ShapeInstance to prep its collision if it hasn't already
+    if (mShapeInstance)
+        mShapeInstance->prepCollision();
+
+    // Cleanup any old collision data
+    mCollisionDetails.clear();
+    mLOSDetails.clear();
+
+    // Any detail or mesh that starts with these names is considered
+    // to be a "collision" mesh ("LOS" allows for specific line of sight meshes)
+    static const char* sCollisionStr("Collision");
+    static const char* sLOSStr("LOS");
+
+    if (mCollisionType == None || mCollisionType == Bounds)
+        mConvexList->nukeList();
+    else if (mCollisionType == CollisionMesh)
+    {
+        // Scan out the collision hulls...
+        U32 i;
+        for (i = 0; i < mShape->details.size(); i++)
+        {
+            char* name = (char*)mShape->names[mShape->details[i].nameIndex];
+
+            if (dStrstr((const char*)dStrlwr(name), "collision-"))
+            {
+                mCollisionDetails.push_back(i);
+
+                // The way LOS works is that it will check to see if there is a LOS detail that matches
+                // the the collision detail + 1 + MaxCollisionShapes (this variable name should change in
+                // the future). If it can't find a matching LOS it will simply use the collision instead.
+                // We check for any "unmatched" LOS's further down
+                mLOSDetails.increment();
+
+                char buff[128];
+                dSprintf(buff, sizeof(buff), "LOS-%d", i + 1 + MaxCollisionShapes);
+                U32 los = mShape->findDetail(buff);
+                if (los == -1)
+                    mLOSDetails.last() = i;
+                else
+                    mLOSDetails.last() = los;
+            }
+        }
+
+        // Snag any "unmatched" LOS details
+        for (i = 0; i < mShape->details.size(); i++)
+        {
+            char* name = (char*)mShape->names[mShape->details[i].nameIndex];
+
+            if (dStrstr((const char*)dStrlwr(name), "los-"))
+            {
+                // See if we already have this LOS
+                bool found = false;
+                for (U32 j = 0; j < mLOSDetails.size(); j++)
+                {
+                    if (mLOSDetails[j] == i)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                    mLOSDetails.push_back(i);
+            }
+        }
+
+        // Compute the hull accelerators (actually, just force the shape to compute them)
+        for (i = 0; i < mCollisionDetails.size(); i++)
+            mShapeInstance->getShape()->getAccelerator(mCollisionDetails[i]);
+
+
+        // Since it looks odd to continue to collide against a mesh with
+        // no collision details under the current type be sure to nuke it
+        if (mCollisionDetails.size() == 0)
+            mConvexList->nukeList();
+    }
+    else  // VisibleMesh
+    {
+        // With the VisbileMesh we do our collision against the highest LOD
+        // visible mesh
+        if (mShape->details.size() > 0)
+        {
+            U32 highestDetail = 0;
+            F32 highestSize = mShape->details[0].size;
+
+            for (U32 i = 1; i < mShape->details.size(); i++)
+            {
+                // Make sure we skip any details that shouldn't be rendered
+                if (mShape->details[i].size < 0)
+                    continue;
+
+                // Also make sure we skip any collision details with a size
+                char* name = (char*)mShape->names[mShape->details[i].nameIndex];
+
+                if (dStrstr((const char*)dStrlwr(name), "collision-"))
+                    continue;
+
+                if (dStrstr((const char*)dStrlwr(name), "los-"))
+                    continue;
+
+                // Otherwise test against the current highest size
+                if (mShape->details[i].size > highestSize)
+                {
+                    highestDetail = i;
+                    highestSize = mShape->details[i].size;
+                }
+            }
+
+            mCollisionDetails.push_back(highestDetail);
+            mLOSDetails.push_back(highestDetail);
+        }
+
+        // Since it looks odd to continue to collide against a mesh with
+        // no collision details under the current type be sure to nuke it
+        if (mCollisionDetails.size() == 0)
+            mConvexList->nukeList();
+    }
 }
 
 
@@ -297,6 +390,9 @@ U32 TSStatic::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
         }
     }
 
+    if (stream->writeFlag(mask & UpdateCollisionMask))
+        stream->write((U32)mCollisionType);
+
     return retMask;
 }
 
@@ -331,6 +427,22 @@ void TSStatic::unpackUpdate(NetConnection* con, BitStream* stream)
             lightIds.push_back(id);
         }
     }
+
+    if (stream->readFlag()) // UpdateCollisionMask
+    {
+        U32 collisionType = CollisionMesh;
+
+        stream->read(&collisionType);
+
+        // Handle it if we have changed CollisionType's
+        if ((CollisionType)collisionType != mCollisionType)
+        {
+            mCollisionType = (CollisionType)collisionType;
+
+            if (isProperlyAdded() && mShapeInstance)
+                prepCollision();
+        }
+    }
 }
 
 
@@ -338,27 +450,107 @@ void TSStatic::unpackUpdate(NetConnection* con, BitStream* stream)
 //----------------------------------------------------------------------------
 bool TSStatic::castRay(const Point3F& start, const Point3F& end, RayInfo* info)
 {
-    if (mShapeInstance)
-    {
-        RayInfo shortest;
-        shortest.t = 1e8;
+    if (mCollisionType == None)
+        return false;
 
-        info->object = NULL;
-        for (U32 i = 0; i < mLOSDetails.size(); i++)
+    if (!mShapeInstance)
+        return false;
+
+    if (mCollisionType == Bounds)
+    {
+        F32 st, et, fst = 0.0f, fet = 1.0f;
+        F32* bmin = &mObjBox.min.x;
+        F32* bmax = &mObjBox.max.x;
+        F32 const* si = &start.x;
+        F32 const* ei = &end.x;
+
+        for (U32 i = 0; i < 3; i++)
         {
-            mShapeInstance->animate(mLOSDetails[i]);
-            if (mShapeInstance->castRay(start, end, info, mLOSDetails[i]))
+            if (*si < *ei)
             {
-                info->object = this;
-                if (info->t < shortest.t)
-                    shortest = *info;
+                if (*si > *bmax || *ei < *bmin)
+                    return false;
+                F32 di = *ei - *si;
+                st = (*si < *bmin) ? (*bmin - *si) / di : 0.0f;
+                et = (*ei > *bmax) ? (*bmax - *si) / di : 1.0f;
             }
+            else
+            {
+                if (*ei > *bmax || *si < *bmin)
+                    return false;
+                F32 di = *ei - *si;
+                st = (*si > *bmax) ? (*bmax - *si) / di : 0.0f;
+                et = (*ei < *bmin) ? (*bmin - *si) / di : 1.0f;
+            }
+            if (st > fst) fst = st;
+            if (et < fet) fet = et;
+            if (fet < fst)
+                return false;
+            bmin++; bmax++;
+            si++; ei++;
         }
 
-        if (info->object == this) {
-            // Copy out the shortest time...
-            *info = shortest;
-            return true;
+        info->normal = start - end;
+        info->normal.normalizeSafe();
+        getTransform().mulV(info->normal);
+
+        info->t = fst;
+        info->object = this;
+        info->point.interpolate(start, end, fst);
+        info->material = NULL;
+        return true;
+    }
+    
+    if (mShapeInstance)
+    {
+        if (mCollisionType == CollisionMesh)
+        {
+            RayInfo shortest;
+            shortest.t = 1e8;
+
+            info->object = NULL;
+            for (U32 i = 0; i < mLOSDetails.size(); i++)
+            {
+                mShapeInstance->animate(mLOSDetails[i]);
+                if (mShapeInstance->castRay(start, end, info, mLOSDetails[i]))
+                {
+                    info->object = this;
+                    if (info->t < shortest.t)
+                        shortest = *info;
+                }
+            }
+
+            if (info->object == this) {
+                // Copy out the shortest time...
+                *info = shortest;
+                return true;
+            }
+        }
+        if (mCollisionType == VisibleMesh)
+        {
+            RayInfo shortest = *info;
+            RayInfo localInfo;
+            shortest.t = 1e8f;
+
+            for (U32 i = 0; i < mLOSDetails.size(); i++)
+            {
+                mShapeInstance->animate(mLOSDetails[i]);
+
+                if (mShapeInstance->castRayOpcode(mLOSDetails[i], start, end, &localInfo))
+                {
+                    localInfo.object = this;
+
+                    if (localInfo.t < shortest.t)
+                        shortest = localInfo;
+                }
+            }
+
+            if (shortest.object == this)
+            {
+                // Copy out the shortest time...
+                *info = shortest;
+                return true;
+            }
         }
     }
 
@@ -367,21 +559,51 @@ bool TSStatic::castRay(const Point3F& start, const Point3F& end, RayInfo* info)
 
 
 //----------------------------------------------------------------------------
-bool TSStatic::buildPolyList(AbstractPolyList* polyList, const Box3F&, const SphereF&)
+bool TSStatic::buildPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF&)
 {
-    if (mShapeInstance) {
-        bool ret = false;
+    if (mCollisionType == None)
+        return false;
 
-        polyList->setTransform(&mObjToWorld, mObjScale);
+    if (!mShapeInstance)
+        return false;
+
+    if (mCollisionType == Bounds)
+    {
         polyList->setObject(this);
+        polyList->addBox(mObjBox);
+    }
 
-        for (U32 i = 0; i < mCollisionDetails.size(); i++)
+    if (mShapeInstance) {
+        if (mCollisionType == CollisionMesh)
         {
-            mShapeInstance->buildPolyList(polyList, mCollisionDetails[i]);
-            ret = true;
-        }
+            bool ret = false;
 
-        return ret;
+            polyList->setTransform(&mObjToWorld, mObjScale);
+            polyList->setObject(this);
+
+            for (U32 i = 0; i < mCollisionDetails.size(); i++)
+            {
+                mShapeInstance->buildPolyList(polyList, mCollisionDetails[i]);
+                ret = true;
+            }
+
+            return ret;
+        }
+        if (mCollisionType == VisibleMesh)
+        {
+            bool ret = false;
+            
+            polyList->setTransform(&mObjToWorld, mObjScale);
+            polyList->setObject(this);
+            
+            for (U32 i = 0; i < mCollisionDetails.size(); i++)
+            {
+                mShapeInstance->buildPolyListOpcode(mCollisionDetails[i], polyList, box);
+                ret = true;
+            }
+
+            return ret;
+        }
     }
 
     return false;

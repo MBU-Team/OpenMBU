@@ -15,9 +15,6 @@
 #if defined( PLATFORM_XENON )
 #  include <PPCIntrinsics.h>
 #endif
-#include <math.h>
-#include "IcePreprocessor.h"
-#include "IceTypes.h"
 
 	#define	SIGN_BITMASK			0x80000000
 
@@ -39,27 +36,42 @@
 
 	//! Fast fabs for floating-point values. It just clears the sign bit.
 	//! Don't use it blindy, it can be faster or slower than the FPU comparison, depends on the context.
-	inline float FastFabs(float x)
+	inline_ float FastFabs(float x)
 	{
 		udword FloatBits = IR(x)&0x7fffffff;
 		return FR(FloatBits);
 	}
 
 	//! Fast square root for floating-point values.
-	inline float FastSqrt(float square)
+	inline_ float FastSqrt(float square)
 	{
+#if defined( PLATFORM_WINDOWS ) && !defined ( _WIN64 )
+			float retval;
+
+			__asm {
+					mov             eax, square
+					sub             eax, 0x3F800000
+					sar             eax, 1
+					add             eax, 0x3F800000
+					mov             [retval], eax
+			}
+			return retval;
+#elif defined( PLATFORM_XENON )
+      return __fsqrts( square );
+#else
 		return( sqrtf( square ) );
+#endif
 	}
 
 	//! Saturates positive to zero.
-	float fsat(float f)
+	inline_ float fsat(float f)
 	{
 		udword y = (udword&)f & ~((sdword&)f >>31);
 		return (float&)y;
 	}
 
 	//! Computes 1.0f / sqrtf(x).
-	float frsqrt(float f)
+	inline_ float frsqrt(float f)
 	{
 		float x = f * 0.5f;
 		udword y = 0x5f3759df - ((udword&)f >> 1);
@@ -70,7 +82,7 @@
 	}
 
 	//! Computes 1.0f / sqrtf(x). Comes from NVIDIA.
-	float InvSqrt(const float& x)
+	inline_ float InvSqrt(const float& x)
 	{
 		udword tmp = (udword(IEEE_1_0 << 1) + IEEE_1_0 - *(udword*)&x) >> 1;   
 		float y = *(float*)&tmp;                                             
@@ -79,7 +91,7 @@
 
 	//! Computes 1.0f / sqrtf(x). Comes from Quake3. Looks like the first one I had above.
 	//! See http://www.magic-software.com/3DGEDInvSqrt.html
-	float RSqrt(float number)
+	inline_ float RSqrt(float number)
 	{
 		long i;
 		float x2, y;
@@ -96,7 +108,7 @@
 	}
 
 	//! TO BE DOCUMENTED
-	float fsqrt(float f)
+	inline_ float fsqrt(float f)
 	{
 		udword y = ( ( (sdword&)f - 0x3f800000 ) >> 1 ) + 0x3f800000;
 		// Iteration...?
@@ -106,7 +118,7 @@
 	}
 
 	//! Returns the float ranged espilon value.
-	float fepsilon(float f)
+	inline_ float fepsilon(float f)
 	{
 		udword b = (udword&)f & 0xff800000;
 		udword a = b | 0x00000001;
@@ -116,12 +128,12 @@
 	}
 
 	//! Is the float valid ?
-	bool IsNAN(float value)				{ return (IR(value)&0x7f800000) == 0x7f800000;	}
-	bool IsIndeterminate(float value)	{ return IR(value) == 0xffc00000;				}
-	bool IsPlusInf(float value)			{ return IR(value) == 0x7f800000;				}
-	bool IsMinusInf(float value)		{ return IR(value) == 0xff800000;				}
+	inline_ bool IsNAN(float value)				{ return (IR(value)&0x7f800000) == 0x7f800000;	}
+	inline_ bool IsIndeterminate(float value)	{ return IR(value) == 0xffc00000;				}
+	inline_ bool IsPlusInf(float value)			{ return IR(value) == 0x7f800000;				}
+	inline_ bool IsMinusInf(float value)		{ return IR(value) == 0xff800000;				}
 
-	bool IsValidFloat(float value)
+	inline_	bool IsValidFloat(float value)
 	{
 		if(IsNAN(value))			return false;
 		if(IsIndeterminate(value))	return false;
@@ -164,18 +176,132 @@
 	}
 */
 	//! This function computes the slowest possible floating-point value (you can also directly use FLT_EPSILON)
-	inline float ComputeFloatEpsilon()
+	inline_ float ComputeFloatEpsilon()
 	{
 		float f = 1.0f;
 		((udword&)f)^=1;
 		return f - 1.0f;	// You can check it's the same as FLT_EPSILON
 	}
 
-	inline bool IsFloatZero(float x, float epsilon=1e-6f)
+	inline_ bool IsFloatZero(float x, float epsilon=1e-6f)
 	{
 		return x*x < epsilon;
 	}
 
+#if defined( PLATFORM_WINDOWS ) && !defined ( _WIN64 )
+	#define FCOMI_ST0	_asm	_emit	0xdb	_asm	_emit	0xf0
+	#define FCOMIP_ST0	_asm	_emit	0xdf	_asm	_emit	0xf0
+	#define FCMOVB_ST0	_asm	_emit	0xda	_asm	_emit	0xc0
+	#define FCMOVNB_ST0	_asm	_emit	0xdb	_asm	_emit	0xc0
+
+	#define FCOMI_ST1	_asm	_emit	0xdb	_asm	_emit	0xf1
+	#define FCOMIP_ST1	_asm	_emit	0xdf	_asm	_emit	0xf1
+	#define FCMOVB_ST1	_asm	_emit	0xda	_asm	_emit	0xc1
+	#define FCMOVNB_ST1	_asm	_emit	0xdb	_asm	_emit	0xc1
+
+	#define FCOMI_ST2	_asm	_emit	0xdb	_asm	_emit	0xf2
+	#define FCOMIP_ST2	_asm	_emit	0xdf	_asm	_emit	0xf2
+	#define FCMOVB_ST2	_asm	_emit	0xda	_asm	_emit	0xc2
+	#define FCMOVNB_ST2	_asm	_emit	0xdb	_asm	_emit	0xc2
+
+	#define FCOMI_ST3	_asm	_emit	0xdb	_asm	_emit	0xf3
+	#define FCOMIP_ST3	_asm	_emit	0xdf	_asm	_emit	0xf3
+	#define FCMOVB_ST3	_asm	_emit	0xda	_asm	_emit	0xc3
+	#define FCMOVNB_ST3	_asm	_emit	0xdb	_asm	_emit	0xc3
+
+	#define FCOMI_ST4	_asm	_emit	0xdb	_asm	_emit	0xf4
+	#define FCOMIP_ST4	_asm	_emit	0xdf	_asm	_emit	0xf4
+	#define FCMOVB_ST4	_asm	_emit	0xda	_asm	_emit	0xc4
+	#define FCMOVNB_ST4	_asm	_emit	0xdb	_asm	_emit	0xc4
+
+	#define FCOMI_ST5	_asm	_emit	0xdb	_asm	_emit	0xf5
+	#define FCOMIP_ST5	_asm	_emit	0xdf	_asm	_emit	0xf5
+	#define FCMOVB_ST5	_asm	_emit	0xda	_asm	_emit	0xc5
+	#define FCMOVNB_ST5	_asm	_emit	0xdb	_asm	_emit	0xc5
+
+	#define FCOMI_ST6	_asm	_emit	0xdb	_asm	_emit	0xf6
+	#define FCOMIP_ST6	_asm	_emit	0xdf	_asm	_emit	0xf6
+	#define FCMOVB_ST6	_asm	_emit	0xda	_asm	_emit	0xc6
+	#define FCMOVNB_ST6	_asm	_emit	0xdb	_asm	_emit	0xc6
+
+	#define FCOMI_ST7	_asm	_emit	0xdb	_asm	_emit	0xf7
+	#define FCOMIP_ST7	_asm	_emit	0xdf	_asm	_emit	0xf7
+	#define FCMOVB_ST7	_asm	_emit	0xda	_asm	_emit	0xc7
+	#define FCMOVNB_ST7	_asm	_emit	0xdb	_asm	_emit	0xc7
+
+	//! A global function to find MAX(a,b) using FCOMI/FCMOV
+	inline_ float FCMax2(float a, float b)
+	{
+		float Res;
+		_asm	fld		[a]
+		_asm	fld		[b]
+		FCOMI_ST1
+		FCMOVB_ST1
+		_asm	fstp	[Res]
+		_asm	fcomp
+		return Res;
+	}
+
+	//! A global function to find MIN(a,b) using FCOMI/FCMOV
+	inline_ float FCMin2(float a, float b)
+	{
+		float Res;
+		_asm	fld		[a]
+		_asm	fld		[b]
+		FCOMI_ST1
+		FCMOVNB_ST1
+		_asm	fstp	[Res]
+		_asm	fcomp
+		return Res;
+	}
+
+	//! A global function to find MAX(a,b,c) using FCOMI/FCMOV
+	inline_ float FCMax3(float a, float b, float c)
+	{
+		float Res;
+		_asm	fld		[a]
+		_asm	fld		[b]
+		_asm	fld		[c]
+		FCOMI_ST1
+		FCMOVB_ST1
+		FCOMI_ST2
+		FCMOVB_ST2
+		_asm	fstp	[Res]
+		_asm	fcompp
+		return Res;
+	}
+
+	//! A global function to find MIN(a,b,c) using FCOMI/FCMOV
+	inline_ float FCMin3(float a, float b, float c)
+	{
+		float Res;
+		_asm	fld		[a]
+		_asm	fld		[b]
+		_asm	fld		[c]
+		FCOMI_ST1
+		FCMOVNB_ST1
+		FCOMI_ST2
+		FCMOVNB_ST2
+		_asm	fstp	[Res]
+		_asm	fcompp
+		return Res;
+	}
+#elif defined( PLATFORM_XENON )
+
+inline float FCMax2(float a, float b) { return (float)__fsel((a) - (b), a, b ); }
+inline float FCMin2(float a, float b) { return (float)__fsel((a) - (b), b, a ); }
+
+inline float FCMax3(float a, float b, float c)
+{
+   return (float)__fsel( (a) - (b), __fsel( (a) - (c), a, c ), __fsel( (b) - (c), b, c ) );
+}
+
+inline float FCMin3(float a, float b, float c)
+{
+   return (float)__fsel( (a) - (b), __fsel( (b) - (c), c, b ), __fsel( (a) - (c), c, a ) );
+}
+
+#else
 inline float FCMax2(float a, float b) { return a>b ? a : b; }
 inline float FCMin2(float a, float b) { return a>b ? b : a; }
 inline float FCMax3(float a, float b, float c)
@@ -192,8 +318,9 @@ inline float FCMin3(float a, float b, float c)
 	
 	return( FCMin2( a, c ) );
 }
+#endif
 
-	inline int ConvertToSortable(float f)
+	inline_ int ConvertToSortable(float f)
 	{
 		int& Fi = (int&)f;
 		int Fmask = (Fi>>31);

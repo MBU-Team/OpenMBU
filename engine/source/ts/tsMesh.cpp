@@ -2306,6 +2306,10 @@ S32 TSMesh::getNumPolys()
 
 TSMesh::~TSMesh()
 {
+    delete mOptTree;
+    delete[] mOpTris;
+    delete[] mOpPoints;
+    delete mOpMeshInterface;
 }
 
 //-----------------------------------------------------
