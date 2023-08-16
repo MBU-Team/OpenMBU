@@ -1267,6 +1267,17 @@ function Creator::init( %this )
       %split    = strreplace(%file, "/", " ");
       %dirCount = getWordCount(%split)-1;
       %parentId = %base;
+
+      if (strStr(%file, ".cached.dts") != -1)
+      {
+          // check if dae exists by same name
+          %daeName = strreplace(%file, ".cached.dts", ".dae");
+          if (isFile(%daeName)) 
+          {
+             %file = findNextFile( "*.dts" );
+             continue;
+          }
+      }                      
       
       for(%i=0; %i<%dirCount; %i++)
       {
@@ -1281,6 +1292,31 @@ function Creator::init( %this )
       %this.insertItem( %parentId, fileBase( %file ), %create,"TSStatic" );
    
       %file = findNextFile( "*.dts" );
+   }
+
+   // Dae files
+   %file = findFirstFile( "*.dae" );
+   while( %file !$= "" ) 
+   {
+      // Determine which group to put the file in
+      // and build the group heirarchy as we go
+      %split    = strreplace(%file, "/", " ");
+      %dirCount = getWordCount(%split)-1;
+      %parentId = %base;
+      
+      for(%i=0; %i<%dirCount; %i++)
+      {
+         %parent = getWords(%split, 0, %i);
+         // if the group doesn't exist create it
+         if ( !%staticId[%parent] )
+            %staticId[%parent] = %this.insertItem( %parentId, getWord(%split, %i));
+         %parentId = %staticId[%parent];
+      }
+      // Add the file to the group
+      %create = "TSStatic::create(\"" @ %file @ "\");";
+      %this.insertItem( %parentId, fileBase( %file ), %create,"TSStatic" );
+   
+      %file = findNextFile( "*.dae" );
    }
 
 
@@ -1427,6 +1463,11 @@ function Creator::create(%this, %sel)
 
 function TSStatic::create(%shapeName)
 {
+   if (strStr(%shapeName, ".dae") != -1)
+   {
+      %shapeName = convertCollada(%shapeName);
+      if (%shapeName $= "") return 0;
+   }                     
    %obj = new TSStatic() 
    {
       shapeName = %shapeName;

@@ -233,6 +233,14 @@ public:
     static TSMesh* assembleMesh(U32 meshType, bool skip);
     virtual void disassemble();
 
+    void createTangents(const Vector<Point3F>& _verts, const Vector<Point3F>& _norms);
+    void findTangent(U32 index1,
+        U32 index2,
+        U32 index3,
+        Point3F* tan0,
+        Point3F* tan1,
+        const Vector<Point3F>& _verts);
+
     // this function allows subclasses to override where there vertex and primitive buffers come from.
     // note that this function returns a reference, allowing the caller to modify the buffers.
     virtual GFXVertexBufferHandle<MeshVertex>& getVertexBuffer() { return mVB; };

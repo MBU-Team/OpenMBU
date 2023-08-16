@@ -57,7 +57,7 @@ TSMesh* AppMesh::constructTSMesh()
    tsmesh->numFrames = numFrames;
    tsmesh->numMatFrames = numMatFrames;
    tsmesh->vertsPerFrame = vertsPerFrame;
-   // tsmesh->createTangents(tsmesh->verts, tsmesh->norms);
+   tsmesh->createTangents(tsmesh->verts, tsmesh->norms);
    tsmesh->encodedNorms.set(NULL,0);
 
    return tsmesh;

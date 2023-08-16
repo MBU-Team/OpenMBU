@@ -82,7 +82,7 @@ TSMesh* TSShape::createMeshCube(const Point3F& center, const Point3F& extents)
    cube->numFrames = 1;
    cube->numMatFrames = 1;
    cube->vertsPerFrame = cube->verts.size();
-   //cube->createTangents(cube->verts, cube->norms);
+   cube->createTangents(cube->verts, cube->norms);
    cube->encodedNorms.set(NULL,0);
 
    return cube;
@@ -874,7 +874,7 @@ bool TSShape::addMesh(TSShape* srcShape, const char* srcMeshName, const char* me
       //mesh->colors = srcMesh->colors;
       mesh->norms = srcMesh->norms;
 
-     // mesh->createTangents(mesh->verts, mesh->norms);
+      mesh->createTangents(mesh->verts, mesh->norms);
       mesh->encodedNorms.set(NULL,0);
 
       // Create and fill aligned data structure

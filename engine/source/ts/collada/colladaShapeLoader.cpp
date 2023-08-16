@@ -621,18 +621,15 @@ ConsoleFunction(convertCollada, const char*, 2, 2, "convertCollada(path)")
 {
     Torque::Path p = argv[1];
     TSShape* shape = loadColladaShape(p);
+    Torque::Path cachedPath(p);
+    cachedPath.setExtension("cached.dts");
+    
     if (shape)
     {
-        Torque::Path dtsPath = p;
-        dtsPath.setExtension("dts");
-        FileStream dtsStream;
-        if (dtsStream.open(dtsPath.getFullPath().c_str(), FileStream::Write))
-        {
-            shape->write(&dtsStream);
-            dtsStream.close();
-        }
         delete shape;
-        return dtsPath.getFullPath().c_str();
+        char* buf = Con::getReturnBuffer(256);
+        sprintf(buf, "%s", cachedPath.getFullPath().c_str());
+        return buf;
     }
     return "";
 }
