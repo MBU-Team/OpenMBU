@@ -1215,14 +1215,14 @@ void TSShape::disassembleShape()
     alloc.copyToBuffer32((S32*)subShapeFirstNode.address(), numSubShapes);
     alloc.copyToBuffer32((S32*)subShapeFirstObject.address(), numSubShapes);
     if (subShapeFirstDecal.address() == NULL) {
-        subShapeFirstDecal.reserve(1);
+        subShapeFirstDecal.push_back(0);
     }
     alloc.copyToBuffer32((S32*)subShapeFirstDecal.address(), numSubShapes);
     alloc.setGuard();
     alloc.copyToBuffer32((S32*)subShapeNumNodes.address(), numSubShapes);
     alloc.copyToBuffer32((S32*)subShapeNumObjects.address(), numSubShapes);
     if (subShapeNumDecals.address() == NULL) {
-        subShapeNumDecals.reserve(1);
+        subShapeNumDecals.push_back(0);
     }
     alloc.copyToBuffer32((S32*)subShapeNumDecals.address(), numSubShapes);
     alloc.setGuard();
