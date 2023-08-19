@@ -611,3 +611,20 @@ TSShape* assimpLoadShape(const Torque::Path &path)
    loader.releaseImport();
    return tss;
 }
+
+ConsoleFunction(convertAssimp, const char*, 2, 2, "convertAssimp(path)")
+{
+    Torque::Path p = argv[1];
+    TSShape* shape = assimpLoadShape(p);
+    Torque::Path cachedPath(p);
+    cachedPath.setExtension("cached.dts");
+
+    if (shape)
+    {
+        delete shape;
+        char* buf = Con::getReturnBuffer(256);
+        sprintf(buf, "%s", cachedPath.getFullPath().c_str());
+        return buf;
+    }
+    return "";
+}
