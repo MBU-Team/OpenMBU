@@ -117,6 +117,7 @@ addPath("${srcDir}/terrain/environment")
 addPath("${srcDir}/ts")
 addPath("${srcDir}/ts/loader")
 addPath("${srcDir}/ts/collada")
+addPath("${srcDir}/ts/assimp")
 addPath("${srcDir}/util")
 addPath("${srcDir}/xblive")
 
@@ -266,6 +267,7 @@ addLib(tinyxml)
 addLib(opcode)
 addLib(collada)
 addLib(pcre)
+addLib(assimp)
 
 
 
@@ -322,6 +324,7 @@ addDef(BAN_OPCODE_AUTOLINK)
 addDef(ICE_NO_DLL)
 addDef(TORQUE_OPCODE)
 addDef(TORQUE_COLLADA)
+addDef(TORQUE_ASSIMP)
 addDef(DOM_INCLUDE_TINYXML)
 addDef(PCRE_STATIC)
 
@@ -347,6 +350,7 @@ addInclude("${libDir}/tinyxml")
 addInclude("${libDir}/opcode")
 addInclude("${libDir}/collada/include")
 addInclude("${libDir}/collada/include/1.4")
+addInclude("${libDir}/assimp/include")
 
 if(UNIX AND NOT APPLE)
 	addInclude("/usr/include/freetype2/freetype")

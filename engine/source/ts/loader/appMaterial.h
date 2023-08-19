@@ -3,9 +3,6 @@
 // Copyright (C) 2008 GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 #pragma once
-#ifndef _APPMATERIAL_H_
-#define _APPMATERIAL_H_
-
 #include <string>
 typedef std::string String;
 #ifndef _MATERIAL_H_
@@ -26,4 +23,3 @@ struct AppMaterial
    virtual F32 getReflectance() { return reflectance; }
 };
 
-#endif // _APPMATERIAL_H_

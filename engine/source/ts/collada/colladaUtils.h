@@ -57,6 +57,13 @@ namespace ColladaUtils
          NumLodTypes
       };
 
+      enum eAnimTimingType
+      {
+          FrameCount = 0,
+          Seconds = 1,
+          Milliseconds = 1000
+      };
+
       domUpAxisType  upAxis;           // Override for the collada <up_axis> element
       F32            unit;             // Override for the collada <unit> element
       eLodType       lodType;          // LOD type option
@@ -64,10 +71,30 @@ namespace ColladaUtils
       String         matNamePrefix;    // Prefix to apply to collada material names
       String         alwaysImport;     // List of node names (with wildcards) to import, even if in the neverImport list
       String         neverImport;      // List of node names (with wildcards) to ignore on loading
+      String         alwaysImportMesh; // List of mesh names (with wildcards) to import, even if in the neverImportMesh list
+      String         neverImportMesh;  // List of mesh names (with wildcards) to ignore on loading
       bool           ignoreNodeScale;  // Ignore <scale> elements in <node>s
       bool           adjustCenter;     // Translate model so origin is at the center
       bool           adjustFloor;      // Translate model so origin is at the bottom
       bool           forceUpdateMaterials;   // Force update of materials.cs
+      bool           useDiffuseNames;  // Use diffuse texture as the material name
+
+      // Assimp specific preprocess import options
+      bool           convertLeftHanded;   // Convert to left handed coordinate system.
+      bool           calcTangentSpace;    // Calculate tangents and bitangents, if possible.
+      bool           genUVCoords;         // Convert spherical, cylindrical, box and planar mapping to proper UVs.
+      bool           transformUVCoords;   // Preprocess UV transformations (scaling, translation ...)
+      bool           flipUVCoords;        // This step flips all UV coordinates along the y-axis and adjusts material settings
+      // and bitangents accordingly.\nAssimp uses TL(0,0):BR(1,1). T3D uses TL(0,1):BR(1,0).
+      bool           findInstances;       // Search for instanced meshes and remove them by references to one master.
+      bool           limitBoneWeights;    // Limit bone weights to 4 per vertex.
+      bool           joinIdenticalVerts;  // Identifies and joins identical vertex data sets within all imported meshes.
+      bool           reverseWindingOrder; // This step adjusts the output face winding order to be clockwise. The default face winding order is counter clockwise.
+      bool           invertNormals;       // Reverse the normal vector direction for all normals.
+      bool           removeRedundantMats; // Removes redundant materials.
+      eAnimTimingType animTiming;         // How to import timing data as frames, seconds or milliseconds
+      S32            animFPS;             // FPS value to use if timing is set in frames and the animations does not have an fps set
+      F32            formatScaleFactor;   // Scale factor applied to convert the shape format default unit to meters
 
       ImportOptions()
       {
@@ -87,6 +114,22 @@ namespace ColladaUtils
          adjustCenter = false;
          adjustFloor = false;
          forceUpdateMaterials = false;
+         useDiffuseNames = false;
+
+         convertLeftHanded = false;
+         calcTangentSpace = false;
+         genUVCoords = false;
+         transformUVCoords = false;
+         flipUVCoords = true;
+         findInstances = false;
+         limitBoneWeights = false;
+         joinIdenticalVerts = true;
+         reverseWindingOrder = true;
+         invertNormals = false;
+         removeRedundantMats = true;
+         animTiming = Seconds;
+         animFPS = 30;
+         formatScaleFactor = 1.0f;
       }
    };
 

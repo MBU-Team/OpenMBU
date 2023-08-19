@@ -5,6 +5,7 @@
 #pragma once
 #include "ts/loader/appMaterial.h"
 #include "ts/loader/appSequence.h"
+#include "core/tVector.h"
 #ifndef _APPMESH_H_
 #define _APPMESH_H_
 
@@ -14,11 +15,9 @@
 #ifndef _MMATH_H_
 #include "math/mMath.h"
 #endif
-#ifndef _TVECTOR_H_
-#include "core/tVector.h"
-#endif
 
 class AppNode;
+class AppMaterial;
 
 class AppMesh
 {

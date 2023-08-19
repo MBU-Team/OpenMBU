@@ -684,12 +684,13 @@ void TSShapeLoader::generateSequences()
 
       seq.nameIndex = shape->addName(appSequences[iSeq]->getName());
       seq.toolBegin = appSequences[iSeq]->getStart();
-      seq.duration = appSequences[iSeq]->getEnd() - appSequences[iSeq]->getStart();
       seq.numKeyframes = seq.duration * AppFrameRate + 0.5f;
       seq.priority = appSequences[iSeq]->getPriority();
       seq.flags = appSequences[iSeq]->getFlags();
 
-      appSequences[iSeq]->delta = seq.duration / seq.numKeyframes;
+      // Compute duration and number of keyframes (then adjust time between frames to match)
+      seq.duration = appSequences[iSeq]->getEnd() - appSequences[iSeq]->getStart();
+      seq.numKeyframes = (S32)(seq.duration * appSequences[iSeq]->fps + 0.5f) + 1;
 
       // Set membership arrays (ie. which nodes and objects are affected by this sequence)
       setNodeMembership(seq, appSequences[iSeq]);
@@ -901,9 +902,9 @@ void TSShapeLoader::fillNodeTransformCache(TSShape::Sequence& seq, const AppSequ
       nodeScaleCache[i] = new Point3F[seq.numKeyframes];
 
    // get the node transforms for every frame
-   F32 time = appSeq->getStart();
-   for (int iFrame = 0; iFrame < seq.numKeyframes; iFrame++, time += appSeq->delta)
+   for (int iFrame = 0; iFrame < seq.numKeyframes; iFrame++)
    {
+       F32 time = appSeq->getStart() + seq.duration * iFrame / getMax(1, seq.numKeyframes - 1);
       for (int iNode = 0; iNode < appNodes.size(); iNode++)
       {
          generateNodeTransform(appNodes[iNode], time, seq.isBlend(), appSeq->getBlendRefTime(),
@@ -994,9 +995,11 @@ void TSShapeLoader::generateObjectAnimation(TSShape::Sequence& seq, const AppSeq
 
       if (visMatters || frameMatters || matFrameMatters)
       {
-         F32 time = appSeq->getStart();
-         for (int iFrame = 0; iFrame < seq.numKeyframes; iFrame++, time += appSeq->delta)
-            generateObjectState(shape->objects[iObject], time, frameMatters, matFrameMatters);
+         for (int iFrame = 0; iFrame < seq.numKeyframes; iFrame++)
+         {
+             F32 time = appSeq->getStart() + seq.duration * iFrame / getMax(1, seq.numKeyframes - 1);
+             generateObjectState(shape->objects[iObject], time, frameMatters, matFrameMatters);
+         }
       }
    }
 }

@@ -22,10 +22,10 @@
 class AppSequence
 {
 public:
-   F32 delta;
+   F32 fps;
 
 public:
-   AppSequence() { }
+   AppSequence(): fps(30.0) { }
    virtual ~AppSequence() { }
 
    virtual S32 getNumTriggers() const { return 0; }
