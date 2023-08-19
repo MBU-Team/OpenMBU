@@ -2314,14 +2314,14 @@ TSMesh::~TSMesh()
         delete mOpMeshInterface;
         mOpMeshInterface = NULL;
     }
-    if (mOpTris) {
-        delete[] mOpTris;
-        mOpTris = NULL;
-    }
-    if (mOpPoints) {
-        delete[] mOpPoints;
-        mOpPoints = NULL;
-    }
+    //if (mOpTris) {
+    //    delete[] mOpTris;
+    //    mOpTris = NULL;
+    //}
+    //if (mOpPoints) {
+    //    delete[] mOpPoints;
+    //    mOpPoints = NULL;
+    //}
 }
 
 //-----------------------------------------------------

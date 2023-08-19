@@ -17,7 +17,7 @@
 #if defined(TORQUE_MAX_LIB)
 #define MAX_TS_SET_DWORDS 32
 #else
-#define MAX_TS_SET_DWORDS 6
+#define MAX_TS_SET_DWORDS 64
 #endif
 
 #define MAX_TS_SET_SIZE   (32*MAX_TS_SET_DWORDS)

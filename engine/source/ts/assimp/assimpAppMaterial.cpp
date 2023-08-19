@@ -76,7 +76,7 @@ AssimpAppMaterial::AssimpAppMaterial(aiMaterial* mtl) :
    Con::printf("[ASSIMP] Loading Material: %s", name.c_str());
 }
 
-void AssimpAppMaterial::initMaterial(const Torque::Path& path, Material* mat) const
+void AssimpAppMaterial::initMaterial(const Torque::Path& path, Material* mat)
 {
    String cleanFile = cleanString2(TSShapeLoader::getShapePath().getFileName());
    String cleanName = cleanString2(getName());

@@ -45,8 +45,8 @@ public:
    AssimpAppMaterial(aiMaterial* mtl);
    ~AssimpAppMaterial() { }
 
-   String getName() const { return name; }
-   void initMaterial(const Torque::Path& path, Material* mat) const;
+   String getName() { return name; }
+   void initMaterial(const Torque::Path& path, Material* mat);
 
    static String cleanTextureName(String& texName, String& shapeName, const Torque::Path& path, bool nameOnly = false);
    static U32 sDefaultMatNumber;

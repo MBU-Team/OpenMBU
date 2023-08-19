@@ -316,6 +316,8 @@ void TSShapeInstance::buildInstanceData(TSShape* _shape, bool loadMaterials)
     // set up subtree data
     S32 ss = mShape->subShapeFirstNode.size(); // we have this many subtrees
     mDirtyFlags = new U32[ss];
+    for (int i = 0; i < ss; i++)
+        mDirtyFlags[i] = 0;
 
     mGroundThread = NULL;
     mCurrentDetailLevel = 0;

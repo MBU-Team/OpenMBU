@@ -652,6 +652,8 @@ void TSShapeLoader::generateMaterialList()
 
       AppMaterial* appMat = AppMesh::appMaterials[iMat];
       shape->materialList->push_back(appMat->getName().c_str(), appMat->getFlags(), U32(-1), U32(-1), U32(-1), 1.0f, appMat->getReflectance());
+      Con::printf("Material: %s", appMat->getName().c_str());
+
 
       // Create corresponding IFL if needed
       if (appMat->getFlags() & TSMaterialList::IflMaterial)
