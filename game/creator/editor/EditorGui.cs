@@ -148,6 +148,7 @@ function EditorGui::init(%this)
    EditorMenuBar.addMenuItem("Edit", "-", 0);
    EditorMenuBar.addMenuItem("Edit", "World Editor Settings...", 12);
    EditorMenuBar.addMenuItem("Edit", "Terrain Editor Settings...", 13);
+   EditorMenuBar.addMenuItem("Edit", "Model Importer Settings...", 14);
 
    EditorMenuBar.addMenu("Camera", 7);
    EditorMenuBar.addMenuItem("Camera", "Drop Camera at Player", 1, "Alt Q");
@@ -680,7 +681,10 @@ function EditorMenuBar::onEditMenuItemSelect(%this, %itemId, %item)
       Canvas.pushDialog(WorldEditorSettingsDlg);
    else if(%item $= "Terrain Editor Settings...")
       Canvas.pushDialog(TerrainEditorValuesSettingsGui, 99);
-   else if(%item $= "Relight Scene")
+   else if (%item $= "Model Importer Settings...") {
+      ModelImporterSettingsDlg.onWake();
+      Canvas.pushDialog(ModelImporterSettingsDlg, 99);
+   } else if(%item $= "Relight Scene")
       lightScene("", forceAlways);
    else if(EWorldEditor.isVisible())
    {

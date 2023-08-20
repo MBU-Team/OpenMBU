@@ -584,7 +584,7 @@ TSShape* assimpLoadShape(const Torque::Path &path)
    }
 
    // Allow TSShapeConstructor object to override properties
-   ColladaUtils::getOptions().reset();
+   // ColladaUtils::getOptions().reset();
    TSShapeConstructor* tscon = TSShapeConstructor::findShapeConstructor(path.getFullPath().c_str());
    //if (tscon)
    //{
@@ -627,4 +627,24 @@ ConsoleFunction(convertAssimp, const char*, 2, 2, "convertAssimp(path)")
         return buf;
     }
     return "";
+}
+
+ConsoleFunction(setImportSettings, void, 12, 12, "setImportSettings(...)")
+{
+    ColladaUtils::ImportOptions& opts = ColladaUtils::getOptions();
+    opts.convertLeftHanded = atoi(argv[1]);
+    opts.genUVCoords = atoi(argv[2]);
+    opts.transformUVCoords = atoi(argv[3]);
+    opts.flipUVCoords = atoi(argv[4]);
+    opts.joinIdenticalVerts = atoi(argv[5]);
+    opts.reverseWindingOrder = atoi(argv[6]);
+    opts.invertNormals = atoi(argv[7]);
+    opts.adjustCenter = atoi(argv[8]);
+    opts.adjustFloor = atoi(argv[9]);
+    opts.formatScaleFactor = atof(argv[10]);
+    if (isnan(opts.formatScaleFactor) || opts.formatScaleFactor == 0)
+        opts.formatScaleFactor = 1.0;
+    opts.unit = atof(argv[11]);
+    if (isnan(opts.unit) || opts.unit == 0)
+        opts.unit = -1.0;
 }
