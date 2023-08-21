@@ -168,7 +168,7 @@ TSShape* TSShapeLoader::generateShape(const Torque::Path& path)
    generateSubshapes();
 
    // Create objects (meshes and details)
-   generateObjects();
+   generateObjects();    
 
    // Generate initial object states and node transforms
    generateDefaultStates();
@@ -189,6 +189,12 @@ TSShape* TSShapeLoader::generateShape(const Torque::Path& path)
 
    // Install the TS memory helper into a TSShape object.
    install();
+
+   // Smooth normals
+   if (ColladaUtils::getOptions().smoothNormals) {
+       shape->optimizeMeshes();
+       shape->smoothNormals();
+   }
 
    return shape;
 }

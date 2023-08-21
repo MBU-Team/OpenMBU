@@ -140,7 +140,8 @@ void AssimpShapeLoader::enumerateScene()
       (ColladaUtils::getOptions().transformUVCoords ? aiProcess_TransformUVCoords : 0) |
       (ColladaUtils::getOptions().flipUVCoords ? aiProcess_FlipUVs : 0) |
       (ColladaUtils::getOptions().findInstances ? aiProcess_FindInstances : 0) |
-      (ColladaUtils::getOptions().limitBoneWeights ? aiProcess_LimitBoneWeights : 0);
+      (ColladaUtils::getOptions().limitBoneWeights ? aiProcess_LimitBoneWeights : 0) |
+      (ColladaUtils::getOptions().smoothNormals ? (aiProcess_ForceGenNormals | aiProcess_GenSmoothNormals) : 0);
 
    if (Con::getBoolVariable("$Assimp::OptimizeMeshes", false))
       ppsteps |= aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph;
@@ -166,7 +167,7 @@ void AssimpShapeLoader::enumerateScene()
    mScene = (aiScene*)aiImportFileExWithProperties(shapePath.getFullPath().c_str(), ppsteps, NULL, props);
 
    aiReleasePropertyStore(props);
-
+   
    if ( mScene )
    {
       Con::printf("[ASSIMP] Mesh Count: %d", mScene->mNumMeshes);
@@ -629,7 +630,7 @@ ConsoleFunction(convertAssimp, const char*, 2, 2, "convertAssimp(path)")
     return "";
 }
 
-ConsoleFunction(setImportSettings, void, 12, 12, "setImportSettings(...)")
+ConsoleFunction(setImportSettings, void, 14, 14, "setImportSettings(...)")
 {
     ColladaUtils::ImportOptions& opts = ColladaUtils::getOptions();
     opts.convertLeftHanded = atoi(argv[1]);
@@ -639,12 +640,26 @@ ConsoleFunction(setImportSettings, void, 12, 12, "setImportSettings(...)")
     opts.joinIdenticalVerts = atoi(argv[5]);
     opts.reverseWindingOrder = atoi(argv[6]);
     opts.invertNormals = atoi(argv[7]);
-    opts.adjustCenter = atoi(argv[8]);
-    opts.adjustFloor = atoi(argv[9]);
-    opts.formatScaleFactor = atof(argv[10]);
+    opts.smoothNormals = atoi(argv[8]);
+    opts.adjustCenter = atoi(argv[9]);
+    opts.adjustFloor = atoi(argv[10]);
+    opts.formatScaleFactor = atof(argv[11]);
     if (isnan(opts.formatScaleFactor) || opts.formatScaleFactor == 0)
         opts.formatScaleFactor = 1.0;
-    opts.unit = atof(argv[11]);
+    opts.unit = atof(argv[12]);
     if (isnan(opts.unit) || opts.unit == 0)
         opts.unit = -1.0;
+    switch (atoi(argv[13]))
+    {
+    case 0:
+        opts.upAxis = domUpAxisType::UPAXISTYPE_X_UP;
+        break;
+    case 1:
+        opts.upAxis = domUpAxisType::UPAXISTYPE_Y_UP;
+        break;
+    default:
+    case 2:
+        opts.upAxis = domUpAxisType::UPAXISTYPE_Z_UP;
+        break;
+    }
 }

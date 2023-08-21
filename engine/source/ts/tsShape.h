@@ -556,6 +556,9 @@ public:
 
     bool setSequenceBlend(const char* seqName, bool blend, const char* blendRefSeqName, S32 blendRefFrame);
     bool setSequenceGroundSpeed(const char* seqName, const Point3F& trans, const Point3F& rot);
+
+    void smoothNormals();
+    void optimizeMeshes();
     /// @}
 };
 

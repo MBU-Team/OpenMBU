@@ -12,6 +12,9 @@
 #include "ts/tsShape.h"
 #include "ts/tsShapeInstance.h"
 #include "core/fileStream.h"
+#include <assimp/SpatialSort.h>
+#include <assimp/qnan.h>
+#include <unordered_map>
 //-----------------------------------------------------------------------------
 
 TSMesh* TSShape::createMeshCube(const Point3F& center, const Point3F& extents)
@@ -1639,4 +1642,120 @@ bool TSShape::setSequenceGroundSpeed(const char* seqName, const Point3F& trans, 
    }
 
    return true;
+}
+
+void TSShape::smoothNormals()
+{
+    std::vector<aiVector3D> shapeVerts;
+    std::vector<aiVector3D> shapeNorms;
+    std::vector<int> shapeMeshIdx;
+    std::vector<int> shapeNormIdx;
+    for (int meshidx = 0; meshidx < meshes.size(); meshidx++)
+    {
+        TSMesh* mesh = meshes[meshidx];
+        for (int i = 0; i < mesh->verts.size(); i++)
+        {
+            shapeVerts.push_back(aiVector3D(mesh->verts[i].x, mesh->verts[i].y, mesh->verts[i].z));
+            shapeNorms.push_back(aiVector3D(mesh->norms[i].x, mesh->norms[i].y, mesh->norms[i].z));
+            shapeMeshIdx.push_back(meshidx);
+            shapeNormIdx.push_back(i);
+        }
+    }
+
+    // Set up a SpatialSort to quickly find all vertices close to a given position
+    // check whether we can reuse the SpatialSort of a previous step.
+    Assimp::SpatialSort* vertexFinder = nullptr;
+    Assimp::SpatialSort _vertexFinder;
+    ai_real posEpsilon = ai_real(1e-5);
+    if (!vertexFinder) {
+        _vertexFinder.Fill(shapeVerts.data(), shapeVerts.size(), sizeof(aiVector3D));
+        vertexFinder = &_vertexFinder;
+        posEpsilon = (bounds.max - bounds.min).len() * 1e-4;
+    }
+    std::vector<unsigned int> verticesFound;
+    aiVector3D* pcNew = new aiVector3D[shapeVerts.size()];
+
+    std::vector<bool> abHad(shapeVerts.size(), false);
+    for (unsigned int i = 0; i < shapeVerts.size(); ++i) {
+        if (abHad[i]) {
+            continue;
+        }
+
+        // Get all vertices that share this one ...
+        vertexFinder->FindPositions(shapeVerts[i], posEpsilon, verticesFound);
+
+        aiVector3D pcNor;
+        for (unsigned int a = 0; a < verticesFound.size(); ++a) {
+            const aiVector3D& v = shapeNorms[verticesFound[a]];
+            if (is_not_qnan(v.x)) pcNor += v;
+        }
+        pcNor.NormalizeSafe();
+
+        // Write the smoothed normal back to all affected normals
+        for (unsigned int a = 0; a < verticesFound.size(); ++a) {
+            unsigned int vidx = verticesFound[a];
+            pcNew[vidx] = pcNor;
+            abHad[vidx] = true;
+        }
+    }
+
+    for (int i = 0; i < shapeNorms.size(); i++)
+    {
+        TSMesh* mesh = meshes[shapeMeshIdx[i]];
+        mesh->norms[shapeNormIdx[i]].set(shapeNorms[i].x, shapeNorms[i].y, shapeNorms[i].z);
+    }
+
+    delete[] pcNew;
+}
+
+struct point_compare_ctl {
+    bool operator()(const std::tuple<Point3F, Point2F, Point3F>& p1, const std::tuple<Point3F, Point2F, Point3F>& p2) const {
+        return ((std::get<0>(p1) - std::get<0>(p2)).len() < 1e-5) && ((std::get<1>(p1) - std::get<1>(p2)).len() < 1e-5) && ((std::get<2>(p1) - std::get<2>(p2)).len() < 1e-5);
+    }
+};
+
+struct point_hash_ctl
+{
+    std::size_t operator()(const std::tuple<Point3F, Point2F, Point3F>& k) const
+    {
+        return std::hash<float>()(std::get<0>(k).x) ^ std::hash<float>()(std::get<0>(k).y) ^ std::hash<float>()(std::get<0>(k).z) ^
+            std::hash<float>()(std::get<1>(k).x) ^ std::hash<float>()(std::get<1>(k).y) ^
+            std::hash<float>()(std::get<2>(k).x) ^ std::hash<float>()(std::get<2>(k).y) ^ std::hash<float>()(std::get<2>(k).z);
+    }
+};
+
+void TSShape::optimizeMeshes()
+{
+    for (auto& mesh : meshes)
+    {
+        std::unordered_map<std::tuple<Point3F, Point2F, Point3F>, U32, point_hash_ctl, point_compare_ctl> shapeVertMap;
+        std::vector<std::tuple<Point3F, Point2F, Point3F>> shapeVerts;
+        std::vector<U32> remaps;
+
+        for (int i = 0; i < mesh->verts.size(); i++)
+        {
+            auto v = std::make_tuple(mesh->verts[i], mesh->tverts[i], mesh->norms[i]);
+            U32 ind = shapeVerts.size();
+            if (shapeVertMap.find(v) != shapeVertMap.end()) 
+                ind = shapeVertMap[v];
+            else 
+            {
+                shapeVerts.push_back(v);
+                shapeVertMap[v] = ind;
+            }
+            remaps.push_back(ind);
+        }
+
+        mesh->verts.clear();
+        mesh->tverts.clear();
+        mesh->norms.clear();
+        for (auto& v : shapeVerts) {
+            mesh->verts.push_back(std::get<0>(v));
+            mesh->tverts.push_back(std::get<1>(v));
+            mesh->norms.push_back(std::get<2>(v));
+        }
+        
+        for (int i = 0; i < mesh->indices.size(); i++)
+            mesh->indices[i] = remaps[mesh->indices[i]];
+    }
 }

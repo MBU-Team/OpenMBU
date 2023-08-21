@@ -14,7 +14,7 @@ new GuiControl(ModelImporterSettingsDlg) {
       horizSizing = "center";
       vertSizing = "center";
       position = "90 55";
-      extent = "230 370";
+      extent = "230 420";
       minExtent = "8 8";
       visible = "1";
       helpTag = "0";
@@ -33,7 +33,7 @@ new GuiControl(ModelImporterSettingsDlg) {
          profile = "GuiButtonProfile";
          horizSizing = "right";
          vertSizing = "bottom";
-         position = "142 342";
+         position = "142 392";
          extent = "80 20";
          minExtent = "8 8";
          visible = "1";
@@ -48,7 +48,7 @@ new GuiControl(ModelImporterSettingsDlg) {
          horizSizing = "right";
          vertSizing = "bottom";
          position = "7 27";
-         extent = "220 310";
+         extent = "220 360";
          minExtent = "8 8";
          visible = "1";
          helpTag = "0";
@@ -180,6 +180,23 @@ new GuiControl(ModelImporterSettingsDlg) {
             extent = "200 24";
             minExtent = "8 8";
             visible = "1";
+            variable = "ModelImporterSettingsDlg.smoothNormals";
+            command = "ModelImporterSettingsDlg.smoothNormals = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Smooth Normals";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Generates smooth normals for the normals.";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 218";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
             variable = "ModelImporterSettingsDlg.adjCenter";
             command = "ModelImporterSettingsDlg.adjCenter = $ThisControl.getValue();";
             helpTag = "0";
@@ -193,7 +210,7 @@ new GuiControl(ModelImporterSettingsDlg) {
             profile = "GuiCheckBoxProfile";
             horizSizing = "right";
             vertSizing = "bottom";
-            position = "10 218";
+            position = "10 244";
             extent = "200 24";
             minExtent = "8 8";
             visible = "1";
@@ -210,7 +227,7 @@ new GuiControl(ModelImporterSettingsDlg) {
             profile = "GuiTextEditProfile";
             horizSizing = "right";
             vertSizing = "bottom";
-            position = "93 246";
+            position = "93 272";
             extent = "107 18";
             minExtent = "8 8";
             visible = "1";
@@ -229,7 +246,7 @@ new GuiControl(ModelImporterSettingsDlg) {
             profile = "GuiTextProfile";
             horizSizing = "right";
             vertSizing = "bottom";
-            position = "18 246";
+            position = "18 272";
             extent = "59 18";
             minExtent = "8 8";
             visible = "1";
@@ -243,7 +260,7 @@ new GuiControl(ModelImporterSettingsDlg) {
             profile = "GuiTextProfile";
             horizSizing = "right";
             vertSizing = "bottom";
-            position = "18 276";
+            position = "18 302";
             extent = "44 18";
             minExtent = "8 8";
             visible = "1";
@@ -257,7 +274,7 @@ new GuiControl(ModelImporterSettingsDlg) {
             profile = "GuiTextEditProfile";
             horizSizing = "right";
             vertSizing = "bottom";
-            position = "93 276";
+            position = "93 302";
             extent = "107 18";
             minExtent = "8 8";
             visible = "1";
@@ -271,6 +288,71 @@ new GuiControl(ModelImporterSettingsDlg) {
             sinkAllKeyEvents = "0";
             Tooltipprofile = "GuiToolTipProfile";
             tooltip = "Override for the collada <unit> element";
+         };
+         new GuiTextCtrl() {
+            profile = "GuiTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "18 328";
+            extent = "44 18";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            text = "Up Axis:";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "The up direction for the model";            
+            maxLength = "255";
+         };
+         new GuiRadioCtrl() {
+            profile = "GuiRadioProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "93 326";
+            extent = "32 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "";
+            command = "ModelImporterSettingsDlg.upAxis = 0;";
+            helpTag = "0";
+            text = "X";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "X Axis";
+            groupNum = "0";
+            buttonType = "RadioButton";
+         };
+         new GuiRadioCtrl() {
+            profile = "GuiRadioProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "123 326";
+            extent = "32 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "";
+            command = "ModelImporterSettingsDlg.upAxis = 1;";
+            helpTag = "0";
+            text = "Y";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Y Axis";
+            groupNum = "0";
+            buttonType = "RadioButton";
+         };
+         new GuiRadioCtrl(mi_zaxis) {
+            profile = "GuiRadioProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "153 326";
+            extent = "32 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "";
+            command = "ModelImporterSettingsDlg.upAxis = 2;";
+            helpTag = "0";
+            text = "Z";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Z Axis";
+            groupNum = "0";
+            buttonType = "RadioButton";
          };
       };
    };
@@ -287,15 +369,18 @@ function ModelImporterSettingsDlg::onWake(%this)
       %this.joinVerts = true;
       %this.reverseWinding = true;
       %this.invertNormals = false;
+      %this.smoothNormals = true;
       %this.adjCenter = false;
       %this.adjFloor = false;
       %this.scaleFactor = "1.0";
       %this.unitScale = "-1.0";
       %this.initialized = true;
+      %this.upAxis = 2;
+      mi_zaxis.setValue(true);
    }
 }
 
 function ModelImporterSettingsDlg::save(%this)
 {
-   setImportSettings(%this.convertLeftHanded, %this.genUVs, %this.preprocessUVs, %this.flipUVs, %this.joinVerts, %this.reverseWinding, %this.invertNormals, %this.adjCenter, %this.adjFloor, %this.scaleFactor, %this.unitScale);
+   setImportSettings(%this.convertLeftHanded, %this.genUVs, %this.preprocessUVs, %this.flipUVs, %this.joinVerts, %this.reverseWinding, %this.invertNormals, %this.smoothNormals, %this.adjCenter, %this.adjFloor, %this.scaleFactor, %this.unitScale, %this.upAxis);
 }
