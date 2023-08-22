@@ -629,6 +629,19 @@ bool TSMesh::buildPolyListOpcode(const S32 od, AbstractPolyList* polyList, const
         mi->GetTriangle(vp, idx[i]);
         verts = vp.Vertex;
 
+        F32 ax = verts[1]->x - verts[0]->x;
+        F32 ay = verts[1]->y - verts[0]->y;
+        F32 az = verts[1]->z - verts[0]->z;
+        F32 bx = verts[2]->x - verts[0]->x;
+        F32 by = verts[2]->y - verts[0]->y;
+        F32 bz = verts[2]->z - verts[0]->z;
+        F32 x = ay * bz - az * by;
+        F32 y = az * bx - ax * bz;
+        F32 z = ax * by - ay * bx;
+        F32 squared = x * x + y * y + z * z;
+
+        if (squared == 0) continue; // Don't do invalid planes or else we crash
+
         // And register it in the polylist...
         polyList->begin(vp.MatIdx, surfaceKey++);
 
