@@ -73,6 +73,7 @@ public:
     void clientCatchup(GameConnection* connection, S32 catchup);
     void forceHifiReset(bool reset) { mForceHifiReset = reset; }
     SimTime getTotalTicks() { return mTotalTicks; }
+    void timeReset();
 
 
     /// @name Advancing Time

@@ -65,6 +65,9 @@
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
 #include "autosplitter/autosplitter.h"
+#include "game/gameProcess.h"
+#include "sim/netConnection.h"
+#include "game/gameConnection.h"
 
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
@@ -743,9 +746,12 @@ void DemoGame::processConsoleEvent(ConsoleEvent* event)
     Sim::postCurrentEvent(Sim::getRootGroup(), new SimConsoleEvent(2, const_cast<const char**>(argv), false));
 }
 
+Move gFirstMove;
+Move gNextMove;
+
 /// Process a time event and update all sub-processes
 void DemoGame::processTimeEvent(TimeEvent* event)
-{
+{  
     PROFILE_START(ProcessTimeEvent);
     U32 elapsedTime = event->elapsedTime;
     // cap the elapsed time to one second
@@ -760,6 +766,142 @@ void DemoGame::processTimeEvent(TimeEvent* event)
         timeDelta = gTimeAdvance;
     else
         timeDelta = (U32)(elapsedTime * gTimeScale);
+
+    if (!gGamePaused)
+    {
+        gFirstMove = gNextMove = NullMove;
+        if (NetConnection::getConnectionToServer() != NULL)
+        {
+            GameConnection* gc = dynamic_cast<GameConnection*>(NetConnection::getConnectionToServer());
+            if (gc)
+            {
+                gc->getNextMove(gFirstMove);
+                gc->getNextMove(gNextMove);
+            }
+        }
+
+        if (mDemoWriteStream)
+        {
+            static char writeBuffer[256];
+
+            BitStream bs(writeBuffer, 256);
+            bool areMovesEqual = gFirstMove.x == mLastMove.x
+                && gFirstMove.y == mLastMove.y
+                && gFirstMove.z == mLastMove.z
+                && gFirstMove.yaw == mLastMove.yaw
+                && gFirstMove.pitch == mLastMove.pitch
+                && gFirstMove.roll == mLastMove.roll
+                && (gFirstMove.freeLook > 0) == (mLastMove.freeLook > 0)
+                && gFirstMove.trigger[3] == mLastMove.trigger[3]
+                && gFirstMove.trigger[1] == mLastMove.trigger[1];
+            if (bs.writeFlag(!areMovesEqual))
+            {
+                mLastMove = gFirstMove;
+                mLastMove.pack(&bs);
+            }
+            areMovesEqual = gNextMove.x == mLastMove.x
+                && gNextMove.y == mLastMove.y
+                && gNextMove.z == mLastMove.z
+                && gNextMove.yaw == mLastMove.yaw
+                && gNextMove.pitch == mLastMove.pitch
+                && gNextMove.roll == mLastMove.roll
+                && (gNextMove.freeLook > 0) == (mLastMove.freeLook > 0)
+                && gNextMove.trigger[3] == mLastMove.trigger[3]
+                && gNextMove.trigger[1] == mLastMove.trigger[1];
+            if (bs.writeFlag(!areMovesEqual))
+            {
+                mLastMove = gNextMove;
+                mLastMove.pack(&bs);
+            }
+            bs.writeInt(elapsedTime, 10);
+            U8 size = bs.getPosition();
+            mDemoWriteStream->write(size);
+            mDemoWriteStream->write(size, writeBuffer);
+            dMemset(writeBuffer, 0, size);
+        }
+        if (mDemoReadStream) 
+        {
+            static char readBuffer[256];
+
+            U32 demoDelta = mDemoTimeDelta;
+            while (elapsedTime > demoDelta)
+            {
+                elapsedTime -= demoDelta;
+                U8 size;
+                mDemoReadStream->read(&size);
+                mDemoReadStream->read(size, &readBuffer);
+                if (mDemoReadStream->getStatus() != Stream::Ok)
+                {
+                    if (mDemoReadStream)
+                        ResourceManager->closeStream(mDemoReadStream);
+                    mDemoReadStream = NULL;
+                    Con::executef(1, (char)"onDemoPlayDone");
+                    break;
+                }
+                BitStream bs(readBuffer, 256);
+                if (bs.readFlag())
+                    mCurrentMove.unpack(&bs);
+                gFirstMove = mCurrentMove;
+                if (bs.readFlag())
+                    mCurrentMove.unpack(&bs);
+                gNextMove = mCurrentMove;
+                U32 demoTime = bs.readInt(10);
+                processElapsedTime(demoTime);
+                mDemoTimeDelta = demoTime;
+                if (elapsedTime < mDemoTimeDelta)
+                    break;
+               
+            }
+            mDemoTimeDelta -= elapsedTime;
+        }
+        else
+        {
+            processElapsedTime(elapsedTime);
+        }
+    }
+    else
+    {
+        Platform::advanceTime(elapsedTime);
+        PROFILE_START(SimAdvanceTime);
+        Sim::advanceTime(timeDelta);
+        PROFILE_END();
+    }
+
+    sgObjectShadowMonitor::sgCleanupUnused();
+    sgShadowTextureCache::sgCleanupUnused();
+
+    if (Canvas && GFX->allowRender())
+    {
+        bool preRenderOnly = false;
+        if (gFrameSkip && gFrameCount % gFrameSkip)
+            preRenderOnly = true;
+
+        PROFILE_START(RenderFrame);
+        ShapeBase::incRenderFrame();
+        Canvas->renderFrame(preRenderOnly);
+        PROFILE_END();
+        gFrameCount++;
+    }
+    GNet->checkTimeouts();
+    fpsUpdate();
+    PROFILE_END();
+
+    // Update the console time
+    Con::setFloatVariable("Sim::Time", F32(Platform::getVirtualMilliseconds()) / 1000);
+}
+
+void DemoGame::processElapsedTime(U32 elapsedTime)
+{
+    U32 timeDelta;
+    if (gTimeAdvance)
+        timeDelta = gTimeAdvance;
+    else
+        timeDelta = (U32)(elapsedTime * gTimeScale);
+
+#ifdef MBU_FINISH_PAD_FIX
+    // TODO: Figure out how to remove this global variable and access dt from Marble::getCameraTransform
+    gTimeDelta = F32(timeDelta) / 1000.0f;
+#endif // MBU_FINISH_PAD_FIX
 
     Platform::advanceTime(elapsedTime);
     bool tickPass;
@@ -795,28 +937,6 @@ void DemoGame::processTimeEvent(TimeEvent* event)
     }
 
     Material::updateTime();
-
-    sgObjectShadowMonitor::sgCleanupUnused();
-    sgShadowTextureCache::sgCleanupUnused();
-
-    if (Canvas && GFX->allowRender())
-    {
-        bool preRenderOnly = false;
-        if (gFrameSkip && gFrameCount % gFrameSkip)
-            preRenderOnly = true;
-
-        PROFILE_START(RenderFrame);
-        ShapeBase::incRenderFrame();
-        Canvas->renderFrame(preRenderOnly);
-        PROFILE_END();
-        gFrameCount++;
-    }
-    GNet->checkTimeouts();
-    fpsUpdate();
-    PROFILE_END();
-
-    // Update the console time
-    Con::setFloatVariable("Sim::Time", F32(Platform::getVirtualMilliseconds()) / 1000);
 }
 
 /// Re-activate the game from, say, a minimized state
@@ -864,4 +984,62 @@ void DemoGame::textureResurrect()
 void DemoGame::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
 {
     GNet->processPacketReceiveEvent(prEvent);
+}
+
+void DemoGame::playDemo(const char* path)
+{
+    Stream* demoStream = ResourceManager->openStream(path);
+    if (demoStream)
+    {
+        this->mDemoReadStream = demoStream;
+        
+        gClientProcessList.timeReset();
+        gServerProcessList.timeReset();
+        this->mCurrentMove = NullMove;
+        char misPath[256];
+        demoStream->readString(misPath);
+        Con::executef(2, "onDemoPlay", misPath);
+    }
+}
+
+void DemoGame::stopDemo()
+{
+    if (mDemoReadStream)
+        ResourceManager->closeStream(mDemoReadStream);
+    if (mDemoWriteStream)
+        ResourceManager->closeStream(mDemoWriteStream);
+    mDemoReadStream = NULL;
+    mDemoWriteStream = NULL;
+}
+
+void DemoGame::recordDemo(const char* path, const char* mispath)
+{
+    FileStream* fs = new FileStream();
+    if (ResourceManager->openFileForWrite(*fs, path))
+    {
+        mLastMove = NullMove;
+        mDemoWriteStream = fs;
+        gClientProcessList.timeReset();
+        gServerProcessList.timeReset();
+        mDemoWriteStream->writeString(mispath);
+    }
+}
+
+ConsoleFunction(playDemo, void, 2, 2, "playDemo(path)")
+{
+    char filePath[1024];
+    Con::expandScriptFilename(filePath, 1024, argv[1]);
+    GameObject.playDemo(filePath);
+}
+
+ConsoleFunction(recordDemo, void, 3, 3, "recordDemo(path)")
+{
+    char filePath[1024];
+    Con::expandScriptFilename(filePath, 1024, argv[1]);
+    GameObject.recordDemo(filePath, argv[2]);
+}
+
+ConsoleFunction(stopDemo, void, 1, 1, "stopDemo()")
+{
+    GameObject.stopDemo();
 }
