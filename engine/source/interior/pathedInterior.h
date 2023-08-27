@@ -66,7 +66,9 @@ public:
         F64 pathPosition;
         Box3F extrudedBox;
         Point3F velocity;
+        EulerF rotVelocity;
         Point3F worldPosition;
+        EulerF worldRotation;
         S32 targetPos;
         F64 stopTime;
     };
@@ -86,6 +88,7 @@ protected:
     F64 mAdvanceTime;
     F64 mStopTime;
     U32 mNextNetUpdate;
+    bool mUseRotation;
 
     // Loaded resources and fields
 protected:
@@ -110,6 +113,10 @@ protected:
     F64                        mCurrentPosition;
     S32                        mTargetPosition;
     Point3F                    mCurrentVelocity;
+    QuatF                      mPreviousOrientation;
+    F32                        mComputeTimeDelta;
+    EulerF                     mOrientationDelta;
+    QuatF                      mNextOrientation;
 
     PathedInterior* mNextPathedInterior;
     InteriorInstance* mDummyInst;
@@ -159,7 +166,7 @@ public:
     void setTargetPosition(S32 targetPosition);
     void computeNextPathStep(F64 timeDelta);
     Box3F getExtrudedBox() { return mExtrudedBox; }
-    Point3F getVelocity() const;
+    Point3F getVelocity(Point3D& contactPt);
     void advance(F64 timeDelta);
 
     U32  packUpdate(NetConnection* conn, U32 mask, BitStream* stream);

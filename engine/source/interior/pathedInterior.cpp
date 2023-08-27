@@ -115,6 +115,8 @@ PathedInterior::PathedInterior()
 #endif
 
     mBaseTransform = MatrixF(true);
+
+    mUseRotation = false;
 }
 
 PathedInterior::~PathedInterior()
@@ -134,6 +136,7 @@ void PathedInterior::initPersistFields()
     addField("basePosition", TypeMatrixPosition, Offset(mBaseTransform, PathedInterior));
     addField("baseRotation", TypeMatrixRotation, Offset(mBaseTransform, PathedInterior));
     addField("baseScale", TypePoint3F, Offset(mBaseScale, PathedInterior));
+    addField("useRotation", TypeBool, Offset(mUseRotation, PathedInterior));
 }
 
 
@@ -402,6 +405,7 @@ U32 PathedInterior::packUpdate(NetConnection* con, U32 mask, BitStream* stream)
         mathWrite(*stream, mBaseScale);
 
         stream->write(mPathKey);
+        stream->write(mUseRotation);
     }
     if (stream->writeFlag((mask & NewPositionMask) && mPathKey != Path::NoPathIndex))
     {
@@ -440,6 +444,7 @@ void PathedInterior::unpackUpdate(NetConnection* con, BitStream* stream)
         mathRead(*stream, &mBaseScale);
 
         stream->read(&mPathKey);
+        stream->read(&mUseRotation);
     }
     if (stream->readFlag())
     {
@@ -473,6 +478,7 @@ void PathedInterior::writePacketData(GameConnection* conn, BitStream* stream)
     mathWrite(*stream, curPos);
     mathWrite(*stream, mCurrentVelocity);
     stream->write(mStopTime);
+    stream->write(mUseRotation);
 }
 
 void PathedInterior::readPacketData(GameConnection* conn, BitStream* stream)
@@ -492,6 +498,7 @@ void PathedInterior::readPacketData(GameConnection* conn, BitStream* stream)
     setTransform(mat);
 
     stream->read(&mStopTime);
+    stream->read(&mUseRotation);
 }
 
 void PathedInterior::processTick(const Move* move)
@@ -560,7 +567,19 @@ void PathedInterior::interpolateTick(F32 delta)
     MatrixF mat = getTransform();
     Point3F newPoint = mCurrentVelocity * TickSec;
     newPoint = mat.getPosition() - (newPoint * delta);
-    mat.setPosition(newPoint);
+    MatrixF newMat(true);
+    MatrixF rotMat(true);
+
+    if (mUseRotation)
+    {
+        EulerF curRot = mat.toEuler();
+        EulerF newRot = mOrientationDelta * TickSec;
+        newRot = curRot - (newRot * delta);
+        newMat.set(newRot);
+    }
+    newMat.setPosition(newPoint);
+    mat = newMat;
+    
     setRenderTransform(mat);
 }
 
@@ -608,6 +627,14 @@ void PathedInterior::computeNextPathStep(F64 timeDelta)
     {
         mExtrudedBox = getWorldBox();
         mCurrentVelocity.set(0, 0, 0);
+
+        if (mUseRotation)
+        {
+            MatrixF mat = getTransform();
+
+            mPreviousOrientation = mat.toEuler();
+            mOrientationDelta.set(0, 0, 0);
+        }
     }
     else
     {
@@ -638,8 +665,9 @@ void PathedInterior::computeNextPathStep(F64 timeDelta)
         Point3F curPoint;
         Point3F newPoint(0.0, 0.0, 0.0);
         MatrixF mat = getTransform();
+        QuatF rot;
         mat.getColumn(3, &curPoint);
-        getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint);
+        getPathManager()->getPathPosition(mPathKey, mCurrentPosition, newPoint, &rot);
         newPoint += mOffset;
 
         Point3F displaceDelta = newPoint - curPoint;
@@ -659,12 +687,43 @@ void PathedInterior::computeNextPathStep(F64 timeDelta)
             mExtrudedBox.max.z += displaceDelta.z;
 
         mCurrentVelocity = displaceDelta * 1000 / F32(timeDelta);
+        if (mUseRotation)
+        {
+            mPreviousOrientation.set(mat);
+            MatrixF rotMat;
+            rot.setMatrix(&rotMat);
+            mOrientationDelta = (rotMat.toEuler() - mat.toEuler()) * 1000 / F32(timeDelta);
+            mNextOrientation = rot;
+            mComputeTimeDelta = F32(timeDelta) / 1000;
+        }
+        
     }
 }
 
-Point3F PathedInterior::getVelocity() const
+Point3F PathedInterior::getVelocity(Point3D& contactPt)
 {
-    return mCurrentVelocity;
+    Point3F center;
+    mWorldBox.getCenter(&center);
+
+    Point3F v(0, 0, 0);
+    if (mUseRotation) {
+        Point3F r = contactPt - center;
+        Point3F r2;
+
+        QuatF quatDelta;
+        quatDelta.mul(mNextOrientation, mPreviousOrientation.inverse());
+
+        quatDelta.mulP(r, &r2);
+
+        v = (r2 - r) / mComputeTimeDelta;
+
+        //AngAxisF aa;
+        //aa.set(mOrientationDelta);
+        //Point3F omega = aa.axis * aa.angle;
+        //v = mCross(omega, r);
+    }
+    
+    return mCurrentVelocity + v;
 }
 
 PathedInterior* PathedInterior::getPathedInteriors(NetObject* obj)
@@ -697,7 +756,9 @@ void PathedInterior::pushTickState()
 #endif
     mSavedState.extrudedBox = mExtrudedBox;
     mSavedState.velocity = mCurrentVelocity;
+    mSavedState.rotVelocity = mOrientationDelta;
     mSavedState.worldPosition = curPos;
+    mSavedState.worldRotation = mat.toEuler();
     mSavedState.targetPos = mTargetPosition;
 }
 
@@ -706,6 +767,7 @@ void PathedInterior::popTickState()
     mCurrentPosition = mSavedState.pathPosition;
     mExtrudedBox = mSavedState.extrudedBox;
     mCurrentVelocity = mSavedState.velocity;
+    mOrientationDelta = mSavedState.rotVelocity;
     resetTickState(true);
 #ifdef MARBLE_BLAST
 #ifdef MB_PHYSICS_SWITCHABLE
@@ -731,10 +793,12 @@ void PathedInterior::resetTickState(bool setT)
     if (setT)
     {
         MatrixF mat = getTransform();
+        mat.set(mSavedState.worldRotation);
         mat.setPosition(curPos);
         setTransform(mat);
     } else
     {
+        mObjToWorld.set(mSavedState.worldRotation);
         mObjToWorld.setPosition(curPos);
     }
 }
@@ -772,7 +836,20 @@ void PathedInterior::advance(F64 timeDelta)
         MatrixF mat = getTransform();
         Point3F newPoint = (F32)timeDelta * mCurrentVelocity;
         newPoint = (newPoint / 1000.0) + mat.getPosition();
-        mat.setPosition(newPoint);
+
+        MatrixF newMat(true);
+        MatrixF rotMat(true);
+        
+        if (mUseRotation)
+        {
+            EulerF prevRot = mat.toEuler();
+            EulerF nextRot = prevRot + (mOrientationDelta * (F32)timeDelta / 1000.0);
+
+            rotMat.set(nextRot);
+        }
+        rotMat.setPosition(newPoint);
+        mat = rotMat;
+        
         setTransform(mat);
     }
 }

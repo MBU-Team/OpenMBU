@@ -620,7 +620,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 
 			Point3D surfaceVelocity;
 			if (hitPI != nullptr) {
-				surfaceVelocity = hitPI->getVelocity();
+				surfaceVelocity = hitPI->getVelocity(contactVert);
 			}
 			else {
 				surfaceVelocity = Point3D(0, 0,  0);
@@ -742,12 +742,13 @@ void Marble::computeFirstPlatformIntersect(F64& dt, Vector<PathedInterior*>& pit
                     isContacting = true;
                     break;
                 }
-
+                
                 if (!isContacting)
                 {
-                    Point3F vel = mVelocity - it->getVelocity();
                     Point3F boxCenter;
                     itBox.getCenter(&boxCenter);
+                    Point3D boxCenter2 = boxCenter;
+                    Point3F vel = mVelocity - it->getVelocity(mPosition);
 
                     Point3F diff = itBox.max - boxCenter;
                     SphereF sphere(boxCenter, diff.len());
