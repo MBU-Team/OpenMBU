@@ -898,11 +898,6 @@ void DemoGame::processElapsedTime(U32 elapsedTime)
     else
         timeDelta = (U32)(elapsedTime * gTimeScale);
 
-#ifdef MBU_FINISH_PAD_FIX
-    // TODO: Figure out how to remove this global variable and access dt from Marble::getCameraTransform
-    gTimeDelta = F32(timeDelta) / 1000.0f;
-#endif // MBU_FINISH_PAD_FIX
-
     Platform::advanceTime(elapsedTime);
     bool tickPass;
     if (!gGamePaused)

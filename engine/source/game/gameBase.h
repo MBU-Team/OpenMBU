@@ -305,6 +305,8 @@ public:
     /// @param   dt   Time since last advance call
     virtual void advanceTime(F32 dt);
 
+    virtual void advancePhysics(const Move* move, U32 timeDelta) {}
+
     /// Allow object a chance to tweak move before it is sent to client and server.
     virtual void preprocessMove(Move* move) {}
     /// @}

@@ -332,6 +332,11 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
             GameBase* gb = getGameBase(pobj);
             gb->advanceTime(dt);
         }
+        for (ProcessObject* pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
+        {
+            GameBase* gb = getGameBase(pobj);
+            gb->advancePhysics(&gFirstMove, timeDelta);
+        }
     }
     else {
         mSkipAdvanceObjectsMs -= timeDelta;
@@ -428,85 +433,11 @@ void ProcessList::advanceObjects()
         obj->plUnlink();
         obj->plLinkBefore(&mHead);
 
-        // Each object is either advanced a single tick, or if it's
-        // being controlled by a client, ticked once for each pending move.
-        GameConnection* con = obj->getControllingClient();
-
-        bool processed = false;
-
-        if (con && con->getControlObject() == obj) {
-            Move* movePtr;
-            U32 numMoves;
-
-            if (con->getMoveList(&movePtr, &numMoves))
-            {
-#ifdef TORQUE_DEBUG_NET_MOVES
-                U32 sum = Move::ChecksumMask & obj->getPacketDataChecksum(con);
-#endif
-
-                obj->processTick(movePtr);
-                if (!obj.isNull() && obj->getControllingClient())
-                {
-                    U32 newsum = Move::ChecksumMask & obj->getPacketDataChecksum(con);
-                    if (obj->isGhost() || gSPMode)
-                        movePtr->checksum = newsum;
-                    else if (movePtr->checksum != newsum)
-                    {
-                        movePtr->checksum = Move::ChecksumMismatch;
-#ifdef TORQUE_DEBUG_NET_MOVES
-                        if (!obj->mIsAiControlled)
-                            Con::printf("move %i checksum disagree: %i != %i, (start %i), (move %f %f %f)",
-                                movePtr->id, movePtr->checksum, newsum, sum, movePtr->yaw, movePtr->y, movePtr->z);
-#endif
-                    } else
-                    {
-#ifdef TORQUE_DEBUG_NET_MOVES
-                        Con::printf("move %i checksum agree: %i == %i, (start %i), (move %f %f %f)",
-                            movePtr->id, movePtr->checksum, newsum, sum, movePtr->yaw, movePtr->y, movePtr->z);
-#endif
-                    }
-
-                }
-                con->clearMoves(1);
-                processed = true;
-            }
-        }
-
-        if (obj->mProcessTick && !processed)
+        if (obj->mProcessTick)
         {
             obj->processTick(NULL);
         }
-        
-        if (!obj.isNull() && (obj->isGhost() || gSPMode) && (obj->getType() & GameBaseHiFiObjectType) != 0)
-        {
-            GameConnection* serverCon = GameConnection::getConnectionToServer();
-
-            TickCacheEntry* entry = obj->addTickCacheEntry();
-
-            BitStream bs(entry->packetData, TickCacheEntry::MaxPacketSize);
-            obj->writePacketData(serverCon, &bs);
-
-            Point3F velocity = obj->getVelocity();
-            F32 velSq = mDot(velocity, velocity);
-            gMaxHiFiVelSq = getMax(gMaxHiFiVelSq, velSq);
-        }
-    }
-
-    if (mIsServer)
-    {
-        SimGroup* group = Sim::gClientGroup;
-        for (S32 i = 0; i < group->size(); i++)
-        {
-            SimObject* obj = (*group)[i];
-            GameConnection* con = static_cast<GameConnection*>(obj);
-            if (!con->getControlObject() && !con->getMoves().empty())
-            {
-                con->clearMoves(1);
-            }
-        }
-    } else if (!GameConnection::getConnectionToServer()->getControlObject())
-    {
-        GameConnection::getConnectionToServer()->clearMoves(1);
+      
     }
 
     mTotalTicks++;

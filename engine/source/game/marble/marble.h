@@ -57,13 +57,9 @@ private:
 public:
     enum MarbleModeFlags
     {
-        MoveMode = 0x1,
-        RestrictXYZMode = 0x2,
-        CameraHoverMode = 0x4,
-        TimerMode = 0x8,
-        StartingMode = 0x10,
-        StoppingMode = 0x20,
-        FinishMode = 0x40
+        NormalMode = 0x0,
+        StartMode = 0x1,
+        StopMode = 0x2,
     };
 
     enum UpdateMaskBits
@@ -310,7 +306,8 @@ public:
     bool computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const Move* move);
     void velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, bool& stoppedPaths, Vector<PathedInterior*>& pitrVec);
     Point3D getExternalForces(const Move* move, F64 timeStep);
-    void advancePhysics(const Move* move, U32 timeDelta);
+    virtual void advancePhysics(const Move* move, U32 timeDelta);
+    void advancePhysicsInner(const Move* move, U32 timeDelta);
 
     // Marble Collision
     void clearObjectsAndPolys();

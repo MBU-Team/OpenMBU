@@ -42,6 +42,8 @@ struct Move
 };
 
 extern const Move NullMove;
+extern Move gFirstMove;
+extern Move gNextMove;
 
 class MoveManager
 {

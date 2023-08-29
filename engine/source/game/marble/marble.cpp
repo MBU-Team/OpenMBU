@@ -385,24 +385,7 @@ void Marble::victorySequence()
 
 void Marble::setMode(U32 mode)
 {
-    U32 newMode = mode & (mode ^ mMode);
-
     mMode = mode;
-
-    if ((newMode & StartingMode) != 0)
-    {
-#ifndef MBG_PHYSICS
-        mModeTimer = mDataBlock->startModeTime >> 5;
-#endif
-    }
-    else if ((newMode & (StoppingMode | FinishMode)) != 0)
-    {
-        if ((newMode & StoppingMode) != 0)
-            mMode |= RestrictXYZMode;
-#ifndef MBG_PHYSICS
-        mModeTimer = mDataBlock->startModeTime >> 5;
-#endif
-    }
 
     setMaskBits(PowerUpMask);
 }
@@ -419,25 +402,6 @@ void Marble::interpolateTick(F32 delta)
     static SimObject* playGui = NULL;
     
     Parent::interpolateTick(delta);
-
-    if (getControllingClient() && (mMode & TimerMode) != 0)
-    {
-        U32 marbleTime = getMarbleTime();
-        S32 newMarbleTime = marbleTime > 32 ? marbleTime - 32 : 0;
-        U32 marbleBonusTime = mMarbleBonusTime;
-        U32 finalMarbleTime = newMarbleTime + (U64)(((F64)marbleTime - newMarbleTime) * (1.0 - delta));
-        if (marbleBonusTime && !mUseFullMarbleTime)
-            finalMarbleTime = marbleTime;
-
-        if (playGui == NULL)
-            playGui = Sim::findObject("PlayGui");
-        char ftime[16];
-        char bonusTime[4];
-        dSprintf(ftime, 16, "%i", finalMarbleTime);
-        dSprintf(bonusTime, 4, "%i", marbleBonusTime != 0);
-        Con::executef(playGui, 3, "updateTimer", ftime, bonusTime);
-        //Con::evaluatef("PlayGui.updateTimer(%i,%i);", finalMarbleTime, marbleBonusTime != 0);
-    }
 }
 
 S32 Marble::mountPowerupImage(ShapeBaseImageData* imageData)
@@ -1742,7 +1706,7 @@ void Marble::findRenderPos(F32 dt)
     else
 #endif
     {
-        if ((mMode & StoppingMode) == 0)
+        if ((mMode & StopMode) == 0)
         {
             mLastRenderPos = pos;
             mLastRenderVel = mVelocity;
@@ -1993,133 +1957,6 @@ void Marble::setPowerUpId(U32 id, bool reset)
 void Marble::processTick(const Move* move)
 {
     Parent::processTick(move);
-
-    clearMarbleAxis();
-    if ((mMode & TimerMode) != 0)
-    {
-        U32 bonusTime = mMarbleBonusTime;
-        if (bonusTime <= 32)
-        {
-            mMarbleBonusTime = 0;
-            mMarbleTime += 32 - bonusTime;
-            if ((mMode & (MoveMode | StoppingMode)) == 0)
-                setMode(StartingMode);
-        }
-        else
-            mMarbleBonusTime = bonusTime - 32;
-
-        mFullMarbleTime += 32;
-    }
-
-#ifndef MBG_PHYSICS
-    if (mModeTimer)
-    {
-        mModeTimer--;
-        if (!mModeTimer)
-        {
-#endif
-            if ((mMode & StartingMode) != 0)
-                mMode = mMode & ~(RestrictXYZMode | CameraHoverMode) | (MoveMode | TimerMode);
-            if ((mMode & StoppingMode) != 0)
-                mMode &= ~MoveMode;
-            if ((mMode & FinishMode) != 0)
-                mMode |= CameraHoverMode;
-            mMode &= ~(StartingMode | FinishMode);
-#ifndef MBG_PHYSICS
-        }
-    }
-#endif
-
-    if (mBlastEnergy < mDataBlock->maxNaturalBlastRecharge >> 5)
-        mBlastEnergy++;
-
-    const Move* newMove;
-    if (mControllable)
-    {
-        if (move)
-        {
-            dMemcpy(&delta.move, move, sizeof(delta.move));
-            newMove = move;  
-        }
-        else
-            newMove = &delta.move;
-    }
-    else
-        newMove = &NullMove;
-
-    processMoveTriggers(newMove);
-    processCameraMove(newMove);
-
-    Point3F startPos(mPosition.x, mPosition.y, mPosition.z);
-
-    advancePhysics(newMove, TickMs);
-
-    Point3F endPos(mPosition.x, mPosition.y, mPosition.z);
-
-    processItemsAndTriggers(startPos, endPos);
-    updatePowerups();
-
-    if (mPadPtr)
-    {
-        bool oldOnPad = mOnPad;
-        updatePadState();
-#ifdef MB_ULTRA_PREVIEWS
-        if (oldOnPad != mOnPad && !(isGhost() || gSPMode))
-#else
-        if (oldOnPad != mOnPad && !isGhost())
-#endif
-        {
-            const char* funcName = "onLeavePad";
-            if (!oldOnPad)
-                funcName = "onEnterPad";
-            Con::executef(mDataBlock, 2, funcName, scriptThis());
-        }
-    }
-
-#ifdef MB_ULTRA_PREVIEWS
-    if (isGhost() || gSPMode)
-#else
-    if (isGhost())
-#endif
-    {
-        if (getControllingClient())
-        {
-            if (Marble::smEndPad.isNull() || Marble::smEndPad->getId() != Marble::smEndPadId)
-            {
-                if (Marble::smEndPadId && Marble::smEndPadId != -1)
-                    Marble::smEndPad = dynamic_cast<StaticShape*>(Sim::findObject(Marble::smEndPadId));
-                
-                if (Marble::smEndPad.isNull())
-                    Marble::smEndPadId = 0;
-            }
-        }
-    }
-
-    if (mOmega.len() < 0.000001)
-        mOmega.set(0, 0, 0);
-
-#ifdef MBG_PHYSICS
-#define MB_RESPAWN_TRIGGER_ID 0
-#else
-#define MB_RESPAWN_TRIGGER_ID 2
-#endif
-
-#ifdef MB_ULTRA_PREVIEWS
-    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
-#else
-    if (!isGhost() && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
-#endif
-        Con::executef(this, 1, "onOOBClick");
-
-    notifyCollision();
-
-    mSinglePrecision.mPosition = mPosition;
-    mSinglePrecision.mVelocity = mVelocity;
-    mSinglePrecision.mOmega = mOmega;
-
-    mPosition = mSinglePrecision.mPosition;
-    mVelocity = mSinglePrecision.mVelocity;
-    mOmega = mSinglePrecision.mOmega;
 }
 
 //----------------------------------------------------------------------------
@@ -2209,23 +2046,13 @@ ConsoleMethod(Marble, setMode, void, 3, 3, "(mode)")
     S32 newMode = object->getMode() & 3;
 
     modesStrings[0] = "Normal";
-    modeFlags[0] = Marble::StartingMode;
+    modeFlags[0] = Marble::NormalMode;
 
     modesStrings[1] = "Victory";
-#ifdef MBG_PHYSICS
-    modeFlags[1] = Marble::StoppingMode | Marble::FinishMode;
-#else
-    modeFlags[1] = Marble::StoppingMode;
-#endif
+    modeFlags[1] = Marble::StopMode;
 
-    modesStrings[2] = "Lost";
-    modeFlags[2] = Marble::StoppingMode;
-
-    modesStrings[3] = "Freeze";
-    modeFlags[3] = Marble::TimerMode | Marble::StoppingMode;
-
-    modesStrings[4] = "Start";
-    modeFlags[4] = Marble::MoveMode | Marble::RestrictXYZMode;
+    modesStrings[2] = "Start";
+    modeFlags[2] = Marble::StartMode;
 
     S32 i = 0;
     while (dStricmp(modesStrings[i], argv[2]))
@@ -2303,11 +2130,6 @@ ConsoleMethod(Marble, getPad, S32, 2, 2, "()")
         return pad->getId();
 
     return 0;
-}
-
-ConsoleMethod(Marble, isFrozen, bool, 2, 2, "()")
-{
-    return (object->getMode() & Marble::MoveMode) == 0;
 }
 
 ConsoleMethod(Marble, getPowerUpId, S32, 2, 2, "()")

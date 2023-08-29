@@ -254,20 +254,6 @@ void GuiShapeNameHud::onRender(Point2I, const RectI& updateRect)
         }
     }
 
-#ifdef MB_ULTRA
-    if (hudItemCount == 0 && !Marble::smEndPad.isNull())
-    {
-        Marble* marble = dynamic_cast<Marble*>(control);
-        if (marble && (marble->getMode() & Marble::StoppingMode) == 0)
-        {
-            Box3F padBox = Marble::smEndPad->getRenderWorldBox();
-            Point3F padPos = (padBox.min + padBox.max) * 0.5f;
-
-            renderArrow(Marble::smEndPad, padPos);
-        }
-    }
-#endif
-
     // Restore control object collision
     control->enableCollision();
 

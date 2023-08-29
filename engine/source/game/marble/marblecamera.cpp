@@ -136,76 +136,18 @@ void Marble::processCameraMove(const Move* move)
             this->mLastYaw -= 0.0544000044465065;
     }
     float delta_new = this->mLastYaw * 0.7 * 6.283185307179586 * 0.03200000151991844;
-    if ((this->mMode & CameraHoverMode) == 0)
+    delta_new = 0.02;
+    if (this->mMouseY < 0.69999999)
     {
-        if (this->mCenteringCamera)
-        {
-            float yawDiff = fabsf(fabsf(delta_new) - fabsf(this->mRadsLeftToCenter));
-            if (yawDiff >= 0.15)
-                yawDiff = sinf(this->mRadsLeftToCenter / this->mRadsStartingToCenter) * 0.15;
-            else
-            {
-                if (yawDiff >= 0.05)
-                    yawDiff = 0.050000001;
-                else
-                    this->mCenteringCamera = 0;
-            }
-   
-            if (this->mRadsLeftToCenter <= (double)delta_new)
-            {
-                delta_new = delta_new - yawDiff;
-                this->mRadsLeftToCenter += yawDiff;
-            }
-            else
-            {
-                delta_new = yawDiff + delta_new;
-                this->mRadsLeftToCenter -= yawDiff;
-            }
-        }
-
-        if (move->deviceIsKeyboardMouse)
-        {
-            this->mMouseY += value.y;
-        }
-        else
-        {
-            float rescaledY = rescaleDeadZone(value.y, 0.69999999);
-            if (rescaledY <= 0.0)
-                rescaledY = 0.4 - rescaledY * -0.75;
-            else
-                rescaledY = rescaledY * 1.1 + 0.4;
-            float movePitchDelta = (rescaledY - this->mMouseY);
-            float movePitchSpeed = computePitchSpeedFromDelta(fabsf(movePitchDelta)) * 0.03200000151991844 * 0.8;
-            if (movePitchDelta <= 0.0)
-            {
-                movePitchDelta = -movePitchDelta;
-                if (movePitchDelta < movePitchSpeed)
-                    movePitchSpeed = movePitchDelta;
-                movePitchDelta = -movePitchSpeed;
-                movePitchSpeed = movePitchDelta;
-            }
-            else if (movePitchSpeed > movePitchDelta)
-            {
-                movePitchSpeed = movePitchDelta;
-            }
-            this->mMouseY += movePitchSpeed;
-        }
+        this->mMouseY = getMin(0.050000001f, (float)(0.699999988079071 - this->mMouseY)) + this->mMouseY;
     }
-    else 
+    else if (this->mMouseY > 0.69999999)
     {
-        delta_new = 0.02;
-        if (this->mMouseY < 0.69999999)
-        {
-            this->mMouseY = getMin(0.050000001f, (float)(0.699999988079071 - this->mMouseY)) + this->mMouseY;
-        }
-        else if (this->mMouseY > 0.69999999)
-        {
-            this->mMouseY = this->mMouseY - getMin(0.050000001f, (float)(this->mMouseY - 0.699999988079071));
-        }
+        this->mMouseY = this->mMouseY - getMin(0.050000001f, (float)(this->mMouseY - 0.699999988079071));
     }
 
     float finalYaw;
-    if (!move->deviceIsKeyboardMouse || (mMode & CameraHoverMode) != 0)
+    if (!move->deviceIsKeyboardMouse)
         finalYaw = delta_new;
     else
         finalYaw = value.x;
@@ -417,18 +359,6 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     Point3F startCam = camUpDir * verticalOffset + position;
     
     Point3F endPos = startCam - forwardDir * mDataBlock->cameraDistance;
-    if (!Marble::smEndPad.isNull() && (mMode & StoppingMode) != 0)
-    {
-        F32 effectTime;
-        if (mEffect.effectTime >= 2.0f)
-            effectTime = 1.0f;
-        else
-            effectTime = mEffect.effectTime * 0.5f;
-
-        effectTime *= 0.5f * mDataBlock->cameraDistance;
-
-        endPos -= forwardDir * effectTime;
-    }
 
     setPlatformsForCamera(position, startCam, endPos);
 

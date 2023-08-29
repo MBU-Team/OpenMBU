@@ -78,7 +78,7 @@
 //#define MBO_PHYSICS
 
 // Define me to use MBG physics
-//#define MBG_PHYSICS
+#define MBG_PHYSICS
 
 // Define me to force marble to correct size
 #define MB_FORCE_MARBLE_SIZE
@@ -101,13 +101,13 @@
 #define XB_LIVE
 
 // Define me to use MBG Moving Platform Timing
-//#define MBG_MOVING_PLATFORM_TIMING
+#define MBG_MOVING_PLATFORM_TIMING
 
 // Define me to allow phasing into platforms (MBG does this, and MBU did before the title update)
 //#define MB_PHYSICS_PHASE_INTO_PLATFORMS
 
 // Define me to fix the shape base images for MBG
-//#define MBG_SHAPEBASEFIX
+#define MBG_SHAPEBASEFIX
 
 // Define me to not render all six faces of marble cubemap in a single frame
 #define MB_CUBEMAP_FAST

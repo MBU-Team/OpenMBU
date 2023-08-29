@@ -81,7 +81,7 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
 
     }
 
-    if (bestContactIndex != mContacts.size() && (mMode & MoveMode) != 0)
+    if (bestContactIndex != mContacts.size() && mMode == NormalMode)
         dMemcpy(&mBestContact, &mContacts[bestContactIndex], sizeof(mBestContact));
 
     if (move->trigger[2] && bestContactIndex != mContacts.size())
@@ -121,7 +121,7 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
         }
     }
 
-    if (bestContactIndex != mContacts.size() && (mMode & MoveMode) != 0)
+    if (bestContactIndex != mContacts.size() && mMode == NormalMode)
     {
         Point3D vAtC = mVelocity + mCross(mOmega, -mBestContact.normal * mRadius) - mBestContact.surfaceVelocity;
         mBestContact.vAtCMag = vAtC.len();
@@ -135,7 +135,7 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
             slipping = true;
 
             F32 friction = 0.0f;
-            if ((mMode & RestrictXYZMode) == 0)
+            if (mMode == StartMode)
                 friction = mDataBlock->kineticFriction * mBestContact.friction;
 
             F64 angAMagnitude = friction * 5.0 * mBestContact.normalForce / (mRadius + mRadius);
@@ -175,13 +175,13 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
             F64 aAtCMag = (mCross(aadd, -mBestContact.normal * mRadius) + Aadd).len();
 
             F64 friction2 = 0.0;
-            if ((mMode & RestrictXYZMode) == 0)
+            if (mMode == StartMode)
                 friction2 = mDataBlock->staticFriction * mBestContact.friction;
 
             if (friction2 * mBestContact.normalForce < aAtCMag)
             {
                 friction2 = 0.0;
-                if ((mMode & RestrictXYZMode) == 0)
+                if (mMode == StartMode)
                     friction2 = mDataBlock->kineticFriction * mBestContact.friction;
 
                 Aadd *= friction2 * mBestContact.normalForce / aAtCMag;
@@ -478,7 +478,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 
 Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
 {
-    if ((mMode & MoveMode) == 0)
+    if (mMode == StopMode)
         return mVelocity * -16.0;
 
     Point3D ret = gWorkGravityDir * mDataBlock->gravity * mPowerUpParams.gravityMod;
@@ -534,7 +534,7 @@ Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
         }
     }
 
-    if (mContacts.empty() && (mMode & RestrictXYZMode) == 0)
+    if (mContacts.empty() && (mMode != StopMode))
     {
         Point3D sideDir;
         Point3D motionDir;
@@ -549,6 +549,103 @@ Point3D Marble::getExternalForces(const Move* move, F64 timeStep)
 }
 
 void Marble::advancePhysics(const Move* move, U32 timeDelta)
+{
+
+    clearMarbleAxis();
+
+    if (mBlastEnergy < mDataBlock->maxNaturalBlastRecharge >> 5)
+        mBlastEnergy++;
+
+    const Move* newMove;
+    if (mControllable)
+    {
+        if (move)
+        {
+            dMemcpy(&delta.move, move, sizeof(delta.move));
+            newMove = move;
+        }
+        else
+            newMove = &delta.move;
+    }
+    else
+        newMove = &NullMove;
+
+    processMoveTriggers(newMove);
+    processCameraMove(newMove);
+
+    Point3F startPos(mPosition.x, mPosition.y, mPosition.z);
+
+    advancePhysicsInner(newMove, timeDelta);
+
+    Point3F endPos(mPosition.x, mPosition.y, mPosition.z);
+
+    processItemsAndTriggers(startPos, endPos);
+    updatePowerups();
+
+    if (mPadPtr)
+    {
+        bool oldOnPad = mOnPad;
+        updatePadState();
+#ifdef MB_ULTRA_PREVIEWS
+        if (oldOnPad != mOnPad && !(isGhost() || gSPMode))
+#else
+        if (oldOnPad != mOnPad && !isGhost())
+#endif
+        {
+            const char* funcName = "onLeavePad";
+            if (!oldOnPad)
+                funcName = "onEnterPad";
+            Con::executef(mDataBlock, 2, funcName, scriptThis());
+        }
+    }
+
+#ifdef MB_ULTRA_PREVIEWS
+    if (isGhost() || gSPMode)
+#else
+    if (isGhost())
+#endif
+    {
+        if (getControllingClient())
+        {
+            if (Marble::smEndPad.isNull() || Marble::smEndPad->getId() != Marble::smEndPadId)
+            {
+                if (Marble::smEndPadId && Marble::smEndPadId != -1)
+                    Marble::smEndPad = dynamic_cast<StaticShape*>(Sim::findObject(Marble::smEndPadId));
+
+                if (Marble::smEndPad.isNull())
+                    Marble::smEndPadId = 0;
+            }
+        }
+    }
+
+    if (mOmega.len() < 0.000001)
+        mOmega.set(0, 0, 0);
+
+#ifdef MBG_PHYSICS
+#define MB_RESPAWN_TRIGGER_ID 0
+#else
+#define MB_RESPAWN_TRIGGER_ID 2
+#endif
+
+#ifdef MB_ULTRA_PREVIEWS
+    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
+#else
+    if (!isGhost() && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
+#endif
+        Con::executef(this, 1, "onOOBClick");
+
+    notifyCollision();
+
+    mSinglePrecision.mPosition = mPosition;
+    mSinglePrecision.mVelocity = mVelocity;
+    mSinglePrecision.mOmega = mOmega;
+
+    mPosition = mSinglePrecision.mPosition;
+    mVelocity = mSinglePrecision.mVelocity;
+    mOmega = mSinglePrecision.mOmega;
+}
+
+void Marble::advancePhysicsInner(const Move* move, U32 timeDelta)
 {
     dMemcpy(&delta.posVec, &mPosition, sizeof(delta.posVec));
 
@@ -620,7 +717,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
         mVelocity += A * timeStep;
         mOmega += a * timeStep;
 
-        if ((mMode & RestrictXYZMode) != 0)
+        if (mMode == StartMode)
         {
 #ifdef MBG_PHYSICS
             mVelocity.set(0, 0, mVelocity.z);
