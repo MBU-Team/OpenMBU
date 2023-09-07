@@ -23,8 +23,12 @@
 static png_byte DGL_CHUNK_dcCf[5] = { 100, 99, 67, 102, '\0' };
 static png_byte DGL_CHUNK_dcCs[5] = { 100, 99, 67, 115, '\0' };
 
+#ifdef TORQUE_32K_TEXTURES
+static const U32 csgMaxRowPointers = 32768;
+#else
 static const U32 csgMaxRowPointers = 1024;
-static png_bytep sRowPointers[1024];
+#endif
+static png_bytep sRowPointers[csgMaxRowPointers];
 
 //-------------------------------------- Replacement I/O for standard LIBPng
 //                                        functions.  we don't wanna use
