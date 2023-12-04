@@ -2,6 +2,8 @@
 #include "console/console.h"
 #include "console/consoleInternal.h"
 
+#include "discord/DiscordGame.h"
+
 #ifdef TORQUE_OS_WIN
 #include <Windows.h>
 #endif
@@ -245,12 +247,18 @@ ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
     {
         case 0:
             Con::printf("Setting Rich Presence to Menus");
+            DiscordGame::get()->setStatus("In Menus");
+            DiscordGame::get()->setDetails("");
             break;
         case 1:
             Con::printf("Setting Rich Presence to Singleplayer");
+            DiscordGame::get()->setStatus("Playing Singleplayer");
+            DiscordGame::get()->setDetails("");
             break;
         case 2:
             Con::printf("Setting Rich Presence to Multiplayer");
+            DiscordGame::get()->setStatus("Playing Multiplayer");
+            DiscordGame::get()->setDetails("");
             break;
     }
 }

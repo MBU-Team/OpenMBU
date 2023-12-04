@@ -44,12 +44,6 @@ struct BitmapFileHeader {
 #pragma pack(pop)
 #endif
 
-struct DiscordState {
-    discord::User currentUser;
-
-    std::unique_ptr<discord::Core> core;
-};
-
 namespace {
     volatile bool interrupted{ false };
 }
@@ -86,34 +80,48 @@ DiscordGame::DiscordGame()
     Con::printf("Initializing Discord Game SDK");
     mActive = false;
 
-    DiscordState state{};
+    mActivity = {};
+    mStatus = nullptr;
+    mDetails = nullptr;
+    //mIcon = nullptr;
+    //mIconText = nullptr;
 
-    discord::Core* core{};
-    auto result = discord::Core::Create(846933806711046144, DiscordCreateFlags_Default, &core);
-    state.core.reset(core);
-    if (!state.core) {
+    mCore = {};
+
+    //auto result = discord::Core::Create(846933806711046144, DiscordCreateFlags_Default, &core);
+    auto result = discord::Core::Create(1181357649644769300, DiscordCreateFlags_NoRequireDiscord, &mCore);
+
+    if (!mCore) {
         Con::printf("Failed to instantiate discord core! (err %i)", static_cast<int>(result));
         //std::cout << "Failed to instantiate discord core! (err " << static_cast<int>(result)
         //    << ")\n";
         //std::exit(-1);
     }
 
-    state.core->SetLogHook(
+    mCore->SetLogHook(
         discord::LogLevel::Debug, [](discord::LogLevel level, const char* message) {
-            Con::printf("Log(%i %s)", static_cast<uint32_t>(level), message);
+            if (level == discord::LogLevel::Error)
+                Con::printf("DiscordGameSDK::Error: %s", message);
+            else if (level == discord::LogLevel::Warn)
+                Con::printf("DiscordGameSDK::Warning: %s", message);
+            else if (level == discord::LogLevel::Debug)
+                Con::printf("DiscordGameSDK::Debug: %s", message);
+            else
+                Con::printf("DiscordGameSDK::Info: %s", message);
+
             //std::cerr << "Log(" << static_cast<uint32_t>(level) << "): " << message << "\n";
         });
 
-    core->UserManager().OnCurrentUserUpdate.Connect([&state]() {
-        state.core->UserManager().GetCurrentUser(&state.currentUser);
-
-        Con::printf("Current user updated: %s#%s", state.currentUser.GetUsername(), state.currentUser.GetDiscriminator());
-
-        //std::cout << "Current user updated: " << state.currentUser.GetUsername() << "#"
-        //    << state.currentUser.GetDiscriminator() << "\n";
-
-        
-        });
+//    mCore->UserManager().OnCurrentUserUpdate.Connect([this]() {
+//        mCore->UserManager().GetCurrentUser(&state.currentUser);
+//
+//        Con::printf("Current user updated: %s#%s", state.currentUser.GetUsername(), state.currentUser.GetDiscriminator());
+//
+//        //std::cout << "Current user updated: " << state.currentUser.GetUsername() << "#"
+//        //    << state.currentUser.GetDiscriminator() << "\n";
+//
+//
+//        });
 
     //mFilename = Platform::getPrefsPath(AUTOSPLITTER_FILE_NAME);
     //mFile.open(mFilename, std::ios_base::app);
@@ -131,4 +139,64 @@ DiscordGame::~DiscordGame()
 {
     //mFile.close();
     //std::remove(mFilename.c_str());
+}
+
+void DiscordGame::update()
+{
+    if (!mActive)
+        return;
+
+    const char* oldStatus = mActivity.GetState();
+    const char* oldDetails = mActivity.GetDetails();
+
+    bool statusChanged = oldStatus != nullptr && mStatus != nullptr && dStrcmp(oldStatus, mStatus) != 0;
+    statusChanged |= (oldStatus == nullptr && mStatus != nullptr);
+    statusChanged |= (oldStatus != nullptr && mStatus == nullptr);
+
+    bool detailsChanged = oldDetails != nullptr && mDetails != nullptr && dStrcmp(oldDetails, mDetails) != 0;
+    detailsChanged |= (oldDetails == nullptr && mDetails != nullptr);
+    detailsChanged |= (oldDetails != nullptr && mDetails == nullptr);
+
+    if (statusChanged || detailsChanged)
+    {
+        if (mStatus == nullptr)
+            mStatus = "";
+        mActivity.SetState(mStatus);
+
+        if (mDetails == nullptr)
+            mDetails = "";
+        mActivity.SetDetails(mDetails);
+
+        mActivity.GetAssets().SetLargeImage("game_icon");
+        mActivity.GetAssets().SetLargeText("OpenMBU");
+//        if (mIcon != nullptr)
+//            mActivity.GetAssets().SetSmallImage(mIcon);
+//        else
+//            mActivity.GetAssets().SetSmallImage("");
+//
+//        if (mIconText != nullptr)
+//            mActivity.GetAssets().SetSmallText(mIconText);
+//        else
+//            mActivity.GetAssets().SetSmallText("");
+
+        //mActivity.GetAssets().SetSmallImage("game_icon");
+        //mActivity.GetAssets().SetSmallText("OpenMBU");
+
+        mActivity.SetType(discord::ActivityType::Playing);
+        //mActivity.SetInstance(true);
+
+        mCore->ActivityManager().UpdateActivity(mActivity, [](discord::Result result)
+        {
+            if (result == discord::Result::Ok)
+                Con::printf("DiscordGameSDK::Activity updated!");
+            else
+                Con::errorf("DiscordGameSDK::Activity update failed! (err %i)", static_cast<int>(result));
+        });
+    }
+
+    // -----------------------
+
+    auto result = mCore->RunCallbacks();
+    if (result != discord::Result::Ok)
+        Con::errorf("DiscordGameSDK::RunCallbacks failed! (err %i)", static_cast<int>(result));
 }

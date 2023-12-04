@@ -218,8 +218,8 @@ static void shutdownLibraries()
     if (ResourceManager)
         ResourceManager->purge();
 
-    Autosplitter::destroy();
     DiscordGame::destroy();
+    Autosplitter::destroy();
 
     RedBook::destroy();
     TSShapeInstance::destroy();
@@ -594,6 +594,9 @@ int DemoGame::main(int argc, const char** argv)
         PROFILE_END();
         PROFILE_START(TimeManagerProcessMain);
         TimeManager::process(); // guaranteed to produce an event
+        PROFILE_END();
+        PROFILE_START(DiscordUpdateMain);
+        DiscordGame::get()->update();
         PROFILE_END();
         PROFILE_END();
     }
