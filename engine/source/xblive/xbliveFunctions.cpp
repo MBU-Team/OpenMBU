@@ -261,19 +261,19 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         DiscordGame::get()->setStatus("In Menus");
         DiscordGame::get()->setDetails("");
         //DiscordGame::get()->setSmallImageKey("game_icon");
-        DiscordGame::get()->setGUID("");
+        DiscordGame::get()->setGUID("MainMenu");
         break;
     case 1:
         Con::printf("Setting Rich Presence to Singleplayer");
-        DiscordGame::get()->setStatus("Playing Singleplayer");
-        DiscordGame::get()->setDetails(levelname);
+        DiscordGame::get()->setStatus(levelname);
+        DiscordGame::get()->setDetails("Playing Singleplayer");
         //DiscordGame::get()->setSmallImageKey("game_icon");
         DiscordGame::get()->setGUID(levelguid);
         break;
     case 2:
         Con::printf("Setting Rich Presence to Multiplayer");
-        DiscordGame::get()->setStatus("Playing Multiplayer");
-        DiscordGame::get()->setDetails(levelname);
+        DiscordGame::get()->setStatus(levelname);
+        DiscordGame::get()->setDetails("Playing Multiplayer");
         //DiscordGame::get()->setSmallImageKey("game_icon");
         DiscordGame::get()->setGUID(levelguid);
         break;

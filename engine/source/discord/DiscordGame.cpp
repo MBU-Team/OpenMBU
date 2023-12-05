@@ -178,13 +178,18 @@ void DiscordGame::update()
 
         if (mGUID != nullptr) {
             //Con::printf("DiscordGameSDK::Info: %s", "Setting Large Image Key", mGUID);
-            mLargeImageKey = DiscordGame::ProcessLevel(mGUID);
-            Con::printf("DiscordGameSDK::Info: %s %s", "Setting Large Image Key GUID:", mGUID);
+            if (strcmp(mGUID, "MainMenu") == 0) {
+                mLargeImageKey = "mbu_logo";
+            }
+            else {
+                mLargeImageKey = DiscordGame::ProcessLevel(mGUID);
+            }
+            //Con::printf("DiscordGameSDK::Info: %s %s", "Setting Large Image Key GUID:", mGUID);
             mActivity.GetAssets().SetLargeImage(mLargeImageKey);
             
         }
         else {
-            mActivity.GetAssets().SetLargeImage("game_icon");
+            mActivity.GetAssets().SetLargeImage("mbu_logo");
         }
             //mImgSm = "loading_icon";
 
@@ -345,9 +350,138 @@ char* DiscordGame::ProcessLevel(const char* guid) {
         return "level_40";
     }
     //Advanced Level GUIDS
+    else if (strcmp(mGUID, "{BA97253E-1B1D-40BF-9F4E-938FCC1DCDAC}") == 0) {
+        return "level_41";
+    }
+    else if (strcmp(mGUID, "{427A70F3-DFB3-4A85-BF21-8E6373B58AAE}") == 0) {
+        return "level_42";
+    }
+    else if (strcmp(mGUID, "{25193471-D1F7-4A31-B30F-792891C35558}") == 0) {
+        return "level_43";
+    }
+    else if (strcmp(mGUID, "{0CD63D0D-D29B-4F2A-A8D8-2B8B5AB85635}") == 0) {
+        return "level_44";
+    }
+    else if (strcmp(mGUID, "{AD4C4328-BAE3-427F-9DFA-2B0294855D48}") == 0) {
+        return "level_45";
+    }
+    else if (strcmp(mGUID, "{834F4547-B534-4B2C-A9C0-11AFA87DC633}") == 0) {
+        return "level_46";
+    }
+    else if (strcmp(mGUID, "{777E5EA8-8A92-4BA9-B0F1-2E4CE2CE9F1A}") == 0) {
+        return "level_47";
+    }
+    else if (strcmp(mGUID, "{FC86DD0D-3646-4565-BCCC-ED24BDAFFCA2}") == 0) {
+        return "level_48";
+    }
+    else if (strcmp(mGUID, "{BB8FA1E2-C6E4-4981-821F-55AD5BBB587A}") == 0) {
+        return "level_49";
+    }
+    else if (strcmp(mGUID, "{268C3D5D-37B4-4386-8FCD-C91EA984AC8A}") == 0) {
+        return "level_50";
+    }
+    else if (strcmp(mGUID, "{60552BB6-BDCC-4E77-971F-C55065A69887}") == 0) {
+        return "level_51";
+    }
+    else if (strcmp(mGUID, "{694E35EF-D063-4852-8453-39DB8EFDE292}") == 0) {
+        return "level_52";
+    }
+    else if (strcmp(mGUID, "{2E115F91-3CD4-49F9-B36E-5901B95D4107}") == 0) {
+        return "level_53";
+    }
+    else if (strcmp(mGUID, "{A57A2C49-DE68-41B8-B01E-4A6776990F32}") == 0) {
+        return "level_54";
+    }
+    else if (strcmp(mGUID, "{76487562-ACEC-46BE-9C22-5D2F7AD572C1}") == 0) {
+        return "level_55";
+    }
+    else if (strcmp(mGUID, "{38FD3570-6217-4FE1-8C79-C0A8D4B45068}") == 0) {
+        return "level_56";
+    }
+    else if (strcmp(mGUID, "{35D90D68-7FFA-4EB8-967D-7373B5EFC718}") == 0) {
+        return "level_57";
+    }
+    else if (strcmp(mGUID, "{6AD733E7-A256-4ECF-A9ED-ED98AB9B832A}") == 0) {
+        return "level_58";
+    }
+    else if (strcmp(mGUID, "{989F14E6-8F25-4AE1-B216-3A1FA3073370}") == 0) {
+        return "level_59";
+    }
+    else if (strcmp(mGUID, "{7E67B719-0465-4CB4-BC05-0E7766AAB1AE}") == 0) {
+        return "level_60";
+    }
     //Multiplayer Level GUIDS
+    else if (strcmp(mGUID, "{CF18B4E3-5D01-4556-BD5B-38732CDFC297}") == 0) {
+        return "level_61";
+    }
+    else if (strcmp(mGUID, "{70E49DF8-CE3F-4136-A081-AC38E865B809}") == 0) {
+        return "level_62";
+    }
+    else if (strcmp(mGUID, "{CD6C0624-475C-46CC-AE15-655B9FFF4E93}") == 0) {
+        return "level_63";
+    }
+    else if (strcmp(mGUID, "{2D001C28-8D65-46D4-98F3-93C16CFD9477}") == 0) {
+        return "level_64";
+    }
+    else if (strcmp(mGUID, "{5D7CFB46-1657-4121-BE0A-1BB9D551A17E}") == 0) {
+        return "level_65";
+    }
+    else if (strcmp(mGUID, "{7DEF697A-3F76-43A9-BF7D-A16B2D913250}") == 0) {
+        return "level_66";
+    }
+    else if (strcmp(mGUID, "{49A510A5-E540-40C2-B555-37A37CA5B01A}") == 0) {
+        return "level_67";
+    }
+    //marble city 1
+    else if (strcmp(mGUID, "{D18409B9-AAA3-4260-8129-C477062BF6CA}") == 0) {
+        return "level_68";
+    }
+    //marble city 2
+    else if (strcmp(mGUID, "{241F26A1-D3FA-4583-87DB-611C21278F86}") == 0) {
+        return "level_68";
+     }
+    else if (strcmp(mGUID, "{872E0141-D1EA-4B68-AFA0-C6B9CEF4669B}") == 0) {
+        return "level_69";
+    }
+    else if (strcmp(mGUID, "{917B670B-2DB1-4746-A345-A8EF799DB682}") == 0) {
+        return "level_70";
+    }
+    else if (strcmp(mGUID, "{87206CA6-73AC-483B-B220-954FE3BE2E8A}") == 0) {
+        return "level_71";
+    }
+    else if (strcmp(mGUID, "{41268C4B-7DAD-4972-B4CC-0A39F008FD4E}") == 0) {
+        return "level_72";
+    }
+    else if (strcmp(mGUID, "{C015BB57-FC15-4A76-A31C-544402339670}") == 0) {
+        return "level_73";
+    }
+    else if (strcmp(mGUID, "{63096AD7-D99D-4E96-8E58-2789AB73ADF7}") == 0) {
+        return "level_74";
+    }
+    else if (strcmp(mGUID, "{92A2B64A-6419-4779-AD02-4AE4686036DB}") == 0) {
+        return "level_75";
+    }
+    else if (strcmp(mGUID, "{B65ACF73-A6C5-48A0-BEEC-D4C6D1E9D33E}") == 0) {
+        return "level_76";
+    }
+    else if (strcmp(mGUID, "{D29EB181-677D-471D-B72A-D0C8092B34F9}") == 0) {
+        return "level_77";
+    }
+    else if (strcmp(mGUID, "{E7FED2CC-6FD2-4D4A-A62F-D6D7EFEBC582}") == 0) {
+        return "level_78";
+    }
+    else if (strcmp(mGUID, "{96E7EB66-B551-4E8F-809C-A83780065C05}") == 0) {
+        return "level_79";
+    }
+    else if (strcmp(mGUID, "{F2F59069-4D07-4665-B649-95E018FAAB28}") == 0) {
+        return "level_80";
+    }
+    else if (strcmp(mGUID, "{3DCFC6EE-A2DE-465F-B040-6FC31D5C0B6E}") == 0) {
+        return "level_81";
+    }
     else {
-        return "game_icon";
+        //Custom / Level Not Found
+        return "custom_level";
     }
     
 }
