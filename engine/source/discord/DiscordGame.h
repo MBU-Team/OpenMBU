@@ -19,9 +19,12 @@ public:
     bool isActive() { return mActive; }
     //void sendData(const char* data);
     void update();
+    char* ProcessLevel(const char* guid);
 
     void setStatus(const char* status) { mStatus = status; if (mStatus == nullptr) mStatus = ""; }
     void setDetails(const char* details) {mDetails = details; if (mDetails == nullptr) mDetails = ""; }
+    void setGUID(const char* guid) { mGUID = guid; if (mGUID == nullptr) mGUID = ""; }
+    void setSmallImageKey(const char* sImgKey) { mImgSm = sImgKey; if (mImgSm == nullptr) mImgSm = "loading_icon"; }
     //void setIcon(const char* icon, const char* iconText) { mIcon = icon; if (mIcon == nullptr) mIcon = ""; mIconText = iconText; if (mIconText == nullptr) mIconText = ""; }
 private:
     DiscordGame();
@@ -34,6 +37,9 @@ private:
     discord::Activity mActivity;
     const char* mStatus;
     const char* mDetails;
+    const char* mGUID;
+    const char* mImgSm;
+    const char* mLargeImageKey;
     //const char* mIcon;
     //const char* mIconText;
 };

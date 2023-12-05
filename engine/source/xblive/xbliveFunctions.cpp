@@ -236,30 +236,47 @@ ConsoleFunction(XBLiveGetGamerZone, const char*, 1, 1, "(port)")
     return "";
 }
 
-ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
+ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, levelguid)")
 {
     argc;
 
     S32 port = atoi(argv[1]);
     S32 presence = atoi(argv[2]);
+    const char* levelname;
+    const char* levelguid;
+    if (argc > 3)
+        levelname = StringTable->insert(argv[3]);
+    else
+        levelname = StringTable->insert("");
+
+    if (argc > 4)
+        levelguid = StringTable->insert(argv[4]);
+    else
+        levelguid = StringTable->insert("");
 
     switch (presence)
     {
-        case 0:
-            Con::printf("Setting Rich Presence to Menus");
-            DiscordGame::get()->setStatus("In Menus");
-            DiscordGame::get()->setDetails("");
-            break;
-        case 1:
-            Con::printf("Setting Rich Presence to Singleplayer");
-            DiscordGame::get()->setStatus("Playing Singleplayer");
-            DiscordGame::get()->setDetails("");
-            break;
-        case 2:
-            Con::printf("Setting Rich Presence to Multiplayer");
-            DiscordGame::get()->setStatus("Playing Multiplayer");
-            DiscordGame::get()->setDetails("");
-            break;
+    case 0:
+        Con::printf("Setting Rich Presence to Menus");
+        DiscordGame::get()->setStatus("In Menus");
+        DiscordGame::get()->setDetails("");
+        //DiscordGame::get()->setSmallImageKey("game_icon");
+        DiscordGame::get()->setGUID("");
+        break;
+    case 1:
+        Con::printf("Setting Rich Presence to Singleplayer");
+        DiscordGame::get()->setStatus("Playing Singleplayer");
+        DiscordGame::get()->setDetails(levelname);
+        //DiscordGame::get()->setSmallImageKey("game_icon");
+        DiscordGame::get()->setGUID(levelguid);
+        break;
+    case 2:
+        Con::printf("Setting Rich Presence to Multiplayer");
+        DiscordGame::get()->setStatus("Playing Multiplayer");
+        DiscordGame::get()->setDetails(levelname);
+        //DiscordGame::get()->setSmallImageKey("game_icon");
+        DiscordGame::get()->setGUID(levelguid);
+        break;
     }
 }
 

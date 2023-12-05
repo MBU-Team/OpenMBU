@@ -484,7 +484,7 @@ function clientSetSigninPort(%port)
       clientLockController(%port);
       
       // set presence info to "menus"
-      XBLiveSetRichPresence(%port, 0);
+      XBLiveSetRichPresence(%port, 0, "", "");
       
       if( !isDemoLaunch() )
       {
