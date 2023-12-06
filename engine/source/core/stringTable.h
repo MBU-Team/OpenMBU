@@ -138,8 +138,12 @@ public:
     static U32 hashStringn(const char* in_pString, S32 len);
 };
 
-
 extern _StringTable* StringTable;
+
+inline const char* operator ""_ts(const char* text, dsize_t length)
+{
+    return StringTable->insert(text);
+}
 
 
 #endif //_STRINGTABLE_H_

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
 #include "discord.h"
 
 #include "console/console.h"
@@ -19,20 +20,46 @@ public:
     bool isActive() { return mActive; }
     //void sendData(const char* data);
     void update();
-    char* ProcessLevel(const char* guid);
+    const char* ProcessLevel(StringTableEntry guid);
 
-    void setStatus(const char* status) { mStatus = status; if (mStatus == nullptr) mStatus = ""; }
-    void setDetails(const char* details) {mDetails = details; if (mDetails == nullptr) mDetails = ""; }
-    void setGUID(const char* guid) { mGUID = guid; if (mGUID == nullptr) mGUID = ""; }
-    void setSmallImageKey(const char* sImgKey) { mImgSm = sImgKey; if (mImgSm == nullptr) mImgSm = "loading_icon"; }
+    void setStatus(const char* status) 
+    { 
+        mStatus = status; 
+        if (mStatus == nullptr) 
+            mStatus = ""; 
+        notifyParamsChange();
+
+    }
+    void setDetails(const char* details) 
+    { 
+        mDetails = details; 
+        if (mDetails == nullptr) 
+            mDetails = ""; 
+        notifyParamsChange();
+    }
+    void setLevel(const char* guid) 
+    {
+        mGUID = guid; 
+        if (mGUID == nullptr) 
+            mGUID = ""; 
+        notifyParamsChange();
+    }
+    void setSmallImageKey(const char* sImgKey) 
+    {
+        mImgSm = sImgKey; 
+        if (mImgSm == nullptr) 
+            mImgSm = "loading_icon"; 
+        notifyParamsChange();
+    }
+    void notifyParamsChange() { mChanged = true; }
     //void setIcon(const char* icon, const char* iconText) { mIcon = icon; if (mIcon == nullptr) mIcon = ""; mIconText = iconText; if (mIconText == nullptr) mIconText = ""; }
 private:
     DiscordGame();
     ~DiscordGame();
     static DiscordGame* smInstance;
     bool mActive;
-    std::string mFilename;
-    std::fstream mFile;
+    bool mChanged;
+    std::unordered_map<const char*, const char*> mGuidLookup;
     discord::Core* mCore;
     discord::Activity mActivity;
     const char* mStatus;

@@ -238,6 +238,7 @@ ConsoleFunction(XBLiveGetGamerZone, const char*, 1, 1, "(port)")
 
 ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, levelguid)")
 {
+#ifdef TORQUE_DISCORD_RPC
     argc;
 
     S32 port = atoi(argv[1]);
@@ -261,23 +262,24 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         DiscordGame::get()->setStatus("In Menus");
         DiscordGame::get()->setDetails("");
         //DiscordGame::get()->setSmallImageKey("game_icon");
-        DiscordGame::get()->setGUID("MainMenu");
+        DiscordGame::get()->setLevel("MainMenu");
         break;
     case 1:
         Con::printf("Setting Rich Presence to Singleplayer");
         DiscordGame::get()->setStatus(levelname);
         DiscordGame::get()->setDetails("Playing Singleplayer");
         //DiscordGame::get()->setSmallImageKey("game_icon");
-        DiscordGame::get()->setGUID(levelguid);
+        DiscordGame::get()->setLevel(levelguid);
         break;
     case 2:
         Con::printf("Setting Rich Presence to Multiplayer");
         DiscordGame::get()->setStatus(levelname);
         DiscordGame::get()->setDetails("Playing Multiplayer");
         //DiscordGame::get()->setSmallImageKey("game_icon");
-        DiscordGame::get()->setGUID(levelguid);
+        DiscordGame::get()->setLevel(levelguid);
         break;
     }
+#endif
 }
 
 ConsoleFunction(XBLiveLoadAchievements, void, 3, 3, "(port, callback)")

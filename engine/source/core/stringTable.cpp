@@ -203,4 +203,3 @@ void _StringTable::resize(const U32 newSize)
         buckets[key % newSize] = temp;
     }
 }
-
