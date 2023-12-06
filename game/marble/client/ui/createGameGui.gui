@@ -9,7 +9,7 @@ new GuiControl(CreateGameGui) {
          
    new GuiXboxOptionListCtrl(CreateGameOptionList) {
       profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallWideProfile";
-      position = isWidescreen()? "360 323" : "-20 145";
+      position = isWidescreen()? "360 237" : "-20 95";
       extent = isWidescreen()? "835 430" : "660 280";
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = isWidescreen()? "bottom" : "top";
@@ -75,6 +75,7 @@ function CreateGameGui::show(%this,%backGui)
    %this.maxPlayersIndex = 1;
    %this.privateSlotsIndex = 2;
    %this.privateGameIndex = 3;
+   %this.targetScoreIndex = 4;
    CreateGameOptionList.addRow($Text::Mission, GameMissionInfo.getMissionDisplayNameList(), 18);
    CreateGameOptionList.addRow($Text::MaxPlayers, GetOptionListRangeText(%this.maxPlayersMin, $Server::AbsMaxPlayers), 8);
    
@@ -82,6 +83,7 @@ function CreateGameGui::show(%this,%backGui)
       CreateGameOptionList.addRow($Text::PrivateSlots, $Text::None TAB GetOptionListRangeText(1, $Server::AbsMaxPlayers), 8);
 
    CreateGameOptionList.addRow($Text::IsPrivate, $Text::No TAB $Text::Yes, 8);
+   CreateGameOptionList.addRow($Text::TargetScore, GetOptionListRangeText(0, 250, 25), 8);
    //CreateGameOptionList.addRow($Text::GM23, $Text::S40 TAB GetOptionListRangeText(1, $Server::AbsMaxBots));
    //CreateGameOptionList.addRow($Text::GM29, GetOptionListRangeText(5, 15, 5));
    
@@ -324,6 +326,7 @@ function CreateGameGui::createGame(%this)
    
    $pref::Server::missionId = $Server::MissionId;
    $pref::Server::MaxPlayers = CreateGameOptionList.getOptionIndex(%this.maxPlayersIndex) + CreateGameGui.maxPlayersMin;
+   $pref::Server::TargetScore = CreateGameOptionList.getOptionIndex(%this.targetScoreIndex) * 25;
    $Server::IsPrivate = CreateGameOptionList.getOptionIndex(%this.privateGameIndex);
    
    $Server::InviteCode = generateInviteCode();

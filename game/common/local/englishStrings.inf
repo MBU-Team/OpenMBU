@@ -261,6 +261,7 @@ $Text::Mission = "Level";
 $Text::MaxPlayers = "Max Players";
 $Text::PrivateSlots = "Private Slots";
 $Text::IsPrivate = "Private Game";
+$Text::TargetScore = "Target Score"
 
 ;-------------------------------------------------------------------------------
 ; Leaderboard Select Menu

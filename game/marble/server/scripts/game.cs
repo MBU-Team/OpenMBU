@@ -1379,6 +1379,13 @@ function GameConnection::onFoundGem(%this,%amount,%gem,%points)
       commandToClient(%this,'setGemCount',%this.gemCount,$Game::GemCount);
       if(%points == GemItem_5pts.points)
          commandToClient(%this, 'pickedUpABlueGem');
+
+      if ($pref::Server::TargetScore != 0 && %this.points >= $pref::Server::TargetScore)
+      {
+         cancel($Game::Schedule);
+         onGameDurationEnd();
+      }
+
          
       return;
    }
