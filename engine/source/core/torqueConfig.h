@@ -54,6 +54,9 @@
 /// Define me to enable torque terrain
 //#define TORQUE_TERRAIN
 
+/// Define me to enable discord rich presence
+#define TORQUE_DISCORD_RPC
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 
