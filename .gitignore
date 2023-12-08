@@ -9,6 +9,7 @@ game/MBUltra
 prefs.cs
 banlist.cs
 config.cs
+default.bind.cs
 tools/*.exe
 tools/*.ilk
 shaderP*.hlsl
