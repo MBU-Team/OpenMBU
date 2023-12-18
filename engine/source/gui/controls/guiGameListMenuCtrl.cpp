@@ -31,7 +31,7 @@ bool GuiGameListMenuCtrl::onWake()
     if (!Parent::onWake())
         return false;
 
-    mRowHeight = mProfile->mFont->getHeight();
+    mRowHeight = mProfile->mFonts[0].mFont->getHeight();
     mRowsPerPage = mBounds.extent.y / mRowHeight;
     mProfile->constructBitmapArray();
     setActive(true);

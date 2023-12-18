@@ -1031,18 +1031,18 @@ void WorldEditor::renderMousePopupInfo()
         return;
     }
 
-    U32 width = mProfile->mFont->getStrWidth((const UTF8*)buf);
+    U32 width = mProfile->mFonts[0].mFont->getStrWidth((const UTF8*)buf);
 
     if (mRenderPopupBackground)
     {
         Point2I min(pos.x - width / 2 - 2, pos.y - 1);
-        Point2I max(pos.x + width / 2 + 2, pos.y + mProfile->mFont->getHeight() + 1);
+        Point2I max(pos.x + width / 2 + 2, pos.y + mProfile->mFonts[0].mFont->getHeight() + 1);
 
         GFX->drawRectFill(min, max, mPopupBackgroundColor);
     }
 
     GFX->setBitmapModulation(mPopupTextColor);
-    GFX->drawText(mProfile->mFont, Point2I(pos.x - width / 2, pos.y), buf);
+    GFX->drawText(mProfile->mFonts[0].mFont, Point2I(pos.x - width / 2, pos.y), buf);
 
     GFX->setZEnable(true); // MDF--
 }
@@ -1261,7 +1261,7 @@ void WorldEditor::renderScreenObj(SceneObject* obj, Point2I sPos)
 
         const char* str = parseObjectFormat(obj, mObjTextFormat);
 
-        Point2I extent(mProfile->mFont->getStrWidth((const UTF8*)str), mProfile->mFont->getHeight());
+        Point2I extent(mProfile->mFonts[0].mFont->getStrWidth((const UTF8*)str), mProfile->mFonts[0].mFont->getHeight());
 
         Point2I pos(sPos);
 
@@ -1271,7 +1271,7 @@ void WorldEditor::renderScreenObj(SceneObject* obj, Point2I sPos)
             pos.y += (bitmap->getHeight() / 2) + 3;
         }
         GFX->setBitmapModulation(mObjectTextColor);
-        GFX->drawText(mProfile->mFont, pos, str);
+        GFX->drawText(mProfile->mFonts[0].mFont, pos, str);
         GFX->setZEnable(true); // MDF--
     }
 }
@@ -1480,12 +1480,12 @@ void WorldEditor::renderAxisGizmoText()
                 }
 
                 GFX->drawRectFill(Point2I((S32)sPos.x - 3, (S32)sPos.y + 2),
-                    Point2I((S32)sPos.x + 8, (S32)sPos.y + mProfile->mFont->getHeight() + 3),
+                    Point2I((S32)sPos.x + 8, (S32)sPos.y + mProfile->mFonts[0].mFont->getHeight() + 3),
                     fillColor);
 
 
                 GFX->drawRect(Point2I((S32)sPos.x - 3, (S32)sPos.y + 2),
-                    Point2I((S32)sPos.x + 8, (S32)sPos.y + mProfile->mFont->getHeight() + 3),
+                    Point2I((S32)sPos.x + 8, (S32)sPos.y + mProfile->mFonts[0].mFont->getHeight() + 3),
                     textColor);
             }
             else
@@ -1496,7 +1496,7 @@ void WorldEditor::renderAxisGizmoText()
             char buf[2];
             buf[0] = axisText[i]; buf[1] = '\0';
             GFX->setBitmapModulation(textColor);
-            GFX->drawText(mProfile->mFont, Point2I((S32)sPos.x, (S32)sPos.y), buf);
+            GFX->drawText(mProfile->mFonts[0].mFont, Point2I((S32)sPos.x, (S32)sPos.y), buf);
         }
     }
 

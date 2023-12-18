@@ -107,11 +107,12 @@ void GuiAchievementPopupCtrl::onRender(Point2I offset, const RectI &updateRect)
     // actual achievement text are the same size.
 
     GFX->setBitmapModulation(mProfile->mFontColor);
-    Point2I textExtent(mBounds.extent.x, mBounds.extent.y - HEADER_OFFSET_Y);
-    renderJustifiedText(offset, textExtent, mHeader);
+    Point2I textExtent(mBounds.extent.x + ACHIEVEMENT_HEADER_OFFSET_X, mBounds.extent.y - ACHIEVEMENT_HEADER_OFFSET_Y);
+    Point2I textExtent2(mBounds.extent.x, mBounds.extent.y - ACHIEVEMENT_HEADER_OFFSET_Y);
+    renderJustifiedText(mProfile->mFonts[0].mFont, offset, textExtent, mHeader);
 
-    Point2I titleOffset(offset.x, offset.y + (mBounds.extent.y - textExtent.y));
-    renderJustifiedText(titleOffset, textExtent, mTitle);
+    Point2I titleOffset(offset.x - ACHIEVEMENT_TITLE_OFFSET_X, offset.y + (mBounds.extent.y - textExtent2.y) - ACHIEVEMENT_TITLE_OFFSET_Y);
+    renderJustifiedText(mProfile->mFonts[1].mFont, titleOffset, textExtent2, mTitle);
 
     renderChildControls(offset, updateRect);
 }

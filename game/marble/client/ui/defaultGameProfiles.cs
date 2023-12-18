@@ -417,8 +417,10 @@ new GuiControlProfile ("ControllerTextRightProfile" : ControllerTextProfile)
 
 new GuiControlProfile ("AchievementDlgProfile")
 {
-   fontType = $XBOX::Headerfont;
+   fontType = "Arial Bold";
    fontColor = "16 16 16";
-   fontSize = 32;
+   fontSize = 20;
+   fontType2 = "Arial Bold";
+   fontSize2 = 28;
    justify = center;
 };

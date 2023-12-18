@@ -34,7 +34,7 @@ bool GuiConsoleTextCtrl::onWake()
     if (!Parent::onWake())
         return false;
 
-    mFont = mProfile->mFont;
+    mFont = mProfile->mFonts[0].mFont;
     return true;
 }
 
@@ -58,7 +58,7 @@ void GuiConsoleTextCtrl::setText(const char* txt)
 
     //Make sure we have a font
     mProfile->incRefCount();
-    mFont = mProfile->mFont;
+    mFont = mProfile->mFonts[0].mFont;
 
     setUpdate();
 

@@ -36,7 +36,7 @@ bool GuiPaneControl::onWake()
     if (!Parent::onWake())
         return false;
 
-    mFont = mProfile->mFont;
+    mFont = mProfile->mFonts[0].mFont;
     AssertFatal(mFont, "GuiPaneControl::onWake: invalid font in profile");
     if (mCaptionID && *mCaptionID != 0)
     {

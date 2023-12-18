@@ -588,6 +588,8 @@ public:
     /// @note This should move into the graphics library at some point
     void renderJustifiedText(Point2I offset, Point2I extent, const char* text);
 
+    void renderJustifiedText(GFont* font, Point2I offset, Point2I extent, const char* text);
+
     void renderShadowText(U32 shadowType, const GFont* font, F32 alpha, const Point2I& drawPoint, const char* text, U32 textLen);
     void renderShadowText(U32 shadowType, const GFont* font, F32 alpha, const Point2I& drawPoint, const UTF16* text, U32 textLen);
 

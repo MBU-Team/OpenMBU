@@ -48,9 +48,12 @@ if(!isObject(GuiDefaultProfile)) new GuiControlProfile (GuiDefaultProfile)
    // font
    fontType = "Arial";
    fontSize = 14;
+   fontType2 = "Arial";
+   fontSize2 = 14;
    
    // Changed for loc debug builds
    fontCharset = $locCharacterSet;
+   fontCharset2 = $locCharacterSet;
 
    fontColor = "0 0 0";
    fontColorHL = "32 100 100";
