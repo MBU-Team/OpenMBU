@@ -27,6 +27,7 @@ $pref::Input::KeyboardTurnSpeed = 0.025;
 $pref::Input::MouseSensitivity = 0.005;
 $pref::Input::InvertYAxis = false;
 $pref::Input::AlwaysFreeLook = false;
+$pref::Input::ModAnalogRange = false;
 $pref::Input::AutoCenterCamera = true;
 $pref::sceneLighting::cacheSize = 20000;
 $pref::sceneLighting::purgeMethod = "lastCreated";

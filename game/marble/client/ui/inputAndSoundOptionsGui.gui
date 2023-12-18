@@ -11,7 +11,7 @@ new GuiControl(inputAndSoundOptionsGui) {
    new GuiXboxOptionListCtrl(inputAndSoundOptionsList) {
       profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallProfile";
       position = isWidescreen()? "380 211" : "132 100";
-      extent = isWidescreen()? "815 400" : "510 250";
+      extent = isWidescreen()? "815 500" : "510 350";
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = "center";
       // there can only be two columns; these values are percentages of total extent
