@@ -441,6 +441,21 @@ function bringUpOptions(%val)
 }
 
 //------------------------------------------------------------------------------
+// Chatses
+//------------------------------------------------------------------------------
+
+function GlobalChat(%val)
+{
+   if(%val && $Pref::Chat::LineTime > 0)
+      newMessageHud.open("SAY");
+}
+function TeamChat(%val)
+{
+   if(%val && $Pref::Chat::LineTime > 0)
+      newMessageHud.open("TEAM");
+}
+
+//------------------------------------------------------------------------------
 // Dubuging Functions
 //------------------------------------------------------------------------------
 
@@ -483,11 +498,14 @@ function cycleDebugRenderMode(%val)
 
 function pauseOrEscape()
 {
-	if (Canvas.getContent() == EditorGui.getId())
+	if (isObject(EditorGui) && Canvas.getContent() == EditorGui.getId())
 	{
 		Editor.close("PlayGui");
 		Canvas.setContent(RootGui);
 		RootGui.setContent(PlayGui);
+	} else if (isObject(GuiEditorGui) && Canvas.getContent() == GuiEditorGui.getId())
+	{
+	   GuiEdit(0);
 	} else if (PlayGui.isAwake())
 	{
 		if (GamePauseGui.isAwake())
@@ -563,6 +581,10 @@ moveMap.bind(keyboard, "alt c", toggleCamera);
 //moveMap.bindCmd( keyboard, o, "", "pauseToggle(0);" );
 //moveMap.bindCmd( keyboard, p, "", "pauseToggle(1);" );
 moveMap.bindCmd( keyboard, y, "togglePlayerListLength();", "" );
+
+moveMap.bind(keyboard, "t", GlobalChat);
+moveMap.bind(keyboard, "ENTER", GlobalChat);
+//moveMap.bind(keyboard, "y", TeamChat);
 
 // mouse
 moveMap.bind( mouse, button0, mouseFire );

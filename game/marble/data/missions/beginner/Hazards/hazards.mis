@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          include = "1";
          difficulty = "3";
          name = $Text::LevelName9;
+         guid = "{4FAE738C-7565-41D9-9EAD-93F9EA107720}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

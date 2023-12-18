@@ -132,42 +132,6 @@
             <desc>Stop moving.</desc>
         </method>
     </class>
-    <class>        <name>AtlasInstance</name>
-        <base>SceneObject</base>
-        <method>            <name>purge</name>
-            <desc>- Purge all loaded chunks.</desc>
-        </method>
-        <field>            <name>chunkFile</name>
-            <desc>Path to the file we will be loading geometry data from.</desc>
-        </field>
-        <field>            <name>detailTexture</name>
-            <desc>Detail texture.</desc>
-        </field>
-        <field>            <name>materialName</name>
-            <desc>Name of our Material. Must be specialized for terrain usage.</desc>
-        </field>
-        <field>            <name>tqtFile</name>
-            <desc>Path to the file we will be loading texture data from.</desc>
-        </field>
-    </class>
-    <class>        <name>AtlasInstance2</name>
-        <base>SceneObject</base>
-        <method>            <name>purgeClipmap</name>
-            <desc>- Refill clipmap from image cache.</desc>
-        </method>
-        <method>            <name>purgeClipmapTimed</name>
-            <desc>- Refill clipmap from image cache, time test.</desc>
-        </method>
-        <field>            <name>atlasFile</name>
-            <desc>filename atlasFile</desc>
-        </field>
-        <field>            <name>detailTex</name>
-            <desc>filename detailTex</desc>
-        </field>
-        <field>            <name>lightMapSize</name>
-            <desc>int lightMapSize</desc>
-        </field>
-    </class>
     <class>        <name>BanList</name>
         <base>SimObject</base>
         <method>            <name>add</name>
@@ -287,6 +251,9 @@
         <base>Material</base>
         <field>            <name>blendOp</name>
             <desc>enumval blendOp</desc>
+        </field>
+        <field>            <name>dynamicLightingMaskMaterial</name>
+            <desc>SimObjectPtr dynamicLightingMaskMaterial</desc>
         </field>
         <field>            <name>dynamicLightingMaterial</name>
             <desc>SimObjectPtr dynamicLightingMaterial</desc>
@@ -601,6 +568,15 @@
         </field>
         <field>            <name>faceViewer</name>
             <desc>bool faceViewer</desc>
+        </field>
+        <field>            <name>impulseForce</name>
+            <desc>float impulseForce</desc>
+        </field>
+        <field>            <name>impulseMask</name>
+            <desc>int impulseMask</desc>
+        </field>
+        <field>            <name>impulseRadius</name>
+            <desc>float impulseRadius</desc>
         </field>
         <field>            <name>lifetimeMS</name>
             <desc>int lifetimeMS</desc>
@@ -1520,19 +1496,45 @@
             <desc>- Set a specific card capability.</desc>
         </method>
     </class>
+    <class>        <name>GFXInit</name>
+        <method>            <name>getAdapterCount</name>
+            <desc>Return the number of adapters available.</desc>
+        </method>
+        <method>            <name>getAdapterMode</name>
+            <args>int id, int modeId</args>
+            <desc>Gets information on the specified adapter and mode.
+
+\param id Index of the adapter to get data from.
+\param modeId Index of the mode to get data from.
+\return (string) A video mode string given an adapter and mode index. See GuiCanvas.getVideoMode()</desc>
+        </method>
+        <method>            <name>getAdapterModeCount</name>
+            <args>int id</args>
+            <desc>Gets the number of modes available on the specified adapter.
+
+\param id Index of the adapter to get data from.
+\return (int) The number of video modes supported by the adapter, or -1 if the given adapter was not found.</desc>
+        </method>
+        <method>            <name>getAdapterName</name>
+            <args>int id</args>
+            <desc>Returns the name of a given adapter.</desc>
+        </method>
+        <method>            <name>getAdapterShaderModel</name>
+            <args>int id</args>
+            <desc>Returns the SM supported by a given adapter.</desc>
+        </method>
+        <method>            <name>getAdapterType</name>
+            <args>int id</args>
+            <desc>Returns the type (D3D9, D3D8, GL, Null) of a given adapter.</desc>
+        </method>
+        <method>            <name>getDefaultAdapterIndex</name>
+            <desc>Returns the index of the adapter we'll be starting up with.</desc>
+        </method>
+    </class>
     <class>        <name>GhostAlwaysObjectEvent</name>
     </class>
     <class>        <name>GlowBuffer</name>
         <base>SimObject</base>
-        <field>            <name>kernel</name>
-            <desc>Point4F kernel</desc>
-        </field>
-        <field>            <name>maxGlowPasses</name>
-            <desc>int maxGlowPasses</desc>
-        </field>
-        <field>            <name>pixelOffsets</name>
-            <desc>Point4F pixelOffsets</desc>
-        </field>
         <field>            <name>shader</name>
             <desc>string shader</desc>
         </field>
@@ -1545,6 +1547,12 @@
     </class>
     <class>        <name>GuiArrayCtrl</name>
         <base>GuiControl</base>
+        <field>            <name>allowUnselectedScroll</name>
+            <desc>bool allowUnselectedScroll</desc>
+        </field>
+        <field>            <name>rowsPerPage</name>
+            <desc>int rowsPerPage</desc>
+        </field>
     </class>
     <class>        <name>GuiAutoScrollCtrl</name>
         <base>GuiTickCtrl</base>
@@ -1687,6 +1695,8 @@
         </method>
         <method>            <name>getCursorPos</name>
             <desc>Get the current position of the cursor.</desc>
+        </method>
+        <method>            <name>getLastDeviceInst</name>
         </method>
         <method>            <name>hideCursor</name>
         </method>
@@ -1861,6 +1871,9 @@
         </field>
         <field>            <name>tooltipprofile</name>
             <desc>GuiProfile tooltipprofile</desc>
+        </field>
+        <field>            <name>UIMode</name>
+            <desc>enumval UIMode</desc>
         </field>
         <field>            <name>Variable</name>
             <desc>string Variable</desc>
@@ -2465,6 +2478,68 @@
     <class>        <name>GuiNoMouseCtrl</name>
         <base>GuiControl</base>
     </class>
+    <class>        <name>GuiObjectView</name>
+        <base>GuiTSCtrl</base>
+        <method>            <name>setEmpty</name>
+            <desc>Removes the model displayed in this control</desc>
+        </method>
+        <method>            <name>setModel</name>
+            <args>string shapeName</args>
+            <desc>(string skinName)
+Sets the model to be displayed in this control
+
+\param shapeName Name of the model to display.
+\param skinName Name of the skin to use for the model.</desc>
+        </method>
+        <method>            <name>setMount</name>
+            <args>string shapeName, int mountPoint</args>
+            <desc>Mounts the given model to the specified mount point of the primary model displayed in this control.
+
+\param shapeName Name of the model to mount.\param mountPoint Index of the mount point to be mounted to. Corresponds to "mountPointN" in your shape where N is the number passed here.</desc>
+        </method>
+        <method>            <name>setOrbitDistance</name>
+            <args>float distance</args>
+            <desc>Sets the distance at which the camera orbits the object. Clamped to the acceptable range defined in the class by min and max orbit distances.
+
+\param distance The distance to set the orbit to (will be clamped).</desc>
+        </method>
+        <method>            <name>setSeq</name>
+            <args>int index</args>
+            <desc>Sets the animation to play for the viewed object.
+
+\param index The index of the animation to play.</desc>
+        </method>
+        <field>            <name>autoSize</name>
+            <desc>bool autoSize</desc>
+        </field>
+        <field>            <name>cameraRotX</name>
+            <desc>float cameraRotX</desc>
+        </field>
+        <field>            <name>cameraRotY</name>
+            <desc>float cameraRotY</desc>
+        </field>
+        <field>            <name>cameraRotZ</name>
+            <desc>float cameraRotZ</desc>
+        </field>
+        <field>            <name>cameraXRotSpeed</name>
+            <desc>float cameraXRotSpeed</desc>
+        </field>
+        <field>            <name>cameraYRotSpeed</name>
+            <desc>float cameraYRotSpeed</desc>
+        </field>
+        <field>            <name>cameraZRotSpeed</name>
+            <desc>float cameraZRotSpeed</desc>
+        </field>
+        <field>            <name>model</name>
+            <desc>filename model</desc>
+        </field>
+        <field>            <name>orbitDistance</name>
+            <desc>float orbitDistance</desc>
+        </field>
+        <field>            <name>skin</name>
+            <desc>string skin</desc>
+        </field>
+    </class>
     <class>        <name>GuiPaneControl</name>
         <base>GuiControl</base>
         <method>            <name>setCollapsed</name>
@@ -2638,6 +2713,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getValue</name>
             <desc>Get the position of the slider.</desc>
         </method>
+        <field>            <name>bitmap</name>
+            <desc>filename bitmap</desc>
+        </field>
         <field>            <name>range</name>
             <desc>Point2F range</desc>
         </field>
@@ -2854,6 +2932,9 @@ More of a helper function than anything.   If console access to the field list i
             <args>int rowNum</args>
             <desc>Selects the specified row.</desc>
         </method>
+        <method>            <name>setTopRow</name>
+            <args>int rowNum</args>
+        </method>
         <method>            <name>sort</name>
             <args>int columnID, bool increasing=false</args>
             <desc>Performs a standard (alphabetical) sort on the values in the specified column.</desc>
@@ -3055,6 +3136,26 @@ More of a helper function than anything.   If console access to the field list i
             <desc>bool resizeWidth</desc>
         </field>
     </class>
+    <class>        <name>GuiXboxButtonCtrl</name>
+        <base>GuiControl</base>
+        <method>            <name>getText</name>
+            <desc>- returns the text of the button.</desc>
+        </method>
+        <method>            <name>setText</name>
+            <args>string text</args>
+            <desc>- sets the text of the button to the string.</desc>
+        </method>
+        <method>            <name>setTextID</name>
+            <args>string id</args>
+            <desc>- sets the text of the button to the localized string.</desc>
+        </method>
+        <field>            <name>text</name>
+            <desc>caseString text</desc>
+        </field>
+        <field>            <name>textID</name>
+            <desc>string textID</desc>
+        </field>
+    </class>
     <class>        <name>GuiXboxListCtrl</name>
         <base>GuiControl</base>
         <method>            <name>addRow</name>
@@ -3092,6 +3193,8 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>addRow</name>
             <args>text, [data], [bitmapIndex]</args>
         </method>
+        <method>            <name>areButtonsEnabled</name>
+        </method>
         <method>            <name>clear</name>
         </method>
         <method>            <name>getBottomRow</name>
@@ -3108,6 +3211,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getSelectedText</name>
         </method>
         <method>            <name>getTopRow</name>
+        </method>
+        <method>            <name>setButtonsEnabled</name>
+            <args>enabled</args>
         </method>
         <method>            <name>setOptionIndex</name>
             <args>row, idx</args>
@@ -3230,6 +3336,8 @@ More of a helper function than anything.   If console access to the field list i
     <class>        <name>InteriorInstance</name>
         <base>SceneObject</base>
         <method>            <name>getNumDetailLevels</name>
+        </method>
+        <method>            <name>magicButton</name>
         </method>
         <method>            <name>setAlarmMode</name>
             <args>string mode</args>
@@ -3591,6 +3699,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>animFlags</name>
             <desc>int animFlags</desc>
         </field>
+        <field>            <name>attenuateBackFace</name>
+            <desc>bool attenuateBackFace</desc>
+        </field>
         <field>            <name>baseTex</name>
             <desc>filename baseTex</desc>
         </field>
@@ -3602,6 +3713,9 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>castsShadow</name>
             <desc>bool castsShadow</desc>
+        </field>
+        <field>            <name>colorMultiply</name>
+            <desc>ColorF colorMultiply</desc>
         </field>
         <field>            <name>cubemap</name>
             <desc>string cubemap</desc>
@@ -3647,6 +3761,9 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>planarReflection</name>
             <desc>bool planarReflection</desc>
+        </field>
+        <field>            <name>preload</name>
+            <desc>bool preload</desc>
         </field>
         <field>            <name>renderBin</name>
             <desc>enumval renderBin</desc>
@@ -3781,62 +3898,6 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float flightCeilingRange</desc>
         </field>
     </class>
-    <class>        <name>MissionAreaEditor</name>
-        <base>GuiBitmapCtrl</base>
-        <method>            <name>centerWorld</name>
-            <args>including terrain</args>
-            <desc>in the world so that the center of the world is the center of the mission area.</desc>
-        </method>
-        <method>            <name>getArea</name>
-            <desc>Return a 4-tuple: area_x area_y area_width are_height</desc>
-        </method>
-        <method>            <name>setArea</name>
-            <args>int x, int y, int w, int h</args>
-            <desc>Set the mission area to the specified co-ordinates/extents.</desc>
-        </method>
-        <method>            <name>updateTerrain</name>
-            <desc>Update the terrain bitmap that is rendered as background in the control.</desc>
-        </method>
-        <field>            <name>cameraColor</name>
-            <desc>ColorI cameraColor</desc>
-        </field>
-        <field>            <name>defaultObjectColor</name>
-            <desc>ColorI defaultObjectColor</desc>
-        </field>
-        <field>            <name>enableEditing</name>
-            <desc>bool enableEditing</desc>
-        </field>
-        <field>            <name>enableMirroring</name>
-            <desc>bool enableMirroring</desc>
-        </field>
-        <field>            <name>handleFillColor</name>
-            <desc>ColorI handleFillColor</desc>
-        </field>
-        <field>            <name>handleFrameColor</name>
-            <desc>ColorI handleFrameColor</desc>
-        </field>
-        <field>            <name>mirrorArrowColor</name>
-            <desc>ColorI mirrorArrowColor</desc>
-        </field>
-        <field>            <name>mirrorIndex</name>
-            <desc>int mirrorIndex</desc>
-        </field>
-        <field>            <name>mirrorLineColor</name>
-            <desc>ColorI mirrorLineColor</desc>
-        </field>
-        <field>            <name>missionBoundsColor</name>
-            <desc>ColorI missionBoundsColor</desc>
-        </field>
-        <field>            <name>renderCamera</name>
-            <desc>bool renderCamera</desc>
-        </field>
-        <field>            <name>squareBitmap</name>
-            <desc>bool squareBitmap</desc>
-        </field>
-        <field>            <name>waterObjectColor</name>
-            <desc>ColorI waterObjectColor</desc>
-        </field>
-    </class>
     <class>        <name>MissionMarker</name>
         <base>ShapeBase</base>
     </class>
@@ -3869,6 +3930,8 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>getPacketLoss</name>
         </method>
         <method>            <name>getPing</name>
+        </method>
+        <method>            <name>getXnAddr</name>
         </method>
         <method>            <name>resolveGhostID</name>
             <args> S32 ghostID </args>
@@ -4669,6 +4732,9 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>rotation</name>
             <desc>MatrixRotation rotation</desc>
         </field>
+        <field>            <name>rotationEuler</name>
+            <desc>MatrixEulerRotation rotationEuler</desc>
+        </field>
         <field>            <name>scale</name>
             <desc>Point3F scale</desc>
         </field>
@@ -4911,6 +4977,9 @@ More of a helper function than anything.   If console access to the field list i
         </field>
         <field>            <name>pixVersion</name>
             <desc>float pixVersion</desc>
+        </field>
+        <field>            <name>useDevicePixVersion</name>
+            <desc>bool useDevicePixVersion</desc>
         </field>
     </class>
     <class>        <name>ShapeBase</name>
@@ -5779,302 +5848,6 @@ More of a helper function than anything.   If console access to the field list i
             <desc>Parameters are transmitted as strings, one at a time.</desc>
         </method>
     </class>
-    <class>        <name>Terraformer</name>
-        <base>SimObject</base>
-        <method>            <name>blend</name>
-            <args>int srcA, int srcB, int dest_register, float factor, string operation</args>
-            <desc>Perform a blending operation on the terrain.
-
-@param   srcA           First source for operation.
-@param   srcB           Second source for operation.
-@param   dest_register  Destination register for blend.
-@param   factor         Blending factor, from 0-1.
-@param   operation      One of: add, subtract, max, min, multiply. Default is add.</desc>
-        </method>
-        <method>            <name>canyon</name>
-            <args>int dest_register, int frequency, float turbulence, int seed</args>
-        </method>
-        <method>            <name>clearRegister</name>
-            <args>int r</args>
-        </method>
-        <method>            <name>erodeHydraulic</name>
-            <args>int src_register, int dst_register, int iterations, Filter arr </args>
-        </method>
-        <method>            <name>erodeThermal</name>
-            <args>int src_register, int dst_register, float slope, float materialLoss, int iterations </args>
-        </method>
-        <method>            <name>fBm</name>
-            <args>int r, int freq, float roughness, string detail, int seed</args>
-            <desc>Run an fBm pass.
-
-@param   roughness   From 0.0-1.0
-@param   detail      One of 'Very Low', 'Low', 'Normal', 'High', or 'Very High'</desc>
-        </method>
-        <method>            <name>filter</name>
-            <args>int src_register, int dst_register, Filter arr</args>
-        </method>
-        <method>            <name>generateSeed</name>
-        </method>
-        <method>            <name>getCameraPosition</name>
-            <desc>Get the position of the camera.</desc>
-        </method>
-        <method>            <name>loadGreyscale</name>
-            <args>int register, string filename</args>
-        </method>
-        <method>            <name>maskFBm</name>
-            <args>int dest_register, int frequency, float roughness, int seed, Filter arr, bool distort_factor, int distort_reg</args>
-        </method>
-        <method>            <name>maskHeight</name>
-            <args>int src_register, int dst_register, Filter arr, bool distort_factor, int distort_register</args>
-        </method>
-        <method>            <name>maskSlope</name>
-            <args>int src_register, int dst_register, Filter arr, bool distort_factor, int distort_register</args>
-        </method>
-        <method>            <name>maskWater</name>
-            <args>int src_register, int dst_register, bool distort_factor, int distort_reg</args>
-        </method>
-        <method>            <name>mergeMasks</name>
-            <args> src_array, int dst_register</args>
-        </method>
-        <method>            <name>preview</name>
-            <args>GuiTerrPreviewCtrl destination, int register</args>
-        </method>
-        <method>            <name>previewScaled</name>
-            <args>GuiTerrPreviewCtrl destination, int source</args>
-        </method>
-        <method>            <name>rigidMultiFractal</name>
-            <args>int r, int freq, float roughness, string detail, int seed</args>
-            <desc>Run a rigid multi fractal pass.
-
-@param   roughness   From 0.0-1.0
-@param   detail      One of 'Very Low', 'Low', 'Normal', 'High', or 'Very High'</desc>
-        </method>
-        <method>            <name>saveGreyscale</name>
-            <args>int register, string filename</args>
-        </method>
-        <method>            <name>saveHeightField</name>
-            <args>int register, string filename</args>
-        </method>
-        <method>            <name>scale</name>
-            <args>int src_register, int dst_register, float min, float max</args>
-        </method>
-        <method>            <name>setCameraPosition</name>
-            <args>float x, float y, float z=0</args>
-        </method>
-        <method>            <name>setMaterials</name>
-            <args> src_array, material_array </args>
-        </method>
-        <method>            <name>setShift</name>
-            <args>int x, int y</args>
-        </method>
-        <method>            <name>setTerrain</name>
-            <args>int register</args>
-        </method>
-        <method>            <name>setTerrainInfo</name>
-            <args>int blockSize, int tileSize, float minHeight, float heightRange, float waterPercent</args>
-        </method>
-        <method>            <name>sinus</name>
-            <args>int r, Filter a, int seed</args>
-        </method>
-        <method>            <name>smooth</name>
-            <args>int src_register, int dst_register, float factor, int iterations</args>
-        </method>
-        <method>            <name>smoothRidges</name>
-            <args>int src_register, int dst_register, float factor, int iterations</args>
-        </method>
-        <method>            <name>smoothWater</name>
-            <args>int src_register, int dst_register, float factor, int iterations</args>
-        </method>
-        <method>            <name>terrainData</name>
-            <args>int register</args>
-        </method>
-        <method>            <name>terrainFile</name>
-            <args>int register, string filename</args>
-        </method>
-        <method>            <name>turbulence</name>
-            <args>int src_register, int dst_register, float factor, float radius</args>
-        </method>
-    </class>
-    <class>        <name>TerrainBlock</name>
-        <base>SceneObject</base>
-        <method>            <name>getHeightfieldScript</name>
-            <desc>- gets the heightfield script associated with the terrain file.</desc>
-        </method>
-        <method>            <name>getTextureScript</name>
-            <desc>- gets the texture script associated with the terrain file.</desc>
-        </method>
-        <method>            <name>save</name>
-            <args>string fileName</args>
-            <desc>- saves the terrain block's terrain file to the specified file name.</desc>
-        </method>
-        <method>            <name>setHeightfieldScript</name>
-            <args>string script</args>
-            <desc>- sets the heightfield script associated with this terrain file.</desc>
-        </method>
-        <method>            <name>setTextureScript</name>
-            <args>string script</args>
-            <desc>- sets the texture script associated with this terrain file.</desc>
-        </method>
-        <field>            <name>bumpOffset</name>
-            <desc>float bumpOffset</desc>
-        </field>
-        <field>            <name>bumpScale</name>
-            <desc>float bumpScale</desc>
-        </field>
-        <field>            <name>bumpTexture</name>
-            <desc>filename bumpTexture</desc>
-        </field>
-        <field>            <name>detailTexture</name>
-            <desc>filename detailTexture</desc>
-        </field>
-        <field>            <name>emptySquares</name>
-            <desc>intList emptySquares</desc>
-        </field>
-        <field>            <name>squareSize</name>
-            <desc>int squareSize</desc>
-        </field>
-        <field>            <name>terrainFile</name>
-            <desc>filename terrainFile</desc>
-        </field>
-        <field>            <name>zeroBumpScale</name>
-            <desc>int zeroBumpScale</desc>
-        </field>
-    </class>
-    <class>        <name>TerrainEditor</name>
-        <base>EditTSCtrl</base>
-        <method>            <name>attachTerrain</name>
-            <args>TerrainBlock terrain</args>
-        </method>
-        <method>            <name>buildMaterialMap</name>
-        </method>
-        <method>            <name>clearModifiedFlags</name>
-        </method>
-        <method>            <name>clearSelection</name>
-        </method>
-        <method>            <name>getActionName</name>
-            <args>int num</args>
-        </method>
-        <method>            <name>getBrushPos</name>
-            <desc>Returns a Point2I.</desc>
-        </method>
-        <method>            <name>getCurrentAction</name>
-        </method>
-        <method>            <name>getNumActions</name>
-        </method>
-        <method>            <name>getNumTextures</name>
-        </method>
-        <method>            <name>getTerrainMaterials</name>
-            <desc>gets the list of current terrain materials.</desc>
-        </method>
-        <method>            <name>getTextureName</name>
-            <args>int index</args>
-        </method>
-        <method>            <name>markEmptySquares</name>
-        </method>
-        <method>            <name>mirrorTerrain</name>
-        </method>
-        <method>            <name>popBaseMaterialInfo</name>
-        </method>
-        <method>            <name>processAction</name>
-            <args>string action=NULL</args>
-        </method>
-        <method>            <name>pushBaseMaterialInfo</name>
-        </method>
-        <method>            <name>redo</name>
-        </method>
-        <method>            <name>resetSelWeights</name>
-            <args>bool clear</args>
-        </method>
-        <method>            <name>setAction</name>
-            <args>string action_name</args>
-        </method>
-        <method>            <name>setBrushPos</name>
-            <args>int x, int y</args>
-        </method>
-        <method>            <name>setBrushSize</name>
-            <args>int w, int h</args>
-        </method>
-        <method>            <name>setBrushType</name>
-            <args>string type</args>
-            <desc>One of box, ellipse, selection.</desc>
-        </method>
-        <method>            <name>setLoneBaseMaterial</name>
-            <args>string materialListBaseName</args>
-        </method>
-        <method>            <name>setTerraformOverlay</name>
-            <args>bool overlayEnable</args>
-            <desc>- sets the terraformer current heightmap to draw as an overlay over the current terrain.</desc>
-        </method>
-        <method>            <name>setTerrainMaterials</name>
-            <args>string matList</args>
-            <desc>sets the list of current terrain materials.</desc>
-        </method>
-        <method>            <name>undo</name>
-        </method>
-        <field>            <name>adjustHeightMouseScale</name>
-            <desc>float adjustHeightMouseScale</desc>
-        </field>
-        <field>            <name>adjustHeightVal</name>
-            <desc>float adjustHeightVal</desc>
-        </field>
-        <field>            <name>borderFillColor</name>
-            <desc>ColorI borderFillColor</desc>
-        </field>
-        <field>            <name>borderFrameColor</name>
-            <desc>ColorI borderFrameColor</desc>
-        </field>
-        <field>            <name>borderHeight</name>
-            <desc>float borderHeight</desc>
-        </field>
-        <field>            <name>borderLineMode</name>
-            <desc>bool borderLineMode</desc>
-        </field>
-        <field>            <name>enableSoftBrushes</name>
-            <desc>bool enableSoftBrushes</desc>
-        </field>
-        <field>            <name>isDirty</name>
-            <desc>bool isDirty</desc>
-        </field>
-        <field>            <name>isMissionDirty</name>
-            <desc>bool isMissionDirty</desc>
-        </field>
-        <field>            <name>materialGroup</name>
-            <desc>int materialGroup</desc>
-        </field>
-        <field>            <name>paintMaterial</name>
-            <desc>caseString paintMaterial</desc>
-        </field>
-        <field>            <name>processUsesBrush</name>
-            <desc>bool processUsesBrush</desc>
-        </field>
-        <field>            <name>renderBorder</name>
-            <desc>bool renderBorder</desc>
-        </field>
-        <field>            <name>renderVertexSelection</name>
-            <desc>bool renderVertexSelection</desc>
-        </field>
-        <field>            <name>scaleVal</name>
-            <desc>float scaleVal</desc>
-        </field>
-        <field>            <name>selectionHidden</name>
-            <desc>bool selectionHidden</desc>
-        </field>
-        <field>            <name>setHeightVal</name>
-            <desc>float setHeightVal</desc>
-        </field>
-        <field>            <name>smoothFactor</name>
-            <desc>float smoothFactor</desc>
-        </field>
-        <field>            <name>softSelectDefaultFilter</name>
-            <desc>string softSelectDefaultFilter</desc>
-        </field>
-        <field>            <name>softSelectFilter</name>
-            <desc>string softSelectFilter</desc>
-        </field>
-        <field>            <name>softSelectRadius</name>
-            <desc>float softSelectRadius</desc>
-        </field>
-    </class>
     <class>        <name>TextChunk</name>
         <base>SimChunk</base>
         <field>            <name>textData</name>
@@ -6698,48 +6471,6 @@ More of a helper function than anything.   If console access to the field list i
             <desc>float yExtent</desc>
         </field>
     </class>
-    <class>        <name>WaterBlock</name>
-        <base>SceneObject</base>
-        <field>            <name>baseColor</name>
-            <desc>ColorI baseColor</desc>
-        </field>
-        <field>            <name>clarity</name>
-            <desc>float clarity</desc>
-        </field>
-        <field>            <name>fresnelBias</name>
-            <desc>float fresnelBias</desc>
-        </field>
-        <field>            <name>fresnelPower</name>
-            <desc>float fresnelPower</desc>
-        </field>
-        <field>            <name>fullReflect</name>
-            <desc>bool fullReflect</desc>
-        </field>
-        <field>            <name>gridSize</name>
-            <desc>float gridSize</desc>
-        </field>
-        <field>            <name>reflectTexSize</name>
-            <desc>int reflectTexSize</desc>
-        </field>
-        <field>            <name>renderFogMesh</name>
-            <desc>bool renderFogMesh</desc>
-        </field>
-        <field>            <name>surfMaterial</name>
-            <desc>string surfMaterial</desc>
-        </field>
-        <field>            <name>underwaterColor</name>
-            <desc>ColorI underwaterColor</desc>
-        </field>
-        <field>            <name>waveDir</name>
-            <desc>Point2F waveDir</desc>
-        </field>
-        <field>            <name>waveSpeed</name>
-            <desc>float waveSpeed</desc>
-        </field>
-        <field>            <name>waveTexScale</name>
-            <desc>Point2F waveTexScale</desc>
-        </field>
-    </class>
     <class>        <name>WayPoint</name>
         <base>MissionMarker</base>
         <field>            <name>name</name>
@@ -7069,44 +6800,6 @@ More of a helper function than anything.   If console access to the field list i
     <function>        <name>allowConnections</name>
         <args>bool</args>
     </function>
-    <function>        <name>atlasConvertTextureTOC</name>
-        <args>inFile, outFile, format</args>
-        <desc>Convert the single texture TOC contained in inFile to be format format, and write the results into new atlas file outFile. Options for format are: 0=JPEG,1=PNG,2=DDS.</desc>
-    </function>
-    <function>        <name>atlasDumpFileInfo</name>
-        <args>atlasFile</args>
-        <desc>Dump information about the specified Atlas file, including TOC and efficiency information.</desc>
-    </function>
-    <function>        <name>atlasEmitCastRayTest</name>
-        <args>pos</args>
-        <desc>- draw a bunch of debug raycasts from the specified point.</desc>
-    </function>
-    <function>        <name>atlasGenerateBlenderTerrain</name>
-        <args>outFile, inGeometryFile, inOpacityFile, inLightmapFile, virtualTexSize, sourceImage0, sourceImage1, sourceImage2, ..., sourceImageN</args>
-    </function>
-    <function>        <name>atlasGenerateGeometryFromHeightfield</name>
-        <args>atlasOutFile, inHeightfield, hfSize, gridSpacing, patchSize</args>
-        <desc>- generate terrain geometry to atlasOutFile based on the heightfield.</desc>
-    </function>
-    <function>        <name>atlasGenerateTextureTOCFromLargeJPEG</name>
-        <args>jpegFile, treeDepth, outFile</args>
-        <desc>Generate a texture TOC from a single large JPEG image. The image will be stored into a quadtree treeDepth deep (ie, cut into a grid treeDepth^2 tiles on a side). outFile is the name of a new .atlas file which will be created to store this data.</desc>
-    </function>
-    <function>        <name>atlasGenerateTextureTOCFromTiles</name>
-        <args>leafCount, tileMask, outFile, outFormat</args>
-        <desc>- Generate a texture TOC from a set of tiles. leafCount is the size of the grid of tiles on a side. tileMask is the path for the tiles (no extension) with %d for x and y, ie, 'demo/alpha/Alpha1_x%dy%d'. outFile is the file to output a new .atlas file to.</desc>
-    </function>
-    <function>        <name>atlasGenerateUniqueTerrain</name>
-        <args>out, geometry, texture</args>
-        <desc>Generate a terrain with a unique texture schema using the specified geometry and texture atlas files.</desc>
-    </function>
-    <function>        <name>AtlasGeomChunk_dumpIOStatistics</name>
-        <desc>- report IO statistics about Atlas geometry chunks.</desc>
-    </function>
-    <function>        <name>atlasOldGenerateChunkFileFromRaw16</name>
-        <args>srcFile, size, squareSize, vertScale, destFile, error, treeDepth</args>
-        <desc>Create a chunk file from a raw 16 bit heightfield of the given square size and vertical scale.</desc>
-    </function>
     <function>        <name>backtrace</name>
         <desc>Print the call stack.</desc>
     </function>
@@ -7127,9 +6820,14 @@ More of a helper function than anything.   If console access to the field list i
     </function>
     <function>        <name>cancelServerQuery</name>
     </function>
+    <function>        <name>checkForPDLC</name>
+    </function>
     <function>        <name>cleanDetailManager</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>clearClientPaths</name>
+    </function>
+    <function>        <name>clearGFXResourceFlags</name>
     </function>
     <function>        <name>clearServerPaths</name>
     </function>
@@ -7214,12 +6912,24 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
         <args>packageName</args>
     </function>
     <function>        <name>debug</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>deleteDataBlocks</name>
         <desc>Delete all the datablocks we've downloaded. This is usually done in preparation of downloading a new set of datablocks,  such as occurs on a mission change, but it's also good post-mission cleanup.</desc>
     </function>
+    <function>        <name>deleteEmptyVariables</name>
+        <desc>deleteVariables(wildCard)</desc>
+    </function>
+    <function>        <name>deletePrefs</name>
+        <args>relativeFileName</args>
+    </function>
     <function>        <name>deleteVariables</name>
         <args>wildCard</args>
+    </function>
+    <function>        <name>describeGFXResources</name>
+        <args>string resourceNames, string filePath, bool unflaggedOnly = false</args>
+        <desc>If resourceNames is , this function describes all resources.
+If filePath is , this function writes the resource descriptions to the console</desc>
     </function>
     <function>        <name>detag</name>
         <args>textTagString</args>
@@ -7232,9 +6942,6 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     </function>
     <function>        <name>DNetSetLogging</name>
         <args>bool enabled</args>
-    </function>
-    <function>        <name>doChunkGen</name>
-        <desc>Test chunk generation.</desc>
     </function>
     <function>        <name>doesAllowConnections</name>
     </function>
@@ -7249,22 +6956,27 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     </function>
     <function>        <name>dumpMemSnapshot</name>
         <args>string fileName</args>
-        <desc>Dump a snapshot of current memory to a file.</desc>
+        <desc>Dump a snapshot of current memory to a file.
+(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>dumpNetStats</name>
     </function>
     <function>        <name>dumpNetStringTable</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>dumpProcessList</name>
     </function>
     <function>        <name>dumpResourceStats</name>
-        <desc>Dump information about resources. Debug only!</desc>
+        <desc>Dump information about resources. Debug only!
+(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>dumpTextureStats</name>
-        <desc>Dump texture manager statistics. Debug only!</desc>
+        <desc>Dump texture manager statistics. Debug only!
+(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>DumpUnflaggedAllocs</name>
         <args>filename [optional, if not specified dumps to console]</args>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>duplicateCachedFont</name>
         <args>oldFontName, oldFontSize, newFontName</args>
@@ -7348,19 +7060,17 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
         <args>text</args>
     </function>
     <function>        <name>FlagCurrentAllocs</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
+    </function>
+    <function>        <name>flagCurrentGFXResources</name>
     </function>
     <function>        <name>flushTextureCache</name>
         <desc>Flush the texture cache.</desc>
     </function>
     <function>        <name>FreeMemoryDump</name>
     </function>
-    <function>        <name>generateChunkFileFromRaw16</name>
-        <args>srcFile, size, squareSize, vertScale, destFile, error, treeDepth</args>
-        <desc>Create a chunk file from a raw 16 bit heightfield of the given square size and vert scale.</desc>
-    </function>
-    <function>        <name>generateTQT</name>
-        <args>filename sourceImage, filename tgtFile, treeDepth, tileSize</args>
-        <desc>Generate a TQT file with the specified parameters from the given source image.</desc>
+    <function>        <name>GenerateGUID</name>
+        <desc>- Generates a new GUID and returns it as a string.</desc>
     </function>
     <function>        <name>getBoxCenter</name>
         <args>Box b</args>
@@ -7388,6 +7098,15 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>getCurrentActionMap</name>
     </function>
     <function>        <name>getDesktopResolution</name>
+        <desc>Get the width, height, and bitdepth of the screen.</desc>
+    </function>
+    <function>        <name>getDetermRandom</name>
+        <args>int a=1, int b=0</args>
+        <desc>Get a random number between a and b.</desc>
+    </function>
+    <function>        <name>getDetermRandom2</name>
+        <args>int a=1, int b=0</args>
+        <desc>Get a random number between a and b.</desc>
     </function>
     <function>        <name>getDisplayDeviceList</name>
         <desc>Returns a tab-seperated string of the detected devices.</desc>
@@ -7426,6 +7145,7 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>getLanguage</name>
     </function>
     <function>        <name>getMaxFrameAllocation</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>getModPaths</name>
         <desc>Return the mod paths the resource manager is using.</desc>
@@ -7456,6 +7176,8 @@ Real time is platform defined; typically time since the computer booted.</desc>
     </function>
     <function>        <name>getRecords</name>
         <args>text, index [,endIndex]</args>
+    </function>
+    <function>        <name>getRegion</name>
     </function>
     <function>        <name>getResolution</name>
         <desc>Returns screen resolution in form "width height bitdepth fullscreen"</desc>
@@ -7492,10 +7214,6 @@ Sim time is time since the game started.</desc>
     <function>        <name>getTaggedString</name>
         <args>int tag</args>
     </function>
-    <function>        <name>getTerrainHeight</name>
-        <args>Point2I pos</args>
-        <desc>- gets the terrain height at the specified position.</desc>
-    </function>
     <function>        <name>getTimeSinceStart</name>
         <args>%scheduleId</args>
     </function>
@@ -7528,12 +7246,6 @@ Sim time is time since the game started.</desc>
     <function>        <name>importCachedFont</name>
         <args>fontName, size, fileName, padding, kerning</args>
         <desc>- Import an image strip from exportCachedFont. Call with the same parameters you called exportCachedFont.</desc>
-    </function>
-    <function>        <name>importOldAtlasCHU</name>
-        <args>oldCHU, newAtlasFile</args>
-    </function>
-    <function>        <name>importOldAtlasTQT</name>
-        <args>oldTQT, newAtlasFile</args>
     </function>
     <function>        <name>initContainerRadiusSearch</name>
         <args>Point3F pos, float radius, bitset mask</args>
@@ -7576,6 +7288,9 @@ Sim time is time since the game started.</desc>
         <args>Point3F pos</args>
         <desc>or (float x, float y, float z)</desc>
     </function>
+    <function>        <name>isRelease</name>
+        <desc>- Returns true if the script is running in a release build of Torque</desc>
+    </function>
     <function>        <name>isResourceBGLoaded</name>
         <args>file</args>
     </function>
@@ -7600,6 +7315,9 @@ Sim time is time since the game started.</desc>
         <desc>Relight the scene.
 
 If mode is "forceAlways", the lightmaps will be regenerated regardless of whether lighting cache files can be written to. If mode is "forceWritable", then the lightmaps will be regenerated only if the lighting cache files can be written.</desc>
+    </function>
+    <function>        <name>listGFXResources</name>
+        <args>bool unflaggedOnly = false</args>
     </function>
     <function>        <name>loadChunkFile</name>
         <args>Filename file</args>
@@ -7626,10 +7344,6 @@ If mode is "forceAlways", the lightmaps will be regenerated regardless of whethe
     <function>        <name>mAcos</name>
         <args>float th</args>
         <desc>Returns the arc-cosine of th, which is in radians.</desc>
-    </function>
-    <function>        <name>makeTestTerrain</name>
-        <args>string fileName, ...</args>
-        <desc>- makes a test terrain file - arguments after the fileName are the names of the initial terrain materials.</desc>
     </function>
     <function>        <name>mAsin</name>
         <args>float th</args>
@@ -7686,10 +7400,6 @@ Possible parameters are:
     <function>        <name>mDegToRad</name>
         <args>float degrees</args>
         <desc>Convert a measure in degrees to radians.</desc>
-    </function>
-    <function>        <name>mergeTQT</name>
-        <args>filename tqt00, filename tqt01, filename tqt10, filename tqt11, filename outputTQT</args>
-        <desc>Merge the four supplied TQT files into one larger one. NOT CURRENTLY WORKING.</desc>
     </function>
     <function>        <name>mFloatLength</name>
         <args>float v, int numDecimals</args>
@@ -7751,6 +7461,8 @@ Possible parameters are:
     <function>        <name>NextToken</name>
         <desc>nextToken(str,token,delim)</desc>
     </function>
+    <function>        <name>outputdebugline</name>
+    </function>
     <function>        <name>panoramaScreenShot</name>
         <args>string file, string format</args>
         <desc>Take a panoramic screenshot.
@@ -7786,6 +7498,9 @@ Possible parameters are:
     <function>        <name>preloadClientDataBlocks</name>
         <args>Server parameter is set to false</args>
         <desc>.  This will take some time to complete.</desc>
+    </function>
+    <function>        <name>preloadTexture</name>
+        <args>filename</args>
     </function>
     <function>        <name>profilerDump</name>
         <desc>Dump the current state of the profiler.</desc>
@@ -7919,6 +7634,14 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
         <args>defaultFov</args>
         <desc>- Set the default FOV for a camera.</desc>
     </function>
+    <function>        <name>setDetermRandom2Seed</name>
+        <args>int seed=-1</args>
+        <desc>Set the current determ random seed. If no seed is provided, then the current time in ms is used.</desc>
+    </function>
+    <function>        <name>setDetermRandomSeed</name>
+        <args>int seed=-1</args>
+        <desc>Set the current determ random seed. If no seed is provided, then the current time in ms is used.</desc>
+    </function>
     <function>        <name>setEchoFileLoads</name>
         <args>bool</args>
     </function>
@@ -7931,9 +7654,11 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
     </function>
     <function>        <name>setInteriorFocusedDebug</name>
         <args>bool enable</args>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>setInteriorRenderMode</name>
         <args>int modeNum</args>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
     </function>
     <function>        <name>setLogMode</name>
         <args>mode</args>
@@ -8110,6 +7835,8 @@ Creates a new sound source using a profile or a description and filename and pla
         <args>src string, target string</args>
         <desc>case insensitive</desc>
     </function>
+    <function>        <name>stopDemoTimer</name>
+    </function>
     <function>        <name>stopHeartbeat</name>
     </function>
     <function>        <name>stopServerQuery</name>
@@ -8190,11 +7917,6 @@ Creates a new sound source using a profile or a description and filename and pla
 @param consolePass Password for read/write access to console.
 @param listenPass  Password for read access to console.@param remoteEcho  [optional] Enable echoing back to the client, off by default.</desc>
     </function>
-    <function>        <name>testCHF</name>
-        <desc>Benchmark the AtlasHeightfield query speed.</desc>
-    </function>
-    <function>        <name>testPNGCompression</name>
-    </function>
     <function>        <name>toggleFullScreen</name>
     </function>
     <function>        <name>trace</name>
@@ -8203,9 +7925,16 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>trim</name>
         <args>string</args>
     </function>
+    <function>        <name>unscientific</name>
+        <args>value</args>
+    </function>
     <function>        <name>updateVideoMode</name>
     </function>
     <function>        <name>ValidateMemory</name>
+        <desc>(only exists in Debug x86, Debug x64)</desc>
+    </function>
+    <function>        <name>variablesExist</name>
+        <args>wildCard</args>
     </function>
     <function>        <name>VectorAdd</name>
         <args>Vector3F a, Vector3F b</args>
@@ -8252,13 +7981,62 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>writeFontCache</name>
         <desc>- force all cached fonts toserialize themselves to the cache.</desc>
     </function>
+    <function>        <name>XBLiveAddPolledHost</name>
+        <args>index</args>
+    </function>
+    <function>        <name>XBLiveAreStatsLoaded</name>
+        <args>level</args>
+    </function>
+    <function>        <name>XBLiveCancelLoading</name>
+    </function>
+    <function>        <name>XBLiveCancelQoSPoll</name>
+    </function>
+    <function>        <name>XBLiveCheckForInvite</name>
+        <args>port</args>
+    </function>
+    <function>        <name>XBLiveClearLoadedLeaderboards</name>
+    </function>
+    <function>        <name>XBLiveConnect</name>
+        <args>index, invited, callback</args>
+    </function>
+    <function>        <name>XBLiveCreateHostedMatch</name>
+        <args>name, gamemode, mission, maxplayers, privateslots, callback</args>
+    </function>
     <function>        <name>XBLiveEndStatsSession</name>
     </function>
+    <function>        <name>XBLiveGetGamerZone</name>
+        <args>port</args>
+    </function>
+    <function>        <name>XBLiveGetLeaderboardRow</name>
+    </function>
+    <function>        <name>XBLiveGetLeaderboardRowCount</name>
+    </function>
+    <function>        <name>XBLiveGetLocalQoSInfo</name>
+    </function>
+    <function>        <name>XBLiveGetMatchResultsEntry</name>
+        <args>index</args>
+    </function>
     <function>        <name>XBLiveGetSignInPort</name>
+    </function>
+    <function>        <name>XBLiveGetStatValue</name>
+        <args>level, lb</args>
     </function>
     <function>        <name>XBLiveGetUserId</name>
     </function>
     <function>        <name>XBLiveGetUserName</name>
+    </function>
+    <function>        <name>XBLiveGetYAxisInversion</name>
+        <args>port</args>
+    </function>
+    <function>        <name>XBLiveIsArbRegistered</name>
+    </function>
+    <function>        <name>XBLiveIsFriend</name>
+        <args>port, xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveIsPlayerMuted</name>
+        <args>xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveIsRanked</name>
     </function>
     <function>        <name>XBLiveIsSignedIn</name>
         <args>[port]</args>
@@ -8269,6 +8047,80 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveIsStatsSessionActive</name>
     </function>
+    <function>        <name>XBLiveLeaderboardHasColumn</name>
+    </function>
+    <function>        <name>XBLiveLoadAchievements</name>
+        <args>port, callback</args>
+    </function>
+    <function>        <name>XBLiveLoadLeaderboard</name>
+    </function>
+    <function>        <name>XBLiveProbeLocalQoS</name>
+        <args>callback</args>
+    </function>
+    <function>        <name>XBLiveReadStats</name>
+    </function>
+    <function>        <name>XBLiveRegisterLocalTalker</name>
+        <args>xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveRegisterPlayer</name>
+        <args>name, xbLiveId, invited</args>
+    </function>
+    <function>        <name>XBLiveRegisterRemoteTalker</name>
+        <args>xbLiveId, address</args>
+    </function>
+    <function>        <name>XBLiveSearchForMatches</name>
+        <args>gamemode, mission, maxplayers, unknown, callback</args>
+    </function>
+    <function>        <name>XBLiveSetEnabled</name>
+        <args>enabled</args>
+    </function>
+    <function>        <name>XBLiveSetRichPresence</name>
+        <args>port, presence</args>
+    </function>
+    <function>        <name>XBLiveSetSignInPort</name>
+        <args>port</args>
+    </function>
+    <function>        <name>XBLiveSetStatsDirty</name>
+        <args>level</args>
+    </function>
+    <function>        <name>XBLiveShowFriendRequestUI</name>
+        <args>port, xuid</args>
+    </function>
+    <function>        <name>XBLiveShowGamercardUI</name>
+        <args>port, xuid</args>
+    </function>
+    <function>        <name>XBLiveShowPlayerReviewUI</name>
+        <args>port, xuid</args>
+    </function>
+    <function>        <name>XBLiveShowSigninUI</name>
+    </function>
+    <function>        <name>XBLiveStartQoSPoll</name>
+    </function>
     <function>        <name>XBLiveStartStatsSession</name>
+    </function>
+    <function>        <name>XBLiveUnregisterLocalTalker</name>
+    </function>
+    <function>        <name>XBLiveUnregisterPlayer</name>
+        <args>name, xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveUnregisterRemoteTalker</name>
+        <args>xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveUpdateRemoteVoiceStatus</name>
+        <args>xbLiveId, xbLiveVoice</args>
+    </function>
+    <function>        <name>XBLiveUpdateSigninState</name>
+    </function>
+    <function>        <name>XBLiveWriteStats</name>
+        <args>lbid, lb, score, callback</args>
+    </function>
+    <function>        <name>XBLiveWriteStatsXuid</name>
+        <args>xbLiveId, leaderboardId, type, score, callback</args>
+    </function>
+    <function>        <name>XBLiveXnAddrToString</name>
+        <args>address</args>
+    </function>
+    <function>        <name>XBShowMarketplaceUI</name>
+        <args>port, category, itemId</args>
     </function>
 </exports>

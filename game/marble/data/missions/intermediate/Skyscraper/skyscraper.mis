@@ -32,6 +32,7 @@ startHelpText  =  $Text::LevelStartHelp77;
          difficulty = "5";
          type = "intermediate";
 name  =  $Text::LevelName77;
+         guid = "{BED8DF2C-4F41-4FE5-B253-27FBDEF3F68A}";
    };
    new Sky(Sky) {
       position = "336 136 0";

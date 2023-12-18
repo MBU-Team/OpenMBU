@@ -43,6 +43,46 @@ new GuiControl(XMessagePopupDlg) {
 	         minAlpha = "1.0";
 	      };
 	      
+		   new GuiControl(XMessagePopupBottomNavBarNew) {
+		      profile = "GuiDefaultProfile";
+		      horizSizing = "right";
+		      vertSizing = "bottom";
+		      position = "-119 248";
+		      extent = "640 200";
+		      minExtent = "8 2";
+		      visible = "1";
+		      UIMode = "NewOnly";
+		      
+		      new GuiXboxButtonCtrl(XMessagePopupABtnNew) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "330 0";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "./xbox/pad_button_a";
+               bitmapAlign = "right";
+               text = "";
+               command = "XMessagePopupDlg.onA(); XMessagePopupDlg.onAReleased();";
+               visible = "1";
+            };
+		      
+		      new GuiXboxButtonCtrl(XMessagePopupBBtnNew) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "440 0";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "./xbox/pad_button_b";
+               bitmapAlign = "right";
+               text = "";
+               command = "XMessagePopupDlg.onB(); XMessagePopupDlg.onBReleased();";
+               visible = "1";
+            };
+		      
+		   };
+	      
 		   new GuiControl(XMessagePopupBottomNavBar) {
 		      profile = "GuiDefaultProfile";
 		      horizSizing = "right";
@@ -51,6 +91,7 @@ new GuiControl(XMessagePopupDlg) {
 		      extent = "640 200";
 		      minExtent = "8 2";
 		      visible = "1";
+		      UIMode = "LegacyOnly";
 		
 		      new GuiControl(XMessagePopupABtn) {
 		         profile = "GuiDefaultProfile";
@@ -196,22 +237,34 @@ function XMessagePopupDlg::setCurrentContent(%this)
    {
       XMessagePopupABtnTxt.setText(%this.stackData[%this.stack].A_button_text);
       XMessagePopupABtn.setVisible(true);
+      
+      XMessagePopupABtnNew.setText(%this.stackData[%this.stack].A_button_text);
+      XMessagePopupABtnNew.setVisible(true);
    }
    else
    {
       XMessagePopupABtnTxt.setText("");
       XMessagePopupABtn.setVisible(false);
+      
+      XMessagePopupABtnNew.setText("");
+      XMessagePopupABtnNew.setVisible(false);
    }
    
    if (%this.stackData[%this.stack].B_button_text !$= "")
    {
       XMessagePopupBBtnTxt.setText(%this.stackData[%this.stack].B_button_text);
-      XMessagePopupBBtn.setVisible(true);   
+      XMessagePopupBBtn.setVisible(true); 
+        
+      XMessagePopupBBtnNew.setText(%this.stackData[%this.stack].B_button_text);
+      XMessagePopupBBtnNew.setVisible(true);  
    }
    else
    {
       XMessagePopupBBtnTxt.setText("");
       XMessagePopupBBtn.setVisible(false);   
+      
+      XMessagePopupBBtnNew.setText("");
+      XMessagePopupBBtnNew.setVisible(false);
    }
 }
 

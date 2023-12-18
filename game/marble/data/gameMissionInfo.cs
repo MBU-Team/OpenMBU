@@ -4,32 +4,40 @@ $sky_intermediate = "marble/data/skies/sky_intermediate.dml";
 $sky_advanced = "marble/data/skies/sky_advanced.dml";
 
 // leaderboard ids
-$Leaderboard::SPOverall = 99;
-$Leaderboard::SPCompletion = 95;
-$Leaderboard::MPScrumOverall = 98;
+$Leaderboard::SPOverall = "{D8785EA3-2188-4BCC-89D1-B77CB8DF9A54}";
+$Leaderboard::SPCompletion = "{09B491BA-BC32-44E9-AF1F-92C02031BB5E}";
+//$Leaderboard::CustomSPOverall = "{C591744D-DE67-43B4-A4E0-D0EC781B7418}";
+$Leaderboard::MPScrumOverall = "{B7E841BE-AAA7-4054-AE9D-729C13937037}";
 // skill leaderboard variables are defined in engine code (since they may be changed by xlast)
 // variables are:
 // $Leaderboard::MPScrumSkill
 
-// titles for the overall leaderboards
-$LeaderboardTitles[$Leaderboard::SPOverall]     = $Text::LB_SPOverall;
-// not displayed --> //$LeaderboardTitles[$Leaderboard::SPCompletion]  = $Text::LB_SPCompletion; 
-$LeaderboardTitles[$Leaderboard::MPScrumOverall] = $Text::Standard;
-$LeaderboardTitles[$Leaderboard::MPScrumSkill] = $Text::Ranked;
+// Languages are no longer loaded at this point so we need to set this later
+function initLBText()
+{
+   // titles for the overall leaderboards
+   $LeaderboardTitles[$Leaderboard::SPOverall] = $Text::LB_SPOverall;
+   // not displayed --> //$LeaderboardTitles[$Leaderboard::SPCompletion]  = $Text::LB_SPCompletion; 
+   $LeaderboardTitles[$Leaderboard::MPScrumOverall] = $Text::Standard;
+   $LeaderboardTitles[$Leaderboard::MPScrumSkill] = $Text::Ranked;
+}
 
 // overall leaderboards for each game mode
 $OverallLeaderboards[0] = $Leaderboard::MPScrumOverall;
+
 
 new ScriptObject(GameMissionInfo)
 {
    currentSPIndex = -1;
    currentMPIndex = -1;
+   currentCustomIndex = -1;
    
    // various "constants"
    MissionFileSpec = "*/missions/*.mis";
    SPMode = "SinglePlayer";
    MPMode = "MultiPlayer";
    SpecialMode = "Special";
+   CustomMode = "Custom";
 };
 
 function GameMissionInfo::filterDifficulty(%this)
@@ -84,6 +92,8 @@ function GameMissionInfo::getCurrentMissionGroup(%this)
       %missionGroup = MultiPlayMissionGroup;
    else if (%this.mode $= GameMissionInfo.SpecialMode)
       %missionGroup = SpecialMissionGroup;
+   else if (%this.mode $= GameMissionInfo.CustomMode)
+      %missionGroup = CustomSinglePlayMissionGroup;
    else 
       %missionGroup = SinglePlayMissionGroup;
       
@@ -92,6 +102,10 @@ function GameMissionInfo::getCurrentMissionGroup(%this)
 
 function GameMissionInfo::getLeaderboardTitle(%this,%lbid)
 {
+   // Init Leaderboard Text here as this should ensure that
+   // the correct language text is used.
+   initLBText();
+   
    return $LeaderboardTitles[%lbid];
 }
 
@@ -118,13 +132,26 @@ function GameMissionInfo::findIndexByPath(%this, %missionFile)
    return %index;
 }
 
-function GameMissionInfo::findMissionById(%this,%missionId)
+function GameMissionInfo::findMissionById(%this,%missionId, %group)
+{
+   if (%group $= "")
+      %group = %this.getCurrentMissionGroup();
+   for (%i = 0; %i < %group.getCount(); %i++)
+   {
+      %mission = %group.getObject(%i);
+      if (%mission.level == %missionId)
+         return %mission;
+   }
+   return 0;
+}
+
+function GameMissionInfo::findMissionByGuid(%this,%guid)
 {
    %group = %this.getCurrentMissionGroup();
    for (%i = 0; %i < %group.getCount(); %i++)
    {
       %mission = %group.getObject(%i);
-      if (%mission.level == %missionId)
+      if (%mission.guid $= %guid)
          return %mission;
    }
    return 0;
@@ -171,8 +198,13 @@ function GameMissionInfo::setCurrentIndex(%this,%index)
       %this.currentMPIndex = %index;
    else if (%this.mode $= GameMissionInfo.SpecialMode)
       $this.currentSpecialIndex = %index;
+   else if (%this.mode $= GameMissionInfo.CustomMode)
+      %this.currentCustomIndex = %index;
    else
       %this.currentSPIndex = %index;
+      
+   //$Server::GameType = GameMissionInfo.getCurrentMission().gameMode;
+   $Server::MissionType = GameMissionInfo.getCurrentMission().guid;
 }
 
 function GameMissionInfo::getCurrentIndex(%this)
@@ -181,6 +213,8 @@ function GameMissionInfo::getCurrentIndex(%this)
       return %this.currentMPIndex;
    else if (%this.mode $= GameMissionInfo.SpecialMode)
       return %this.currentSpecialIndex;
+   else if (%this.mode $= GameMissionInfo.CustomMode)
+      return %this.currentCustomIndex;
    else
       return %this.currentSPIndex;
 }
@@ -385,7 +419,8 @@ function GameMissionInfo::selectMission(%this, %index)
 
 function GameMissionInfo::setCamera(%this)
 {
-   $previewCamera.setTransform(%this.getCurrentMission().cameraPos);
+   if (isObject($previewCamera))
+      $previewCamera.setTransform(%this.getCurrentMission().cameraPos);
 }
 
 function GameMissionInfo::currentMissionLocked(%this)
@@ -608,6 +643,25 @@ function GameMissionInfo::getMissionDisplayNameList(%this)
    return %list;
 }
 
+// the ordering of the list returned by this function must match getMissionDisplayNameList above
+function GameMissionInfo::getMissionGuidList(%this)
+{
+   %group = %this.getCurrentMissionGroup();
+   %list = "";
+   for (%i = 0; %i < %group.getCount(); %i++)
+   {
+      %mission = %group.getObject(%i);
+      
+      if( %this.filterDifficulty() $= "" || %this.filterDifficulty() $= %mission.difficultySet )
+      {
+         %list = %list @ %mission.guid;
+         if (%i < %group.getCount() - 1)
+            %list = %list @ "\t";
+      }
+   }
+   return %list;
+}
+
 function GameMissionInfo::getMissionDisplayName(%this, %missionId)
 {
    %mission = %this.findMissionById(%missionId);
@@ -704,12 +758,29 @@ function buildLeaderboardList()
    for (%i = 0; %i < SinglePlayMissionGroup.getCount(); %i++)
    {
       %mis = SinglePlayMissionGroup.getObject(%i);
-      %spList = %spList TAB %mis.level;
+      %spList = %spList TAB %mis.guid;//%mis.level;
    }
    
    // store the list as a property of the mission group
    SinglePlayMissionGroup.lbList = %spList;
    SinglePlayMissionGroup.lbListCount = getFieldCount(%spList);
+   
+   // start spcustom list with overall leaderboard
+   %spcustomList = "";//$Leaderboard::CustomSPOverall;
+   
+   // append all of the sp custom missions
+   for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+   {
+      %mis = CustomSinglePlayMissionGroup.getObject(%i);
+      if (%spcustomList $= "")
+         %spcustomList = %mis.guid;//%mis.level;
+      else
+         %spcustomList = %spcustomList TAB %mis.guid;//%mis.level;
+   }
+   
+   // store the list as a property of the mission group
+   CustomSinglePlayMissionGroup.lbList = %spcustomList;
+   CustomSinglePlayMissionGroup.lbListCount = getFieldCount(%spcustomList);
    
    // start mp list with overall leaderboards
    %mpList = 
@@ -720,7 +791,7 @@ function buildLeaderboardList()
 //   for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
 //   {
 //      %mis = MultiPlayMissionGroup.getObject(%i);
-//      %mpList = %mpList TAB %mis.level;
+//      %mpList = %mpList TAB %mis.guid;//%mis.level;
 //   }
    
    // store the list as a property of the mission group
@@ -730,12 +801,18 @@ function buildLeaderboardList()
 
 function buildMissionList()
 {
-   if( !isObject( SinglePlayMissionGroup ) || !isObject( MultiPlayMissionGroup ) || !isObject( SpecialMissionGroup ) )
+   if( !isObject( SinglePlayMissionGroup ) || !isObject( CustomSinglePlayMissionGroup ) ||!isObject( MultiPlayMissionGroup ) || !isObject( SpecialMissionGroup ) )
    {
       if( !isObject( SinglePlayMissionGroup ) )
       {
          new SimGroup( SinglePlayMissionGroup );
          RootGroup.add( SinglePlayMissionGroup );
+      }
+      
+      if( !isObject( CustomSinglePlayMissionGroup ) )
+      {
+         new SimGroup( CustomSinglePlayMissionGroup );
+         RootGroup.add( CustomSinglePlayMissionGroup );
       }
       
       if( !isObject( MultiPlayMissionGroup ) )
@@ -760,11 +837,13 @@ function buildMissionList()
       }
 
       sortByLevel( SinglePlayMissionGroup );
+      sortByLevel( CustomSinglePlayMissionGroup );
       sortByLevel( MultiPlayMissionGroup );
       sortByLevel( SpecialMissionGroup );
       // hack, do this twice to get things into the proper order, don't have time to figure out why a 
       // single sort doesn't work
       sortByLevel( SinglePlayMissionGroup );
+      sortByLevel( CustomSinglePlayMissionGroup );
       sortByLevel( MultiPlayMissionGroup );
       sortByLevel( SpecialMissionGroup );
       
@@ -779,6 +858,28 @@ function buildMissionList()
             GameMissionInfo.dupLevelIds[%mis.level] = true;
          }
          %levelIds[%mis.level] = true;
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
+      }
+      for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+      {
+         %mis = CustomSinglePlayMissionGroup.getObject(%i);
+         //if (%levelIds[%mis.level] !$= "")
+         //{
+            //GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate mission Id for level:" SPC %mis.file @ "\n";
+            //GameMissionInfo.dupLevelIds[%mis.level] = true;
+         //}
+         //%levelIds[%mis.level] = true;
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
       }
       for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
       {
@@ -789,6 +890,12 @@ function buildMissionList()
             GameMissionInfo.dupLevelIds[%mis.level] = true;
          }
          %levelIds[%mis.level] = true;
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
       }
       
       for (%i = 0; %i < SpecialMissionGroup.getCount(); %i++)
@@ -800,6 +907,12 @@ function buildMissionList()
             GameMissionInfo.dupLevelIds[%mis.level] = true;
          }
          %levelIds[%mis.level] = true;
+         if (%mis.guid !$= "")
+         {
+            if (%guids[%mis.guid] !$= "")
+               GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate GUID for level:" SPC %mis.file @ "\n";
+            %guids[%mis.guid] = true;
+         }
       }
       
       if (GameMissionInfo.dupErrors !$= "")
@@ -863,7 +976,8 @@ function sortByLevel(%grp)
       //{
          %grp.numAddedMissions++;
          %obj = %ngrp.getObject(%lowestIndex);
-         //%obj.level = %newLevelNum;
+         if (%obj.difficultySet $= "custom")
+            %obj.level = %newLevelNum;
          %grp.add(%obj);
       //}
    }
@@ -876,6 +990,10 @@ function getMissionObject( %missionFile )
    
    %missionInfoObject = "";
    %missionNameVar = "";
+   
+   %isCustom = false;
+   if( filePath(filePath(%missionFile)) $= "marble/data/missions/custom" )
+      %isCustom = true;
    
    if ( %file.openForRead( %missionFile ) ) {
 		%inInfoBlock = false;
@@ -903,7 +1021,8 @@ function getMissionObject( %missionFile )
 			         (strpos(%line, "name =") != -1 || strpos(%line, "startHelpText =") != -1) &&
 			         strpos(%line, "$Text::") == -1)
 			   {
-			      GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Bad loc info in" SPC %missionFile @ "\n";
+			      if (!%isCustom)
+                  GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Bad loc info in" SPC %missionFile @ "\n";
 			   }
 			   
 			   %missionNameVarIndex = strpos(%line, "$Text::LevelName");
@@ -922,6 +1041,9 @@ function getMissionObject( %missionFile )
 	echo("checking mission" SPC %missionFile);
 	%missionInfoObject = "%missionInfoObject = " @ %missionInfoObject;
 	eval( %missionInfoObject );
+	
+	if (%missionInfoObject.guid $= "")
+	   GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Missing GUID in" SPC %missionFile @ "\n";
    
    if (%missionNameVar !$= "")
       %missionInfoObject.nameVar = %missionNameVar;
@@ -956,18 +1078,28 @@ function getMissionObject( %missionFile )
       %missionInfoObject.difficultySet = "intermediate";
    else if( %misPath $= "marble/data/missions/advanced" )
       %missionInfoObject.difficultySet = "advanced";
+   else if( %misPath $= "marble/data/missions/custom" )
+      %missionInfoObject.difficultySet = "custom";
    else if( %misPath $= "marble/data/missions/special" )
       %missionInfoObject.difficultySet = "special";
    
    if (%missionInfoObject.gameType $= "")
       %missionInfoObject.gameType = GameMissionInfo.SPMode;
       
-   if (%missionInfoObject.gameType $= GameMissionInfo.SPMode)
+   if (%missionInfoObject.difficultySet $= "custom")
+      CustomSinglePlayMissionGroup.add(%missionInfoObject);
+   else if (%missionInfoObject.gameType $= GameMissionInfo.SPMode)
       SinglePlayMissionGroup.add(%missionInfoObject);
    else if (%missionInfoObject.gameType $= GameMissionInfo.MPMode)
       MultiPlayMissionGroup.add(%missionInfoObject);
    else if (%missionInfoObject.gameType $= GameMissionInfo.SpecialMode)
       SpecialMissionGroup.add(%missionInfoObject);
+      
+   if (%missionInfoObject.difficultySet $= "custom")
+   {
+      %missionInfoObject.customId = %missionInfoObject.name @ %path;
+      error("CustomID: " @ %missionInfoObject.customId);
+   }
 
    //%missionInfoObject.type = %groupTab;
    %missionInfoObject.setName("");
@@ -979,5 +1111,12 @@ function getMissionObject( %missionFile )
    if (%missionInfoObject.type $= "intermediate")
       %missionInfoObject.sky = $sky_intermediate;
    if (%missionInfoObject.type $= "advanced")
+      %missionInfoObject.sky = $sky_advanced;
+      
+   if (%missionInfoObject.customType $= "beginner")
+      %missionInfoObject.sky = $sky_beginner;
+   if (%missionInfoObject.customType $= "intermediate")
+      %missionInfoObject.sky = $sky_intermediate;
+   if (%missionInfoObject.customType $= "advanced")
       %missionInfoObject.sky = $sky_advanced;
 }

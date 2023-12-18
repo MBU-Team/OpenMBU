@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          desc = "promontory";
          gemGroupRadius = "20";
          include = "1";
+         guid = "{F2F59069-4D07-4665-B649-95E018FAAB28}";
    };
    new Trigger(Bounds) {
       position = "-141 115 -25.8226";

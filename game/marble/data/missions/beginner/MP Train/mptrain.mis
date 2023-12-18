@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          desc = "A single player mission that shows of basic multiplayer powerups.";
          startHelpText = $Text::LevelStartHelp10;
          include = "1";
+         guid = "{1DF4EDE4-39DB-4604-B656-A5B990CE70B6}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

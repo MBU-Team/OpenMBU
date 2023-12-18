@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          startHelpText = $Text::LevelStartHelp35;
          level = "30";
          name = $Text::LevelName35;
+         guid = "{A356C0DA-9F6E-4A7E-9D69-E8B91EC013BB}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

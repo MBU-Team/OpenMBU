@@ -130,7 +130,10 @@ function GameEndGui::onY(%this)
       return;
    }
    else
-      RootGui.setContent(levelScoresGui, "", GameMissionInfo.getCurrentMission().level, GameEndGui);
+   {
+      //RootGui.setContent(levelScoresGui, "", GameMissionInfo.getCurrentMission().level, GameEndGui);
+      RootGui.setContent(levelScoresGui, "", GameMissionInfo.getCurrentMission().guid, GameEndGui);
+   }
       
    return true;
 }

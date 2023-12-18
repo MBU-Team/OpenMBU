@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          time = "75000";
          hasEggIndex = "11";
+         guid = "{62329829-CB12-403D-A0DD-CC6B5D2B70D0}";
    };
    new Sky(Sky) {
       position = "336 136 0";

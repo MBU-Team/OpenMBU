@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          desc = "Its a jungle out there!";
          type = "Intermediate";
          hasEggIndex = "7";
+         guid = "{8AC4C432-8A5C-4ADE-9B38-08B462EB1354}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

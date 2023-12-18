@@ -8,6 +8,16 @@
 // PlayGui is the main TSControl through which the game is viewed.
 // The PlayGui also contains the hud controls.
 //-----------------------------------------------------------------------------
+function PlayGui::AddSubDialog(%this, %dialog)
+{
+   if (!isObject(%this.subDialogs))
+   {
+      %this.subDialogs = new SimSet();
+      RootGroup.add(%this.subDialogs); // beware $instantGroup !
+   }
+   %this.subDialogs.add(%dialog);
+}
+
 function PlayGui::onWake(%this)
 {
    // Turn off any shell sounds...
@@ -23,11 +33,15 @@ function PlayGui::onWake(%this)
       demoMap.push();
    else
       moveMap.push();
+
+   if (isObject(%this.subDialogs))
+      for (%i = 0; %i < %this.subDialogs.getCount(); %i++)
+         Canvas.pushDialog(%this.subDialogs.getObject(%i));
    
    // Fix inputs getting stuck
    clearInputs();
 
-   if (ServerConnection.isMultiplayer)
+   if (ServerConnection.isMultiplayer)// || $Game::SPGemHunt)
    {
       Canvas.pushDialog(PlayerListGui);
       
@@ -60,8 +74,9 @@ function PlayGui::onWake(%this)
    // hack city - these controls are floating around and need to be clamped
    schedule(0, 0, "refreshCenterTextCtrl");
    schedule(0, 0, "refreshBottomTextCtrl");
-   playGameMusic();
+   //playGameMusic();
    %this.setPowerUp( "" );
+   %this.setBlastBar();
    
    // hack town - pause if system UI is active
    if ($Client::SystemUIActive && !GamePauseGui.isAwake() && !$GameEndNoAllowPause)
@@ -92,6 +107,7 @@ function PlayGui::show(%this)
 	  	%this.resizeGemSlots();	
 	    %this.setGemCount(%this.gemCount);
 	    %this.setMaxGems(%this.maxGems);
+	    %this.setPoints(%this.points);
 	    %this.scaleGemArrows();
 	   
 		// recenter center things
@@ -107,13 +123,17 @@ function PlayGui::onSleep(%this)
       Canvas.popDialog(PlayerListGui);
    if (GamePauseGui.isAwake())
       Canvas.popDialog(GamePauseGui);
+
+   if (isObject(%this.subDialogs))
+      for (%i = 0; %i < %this.subDialogs.getCount(); %i++)
+         Canvas.popDialog(%this.subDialogs.getObject(%i));
       
    // Terminate all playing sounds
    sfxStopAll($SimAudioType);
-   playShellMusic();
+   //playShellMusic();
    // pop the keymaps
    moveMap.pop();
-   demoMap.pop();
+   //demoMap.pop();
    
    // Fix inputs getting stuck
    clearInputs();
@@ -163,16 +183,36 @@ function PlayGui::setMessage(%this,%text,%timer)
 //-----------------------------------------------------------------------------
 function PlayGui::setPowerUp(%this,%bmpFile)
 {
+   %this.currentPowerUpFile = %bmpFile;
+   %path = "marble/client/ui/game/pc/";
+   if ($pref::UI::LegacyUI)
+      %path = "marble/client/ui/game/";
+   
    // Update the power up hud control
    if (%bmpFile $= "")
    {
-      HUD_ShowPowerUp.setBitmap("marble/client/ui/game/powerup.png");
+      HUD_ShowPowerUp.setBitmap(%path @ "powerup.png");
    }
    else
    {
-      HUD_ShowPowerUp.setBitmap("marble/client/ui/game/" @ %bmpFile);
+      HUD_ShowPowerUp.setBitmap(%path @ %bmpFile);
    }
 }   
+
+function PlayGui::setBlastBar(%this)
+{
+   %path = "marble/client/ui/game/pc/";
+   if ($pref::UI::LegacyUI)
+      %path = "marble/client/ui/game/";
+      
+   BoostBarFG.setBitmap(%path @ "powerbar.png");
+}
+
+function PlayGui::updatePlayGui(%this)
+{
+   %this.setPowerUp(%this.currentPowerUpFile);
+   %this.setBlastBar();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -204,6 +244,8 @@ function PlayGui::resizeGemSlots(%this)
 
 function PlayGui::setMaxGems(%this,%count)
 {
+   if ($Game::SPGemHunt)
+      return;
    %this.maxGems = %count;
    %one = %count % 10;
    %ten = (%count - %one) % 100;
@@ -287,6 +329,8 @@ function PlayGui::setMaxGems(%this,%count)
 
 function PlayGui::setGemCount(%this,%count)
 {
+   if ($Game::SPGemHunt)
+      return;
    %this.gemCount = %count;
    %one = %count % 10;
    %ten = (%count - %one) % 100;
@@ -301,6 +345,9 @@ function PlayGui::setGemCount(%this,%count)
 //-----------------------------------------------------------------------------
 function PlayGui::setPoints(%this, %clientid, %points)
 {
+   if (!$Game::SPGemHunt)
+      return;
+   %this.points = %points;
    %pts = %points;
 
    %drawNeg = false;
@@ -321,7 +368,7 @@ function PlayGui::setPoints(%this, %clientid, %points)
    GemsFoundTen.setNumber(%ten);
    GemsFoundOne.setNumber(%one);
 
-   %visible = %pts != 0;
+   %visible = true;//%pts != 0;
 
    GemsSlash.setVisible(false);
    HUD_ShowGem.setVisible(false);
@@ -340,6 +387,9 @@ function PlayGui::setPoints(%this, %clientid, %points)
       GemsFoundHundred.setVisible(false);
 
       GemsFoundOne.position = $gemsFoundThirdSlot - %negOffset SPC $gemsVertPos;
+      
+      //HUD_ShowGem.setVisible(%visible);
+      //HUD_ShowGem.position = $showGemFirstSlot - 48 SPC $showGemVertPos;
    }
    else if (%pts < 100)
    {
@@ -349,6 +399,9 @@ function PlayGui::setPoints(%this, %clientid, %points)
 
       GemsFoundOne.position = $gemsFoundThirdSlot SPC $gemsVertPos;
       GemsFoundTen.position = $gemsFoundSecondSlot SPC $gemsVertPos;
+      
+      //HUD_ShowGem.setVisible(%visible);
+      //HUD_ShowGem.position = $showGemSecondSlot - 24 SPC $showGemVertPos;
    }
    else
    {
@@ -359,7 +412,17 @@ function PlayGui::setPoints(%this, %clientid, %points)
       GemsFoundOne.position = $gemsFoundThirdSlot + %negOffset SPC $gemsVertPos;
       GemsFoundTen.position = $gemsFoundSecondSlot + %negOffset SPC $gemsVertPos;
       GemsFoundHundred.position = $gemsFoundFirstSlot + %negOffset SPC $gemsVertPos;
+
+     //%width = getWord(getResolution(), 0);
+     //if (%width > 640)
+        //HUD_ShowGem.setVisible(%visible);
+     //else
+        //HUD_ShowGem.setVisible(false);
+     //HUD_ShowGem.position = $showGemThirdSlot SPC $showGemVertPos;
    }
+   
+   HUD_ShowGem.setVisible(%visible);
+   HUD_ShowGem.position = $showGemFirstSlot - 48 SPC $showGemVertPos;
 }
 
 //-----------------------------------------------------------------------------

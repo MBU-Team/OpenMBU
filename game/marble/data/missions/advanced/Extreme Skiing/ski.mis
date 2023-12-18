@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          artist = "Alex Swanson";
          difficulty = "10";
          name = $Text::LevelName75;
+         guid = "{38FD3570-6217-4FE1-8C79-C0A8D4B45068}";
    };
    new Sky(Sky) {
       position = "336 136 0";

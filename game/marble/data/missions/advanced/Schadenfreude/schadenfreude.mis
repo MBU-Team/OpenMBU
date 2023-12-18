@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          include = "1";
          difficulty = "11";
          gameType = "SinglePlayer";
+         guid = "{7E67B719-0465-4CB4-BC05-0E7766AAB1AE}";
    };
    new Sky(Sky) {
       position = "336 136 0";

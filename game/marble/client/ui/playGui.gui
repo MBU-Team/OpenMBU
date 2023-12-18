@@ -676,5 +676,6 @@ function setHudVisible( %visible )
    {
       PlayGui.setGemCount( PlayGui.gemCount );
       PlayGui.setMaxGems( PlayGui.maxGems );
+      PlayGui.setPoints( PlayGui.points );
    }
 }

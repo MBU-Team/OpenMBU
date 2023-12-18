@@ -204,7 +204,7 @@ void Dictionary::exportVariables(const char* varString, const char* fileName, bo
         strm.close();
 }
 
-void Dictionary::deleteVariables(const char* varString)
+void Dictionary::deleteVariables(const char* varString, bool emptyOnly)
 {
     const char* searchStr = varString;
 
@@ -216,9 +216,34 @@ void Dictionary::deleteVariables(const char* varString)
             Entry* matchedEntry = (FindMatch::isMatch((char*)searchStr, (char*)walk->name)) ? walk : NULL;
             walk = walk->nextEntry;
             if (matchedEntry)
-                remove(matchedEntry); // assumes remove() is a stable remove (will not reorder entries on remove)
+            {
+                bool empty = false;
+                const char* val = matchedEntry->getStringValue();
+                if (!val || (val && val[0] == '\0'))
+                    empty = true;
+                if (!emptyOnly || empty)
+                    remove(matchedEntry); // assumes remove() is a stable remove (will not reorder entries on remove)
+            }
         }
     }
+}
+
+bool Dictionary::variablesExist(const char* varString)
+{
+    const char* searchStr = varString;
+
+    for (S32 i = 0; i < hashTable->size; i++)
+    {
+        Entry* walk = hashTable->data[i];
+        while (walk)
+        {
+            Entry* matchedEntry = (FindMatch::isMatch((char*)searchStr, (char*)walk->name)) ? walk : NULL;
+            walk = walk->nextEntry;
+            if (matchedEntry)
+                return true;
+        }
+    }
+    return false;
 }
 
 U32 HashPointer(StringTableEntry ptr)

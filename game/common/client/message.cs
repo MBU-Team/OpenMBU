@@ -72,7 +72,9 @@ function addMessageCallback(%msgType, %func)
 
 function defaultMessageCallback(%msgType, %msgString, %a1, %a2, %a3, %a4, %a5, %a6, %a7, %a8, %a9, %a10)
 {
-   onServerMessage(detag(%msgString));
+   %msg = detag(%msgString);
+   if (%msg !$= "" && %msg != 0)
+      onServerMessage(%msg);
 }
 
 // Register that default message handler now.

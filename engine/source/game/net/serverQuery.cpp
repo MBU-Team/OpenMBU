@@ -100,7 +100,7 @@ static Vector<NetAddress> gFinishedList(__FILE__, __LINE__); // timed out server
 NetAddress gMasterServerQueryAddress;
 bool gServerBrowserDirty = false;
 
-static const U32 gHeartbeatInterval = 120000;
+static const U32 gHeartbeatInterval = 10000;//120000;
 static const S32 gMasterServerRetryCount = 3;
 static const S32 gMasterServerTimeout = 2000;
 static const S32 gPacketRetryCount = 4;
@@ -347,15 +347,15 @@ void queryLanServers(U32 port, U8 flags, const char* gameType, const char* missi
     sActiveFilter.type = useFilters ? ServerFilter::OfflineFiltered : ServerFilter::Offline;
 
     // Clear the filter:
-    if (!sActiveFilter.gameType || dStricmp(sActiveFilter.gameType, "Any") != 0)
+    if (!sActiveFilter.gameType || dStricmp(sActiveFilter.gameType, gameType) != 0)
     {
         sActiveFilter.gameType = (char*)dRealloc(sActiveFilter.gameType, 4);
-        dStrcpy(sActiveFilter.gameType, "Any");
+        dStrcpy(sActiveFilter.gameType, gameType);
     }
-    if (!sActiveFilter.missionType || dStricmp(sActiveFilter.missionType, "Any") != 0)
+    if (!sActiveFilter.missionType || dStricmp(sActiveFilter.missionType, missionType) != 0)
     {
         sActiveFilter.missionType = (char*)dRealloc(sActiveFilter.missionType, 4);
-        dStrcpy(sActiveFilter.missionType, "Any");
+        dStrcpy(sActiveFilter.missionType, missionType);
     }
     sActiveFilter.queryFlags = 0;
     sActiveFilter.minPlayers = minPlayers;
@@ -741,7 +741,7 @@ Vector<MasterInfo>* getMasterServerList()
 
     for (U32 i = 0; i < 10; i++) {
         char buffer[50];
-        dSprintf(buffer, sizeof(buffer), "Pref::Master%d", i);
+        dSprintf(buffer, sizeof(buffer), "Server::Master%d", i);//"Pref::Master%d", i);
         const char* master = Con::getVariable(buffer);
         if (master && *master) {
             NetAddress address;
@@ -1579,7 +1579,7 @@ static void handleGameMasterInfoRequest(const NetAddress* address, U32 key, U8 f
         writeCString(out, Con::getVariable("Server::MissionType"));
         temp8 = U8(Con::getIntVariable("Pref::Server::MaxPlayers"));
         out->write(temp8);
-        temp32 = Con::getIntVariable("Pref::Server::RegionMask");
+        temp32 = Con::getIntVariable("Server::RegionMask");//"Pref::Server::RegionMask");
         out->write(temp32);
         temp32 = getVersionNumber();
         out->write(temp32);

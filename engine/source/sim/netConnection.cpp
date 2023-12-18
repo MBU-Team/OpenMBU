@@ -1195,3 +1195,10 @@ errorOut:
         error = "Unknown Error";
     return error;
 }
+
+ConsoleMethod(NetConnection, getXnAddr, const char*, 2, 2, "getXnAddr()")
+{
+    // TODO: Do we want to deal with this xbox live function?
+
+    return "";
+}

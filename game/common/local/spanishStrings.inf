@@ -458,6 +458,8 @@ $Text::LocCredits = "<spush><font:Arial Bold:30>Localization<spop>\n\n<spush><fo
 ;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
 ;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
 
+$Text::AchievementUnlocked = "Logro desbloqueado";
+
 $Text::AchievementName01 = "Pelota puntual";
 $Text::AchievementName02 = "Enseña de aprendiz";
 $Text::AchievementName03 = "Enseña de intermedio";

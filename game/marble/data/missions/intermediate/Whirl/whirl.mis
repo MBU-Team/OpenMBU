@@ -13,6 +13,7 @@ new SimGroup(MissionGroup) {
          gameType = "SinglePlayer";
          time = "140000";
          hasEggIndex = "12";
+         guid = "{40D18ABA-D319-4D37-ACDD-239DC8B9D0B8}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

@@ -6,23 +6,29 @@
 #define ACHIEVEMENT_ICON_OFFSET_X 20
 #define ACHIEVEMENT_ICON_OFFSET_Y 17
 
+#define HEADER_OFFSET_Y 30
+
 class GuiAchievementPopupCtrl : public GuiControl
 {
     typedef GuiControl Parent;
 
 protected:
-    StringTableEntry mBitmapName;
-    GFXTexHandle mBackgroundTextureObject;
+    StringTableEntry mIconBitmapName;
     GFXTexHandle mIconTextureObject;
+    StringTableEntry mBackgroundBitmapName;
+    GFXTexHandle mBackgroundTextureObject;
     StringTableEntry mTitle;
+    StringTableEntry mHeader;
 
 public:
     GuiAchievementPopupCtrl();
     static void initPersistFields();
     void onRender(Point2I offset, const RectI &updateRect);
     bool onWake();
-    void setBitmap(const char *name);
+    void setIcon(const char *name);
+    void setBackground(const char *name);
     void setTitle(const char *title);
+    void setHeader(const char *header);
 
     DECLARE_CONOBJECT(GuiAchievementPopupCtrl);
 };

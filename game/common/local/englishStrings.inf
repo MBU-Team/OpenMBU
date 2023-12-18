@@ -20,6 +20,8 @@ $Text::More = "More";
 $Text::Level = "Level";
 $Text::Start = "Start";
 $Text::PressAToStart = "Press A to start.";
+$Text::ClickToContinue = "Click to continue";
+$Text::Chat = "Chat";
 
 ;-------------------------------------------------------------------------------
 ; Live
@@ -111,8 +113,10 @@ $Text::PurchasedThanks = "Thank you for purchasing Marble Blast Ultra!";
 ;-------------------------------------------------------------------------------
 $Text::None = "None";
 $Text::BestTime = "My Best Time:";
+$Text::BestScore = "My Best Score:";
 $Text::EndTime = "Time:";
 $Text::EndScore = "Rating:";
+$Text::EndScore2 = "Score:";
 $Text::LevelComplete = "LEVEL COMPLETE!";
 $Text::NewBestTime = "New Best Time!";
 $Text::NewHighScore = "New High Score!";
@@ -212,9 +216,13 @@ $Text::RTArcadeMenu = "Return to Arcade";
 $Text::LevelsBeginner = "Beginner Levels";
 $Text::LevelsIntermediate = "Intermediate Levels";
 $Text::LevelsAdvanced = "Advanced Levels";
+$Text::LevelsCustom = "Custom Levels";
+$Text::SPGemHunt = "Gem Hunt";
 $Text::Go = "Go";
 $Text::OK = "OK";
 $Text::Cancel = "Cancel";
+$Text::Yes = "Yes";
+$Text::No = "No";
 $Text::Refresh = "Refresh";
 $Text::Select = "Select";
 ;$Text::ReturningToArcade = "Returning to Xbox Live Arcade Menu";
@@ -314,13 +322,15 @@ $Text::InvY = "Camera Y-Axis";
 $Text::MouseSensitivity = "Mouse Sensitivity";
 $Text::InvOnOff = "Normal\tInverted";
 $Text::VideoOptions = "Video Options";
-$Text::FullscreenResolution = "Fullscreen Resolution";
-$Text::WindowedResolution = "Windowed Resolution";
+$Text::FullscreenResolution = "Fullscreen Res";
+$Text::WindowedResolution = "Windowed Res";
 $Text::DisplayMode = "Display Mode";
 $Text::DisplayModeOptions = "Windowed\tBorderless Fullscreen\tExclusive Fullscreen";
-$Text::ReflectionDetailLevel = "Reflection Detail Level";
+$Text::ReflectionDetailLevel = "Reflection Detail";
 $Text::ReflectionDetailLevelOptions = "Nothing\tSky\tLevel and Sky\tLevel, Sky and Items\tEverything";
 $Text::MarbleSkin = "Marble Type";
+$Text::UIStyle = "UI Style";
+$Text::UIStyleOptions = "Mouse/Keyboard\tXbox 360";
 
 ;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
 ;$Text::MarbleColor = "Marble Color";
@@ -459,6 +469,8 @@ $Text::LocCredits = "<spush><font:Arial Bold:%1>Localization<spop>\n\n<spush><fo
 ;-------------------------------------------------------------------------------
 ;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
 ;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
+
+$Text::AchievementUnlocked = "Achievement Unlocked";
 
 $Text::AchievementName01 = "Timely Marble";
 $Text::AchievementName02 = "Apprentice's Badge";
@@ -660,4 +672,4 @@ $Text::TriggerTextTornado = "Beware of the tornado's pull!";
 $Text::TriggerTextFans = "Beware of the wind from the fans.";
 $Text::TriggerTextBumpers = "Bumpers push back when you collide with them.";
 $Text::TriggerTextAirMove = "You can change the direction of your spin even while in the air.";
-
+$Text::MultiplayerStartup = "Collect the most gems to win!";

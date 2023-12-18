@@ -20,6 +20,8 @@ ColorI FontShadowColor(0, 0, 0);
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 IMPLEMENT_CONOBJECT(GuiControl);
 
+bool GuiControl::smLegacyUI = false;
+
 //used to locate the next/prev responder when tab is pressed
 GuiControl* GuiControl::smPrevResponder = NULL;
 GuiControl* GuiControl::smCurResponder = NULL;
@@ -56,6 +58,8 @@ GuiControl::GuiControl()
 
     mTooltipProfile = NULL;
     mTooltip = StringTable->insert("");
+
+    mUIMode = AlwaysShow;
 }
 
 GuiControl::~GuiControl()
@@ -110,6 +114,14 @@ static EnumTable::Enums vertEnums[] =
 };
 static EnumTable gVertSizingTable(sizeof(vertEnums) / sizeof(EnumTable::Enums), &vertEnums[0]);
 
+static EnumTable::Enums uiModes[] =
+    {
+        { GuiControl::UIMode::AlwaysShow,      "AlwaysShow"     },
+        { GuiControl::UIMode::LegacyOnly,      "LegacyOnly"     },
+        { GuiControl::UIMode::NewOnly,      "NewOnly"     }
+    };
+static EnumTable gUIModeTable(sizeof(uiModes) / sizeof(EnumTable::Enums), &uiModes[0]);
+
 void GuiControl::initPersistFields()
 {
     Parent::initPersistFields();
@@ -123,6 +135,8 @@ void GuiControl::initPersistFields()
     addField("MinExtent", TypePoint2I, Offset(mMinExtent, GuiControl));
 
     addField("Visible", TypeBool, Offset(mVisible, GuiControl));
+
+    addField("UIMode", TypeEnum, Offset(mUIMode, GuiControl), 1, &gUIModeTable);
     addDepricatedField("Modal");
     addDepricatedField("SetFirstResponder");
 
@@ -138,6 +152,23 @@ void GuiControl::initPersistFields()
     addGroup("I18N");
     addField("langTableMod", TypeString, Offset(mLangTableName, GuiControl));
     endGroup("I18N");
+}
+
+void GuiControl::consoleInit()
+{
+    Con::addVariable("$pref::UI::LegacyUI", TypeBool, &smLegacyUI);
+}
+
+bool GuiControl::isCurrentUIMode()
+{
+    GuiControl* parent = getParent();
+    if (parent && !parent->isCurrentUIMode())
+        return false;
+
+    if ((mUIMode == LegacyOnly && !smLegacyUI) || (mUIMode == NewOnly && smLegacyUI))
+        return false;
+
+    return true;
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
@@ -461,6 +492,9 @@ void GuiControl::parentResized(const Point2I& oldParentExtent, const Point2I& ne
 
 void GuiControl::onRender(Point2I offset, const RectI& updateRect)
 {
+    if (!isCurrentUIMode())
+        return;
+
     RectI ctrlRect(offset, mBounds.extent);
 
     // MBU X360 has this extra line
@@ -981,7 +1015,7 @@ GuiControl* GuiControl::findHitControl(const Point2I& pt, S32 initialLayer)
         {
             continue;
         }
-        else if (ctrl->mVisible && ctrl->pointInControl(pt))
+        else if (ctrl->mVisible && ctrl->isCurrentUIMode() && ctrl->pointInControl(pt))
         {
             Point2I ptemp = pt - ctrl->mBounds.point;
             GuiControl* hitCtrl = ctrl->findHitControl(ptemp);

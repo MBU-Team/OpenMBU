@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          level = "46";
          name = $Text::LevelName76;
          include = "1";
+         guid = "{834F4547-B534-4B2C-A9C0-11AFA87DC633}";
    };
    new Sky(Sky) {
       position = "336 136 0";

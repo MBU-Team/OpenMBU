@@ -17,7 +17,7 @@ new GuiControl(AchievementDlg) {
          extent =   "507 116";
          //minExtent = "48 92";
          visible = "1";
-         bitmap = "";
+         icon = "";
          wrap = "0";
 	};
    
@@ -29,7 +29,8 @@ function AchievementDlg::onWake(%this)
 	enableGamepad();
 	moveMap.push();
 	//AchievementFrame.setPosition("70", "0");
-	AchievementFrame.setBitmap("./achievement/" @ $AchievementId);
+	AchievementFrame.setHeader($Text::AchievementUnlocked);
+	AchievementFrame.setIcon("./achievement/" @ $AchievementId);
 	%title = "Unknown Achievement";
 	switch$ ($AchievementId)
 	{

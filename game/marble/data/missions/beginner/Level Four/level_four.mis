@@ -11,6 +11,7 @@ startHelpText  =  $Text::LevelStartHelp6;
 name  =  $Text::LevelName6;
          gameType = "singleplayer";
          desc = "Finally, a mission where you can fall off!";
+         guid = "{E4538A09-5ACA-4012-B32C-5631C83A6A40}";
    };
    new Sky(Sky) {
       position = "336 136 0";

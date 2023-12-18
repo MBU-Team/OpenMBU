@@ -24,11 +24,14 @@
 
 $EnableFMS = true;
 
-if ($testLevel)
+if ($testLevel || $disablePreviews)
    $EnableFMS = false;
    
 if ($buildMega)
    $EnableFMS = true;
+   
+if ($EnableFMS)
+   $buildMega = true; // Always use build mega, for custom support
 
 function initClient()
 {
@@ -131,8 +134,6 @@ function initClient()
    exec("./ui/GameEndGui.gui");
    exec("./ui/StartupErrorGui.gui");
    exec("./ui/controlerDisplayGui.gui");
-   exec("./ui/AchievementDlg.gui");
-   exec("./ui/AchievementListGui.gui");
    
    //exec("./ui/AboutGui.gui");   
    //exec("./ui/LevelScoresGui.gui");
@@ -163,7 +164,12 @@ function initClient()
    exec("./scripts/recordings.cs");
    exec("./scripts/achievements.cs");
    
+   exec("./ui/AchievementDlg.gui");
+   exec("./ui/AchievementListGui.gui");
+   
    exec("./scripts/xbLive.cs");
+   
+   exec("./ui/chathud/init.cs");
    
    // Default player key bindings
    exec("./scripts/default.bind.cs");
@@ -318,7 +324,7 @@ function fixSizing()
    RootCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    PauseCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    
-   if (PlayGui.isAwake() && !GamePauseGuiActive)
+   if (PlayGui.isAwake() && !$GamePauseGuiActive)
    {
       // TODO: Figure out why doing this sometimes causes BlastBar to offset from bitmap
       RootGui.setContent(PlayGui);
@@ -502,6 +508,7 @@ function connectToServer(%address,%invited)
          portInit($Pref::Server::Port);
       }
       $Client::connectedMultiplayer = true;
+      $Game::SPGemHunt = false;
       %conn.connect(%address);
    }
 
@@ -561,7 +568,10 @@ function establishConnection(%address, %mp, %invited)
    if (%address $= "")
    {
       if (%mp)
+      {
          $Client::connectedMultiplayer = true;
+         $Game::SPGemHunt = false;
+      }
       else
          $Client::connectedMultiplayer = false;
       %conn.connectLocal();
@@ -577,6 +587,7 @@ function establishConnection(%address, %mp, %invited)
          portInit($Pref::Server::Port);
       }
       $Client::connectedMultiplayer = true;
+      $Game::SPGemHunt = false;
       %conn.connect(%address);
    }
 
@@ -592,6 +603,36 @@ function populatePreviewMission()
    for (%i = 0; %i < SinglePlayMissionGroup.getCount(); %i++)
    {
       %info = SinglePlayMissionGroup.getObject(%i);      
+      %mission = fileName(%info.file);
+
+      // First the InteriorInstance's
+      %info.missionGroup = loadObjectsFromMission(%mission);
+
+      // Then any camera markers
+      loadObjectsFromMission(%mission, "SpawnSphere", "CameraSpawnSphereMarker");
+
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_3shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_6shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_9shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_12shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_15shape");
+      
+      // Then the glass
+      loadObjectsFromMission(%mission, "StaticShape", "glass_18shape");
+   }
+   
+   for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+   {
+      %info = CustomSinglePlayMissionGroup.getObject(%i);      
       %mission = fileName(%info.file);
 
       // First the InteriorInstance's
@@ -730,6 +771,13 @@ function setupCameras()
       %info.cameraPoint = getCameraObject(%info.missionGroup);
       %info.cameraPos = getSpawnPosition(%info.cameraPoint);
    }
+   
+   for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
+   {
+      %info = CustomSinglePlayMissionGroup.getObject(%i);
+      %info.cameraPoint = getCameraObject(%info.missionGroup);
+      %info.cameraPos = getSpawnPosition(%info.cameraPoint);
+   }
 
    for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
    {
@@ -816,28 +864,30 @@ function createPreviewServer(%mission)
 function createEmptyMission(%interiorArg)
 {
    return new SimGroup(MissionGroup) {
-     new ScriptObject(MissionInfo) {
-           level = "001";
-            desc = "A preview mission";
-            time = "0";
-            include = "1";
-            difficulty = "4";
-            name = "Preview Mission";
-            type = "Intermediate";
-            goldTime = "0";
-            gameType = "SinglePlayer";
-     };
-     new MissionArea(MissionArea) {
-        area = "-360 -648 720 1296";
-        flightCeiling = "300";
-        flightCeilingRange = "20";
-        locked = "true";
-     };
-     new Sky(Sky) {
-        position = "336 136 0";
-        rotation = "1 0 0 0";
-        scale = "1 1 1";
-         materialList = "~/data/skies/sky_advanced.dml";
+      new ScriptObject(MissionInfo) {
+         level = "001";
+         desc = "A preview mission";
+         time = "0";
+         include = "1";
+         difficulty = "4";
+         name = "Preview Mission";
+         type = "custom";
+         customType = "intermediate";
+         goldTime = "0";
+         gameType = "SinglePlayer";
+         guid = GenerateGuid();
+      };
+      new MissionArea(MissionArea) {
+         area = "-360 -648 720 1296";
+         flightCeiling = "300";
+         flightCeilingRange = "20";
+         locked = "true";
+      };
+      new Sky(Sky) {
+         position = "336 136 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         materialList = "~/data/skies/sky_intermediate.dml";
          cloudHeightPer[0] = "0";
          cloudHeightPer[1] = "0";
          cloudHeightPer[2] = "0";
@@ -856,26 +906,50 @@ function createEmptyMission(%interiorArg)
          windVelocity = "1 0 0";
          windEffectPrecipitation = "0";
          SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
-        useSkyTextures = "1";
-        renderBottomTexture = "1";
-        noRenderBans = "1";
+         useSkyTextures = "1";
+         renderBottomTexture = "1";
+         noRenderBans = "1";
          renderBanOffsetHeight = "50";
          skyGlow = "0";
          skyGlowColor = "0.000000 0.000000 0.000000 0.000000";
             fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
             fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
             fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
-     };
-     new Sun() {
-         direction = "-0.614021 0.433884 -0.659336";
-         color = "1.400000 1.200000 0.400000 1.000000";
-        ambient = "0.400000 0.400000 0.400000 1.000000";
-     };
+      };
+      new StaticShape(Cloud_Shape) {
+         position = "0 0 0";
+         rotation = "1 0 0 0";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "0";
+         dataBlock = "astrolabeCloudsIntermediateShape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
+      };
+      new Sun() {
+         direction = "-0.573201 -0.275357 -0.771764";
+         color = "1.08 1.03 0.9 1";
+         ambient = "0.4 0.4 0.5 1";
+      };
       new StaticShape() {
          position = "0 0 -500";
          rotation = "1 0 0 0";
          scale = "1 1 1";
          dataBlock = "astrolabeShape";
+      };
+      new SpawnSphere(CameraObj) {
+         position = "-15.7107 -13.117 10.6244";
+         rotation = "0.468686 -0.160109 0.868734 42.9325";
+         scale = "1 1 1";
+         hidden = "0";
+         reanderShadow = "1";
+         dataBlock = "CameraSpawnSphereMarker";
+         radius = "100";
+         sphereWeight = "100";
+         indoorWeight = "100";
+         outdoorWeight = "100";
       };
    };
 }

@@ -1205,10 +1205,35 @@ ConsoleFunction(export, void, 2, 4, "export(searchString [, relativeFileName [,a
     gAllowExternalWrite = false;
 }
 
+ConsoleFunction(deletePrefs, void, 2, 2, "deletePrefs(relativeFileName)")
+{
+    const char* filename = Platform::getPrefsPath(argv[1]);
+    if (filename == NULL || *filename == 0)
+        return;
+
+    gAllowExternalWrite = true;
+
+    dFileDelete(filename);
+
+    gAllowExternalWrite = false;
+}
+
 ConsoleFunction(deleteVariables, void, 2, 2, "deleteVariables(wildCard)")
 {
     argc;
     gEvalState.globalVars.deleteVariables(argv[1]);
+}
+
+ConsoleFunction(deleteEmptyVariables, void, 2, 2, "deleteVariables(wildCard)")
+{
+    argc;
+    gEvalState.globalVars.deleteVariables(argv[1], true);
+}
+
+ConsoleFunction(variablesExist, bool, 2, 2, "variablesExist(wildCard)")
+{
+    argc;
+    return gEvalState.globalVars.variablesExist(argv[1]);
 }
 
 //----------------------------------------------------------------

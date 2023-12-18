@@ -14,6 +14,7 @@ new SimGroup(MissionGroup) {
          desc = "Gets the Gemses!";
          numgems = "1";
          include = "1";
+         guid = "{92A2B64A-6419-4779-AD02-4AE4686036DB}";
    };
    new Item() {
       position = "9.29052 -28.9862 10.4998";

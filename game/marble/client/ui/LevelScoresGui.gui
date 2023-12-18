@@ -374,7 +374,7 @@ function levelScoresGui::show(%this,%mode,%missionId,%backGui)
    %this.currentMissionGroup = GameMissionInfo.getCurrentMissionGroup();
    
    // JMQ: disable MP level leaderboards
-   if (%this.missionId > 60)
+   if (%this.missionId > 60 && %mode !$= GameMissionInfo.CustomMode)
       %this.missionId = "";
       
    if (%missionId $= "")
@@ -415,7 +415,7 @@ function levelScoresGui::show(%this,%mode,%missionId,%backGui)
    
    %this.updateLeaderboard();
    
-  	if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
+  	//if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
 }
 
 function levelScoresGui::hide(%this)
@@ -511,7 +511,7 @@ function levelScoresGui::doLoad(%this)
    
    ScoreboardList.clear();
    
-   XBLiveLoadLeaderboard(%this.lbId, %this.leaderboard, %this.entryStart, $MaxEntriesOnScreen, "levelScoresGui.setSelected();");  
+   XBLiveLoadLeaderboard(%this.lbId, %this.leaderboard, %this.entryStart, $MaxEntriesOnScreen, "levelScoresGui.setSelected();");
 }
 
 // update the visual indicator of what level is being viewed.  this can be done even if the load for the 
@@ -520,7 +520,8 @@ function levelScoresGui::doLoad(%this)
 function levelScoresGui::setSelectedInfo(%this)
 {
    //%mission = LevelScoresGui.currentMissionGroup.getObject( LevelScoresGui.currentMission );
-   %mission = GameMissionInfo.findMissionById(%this.lbId);
+   //%mission = GameMissionInfo.findMissionById(%this.lbId);
+   %mission = GameMissionInfo.findMissionByGuid(%this.lbId);
    if (isObject(%mission))
    {
       %isOverall = false;
@@ -570,7 +571,7 @@ function levelScoresGui::setSelected(%this)
    LS_uparrow.setVisible( false );
    LS_Rank_Header.setVisible( true );
    
-	if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
+	//if (isPCBuild()) levelScoresGui.schedule(1000, test, 0); 
 	%this.setLoadingDisplay();
 	
 	if (%this.lbId == $Leaderboard::MPScrumSkill)
@@ -578,7 +579,8 @@ function levelScoresGui::setSelected(%this)
 	else
 	   LS_Score_Header.setText("<font:Arial Bold:18><just:right>" @ $Text::Score);
 	
-	%mission = GameMissionInfo.findMissionById(%this.lbId);
+	//%mission = GameMissionInfo.findMissionById(%this.lbId);
+	%mission = GameMissionInfo.findMissionByGuid(%this.lbId);
 	%isOverall = %this.setSelectedInfo();
    
    %rowCount = XBLiveGetLeaderboardRowCount(%this.lbId, %this.leaderboard);

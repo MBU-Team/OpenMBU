@@ -10,6 +10,7 @@ new SimGroup(MissionGroup) {
          time = "30000";
          level = "24";
          name = $Text::LevelName69;
+         guid = "{E0E23377-0DAD-4B2A-9F9F-7DAF1BD18CBF}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

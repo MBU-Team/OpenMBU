@@ -11,6 +11,7 @@ startHelpText  =  $Text::LevelStartHelp73;
 name  =  $Text::LevelName73;
          artist = "Alex Swanson";
          gameType = "SinglePlayer";
+         guid = "{958557D1-641F-474C-BB27-AAA1E90925FD}";
    };
    new Sky(Sky) {
       position = "336 136 0";

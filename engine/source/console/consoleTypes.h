@@ -37,6 +37,8 @@ DefineConsoleType(TypeCubemap)
 DefineConsoleType(TypeProjectileDataPtr)
 DefineConsoleType(TypeParticleEmitterDataPtr);
 
+DefineConsoleType(TypeGUID)
+
 /*
    // Game types
    TypeGameBaseDataPtr,

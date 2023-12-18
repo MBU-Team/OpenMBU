@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          include = "1";
          difficulty = "1";
          name = "MarblePicker";
+         guid = "{05E97996-657C-45B2-A39E-C6BCC6160D8F}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

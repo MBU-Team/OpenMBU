@@ -232,6 +232,54 @@ ConsoleSetType(TypeMatrixRotation)
             pDst[i * 4 + j] = pSrc[i * 4 + j];
 }
 
+//////////////////////////////////////////////////////////////////////////
+// TypeMatrixEulerRotation
+//////////////////////////////////////////////////////////////////////////
+ConsoleType(MatrixEulerRotation, TypeMatrixEulerRotation, sizeof(MatrixF))
+
+ConsoleGetType(TypeMatrixEulerRotation)
+{
+    EulerF euler = (*(MatrixF*)dptr).toEuler();
+    char* returnBuffer = Con::getReturnBuffer(256);
+    dSprintf(returnBuffer, 256, "%g %g %g", mRadToDeg(euler.x), mRadToDeg(euler.y), mRadToDeg(euler.z));
+    return returnBuffer;
+}
+
+ConsoleSetType(TypeMatrixEulerRotation)
+{
+    // DMM: Note that this will ONLY SET the ULeft 3x3 submatrix.
+    //
+    EulerF euler(0, 0, 0);
+    if (argc == 1)
+    {
+        dSscanf(argv[0], "%g %g %g", &euler.x, &euler.y, &euler.z);
+        euler.x = mDegToRad(euler.x);
+        euler.y = mDegToRad(euler.y);
+        euler.z = mDegToRad(euler.z);
+    }
+    else if (argc == 3)
+    {
+        for (S32 i = 0; i < argc; i++)
+            ((F32*)&euler)[i] = dAtof(argv[i]);
+        euler.x = mDegToRad(euler.x);
+        euler.y = mDegToRad(euler.y);
+        euler.z = mDegToRad(euler.z);
+    }
+    else
+        Con::printf("Matrix euler rotation must be set as { x, y, z } or \"x y z\"");
+
+
+    //
+    MatrixF temp;
+    temp.set(euler);
+
+    F32* pDst = *(MatrixF*)dptr;
+    const F32* pSrc = temp;
+    for (U32 i = 0; i < 3; i++)
+        for (U32 j = 0; j < 3; j++)
+            pDst[i * 4 + j] = pSrc[i * 4 + j];
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -515,6 +563,36 @@ ConsoleFunction(setRandomSeed, void, 1, 2, "(int seed=-1) Set the current random
     MRandomLCG::setGlobalRandSeed(seed);
 }
 
+ConsoleFunction(setDetermRandomSeed, void, 1, 2, "(int seed=-1) Set the current determ random seed. If no seed is provided, then the current time in ms is used.")
+{
+    U32 seed = Platform::getRealMilliseconds();
+    if (argc == 2)
+        seed = dAtoi(argv[1]);
+
+    // TODO: Deal with journaling
+//    if (Journal::_State == PlayState)
+//        Journal::mFile->read(&seed);
+//    else if (Journal::_State == RecordState)
+//        Journal::mFile->write(seed);
+
+    gRandGenDeterm.setSeed(seed);
+}
+
+ConsoleFunction(setDetermRandom2Seed, void, 1, 2, "(int seed=-1) Set the current determ random seed. If no seed is provided, then the current time in ms is used.")
+{
+    U32 seed = Platform::getRealMilliseconds();
+    if (argc == 2)
+        seed = dAtoi(argv[1]);
+
+    // TODO: Deal with journaling
+//    if (Journal::_State == PlayState)
+//        Journal::mFile->read(&seed);
+//    else if (Journal::_State == RecordState)
+//        Journal::mFile->write(seed);
+
+    gRandGenDeterm2.setSeed(seed);
+}
+
 ConsoleFunction(getRandomSeed, S32, 1, 1, "Return the current random seed.")
 {
     return gRandGen.getSeed();
@@ -551,5 +629,85 @@ ConsoleFunction(getRandom, F32, 1, 3, "(int a=1, int b=0)"
     return gRandGen.randF();
 }
 
+ConsoleFunction(getDetermRandom, F32, 1, 3, "(int a=1, int b=0)"
+                                      "Get a random number between a and b.")
+{
+    if (argc == 2)
+        return F32(gRandGenDeterm.randI(0, dAtoi(argv[1])));
+    else
+    {
+        if (argc == 3) {
+            S32 min = dAtoi(argv[1]);
+            S32 max = dAtoi(argv[2]);
+            if (min > max) {
+                S32 t = min;
+                min = max;
+                max = t;
+            }
+            return F32(gRandGenDeterm.randI(min, max));
+        }
+    }
+    return gRandGenDeterm.randF();
+}
+
+ConsoleFunction(getDetermRandom2, F32, 1, 3, "(int a=1, int b=0)"
+                                            "Get a random number between a and b.")
+{
+    if (argc == 2)
+        return F32(gRandGenDeterm2.randI(0, dAtoi(argv[1])));
+    else
+    {
+        if (argc == 3) {
+            S32 min = dAtoi(argv[1]);
+            S32 max = dAtoi(argv[2]);
+            if (min > max) {
+                S32 t = min;
+                min = max;
+                max = t;
+            }
+            return F32(gRandGenDeterm2.randI(min, max));
+        }
+    }
+    return gRandGenDeterm2.randF();
+}
+
 ConsoleFunctionGroupEnd(RandomNumbers);
 //------------------------------------------------------------------------------
+
+ConsoleFunction(unscientific, const char*, 2, 2, "(value)")
+{
+    Con::setVariable("$unscientific_hack_variable_hope_nobody_uses_this_name", "");
+
+    char buf[4096];
+    dSprintf(buf, 4096, "%s = %s;", "$unscientific_hack_variable_hope_nobody_uses_this_name", argv[1]);
+    Con::evaluate(buf);
+
+    const char* var = Con::getVariable("$unscientific_hack_variable_hope_nobody_uses_this_name");
+
+    F32 f;
+    if (var && *var && dSscanf(var, "%g", &f))
+    {
+        char* ret = Con::getReturnBuffer(256);
+
+        dSprintf(ret, 256, "%g", (F64)f);
+        char* num;
+        for (dsize_t i = dStrlen(ret) - 1; i >= 0; *num = 0)
+        {
+            num = &ret[i];
+            int c = ret[i];
+            if (c == '.')
+                break;
+            if (c != '0')
+                break;
+            i--;
+        }
+
+        S32 len = dStrlen(ret);
+        if (ret[len - 1] == '.')
+            ret[len - 1] = 0;
+
+        return ret;
+    }
+
+    return "";
+}

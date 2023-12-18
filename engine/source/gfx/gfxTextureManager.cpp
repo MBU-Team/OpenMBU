@@ -743,7 +743,16 @@ ConsoleFunction(reloadTextures, void, 1, 1, "")
     }
 }
 
+ConsoleFunction(preloadTexture, void, 2, 2, "preloadTexture(filename)")
+{
+    static Vector<GFXTexHandle*> sPreloadGuiTextureVector;
 
+    static char buffer[1024];
+    Con::expandScriptFilename(buffer, 1024, argv[1]);
+
+    GFXTexHandle* tex = new GFXTexHandle(buffer, &GFXDefaultGUIProfile);
+    sPreloadGuiTextureVector.push_back(tex);
+}
 
 
 

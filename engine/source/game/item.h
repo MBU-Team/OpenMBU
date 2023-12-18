@@ -68,7 +68,10 @@ class Item : public ShapeBase
     typedef ShapeBase Parent;
 
     enum MaskBits {
+
+#ifndef ITEM_FIX_SET_HIDDEN
         HiddenMask = Parent::NextFreeMask,
+#endif
         ThrowSrcMask = Parent::NextFreeMask << 1,
         PositionMask = Parent::NextFreeMask << 2,
         RotationMask = Parent::NextFreeMask << 3,

@@ -65,24 +65,25 @@ new MessageVector(HudMessageVector);
 $LastHudTarget = 0;
 
 //-----------------------------------------------------------------------------
-function onChatMessage(%message, %voice, %pitch)
-{
-   // XXX Client objects on the server must have voiceTag and voicePitch
-   // fields for values to be passed in for %voice and %pitch... in
-   // this example mod, they don't have those fields.
-   // Clients are not allowed to trigger general game sounds with their
-   // chat messages... a voice directory MUST be specified.
-   if (%voice $= "") {
-      %voice = "default";
-   }
-   // See if there's a sound at the end of the message, and play it.
-   if ((%wavStart = playMessageSound(%message, %voice, %pitch)) != -1) {
-      // Remove the sound marker from the end of the message.
-      %message = getSubStr(%message, 0, %wavStart);
-   }
-   // Chat goes to the chat HUD.
-   addChatLine(%message);
-}
+// let newfangled NewChatHud handle this
+//function onChatMessage(%message, %voice, %pitch)
+//{
+   //// XXX Client objects on the server must have voiceTag and voicePitch
+   //// fields for values to be passed in for %voice and %pitch... in
+   //// this example mod, they don't have those fields.
+   //// Clients are not allowed to trigger general game sounds with their
+   //// chat messages... a voice directory MUST be specified.
+   //if (%voice $= "") {
+      //%voice = "default";
+   //}
+   //// See if there's a sound at the end of the message, and play it.
+   //if ((%wavStart = playMessageSound(%message, %voice, %pitch)) != -1) {
+      //// Remove the sound marker from the end of the message.
+      //%message = getSubStr(%message, 0, %wavStart);
+   //}
+   //// Chat goes to the chat HUD.
+   //addChatLine(%message);
+//}
 function chatFade(%fade)
 {
    ChatTextForeground.setAlpha(%fade);
@@ -248,6 +249,20 @@ function addHelpLine(%message, %playBeep, %fade)
    if(%playBeep)
    {
       serverplay2d(HelpDingSfx);
+   }
+}
+function addStartMessage(%message)
+{
+   %fontSize = "<font:Arial Bold:30>";
+      
+   if (getWordCount(%message)) 
+   {
+      %text = "<just:center>" @ %fontSize @ %message;
+      HelpTextForeground.setText("<color:ebebeb>" @ %text @ "\n ");
+      cancel($HelpFadeTimer);
+      HelpTextForeground.setAlpha(1.0);
+      HelpTextForeground.setVisible(true);
+      $HelpFadeTimer = schedule(5000, 0, helpFade, 1.0);
    }
 }
 function onServerMessage(%message)

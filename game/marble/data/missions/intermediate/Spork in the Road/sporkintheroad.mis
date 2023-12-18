@@ -13,6 +13,7 @@ new SimGroup(MissionGroup) {
          desc = "Find the gems in the maze of roads!";
          type = "intermediate";
          hasEggIndex = "9";
+         guid = "{802D17DF-0168-4A17-B8A6-EF62D0ED5D7B}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

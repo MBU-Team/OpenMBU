@@ -21,3 +21,4 @@ shaderV*.hlsl
 build/
 .idea
 *.manifest
+game/marble/data/missions/custom/

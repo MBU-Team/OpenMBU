@@ -181,7 +181,13 @@ function levelPreviewGui::onWake(%this)
    //RootGui.setLS($Text::ChangeLevels);
    RootGui.setTitle($Text::LevelPreview);
    
-   GameMissionInfo.setMode(GameMissionInfo.SPMode);
+   if (GameMissionInfo.getMode() !$= GameMissionInfo.CustomMode)
+   {
+      if ($Game::SPGemHunt)
+         GameMissionInfo.setMode(GameMissionInfo.MPMode);
+      else
+         GameMissionInfo.setMode(GameMissionInfo.SPMode);
+   }
    GameMissionInfo.setDefaultMission();
    
    if ($EnableFMS)
@@ -273,7 +279,10 @@ function levelPreviewGui::onY(%this)
       return;
    }
    else
-      RootGui.setContent(levelScoresGui, "", GameMissionInfo.getCurrentMission().level, levelPreviewGui);
+   {
+      //RootGui.setContent(levelScoresGui, GameMissionInfo.getMode(), GameMissionInfo.getCurrentMission().level, levelPreviewGui);
+      RootGui.setContent(levelScoresGui, GameMissionInfo.getMode(), GameMissionInfo.getCurrentMission().guid, levelPreviewGui);
+   }
       
    return true;
 }
@@ -348,6 +357,8 @@ function levelPreviewGui::setSelected(%this)
    
    %mission = GameMissionInfo.getCurrentMission();
    
+   $Game::SPGemHunt = %mission.gameMode $= "scrum";
+   
    // if we haven't loaded stats for this level, load them and call populateLevelInfo function when load completes
 //   if (XBLiveIsSignedInSilver() && !XBLiveAreStatsLoaded(%mission.level))
 //   {
@@ -417,47 +428,70 @@ function levelPreviewGui::populateLevelInfo(%this)
             LP_egg.setVisible( true );
       }
       
+      //if (%mission.difficultySet $= "custom")
+      //{
+         //%theCachedTime = $CachedUserTime::customLevelTime[%mission.customId];
+      //} else {
+         //%theCachedTime = $CachedUserTime::levelTime[%mission.level];
+      //}
+      
+      %theCachedTime = $CachedUserScore::LevelScore[%mission.guid];
+      
+      %time = 0;
       if( XBLiveIsSignedInSilver() )
       {
          //%player = new LeaderboardEntry();
          //%player.loadThisPlayer();
          //%time = %player.getBestTime( %mission.level );
          
-         %cachedTime = $CachedUserTime::levelTime[%mission.level];
+         %cachedTime = %theCachedTime;
          
          if (XBLiveAreStatsLoaded(%mission.level))
             %time = XBLiveGetStatValue(%mission.level, "time");
             
          if( ( %time > %cachedTime && %cachedTime != 0 ) || %time == 0 )
             %time = %cachedTime;
-         
-         if( %time <= 0 )
-         {
-            %time = $Text::None;
-         }
-         else
-         {
-            %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
-            %time = %color @ formatTime( %time );
-         }
       }
       else
       {
-         if( $CachedUserTime::levelTime[%mission.level] )
+         if( %theCachedTime )
          {
-            %time = $CachedUserTime::levelTime[%mission.level];
+            %time = %theCachedTime;
              
             %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
             %time = %color @ formatTime( %time );
          }
+      }
+         
+      if( %time <= 0 )
+      {
+         %time = $Text::None;
+      }
+      else
+      {
+         if ($Game::SPGemHunt)
+         {
+            %time = %colorBetter @ %time;
+         }
          else
-            %time = $Text::None;
+         {
+            %color = (%time > %mission.time) ? %colorWorse : %colorBetter;
+            %time = %color @ formatTime( %time );
+         }
       }
       
-      %descText = "<just:right>" @ %lineSpacingHack @ $Text::BestTime
-                                  @ "\n" @ %lineSpacingHack @ $Text::ParTime;
-                                  
-      %timeText = %biggerFont @ %time @ "\n" @ %timeText;
+      if ($Game::SPGemHunt)
+      {
+         %descText = "<just:right>" @ %lineSpacingHack @ $Text::BestScore;
+         %timeText = %biggerFont @ %time;
+      }
+      else
+      {
+         %descText = "<just:right>" @ %lineSpacingHack @ $Text::BestTime
+                                     @ "\n" @ %lineSpacingHack @ $Text::ParTime;
+                                     
+         %timeText = %biggerFont @ %time @ "\n" @ %timeText;
+      }
    }
    
    levelPreviewGui.setLevelText( %mission.level, getMissionNameFromNameVar(%mission) );
@@ -499,7 +533,7 @@ function levelPreviewGui::updateXOnline( %this, %code, %user )
       LP_scores_btn.setVisible( false );
    }
 }
-addXBLACallback( levelPreviewGui, "updateXOnline", 0 ); // Login callback = 0
+//addXBLACallback( levelPreviewGui, "updateXOnline", 0 ); // Login callback = 0
 
 function levelPreviewGui::loadedScores()
 {
@@ -509,7 +543,7 @@ function levelPreviewGui::loadedScores()
    levelPreviewGui.setSelected();
    levelScoresGui.updateLeaderboard();
 }
-addXBLACallback( levelPreviewGui, "loadedScores", 3 ); // user stat load callback = 3
+//addXBLACallback( levelPreviewGui, "loadedScores", 3 ); // user stat load callback = 3
 
 //------------------------------------------------------------------------------------------------
 function startSelectedMission()

@@ -13,6 +13,7 @@ new SimGroup(MissionGroup) {
          numgems = "1";
          gameType = "MultiPlayer";
          desc = "Gets the Gemses!";
+         guid = "{241F26A1-D3FA-4583-87DB-611C21278F86}";
    };
    new Trigger(Bounds) {
       position = "-58 87 -22";

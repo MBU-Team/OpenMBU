@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          difficulty = "8";
          numgems = "1";
          goldTime = "0";
+         guid = "{3DCFC6EE-A2DE-465F-B040-6FC31D5C0B6E}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

@@ -11,6 +11,7 @@ new SimGroup(MissionGroup) {
          artist = "Tim Aste";
          type = "intermediate";
          difficulty = "7";
+         guid = "{7A7BF863-D4E5-471D-91C3-B4DD7041AA4B}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

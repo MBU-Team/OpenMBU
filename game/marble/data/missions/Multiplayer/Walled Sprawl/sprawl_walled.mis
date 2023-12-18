@@ -14,6 +14,7 @@ name  =  $Text::LevelNameMP3;
          gameType = "MultiPlayer";
          desc = "Gem Hunt!";
          maxGemsPerGroup = "7";
+         guid = "{CF18B4E3-5D01-4556-BD5B-38732CDFC297}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

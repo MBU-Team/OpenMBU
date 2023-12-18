@@ -11,6 +11,7 @@ startHelpText  =  $Text::LevelStartHelp39;
          level = "18";
 name  =  $Text::LevelName39;
          gameType = "singlePlayer";
+         guid = "{FE60AB24-C91E-4BB0-A3E2-21256BE1627E}";
    };
    new Sky(Sky) {
       position = "336 136 0";

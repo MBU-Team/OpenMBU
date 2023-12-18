@@ -21,6 +21,8 @@ bool gEnableDatablockCanvasRepaint = false;
 
 extern bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl);
 
+bool GuiCanvas::smForceMouse = false;
+
 // We formerly kept all the GUI related IMPLEMENT_CONOBJECT macros here.
 // Now they belong with their implementations. -- BJG
 
@@ -196,6 +198,19 @@ ConsoleMethod(GuiCanvas, setDefaultFirstResponder, void, 2, 2, "()")
     Canvas->setDefaultFirstResponder();
 }
 
+ConsoleMethod(GuiCanvas, getLastDeviceInst, S32, 2, 2, "()")
+{
+    // On Xbox Live this would return the device that sent the last input
+    //return object->mLastEvent.deviceInst;
+
+    return 0;
+}
+
+void GuiCanvas::consoleInit()
+{
+    Con::addVariable("$Canvas::forceMouse", TypeBool, &smForceMouse);
+}
+
 void GuiCanvas::initPersistFields()
 {
     Con::addVariable("LastInputEventTime", TypeS32, &gLastEventTime);
@@ -226,6 +241,9 @@ GuiCanvas::GuiCanvas()
     mLastMouseDownTime = 0;
     mPrevMouseTime = 0;
     defaultCursor = NULL;
+
+    mCurrentlyProcessingLeftMousePress = false;
+    mCurrentlyProcessingRightMousePress = false;
 
     mRenderFront = false;
 }
@@ -419,7 +437,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             return true;
         }
     }
-    else if (event->deviceType == MouseDeviceType && cursorON)
+    else if (event->deviceType == MouseDeviceType && (cursorON || ((mCurrentlyProcessingLeftMousePress || mCurrentlyProcessingRightMousePress) && !smForceMouse)))
     {
         //copy the modifier into the new event
         mLastEvent.modifier = event->modifier;
@@ -501,12 +519,16 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                     mLastEvent.mouseClickCount = mLastMouseClickCount;
 
                     rootMouseDown(mLastEvent);
+
+                    mCurrentlyProcessingLeftMousePress = true;
                 }
                 //else button was released
                 else
                 {
                     mNextMouseTime = 0xFFFFFFFF;
                     rootMouseUp(mLastEvent);
+
+                    mCurrentlyProcessingLeftMousePress = false;
                 }
                 return true;
             }
@@ -517,7 +539,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                     U32 curTime = Platform::getVirtualMilliseconds();
 
                     //if the last button pressed was the right...
-                    if (!mLeftMouseLast)
+                    if (!mRightMouseLast)
                     {
                         //if it was within the double click time count the clicks
                         if (curTime - mLastMouseDownTime <= 50)
@@ -527,7 +549,7 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                     }
                     else
                     {
-                        mLeftMouseLast = false;
+                        mRightMouseLast = false;
                         mLastMouseClickCount = 1;
                     }
 
@@ -535,9 +557,15 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
                     mLastEvent.mouseClickCount = mLastMouseClickCount;
 
                     rootRightMouseDown(mLastEvent);
+
+                    mCurrentlyProcessingRightMousePress = true;
                 }
                 else // it was a mouse up
+                {
                     rootRightMouseUp(mLastEvent);
+
+                    mCurrentlyProcessingRightMousePress = false;
+                }
                 return true;
             }
         }
@@ -725,13 +753,39 @@ bool FakeXboxButtonEvent(const InputEvent* event, GuiControl* ctrl)
     return false;
 }
 
+bool GuiCanvas::MapRightMouseToXbox(bool release)
+{
+    GuiControl* responder = mFirstResponder;
+    if (!responder)
+    {
+        if (objectList.size() <= 0)
+            return false;
+        responder = (GuiControl*)objectList[objectList.size() - 1];
+        if (!responder)
+            return false;
+    }
+
+    if (responder->mEventCtrl)
+        responder = (GuiControl*)responder->mEventCtrl;
+
+    if (responder)
+    {
+        if (release && responder->onGamepadButtonReleased(XI_B))
+            return true;
+        else if (!release && responder->onGamepadButtonPressed(XI_B))
+            return true;
+    }
+
+    return false;
+}
+
 void GuiCanvas::rootMouseDown(const GuiEvent& event)
 {
     mPrevMouseTime = Platform::getVirtualMilliseconds();
     mMouseButtonDown = true;
 
     //pass the event to the mouse locked control
-    if (bool(mMouseCapturedControl))
+    if (bool(mMouseCapturedControl) && mMouseCapturedControl->isCurrentUIMode())
         mMouseCapturedControl->onMouseDown(event);
 
     //else pass it to whoever is underneath the cursor
@@ -792,7 +846,7 @@ void GuiCanvas::rootMouseUp(const GuiEvent& event)
     mMouseButtonDown = false;
 
     //pass the event to the mouse locked control
-    if (bool(mMouseCapturedControl))
+    if (bool(mMouseCapturedControl) && mMouseCapturedControl->isCurrentUIMode())
         mMouseCapturedControl->onMouseUp(event);
     else
     {
@@ -800,7 +854,7 @@ void GuiCanvas::rootMouseUp(const GuiEvent& event)
 
         //Con::printf("GuiCanvas::rootMouseUp: mMouseControl = %s", mMouseControl ? mMouseControl->getName() : "NULL");
 
-        if (bool(mMouseControl))
+        if (bool(mMouseControl) && mMouseControl->isCurrentUIMode())
             mMouseControl->onMouseUp(event);
     }
 }
@@ -854,6 +908,12 @@ void GuiCanvas::rootRightMouseDown(const GuiEvent& event)
     mPrevMouseTime = Platform::getVirtualMilliseconds();
     mMouseRightButtonDown = true;
 
+    if (MapRightMouseToXbox(false))
+    {
+        // Don't return because it breaks the editor!
+        //return;
+    }
+
     if (bool(mMouseCapturedControl))
         mMouseCapturedControl->onRightMouseDown(event);
     else
@@ -871,6 +931,12 @@ void GuiCanvas::rootRightMouseUp(const GuiEvent& event)
 {
     mPrevMouseTime = Platform::getVirtualMilliseconds();
     mMouseRightButtonDown = false;
+
+    if (MapRightMouseToXbox(true))
+    {
+        // Don't return because it breaks the editor!
+        //return;
+    }
 
     if (bool(mMouseCapturedControl))
         mMouseCapturedControl->onRightMouseUp(event);

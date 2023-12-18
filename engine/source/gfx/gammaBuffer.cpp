@@ -207,12 +207,12 @@ void GammaBuffer::setAsRenderTarget()
         return;
     // Make sure we have a final display target of the same size as the view
     // we're rendering.
-//    Point2I goalResolution = getCurrentClientSceneGraph()->getDisplayTargetResolution();
-//    if(mSurface.isNull() || goalResolution != Point2I(mSurface.getWidth(), mSurface[2].getHeight()))
-//    {
-//        Con::printf("GlowBuffer (%x) - Resizing glow texture to be %dx%dpx", this, goalResolution.x, goalResolution.y);
-//        mSurface.set( goalResolution.x, goalResolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1 );
-//    }
+    Point2I goalResolution = GFX->getVideoMode().resolution;
+    if(mSurface.isNull() || goalResolution != Point2I(mSurface.getWidth(), mSurface.getHeight()))
+    {
+        Con::printf("GammaBuffer (%x) - Resizing gamma texture to be %dx%dpx", this, goalResolution.x, goalResolution.y);
+        mSurface.set( goalResolution.x, goalResolution.y, GFXFormatR8G8B8A8, &GFXDefaultRenderTargetZBufferProfile, 1 );
+    }
 
     mTarget->attachTexture(GFXTextureTarget::Color0, mSurface);
     mTarget->attachTexture(GFXTextureTarget::DepthStencil, GFXTextureTarget::sDefaultDepthStencil );

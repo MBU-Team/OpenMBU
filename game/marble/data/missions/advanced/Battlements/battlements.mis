@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          difficulty = "9";
          level = "51";
          hasEggIndex = "13";
+         guid = "{60552BB6-BDCC-4E77-971F-C55065A69887}";
    };
    new Sky(Sky) {
       position = "336 136 0";

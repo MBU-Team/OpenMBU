@@ -15,6 +15,7 @@ new SimGroup(MissionGroup) {
          gemGroupRadius = "20";
          difficulty = "4";
          goldTime = "0";
+         guid = "{D29EB181-677D-471D-B72A-D0C8092B34F9}";
    };
    new Item() {
       position = "1.00005 3.03539 -28.0079";

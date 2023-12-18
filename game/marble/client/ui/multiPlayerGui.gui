@@ -72,6 +72,9 @@ function MultiPlayerGui::onY(%this)
 {  
    sfxPlay( AudioButtonDown );
    
+   if (isPCBuild())
+      return true;   
+   
    %newModeRanked = !$Client::MatchMode;
    
    if (%newModeRanked && isPCBuild())
@@ -111,10 +114,13 @@ function MultiPlayerGui::exit(%this, %signOff)
 
 function MultiPlayerGui::updateMatchMode(%this)
 {
-   if ($Client::MatchMode)
-      RootGui.setY($Text::ModeRanked);
-   else
-      RootGui.setY($Text::ModeStandard);
+   if (!isPCBuild())
+   {
+      if ($Client::MatchMode)
+         RootGui.setY($Text::ModeRanked);
+      else
+         RootGui.setY($Text::ModeStandard);
+   }
    XBLiveSetRanked($Client::MatchMode);
 }
 
@@ -130,7 +136,8 @@ function MultiPlayerGui::show(%this)
    MultiPlayerMenu.addRow($Text::LeaderBoards, "", 0, 6);
 
    RootGui.setTitle($Text::MultiplayerMenu);
-   RootGui.setA($Text::GO);
+   if ($pref::UI::LegacyUI)
+      RootGui.setA($Text::GO);
    RootGui.setB($Text::Back);
    
    // make sure we're not in ranked mode in these cases

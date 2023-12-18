@@ -18,38 +18,39 @@ function Sign::onAdd(%this,%obj)
 // Different signs...
 //-----------------------------------------------------------------------------
 
-datablock StaticShapeData(SignPlain)
-{
-   // Mission editor category
-   category = "Signs";
-   className = "Sign";
-
-   // Basic Item properties
-   shapeFile = "~/data/shapes/signs/plainsign.dts";
-   mass = 1;
-   friction = 1;
-   elasticity = 0.3;
-};
-
-datablock StaticShapeData(SignPlainUp: SignPlain)
-{
-   skin = "up";
-};
-
-datablock StaticShapeData(SignPlainDown: SignPlain)
-{
-   skin = "down";
-};
-
-datablock StaticShapeData(SignPlainLeft: SignPlain)
-{
-   skin = "left";
-};
-
-datablock StaticShapeData(SignPlainRight: SignPlain)
-{
-   skin = "right";
-};
+// Unused
+//datablock StaticShapeData(SignPlain)
+//{
+   //// Mission editor category
+   //category = "Signs";
+   //className = "Sign";
+//
+   //// Basic Item properties
+   //shapeFile = "~/data/shapes/signs/plainsign.dts";
+   //mass = 1;
+   //friction = 1;
+   //elasticity = 0.3;
+//};
+//
+//datablock StaticShapeData(SignPlainUp: SignPlain)
+//{
+   //skin = "up";
+//};
+//
+//datablock StaticShapeData(SignPlainDown: SignPlain)
+//{
+   //skin = "down";
+//};
+//
+//datablock StaticShapeData(SignPlainLeft: SignPlain)
+//{
+   //skin = "left";
+//};
+//
+//datablock StaticShapeData(SignPlainRight: SignPlain)
+//{
+   //skin = "right";
+//};
 
 //-----------------------------------------------------------------------------
 

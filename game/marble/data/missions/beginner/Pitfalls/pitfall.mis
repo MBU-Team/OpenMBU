@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          name = $Text::LevelName21;
          gameType = "SinglePlayer";
          include = true;
+         guid = "{42A49D1B-D64A-419A-8D18-A947DF0996A4}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

@@ -12,6 +12,7 @@ new SimGroup(MissionGroup) {
          artist = "Alex Swanson";
          desc = "Follow the path and fly to the goal.";
          type = "beginner";
+         guid = "{69B70D35-6D43-45B2-98C6-FEC7A6D71CC2}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

@@ -14,6 +14,7 @@ name  =  $Text::LevelName1;
          difficulty = "1";
 startHelpText  =  $Text::LevelStartHelp1;
          hasEggIndex = "1";
+         guid = "{D7DD1833-2929-4D0F-B05F-E2BB4C410408}";
    };
    new Sky(Sky) {
       position = "336 136 0";

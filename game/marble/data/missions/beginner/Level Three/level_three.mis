@@ -13,6 +13,7 @@ name  =  $Text::LevelName3;
          gameType = "singlePlayer";
          desc = "Learn about Gems and Time Travel.";
          hasEggIndex = "2";
+         guid = "{39F047AB-B2C6-46D1-8243-6C2A5E8EBE86}";
    };
    new MissionArea(MissionArea) {
       area = "-360 -648 720 1296";

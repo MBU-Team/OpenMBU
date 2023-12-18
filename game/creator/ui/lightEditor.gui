@@ -2199,7 +2199,7 @@ function clientCmdsgGetLightDBIdCallback(%id)
 
 function sgLightDBList::onSelect(%this, %id, %text)
 {
-   if(sgLightEditor.activePanel != sgLightEditorLightEditorPanel)
+   if(sgLightEditor.activePanel !$= sgLightEditorLightEditorPanel)
    {
       error("sgLightDBList::onSelect> Error Light Editor panel not set.");
 	  return;
@@ -2216,7 +2216,7 @@ function sgLightDBList::onSelect(%this, %id, %text)
 
 function sgFilterDBList::onSelect(%this, %id, %text)
 {
-   if(sgLightEditor.activePanel != sgLightEditorCinematicFilterEditorPanel)
+   if(sgLightEditor.activePanel !$= sgLightEditorCinematicFilterEditorPanel)
    {
       error("sgFilterDBList::onSelect> Error Filter Editor panel not set.");
 	  return;

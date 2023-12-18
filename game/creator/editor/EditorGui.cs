@@ -231,6 +231,9 @@ function EditorGui::init(%this)
    EditorMenuBar.addMenuItem($sgEditorItemNames::sgMenu, $sgEditorItemNames::sgMenuItem[2], 4, "Alt F");
    EditorMenuBar.addMenuItem($sgEditorItemNames::sgMenu, $sgEditorItemNames::sgMenuItem[3], 5, "Alt L");
    
+   EditorMenuBar.addMenu("MBU", 8);
+   EditorMenuBar.addMenuItem("MBU", "Set Preview Camera", 2, "", 1);
+   
    EditorMenuBar.onActionMenuItemSelect(0, "Adjust Height");
    EditorMenuBar.onBrushMenuItemSelect(0, "Circle Brush");
    EditorMenuBar.onBrushMenuItemSelect(0, "Soft Brush");
@@ -367,6 +370,13 @@ function EditorDoLoadMission(%file)
    Editor.close();
 
    loadMission( %file, true ) ;
+   
+   if(MissionInfo.gameType $= "MultiPlayer")
+      $Game::SPGemHunt = true;
+   else
+      $Game::SPGemHunt = false;
+      
+   $Server::ServerType = "SinglePlayer";
 
    // recreate and open the editor
    Editor::create();
@@ -474,6 +484,9 @@ function EditorMenuBar::onMenuItemSelect(%this, %menuId, %menu, %itemId, %item)
 
       case $sgEditorItemNames::sgMenu:
          %this.onToggleSGTools(%itemId, %item);
+         
+      case "MBU":
+         %this.onMBUMenuItemSelect(%itemId, %item);
    }
 }
 
@@ -500,6 +513,23 @@ function EditorMenuBar::onFileMenuItemSelect(%this, %itemId, %item)
       case "Quit":
          EditorQuitMission();
    }
+}
+
+function EditorMenuBar::onMBUMenuItemSelect(%this, %itemId, %item)
+{
+   switch$(%item)
+   {
+      case "Set Preview Camera":
+         EditorSetPreviewCamera();
+   }
+}
+
+function EditorSetPreviewCamera()
+{
+	CameraObj.setTransform(LocalClientConnection.camera.getTransform());
+	EWorldEditor.isDirty = true;
+	
+	echo("Preview Camera has been moved!");
 }
 
 function EditorMenuBar::onCameraMenuItemSelect(%this, %itemId, %item)
@@ -2927,6 +2957,8 @@ function Editor::open(%this)
    // prevent the mission editor from opening while the GuiEditor is open.
    if(Canvas.getContent() == GuiEditorGui.getId())
       return;
+      
+   $Canvas::forceMouse = true;
 
    Canvas.setContent(EditorGui);
 }
@@ -2937,6 +2969,8 @@ function Editor::close(%this, %gui)
       %gui = RootGui;
    Canvas.setContent(%gui);
    MessageHud.close();
+   
+   $Canvas::forceMouse = false;
 }
 
 //------------------------------------------------------------------------------

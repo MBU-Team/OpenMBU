@@ -1,0 +1,77 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(newChatHud) {
+   canSaveDynamicFields = "1";
+   Profile = "GuiDefaultProfile";
+   HorizSizing = "right";
+   VertSizing = "bottom";
+   position = "0 0";
+   Extent = "640 480";
+   MinExtent = "8 2";
+   canSave = "1";
+   Visible = "1";
+   hovertime = "1000";
+      noCursor = 1;
+
+   new GuiMLTextCtrl(newChatTextShadow) {
+      canSaveDynamicFields = "0";
+      Profile = "ChatTextShadowProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "351 176";
+      extent = "270 0";
+      canSave = "1";
+      Visible = "1";
+      hovertime = "1000";
+      lineSpacing = "0";
+      allowColorChars = "1";
+      maxChars = "-1";
+      text = "";
+      shadow = 0;
+   };
+   new GuiMLTextCtrl(newChatText) {
+      canSaveDynamicFields = "0";
+      Profile = "ChatTextProfile";
+      horizSizing = "left";
+      vertSizing = "bottom";
+      position = "350 175";
+      extent = "270 0";
+      canSave = "1";
+      Visible = "1";
+      hovertime = "1000";
+      lineSpacing = "0";
+      allowColorChars = "1";
+      maxChars = "-1";
+      text = "";
+      shadow = 0;
+   };
+   new GuiTextCtrl(chatWhosTalkingText) {
+      canSaveDynamicFields = "0";
+      Profile = "WhoTalkProfile";
+      HorizSizing = "width";
+      VertSizing = "bottom";
+      position = "-1 40";
+      Extent = "300 18";
+      MinExtent = "8 2";
+      canSave = "1";
+      Visible = "1";
+      hovertime = "1000";
+      maxLength = "255";
+      shadow = 1;
+   };
+   new GuiTextCtrl(chatScrollDownIndicator) {
+      canSaveDynamicFields = "0";
+      Profile = "GuiDefaultProfile";
+      HorizSizing = "right";
+      VertSizing = "bottom";
+      position = "4 196";
+      Extent = "27 18";
+      MinExtent = "8 2";
+      canSave = "1";
+      Visible = "0";
+      hovertime = "1000";
+      text = "VVV";
+      maxLength = "255";
+      shadow = 1;
+   };
+};
+//--- OBJECT WRITE END ---

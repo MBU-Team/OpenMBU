@@ -7,10 +7,10 @@
 
 // List of master servers to query, each one is tried in order
 // until one responds
-$Pref::Server::RegionMask = 2;
-$pref::Master[0] = "2:master.garagegames.com:28002";
+$Server::RegionMask = 2;
+$Server::Master[0] = "2:master.openmbu.com:28002"; //"2:master.garagegames.com:28002";
 
-$Pref::Server::DisplayOnMaster = "Never"; // Xbox should not use GG master server
+$Server::DisplayOnMaster = "Always"; //"Never"; // Xbox should not use GG master server
 // Information about the server
 $Pref::Server::missionId = 0;
 $Pref::Server::Name = "MB2 Test Server";

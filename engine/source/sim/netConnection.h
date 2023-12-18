@@ -603,6 +603,9 @@ public:
         AwaitingConnectRequest,    ///< We've received a challenge request and sent a challenge response.
         AwaitingConnectResponse,   ///< We've received a challenge response and sent a connect request.
         Connected,                 ///< We've accepted a connect request, or we've received a connect response accept.
+#ifdef TORQUE_NET_HOLEPUNCHING
+        SendingPunchPackets,
+#endif // TORQUE_NET_HOLEPUNCHING
     };
 
     U32 mConnectionSendCount;  ///< number of connection messages we've sent.

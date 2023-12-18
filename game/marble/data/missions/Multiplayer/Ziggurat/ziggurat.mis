@@ -14,6 +14,7 @@ new SimGroup(MissionGroup) {
          desc = "Gets the Gemses!";
          numgems = "1";
          include = "1";
+         guid = "{96E7EB66-B551-4E8F-809C-A83780065C05}";
    };
    new SpawnSphere() {
       position = "38.0881 -29.0699 -5.81805";
