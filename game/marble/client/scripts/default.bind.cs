@@ -248,6 +248,7 @@ function gamepadYaw(%val)
    // sure we don't slam the move if we don't think the user is using the gamepad
    if (!$mvDeviceIsKeyboardMouse)
    {
+      $mvAutoCenterCamera = $pref::Input::AutoCenterCamera;
       %scale = (ServerConnection.gameState $= "wait") ? -0.1 : 3.14;
       $mvYawRightSpeed = -(%scale * %val);
    }
@@ -267,6 +268,7 @@ function gamepadPitch(%val)
    // sure we don't slam the move if we don't think the user is using the gamepad
    if (!$mvDeviceIsKeyboardMouse)
    {
+      $mvAutoCenterCamera = $pref::Input::AutoCenterCamera;
       %scale = (ServerConnection.gameState $= "wait") ? -0.05 : 3.14;
       $mvPitchUpSpeed = %scale * %val;
    }
@@ -278,6 +280,7 @@ function mouseYaw(%val)
       %val *= -1.0;
       
    $mvDeviceIsKeyboardMouse = true;
+   $mvAutoCenterCamera = false;
 
    $mvYaw += getMouseAdjustAmount(%val);
 }
@@ -288,6 +291,7 @@ function mousePitch(%val)
       %val *= -1.0;
       
    $mvDeviceIsKeyboardMouse = true;
+   $mvAutoCenterCamera = false;
       
    $mvPitch += getMouseAdjustAmount(%val);
 }

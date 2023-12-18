@@ -40,6 +40,7 @@ function inputAndSoundOptionsGui::show(%this, %backGui)
    inputAndSoundOptionsList.addRow($Text::FXVol, GetOptionListRangeText(0, 100, 5), 8); // "FX"
    inputAndSoundOptionsList.addRow($Text::MouseSensitivity, GetOptionListRangeText(10, 100, 5), 8); // mouse sensitivity
    inputAndSoundOptionsList.addRow($Text::ModAnalogRange, $Text::ModAnalogRangeOnOff, 8); // mod analog range
+   inputAndSoundOptionsList.addRow($Text::CenterCam, $Text::OptionOffOn, 8); // auto center camera
 
    inputAndSoundOptionsList.setOptionIndex(0, $pref::invertYCamera);
    inputAndSoundOptionsList.setOptionIndex(1, $pref::invertXCamera);
@@ -47,6 +48,7 @@ function inputAndSoundOptionsGui::show(%this, %backGui)
    inputAndSoundOptionsList.setOptionIndex(3, ($pref::Option::FXVolume) / 5 );
    inputAndSoundOptionsList.setOptionIndex(4, (($pref::Input::MouseSensitivity * 10000) / 5) - 2);
    inputAndSoundOptionsList.setOptionIndex(5, $pref::Input::ModAnalogRange);
+   inputAndSoundOptionsList.setOptionIndex(6, $pref::Input::AutoCenterCamera);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( $Text::About1Title );
@@ -89,6 +91,11 @@ function inputAndSoundOptionsList::onOptionChange(%this, %increase)
          if (%val != 0 && %val != 1)
             %val = 0;
          $pref::Input::ModAnalogRange = %val;
+      case 6:
+         // auto center camera
+         if (%val != 0 && %val != 1)
+            %val = 0;
+         $pref::Input::AutoCenterCamera = %val;
    }  
 }
 

@@ -96,9 +96,19 @@ public:
     ColorI mBevelColorLL;                          ///< Used for the low-light part of the bevel
 
     // font members
-    StringTableEntry  mFontType;                    ///< Font face name for the control
-    S32               mFontSize;                    ///< Font size for the control
-    enum {
+    struct FontData
+    {
+        StringTableEntry mFontType;                    ///< Font face name for the control
+        S32 mFontSize;                    ///< Font size for the control
+        U32 mFontCharset;                              ///< Font character set
+
+        Resource<GFont> mFont;                        ///< Font resource
+    };
+
+    FontData mFonts[2];                             ///< Array of fonts used for the control
+
+    enum
+    {
         BaseColor = 0,
         ColorHL,
         ColorNA,
@@ -110,14 +120,11 @@ public:
         ColorUser4,
         ColorUser5,
     };
-    ColorI  mFontColors[10];                        ///< Array of font colors used for drawText with escape characters for changing color mid-string
-    ColorI& mFontColor;                             ///< Main font color
-    ColorI& mFontColorHL;                           ///< Highlited font color
-    ColorI& mFontColorNA;                           ///< Font color when object is not active/disabled
-    ColorI& mFontColorSEL;                          ///< Font color when object/text is selected
-    U32  mFontCharset;                              ///< Font character set
-
-    Resource<GFont>   mFont;                        ///< Font resource
+    ColorI mFontColors[10];                        ///< Array of font colors used for drawText with escape characters for changing color mid-string
+    ColorI &mFontColor;                             ///< Main font color
+    ColorI &mFontColorHL;                           ///< Highlited font color
+    ColorI &mFontColorNA;                           ///< Font color when object is not active/disabled
+    ColorI &mFontColorSEL;                          ///< Font color when object/text is selected
 
     enum AlignmentType
     {

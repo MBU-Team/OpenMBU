@@ -36,11 +36,11 @@ endif()
 
 if(WIN32)
     # warning C4800: 'XXX' : forcing value to bool 'true' or 'false' (performance warning)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4800")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800")
     # warning C4018: '<' : signed/unsigned mismatch
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4018")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4018")
     # warning C4244: 'initializing' : conversion from 'XXX' to 'XXX', possible loss of data
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd4244")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
 
     if( TORQUE_CPU_X64 )
         link_directories("${libDir}/directx9/Lib/x64")
@@ -261,6 +261,29 @@ addLib(zlib)
 addLib(lungif)
 addLib(libqslim)
 
+# curl
+set(BUILD_CURL_EXE OFF CACHE INTERNAL "" FORCE)
+set(CURL_CA_PATH "none" CACHE INTERNAL "" FORCE)
+set(BUILD_TESTING OFF CACHE INTERNAL "" FORCE)
+set(CMAKE_USE_LIBSSH2 OFF CACHE INTERNAL "" FORCE)
+set(CURL_STATICLIB ON CACHE INTERNAL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
+set(ENABLE_MANUAL OFF CACHE INTERNAL "" FORCE)
+set(ENABLE_UNIX_SOCKETS OFF CACHE INTERNAL "" FORCE)
+set(HTTP_ONLY ON CACHE INTERNAL "" FORCE)
+set(PICKY_COMPILER ON CACHE INTERNAL "" FORCE)
+if(WIN32)
+    set(CURL_USE_SCHANNEL ON CACHE INTERNAL "" FORCE)
+    set(CURL_STATIC_CRT ${TORQUE_STATIC} CACHE INTERNAL "" FORCE)
+    set(ENABLE_INET_PTON ON CACHE INTERNAL "" FORCE)
+elseif(APPLE)
+    set(CURL_USE_OPENSSL OFF CACHE INTERNAL "" FORCE)
+    set(CURL_USE_SECTRANSP ON CACHE INTERNAL "" FORCE)
+endif()
+add_subdirectory( ${libDir}/curl ${CMAKE_CURRENT_BINARY_DIR}/curl)
+
+addInclude("${libDir}/curl/include")
+addLib(libcurl)
 
 
 if(WIN32)

@@ -16,6 +16,7 @@
 #include "game/gameConnectionEvents.h"
 
 bool MoveManager::mDeviceIsKeyboardMouse = false;
+bool MoveManager::mAutoCenterCamera = false;
 F32 MoveManager::mForwardAction = 0;
 F32 MoveManager::mBackwardAction = 0;
 F32 MoveManager::mUpAction = 0;
@@ -68,6 +69,7 @@ void MoveManager::init()
 
     Con::addVariable("mvFreeLook", TypeBool, &mFreeLook);
     Con::addVariable("mvDeviceIsKeyboardMouse", TypeBool, &mDeviceIsKeyboardMouse);
+    Con::addVariable("mvAutoCenterCamera", TypeBool, &mAutoCenterCamera);
     Con::addVariable("mvPitch", TypeF32, &mPitch);
     Con::addVariable("mvYaw", TypeF32, &mYaw);
     Con::addVariable("mvRoll", TypeF32, &mRoll);
@@ -168,7 +170,8 @@ void Move::pack(BitStream* stream, const Move* baseMove)
 
     if (pyaw != pBaseMove->pyaw || ppitch != pBaseMove->ppitch || proll != pBaseMove->proll ||
         px != pBaseMove->px || py != pBaseMove->py || pz != pBaseMove->pz ||
-        deviceIsKeyboardMouse != pBaseMove->deviceIsKeyboardMouse || freeLook != pBaseMove->freeLook || 
+        deviceIsKeyboardMouse != pBaseMove->deviceIsKeyboardMouse || autoCenterCamera != pBaseMove->autoCenterCamera ||
+        freeLook != pBaseMove->freeLook ||
         triggerDifferent)
     {
         somethingDifferent = true;
@@ -192,6 +195,7 @@ void Move::pack(BitStream* stream, const Move* baseMove)
 
         stream->writeFlag(freeLook);
         stream->writeFlag(deviceIsKeyboardMouse);
+        stream->writeFlag(autoCenterCamera);
 
         if (stream->writeFlag(triggerDifferent))
         {
@@ -240,6 +244,7 @@ void Move::unpack(BitStream* stream, const Move* baseMove)
 
         freeLook = stream->readFlag();
         deviceIsKeyboardMouse = stream->readFlag();
+        autoCenterCamera = stream->readFlag();
 
         bool triggersDiffer = stream->readFlag();
         for (U32 i = 0; i < MaxTriggerKeys; i++)
@@ -281,6 +286,7 @@ bool GameConnection::getNextMove(Move& curMove)
 
     curMove.freeLook = MoveManager::mFreeLook;
     curMove.deviceIsKeyboardMouse = MoveManager::mDeviceIsKeyboardMouse;
+    curMove.autoCenterCamera = MoveManager::mAutoCenterCamera;
 
     for (U32 i = 0; i < MaxTriggerKeys; i++)
     {

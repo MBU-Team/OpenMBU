@@ -553,9 +553,9 @@ void GuiTreeViewCtrl::buildItem(Item* item, U32 tabLevel, bool bForceFullUpdate)
     item->mTabLevel = tabLevel;
     mVisibleItems.push_back(item);
 
-    if (bool(mProfile->mFont))
+    if (bool(mProfile->mFonts[0].mFont))
     {
-        S32 width = (tabLevel + 1) * mTabSize + item->getDisplayTextWidth(mProfile->mFont);
+        S32 width = (tabLevel + 1) * mTabSize + item->getDisplayTextWidth(mProfile->mFonts[0].mFont);
         if (mProfile->mBitmapArrayRects.size() > 0)
             width += mProfile->mBitmapArrayRects[0].extent.x;
 
@@ -1164,7 +1164,7 @@ bool GuiTreeViewCtrl::hitTest(const Point2I& pnt, Item*& item, BitSet32& flags)
     char* buf = (char*)txtAlloc.alloc(bufLen);
     item->getDisplayText(bufLen, buf);
 
-    min += mProfile->mFont->getStrWidth(buf);
+    min += mProfile->mFonts[0].mFont->getStrWidth(buf);
     if (pos.x < min)
         flags.set(OnText);
 
@@ -3030,7 +3030,7 @@ void GuiTreeViewCtrl::onRenderCell(Point2I offset, Point2I cell, bool, bool)
     item->getDisplayText(bufLen, displayText);
 
     // Draw the rollover/selected bitmap, if one was specified.
-    drawRect.extent.x = mProfile->mFont->getStrWidth(displayText) + (2 * mTextOffset);
+    drawRect.extent.x = mProfile->mFonts[0].mFont->getStrWidth(displayText) + (2 * mTextOffset);
     if (item->mState.test(Item::Selected) && mTexSelected)
         GFX->drawBitmapStretch(mTexSelected, drawRect);
     else if (item->mState.test(Item::MouseOverText) && mTexRollover)
@@ -3076,7 +3076,7 @@ void GuiTreeViewCtrl::onRenderCell(Point2I offset, Point2I cell, bool, bool)
     GFX->setBitmapModulation(fontColor);
 
     // Center the text horizontally.
-    S32 height = (mItemHeight - mProfile->mFont->getHeight()) / 2;
+    S32 height = (mItemHeight - mProfile->mFonts[0].mFont->getHeight()) / 2;
 
     if (height > 0)
         drawRect.point.y += height;
@@ -3084,7 +3084,7 @@ void GuiTreeViewCtrl::onRenderCell(Point2I offset, Point2I cell, bool, bool)
     // JDD - offset by two pixels or so to keep the text from rendering RIGHT ONTOP of the outline
     drawRect.point.x += 2;
 
-    GFX->drawText(mProfile->mFont, drawRect.point, displayText, mProfile->mFontColors);
+    GFX->drawText(mProfile->mFonts[0].mFont, drawRect.point, displayText, mProfile->mFontColors);
 
 }
 

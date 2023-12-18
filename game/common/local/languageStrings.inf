@@ -10,6 +10,7 @@ $Text::LangFrench = "Français";
 $Text::LangGerman = "Deutsch";
 $Text::LangItalian = "Italiano";
 $Text::LangSpanish = "Español";
+$Text::LangPolish = "Polski";
 $Text::LangPortuguese = "Português";
 $Text::LangChinese = "中國人";
 $Text::LangJapanese = "日本語";

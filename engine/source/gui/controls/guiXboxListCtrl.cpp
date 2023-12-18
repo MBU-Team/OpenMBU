@@ -233,8 +233,8 @@ void GuiXboxListCtrl::onRender(Point2I offset, const RectI& updateRect)
         bitmapHeight = mProfile->mBitmapArrayRects[0].extent.y;
 
     GFont* font;
-    if (mProfile->mFont)
-        font = mProfile->mFont;
+    if (mProfile->mFonts[0].mFont)
+        font = mProfile->mFonts[0].mFont;
     else
         font = NULL;
 

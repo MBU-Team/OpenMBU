@@ -458,6 +458,8 @@ $Text::LocCredits = "<spush><font:Arial Bold:30>Localization<spop>\n\n<spush><fo
 ;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
 ;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
 
+$Text::AchievementUnlocked = "Succès dévérouillé";
+
 $Text::AchievementName01 = "Bille chrono";
 $Text::AchievementName02 = "Badge d'apprenti";
 $Text::AchievementName03 = "Badge de compagnon";
@@ -470,6 +472,9 @@ $Text::AchievementName09 = "Panier à surprises";
 $Text::AchievementName10 = "Première place";
 $Text::AchievementName11 = "Collectionneur de cristaux";
 $Text::AchievementName12 = "Vétéran";
+$Text::AchievementName13 = "Chasse aux gemmes bleues";
+$Text::AchievementName14 = "Pack de cartes Dominateur";
+$Text::AchievementName15 = "Maître des Flèches";
 
 $Text::AchievementDescription01 = "Terminez n'importe quel niveau avant le temps limite.";
 $Text::AchievementDescription02 = "Terminez tous les niveaux Débutant.";
@@ -483,6 +488,9 @@ $Text::AchievementDescription09 = "Trouvez les vingt surprises cachées.";
 $Text::AchievementDescription10 = "Obtenez la première place dans une partie Multijoueur.";
 $Text::AchievementDescription11 = "Obtenez 75 points dans une partie Multijoueur.";
 $Text::AchievementDescription12 = "Obtenez un total de 2 000 points en Multijoueur.";
+$Text::AchievementDescription13 = "Collectionnez une gemme bleue dans un Marble It Up! Match multijoueur.";
+$Text::AchievementDescription14 = "Obtenez 40 gemmes dans n'importe quel 3 de Playground, Bowl, Concentric, Vortex Effect, Blast Club (Marble Fu pack).";
+$Text::AchievementDescription15 = "Collectez 50 gemmes dans Spires (pack Agoraphobie).";
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings

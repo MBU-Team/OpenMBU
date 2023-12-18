@@ -442,7 +442,7 @@ void GuiMenuBar::onPreRender()
         {
             if (!walk->visible)
                 continue;
-            walk->bounds.set(curX, 1, mProfile->mFont->getStrWidth((const UTF8*)walk->text) + 12, mBounds.extent.y - 2);
+            walk->bounds.set(curX, 1, mProfile->mFonts[0].mFont->getStrWidth((const UTF8*)walk->text) + 12, mBounds.extent.y - 2);
             curX += walk->bounds.extent.x;
         }
         mouseOverMenu = NULL;
@@ -524,7 +524,7 @@ void GuiMenuBar::onRender(Point2I offset, const RectI& updateRect)
         Point2I start;
 
         start.x = walk->bounds.point.x + 6;
-        start.y = walk->bounds.point.y + (walk->bounds.extent.y - (mProfile->mFont->getHeight() - 2)) / 2;
+        start.y = walk->bounds.point.y + (walk->bounds.extent.y - (mProfile->mFonts[0].mFont->getHeight() - 2)) / 2;
 
         if (walk == mouseDownMenu)
             renderSlightlyLoweredBox(bounds, mProfile);
@@ -533,7 +533,7 @@ void GuiMenuBar::onRender(Point2I offset, const RectI& updateRect)
 
         GFX->setBitmapModulation(fontColor);
 
-        GFX->drawText(mProfile->mFont, start + offset, walk->text, mProfile->mFontColors);
+        GFX->drawText(mProfile->mFonts[0].mFont, start + offset, walk->text, mProfile->mFontColors);
     }
 }
 
@@ -786,7 +786,7 @@ void GuiMenuBar::onAction()
     S32 textWidth = 0, width = 0;
     S32 acceleratorWidth = 0;
 
-    GFont* font = mProfile->mFont;
+    GFont* font = mProfile->mFonts[0].mFont;
 
     for (MenuItem* walk = mouseDownMenu->firstMenuItem; walk; walk = walk->nextMenuItem)
     {

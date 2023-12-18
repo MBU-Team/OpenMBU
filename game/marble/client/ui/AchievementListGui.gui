@@ -127,18 +127,21 @@ function AchievementListGui::show(%this, %backgui)
    
    AchievementList.clear();
    
-   AchievementList.addRow(0, %ach[1] TAB "Timely Marble" TAB "5G");
-   AchievementList.addRow(1, %ach[2] TAB "Apprentice's Badge" TAB "10G");
-   AchievementList.addRow(2, %ach[3] TAB "Journeyman's Badge" TAB "15G");
-   AchievementList.addRow(3, %ach[4] TAB "Adept's Badge" TAB "25G");
-   AchievementList.addRow(4, %ach[5] TAB "Marble-fu Initiate" TAB "15G");
-   AchievementList.addRow(5, %ach[6] TAB "Marble-fu Master" TAB "25G");
-   AchievementList.addRow(6, %ach[7] TAB "Marble-fu Transcendent" TAB "35G");
-   AchievementList.addRow(7, %ach[8] TAB "Egg Seeker" TAB "5G");
-   AchievementList.addRow(8, %ach[9] TAB "Egg Basket" TAB "25G");
-   AchievementList.addRow(9, %ach[10] TAB "First Place" TAB "10G");
-   AchievementList.addRow(10, %ach[11] TAB "Gem Collector" TAB "10G");
-   AchievementList.addRow(11, %ach[12] TAB "Veteran Battler" TAB "20G");
+   AchievementList.addRow(0, %ach[1] TAB $Text::AchievementName01 TAB "5G");
+   AchievementList.addRow(1, %ach[2] TAB $Text::AchievementName02 TAB "10G");
+   AchievementList.addRow(2, %ach[3] TAB $Text::AchievementName03 TAB "15G");
+   AchievementList.addRow(3, %ach[4] TAB $Text::AchievementName04 TAB "25G");
+   AchievementList.addRow(4, %ach[5] TAB $Text::AchievementName05 TAB "15G");
+   AchievementList.addRow(5, %ach[6] TAB $Text::AchievementName06 TAB "25G");
+   AchievementList.addRow(6, %ach[7] TAB $Text::AchievementName07 TAB "35G");
+   AchievementList.addRow(7, %ach[8] TAB $Text::AchievementName08 TAB "5G");
+   AchievementList.addRow(8, %ach[9] TAB $Text::AchievementName09 TAB "25G");
+   AchievementList.addRow(9, %ach[10] TAB $Text::AchievementName10 TAB "10G");
+   AchievementList.addRow(10, %ach[11] TAB $Text::AchievementName11 TAB "10G");
+   AchievementList.addRow(11, %ach[12] TAB $Text::AchievementName12 TAB "20G");
+   AchievementList.addRow(12, %ach[13] TAB $Text::AchievementName13 TAB "10G");
+   AchievementList.addRow(13, %ach[14] TAB $Text::AchievementName14 TAB "20G");
+   AchievementList.addRow(14, %ach[15] TAB $Text::AchievementName15 TAB "20G");
    
    // creates an empty popup dialog?
    RootGui.setA("Details");
@@ -162,20 +165,21 @@ function AchievementListGui::onA(%this)
       %desc = "Select an achievement from the list.";
       switch$ (%id)
       {
-         case 0: %desc = "Finish any level under par time.";
-         case 1: %desc = "Complete all Beginner levels.";
-         case 2: %desc = "Complete all Intermediate levels.";
-         case 3: %desc = "Complete all Advanced levels.";
-         case 4: %desc = "Finish all Beginner levels under par time.";
-         case 5: %desc = "Finish all Intermediate levels under par time.";
-         case 6: %desc = "Finish all Advanced levels under par time.";
-         case 7: %desc = "Find any hidden easter egg.";
-         case 8: %desc = "Find all twenty easter eggs.";
-         case 9: %desc = "Get first place in a multiplayer match.";
-         case 10: %desc = "Get 75 points in a multiplayer match.";
-         case 11: %desc = "Collect 2,000 total points in multiplayer.";
-         case 12: %desc = "Complete all Bonus levels.";
-         case 13: %desc = "Finish all Bonus levels under par time.";
+         case 0: %desc = $Text::AchievementDescription01;
+         case 1: %desc = $Text::AchievementDescription02;
+         case 2: %desc = $Text::AchievementDescription03;
+         case 3: %desc = $Text::AchievementDescription04;
+         case 4: %desc = $Text::AchievementDescription05;
+         case 5: %desc = $Text::AchievementDescription06;
+         case 6: %desc = $Text::AchievementDescription07;
+         case 7: %desc = $Text::AchievementDescription08;
+         case 8: %desc = $Text::AchievementDescription09;
+         case 9: %desc = $Text::AchievementDescription10;
+         case 10: %desc = $Text::AchievementDescription11;
+         case 11: %desc = $Text::AchievementDescription12;
+         case 12: %desc = $Text::AchievementDescription13;
+         case 13: %desc = $Text::AchievementDescription14;
+         case 14: %desc = $Text::AchievementDescription15;
       }
       %name = getField(AchievementList.getRowTextById(%id), 1);
       //LobbyPopupDlg.show(%name,%id,true,false,false,true);

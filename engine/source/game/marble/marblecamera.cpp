@@ -170,25 +170,32 @@ void Marble::processCameraMove(const Move* move)
         else
         {
             float rescaledY = rescaleDeadZone(value.y, 0.69999999);
-            if (rescaledY <= 0.0)
-                rescaledY = 0.4 - rescaledY * -0.75;
-            else
-                rescaledY = rescaledY * 1.1 + 0.4;
-            float movePitchDelta = (rescaledY - this->mMouseY);
-            float movePitchSpeed = computePitchSpeedFromDelta(fabsf(movePitchDelta)) * 0.03200000151991844 * 0.8;
-            if (movePitchDelta <= 0.0)
+            if (move->autoCenterCamera)
             {
-                movePitchDelta = -movePitchDelta;
-                if (movePitchDelta < movePitchSpeed)
+                if (rescaledY <= 0.0)
+                    rescaledY = 0.4 - rescaledY * -0.75;
+                else
+                    rescaledY = rescaledY * 1.1 + 0.4;
+                float movePitchDelta = (rescaledY - this->mMouseY);
+                float movePitchSpeed = computePitchSpeedFromDelta(fabsf(movePitchDelta)) * 0.03200000151991844 * 0.8;
+                if (movePitchDelta <= 0.0)
+                {
+                    movePitchDelta = -movePitchDelta;
+                    if (movePitchDelta < movePitchSpeed)
+                        movePitchSpeed = movePitchDelta;
+                    movePitchDelta = -movePitchSpeed;
                     movePitchSpeed = movePitchDelta;
-                movePitchDelta = -movePitchSpeed;
-                movePitchSpeed = movePitchDelta;
+                } else if (movePitchSpeed > movePitchDelta)
+                {
+                    movePitchSpeed = movePitchDelta;
+                }
+                this->mMouseY += movePitchSpeed;
             }
-            else if (movePitchSpeed > movePitchDelta)
+            else
             {
-                movePitchSpeed = movePitchDelta;
+                F32 sensitivity = 1.5f;
+                this->mMouseY += rescaledY * TickSec * sensitivity;
             }
-            this->mMouseY += movePitchSpeed;
         }
     }
     else 

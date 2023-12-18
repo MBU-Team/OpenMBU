@@ -1,0 +1,41 @@
+﻿[Strings]
+$Text::NewContent = "Pobierz nową zawartość!";
+;-------------------------------------------------------------------------------
+; PDLC and Unlock Stuff
+;-------------------------------------------------------------------------------
+$Text::PDLCFreeThanks = "Ciesz się darmową mapą Marble Blast Ultra!";
+$Text::PDLCThanksPack1 = "Dziękujemy za odblokowanie dodatku Marble Fu!";
+$Text::PDLCThanksPack2 = "Dziękujemy za odblokowanie dodatku Agorafobia!";
+$Text::PDLCThanksPackBoth = "Dziękujemy za odblokowanie dodatków Marble Fu i Agorafobia!";
+$Text::UnlockFreeMap = "Odblokuj darmową mapę";    // Displayed on main menu
+$Text::UnlockMapPack = "Odblokuj pakiet map";    // ""
+$Text::CorruptPDLC = "Nie można odczytać %1.  Może być uszkodzony.  Spróbuj pobrać go ponownie."; // Displayed if PDLC corrupt; %1 replaced with XCONTENT_DATA.szDisplayName
+$Text::DownloadContent = "Zawartość do pobrania";
+$Text::UnlockPDLC0 = "Odblokuj Kulkuj w Górę!!";              // Displayed on mission selection
+$Text::UnlockPDLC1 = "Odblokuj dodatek Marble Fu";   // ""
+$Text::UnlockPDLC2 = "Odblokuj dodatek Agorafobia"; // ""
+$Text::PDLCUpsell00 = "Odblokuj ten pakiet map do gry wieloosobowej Marble Blast już teraz i...\n\n";           // PDLC Upsell Screen 
+$Text::PDLCUpsell01 = "Zdobądź 5 nowych poziomów dla wielu graczy, które możesz hostować i ćwiczyć!\n\n";       // ""
+$Text::PDLCUpsell02 = "Spróbuj zdobyć nowe osiągnięcie (warte 20 punktów gamerscore)!\n\n";    // ""
+$Text::PDLCUpsell03 = "\n\n";                                                                   // ""
+$Text::PDLCUpsell04 = "\n\n";                                                                   // ""
+$Text::GGCredits = "<spush><font:Arial Bold:%1>GarageGames Team<spop>\n\n<spush><font:Arial Bold:%2>Development<spop>\nTim Aste\nJane Chase\nTimothy Clarke\nAdam deGrandis\nClark Fagot\nMatt Fairfax\nMark Frohnmayer\nBen Garney\nTim Gift\nDavey Jackson\nJustin Kovac\nJoe Maruschak\nMark McCoy\nJay Moore\nRick Overman\nJohn Quigley\nBrian Ramage\nKevin Ryan\nLiam Ryan\nAlex Swanson\nJeff Tunnell\nPat Wilson\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nCafe Aroma\nCafe Yumm!\nMezza Luna Pizzeria\nPizza Research Institute\nThe GarageGames Community";
+$Text::AchievementName13 = "Polowanie na niebieski klejnot";
+$Text::AchievementName14 = "Zestaw map Dominator";
+$Text::AchievementName15 = "Mistrz Iglic";
+$Text::AchievementDescription13 = "Zbierz niebieski klejnot w rozgrywce wieloosobowej na mapie Kulkuj w Górę!";
+$Text::AchievementDescription14 = "Zdobądź 40 klejnotów w 3 dowolnych poziomach: Plac Zabaw, Miska, Koncentryczny, Efekt Wiru, Klub Wybuchów (pakiet Marble Fu).";
+$Text::AchievementDescription15 = "Zbierz 50 klejnotów w na mapie Iglica (pakiet Agorafobia).";
+;-------------------------------------------------------------------------------                            
+; Singleplayer Game Strings                                                                                 
+$Text::LevelNameMP11 = "Kulkuj w Górę! (Add-on)";	// Add-on levels
+$Text::LevelNameMP12 = "Plac Zabaw (Add-on)";		// ""
+$Text::LevelNameMP13 = "Miska (Add-on)";			// "" 
+$Text::LevelNameMP14 = "Koncentryczny (Add-on)";        	// "" 
+$Text::LevelNameMP15 = "Efekt Wiru (Add-on)";     	// "" 
+$Text::LevelNameMP16 = "Klub Wybuchów (Add-on)";        	// "" 
+$Text::LevelNameMP17 = "Jądro (Add-on)";              	// "" 
+$Text::LevelNameMP18 = "Triumwirat (Add-on)";       	// "" 
+$Text::LevelNameMP19 = "Zyggurat (Add-on)";          	// "" 
+$Text::LevelNameMP20 = "Cypel (Add-on)";        	// "" 
+$Text::LevelNameMP21 = "Iglica (Add-on)";            	// "" 

@@ -176,7 +176,7 @@ void GuiMessageVectorCtrl::lineInserted(const U32 arg)
         numLines += mLineWrappings[i].numLines;
     }
 
-    U32 newHeight = (mProfile->mFont->getHeight() + mLineSpacingPixels) * getMax(numLines, U32(1));
+    U32 newHeight = (mProfile->mFonts[0].mFont->getHeight() + mLineSpacingPixels) * getMax(numLines, U32(1));
     resize(mBounds.point, Point2I(mBounds.extent.x, newHeight));
     if (fullyScrolled)
         pScroll->scrollTo(0, 0x7FFFFFFF);
@@ -222,7 +222,7 @@ void GuiMessageVectorCtrl::lineDeleted(const U32 arg)
         numLines += mLineWrappings[i].numLines;
     }
 
-    U32 newHeight = (mProfile->mFont->getHeight() + mLineSpacingPixels) * getMax(numLines, U32(1));
+    U32 newHeight = (mProfile->mFonts[0].mFont->getHeight() + mLineSpacingPixels) * getMax(numLines, U32(1));
     resize(mBounds.point, Point2I(mBounds.extent.x, newHeight));
 }
 
@@ -233,7 +233,7 @@ void GuiMessageVectorCtrl::vectorDeleted()
     AssertFatal(mLineWrappings.size() == 0, "Error, line wrappings not properly cleared out!");
 
     mMessageVector = NULL;
-    U32 newHeight = mProfile->mFont->getHeight() + mLineSpacingPixels;
+    U32 newHeight = mProfile->mFonts[0].mFont->getHeight() + mLineSpacingPixels;
     resize(mBounds.point, Point2I(mBounds.extent.x, newHeight));
 }
 
@@ -374,13 +374,13 @@ void GuiMessageVectorCtrl::createLineWrapping(LineWrapping& rWrapping, const cha
         }
 
         // Ok, there's some actual text in this line.  How long is it?
-        U32 baseLength = mProfile->mFont->getStrNWidthPrecise((const UTF8*)&string[rLine.start], rLine.end - rLine.start + 1);
+        U32 baseLength = mProfile->mFonts[0].mFont->getStrNWidthPrecise((const UTF8*)&string[rLine.start], rLine.end - rLine.start + 1);
         if (baseLength > splitWidth) {
             // DMMNOTE: Replace with bin search eventually
             U32 currPos;
             U32 breakPos;
             for (currPos = 0; currPos < rLine.end - rLine.start + 1; currPos++) {
-                U32 currLength = mProfile->mFont->getStrNWidthPrecise((const UTF8*)&string[rLine.start], currPos + 1);
+                U32 currLength = mProfile->mFonts[0].mFont->getStrNWidthPrecise((const UTF8*)&string[rLine.start], currPos + 1);
                 if (currLength > splitWidth) {
                     // Make sure that the currPos has advanced, then set the breakPoint.
                     breakPos = currPos != 0 ? currPos - 1 : 0;
@@ -560,15 +560,15 @@ bool GuiMessageVectorCtrl::onWake()
     if (Parent::onWake() == false)
         return false;
 
-    if (bool(mProfile->mFont) == false)
+    if (bool(mProfile->mFonts[0].mFont) == false)
         return false;
 
     mMinSensibleWidth = 1;
 
     for (U32 i = 0; i < 256; i++) {
-        if (mProfile->mFont->isValidChar(U8(i))) {
-            if (mProfile->mFont->getCharWidth(U8(i)) > mMinSensibleWidth)
-                mMinSensibleWidth = mProfile->mFont->getCharWidth(U8(i));
+        if (mProfile->mFonts[0].mFont->isValidChar(U8(i))) {
+            if (mProfile->mFonts[0].mFont->getCharWidth(U8(i)) > mMinSensibleWidth)
+                mMinSensibleWidth = mProfile->mFonts[0].mFont->getCharWidth(U8(i));
         }
     }
 
@@ -593,7 +593,7 @@ void GuiMessageVectorCtrl::onRender(Point2I      offset,
 {
     Parent::onRender(offset, updateRect);
     if (isAttached()) {
-        U32 linePixels = mProfile->mFont->getHeight() + mLineSpacingPixels;
+        U32 linePixels = mProfile->mFonts[0].mFont->getHeight() + mLineSpacingPixels;
         U32 currLine = 0;
         for (U32 i = 0; i < mMessageVector->getNumLines(); i++) {
 
@@ -604,7 +604,7 @@ void GuiMessageVectorCtrl::onRender(Point2I      offset,
 
                 Point2I globalCheck = localToGlobalCoord(localStart);
                 U32 globalRangeStart = globalCheck.y;
-                U32 globalRangeEnd = globalCheck.y + mProfile->mFont->getHeight();
+                U32 globalRangeEnd = globalCheck.y + mProfile->mFonts[0].mFont->getHeight();
                 if (globalRangeStart > updateRect.point.y + updateRect.extent.y ||
                     globalRangeEnd < updateRect.point.y) {
                     currLine++;
@@ -623,14 +623,14 @@ void GuiMessageVectorCtrl::onRender(Point2I      offset,
                     if (walkAcross->specialReference == -1) {
                         GFX->setBitmapModulation(lastColor);
                         GFX->setTextAnchorColor(mProfile->mFontColor);
-                        strWidth = GFX->drawTextN(mProfile->mFont, globalStart, &mMessageVector->getLine(i).message[walkAcross->start],
+                        strWidth = GFX->drawTextN(mProfile->mFonts[0].mFont, globalStart, &mMessageVector->getLine(i).message[walkAcross->start],
                             walkAcross->end - walkAcross->start + 1, mProfile->mFontColors, mMaxColorIndex);
                     }
                     else {
                         GFX->getBitmapModulation(&lastColor);
                         GFX->setBitmapModulation(mSpecialColor);
                         GFX->setTextAnchorColor(mProfile->mFontColor);
-                        strWidth = GFX->drawTextN(mProfile->mFont, globalStart, &mMessageVector->getLine(i).message[walkAcross->start],
+                        strWidth = GFX->drawTextN(mProfile->mFonts[0].mFont, globalStart, &mMessageVector->getLine(i).message[walkAcross->start],
                             walkAcross->end - walkAcross->start + 1);
 
                         // in case we have 2 in a row...
@@ -640,9 +640,9 @@ void GuiMessageVectorCtrl::onRender(Point2I      offset,
                     if (walkAcross->specialReference != -1) {
                         Point2I lineStart = localStart;
                         Point2I lineEnd = localStart;
-                        lineStart.y += mProfile->mFont->getBaseline() + 1;
+                        lineStart.y += mProfile->mFonts[0].mFont->getBaseline() + 1;
                         lineEnd.x += strWidth;
-                        lineEnd.y += mProfile->mFont->getBaseline() + 1;
+                        lineEnd.y += mProfile->mFonts[0].mFont->getBaseline() + 1;
 
                         GFX->drawLine(localToGlobalCoord(lineStart),
                             localToGlobalCoord(lineEnd),
@@ -694,7 +694,7 @@ void GuiMessageVectorCtrl::findSpecialFromCoord(const Point2I& point, S32* speci
         return;
     }
 
-    U32 linePixels = mProfile->mFont->getHeight() + mLineSpacingPixels;
+    U32 linePixels = mProfile->mFonts[0].mFont->getHeight() + mLineSpacingPixels;
 
     if ((point.x < 0 || point.x >= mBounds.extent.x) ||
         (point.y < 0 || point.y >= mBounds.extent.y)) {
@@ -757,7 +757,7 @@ void GuiMessageVectorCtrl::findSpecialFromCoord(const Point2I& point, S32* speci
 
     U32 currElem = 0;
     while (line) {
-        U32 newX = currX + mProfile->mFont->getStrNWidth((const UTF8*)mMessageVector->getLine(elemIndex).message,
+        U32 newX = currX + mProfile->mFonts[0].mFont->getStrNWidth((const UTF8*)mMessageVector->getLine(elemIndex).message,
             line->end - line->start + 1);
         if (point.x < newX) {
             // That's the one!

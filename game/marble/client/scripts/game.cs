@@ -69,8 +69,14 @@ function clientCmdGameEnd()
    
    if( !$Client::connectedMultiplayer && $GameEndUserName $= XBLiveGetUserName() )
    {
-      if (!UpsellGui.isAwake()) // wait user gets off the upsell gui 
-         RootGui.setContent(GameEndGui);
+      if ($testLevel)
+      {
+         restartLevel();
+      } else
+      {
+         if (!UpsellGui.isAwake()) // wait user gets off the upsell gui 
+            RootGui.setContent(GameEndGui);
+      }
    }
       
    // Copy the current player scores from the player list into the
@@ -1439,4 +1445,20 @@ function clientLocalizedItemPickupHandler( %msgType, %msgString, %id, %data )
 {
    %message = powerupIdToString( %id,%data );
    addChatLine( %message );
+}
+
+//-------------------------------------------------------------------------------
+
+// Gem related msgs, also handles easter eggs
+
+addMessageCallback( 'MsgMissingGems', clientTaggedMessageHandler );
+addMessageCallBack( 'MsgItemPickup', clientTaggedMessageHandler );
+addMessageCallBack( 'MsgHaveAllGems', clientTaggedMessageHandler );
+addMessageCallBack( 'MsgRaceOver', clientTaggedMessageHandler );
+
+function clientTaggedMessageHandler(%msgType, %msgString, %id, %data)
+{
+   // Detag the message and try to load any data into it as required. For strings not requiring config
+   // like "You've finished!" etc, avar is a no-op
+   addChatLine(avar(detag(%msgString),%data));
 }

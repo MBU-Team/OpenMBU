@@ -37,6 +37,8 @@ LangType Platform::getSystemLanguage()
             return LANGTYPE_JAPANESE;
         case 0x12: // ko
             return LANGTYPE_KOREAN;
+        case 0x15: // pl
+            return LANGTYPE_POLISH;
         case 0x16: // pt
             return LANGTYPE_PORTUGUESE;
     }

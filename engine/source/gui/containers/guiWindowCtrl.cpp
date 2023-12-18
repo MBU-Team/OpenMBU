@@ -622,7 +622,7 @@ void GuiWindowCtrl::onRender(Point2I offset, const RectI& updateRect)
     // if mis-positioned or 'scrunched' in a small width.
     GFX->setBitmapModulation(mProfile->mFontColor);
     S32 fontHeight = mFont->getHeight();
-    S32 textWidth = mProfile->mFont->getStrWidth((const UTF8*)mText);
+    S32 textWidth = mProfile->mFonts[0].mFont->getStrWidth((const UTF8*)mText);
     Point2I start(0, 0);
     // align the horizontal
     if (mProfile->mAlignment == GuiControlProfile::RightJustify)
