@@ -96,6 +96,10 @@ function GameConnection::onConnectRequestRejected( %this, %msg )
 {
    switch$(%msg)
    {
+      case "CHR_PROTOCOL_LESS":
+         %error = $Text::ErrorOutdatedClient;
+      case "CHR_PROTOCOL_GREATER":
+         %error = $Text::ErrorOutdatedServer;
       case "CR_INVALID_PROTOCOL_VERSION":
          %error = $Text::ErrorCannotConnect;
       case "CR_INVALID_CONNECT_PACKET":

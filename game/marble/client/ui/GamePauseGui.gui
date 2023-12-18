@@ -54,14 +54,23 @@ function GamePauseGui::onWake(%this)
    if (!ServerConnection.isMultiplayer)
       PauseMenu.addRow($Text::Restart, "1", 0, 2);
    //PauseMenu.addRow($Text::InvY, "2");
-   PauseMenu.addRow($Text::ExitLevelOption, "8", 20, 10);
+   if (!$testLevel)
+      PauseMenu.addRow($Text::ExitLevelOption, "8", 20, 10);
    if (isDemoLaunch())
       PauseMenu.addRow($Text::UnlockFullGame, "3", 0, 2);
    //PauseMenu.addRow($Text::AboutBasics, "4", 0, 8);
    PauseMenu.addRow($Text::HelpAndOptions, "5", 0, 8);
-   PauseMenu.addRow($Text::LeaderBoards, "6", 0, 6);
-   PauseMenu.addRow($Text::Achievements, "7", 0, 6);
-   PauseMenu.addRow($Text::MainMenuOption, "9", 0, 10);
+   if (!$testLevel)
+   {
+      PauseMenu.addRow($Text::LeaderBoards, "6", 0, 6);
+      PauseMenu.addRow($Text::Achievements, "7", 0, 6);
+      PauseMenu.addRow($Text::MainMenuOption, "9", 0, 10);
+   }
+   
+   if ($testLevel)
+   {
+      PauseMenu.addRow("Exit", "10", 0, 10);
+   }
       
    setHudVisible( false );
    
@@ -212,6 +221,14 @@ function GamePauseGui::onA()
          XMessagePopupDlg.show(0, %msg, 
             %okTxt, "GamePauseGui.onMMSelected();", 
             %cancelTxt);
+      case 10:
+         %unpause = false;
+         %this.resumingGame = false;
+         
+         XMessagePopupDlg.show(0, "Are you sure you want to exit the level test?", 
+            $Text::Yes, "quit();", 
+            $Text::No);
+         
    }
    
    if (%unpause)

@@ -20,7 +20,8 @@
 
 /// Version number is major * 1000 + minor * 100 + revision * 10.
 /// Different engines (TGE, T2D, etc.) will have different version numbers.
-#define TORQUE_VERSION              901 // version 0.9
+#define TORQUE_VERSION              902 // version 0.9
+#define TORQUE_PROTOCOL_VERSION     13  // increment this when we change the protocol
 
 /// What engine are we running? The presence and value of this define are
 /// used to determine what engine (TGE, T2D, etc.) and version thereof we're
@@ -54,6 +55,9 @@
 /// Define me to enable torque terrain
 //#define TORQUE_TERRAIN
 
+/// Define me to have 32k texture support (This uses significantly more memory and won't work for many people)
+//#define TORQUE_32K_TEXTURES
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 
@@ -79,6 +83,9 @@
 
 // Define me to use MBG physics
 //#define MBG_PHYSICS
+
+// Define me to force marble to correct size
+#define MB_FORCE_MARBLE_SIZE
 
 // Define me to use a framerate-independent finish pad animation
 #define MBU_FINISH_PAD_FIX
@@ -227,7 +234,11 @@
 /// It was previously set to 3MB but I've increased it to 16MB due to the
 /// FrameAllocator being used as temporary storage for bitmaps in the D3D9
 /// texture manager.
+#ifdef TORQUE_32K_TEXTURES
+#define TORQUE_FRAME_SIZE     3072 << 20
+#else
 #define TORQUE_FRAME_SIZE     16 << 20
+#endif
 
 /// Define if you want nVIDIA's NVPerfHUD to work with TSE
 #define TORQUE_NVPERFHUD
@@ -243,8 +254,6 @@
 // If this is defined, and a material is not found, it will be created
 //#define CREATE_MISSING_MATERIALS
 
-// Enable ShaderGen
-#define TORQUE_SHADERGEN
 // Enable ShaderGen
 #define TORQUE_SHADERGEN
 

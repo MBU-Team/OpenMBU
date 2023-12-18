@@ -49,6 +49,9 @@ for ($i = 1; $i < $Game::argc ; $i++)
    
    switch$ ($arg)
    {
+      case "-test":
+         $skipLogos = true;
+         $i++;
       case "-language":
          $argUsed[$i]++;
          if( $hasNextArg )
@@ -574,4 +577,10 @@ function loaderSetEngineLogo()
 
 initVideo();
 
-schedule(3000, 0, loaderSetEngineLogo);
+if ($skipLogos)
+{
+   continueStartup();
+} else
+{
+   schedule(3000, 0, loaderSetEngineLogo);
+}

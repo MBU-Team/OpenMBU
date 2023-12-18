@@ -16,6 +16,7 @@ A reverse engineered version of Marble Blast Ultra that is based on Torque Shade
 - [thearst3rd](https://github.com/thearst3rd) - Developer
 - [RandomityGuy](https://github.com/RandomityGuy) - Developer
 - [AJ Ferguson](https://github.com/AJ-Ferguson) - Developer
+- [polyrain](https://github.com/polyrain) - Developer
 - [Hailey Eira](https://github.com/HaileyEira) - Tester & Contributed Official Dev Builds
 
 # License

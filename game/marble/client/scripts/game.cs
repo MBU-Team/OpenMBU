@@ -69,8 +69,14 @@ function clientCmdGameEnd()
    
    if( !$Client::connectedMultiplayer && $GameEndUserName $= XBLiveGetUserName() )
    {
-      if (!UpsellGui.isAwake()) // wait user gets off the upsell gui 
-         RootGui.setContent(GameEndGui);
+      if ($testLevel)
+      {
+         restartLevel();
+      } else
+      {
+         if (!UpsellGui.isAwake()) // wait user gets off the upsell gui 
+            RootGui.setContent(GameEndGui);
+      }
    }
       
    // Copy the current player scores from the player list into the
