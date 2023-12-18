@@ -373,7 +373,7 @@ void GuiInspectorField::onRender(Point2I offset, const RectI& updateRect)
     RectI editFieldRect(offset + Point2I(captionRect.extent.x + 1, 0), Point2I(mBounds.extent.x - (captionRect.extent.x + 5), mBounds.extent.y));
 
     // Calculate Y Offset to center vertically the caption
-    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFont->getHeight()) / 2);
+    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFonts[0].mFont->getHeight()) / 2);
 
     renderFilledBorder(captionRect, mProfile->mBorderColor, mProfile->mFillColor);
     renderFilledBorder(editFieldRect, mProfile->mBorderColor, mProfile->mFillColor);
@@ -391,7 +391,7 @@ void GuiInspectorField::onRender(Point2I offset, const RectI& updateRect)
 
         GFX->setClipRect(RectI(clipRect.point, Point2I(captionRect.extent.x, clipRect.extent.y)));
         // Draw Caption ( Vertically Centered )
-        GFX->drawText(mProfile->mFont, Point2I(captionRect.point.x + 6, captionRect.point.y + captionYOffset), mCaption, &mProfile->mFontColor);
+        GFX->drawText(mProfile->mFonts[0].mFont, Point2I(captionRect.point.x + 6, captionRect.point.y + captionYOffset), mCaption, &mProfile->mFontColor);
 
         GFX->setBitmapModulation(currColor);
 
@@ -567,7 +567,7 @@ void GuiInspectorGroup::onMouseDown(const GuiEvent& event)
     // Calculate Group Caption Rect ( Clip rect within 4 units of the outer bounds so we don't render into border )
     RectI captionRect(Point2I(mBarWidth.x, 0), Point2I(mBounds.extent.x - 4, mBarWidth.y));
     // Calculate Y Offset to center vertically the caption
-    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFont->getHeight()) / 2);
+    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFonts[0].mFont->getHeight()) / 2);
     // Calculate Expand/Collapse Button Rect
     RectI toggleRect(Point2I(captionYOffset, captionYOffset), mBarWidth - Point2I(captionYOffset * 2, captionYOffset * 2));
     toggleRect.inset(1, 1);
@@ -690,7 +690,7 @@ void GuiInspectorGroup::onRender(Point2I offset, const RectI& updateRect)
     //////////////////////////////////////////////////////////////////////////
     // Calculate Necessary Rendering Rectangles
     //////////////////////////////////////////////////////////////////////////
-    if (!mProfile || mProfile->mFont.isNull())
+    if (!mProfile || mProfile->mFonts[0].mFont.isNull())
         return;
 
     // Calculate actual world bounds for rendering
@@ -700,7 +700,7 @@ void GuiInspectorGroup::onRender(Point2I offset, const RectI& updateRect)
     // Calculate Group Caption Rect ( Clip rect within 4 units of the outer bounds so we don't render into border )
     RectI captionRect(offset + Point2I(mBarWidth.x, 0), Point2I(mBounds.extent.x - (mBarWidth.x + 4), mBarWidth.y));
     // Calculate Y Offset to center vertically the caption
-    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFont->getHeight()) / 2);
+    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFonts[0].mFont->getHeight()) / 2);
     // Calculate Expand/Collapse Button Rect
     RectI toggleRect(offset + Point2I(captionYOffset, captionYOffset), mBarWidth - Point2I(captionYOffset * 2, captionYOffset * 2));
     toggleRect.inset(1, 1);
@@ -718,7 +718,7 @@ void GuiInspectorGroup::onRender(Point2I offset, const RectI& updateRect)
 
     GFX->setBitmapModulation(mProfile->mFontColor);
     // Draw Caption ( Vertically Centered )
-    GFX->drawText(mProfile->mFont, Point2I(captionRect.point.x, captionRect.point.y + captionYOffset), mCaption, &mProfile->mFontColor);
+    GFX->drawText(mProfile->mFonts[0].mFont, Point2I(captionRect.point.x, captionRect.point.y + captionYOffset), mCaption, &mProfile->mFontColor);
 
     GFX->setBitmapModulation(currColor);
 
@@ -1042,7 +1042,7 @@ void GuiInspectorDynamicGroup::onRender(Point2I offset, const RectI& updateRect)
     // Calculate rendering rectangle for the groups content
     RectI contentRect(offset + mBarWidth, mBounds.extent - (mBarWidth + Point2I(1, 1)));
 
-    U32 textXOffset = mFloor((F32)(mBarWidth.x - mProfile->mFont->getHeight()) / 2) + mProfile->mFont->getHeight();
+    U32 textXOffset = mFloor((F32)(mBarWidth.x - mProfile->mFonts[0].mFont->getHeight()) / 2) + mProfile->mFonts[0].mFont->getHeight();
     RectI addFieldRect(offset + Point2I(textXOffset, mBarWidth.y + 4), Point2I(mBarWidth.x, mBounds.extent.y));
 
     // Backup Bitmap Modulation
@@ -1054,7 +1054,7 @@ void GuiInspectorDynamicGroup::onRender(Point2I offset, const RectI& updateRect)
     RectI clipRect = GFX->getClipRect();
     GFX->setClipRect(updateRect);
     // Draw Caption ( Vertically Centered )
-    GFX->drawText(mProfile->mFont, addFieldRect.point, "Add Field", &mProfile->mFontColor, 9, -90.f);
+    GFX->drawText(mProfile->mFonts[0].mFont, addFieldRect.point, "Add Field", &mProfile->mFontColor, 9, -90.f);
 
     GFX->setClipRect(clipRect);
     GFX->setBitmapModulation(currColor);
@@ -1071,7 +1071,7 @@ void GuiInspectorDynamicGroup::onMouseDown(const GuiEvent& event)
 
     Point2I localPoint(globalToLocalCoord(event.mousePoint));
 
-    U32 textXOffset = mFloor((F32)(mBarWidth.x - mProfile->mFont->getHeight()) / 2);
+    U32 textXOffset = mFloor((F32)(mBarWidth.x - mProfile->mFonts[0].mFont->getHeight()) / 2);
     RectI addFieldRect(Point2I(textXOffset, mBarWidth.y + 4), Point2I(mBarWidth.x, mBounds.extent.y));
 
     if (addFieldRect.pointInRect(localPoint))
@@ -1329,7 +1329,7 @@ void GuiInspectorDynamicField::onRender(Point2I offset, const RectI& updateRect)
     RectI editFieldRect(offset + Point2I(captionRect.extent.x + 1, 0), Point2I(mBounds.extent.x - (captionRect.extent.x + 5), mBounds.extent.y));
 
     // Calculate Y Offset to center vertically the caption
-    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFont->getHeight()) / 2);
+    U32 captionYOffset = mFloor((F32)(captionRect.extent.y - mProfile->mFonts[0].mFont->getHeight()) / 2);
 
     renderFilledBorder(captionRect, mProfile->mBorderColor, mProfile->mFillColor);
     renderFilledBorder(editFieldRect, mProfile->mBorderColor, mProfile->mFillColor);

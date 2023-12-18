@@ -532,7 +532,7 @@ void GuiMLTextCtrl::getCursorPositionAndColor(Point2I& cursorTop, Point2I& curso
 {
     S32 x = 0;
     S32 y = 0;
-    S32 height = mProfile->mFont->getHeight();
+    S32 height = mProfile->mFonts[0].mFont->getHeight();
     color = mProfile->mCursorColor;
     for (Line* walk = mLineList; walk; walk = walk->next)
     {
@@ -1452,7 +1452,7 @@ void GuiMLTextCtrl::reflow()
     mLineInsert = &mLineList;
 
     mCurStyle = allocStyle(NULL);
-    mCurStyle->font = allocFont((char*)mProfile->mFontType, dStrlen(mProfile->mFontType), mProfile->mFontSize);
+    mCurStyle->font = allocFont((char*)mProfile->mFonts[0].mFontType, dStrlen(mProfile->mFonts[0].mFontType), mProfile->mFonts[0].mFontSize);
     if (!mCurStyle->font)
         return;
     mCurStyle->color = mProfile->mFontColor;

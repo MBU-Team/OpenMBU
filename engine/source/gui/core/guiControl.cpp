@@ -1586,23 +1586,28 @@ void GuiControl::getScrollLineSizes(U32* rowHeight, U32* columnWidth)
 
 void GuiControl::renderJustifiedText(Point2I offset, Point2I extent, const char* text)
 {
-    GFont* font = mProfile->mFont;
+    GFont* font = mProfile->mFonts[0].mFont;
+    this->renderJustifiedText(font, offset, extent, text);
+}
+
+void GuiControl::renderJustifiedText(GFont* font, Point2I offset, Point2I extent, const char* text)
+{
     S32 textWidth = font->getStrWidth((const UTF8*)text);
     Point2I start;
 
     // align the horizontal
     switch (mProfile->mAlignment)
     {
-    case GuiControlProfile::RightJustify:
-        start.set(extent.x - textWidth, 0);
-        break;
-    case GuiControlProfile::CenterJustify:
-        start.set((extent.x - textWidth) / 2, 0);
-        break;
-    default:
-        // GuiControlProfile::LeftJustify
-        start.set(0, 0);
-        break;
+        case GuiControlProfile::RightJustify:
+            start.set(extent.x - textWidth, 0);
+            break;
+        case GuiControlProfile::CenterJustify:
+            start.set((extent.x - textWidth) / 2, 0);
+            break;
+        default:
+            // GuiControlProfile::LeftJustify
+            start.set(0, 0);
+            break;
     }
 
     // If the text is longer then the box size, (it'll get clipped) so
