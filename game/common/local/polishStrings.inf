@@ -1,0 +1,676 @@
+﻿[Strings]
+;-------------------------------------------------------------------------------
+; Polish String Table
+;
+; Translation was made by Patrxgt
+;
+; Note, any line that begins with a comment (;) is not used and does not 
+; need to be translated
+;-------------------------------------------------------------------------------
+$Text::Title = "Marble Blast Ultra";
+
+;-------------------------------------------------------------------------------
+; General
+;-------------------------------------------------------------------------------
+$Text::Loading = "Ładowanie";
+$Text::Exit = "Wyjdź";
+$Text::Previous = "Poprzedni";
+$Text::Next = "Następny";
+$Text::Retry = "Spróbuj ponownie";
+$Text::Back = "Wstecz";
+$Text::More = "Więcej";
+$Text::Level = "Poziom";
+$Text::Start = "Start";
+$Text::PressAToStart = "Naciśnij A, aby rozpocząć.";
+$Text::ClickToContinue = "Kliknij, aby kontynuować";
+$Text::Chat = "Czat";
+
+;-------------------------------------------------------------------------------
+; Live
+;-------------------------------------------------------------------------------
+$Text::SignIn = "Zaloguj się";
+$Text::SignedIn = "Zalogowano";
+$Text::SignInFailed = "Nie udało się zalogować";
+$Text::PassCodeNeeded = "Wymagany kod dostępu";
+$Text::NotSignedIn = "Nie zalogowano";
+$Text::SigningIn = "Logowanie";
+
+$Text::Friends = "Znajomi";
+$Text::Offline = "Offline";
+$Text::PlayOffline = "Graj Offline";
+$Text::ConnectionLost = "Połączenie z usługą Xbox Live zostało utracone. Zaloguj się ponownie.";
+$Text::DupLogin = "Zostałeś wylogowany z usługi Xbox Live, ponieważ inna osoba zalogowała się przy użyciu Twojego konta.";
+$Text::ESRBWarning = "Uwaga ESRB: Wrażenia z gry mogą ulec zmianie podczas rozgrywki sieciowej";
+
+;-------------------------------------------------------------------------------
+; Live Leaderboards
+;-------------------------------------------------------------------------------
+$Text::Leaderboard = "Tabela wyników"; // used for Y button label on single player level preview gui, bug 14993
+$Text::LeaderBoards = "Tabele wyników";
+$Text::CLeaderBoard = "Zmień widok";
+$Text::NobodyRanked = "Nikt jeszcze nie zdobył rangi w tej tabeli wyników.";
+$Text::YouNotRanked = "Nie masz rangi w tej tabeli wyników.";
+$Text::FriendNotRanked = "Żaden z twoich znajomych nie ma jeszcze rangi w tej tabeli wyników.";
+$Text::Overall = "Ogólnie";
+$Text::MyScore = "Mój wynik";
+$Text::MBLeaderBoard = "Tabela wyników Marble Blast";
+
+
+;-------------------------------------------------------------------------------
+; Controler
+;-------------------------------------------------------------------------------
+$Text::ButtonA = "A";
+$Text::ButtonB = "B";
+$Text::ButtonX = "X";
+$Text::ButtonY = "Y";
+$Text::ButtonRB = "Prawy Bumper"; // capitalized because it is a label on pause menu
+$Text::ButtonLB = "Lewy Bumper"; // capitalized because it is a label on pause menu
+$Text::ButtonStart = "START";
+$Text::ButtonBack = "BACK";
+$Text::LTrigger = "lewy spust";
+$Text::RTrigger = "prawy spust";
+$Text::LStickBtn = "lewy drążek";
+$Text::RStickBtn = "prawy drążek";
+$Text::PullToUse = "Naciśnij prawy spust, aby użyć %1"; // %1 will be replaced with name of powerup
+
+;-------------------------------------------------------------------------------
+; Demo Mode
+;-------------------------------------------------------------------------------
+$Text::PlayAllN1 = "Zagraj we wszystkie 60 poziomów po odblokowaniu pełnej wersji!";
+$Text::SaveAndRank = "Zapisz swój wynik i opublikuj w tabelach wyników po odblokowaniu pełnej wersji!";
+$Text::NoSaveInDemo = "Możesz opublikować swój najlepszy wynik tylko po odblokowaniu pełnej wersji gry. Naciśnij <bitmap:marble/client/ui/xbox/pad_button_a.png>, aby kontynuować bez zapisywania swojego wyniku online.";
+$Text::DemoEgg = "Po odblokowaniu pełnej wersji otrzymasz wiele wspaniałych funkcji - w tym ukryte ciekawostki!";
+$Text::InviteBuyNow = "Odblokuj pełną wersję, aby zagrać w tej rozgrywce!";
+$Text::DemoNoRanked = "Odblokuj pełną wersję, aby rozgrywać rozgrywki rankingowe!";
+$Text::DemoUpsellLevel = "Odblokuj pełną wersję, aby zagrać w ten poziom!";
+
+$Text::DemoUpsell00 = "Odblokuj Marble Blast Ultra już teraz i...";
+$Text::DemoUpsell01 = "- Przejdź wszystkie 60 poziomów dla jednego gracza!\n\n";
+$Text::DemoUpsell02 = "- Zobacz, jak Twoje najlepsze czasy wypadają na tle najlepszych na świecie!\n\n";
+$Text::DemoUpsell03 = "- Rywalizuj na Xbox Live na wszystkich 10 poziomach wieloosobowych!\n\n";
+$Text::DemoUpsell04 = "- Publikuj swoje najlepsze wyniki i przechwalaj się nimi w rankingach!\n\n";
+$Text::DemoUpsell05 = "- Play for keeps in ranked matches!\n\n"
+$Text::DemoUpsell06 = "- Earn achievements and find hidden easter eggs!\n\n";
+$Text::DemoUpsell07 = "Unlock the Full Game";
+$Text::DemoUpsell08 = "Unlock these great features:\n\n";
+$Text::DemoUpsell09 = "Back to Game";
+$Text::DemoUpsell10 = "Quit";
+
+$Text::DemoUpsellMP0 = "Welcome to Marble Blast Ultra Multiplayer!\n\n";
+$Text::DemoUpsellMP1 = "You can try out Multiplayer mode for 7 minutes each time you play the Marble Blast Ultra trial game.\n\n";
+$Text::DemoUpsellMP2 = "In the trial game, you cannot invite other players to your game or join other Marble Blast Ultra games by invitation.\n\n";
+$Text::DemoUpsellMP3 = "Only one Level is available in the trial, but the full game contains all 10 multiplayer levels.\n\n";
+$Text::DemoUpsellMP4 = "Unlock the full version for uninterrupted and unlimited multiplayer play!";
+
+$Text::DemoUpsellMP5 = "Time's up!  Unlock the full game now and...\n\n";
+$Text::DemoUpsellMP6 = "The host ran out of time!  Unlock the full game now and...\n\n";
+$Text::DemoUpsellMP7 = "You are out of time!  Exit the match to unlock the full version.";
+
+$Text::DemoTimerLabel = "Trial Time:"; // demo timer label
+
+$Text::PurchasedThanks = "Thank you for purchasing Marble Blast Ultra!";
+
+;-------------------------------------------------------------------------------
+; Level Time Stuff
+;-------------------------------------------------------------------------------
+$Text::None = "Brak";
+$Text::BestTime = "Mój najlepszy czas:";
+$Text::BestScore = "Mój najlepszy wynik:";
+$Text::EndTime = "Czas:";
+$Text::EndScore = "Ocena:";
+$Text::EndScore2 = "Wynik:";
+$Text::LevelComplete = "UKOŃCZONO POZIOM!";
+$Text::NewBestTime = "Nowy najlepszy czas!";
+$Text::NewHighScore = "Nowy najwyższy wynik!";
+$Text::ParTime = "Limit czasu:";
+$Text::Improvement = "Poprawa";
+$Text::MyRecord = "Mój rekord";
+$Text::OldRecord = "Stary rekord";
+$Text::NextLevel = "Następny poziom";
+$Text::LoadingBest = "Ładowanie twoich najlepszych czasów";
+$Text::Completion = "Ukończenie";
+$Text::TimeBonus = "Bonus czasowy";
+$Text::ChangeLevels = "Zmień poziomy";
+$Text::Rank = "Ranga";
+$Text::PlayerName = "Tag gracza";
+$Text::Time = "Czas";
+$Text::Points = "Punktów";
+$Text::Score = "Ocena";
+$Text::TrueSkill = "Ranga TrueSkill(TM)";
+$Text::Difficulty = "Trudność";
+
+;-------------------------------------------------------------------------------
+; Tagged Strings
+;-------------------------------------------------------------------------------
+$Text::Tagged::Congratulations = '\c0Gratulacje! Zwyciężyłeś\aś!';
+$Text::Tagged::NotAllGems = '\c0Nie możesz ukończyć poziomu bez wszystkich klejnotów!';
+$Text::Tagged::HaveAllGems = '\c0Masz wszystkie klejnoty. Kieruj się w stronę mety!';
+$Text::Tagged::OneGemLeft = '\c0Podniesiono klejnot. Pozostał tylko jeden klejnot!';
+$Text::Tagged::NGemsLeft = '\c0Podniesiono klejnot. Pozostało %1 klejnotów!';
+
+$Text::Tagged::AnEasterEgg = '\c0Podniesiono znajdźkę!';
+$Text::Tagged::GemPickupOnePoint = '\c0Podniesiono klejnot warty 1 punkt!';
+$Text::Tagged::GemPickupNPoints = '\c0Podniesiono klejnot warty %1 punktów!';
+$Text::Tagged::GameOver = '\c0Przgrana!';
+
+;-------------------------------------------------------------------------------
+; Non-tagged powerup strings
+;-------------------------------------------------------------------------------
+$Text::ASuperJump = "Podniesiono ulepszenie: Super Skok!";
+$Text::ASuperSpeed = "Podniesiono ulepszenie: Super Prędkość!";
+$Text::AGyrocopter = "Podniesiono ulepszenie: Żyrokopter!";
+$Text::AGravityMod = "Podniesiono ulepszenie: Modyfikator Grawitacji!";
+$Text::AMegaMarble = "Podniesiono ulepszenie: Wielka Kula!";
+$Text::ABlast = "Podniesiono ulepszenie: Wybuch!";
+$Text::ATimeTravelBonus = "Podniesiono %1 sekund premii do podróży w czasie!";
+
+;-------------------------------------------------------------------------------
+; Non-tagged game messages 
+;-------------------------------------------------------------------------------
+$Text::Msg::Tied = "Remis!"; // tie
+$Text::Msg::WonMP1 = "%1 wygrał punktem z %2!"; // 1 point version
+$Text::Msg::WonMPN = "%1 wygrał punktami z %2!"; // 0 or 2+ point version
+$Text::Msg::PlayerJoin = "%1 dołączył\a do gry";
+$Text::Msg::PlayerDrop =  "%1 opóścił\a grę";
+
+;-------------------------------------------------------------------------------
+; Various gui strings
+;-------------------------------------------------------------------------------
+$Text::SearchingForGames  = "Szukanie gier...";
+$Text::LobbyRankFormat = " [%1]"; whether the game is ranked or standard is displayed in the Lobby in this format
+                                ; after the level name.  %1 will be $Text::Ranked or $Text::Standard
+$Text::Ranked = "Rozgrywka rankingowa";
+$Text::Standard = "Rozgrywka standardowa";
+$Text::ModeRanked = "Typ: Rozgrywka rankingowa";
+$Text::ModeStandard = "Typ: Rozgrywka standardowa";
+$Text::PoweredBy = "NAPĘDZANA"; // In context: "POWERED BY Torque Shader Engine." 
+
+;-------------------------------------------------------------------------------
+; Gui titles
+;-------------------------------------------------------------------------------
+$Text::MainMenu = "MENU GŁÓWNE";
+$Text::DifficultyMenu = "WYBIERZ POZIOM TRUDNOŚCI";
+$Text::SelectBeginner = "POCZĄTKUJĄCY: ";
+$Text::SelectIntermediate = "ŚREDNIOZAAWANSOWANY: ";
+$Text::SelectAdvanced = "ZAAWANSOWANY: ";
+$Text::LevelPreview = "WYBIERZ POZIOM";
+$Text::CreateMatchTitle = "UTWÓRZ ROZGRYWKĘ";
+$Text::Lobby = "POCZEKALNIA";
+$Text::JoinGame = "DOŁĄCZ DO GRY";
+$Text::LeaderBoardScreen = "TABELE WYNIKÓW";
+$Text::MultiplayerMenu = "GRA WIELOOSOBOWA";
+$Text::OptimatchTitle = "NIESTANDARDOWA GRA";
+$Text::AboutMenu = "O MARBLE BLAST";
+$Text::SelectLeaderboard = "WYBIERZ TABELĘ WYNIKÓW";
+
+;-------------------------------------------------------------------------------
+; Menu Options
+;-------------------------------------------------------------------------------
+$Text::SinglePlayer = "Jeden gracz";
+$Text::Multiplayer = "Wielu graczy";
+$Text::Achievements = "Osiągnięcia";
+$Text::Play = "Graj";
+;$Text::XbLiveOptions = "Opcje Xbox Live";
+;$Text::Options = "Opcje";
+$Text::HelpAndOptions = "Pomoc i Opcje";
+$Text::UnlockFullGame = "Odblokuj pełną wersję";
+$Text::RTArcadeMenu = "Wyjdź z gry";
+$Text::LevelsBeginner = "Łatwe poziomy";
+$Text::LevelsIntermediate = "Normalne poziomy";
+$Text::LevelsAdvanced = "Trudne poziomy";
+$Text::LevelsCustom = "Niestandardowe poziomy";
+$Text::SPGemHunt = "Polowanie na klejnoty";
+$Text::Go = "Start";
+$Text::OK = "OK";
+$Text::Cancel = "Anuluj";
+$Text::Yes = "Tak";
+$Text::No = "Nie";
+$Text::Refresh = "Odśwież";
+$Text::Select = "Wybierz";
+;$Text::ReturningToArcade = "Wracam do menu Xbox Live Arcade";
+;$Text::PlayMarbleBlast = "Graj w Marble Blast";
+$Text::QuickMatch = "Szybka rozgrywka";
+$Text::OptiMatch = "Niestandardowa rozgrywka";
+$Text::CreateMatch = "Utwórz rozgrywkę";
+$Text::JoinMatch = "Dołącz do rozgrywki";
+$Text::Players = "Gracze";
+$Text::Ready = "Gotowy";
+$Text::ExitGame = "Wyjdź";
+
+;-------------------------------------------------------------------------------
+; Join Game Gui
+;-------------------------------------------------------------------------------
+$Text::Join = "Dołącz";
+$Text::Create = "Utwórz";
+$Text::JoiningGame = "Dołaczanie do gry";
+$Text::ZoneLabel = "Strefa Gracza Xbox Live";
+$Text::ZoneOptions = "Losowa\tMoja";
+$Text::LanguageLabel = "Język";
+$Text::LangOptions = "Losowy\tMój";
+$Text::AnyOption = "Losowo";
+$Text::MaxPlayersOption = "Maks. liczba graczy"; // $Text::AnyOption, 2, 3, 4 ... 8
+$Text::MissionOption = "Poziom"; // $Text::AnyOption, $Text::LevelNameMP1, $Text::LevelNameMP2 ...
+
+$Text::FGG_Host = "Gospodarz";
+$Text::FGG_Mission = "Poziom";
+$Text::FGG_NumPlayers = "Num Players";
+$Text::FGG_Players = "Graczy";
+
+;-------------------------------------------------------------------------------
+; Create Game Gui
+;-------------------------------------------------------------------------------
+$Text::Mission = "Poziom";
+$Text::MaxPlayers = "Maksymalna liczba graczy";
+$Text::PrivateSlots = "Prywatne miejsca";
+$Text::IsPrivate = "Prywatna gra";
+
+;-------------------------------------------------------------------------------
+; Leaderboard Select Menu
+;-------------------------------------------------------------------------------
+$Text::LBSinglePlayer = "Jeden gracz";
+$Text::LBMPScrum = "Wielu graczy";
+
+;-------------------------------------------------------------------------------
+; Lobby stuff
+;-------------------------------------------------------------------------------
+$Text::LobbyHostName = "Gospodarz:"; 
+$Text::LobbyHostLevel = "Poziom:"; 
+$Text::LobbyHostPrivateSlots = "Prywatne miejsca"; 
+$Text::LobbyHostPublicSlots = "Publiczne miejsca"; 
+$Text::LobbyHostInviteCode = "Kod zaproszenia";
+$Text::LobbyHostInviteVisibility = "Widoczność zaproszeń";
+
+; separators
+$Text::Colon  = ":";
+$Text::Comma  = ",";
+$Text::Slash  = "/";
+$Text::Plus   = "+";
+$Text::Minus  = "-";
+$Text::Period  = ".";
+
+$Text::SubmitPlayerReview = "Prześlij recenzję gracza";
+$Text::Kick = "Wyrzuć";
+$Text::GamerCard = "Karta gracza";
+$Text::SendFriendRequest = "Wyślij prośbę o dodanie do znajomych";
+$Text::NoOptionsAvailable  = "Brak dostępnych opcji.";
+$Text::SelectPlayer = "Wybierz gracza";
+$Text::Player = "Gracz:";
+
+;-------------------------------------------------------------------------------
+; Pause Menu
+;-------------------------------------------------------------------------------
+$Text::UseItems = "Ulepszenie";
+$Text::Blast = "Wybuch";
+$Text::ShowScores = "Wyniki";
+$Text::Jump = "Skok";
+$Text::Camera = "Kamera";
+$Text::MoveMarble = "Poruszaj kulką";
+;$Text::ShowNames = "Przełączanie widoczności nazwy";
+$Text::HighScores = "Najwyższe wyniki";
+
+$Text::Paused = "Zatrzymano";
+$Text::Resume = "Wznów";
+$Text::Restart = "Restart";
+$Text::MainMenuOption = "Menu główne";
+$Text::ExitLevelOption = "Opuść poziom";
+$Text::ResumePlay = "Wznów grę";
+
+;-------------------------------------------------------------------------------
+; Options
+;-------------------------------------------------------------------------------
+$Text::GameOptions = "Opcje gry";
+$Text::Adjust = "Dostosuj";
+$Text::Toggle = "Przełącz";
+$Text::MusicVol = "Głośność muzyki";
+$Text::FXVol = "Głośność efektów";
+$Text::InvX = "Oś X Kamery";
+$Text::InvY = "Oś Y Kamery";
+$Text::MouseSensitivity = "Czułość myszki";
+$Text::InvOnOff = "Normalna\tOdwrócona";
+$Text::VideoOptions = "Video Options";
+$Text::FullscreenResolution = "Rozdz. (pełny ekran)";
+$Text::WindowedResolution = "Rozdz. (okno)";
+$Text::DisplayMode = "Tryb wyświetlania";
+$Text::DisplayModeOptions = "Okienkowy\tOkno bez ramek\tPełny ekran";
+$Text::ReflectionDetailLevel = "Detale odbić";
+$Text::ReflectionDetailLevelOptions = "Brak\tNiebo\tNiebo i Poziom\tPrawie Wszystko\tWszystko";
+$Text::Framerate = "Klatki na sekundę";
+$Text::FramerateOptions = "Nielimitowane\tSynchro. Pionowa\t30\t60\t75\t120\t200\tNiestandardowe";
+$Text::MarbleSkin = "Typ kulki";
+$Text::UIStyle = "Styl interfejsu";
+$Text::UIStyleOptions = "Mysz/Klawiatura\tKontroler Xbox 360";
+$Text::InviteVisibilityOptions = "Ukryty\tWidoczny";
+
+;This string is no longer used $Text::MarbleOptions = "one\ttwo\tthree\tfour\tfive\tsix\tseven\teight\tnine\tten\televen\ttwelve\tthirteen\tfourteen\tfifteen\tsixteen\tseventeen\teighteen\tnineteen\ttwenty";
+;$Text::MarbleColor = "Kolor kulki";
+
+;-------------------------------------------------------------------------------
+; Object Strings
+;-------------------------------------------------------------------------------
+$Text::FoundNewEgg = "Znalazłeś nową znajdźkę! Tak trzymać!";
+$Text::AlreadyFoundEgg = "Już znalazłeś tą znajdźkę!";
+
+$Text::UseSuperJump = "Ulepszenie: Super Skok";
+$Text::UseSuperSpeed = "Ulepszenie: Super Prędkość";
+$Text::UseGyrocopter = "Ulepszenie: Żyrokopter";
+$Text::UseMegaMarble = "Ulepszenie: Duża Kula";
+$Text::UseBlast = "Ulepszenie: Wybuch";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Game Modes
+;-------------------------------------------------------------------------------
+$Text::GameModeScrum = "Młyn";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Overall leaderboard titles
+;-------------------------------------------------------------------------------
+$Text::LB_SPOverall = "Ogólnie (jeden gracz)"
+$Text::LB_MPScrumOverall = "Ogólnie (wielu graczy)";
+$Text::LB_MPScrumSkill = "Ogólnie w rozgrywkach rankingowych";
+
+;-------------------------------------------------------------------------------
+; Errors
+;-------------------------------------------------------------------------------
+;$Text::SettingsHosed = "Ustawienia wydają się być uszkodzone. Przywrócone zostaną ustawienia domyślne. Naciśnij A, aby kontynuować.";
+;$Text::SettingsHosedTitle = "Uszkodzone ustawienia";
+;$Text::CtrlrReconnect = "Podłącz ponownie kontroler do portu %1 i naciśnij START, aby kontynuować.";
+;$Text::CtrlrDisconnectTitle = "Odłączony kontroler";
+;$Text::ReconnectAnyPort = "Podłącz ponownie kontroler do dowolnego portu i naciśnij START, aby kontynuować.";
+;$Text::UploadOnlyIfSignedIn = "Możesz przesłać swój najlepszy wynik tylko wtedy, gdy jesteś zalogowany do usługi Xbox Live.";
+$Text::Continue = "Kontynuuj";
+;$Text::UpdateRequired = "Do gry online wymagana jest aktualizacja. Wróć do menu Xbox Live Arcade, zaloguj się do Xbox Live i ponownie wybierz tę grę, aby pobrać aktualizację.";
+; $Text::ArbRegister = "Registering with Arbitration service"; // using $Text::TestingNetwork for this now
+$Text::SignInForMultiplayer = "Aby zagrać w grę wieloosobową, musisz zalogować się do usługi Xbox Live.";
+$Text::MPNotAllowed = "Nie możesz grać w gry wieloosobowe na Xbox Live.";
+;$Text::SignInToPurchase = "Aby odblokować pełną wersję gry, musisz zalogować się do usługi Live.  Naciśnij A, aby się zalogować lub B, aby anulować.";
+$Text::SignInLeaderboard = "Aby zobaczyć tabele wyników, musisz zalogować się do Xbox Live.";
+;$Text::SignInForSP = "Zaloguj się, aby zagrać.";
+;$Text::SignInToPlay = "Zaloguj się, aby zagrać lub naciśnij B, aby powrócić do Arcade.";
+$Text::ExitLevelConfirm = "Czy na pewno chcesz opuścić ten poziom?  Utracisz bieżący postęp.";
+$Text::HostMMConfirm = "Czy na pewno chcesz powrócić do menu głównego?  Spowoduje to zakończenie gry dla wszystkich graczy.";
+$Text::HostMMInviteConfirm = "Czy na pewno chcesz zaakceptować to zaproszenie do gry?  Spowoduje to zakończenie gry dla wszystkich graczy.";
+$Text::ClientMMConfirm = "Czy na pewno chcesz zakończyć poziom i powrócić do menu głównego?";
+$Text::RankedHostConfirm = "Czy na pewno chcesz opuścić grę?  Spowoduje to zakończenie gry dla wszystkich graczy, a przedwczesne opuszczenie gry może spowodować utratę punktów.";
+$Text::RankedClientConfirm = "Czy na pewno chcesz opuścić grę?  Przedwczesne zakończenie gry może spowodować utratę punktów.";
+
+$Text::ErrorCannotConnect   = "Nie można połączyć się z sesją.";
+$Text::ErrorSessionEnded    = "Sesja zakończyła się niespodziewanie.";
+$Text::ErrorConnectionLost  = "Połączenie z sesją zostało utracone.";
+$Text::ErrorHostKilled      = "Gospodarz zakończył sesję.";
+$Text::ErrorSessionGone     = "Sesja gry nie jest już dostępna.";
+$Text::ErrorYouBanned       = "Nie możesz grać w tej sesji.";
+$Text::ErrorNoGames         = "Nie znaleziono żadnych gier.";
+$Text::ErrorHostKickedYou   = "Gospodarz wyrzucił cię z gry.";
+$Text::ErrorBandwidthWarn   = "Warunki sieciowe mogą mieć wpływ na tę grę, jeśli zezwolisz na taką liczbę graczy.";
+$Text::ErrorClientsNotReady = "Nie można rozpocząć gry, dopóki wszyscy gracze nie będą gotowi.";
+$Text::ErrorClientsWillDrop = "Wyjście z gry spowoduje rozłączenie wszystkich graczy.";
+$Text::ErrorTooFewPlayers   = "Nie można rozpocząć rozgrywki rankingowej z tylko jednym graczem.";
+$Text::ErrorSignedOff       = "Zostałeś wylogowany z Xbox Live.  Powrót do menu głównego.";
+$Text::TestingNetwork       = "Proszę czekać";
+;$Text::ErrorArbFailed       = "Session ended due to failed registration with Arbitration service."; // using $Text::ErrorCannotConnect now
+$Text::ErrorDemoUpgrade     = "Odblokuj pełną wersję, aby wziąć udział w tej rozgrywce!";
+;$Text::ErrorDemoReject      = "Gracze pełnej wersji nie mogą grać w sesjach wersji demo."; // using $Text::ErrorCannotConnect, should never happen anyway
+$Text::ErrorKickSure        = "Jesteś pewien(-na), że chcesz wyrzucić tego gracza?";
+$Text::ErrorNoSwitchMarble  = "Nie można zmienić kulki podczas gry.";
+$Text::ErrorNoChangeRes     = "Nie można zmienić rozdzielczości podczas gry.";
+
+
+;-------------------------------------------------------------------------------
+; Help & Options Menu Options
+;-------------------------------------------------------------------------------
+$Text::HOMarble = "Wygląd kulki";
+$Text::HOOptions = "Dźwięk i Sterowanie";
+$Text::HOVideoOptions = "Grafika";
+$Text::HOMiscOptions = "Różne";
+$Text::HOInstructions = "Jak grać";
+$Text::HOCredits = "Twórcy";
+
+;-------------------------------------------------------------------------------
+; About Menu Options
+;-------------------------------------------------------------------------------
+$Text::AboutBasics = "Sterowanie kulką";
+$Text::AboutPowerups = "Ulepszenia";
+$Text::AboutBlast = "Miernik Wybuchu";
+$Text::AboutSP = "Tryb jednego gracza";
+$Text::AboutMP = "Tryb wielu graczy";
+
+;-------------------------------------------------------------------------------
+; About Page
+;-------------------------------------------------------------------------------
+$Text::HOTitle = "POMOC I OPCJE";
+$Text::About0Title = "WYBIERZ WYGLĄD KULKI";
+$Text::About1Title = "DŹWIĘK I STEROWANIE";
+$Text::About2Title = "JAK GRAĆ";
+$Text::About3Title = "STEROWANIE KULKĄ";
+$Text::About3aTitle = "ULEPSZENIA";
+$Text::About3bTitle = "MIERNIK WYBUCHU";
+$Text::About4Title = "TRYB JEDNEGO GRACZA";
+$Text::About5Title = "TRYB WIELU GRACZY";
+$Text::About6Title = "TWÓRCY MARBLE BLAST";
+
+;About Marble Blast Basics
+$Text::About1 = "Użyj lewego drążka, aby poruszać kulką. \n\nNaciśnij A lub pociągnij lewy spust, aby kulka podskoczyła.\n\nUżyj prawego drążka, aby rozglądać się za pomocą kamery. \n\nUżyj ekranu Pomoc i Opcje w Menu Głównym, aby odwrócić sterowanie kamerą.";
+
+;About Powerups
+$Text::About2 = "Istnieje wiele ulepszeń, które pomogą ci w grze.  Aby zebrać ulepszenie, przeturlaj się po nim.  Pojawi się ono w oknie ulepszeń.";
+$Text::About3 = "Pociągnij prawy spust lub naciśnij B, aby aktywować ulepszenie.";
+
+;About Blast
+$Text::About4 = "Kulka ma zdolność wybuchu, która odpycha przeciwników w trybie wieloosobowym i daje ci lekkie przyspieszenie.  Używaj jej mądrze!";
+$Text::About5 = "Miernik Wybuchu pokazuje aktualny poziom dostępnego wybuchu.  Z czasem powoli się on regeneruje.";
+$Text::About6 = "Naciśnij X lub prawy bumper, aby użyć aktualnej mocy wybuchu.\n\nZbierz ulepszenie Ultra Wybuch, aby natychmiast zapełnić swój Miernik Wybuchu - i to z nawiązką!";
+
+;About Single Player Mode
+$Text::AboutSP1 = "Dotrzyj do Panelu Końcowego każdego poziomu tak szybko, jak to możliwe.  Sprawdź tabele wyników, aby porównać swoje najlepsze czasy z innymi graczami.";
+$Text::AboutSP2 = "<lmargin:70>Panel Startowy - Tutaj rozpoczyna się poziom.\n\nPanel Końcowy - Przyturlaj się tutaj swoją kulką, aby wygrać.\n\nKlejnoty - Niektóre poziomy mają porozmieszczane klejnoty.  Musisz zebrać je wszystkie, aby móc ukończyć poziom.\n\nPodróż w Czasie - Przeturlaj się po klepsydrze, aby tymczasowo zatrzymać zegar. ";
+
+;About Multiplayer
+$Text::AboutMP1 = "Ścigaj się do klejnotów i zbieraj je, aby zdobywać punkty.  Zbierz jak najwięcej klejnotów, ale bądź gotowy na kolejną porcję!\n\nNiektóre klejnoty są warte więcej punktów niż inne.  Bardziej wartościowe klejnoty są zazwyczaj trudniejsze do zdobycia.";
+$Text::AboutMP2 = "Spójrz na tabele wyników, aby porównać swoje wyniki z innymi graczami z całego świata.";
+
+; Credits
+$Text::GGCredits = "<spush><font:Arial Bold:%1>GarageGames Team<spop>\n\n<spush><font:Arial Bold:%2>Development<spop>\nTim Aste\nJane Chase\nTimothy Clarke\nAdam deGrandis\nClark Fagot\nMatt Fairfax\nMark Frohnmayer\nBen Garney\nTim Gift\nJustin Kovac\nJoe Maruschak\nMark McCoy\nJay Moore\nRick Overman\nJohn Quigley\nBrian Ramage\nKevin Ryan\nLiam Ryan\nAlex Swanson\nJeff Tunnell\nPat Wilson\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nCafe Aroma\nCafe Yumm!\nMezza Luna Pizzeria\nPizza Research Institute\nThe GarageGames Community";
+$Text::MSCredits = "<spush><font:Arial Bold:%1>Xbox Live Arcade Team<spop>\n\n<spush><font:Arial Bold:%2>Program Management<spop>\nKatie Stone\nJon David\n\n<spush><font:Arial Bold:%2>Test Manager<spop>\nTony Harlich\n\n<spush><font:Arial Bold:%2>Test<spop>\nMichael Jones\nChad Dylan Long (VMC)\nEric Snyder (VMC)\nNoriko Fritschle (VMC)\nKevin Hathaway (VMC)\nTy Roberts (VMC)\n\n<spush><font:Arial Bold:%2>Release Manager<spop>\nJulie Pitt (VOLT)\n\n<spush><font:Arial Bold:%2>Development<spop>\nBrian Ostergren\nEric Heutchy\nEric Fleegal\n\n<spush><font:Arial Bold:%2>Group Manager<spop>\nGreg Canessa\n\n<spush><font:Arial Bold:%2>Product Planning<spop>\nRoss Erickson\nCherie Lutz\n\n<spush><font:Arial Bold:%2>Content Creation<spop>\nMichelle Lomba\n\n<spush><font:Arial Bold:%2>Usability<spop>\nTom Fuller\nChuck Harrison\n\n<spush><font:Arial Bold:%2>Special Thanks<spop>\nJ Allard\nShane Kim\nDon Ryan\nChris Early\nOliver Miyashita\nMike Minahan\nVMC Consulting\nAmi Blaire\nDarryl Saunders\nAaron Greenberg\nMichael Wolf\nDavid Hufford\nDarren Trencher";
+$Text::LocCredits = "<spush><font:Arial Bold:%1>Localization<spop>\n\n<spush><font:Arial Bold:%2>Japan Localization Team<spop>\nShinya Muto\nJunya Chiba\nGo Komatsu\nMayumi Koike\nTakehiro Kuga\nMasao Okamoto\nYutaka Hasegawa\nMunetaka Fuse\nTakashi Sasaki\nShinji Komiyama\n\n<spush><font:Arial Bold:%2>Korea Localization Team<spop>\nEun Hee Lee\nIn Goo Kwon\nWhi Young Yoon\nJi Young Kim\n\n<spush><font:Arial Bold:%2>Taiwan Localization Team<spop>\nRobert Lin\nCarole Lin\nLilia Lee\nJason Cheng";
+
+;-------------------------------------------------------------------------------
+; Achievement Strings
+;-------------------------------------------------------------------------------
+;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
+;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
+
+$Text::AchievementName01 = "Punktualna Kulka";
+$Text::AchievementName02 = "Odznaka Praktykanta";
+$Text::AchievementName03 = "Odznaka Czeladnika";
+$Text::AchievementName04 = "Odznaka Adepta";
+$Text::AchievementName05 = "1 poziom wtajemniczenia Kulko-fu";
+$Text::AchievementName06 = "Mistrz Kulko-fu";
+$Text::AchievementName07 = "Arcymistrz Kulko-fu";
+$Text::AchievementName08 = "Poszukiwać Znajdziek";
+$Text::AchievementName09 = "Egg Basket";
+$Text::AchievementName10 = "Pierwsze Miejsce";
+$Text::AchievementName11 = "Kolekcjoner Klejnotów";
+$Text::AchievementName12 = "Kulkowy Weteran";
+
+$Text::AchievementDescription01 = "Ukończ dowolny poziom poniżej limitu czasu.";
+$Text::AchievementDescription02 = "Ukończ wszystkie poziomy o łatwym poziomie trudności.";
+$Text::AchievementDescription03 = "Ukończ wszystkie poziomy o średnim poziomie trudności.";
+$Text::AchievementDescription04 = "Ukończ wszystkie poziomy o trudnym poziomie trudności.";
+$Text::AchievementDescription05 = "Ukończ wszystkie poziomy o łatwym poziomie trudności poniżej limitu czasowego.";
+$Text::AchievementDescription06 = "Ukończ wszystkie poziomy o średnim poziomie trudności poniżej limitu czasowego.";
+$Text::AchievementDescription07 = "Ukończ wszystkie poziomy o trudnym poziomie trudności poniżej limitu czasowego.";
+$Text::AchievementDescription08 = "Znajdź jakąkolwiek znajdźkę.";
+$Text::AchievementDescription09 = "Znajdź wszystkie dwadzieścia znajdziek.";
+$Text::AchievementDescription10 = "Zdobądź pierwsze miejsce w rozgrywce wieloosobowej.";
+$Text::AchievementDescription11 = "Zdobądź 75 punktów w rozgrywce wieloosobowej.";
+$Text::AchievementDescription12 = "Zdobądź łącznie 2,000 punktów w trybie wieloosobowym.";
+
+;-------------------------------------------------------------------------------
+; Singleplayer Game Strings
+;-------------------------------------------------------------------------------
+
+$Text::InGameReady = "Gotowy";
+$Text::InGameGo = "Turlaj się!";
+$Text::InGameOutofBounds = "Poza granicami poziomu";
+
+;-------------------------------------------------------------------------------
+; Level Strings
+;-------------------------------------------------------------------------------
+$Text::LevelName1 = "Nauka Turlania";
+$Text::LevelStartHelp1 = "Witaj w Marble Blast Ultra!\nUżyj lewego drążka, aby toczyć kulkę.";
+$Text::TriggerText1_0 = "Użyj prawego drążka, aby zmienić widok kamery.";
+$Text::TriggerText1_1 = "Naciśnij A lub lewy spust, aby podskoczyć!";
+$Text::TriggerText1_2 = "Uważaj, aby nie spaść z platformy!";
+$Text::TriggerText1_3 = "Przeturlaj się do Panelu Końcowego, aby ukończyć poziom!";
+$Text::LevelName2 = "W Górę";
+$Text::LevelStartHelp2 = "Ulepszenie Super Skok może być używane do przeskakiwania wyższych barier.";
+$Text::TriggerText2_0 = "Użyj ulepszenia Super Prędkość, aby poruszać się szybciej, zwłaszcza po stromych zboczach!";
+$Text::TriggerText2_1 = "Wjedź windą na najwyższą platformę.";
+$Text::LevelName3 = "Kolekcjoner Klejnotów";
+$Text::LevelStartHelp3 = "Aby ukończyć grę, musisz znaleźć wszystkie ukryte klejnoty";
+$Text::TriggerText3_0 = "Ulepszenie Podróży w Czasie zatrzymuje zegar, pozwalając ci osiągać lepsze czasy!";
+$Text::TriggerText3_1 = "Ulepszenie Podróży w Czasie zatrzymuje zegar, pozwalając ci osiągać lepsze czasy!";
+
+$Text::LevelName4 = "Problemy z Tarciem";
+$Text::LevelStartHelp4 = "Nie wszystkie powierzchnie są takie same!";
+$Text::TriggerText4_0 = "Gumowe maty zapewniają lepszą przyczepność. \nUżywaj ich do pokonywania etepów pod ostrymi kątami!";
+$Text::TriggerText4_1 = "Lód jest śliski!\nPodchodź do niego z ostrożnością.";
+
+$Text::LevelName5 = "Grawitacja dla Opornych";
+$Text::LevelStartHelp5 = "Dotykaj Modyfikatory Grawitacji, aby obrócić świat do góry nogami!";
+$Text::TriggerText5_0 = "Zbierz po jednym klejnocie z każdej z trzech stron.";
+
+$Text::LevelName6 = "Przeprawa przez Most";
+$Text::LevelStartHelp6 = "Uważaj, aby nie spaść przez dziury!!";
+$Text::TriggerText6_0 = "Uważaj na nog... znaczy kulkę na tym wąskim mostku!\nJeśli spadniesz, stracisz czas!";
+$Text::TriggerText6_1 = "Ruchome platformy umożliwiają dotarcie do trudno dostępnych miejsc.";
+
+$Text::LevelName7 = "Królicza Nora";
+$Text::LevelStartHelp7 = "Nabierz rozpędu, aby szybko zlecieć na sam dół!";
+
+$Text::LevelName8 = "Pierwszy Lot";
+$Text::LevelStartHelp8 = "Użyj Żyrokopteru, aby bezpiecznie przelecieć nad przepaścią.";
+
+$Text::LevelName9 = "Niebezpieczna Wspinaczka";
+$Text::LevelStartHelp9 = "Nie pozwól, aby przeszkody zepchnęły cię z toru prowadzącego do mety!";
+
+$Text::LevelName10 = "Bombowa Zabawa";
+$Text::LevelStartHelp10 = "Naciśnij RB, gdy świeci się Miernik Wybuchu, aby użyć mocy Wybuchu.";
+$Text::TriggerText10_0 = "Mniejsza kulka wpadłaby przez te szczeliny...";
+$Text::TriggerText10_1 = "Wybuchu można użyć w powietrzu, aby skoczyć wyżej.  Odrzuca on również inne kulki w grze wieloosobowej.";
+$Text::TriggerText10_2 = "Ulepszenie Ultra Wybuchu natychmiast zapełnia swój Miernik Wybuchu - i to z nawiązką!";
+$Text::TriggerText10_3 = "Ulepszenie Ogromna Kula sprawia, że kulka staje się... ogromna!";
+$Text::TriggerText10_4 = "W grze wieloosobowej celem jest zebranie większej liczby klejnotów od pozostałych graczy.";
+$Text::LevelName36 = "Prawie jak Klasy";
+$Text::LevelName39 = "Pół-Rura";
+$Text::LevelStartHelp39 = "Pędź po przepołowionej rurze i zbieraj klejnoty!";
+$Text::LevelName45 = "Wielka Przepaść";
+$Text::LevelStartHelp45 = "Wespnij się na przełęcz i popędź w dół po drugiej stronie!";
+$Text::LevelName40 = "Arena";
+$Text::LevelStartHelp40 = "Nie daj się zepchnąć!";
+$Text::LevelName37 = "Rozwidlenie Dróg";
+$Text::LevelStartHelp37 = "Zobaczmy, jak szybko uda ci się znaleźć wszystkie klejnoty!";
+$Text::LevelName106 = "Test Wytrzymałości";
+$Text::LevelStartHelp106 = "Nie zostań w tyle za platformą - nie ma już odwrotu!";
+$Text::LevelName104 = "Dywergencja";
+$Text::LevelName105 = "Rdzeń Sześcianu";
+$Text::LevelName103 = "Czarny Diament";
+$Text::LevelName102 = "Terminowe Wznoszenie";
+$Text::LevelName107 = "Miejska Dżungla";
+$Text::LevelStartHelp107 = "Witaj w dżungli!";
+$Text::LevelName48 = "Spirala w Górę";
+$Text::LevelStartHelp48 = "Wspinaj się w górę, aby dotrzeć do celu!";
+$Text::LevelName28 = "Macierz Rampy";
+$Text::LevelStartHelp28 = "Znajdź 10 klejnotów!";
+$Text::LevelName108 = "Górski Odwrót";
+$Text::LevelName101 = "Droga Mniej Uczęszczana";
+$Text::LevelName27 = "Skate Park";
+$Text::LevelStartHelp27 = "Pochwal się swoimi szalonymi trikami!";
+$Text::LevelName35 = "Celuj Wysoko";
+$Text::LevelStartHelp35 = "Celuj w najwyższy otwór";
+$Text::LevelName34 = "Wczesne Przymrozki";
+$Text::LevelStartHelp34 = "Uwaga: Przed tobą lód!";
+$Text::LevelName109 = "Na Samą Górę";
+$Text::LevelName72 = "Przetrwają najlepsi";
+$Text::LevelStartHelp72 = "Pozostań na platformie, aby przetrwać!";
+$Text::LevelName77 = "Drapacz Chmur";
+$Text::LevelStartHelp77 = "Znajdź wszystkie klejnoty w drodze na szczyt!";
+$Text::LevelName50 = "Domek na Drzewie";
+$Text::LevelName58 = "Selekcja Naturalna";
+$Text::LevelStartHelp58 = "Nie zostań w tyle!";
+$Text::LevelName80 = "Wir";
+$Text::LevelName70 = "Hulaj Dusza";
+$Text::LevelName55 = "Tor Przeszkód";
+$Text::LevelName81 = "Jak na Sankach";
+$Text::LevelStartHelp81 = "Skakanie w śliskich miejscach może pomóc w odnalezieniu się.";
+$Text::LevelName86 = "Dualizm";
+$Text::LevelStartHelp86 = "Która trasa jest najszybsza?";
+$Text::LevelName100 = "Król Góry";
+$Text::LevelStartHelp100 = "Dasz sobie radę z tą górą?";
+$Text::LevelName53 = "Potrójny Wyścig";
+$Text::LevelStartHelp53 = "Patrz w obie strony!";
+$Text::LevelName73 = "Archeolog Pasjonata";
+$Text::LevelStartHelp73 = "Zbieraj klejnoty i pędź do mety!";
+$Text::TriggerText73_0 = "Użyj Super Skoku, aby wyskoczyć z powrotem z jaskiń!";
+$Text::LevelName98 = "Masochista";
+$Text::LevelStartHelp98 = "Zwróć szczególną uwagę na wzór klocków.";
+$Text::LevelName57 = "Potrójny labirynt";
+$Text::LevelName76 = "Rampy - Reaktywacja";
+$Text::LevelStartHelp76 = "Zachowaj ostrożność podczas turlania się między platformami.";
+$Text::LevelName79 = "Akrobata";
+$Text::LevelStartHelp79 = "Kontroluj obroty podczas lądowania.";
+$Text::LevelName83 = "Rusztowanie";
+$Text::LevelStartHelp83 = "Turlaj się, aby uniknąć wpadnięcia w pułapki!";
+$Text::LevelName59 = "Śliski Zjazd";
+$Text::LevelStartHelp59 = "Uważaj na klocki!";
+$Text::LevelName75 = "Narciarstwo Ekstremalne";
+$Text::LevelStartHelp75 = "Początkującym narciarzom zaleca się zachowanie ostrożności.";
+$Text::LevelName88 = "Próba";
+$Text::LevelStartHelp88 = "Siła, szybkość i skrytość to klucz do przejścia nadchodzących prób!";
+$Text::LevelName61 = "Pół-Rurkowa Elita";
+$Text::LevelName87 = "Dedal";
+$Text::LevelName97 = "W Trakcie Budowy";
+$Text::LevelStartHelp97 = "Zachowaj ostrożność na tej strukturze.";
+$Text::LevelName56 = "Punkty na Kompasie";
+$Text::LevelName89 = "Bataliony";
+$Text::LevelStartHelp89 = "Miłego szturmowania zamku!";
+$Text::LevelName69 = "Dookoła Świata";
+$Text::LevelName21 = "Pułapki";
+$Text::LevelStartHelp21 = "Ćwicz swoje umiejętności toczenia się, unikając szczelin w podłodze!";
+$Text::LevelName12 = "Grawitacyjna Spirala";
+$Text::LevelStartHelp12 = "Podnieś Modyfikatory Grawitacji, aby dotoczyć się do mety!";
+$Text::LevelName23 = "Kręta Droga";
+$Text::LevelStartHelp23 = "Podążaj krętą drogą, używając ulepszeń, aby pokonać wyrwy!";
+$Text::LevelName22 = "Platformowa Impreza";
+$Text::LevelStartHelp22 = "Jeździj na ruchomych platformach, aby dotrzeć do mety!";
+$Text::LevelName82 = "Skacz Skacz Skacz!";
+
+;-------------------------------------------------------------------------------
+; Multiplayer Level Strings
+;-------------------------------------------------------------------------------
+
+$Text::LevelNameMP1 = "Pod Każdym Kątem";
+$Text::LevelNameMP2 = "Kostka Bojowa";
+$Text::LevelNameMP3 = "Rozproszenie";
+$Text::LevelNameMP4 = "Skate Battle Royale";
+$Text::LevelNameMP5 = "Zenit";
+$Text::LevelNameMP6 = "Król Kulek";
+$Text::LevelNameMP7 = "Miasto Kulek";
+$Text::LevelNameMP8 = "Horyzont";
+$Text::LevelNameMP9 = "Klejnoty na Drodze";
+$Text::LevelNameMP10 = "Epicentrum";
+
+;-------------------------------------------------------------------------------
+; Additional Help Strings
+;-------------------------------------------------------------------------------
+
+$Text::TriggerTextFirstSuperJump = "Użyj ulepszenia Super Skok, aby przeskoczyć przez przepaść."
+$Text::TriggerTextFirstGyrocopter = "Użyj Żyrokoptera, aby bezpiecznie przelecieć nad przepaścią.";
+$Text::TriggerTextFirstMines = "Uwaga na miny!";
+$Text::TriggerTextIce = "Uważaj na lód--łatwo się na nim poślizgnąć!";
+$Text::TriggerTextRubber = "Pokryta gumą powierzchnia zapewnia lepszą przyczepność!";
+$Text::TriggerTextTornado = "Uważaj na siłę przyciągania tornada!";
+$Text::TriggerTextFans = "Uważaj na wiatr z wentylatorów.";
+$Text::TriggerTextBumpers = "Klocki odpychają się podczas zderzenia.";
+$Text::TriggerTextAirMove = "Kierunek obrotu można zmienić nawet w powietrzu.";
+$Text::MultiplayerStartup = "Zbierz jak najwięcej klejnotów, aby zwyciężyć!";
