@@ -58,6 +58,7 @@ private:
     static bool smMouseEnabled;
     static bool smJoystickEnabled;
     static bool smXInputEnabled;
+    static bool smModAnalogRange;
 
     bool mKeyboardActive;
     bool mMouseActive;

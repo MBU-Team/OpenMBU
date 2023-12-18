@@ -11,7 +11,7 @@ new GuiControl(inputAndSoundOptionsGui) {
    new GuiXboxOptionListCtrl(inputAndSoundOptionsList) {
       profile = isWidescreen()? "TextOptionListProfile" : "TextOptionListSmallProfile";
       position = isWidescreen()? "380 211" : "132 100";
-      extent = isWidescreen()? "815 400" : "510 250";
+      extent = isWidescreen()? "815 500" : "510 350";
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = "center";
       // there can only be two columns; these values are percentages of total extent
@@ -39,6 +39,7 @@ function inputAndSoundOptionsGui::show(%this, %backGui)
    inputAndSoundOptionsList.addRow($Text::MusicVol, GetOptionListRangeText(0, 100, 5), 8); // "Music"
    inputAndSoundOptionsList.addRow($Text::FXVol, GetOptionListRangeText(0, 100, 5), 8); // "FX"
    inputAndSoundOptionsList.addRow($Text::MouseSensitivity, GetOptionListRangeText(10, 100, 5), 8); // mouse sensitivity
+   inputAndSoundOptionsList.addRow($Text::ModAnalogRange, $Text::ModAnalogRangeOnOff, 8); // mod analog range
    inputAndSoundOptionsList.addRow($Text::CenterCam, $Text::OptionOffOn, 8); // auto center camera
 
    inputAndSoundOptionsList.setOptionIndex(0, $pref::invertYCamera);
@@ -46,7 +47,8 @@ function inputAndSoundOptionsGui::show(%this, %backGui)
    inputAndSoundOptionsList.setOptionIndex(2, ($pref::Option::MusicVolume) / 5 );
    inputAndSoundOptionsList.setOptionIndex(3, ($pref::Option::FXVolume) / 5 );
    inputAndSoundOptionsList.setOptionIndex(4, (($pref::Input::MouseSensitivity * 10000) / 5) - 2);
-   inputAndSoundOptionsList.setOptionIndex(5, $pref::Input::AutoCenterCamera);
+   inputAndSoundOptionsList.setOptionIndex(5, $pref::Input::ModAnalogRange);
+   inputAndSoundOptionsList.setOptionIndex(6, $pref::Input::AutoCenterCamera);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( $Text::About1Title );
@@ -85,6 +87,11 @@ function inputAndSoundOptionsList::onOptionChange(%this, %increase)
          // mouse sensitivity
          $pref::Input::MouseSensitivity = mClamp((%val+2) * 0.05, 0.1, 1) * 0.01;
       case 5:
+         // mod analog range
+         if (%val != 0 && %val != 1)
+            %val = 0;
+         $pref::Input::ModAnalogRange = %val;
+      case 6:
          // auto center camera
          if (%val != 0 && %val != 1)
             %val = 0;
