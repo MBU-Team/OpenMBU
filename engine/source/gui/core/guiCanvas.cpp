@@ -687,7 +687,24 @@ bool GuiCanvas::processInputEvent(const InputEvent* event)
             }
 
             return retval;
-        } else {
+        }
+        else if (event->objType == XI_CONNECT)
+        {
+            // This is the event that is fired when a controller is connected or disconnected
+//            if (event->action == SI_MAKE)
+//                Con::warnf("XInput Controller Connected");
+//            else if (event->action == SI_BREAK)
+//                Con::warnf("XInput Controller Disconnected");
+        }
+        else if (event->objType == XI_THUMBRX || event->objType == XI_THUMBRY)
+        {
+            // This is the right analog stick, which is not used for anything
+
+            //F32 incomingValue = mFabs(event->fValue);
+            //Con::warnf("Input event XI_THUMBRX or XI_THUMBRY not handled: %f", incomingValue);
+        }
+        else
+        {
             Con::warnf("Input fell outside current logic. Event type: %d", event->objType);
         }
     }
