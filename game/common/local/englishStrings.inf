@@ -391,6 +391,8 @@ $Text::ClientMMConfirm = "Are you sure you want to end the level and return to t
 $Text::RankedHostConfirm = "Are you sure you want to exit this game?  This will end the game for all players, and you may lose points by quitting early.";
 $Text::RankedClientConfirm = "Are you sure you want to exit this game?  You may lose points by quitting early.";
 
+$Text::ErrorOutdatedServer   = "Cannot connect to the session. The server is out of date.";
+$Text::ErrorOutdatedClient   = "Cannot connect to the session. The client is out of date.";
 $Text::ErrorCannotConnect   = "Cannot connect to the session.";
 $Text::ErrorSessionEnded    = "The session has ended unexpectedly.";
 $Text::ErrorConnectionLost  = "You have lost your connection to the session.";
