@@ -77,6 +77,9 @@ const char* getSystemLanguage_forConsole()
         case LANGTYPE_KOREAN:
             language = "korean";
             break;
+        case LANGTYPE_POLISH:
+            language = "polish";
+            break;
         case LANGTYPE_PORTUGUESE:
             language = "portuguese";
             break;

@@ -82,12 +82,15 @@ for ($i = 1; $i < $Game::argc ; $i++)
                case "chinese":
                   $locLanguage = "chinese";
                   $locCharacterSet = CHINESEBIG5;
+               case "polish":
+                  $locLanguage = "polish";
+                  $locCharacterSet = ANSI;
             }
             $argUsed[$i+1]++;
             $i++;
          }
          else
-            error( "Error: Missing Command Line argument. Usage: -language <english|french|german|italian|japanese|korean|portuguese|spanish|chinese>" );
+            error( "Error: Missing Command Line argument. Usage: -language <english|french|german|italian|japanese|korean|portuguese|spanish|chinese|polish>" );
       //--------------------
       case "-log":
          $argUsed[$i]++;

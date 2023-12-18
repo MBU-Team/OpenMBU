@@ -6,13 +6,13 @@
 function getLanguageList()
 {
    // TODO: Unicode characters don't work, fix them and re-enable these languages
-   return "english" TAB "french" TAB "german" TAB "italian" TAB "spanish";// TAB "chinese" TAB "japanese" TAB "korean";
+   return "english" TAB "french" TAB "german" TAB "italian" TAB "spanish" TAB "polish";// TAB "chinese" TAB "japanese" TAB "korean";
 }
 
 function getLanguageDisplayList()
 {
    // TODO: Unicode characters don't work, fix them and re-enable these languages
-   return $Text::LangEnglish TAB $Text::LangFrench TAB $Text::LangGerman TAB $Text::LangItalian TAB $Text::LangSpanish;// TAB $Text::LangChinese TAB $Text::LangJapanese TAB $Text::LangKorean;
+   return $Text::LangEnglish TAB $Text::LangFrench TAB $Text::LangGerman TAB $Text::LangItalian TAB $Text::LangSpanish TAB $Text::LangPolish;// TAB $Text::LangChinese TAB $Text::LangJapanese TAB $Text::LangKorean;
 }
 
 function isEnglish()
