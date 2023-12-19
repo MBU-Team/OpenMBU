@@ -91,25 +91,45 @@ U32 endHighResolutionTimer(U32 time[2])
 
 #elif defined(TORQUE_OS_MAC_CARB)
 
-#include <Timer.h>
-#include <Math64.h>
+#include <mach/mach_time.h> // for mach_absolute_time, mach_timebase_info
 
-void startHighResolutionTimer(U32 time[2]) {
-    UnsignedWide t;
-    Microseconds(&t);
-    time[0] = t.lo;
-    time[1] = t.hi;
+void startHighResolutionTimer(U64 &time) {
+   time = mach_absolute_time();
 }
 
-U32 endHighResolutionTimer(U32 time[2]) {
-    UnsignedWide t;
-    Microseconds(&t);
-    return t.lo - time[0];
-    // given that we're returning a 32 bit integer, and this is unsigned subtraction... 
-    // it will just wrap around, we don't need the upper word of the time.
-    // NOTE: the code assumes that more than 3 hrs will not go by between calls to startHighResolutionTimer() and endHighResolutionTimer().
-    // I mean... that damn well better not happen anyway.
+F64 endHighResolutionTimer(U64 time)  {
+   static mach_timebase_info_data_t    sTimebaseInfo = {0, 0};
+
+   U64 now = mach_absolute_time();
+
+   if(sTimebaseInfo.denom == 0){
+      mach_timebase_info(&sTimebaseInfo);
+   }
+   // Handle the micros/nanos conversion first, because shedding a few bits is better than overflowing.
+   F64 elapsedMicros = (static_cast<F64>(now - time) / 1000.0) * static_cast<F64>(sTimebaseInfo.numer) / static_cast<F64>(sTimebaseInfo.denom);
+
+   return elapsedMicros; // Just truncate, and hope we didn't overflow
 }
+
+//#include <Timer.h>
+//#include <Math64.h>
+//
+//void startHighResolutionTimer(U32 time[2]) {
+//    UnsignedWide t;
+//    Microseconds(&t);
+//    time[0] = t.lo;
+//    time[1] = t.hi;
+//}
+//
+//U32 endHighResolutionTimer(U32 time[2]) {
+//    UnsignedWide t;
+//    Microseconds(&t);
+//    return t.lo - time[0];
+//    // given that we're returning a 32 bit integer, and this is unsigned subtraction...
+//    // it will just wrap around, we don't need the upper word of the time.
+//    // NOTE: the code assumes that more than 3 hrs will not go by between calls to startHighResolutionTimer() and endHighResolutionTimer().
+//    // I mean... that damn well better not happen anyway.
+//}
 
 #else
 
