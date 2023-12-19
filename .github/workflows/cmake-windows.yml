@@ -1,6 +1,6 @@
 # This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: CMake on multiple platforms
+name: CMake on Windows
 
 on:
   push:
@@ -23,47 +23,14 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest]
         build_type: [Release]
-        c_compiler: [cl, clang] #, gcc]
-        asm_compiler: [nasm]
+        c_compiler: [cl]
         include:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            asm_compiler: nasm
             artifact_name: Windows-MSVC
-            install_prerequsites: ""
-          #- os: ubuntu-latest
-          #  c_compiler: gcc
-          #  cpp_compiler: g++
-          #  asm_compiler: nasm
-          - os: ubuntu-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-            asm_compiler: nasm
-            artifact_name: Linux-Clang
-            install_prerequsites: sudo apt install -y nasm libsdl1.2-dev libx11-dev libxft-dev libxxf86vm-dev uuid-dev
-          #- os: macos-latest
-          #  c_compiler: gcc
-          #  cpp_compiler: g++
-          #  asm_compiler: nasm
-          - os: macos-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-            asm_compiler: nasm
-            artifact_name: MacOS-Clang
-            install_prerequsites: brew install nasm sdl
-            mac_cmake_args: -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15"
-        exclude:
-          #- os: windows-latest
-          #  c_compiler: gcc
-          - os: windows-latest
-            c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
-          - os: macos-latest
-            c_compiler: cl
 
     steps:
     - name: Checkout repository
@@ -76,11 +43,6 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Install Prerequsites
-      shell: bash
-      run: |
-        ${{ matrix.install_prerequsites }}
-
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -88,9 +50,7 @@ jobs:
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_ASM_NASM_COMPILER=${{ matrix.asm_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        ${{ matrix.mac_cmake_args }}
         -S ${{ github.workspace }}
 
     - name: Build
