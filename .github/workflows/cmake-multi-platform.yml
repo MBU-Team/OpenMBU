@@ -25,42 +25,40 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         build_type: [Release]
-        c_compiler: [cl, clang, gcc]
+        c_compiler: [cl, clang] #, gcc]
         asm_compiler: [nasm]
         include:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
             asm_compiler: nasm
-          - os: windows-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-            asm_compiler: nasm
-          - os: windows-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-            asm_compiler: nasm
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-            asm_compiler: nasm
+            artifact_name: Windows
+            install_nasm: ""
+          #- os: ubuntu-latest
+          #  c_compiler: gcc
+          #  cpp_compiler: g++
+          #  asm_compiler: nasm
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
             asm_compiler: nasm
-          - os: macos-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-            asm_compiler: nasm
+            artifact_name: Linux
+            install_nasm: apt install -y nasm
+          #- os: macos-latest
+          #  c_compiler: gcc
+          #  cpp_compiler: g++
+          #  asm_compiler: nasm
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
             asm_compiler: nasm
+            artifact_name: MacOS
+            install_nasm: brew install nasm
         exclude:
           #- os: windows-latest
           #  c_compiler: gcc
-          #- os: windows-latest
-          #  c_compiler: clang
+          - os: windows-latest
+            c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
           - os: macos-latest
@@ -76,6 +74,11 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+    - name: Install NASM
+      shell: bash
+      run: |
+        ${{ matrix.install_nasm }}
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -101,5 +104,5 @@ jobs:
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: OpenMBU-${{ matrix.os }}-${{ matrix.c_compiler }}
+        name: OpenMBU-${{ matrix.artifact_name }}-${{ matrix.c_compiler }}
         path: game
