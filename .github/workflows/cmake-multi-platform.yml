@@ -33,7 +33,7 @@ jobs:
             cpp_compiler: cl
             asm_compiler: nasm
             artifact_name: Windows
-            install_nasm: ""
+            install_prerequsites: ""
           #- os: ubuntu-latest
           #  c_compiler: gcc
           #  cpp_compiler: g++
@@ -43,7 +43,7 @@ jobs:
             cpp_compiler: clang++
             asm_compiler: nasm
             artifact_name: Linux
-            install_nasm: apt install -y nasm
+            install_prerequsites: sudo apt install -y nasm libsdl2-dev
           #- os: macos-latest
           #  c_compiler: gcc
           #  cpp_compiler: g++
@@ -53,7 +53,7 @@ jobs:
             cpp_compiler: clang++
             asm_compiler: nasm
             artifact_name: MacOS
-            install_nasm: brew install nasm
+            install_prerequsites: sudo brew install nasm sdl2
         exclude:
           #- os: windows-latest
           #  c_compiler: gcc
@@ -75,10 +75,10 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Install NASM
+    - name: Install Prerequsites
       shell: bash
       run: |
-        ${{ matrix.install_nasm }}
+        ${{ matrix.install_prerequsites }}
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
