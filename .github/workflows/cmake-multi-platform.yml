@@ -32,7 +32,7 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             asm_compiler: nasm
-            artifact_name: Windows
+            artifact_name: Windows-MSVC
             install_prerequsites: ""
           #- os: ubuntu-latest
           #  c_compiler: gcc
@@ -42,8 +42,8 @@ jobs:
             c_compiler: clang
             cpp_compiler: clang++
             asm_compiler: nasm
-            artifact_name: Linux
-            install_prerequsites: sudo apt install -y nasm libsdl2-dev
+            artifact_name: Linux-Clang
+            install_prerequsites: sudo apt install -y nasm libsdl2-2.0-0 libsdl2-dev
           #- os: macos-latest
           #  c_compiler: gcc
           #  cpp_compiler: g++
@@ -52,8 +52,8 @@ jobs:
             c_compiler: clang
             cpp_compiler: clang++
             asm_compiler: nasm
-            artifact_name: MacOS
-            install_prerequsites: sudo brew install nasm sdl2
+            artifact_name: MacOS-Clang
+            install_prerequsites: brew install nasm sdl2
         exclude:
           #- os: windows-latest
           #  c_compiler: gcc
@@ -104,5 +104,5 @@ jobs:
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: OpenMBU-${{ matrix.artifact_name }}-${{ matrix.c_compiler }}
+        name: OpenMBU-${{ matrix.artifact_name }}
         path: game
