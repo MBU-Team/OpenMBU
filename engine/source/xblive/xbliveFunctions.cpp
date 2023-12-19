@@ -230,7 +230,7 @@ ConsoleFunction(XBLiveGetGamerZone, const char*, 1, 1, "(port)")
 {
     argc;
 
-    int port = atoi(argv[1]);
+    int port = dAtoi(argv[1]);
 
     // TODO: Implement
 
@@ -241,8 +241,8 @@ ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
 {
     argc;
 
-    S32 port = atoi(argv[1]);
-    S32 presence = atoi(argv[2]);
+    S32 port = dAtoi(argv[1]);
+    S32 presence = dAtoi(argv[2]);
 
     switch (presence)
     {
