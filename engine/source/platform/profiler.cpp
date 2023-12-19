@@ -89,28 +89,8 @@ U32 endHighResolutionTimer(U32 time[2])
     return ticks;
 }
 
-#elif defined(TORQUE_OS_MAC_CARB)
-
-#include <mach/mach_time.h> // for mach_absolute_time, mach_timebase_info
-
-void startHighResolutionTimer(U64 &time) {
-   time = mach_absolute_time();
-}
-
-F64 endHighResolutionTimer(U64 time)  {
-   static mach_timebase_info_data_t    sTimebaseInfo = {0, 0};
-
-   U64 now = mach_absolute_time();
-
-   if(sTimebaseInfo.denom == 0){
-      mach_timebase_info(&sTimebaseInfo);
-   }
-   // Handle the micros/nanos conversion first, because shedding a few bits is better than overflowing.
-   F64 elapsedMicros = (static_cast<F64>(now - time) / 1000.0) * static_cast<F64>(sTimebaseInfo.numer) / static_cast<F64>(sTimebaseInfo.denom);
-
-   return elapsedMicros; // Just truncate, and hope we didn't overflow
-}
-
+//#elif defined(TORQUE_OS_MAC_CARB)
+//
 //#include <Timer.h>
 //#include <Math64.h>
 //
