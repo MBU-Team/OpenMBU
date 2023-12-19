@@ -54,6 +54,7 @@ jobs:
             asm_compiler: nasm
             artifact_name: MacOS-Clang
             install_prerequsites: brew install nasm sdl
+            mac_cmake_args: -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15"
         exclude:
           #- os: windows-latest
           #  c_compiler: gcc
@@ -89,6 +90,7 @@ jobs:
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_ASM_NASM_COMPILER=${{ matrix.asm_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        ${{ matrix.mac_cmake_args }}
         -S ${{ github.workspace }}
 
     - name: Build
