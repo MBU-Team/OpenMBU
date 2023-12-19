@@ -43,7 +43,7 @@ jobs:
             cpp_compiler: clang++
             asm_compiler: nasm
             artifact_name: Linux-Clang
-            install_prerequsites: sudo apt install -y nasm libsdl2-2.0-0 libsdl2-dev
+            install_prerequsites: sudo apt install -y nasm libsdl-dev
           #- os: macos-latest
           #  c_compiler: gcc
           #  cpp_compiler: g++
@@ -53,7 +53,7 @@ jobs:
             cpp_compiler: clang++
             asm_compiler: nasm
             artifact_name: MacOS-Clang
-            install_prerequsites: brew install nasm sdl2
+            install_prerequsites: brew install nasm sdl
         exclude:
           #- os: windows-latest
           #  c_compiler: gcc
