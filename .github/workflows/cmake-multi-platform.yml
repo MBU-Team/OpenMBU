@@ -43,7 +43,7 @@ jobs:
             cpp_compiler: clang++
             asm_compiler: nasm
             artifact_name: Linux-Clang
-            install_prerequsites: sudo apt install -y nasm libsdl-dev
+            install_prerequsites: sudo apt install -y nasm libsdl1.2-dev
           #- os: macos-latest
           #  c_compiler: gcc
           #  cpp_compiler: g++
