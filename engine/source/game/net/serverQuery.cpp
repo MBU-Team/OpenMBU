@@ -2437,7 +2437,7 @@ static void handleMasterServerJoinInvite(const NetAddress* address, BitStream* s
     char inv[32];
     readCString(stream, (char*) &inv);
     const char* ourInv = Con::getVariable("Server::InviteCode");
-    if (strcmp(ourInv, inv) == 0) {
+    if (dStrcmp(ourInv, inv) == 0) {
         // RESPOND
         U16 netPort = Con::getIntVariable("pref::Server::Port");
 
