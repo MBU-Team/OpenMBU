@@ -2579,6 +2579,15 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
         handleMasterServerJoinInviteResponse(address, stream);
         break;
 #endif
+#ifdef TORQUE_FAST_FILE_TRANSFER
+    case FileTransferPacket:
+    {
+        NetConnection *connection = NetConnection::lookup(address);
+        if (connection)
+            connection->handleFastFilePacket(stream);
+        break;
+    }
+#endif
     }
 }
 

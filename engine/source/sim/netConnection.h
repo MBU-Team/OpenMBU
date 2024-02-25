@@ -963,6 +963,9 @@ protected:
     /// The currently downloading file is always first in the list (ie, [0]).
     Vector<char*> mMissingFileList;
 
+    /// Name of currently uploading file
+    char* mCurrentFileName;
+
     /// Stream for currently uploading file (if any).
     Stream* mCurrentDownloadingFile;
 
@@ -981,6 +984,12 @@ protected:
     /// Error storage for file transfers.
     char mLastFileErrorBuffer[256];
 
+#ifdef TORQUE_FAST_FILE_TRANSFER
+
+    struct FastFileState* mFastFileState;
+
+#endif
+
     /// Structure to track ghost-always objects and their ghost indices.
     struct GhostSave {
         NetObject* ghost;
@@ -993,6 +1002,26 @@ protected:
 public:
     /// Start sending the specified file over the link.
     bool startSendingFile(const char* fileName);
+
+#ifdef TORQUE_FAST_FILE_TRANSFER
+
+    static void fastFileTransferInit();
+    void initFastFile();
+    void destroyFastFile();
+
+    void sendFastFile();
+    void checkFastFile();
+    void handleFastFilePacket(BitStream* stream);
+
+    void sendFastFileRequest(BitStream* stream);
+    void handleFastFileRequest(BitStream* stream);
+    void processFastFileRequest();
+
+    void sendFastFileAcknowledgement(BitStream* stream);
+    void handleFastFileAcknowledgement(BitStream* stream);
+    void processFastFileAcknowledgement();
+
+#endif // TORQUE_NET_HOLEPUNCHING
 
     /// Called when we receive a FileChunkEvent.
     void chunkReceived(U8* chunkData, U32 chunkLen);
