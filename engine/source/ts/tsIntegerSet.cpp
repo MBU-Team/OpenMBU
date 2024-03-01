@@ -39,6 +39,25 @@ bool TSIntegerSet::testAll(S32 upto) const
     return false;
 }
 
+S32 TSIntegerSet::count(S32 upto) const
+{
+    AssertFatal(upto <= MAX_TS_SET_SIZE, "TSIntegerSet::count: out of range");
+
+    S32 count = 0;
+    U32 dword = bits[0];
+    for (S32 i = 0; i < upto; i++)
+    {
+        // get next word
+        if (!(i & 0x1F))
+            dword = bits[i >> 5];
+        // test bits in word
+        if (dword & (1 << (i & 0x1F)))
+            count++;
+    }
+    return count;
+}
+
+
 void TSIntegerSet::intersect(const TSIntegerSet& otherSet)
 {
     for (S32 i = 0; i < MAX_TS_SET_DWORDS; i++)
@@ -179,6 +198,57 @@ void TSIntegerSet::next(S32 & i)
 void TSIntegerSet::copy(const TSIntegerSet& otherSet)
 {
     dMemcpy(bits, otherSet.bits, MAX_TS_SET_DWORDS * 4);
+}
+
+void TSIntegerSet::insert(S32 index, bool value)
+{
+    AssertFatal(index < MAX_TS_SET_SIZE, "TSIntegerSet::insert: out of range");
+
+    // shift bits in words after the insertion point
+    U32 endWord = (end() >> 5) + 1;
+    if (endWord >= MAX_TS_SET_DWORDS)
+        endWord = MAX_TS_SET_DWORDS - 1;
+
+    for (S32 i = endWord; i > (index >> 5); i--)
+    {
+        bits[i] = bits[i] << 1;
+        if (bits[i - 1] & 0x80000000)
+            bits[i] |= 0x1;
+    }
+
+    // shift to create space in target word
+    U32 lowMask = (1 << (index & 0x1f)) - 1;              // bits below the insert point
+    U32 highMask = ~(lowMask | (1 << (index & 0x1f)));    // bits above the insert point
+
+    S32 word = index >> 5;
+    bits[word] = ((bits[word] << 1) & highMask) | (bits[word] & lowMask);
+
+    // insert new value
+    if (value)
+        set(index);
+}
+
+void TSIntegerSet::erase(S32 index)
+{
+    AssertFatal(index < MAX_TS_SET_SIZE, "TSIntegerSet::erase: out of range");
+
+    // shift to erase bit in target word
+    S32 word = index >> 5;
+    U32 lowMask = (1 << (index & 0x1f)) - 1;              // bits below the erase point
+
+    bits[word] = ((bits[word] >> 1) & ~lowMask) | (bits[word] & lowMask);
+
+    // shift bits in words after the erase point
+    U32 endWord = (end() >> 5) + 1;
+    if (endWord >= MAX_TS_SET_DWORDS)
+        endWord = MAX_TS_SET_DWORDS - 1;
+
+    for (S32 i = (index >> 5) + 1; i <= endWord; i++)
+    {
+        if (bits[i] & 0x1)
+            bits[i - 1] |= 0x80000000;
+        bits[i] = bits[i] >> 1;
+    }
 }
 
 TSIntegerSet::TSIntegerSet()

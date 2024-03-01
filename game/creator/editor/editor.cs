@@ -63,6 +63,9 @@ function Editor::onAdd(%this)
    // Terrain Editor
    exec("./TerrainEditorVSettingsGui.gui");
 
+   // Model Importer
+   exec("./ModelImporterSettingsDlg.gui");
+
    // Ignore Replicated fxStatic Instances.
    EWorldEditor.ignoreObjClass("fxShapeReplicatedStatic");
 

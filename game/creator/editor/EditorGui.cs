@@ -148,6 +148,7 @@ function EditorGui::init(%this)
    EditorMenuBar.addMenuItem("Edit", "-", 0);
    EditorMenuBar.addMenuItem("Edit", "World Editor Settings...", 12);
    EditorMenuBar.addMenuItem("Edit", "Terrain Editor Settings...", 13);
+   EditorMenuBar.addMenuItem("Edit", "Model Importer Settings...", 14);
 
    EditorMenuBar.addMenu("Camera", 7);
    EditorMenuBar.addMenuItem("Camera", "Drop Camera at Player", 1, "Alt Q");
@@ -680,7 +681,10 @@ function EditorMenuBar::onEditMenuItemSelect(%this, %itemId, %item)
       Canvas.pushDialog(WorldEditorSettingsDlg);
    else if(%item $= "Terrain Editor Settings...")
       Canvas.pushDialog(TerrainEditorValuesSettingsGui, 99);
-   else if(%item $= "Relight Scene")
+   else if (%item $= "Model Importer Settings...") {
+      ModelImporterSettingsDlg.onWake();
+      Canvas.pushDialog(ModelImporterSettingsDlg, 99);
+   } else if(%item $= "Relight Scene")
       lightScene("", forceAlways);
    else if(EWorldEditor.isVisible())
    {
@@ -1192,6 +1196,34 @@ function WorldEditorToolbarDlg::init(%this)
    WorldEditorCreatorCheckBox.setValue(WorldEditorToolFrameSet.isMember("EditorToolCreatorGui"));
 }
 
+function Creator::addModelSearch(%this,  %extension, %base)
+{
+   %file = findFirstFile( %extension );
+   %staticId = "";
+   while( %file !$= "" ) 
+   {
+      // Determine which group to put the file in
+      // and build the group heirarchy as we go
+      %split    = strreplace(%file, "/", " ");
+      %dirCount = getWordCount(%split)-1;
+      %parentId = %base;
+      
+      for(%i=0; %i<%dirCount; %i++)
+      {
+         %parent = getWords(%split, 0, %i);
+         // if the group doesn't exist create it
+         if ( !%staticId[%parent] )
+            %staticId[%parent] = %this.insertItem( %parentId, getWord(%split, %i));
+         %parentId = %staticId[%parent];
+      }
+      // Add the file to the group
+      %create = "TSStatic::create(\"" @ %file @ "\", \"" @ %extension @ "\");";
+      %this.insertItem( %parentId, fileBase( %file ), %create,"TSStatic" );
+   
+      %file = findNextFile( %extension );
+   }
+}
+
 function Creator::init( %this ) 
 {
    //%this.clear();
@@ -1257,6 +1289,10 @@ function Creator::init( %this )
    // ---------- Static Shapes    
    %base = %this.insertItem( 0, "Static Shapes" );
 
+
+   %extensions = "*.dae *.x *.x3d *.xgl *.fbx *.blend *.3ds *.3mf *.ase *.obj *.ply *.dxf *.lwo *.lws *.lxo *.stl *.ac *.amf *.ms3d *.cob *.scn *.xml *.irrmesh *.irr *.mdl";
+   %extensions = %extensions SPC "*.md2 *.md3 *.pk3 *.mdc *.mmd *.smd *.vta *.3d *.b3d *.q3d *.q3s *.nff *.off *.hmp *.ndo *.gltf *.glb *.dae";
+                        
    // walk all the statics and add them to the correct group
    %staticId = "";
    %file = findFirstFile( "*.dts" );
@@ -1267,12 +1303,30 @@ function Creator::init( %this )
       %split    = strreplace(%file, "/", " ");
       %dirCount = getWordCount(%split)-1;
       %parentId = %base;
+
+      if (strStr(%file, ".cached.dts") != -1)
+      {
+          // check if dae exists by same name
+          %doContinue = false;
+          for (%k = 0; %k < getWordCount(%extensions); %k++)
+          {
+              %ext = strreplace(getWord(%extensions, %k), "*", "");
+              %daeName = strreplace(%file, ".cached.dts", %ext);
+              if (isFile(%daeName)) 
+              {
+                 %file = findNextFile( "*.dts" );
+                 %doContinue = true;
+                 break;
+              }
+          }
+          if (%doContinue) continue;
+                                }                      
       
       for(%i=0; %i<%dirCount; %i++)
       {
-         %parent = getWords(%split, 0, %i);
+         %parent = strlwr(getWords(%split, 0, %i));
          // if the group doesn't exist create it
-         if ( !%staticId[%parent] )
+         if ( %staticId[%parent] $= "" )
             %staticId[%parent] = %this.insertItem( %parentId, getWord(%split, %i));
          %parentId = %staticId[%parent];
       }
@@ -1281,6 +1335,34 @@ function Creator::init( %this )
       %this.insertItem( %parentId, fileBase( %file ), %create,"TSStatic" );
    
       %file = findNextFile( "*.dts" );
+   }
+                        
+   for (%k = 0; %k < getWordCount(%extensions); %k++)
+   {
+       %extension = getWord(%extensions, %k);
+       %file = findFirstFile( %extension );
+       while( %file !$= "" ) 
+       {
+          // Determine which group to put the file in
+          // and build the group heirarchy as we go
+          %split    = strreplace(%file, "/", " ");
+          %dirCount = getWordCount(%split)-1;
+          %parentId = %base;
+      
+          for(%i=0; %i<%dirCount; %i++)
+          {
+             %parent = getWords(%split, 0, %i);
+             // if the group doesn't exist create it
+             if ( !%staticId[%parent] )
+                %staticId[%parent] = %this.insertItem( %parentId, getWord(%split, %i));
+             %parentId = %staticId[%parent];
+          }
+          // Add the file to the group
+          %create = "TSStatic::create(\"" @ %file @ "\", \"" @ %extension @ "\");";
+          %this.insertItem( %parentId, fileBase( %file ), %create,"TSStatic" );
+   
+          %file = findNextFile( %extension );
+       }
    }
 
 
@@ -1425,8 +1507,17 @@ function Creator::create(%this, %sel)
 }
 
 
-function TSStatic::create(%shapeName)
+function TSStatic::create(%shapeName, %extension)
 {
+   if ( %extension $= "*.dae" )
+   {
+      %shapeName = convertCollada(%shapeName);
+      if (%shapeName $= "") return 0;
+   } else if (%extension !$= "")
+   {
+      %shapeName = convertAssimp(%shapeName);
+      if (%shapeName $= "") return 0;
+   }
    %obj = new TSStatic() 
    {
       shapeName = %shapeName;

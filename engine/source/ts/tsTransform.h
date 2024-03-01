@@ -23,6 +23,7 @@ struct Quat16
     void write(Stream*);
 
     void identity();
+    QuatF getQuatF() const;
     QuatF& getQuatF(QuatF* q) const;
     void set(const QuatF& q);
     S32 operator==(const Quat16& q) const;

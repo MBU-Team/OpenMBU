@@ -46,6 +46,9 @@ public:
 };
 #endif
 
+namespace Opcode { class Model; class MeshInterface; }
+namespace IceMaths { class IndexedTriangle; class Point; }
+
 class TSMaterialList;
 class TSShapeInstance;
 struct RayInfo;
@@ -65,8 +68,8 @@ struct TSDrawPrimitive
         TypeMask = Strip | Fan | Triangles
     };
 
-    S16 start;
-    S16 numElements;
+    U16 start;
+    U16 numElements;
     S32 matIndex;    ///< holds material index & element type (see above enum)
 };
 
@@ -122,13 +125,13 @@ public:
     S32 numMatFrames;
     S32 vertsPerFrame;
 
-    ToolVector<Point3F> verts;
-    ToolVector<Point3F> norms;
-    ToolVector<Point2F> tverts;
-    ToolVector<TSDrawPrimitive> primitives;
-    ToolVector<U8> encodedNorms;
-    ToolVector<U16> indices;
-    ToolVector<U16> mergeIndices; ///< the last so many verts merge with these
+    Vector<Point3F> verts;
+    Vector<Point3F> norms;
+    Vector<Point2F> tverts;
+    Vector<TSDrawPrimitive> primitives;
+    Vector<U8> encodedNorms;
+    Vector<U16> indices;
+    Vector<U16> mergeIndices; ///< the last so many verts merge with these
                                   ///< verts to form the next detail level
                                   ///< NOT IMPLEMENTED YET
 
@@ -230,6 +233,14 @@ public:
     static TSMesh* assembleMesh(U32 meshType, bool skip);
     virtual void disassemble();
 
+    void createTangents(const Vector<Point3F>& _verts, const Vector<Point3F>& _norms);
+    void findTangent(U32 index1,
+        U32 index2,
+        U32 index3,
+        Point3F* tan0,
+        Point3F* tan1,
+        const Vector<Point3F>& _verts);
+
     // this function allows subclasses to override where there vertex and primitive buffers come from.
     // note that this function returns a reference, allowing the caller to modify the buffers.
     virtual GFXVertexBufferHandle<MeshVertex>& getVertexBuffer() { return mVB; };
@@ -290,6 +301,15 @@ public:
         mVisibility = 1.0f;
     }
     virtual ~TSMesh();
+
+    Opcode::Model* mOptTree = NULL;
+    Opcode::MeshInterface* mOpMeshInterface = NULL;
+    IceMaths::IndexedTriangle* mOpTris = NULL;
+    IceMaths::Point* mOpPoints = NULL;
+
+    void prepOpcodeCollision();
+    bool buildPolyListOpcode(const S32 od, AbstractPolyList* polyList, const Box3F& nodeBox, TSMaterialList* materials, U32& surfaceKey);
+    bool castRayOpcode(const Point3F& start, const Point3F& end, RayInfo* rayInfo, TSMaterialList* materials);
 };
 
 inline const Point3F& TSMesh::decodeNormal(U8 ncode) { return smU8ToNormalTable[ncode]; }
@@ -300,20 +320,20 @@ public:
     typedef TSMesh Parent;
 
     /// vectors that define the vertex, weight, bone tuples
-    ToolVector<F32> weight;
-    ToolVector<S32> boneIndex;
-    ToolVector<S32> vertexIndex;
+    Vector<F32> weight;
+    Vector<S32> boneIndex;
+    Vector<S32> vertexIndex;
 
     /// vectors indexed by bone number
-    ToolVector<S32> nodeIndex;
-    ToolVector<MatrixF> initialTransforms;
+    Vector<S32> nodeIndex;
+    Vector<MatrixF> initialTransforms;
 
     /// initial values of verts and normals
     /// these get transformed into initial bone space,
     /// from there into world space relative to current bone
     /// pos, and then weighted by bone weights...
-    ToolVector<Point3F> initialVerts;
-    ToolVector<Point3F> initialNorms;
+    Vector<Point3F> initialVerts;
+    Vector<Point3F> initialNorms;
 
     /// set verts and normals...
     void updateSkin();

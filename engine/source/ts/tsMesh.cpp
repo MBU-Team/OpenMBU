@@ -2306,6 +2306,22 @@ S32 TSMesh::getNumPolys()
 
 TSMesh::~TSMesh()
 {
+    if (mOptTree) {
+        delete mOptTree;
+        mOptTree = NULL;
+    }
+    if (mOpMeshInterface) {
+        delete mOpMeshInterface;
+        mOpMeshInterface = NULL;
+    }
+    //if (mOpTris) {
+    //    delete[] mOpTris;
+    //    mOpTris = NULL;
+    //}
+    //if (mOpPoints) {
+    //    delete[] mOpPoints;
+    //    mOpPoints = NULL;
+    //}
 }
 
 //-----------------------------------------------------
@@ -3761,4 +3777,147 @@ void TSMesh::fillTextureSpaceInfo(MeshVertex* vertArray)
 
     }
 
+}
+
+//-----------------------------------------------------------------------------
+// find tangent vector
+//-----------------------------------------------------------------------------
+inline void TSMesh::findTangent(U32 index1,
+    U32 index2,
+    U32 index3,
+    Point3F* tan0,
+    Point3F* tan1,
+    const Vector<Point3F>& _verts)
+{
+    const Point3F& v1 = _verts[index1];
+    const Point3F& v2 = _verts[index2];
+    const Point3F& v3 = _verts[index3];
+
+    const Point2F& w1 = tverts[index1];
+    const Point2F& w2 = tverts[index2];
+    const Point2F& w3 = tverts[index3];
+
+    F32 x1 = v2.x - v1.x;
+    F32 x2 = v3.x - v1.x;
+    F32 y1 = v2.y - v1.y;
+    F32 y2 = v3.y - v1.y;
+    F32 z1 = v2.z - v1.z;
+    F32 z2 = v3.z - v1.z;
+
+    F32 s1 = w2.x - w1.x;
+    F32 s2 = w3.x - w1.x;
+    F32 t1 = w2.y - w1.y;
+    F32 t2 = w3.y - w1.y;
+
+    F32 denom = (s1 * t2 - s2 * t1);
+
+    if (mFabs(denom) < 0.0001f)
+    {
+        // handle degenerate triangles from strips
+        if (denom < 0) denom = -0.0001f;
+        else denom = 0.0001f;
+    }
+    F32 r = 1.0f / denom;
+
+    Point3F sdir((t2 * x1 - t1 * x2) * r,
+        (t2 * y1 - t1 * y2) * r,
+        (t2 * z1 - t1 * z2) * r);
+
+    Point3F tdir((s1 * x2 - s2 * x1) * r,
+        (s1 * y2 - s2 * y1) * r,
+        (s1 * z2 - s2 * z1) * r);
+
+
+    tan0[index1] += sdir;
+    tan1[index1] += tdir;
+
+    tan0[index2] += sdir;
+    tan1[index2] += tdir;
+
+    tan0[index3] += sdir;
+    tan1[index3] += tdir;
+}
+
+//-----------------------------------------------------------------------------
+// create array of tangent vectors
+//-----------------------------------------------------------------------------
+void TSMesh::createTangents(const Vector<Point3F>& _verts, const Vector<Point3F>& _norms)
+{
+    if (_verts.size() == 0) // can only be done in editable mode
+        return;
+
+    U32 numVerts = _verts.size();
+    U32 numNorms = _norms.size();
+    if (numVerts <= 0 || numNorms <= 0)
+        return;
+
+    if (numVerts != numNorms)
+        return;
+
+    Vector<Point3F> tan0;
+    tan0.setSize(numVerts * 2);
+
+    Point3F* tan1 = tan0.address() + numVerts;
+    dMemset(tan0.address(), 0, sizeof(Point3F) * 2 * numVerts);
+
+
+    U32   numPrimatives = primitives.size();
+
+    for (S32 i = 0; i < numPrimatives; i++)
+    {
+        const TSDrawPrimitive& draw = primitives[i];
+        GFXPrimitiveType drawType = getDrawType(draw.matIndex >> 30);
+
+        U32 p1Index = 0;
+        U32 p2Index = 0;
+
+        U16* baseIdx = &indices[draw.start];
+
+        const U32 numElements = (U32)draw.numElements;
+
+        switch (drawType)
+        {
+        case GFXTriangleList:
+        {
+            for (U32 j = 0; j < numElements; j += 3)
+                findTangent(baseIdx[j], baseIdx[j + 1], baseIdx[j + 2], tan0.address(), tan1, _verts);
+            break;
+        }
+
+        case GFXTriangleStrip:
+        {
+            p1Index = baseIdx[0];
+            p2Index = baseIdx[1];
+            for (U32 j = 2; j < numElements; j++)
+            {
+                findTangent(p1Index, p2Index, baseIdx[j], tan0.address(), tan1, _verts);
+                p1Index = p2Index;
+                p2Index = baseIdx[j];
+            }
+            break;
+        }
+
+        default:
+            AssertFatal(false, "TSMesh::createTangents: unknown primitive type!");
+        }
+    }
+
+    tangents.setSize(numVerts);
+
+    // fill out final info from accumulated basis data
+    for (U32 i = 0; i < numVerts; i++)
+    {
+        const Point3F& n = _norms[i];
+        const Point3F& t = tan0[i];
+        const Point3F& b = tan1[i];
+
+        Point3F tempPt = t - n * mDot(n, t);
+        tempPt.normalize();
+        tangents[i] = tempPt;
+
+        Point3F cp;
+        mCross(n, t, &cp);
+
+        tangents[i].w = (mDot(cp, b) < 0.0f) ? -1.0f : 1.0f;
+    }
 }

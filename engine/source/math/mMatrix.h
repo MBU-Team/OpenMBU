@@ -139,7 +139,7 @@ public:
     MatrixF& mul(const F32 a);                         ///< M * a -> M
     MatrixF& mul(const MatrixF& a, const F32 b);       ///< a * b -> M
 
-
+    MatrixF& mulL(const MatrixF& a);                   ///< a * M -> M
     void mul(Point4F& p) const;                       ///< M * p -> p (full [4x4] * [1x4])
     void mulP(Point3F& p) const;                      ///< M * p -> p (assume w = 1.0f)
     void mulP(const Point3F& p, Point3F* d) const;     ///< M * p -> d (assume w = 1.0f)
@@ -157,6 +157,9 @@ public:
     //------------------------------------
     friend MatrixF operator * (const MatrixF& m1, const MatrixF& m2);
     MatrixF& operator *= (const MatrixF& m);
+
+    // Static identity matrix
+    const static MatrixF Identity;
 
 };
 
@@ -375,6 +378,15 @@ inline void MatrixF::mulV(const VectorF& v, Point3F* d) const
 inline void MatrixF::mul(Box3F& b) const
 {
     m_matF_x_box3F(*this, &b.min.x, &b.max.x);
+}
+
+inline MatrixF& MatrixF::mulL(const MatrixF& a)
+{  // a * M -> M
+    AssertFatal(&a != this, "MatrixF::mulL - a.mul(a) is invalid!");
+
+    MatrixF tempThis(*this);
+    m_matF_x_matF(a, tempThis, *this);
+    return (*this);
 }
 
 inline void MatrixF::getColumn(S32 col, Point4F* cptr) const

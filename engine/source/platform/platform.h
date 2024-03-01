@@ -508,6 +508,18 @@ extern dsize_t     dStrcspn(const char* str, const char* set);
 extern char* dStrstr(char* str1, char* str2);
 extern char* dStrstr(const char* str1, const char* str2);
 
+
+extern bool dStrEqual(const char* str1, const char* str2);
+extern bool dStrStartsWith(const char* str1, const char* str2);
+extern bool dStrEndsWith(const char* str1, const char* str2);
+extern char* dStripPath(const char* filename);
+extern char* dChopTrailingNumber(const char* name, S32& number);
+
+/// Like ChopTrailingNumber but doesn't initialize the passed number 
+/// to a default value of 2.
+extern char* dGetTrailingNumber(const char* name, S32& number);
+
+
 extern char* dStrtok(char* str, const char* sep);
 
 extern int         dAtoi(const char* str);
@@ -639,6 +651,19 @@ extern void  dFree(void* in_pFree);
 extern void* dRealloc(void* in_pResize, dsize_t in_size);
 extern void* dRealMalloc(dsize_t);
 extern void  dRealFree(void*);
+
+// Helper function to copy one array into another of different type
+template<class T, class S> void dCopyArray(T* dst, const S* src, dsize_t size)
+{
+    for (dsize_t i = 0; i < size; i++)
+        dst[i] = (T)src[i];
+}
+
+// Special case of the above function when the arrays are the same type (use memcpy)
+template<class T> void dCopyArray(T* dst, const T* src, dsize_t size)
+{
+    dMemcpy(dst, src, size * sizeof(T));
+}
 
 extern void* dMemcpy(void* dst, const void* src, dsize_t size);
 extern void* dMemmove(void* dst, const void* src, dsize_t size);

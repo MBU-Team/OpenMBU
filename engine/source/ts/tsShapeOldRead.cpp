@@ -802,8 +802,9 @@ void TSShape::fixupOldSkins(S32 numMeshes, S32 numSkins, S32 numDetails, S32* de
             emptySkins++; // probably never, but just in case
     while (skinsUsed < numSkins - emptySkins)
     {
+        objects.push_back(TSObject());
         TSObject& object = newObjects[numSkinObjects++];
-        objects.sz++;
+        
         object.nameIndex = 0; // no name
         object.numMeshes = 0;
         object.startMeshIndex = numMeshes + skinsCopy.size();
@@ -844,7 +845,7 @@ void TSShape::fixupOldSkins(S32 numMeshes, S32 numSkins, S32 numDetails, S32* de
         // if no meshes, don't need object
         if (!object.numMeshes)
         {
-            objects.sz--;
+            objects.pop_back();
             numSkinObjects--;
         }
     }

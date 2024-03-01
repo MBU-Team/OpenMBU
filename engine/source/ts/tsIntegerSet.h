@@ -17,7 +17,7 @@
 #if defined(TORQUE_MAX_LIB)
 #define MAX_TS_SET_DWORDS 32
 #else
-#define MAX_TS_SET_DWORDS 6
+#define MAX_TS_SET_DWORDS 64
 #endif
 
 #define MAX_TS_SET_SIZE   (32*MAX_TS_SET_DWORDS)
@@ -47,6 +47,9 @@ public:
     /// Tests all bits for true
     bool testAll(S32 upto = MAX_TS_SET_SIZE) const;
 
+    /// Counts set bits
+    S32 count(S32 upto = MAX_TS_SET_SIZE) const;
+
     /// intersection (a & b)
     void intersect(const TSIntegerSet&);
     /// union (a | b)
@@ -58,6 +61,9 @@ public:
 
     /// copy one integer set into another
     void copy(const TSIntegerSet&);
+
+    void insert(S32 index, bool value);
+    void erase(S32 index);
 
     void operator=(const TSIntegerSet& otherSet) { copy(otherSet); }
 

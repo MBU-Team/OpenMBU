@@ -29,6 +29,32 @@ bool TSShapeConstructor::onAdd()
 {
     if (!Parent::onAdd())
         return false;
+
+    // Prevent multiple objects pointing at the same shape file
+    TSShapeConstructor* tss = findShapeConstructor(mShape);
+    if (tss)
+    {
+        Con::errorf("TSShapeConstructor::onAdd failed: %s is already referenced by "
+            "another TSShapeConstructor object (%s - %d)", mShape,
+            tss->getName(), tss->getId());
+        return false;
+    }
+
+    // Add to the TSShapeConstructor group (for lookups)
+    SimGroup* group;
+    if (!Sim::findObject("TSShapeConstructorGroup", group))
+    {
+        group = new SimGroup();
+        if (!group->registerObject("TSShapeConstructorGroup"))
+        {
+            Con::errorf("TSShapeConstructor::onAdd failed: Could not register "
+                "TSShapeConstructorGroup");
+            return false;
+        }
+        Sim::getRootGroup()->addObject(group);
+    }
+    group->addObject(this);
+
     return true;
 }
 
@@ -154,4 +180,21 @@ void TSShapeConstructor::initPersistFields()
     if (MaxSequences) endGroup("Sequences");
 }
 
+
+TSShapeConstructor* TSShapeConstructor::findShapeConstructor(const char* path)
+{
+    SimGroup* group;
+    if (Sim::findObject("TSShapeConstructorGroup", group))
+    {
+        // Find the TSShapeConstructor object for the given shape file
+        for (S32 i = 0; i < group->size(); i++)
+        {
+            TSShapeConstructor* tss = dynamic_cast<TSShapeConstructor*>(group->operator[](i));
+            
+            if (dStricmp(path, tss->mShape) == 0)
+                return tss;
+        }
+    }
+    return NULL;
+}
 

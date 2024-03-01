@@ -1,0 +1,386 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(ModelImporterSettingsDlg) {
+   profile = "GuiModelessDialogProfile";
+   horizSizing = "right";
+   vertSizing = "bottom";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   helpTag = "0";
+
+   new GuiWindowCtrl() {
+      profile = "GuiWindowProfile";
+      horizSizing = "center";
+      vertSizing = "center";
+      position = "90 55";
+      extent = "230 420";
+      minExtent = "8 8";
+      visible = "1";
+      helpTag = "0";
+      text = "Model Importer Settings";
+      maxLength = "255";
+      resizeWidth = "0";
+      resizeHeight = "0";
+      canMove = "1";
+      canClose = "0";
+      canMinimize = "0";
+      canMaximize = "0";
+      minSize = "50 50";
+      closeCommand = "Canvas.popDialog(ModelImporterSettingsDlg);";
+
+      new GuiButtonCtrl() {
+         profile = "GuiButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "142 392";
+         extent = "80 20";
+         minExtent = "8 8";
+         visible = "1";
+         command = "ModelImporterSettingsDlg.save();Canvas.popDialog(ModelImporterSettingsDlg);";
+         helpTag = "0";
+         text = "OK";
+         groupNum = "-1";
+         buttonType = "PushButton";
+      };
+      new GuiControl(MISettingsGeneralTab) {
+         profile = "GuiWindowProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "7 27";
+         extent = "220 360";
+         minExtent = "8 8";
+         visible = "1";
+         helpTag = "0";
+
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 10";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.convertLeftHanded";
+            command = "ModelImporterSettingsDlg.convertLeftHanded = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Convert Left Handed";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Convert to left handed coordinate system.";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 36";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.genUVs";
+            command = "ModelImporterSettingsDlg.genUVs = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Generate proper UVs";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Convert spherical, cylindrical, box and planar mapping to proper UVs.";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 88";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.preprocessUVs";
+            command = "ModelImporterSettingsDlg.preprocessUVs = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Preprocess UVs";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Preprocess UV transformations (scaling, translation ...)";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 62";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.flipUVs";
+            command = "ModelImporterSettingsDlg.flipUVs = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Flip UVs";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "This step flips all UV coordinates along the y-axis and adjusts material settings";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 114";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.joinVerts";
+            command = "ModelImporterSettingsDlg.joinVerts = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Join Identical Vertices";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Identifies and joins identical vertex data sets within all imported meshes.";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 140";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.reverseWinding";
+            command = "ModelImporterSettingsDlg.reverseWinding = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Reverse Winding";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "This step adjusts the output face winding order to be clockwise. The default face winding order is counter clockwise.";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 166";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.invertNormals";
+            command = "ModelImporterSettingsDlg.invertNormals = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Invert Normals";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Reverse the normal vector direction for all normals.";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 192";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.smoothNormals";
+            command = "ModelImporterSettingsDlg.smoothNormals = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Smooth Normals";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Generates smooth normals for the normals.";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 218";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.adjCenter";
+            command = "ModelImporterSettingsDlg.adjCenter = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Adjust Center";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Translate model so origin is at the center";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiCheckBoxCtrl() {
+            profile = "GuiCheckBoxProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "10 244";
+            extent = "200 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.adjFloor";
+            command = "ModelImporterSettingsDlg.adjFloor = $ThisControl.getValue();";
+            helpTag = "0";
+            text = "Adjust Floor";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Translate model so origin is at the bottom";
+            groupNum = "-1";
+            buttonType = "ToggleButton";
+         };
+         new GuiTextEditCtrl() {
+            profile = "GuiTextEditProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "93 272";
+            extent = "107 18";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.scaleFactor";
+            command = "ModelImporterSettingsDlg.scaleFactor = $ThisControl.getValue();";
+            helpTag = "0";
+            maxLength = "255";
+            historySize = "0";
+            password = "0";
+            tabComplete = "0";
+            sinkAllKeyEvents = "0";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Scale factor applied to convert the shape format default unit to meters";
+         };
+         new GuiTextCtrl() {
+            profile = "GuiTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "18 272";
+            extent = "59 18";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            text = "Scale Factor:";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Scale factor applied to convert the shape format default unit to meters";      
+            maxLength = "255";
+         };
+         new GuiTextCtrl() {
+            profile = "GuiTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "18 302";
+            extent = "44 18";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            text = "Unit Scale:";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Override for the collada <unit> element";            
+            maxLength = "255";
+         };
+         new GuiTextEditCtrl() {
+            profile = "GuiTextEditProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "93 302";
+            extent = "107 18";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "ModelImporterSettingsDlg.unitScale";
+            command = "ModelImporterSettingsDlg.unitScale = $ThisControl.getValue();";
+            helpTag = "0";
+            maxLength = "255";
+            historySize = "0";
+            password = "0";
+            tabComplete = "0";
+            sinkAllKeyEvents = "0";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Override for the collada <unit> element";
+         };
+         new GuiTextCtrl() {
+            profile = "GuiTextProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "18 328";
+            extent = "44 18";
+            minExtent = "8 8";
+            visible = "1";
+            helpTag = "0";
+            text = "Up Axis:";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "The up direction for the model";            
+            maxLength = "255";
+         };
+         new GuiRadioCtrl() {
+            profile = "GuiRadioProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "93 326";
+            extent = "32 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "";
+            command = "ModelImporterSettingsDlg.upAxis = 0;";
+            helpTag = "0";
+            text = "X";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "X Axis";
+            groupNum = "0";
+            buttonType = "RadioButton";
+         };
+         new GuiRadioCtrl() {
+            profile = "GuiRadioProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "123 326";
+            extent = "32 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "";
+            command = "ModelImporterSettingsDlg.upAxis = 1;";
+            helpTag = "0";
+            text = "Y";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Y Axis";
+            groupNum = "0";
+            buttonType = "RadioButton";
+         };
+         new GuiRadioCtrl(mi_zaxis) {
+            profile = "GuiRadioProfile";
+            horizSizing = "right";
+            vertSizing = "bottom";
+            position = "153 326";
+            extent = "32 24";
+            minExtent = "8 8";
+            visible = "1";
+            variable = "";
+            command = "ModelImporterSettingsDlg.upAxis = 2;";
+            helpTag = "0";
+            text = "Z";
+            Tooltipprofile = "GuiToolTipProfile";
+            tooltip = "Z Axis";
+            groupNum = "0";
+            buttonType = "RadioButton";
+         };
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function ModelImporterSettingsDlg::onWake(%this)
+{
+   if (!%this.initialized) {
+      %this.convertLeftHanded = false;
+      %this.genUVs = false;
+      %this.preprocessUVs = false;
+      %this.flipUVs = true;
+      %this.joinVerts = true;
+      %this.reverseWinding = true;
+      %this.invertNormals = false;
+      %this.smoothNormals = true;
+      %this.adjCenter = false;
+      %this.adjFloor = false;
+      %this.scaleFactor = "1.0";
+      %this.unitScale = "-1.0";
+      %this.initialized = true;
+      %this.upAxis = 2;
+      mi_zaxis.setValue(true);
+   }
+}
+
+function ModelImporterSettingsDlg::save(%this)
+{
+   setImportSettings(%this.convertLeftHanded, %this.genUVs, %this.preprocessUVs, %this.flipUVs, %this.joinVerts, %this.reverseWinding, %this.invertNormals, %this.smoothNormals, %this.adjCenter, %this.adjFloor, %this.scaleFactor, %this.unitScale, %this.upAxis);
+}
