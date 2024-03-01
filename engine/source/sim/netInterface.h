@@ -54,6 +54,9 @@ public:
         MasterServerJoinInvite = 74,
         MasterServerJoinInviteResponse = 76,
 #endif // TORQUE_NET_HOLEPUNCHING
+#ifdef TORQUE_FAST_FILE_TRANSFER
+        FileTransferPacket = 82,
+#endif // TORQUE_FAST_FILE_TRANSFER
     };
 protected:
 

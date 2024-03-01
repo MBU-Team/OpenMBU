@@ -154,6 +154,9 @@ void NetConnection::consoleInit()
     Con::addVariable("Stats::netBitsSent", TypeS32, &gNetBitsSent);
     Con::addVariable("Stats::netBitsReceived", TypeS32, &gNetBitsReceived);
     Con::addVariable("Stats::netGhostUpdates", TypeS32, &gGhostUpdates);
+#ifdef TORQUE_FAST_FILE_TRANSFER
+    fastFileTransferInit();
+#endif
 }
 
 void NetConnection::checkMaxRate()
@@ -232,6 +235,7 @@ NetConnection::NetConnection()
     mConnectionState = NotConnected;
 
     mCurrentDownloadingFile = NULL;
+    mCurrentFileName = NULL;
     mCurrentFileBuffer = NULL;
 
     mNextConnection = NULL;
@@ -287,6 +291,10 @@ NetConnection::NetConnection()
     mCurrentFileBufferSize = 0;
     mCurrentFileBufferOffset = 0;
     mNumDownloadedFiles = 0;
+
+#ifdef TORQUE_FAST_FILE_TRANSFER
+    initFastFile();
+#endif
 }
 
 NetConnection::~NetConnection()
@@ -297,6 +305,8 @@ NetConnection::~NetConnection()
     dFree(mCurrentFileBuffer);
     if (mCurrentDownloadingFile)
         ResourceManager->closeStream(mCurrentDownloadingFile);
+    if (mCurrentFileName)
+        dFree(mCurrentFileName);
 
     delete[] mLocalGhosts;
     delete[] mGhostLookupTable;
@@ -307,6 +317,10 @@ NetConnection::~NetConnection()
         delete mDemoWriteStream;
     if (mDemoReadStream)
         ResourceManager->closeStream(mDemoReadStream);
+
+#ifdef TORQUE_FAST_FILE_TRANSFER
+    destroyFastFile();
+#endif
 }
 
 NetConnection::PacketNotify::PacketNotify()
@@ -629,6 +643,7 @@ void NetConnection::checkPacketSend(bool force)
         return;
     }
     sendPacket(stream);
+    checkFastFile();
 }
 
 Net::Error NetConnection::sendPacket(BitStream* stream)

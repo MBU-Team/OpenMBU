@@ -58,6 +58,9 @@
 /// Define me to have 32k texture support (This uses significantly more memory and won't work for many people)
 //#define TORQUE_32K_TEXTURES
 
+/// Define to enable new faster file transfer protocol
+#define TORQUE_FAST_FILE_TRANSFER
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 

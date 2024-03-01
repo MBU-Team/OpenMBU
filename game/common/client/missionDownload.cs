@@ -63,6 +63,26 @@ function onGhostAlwaysObjectReceived()
 }
 
 //----------------------------------------------------------------------------
+
+function onFileChunkReceived(%file, %count, %max)
+{
+   if ($lastReceivedFile !$= %file
+      || $lastChunkStart $= ""
+      || %count < $lastChunkCount
+      || (getSimTime() - $lastChunkStart) > 1000)
+   {
+      $lastReceivedFile = %file;
+      $lastChunkStartCount = %count;
+      $lastChunkStart = getSimTime();
+   }
+   $lastChunkCount = %count;
+   %rate = (%count - $lastChunkStartCount) / ((getSimTime() - $lastChunkStart) / 1000);
+   %rate = (%rate / 1024) @ "kB/s";
+
+   echo(%file SPC %rate SPC %count SPC %max);
+}
+
+//----------------------------------------------------------------------------
 // Phase 3
 //----------------------------------------------------------------------------
 
