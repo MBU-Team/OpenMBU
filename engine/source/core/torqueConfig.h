@@ -55,8 +55,8 @@
 /// Define me to enable torque terrain
 //#define TORQUE_TERRAIN
 
-/// Define me to have 32k texture support (This uses significantly more memory and won't work for many people)
-//#define TORQUE_32K_TEXTURES
+/// Define me to enable discord rich presence
+#define TORQUE_DISCORD_RPC
 
 /// Define to enable new faster file transfer protocol
 #define TORQUE_FAST_FILE_TRANSFER
@@ -237,11 +237,7 @@
 /// It was previously set to 3MB but I've increased it to 16MB due to the
 /// FrameAllocator being used as temporary storage for bitmaps in the D3D9
 /// texture manager.
-#ifdef TORQUE_32K_TEXTURES
-#define TORQUE_FRAME_SIZE     3072 << 20
-#else
 #define TORQUE_FRAME_SIZE     16 << 20
-#endif
 
 /// Define if you want nVIDIA's NVPerfHUD to work with TSE
 #define TORQUE_NVPERFHUD

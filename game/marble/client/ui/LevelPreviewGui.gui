@@ -335,6 +335,7 @@ function levelPreviewGui::setLevelText( %obj, %levelnum, %text )
    
    levelPreviewSelection.clear();
    levelPreviewSelection.addRow($Text::Level, %text, 18);
+   //echo("Setting Preview To: " SPC %text);
 }
 
 function levelPreviewGui::setPreviewText( %text, %fade )

@@ -23,13 +23,6 @@
 static png_byte DGL_CHUNK_dcCf[5] = { 100, 99, 67, 102, '\0' };
 static png_byte DGL_CHUNK_dcCs[5] = { 100, 99, 67, 115, '\0' };
 
-#ifdef TORQUE_32K_TEXTURES
-static const U32 csgMaxRowPointers = 32768;
-#else
-static const U32 csgMaxRowPointers = 1024;
-#endif
-static png_bytep sRowPointers[csgMaxRowPointers];
-
 //-------------------------------------- Replacement I/O for standard LIBPng
 //                                        functions.  we don't wanna use
 //                                        FILE*'s...
@@ -251,8 +244,8 @@ bool GBitmap::readPNG(Stream& io_rStream, bool useMemoryManager /* = false */)
         format);          // use determined format...
 
      // Set up the row pointers...
-    AssertISV(height <= csgMaxRowPointers, "Error, cannot load pngs taller than 1024 pixels!");
-    png_bytep* rowPointers = sRowPointers;
+    // AssertISV(height <= csgMaxRowPointers, "Error, cannot load pngs taller than 1024 pixels!");
+    png_bytep* rowPointers = new png_bytep[height]; //  sRowPointers;
     U8* pBase = (U8*)getBits();
     for (U32 i = 0; i < height; i++)
         rowPointers[i] = pBase + (i * rowBytes);
@@ -265,6 +258,7 @@ bool GBitmap::readPNG(Stream& io_rStream, bool useMemoryManager /* = false */)
     //png_read_end(png_ptr, end_info);
     png_read_end(png_ptr, NULL);
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+    delete[] rowPointers;
 
     // Ok, the image is read in, now we need to finish up the initialization,
     //  which means: setting up the detailing members, init'ing the palette

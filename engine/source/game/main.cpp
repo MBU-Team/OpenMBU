@@ -67,6 +67,9 @@
 #include "sfx/sfxSystem.h"
 #include "autosplitter/autosplitter.h"
 
+#include "discord/DiscordGame.h"
+//#include "../discord/discordGameSDK.h"
+
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
 DemoNetInterface GameNetInterface;
@@ -202,11 +205,13 @@ static bool initLibraries()
     SFXSystem::init();
 
     Autosplitter::init();
+    DiscordGame::init();
     InitXBLive();
-
+    //Con::printf("Load Discord GameSDK");
+    //initDiscord();
+    
     return true;
 }
-
 
 /// Destroys all the things initalized in initLibraries
 static void shutdownLibraries()
@@ -216,6 +221,7 @@ static void shutdownLibraries()
     if (ResourceManager)
         ResourceManager->purge();
 
+    DiscordGame::destroy();
     Autosplitter::destroy();
 
     RedBook::destroy();
@@ -593,6 +599,9 @@ int DemoGame::main(int argc, const char** argv)
         PROFILE_END();
         PROFILE_START(TimeManagerProcessMain);
         TimeManager::process(); // guaranteed to produce an event
+        PROFILE_END();
+        PROFILE_START(DiscordUpdateMain);
+        DiscordGame::get()->update();
         PROFILE_END();
         PROFILE_END();
     }

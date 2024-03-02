@@ -825,17 +825,21 @@ function clientCmdSetGameState(%state, %data)
    if ($Client::connectedMultiplayer)
    {
       // multiplayer
-      XBLiveSetRichPresence(XBLiveGetSignInPort(), 2);
+      %mission = GameMissionInfo.getCurrentMission();
+      XBLiveSetRichPresence(XBLiveGetSignInPort(), 2, MissionInfo.name, %mission.guid);
+      //echo("Setting Rich Presence GUID: " SPC %mission.guid);
    }
    else if (%isWait)
    {
       // menus
-      XBLiveSetRichPresence(XBLiveGetSignInPort(), 0);
+      XBLiveSetRichPresence(XBLiveGetSignInPort(), 0, "", "");
    }
    else 
    {
       // single player
-      XBLiveSetRichPresence(XBLiveGetSignInPort(), 1);
+      %mission = GameMissionInfo.getCurrentMission();
+      XBLiveSetRichPresence(XBLiveGetSignInPort(), 1, MissionInfo.name, %mission.guid);
+      //echo("Setting Rich Presence GUID: " SPC %mission.guid);
    }
 
    %allowStats = clientAreStatsAllowed();

@@ -2,6 +2,8 @@
 #include "console/console.h"
 #include "console/consoleInternal.h"
 
+#include "discord/DiscordGame.h"
+
 #ifdef TORQUE_OS_WIN
 #include <Windows.h>
 #endif
@@ -237,25 +239,50 @@ ConsoleFunction(XBLiveGetGamerZone, const char*, 1, 1, "(port)")
     return "";
 }
 
-ConsoleFunction(XBLiveSetRichPresence, void, 3, 3, "(port, presence)")
+ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, levelguid)")
 {
+#ifdef TORQUE_DISCORD_RPC
     argc;
 
     S32 port = dAtoi(argv[1]);
     S32 presence = dAtoi(argv[2]);
+    const char* levelname;
+    const char* levelguid;
+    if (argc > 3)
+        levelname = StringTable->insert(argv[3]);
+    else
+        levelname = StringTable->insert("");
+
+    if (argc > 4)
+        levelguid = StringTable->insert(argv[4]);
+    else
+        levelguid = StringTable->insert("");
 
     switch (presence)
     {
-        case 0:
-            Con::printf("Setting Rich Presence to Menus");
-            break;
-        case 1:
-            Con::printf("Setting Rich Presence to Singleplayer");
-            break;
-        case 2:
-            Con::printf("Setting Rich Presence to Multiplayer");
-            break;
+    case 0:
+        Con::printf("Setting Rich Presence to Menus");
+        DiscordGame::get()->setStatus("In Menus");
+        DiscordGame::get()->setDetails("");
+        //DiscordGame::get()->setSmallImageKey("game_icon");
+        DiscordGame::get()->setLevel("MainMenu");
+        break;
+    case 1:
+        Con::printf("Setting Rich Presence to Singleplayer");
+        DiscordGame::get()->setStatus(levelname);
+        DiscordGame::get()->setDetails("Playing Singleplayer");
+        //DiscordGame::get()->setSmallImageKey("game_icon");
+        DiscordGame::get()->setLevel(levelguid);
+        break;
+    case 2:
+        Con::printf("Setting Rich Presence to Multiplayer");
+        DiscordGame::get()->setStatus(levelname);
+        DiscordGame::get()->setDetails("Playing Multiplayer");
+        //DiscordGame::get()->setSmallImageKey("game_icon");
+        DiscordGame::get()->setLevel(levelguid);
+        break;
     }
+#endif
 }
 
 ConsoleFunction(XBLiveLoadAchievements, void, 3, 3, "(port, callback)")

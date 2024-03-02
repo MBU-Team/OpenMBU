@@ -51,6 +51,17 @@ if(WIN32)
 	addLib(d3d9)
 	addLib(d3dx9)
 	addLib(dxerr)
+    addDef(TORQUE_DISCORD_RPC)
+
+    if( TORQUE_CPU_X64 )
+        #### link_directories("${libDir}/discord/x86_64")
+        addLib("${libDir}/discord/x86_64/discord_game_sdk.dll.lib")
+    else()
+        #### link_directories("${libDir}/discord/x86")
+        addLib("${libDir}/discord/x86/discord_game_sdk.dll.lib")
+    endif()
+
+	
 endif()
 
 # build types
@@ -75,6 +86,9 @@ addPath("${srcDir}/autosplitter")
 addPath("${srcDir}/collision")
 addPath("${srcDir}/console")
 addPath("${srcDir}/core")
+if(WIN32)
+    addPath("${srcDir}/discord")
+endif()
 addPath("${srcDir}/editor")
 #addPath("${srcDir}/editor/terrain")
 #addPathRec("${srcDir}/atlas")
