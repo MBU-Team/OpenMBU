@@ -776,7 +776,7 @@ function FPSDisplay::update(%this)
 
    if ($showFPS)
    {
-      %text = "FPS: " @ $fps::virtual;
+      %text = "FPS: " @ $fps::virtual @ " Ping: " @ ServerConnection.getPing();
       %this.setText(%text);
       %this.setVisible(true);
    }
