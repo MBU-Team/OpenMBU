@@ -72,7 +72,17 @@ class TSStatic : public SceneObject
 
     enum MaskBits {
         advancedStaticOptionsMask = Parent::NextFreeMask,
+        UpdateCollisionMask = Parent::NextFreeMask << 1,
         NextFreeMask = Parent::NextFreeMask << 1
+    };
+
+public: 
+    enum CollisionType
+    {
+        None = 0,
+        Bounds = 1,
+        CollisionMesh = 2,
+        VisibleMesh = 3
     };
 
 protected:
@@ -80,6 +90,7 @@ protected:
     void onRemove();
 
     // Collision
+    void prepCollision();
     bool castRay(const Point3F& start, const Point3F& end, RayInfo* info);
     bool buildPolyList(AbstractPolyList* polyList, const Box3F& box, const SphereF& sphere);
     void buildConvex(const Box3F& box, Convex* convex);
@@ -92,8 +103,7 @@ protected:
     TSShapeInstance* mShapeInstance;
     Shadow* mShadow;
 
-    Vector<S32>            mCollisionDetails;
-    Vector<S32>            mLOSDetails;
+    CollisionType     mCollisionType;
 
     // Rendering
 protected:
@@ -103,6 +113,9 @@ protected:
     void setTransform(const MatrixF& mat);
 
 public:
+    Vector<S32>            mCollisionDetails;
+    Vector<S32>            mLOSDetails;
+
     TSStatic();
     ~TSStatic();
 
@@ -114,6 +127,17 @@ public:
 
 
     void inspectPostApply();
+    
+    CollisionType getCollisionType() { return mCollisionType; }
+
+    Resource<TSShape> getShape() const { return mShape; }
+    StringTableEntry getShapeFileName() { return mShapeName; }
+
+    TSShapeInstance* getShapeInstance() const { return mShapeInstance; }
+
+    const Vector<S32>& getCollisionDetails() const { return mCollisionDetails; }
+
+    const Vector<S32>& getLOSDetails() const { return mLOSDetails; }
 
     void setShapeName(const char* shapeName);
     void setSequence(const char* sequenceName);

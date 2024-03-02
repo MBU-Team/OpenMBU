@@ -24,7 +24,7 @@ bool GuiConsole::onWake()
         return false;
 
     //get the font
-    mFont = mProfile->mFont;
+    mFont = mProfile->mFonts[0].mFont;
 
     return true;
 }

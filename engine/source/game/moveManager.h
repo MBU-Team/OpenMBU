@@ -32,6 +32,7 @@ struct Move
     U32 checksum;
 
     bool deviceIsKeyboardMouse;
+    bool autoCenterCamera;
     bool freeLook;
     bool trigger[MaxTriggerKeys];
 
@@ -47,6 +48,7 @@ class MoveManager
 {
 public:
     static bool mDeviceIsKeyboardMouse;
+    static bool mAutoCenterCamera;
     static F32 mForwardAction;
     static F32 mBackwardAction;
     static F32 mUpAction;

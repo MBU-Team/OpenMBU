@@ -65,7 +65,7 @@ bool GuiTextCtrl::onWake()
     if (!Parent::onWake())
         return false;
 
-    mFont = mProfile->mFont;
+    mFont = mProfile->mFonts[0].mFont;
     AssertFatal(mFont, "GuiTextCtrl::onWake: invalid font in profile");
     if (mInitialTextID && *mInitialTextID != 0)
         setTextID(mInitialTextID);
@@ -122,7 +122,7 @@ void GuiTextCtrl::setText(const char* txt)
 
     //Make sure we have a font
     mProfile->incRefCount();
-    mFont = mProfile->mFont;
+    mFont = mProfile->mFonts[0].mFont;
 
     //resize
     if (mProfile->mAutoSizeWidth)

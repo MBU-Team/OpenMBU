@@ -421,6 +421,117 @@ void dQsort(void* base, U32 nelem, U32 width, S32(QSORT_CALLBACK* fcmp)(const vo
     qsort(base, nelem, width, fcmp);
 }
 
+/// Safe form of dStrcmp: checks both strings for NULL before comparing
+bool dStrEqual(const char* str1, const char* str2)
+{
+    if (!str1 || !str2)
+        return false;
+    else
+        return (dStrcmp(str1, str2) == 0);
+}
+
+/// Check if one string starts with another
+bool dStrStartsWith(const char* str1, const char* str2)
+{
+    return !dStrnicmp(str1, str2, dStrlen(str2));
+}
+
+/// Check if one string ends with another
+bool dStrEndsWith(const char* str1, const char* str2)
+{
+    const char* p = str1 + dStrlen(str1) - dStrlen(str2);
+    return ((p >= str1) && !dStricmp(p, str2));
+}
+
+/// Strip the path from the input filename
+char* dStripPath(const char* filename)
+{
+    const char* itr = filename + dStrlen(filename);
+    while (--itr != filename) {
+        if (*itr == '/' || *itr == '\\') {
+            itr++;
+            break;
+        }
+    }
+    return dStrdup(itr);
+}
+
+char* dChopTrailingNumber(const char* name, S32& number)
+{
+    // Set default return value
+    number = 2;
+
+    // Check for trivial strings
+    if (!name || !name[0])
+        return 0;
+
+    // Find the number at the end of the string
+    char* buffer = dStrdup(name);
+    char* p = buffer + strlen(buffer) - 1;
+
+    // Ignore trailing whitespace
+    while ((p != buffer) && dIsspace(*p))
+        p--;
+
+    // Need at least one digit!
+    if (!isdigit(*p))
+        return buffer;
+
+    // Back up to the first non-digit character
+    while ((p != buffer) && isdigit(*p))
+        p--;
+
+    // Convert number => allow negative numbers, treat '_' as '-' for Maya
+    if ((*p == '-') || (*p == '_'))
+        number = -dAtoi(p + 1);
+    else
+        number = ((p == buffer) ? dAtoi(p) : dAtoi(++p));
+
+    // Remove space between the name and the number
+    while ((p > buffer) && dIsspace(*(p - 1)))
+        p--;
+    *p = '\0';
+
+    return buffer;
+}
+
+char* dGetTrailingNumber(const char* name, S32& number)
+{
+    // Check for trivial strings
+    if (!name || !name[0])
+        return 0;
+
+    // Find the number at the end of the string
+    char* buffer = dStrdup(name);
+    char* p = buffer + strlen(buffer) - 1;
+
+    // Ignore trailing whitespace
+    while ((p != buffer) && dIsspace(*p))
+        p--;
+
+    // Need at least one digit!
+    if (!isdigit(*p))
+        return buffer;
+
+    // Back up to the first non-digit character
+    while ((p != buffer) && isdigit(*p))
+        p--;
+
+    // Convert number => allow negative numbers, treat '_' as '-' for Maya
+    if ((*p == '-') || (*p == '_'))
+        number = -dAtoi(p + 1);
+    else
+        number = ((p == buffer) ? dAtoi(p) : dAtoi(++p));
+
+    // Remove space between the name and the number
+    while ((p > buffer) && dIsspace(*(p - 1)))
+        p--;
+    *p = '\0';
+
+    return buffer;
+}
+
+
 /*
 UTF8 * convertUTF16toUTF8(const UTF16 *string, UTF8 *buffer, U32 bufsize)
 {

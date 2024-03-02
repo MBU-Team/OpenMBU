@@ -79,6 +79,9 @@ const char* getSystemLanguage_forConsole()
         case LANGTYPE_KOREAN:
             language = "korean";
             break;
+        case LANGTYPE_POLISH:
+            language = "polish";
+            break;
         case LANGTYPE_PORTUGUESE:
             language = "portuguese";
             break;
@@ -229,7 +232,7 @@ ConsoleFunction(XBLiveGetGamerZone, const char*, 1, 1, "(port)")
 {
     argc;
 
-    int port = atoi(argv[1]);
+    int port = dAtoi(argv[1]);
 
     // TODO: Implement
 
@@ -241,8 +244,8 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
 #ifdef TORQUE_DISCORD_RPC
     argc;
 
-    S32 port = atoi(argv[1]);
-    S32 presence = atoi(argv[2]);
+    S32 port = dAtoi(argv[1]);
+    S32 presence = dAtoi(argv[2]);
     const char* levelname;
     const char* levelguid;
     if (argc > 3)

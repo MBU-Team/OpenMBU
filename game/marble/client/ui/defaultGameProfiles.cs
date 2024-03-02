@@ -435,3 +435,13 @@ new GuiControlProfile ("ControllerTextRightProfile" : ControllerTextProfile)
 {
    justify = right;
 };
+
+new GuiControlProfile ("AchievementDlgProfile")
+{
+   fontType = "Arial Bold";
+   fontColor = "16 16 16";
+   fontSize = 20;
+   fontType2 = "Arial Bold";
+   fontSize2 = 28;
+   justify = center;
+};

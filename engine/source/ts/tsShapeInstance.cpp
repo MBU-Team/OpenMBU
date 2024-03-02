@@ -316,6 +316,8 @@ void TSShapeInstance::buildInstanceData(TSShape* _shape, bool loadMaterials)
     // set up subtree data
     S32 ss = mShape->subShapeFirstNode.size(); // we have this many subtrees
     mDirtyFlags = new U32[ss];
+    for (int i = 0; i < ss; i++)
+        mDirtyFlags[i] = 0;
 
     mGroundThread = NULL;
     mCurrentDetailLevel = 0;
@@ -2204,4 +2206,18 @@ U32 TSShapeInstance::getNumDetails()
     }
 
     return 0;
+}
+
+void TSShapeInstance::prepCollision()
+{
+    PROFILE_SCOPE(TSShapeInstance_PrepCollision);
+
+    setStatics(0);
+    // Iterate over all our meshes and call prepCollision on them...
+    for (S32 i = 0; i < mShape->meshes.size(); i++)
+    {
+        if (mShape->meshes[i])
+            mShape->meshes[i]->prepOpcodeCollision();
+    }
+    clearStatics();
 }

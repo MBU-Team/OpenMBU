@@ -86,10 +86,10 @@ void GuiClockHud::onRender(Point2I offset, const RectI& updateRect)
     dSprintf(buf, sizeof(buf), "%02d:%02d", mins, secs);
 
     // Center the text
-    offset.x += (mBounds.extent.x - mProfile->mFont->getStrWidth((const UTF8*)buf)) / 2;
-    offset.y += (mBounds.extent.y - mProfile->mFont->getHeight()) / 2;
+    offset.x += (mBounds.extent.x - mProfile->mFonts[0].mFont->getStrWidth((const UTF8*)buf)) / 2;
+    offset.y += (mBounds.extent.y - mProfile->mFonts[0].mFont->getHeight()) / 2;
     GFX->setBitmapModulation(mTextColor);
-    GFX->drawText(mProfile->mFont, offset, buf);
+    GFX->drawText(mProfile->mFonts[0].mFont, offset, buf);
     GFX->clearBitmapModulation();
 
     // Border last

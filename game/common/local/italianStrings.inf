@@ -458,6 +458,8 @@ $Text::LocCredits = "<spush><font:Arial Bold:30>Localization<spop>\n\n<spush><fo
 ;$Text::SPSignin = "Please Sign In so that your game is saved.  If you sign in to Live you can store your High Scores online.";
 ;$Text::SelectSaveDevice = "Please select a device to store your Achievements.  Press A to select or B to cancel.";
 
+$Text::AchievementUnlocked = "Obiettivo sbloccato";
+
 $Text::AchievementName01 = "Biglia temporale";
 $Text::AchievementName02 = "Distintivo da principiante";
 $Text::AchievementName03 = "Distintivo da professionista";
@@ -470,6 +472,9 @@ $Text::AchievementName09 = "Cesto di sorprese";
 $Text::AchievementName10 = "Prima posizione";
 $Text::AchievementName11 = "Collezionista di gemme";
 $Text::AchievementName12 = "Lottatore veterano";
+$Text::AchievementName13 = "Caccia alla gemma blu";
+$Text::AchievementName14 = "Dominatore del pacchetto mappe";
+$Text::AchievementName15 = "Maestro delle Guglie";
 
 $Text::AchievementDescription01 = "Completa qualunque livello entro il tempo del par.";
 $Text::AchievementDescription02 = "Completa tutti i livelli Principiante.";
@@ -483,6 +488,9 @@ $Text::AchievementDescription09 = "Trova tutte le 20 sorprese.";
 $Text::AchievementDescription10 = "Ottieni la prima posizione in una partita Multiplayer.";
 $Text::AchievementDescription11 = "Totalizza 75 punti in una partita Multiplayer.";
 $Text::AchievementDescription12 = "Totalizza 2.000 punti in modalità Multiplayer.";
+$Text::AchievementDescription13 = "Raccogli una gemma blu in un Marble It Up! partita multigiocatore.";
+$Text::AchievementDescription14 = "Ottieni 40 gemme in 3 qualsiasi di Playground, Bowl, Concentric, Vortex Effect, Blast Club (pacchetto Marble Fu).";
+$Text::AchievementDescription15 = "Raccogli 50 gemme a Spires (pacchetto Agorafobia).";
 
 ;-------------------------------------------------------------------------------
 ; Singleplayer Game Strings

@@ -102,6 +102,10 @@ public:
 
     /// Return distance of closest point on box to refPt.
     F32 getDistanceFromPoint(const Point3F& refPt) const;
+
+    /// Extend the box to include point.
+    /// @see Invalid
+    void extend(const Point3F& p);
 };
 
 inline Box3F::Box3F(const Point3F& in_rMin, const Point3F& in_rMax, const bool in_overrideCheck)
@@ -228,6 +232,21 @@ inline F32 Box3F::getDistanceFromPoint(const Point3F& refPt) const
         vec.z = 0;
 
     return vec.len();
+}
+
+inline void Box3F::extend(const Point3F& p)
+{
+#define EXTEND_AXIS(AXIS)    \
+if (p.AXIS < min.AXIS)       \
+   min.AXIS = p.AXIS;        \
+else if (p.AXIS > max.AXIS)  \
+   max.AXIS = p.AXIS;
+
+    EXTEND_AXIS(x)
+        EXTEND_AXIS(y)
+        EXTEND_AXIS(z)
+
+#undef EXTEND_AXIS
 }
 //------------------------------------------------------------------------------
 /// Clone of Box3F, using 3D types.

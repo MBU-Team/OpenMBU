@@ -2212,6 +2212,12 @@ function spawnStupidMarble(%val, %forceNew)
 
 function serverCmdSpawnStupidMarble(%client,%forceNew)
 {
+   if (%client.getId() !$= LocalClientConnection.getId())
+   {
+      // Nope only host should be able to use this
+      warn("Non-host trying to spawn stupid marble");
+      return;
+   }
    %obj = %client.getControlObject();
    if (isObject(%obj))
    {
@@ -2240,6 +2246,12 @@ $pickerRandomVelz = 1;
 
 function serverCmdSpawnMarblePickerMarble(%client)
 {
+   if (%client.getId() !$= LocalClientConnection.getId())
+   {
+      // Nope only host should be able to use this
+      warn("Non-host trying to spawn marble picker marble");
+      return;
+   }
    if( isObject( %client.dummyMarble ) )
       %client.dummyMarble.delete();
    

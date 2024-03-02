@@ -96,12 +96,19 @@ void NetInterface::processPacketReceiveEvent(PacketReceiveEvent* prEvent)
         U8 packetType;
         pStream.read(&packetType);
         NetAddress* addr = &prEvent->sourceAddress;
+        bool infoPacket = packetType <= GameHeartbeat;
 #ifdef TORQUE_NET_HOLEPUNCHING
-        if (packetType <= GameHeartbeat || packetType >= MasterServerRequestArrangedConnection)
-#else
-        if (packetType <= GameHeartbeat)
+        if (packetType >= MasterServerRequestArrangedConnection && packetType <= MasterServerJoinInviteResponse)
+            infoPacket = true;
 #endif
+#ifdef TORQUE_FAST_FILE_TRANSFER
+        if (packetType == FileTransferPacket)
+            infoPacket = true;
+#endif
+        if (infoPacket)
+        {
             handleInfoPacket(addr, packetType, &pStream);
+        }
 #ifdef GGC_PLUGIN
         else if (packetType == GGCPacket)
         {

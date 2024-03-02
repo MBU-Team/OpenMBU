@@ -290,13 +290,13 @@ void GuiShapeNameHud::onRender(Point2I, const RectI& updateRect)
 void GuiShapeNameHud::drawName(Point2I offset, const char* name, F32 opacity)
 {
     // Center the name
-    offset.x -= mProfile->mFont->getStrWidth((const UTF8*)name) / 2;
-    offset.y -= mProfile->mFont->getHeight();
+    offset.x -= mProfile->mFonts[0].mFont->getStrWidth((const UTF8*)name) / 2;
+    offset.y -= mProfile->mFonts[0].mFont->getHeight();
 
     // Deal with opacity and draw.
     mTextColor.alpha = opacity;
     GFX->setBitmapModulation(mTextColor);
-    GFX->drawText(mProfile->mFont, offset, name);
+    GFX->drawText(mProfile->mFonts[0].mFont, offset, name);
     GFX->clearBitmapModulation();
 }
 

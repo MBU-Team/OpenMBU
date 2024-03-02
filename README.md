@@ -3,7 +3,11 @@
 [![Github all releases](https://img.shields.io/github/downloads/MBU-Team/OpenMBU/total?color=blue&label=Downloads)](https://GitHub.com/MBU-Team/OpenMBU/releases/)
 [![GitHub forks](https://img.shields.io/github/forks/MBU-Team/OpenMBU?label=Forks)](https://GitHub.com/MBU-Team/OpenMBU/network/)
 [![GitHub stars](https://img.shields.io/github/stars/MBU-Team/OpenMBU?label=Stars)](https://GitHub.com/MBU-Team/OpenMBU/stargazers/)
-[![Discord](https://img.shields.io/discord/265605947144142848?color=5865F2&label=Discord&logo=discord&logoColor=white)](https://discord.gg/9TBC7nhCNT)
+[![Discord](https://img.shields.io/discord/265605947144142848?color=5865F2&label=Discord&logo=discord&logoColor=white)](https://discord.gg/SBqT5AxBaY)
+
+[![CMake on Windows](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-windows.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-windows.yml)
+[![CMake on Linux](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml)
+[![CMake on MacOS](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-mac.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-mac.yml)
 
 A reverse engineered version of Marble Blast Ultra that is based on Torque Shader Engine 0.9 (MS4).
 

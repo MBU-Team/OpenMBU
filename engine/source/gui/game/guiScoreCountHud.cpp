@@ -93,8 +93,8 @@ void GuiScoreCountHud::onRender(Point2I offset, const RectI& updateRect)
             char scoreBuffer[256];
             dSprintf(scoreBuffer, 256, "%c%d", (score.score < 0 ? ' ' : '+'), score.score);
 
-            renderPt.x -= mProfile->mFont->getStrWidth(scoreBuffer) >> 1;
-            renderPt.y -= mProfile->mFont->getHeight();
+            renderPt.x -= mProfile->mFonts[0].mFont->getStrWidth(scoreBuffer) >> 1;
+            renderPt.y -= mProfile->mFonts[0].mFont->getHeight();
 
             ColorF foreColor = score.foreColor;
             foreColor.alpha *= a;
@@ -102,12 +102,12 @@ void GuiScoreCountHud::onRender(Point2I offset, const RectI& updateRect)
             backColor.alpha *= a;
 
             GFX->setBitmapModulation(backColor);
-            GFX->drawText(mProfile->mFont, renderPt, scoreBuffer);
+            GFX->drawText(mProfile->mFonts[0].mFont, renderPt, scoreBuffer);
             --renderPt.x;
             --renderPt.y;
 
             GFX->setBitmapModulation(foreColor);
-            GFX->drawText(mProfile->mFont, renderPt, scoreBuffer);
+            GFX->drawText(mProfile->mFonts[0].mFont, renderPt, scoreBuffer);
         }
 
         GFX->clearBitmapModulation();

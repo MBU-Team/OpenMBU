@@ -61,6 +61,7 @@
 #include "gfx/gfxTextureManager.h"
 #include "gfx/debugDraw.h"
 #include "game/badWordFilter.h"
+#include "game/net/httpObject.h"
 
 #include "lightingSystem/sgFormatManager.h"
 #include "sfx/sfxSystem.h"
@@ -149,6 +150,7 @@ static bool initLibraries()
         Platform::AlertOK("Network Error", "Unable to initialize the network... aborting.");
         return false;
     }
+    HTTPObject::init();
 
     // asserts should be created FIRST
     PlatformAssert::create();
@@ -181,6 +183,7 @@ static bool initLibraries()
     ResourceManager->registerExtension(".ter", constructTerrainFile);
 #endif
     ResourceManager->registerExtension(".dts", constructTSShape);
+    // ResourceManager->registerExtension(".dae", constructColladaShape);
     //   ResourceManager->registerExtension(".dml", constructMaterialList);
     ResourceManager->registerExtension(".map", constructInteriorMAP);
 #ifdef TORQUE_TERRAIN
@@ -243,6 +246,7 @@ static void shutdownLibraries()
     FrameAllocator::destroy();
 
     PlatformAssert::destroy();
+    HTTPObject::shutdown();
     Net::shutdown();
 }
 
@@ -582,6 +586,7 @@ int DemoGame::main(int argc, const char** argv)
         PROFILE_END();
         PROFILE_START(NetProcessMain);
         Net::process();      // read in all events
+        HTTPObject::process();
         PROFILE_END();
         PROFILE_START(PlatformProcessMain);
         Platform::process(); // keys, etc.

@@ -28,6 +28,10 @@ THE SOFTWARE.
 #include "platform/platform.h"
 #ifdef TORQUE_OS_WIN
 #define GUID_WINDOWS
+#elif defined(TORQUE_OS_LINUX) || defined(TORQUE_OS_OPENBSD)
+#define GUID_LIBUUID
+#elif defined(TORQUE_OS_MAC)
+#define GUID_CFUUID
 #endif
 
 #ifdef GUID_ANDROID

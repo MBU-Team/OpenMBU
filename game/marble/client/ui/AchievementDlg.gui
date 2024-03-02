@@ -9,15 +9,15 @@ new GuiControl(AchievementDlg) {
    visible = "1";
    noCursor = "1";
    
-   new GuiBitmapCtrl(AchievementFrame) {
-         profile = "GuiDefaultProfile";
+   new GuiAchievementPopupCtrl(AchievementFrame) {
+         profile = "AchievementDlgProfile";
          horizSizing = "center";
-         vertSizing = "bottom";
-         position = "70 465";
-         //extent =   "240 460"; 
+         vertSizing = "top";
+         position = "0 150";
+         extent =   "507 116";
          //minExtent = "48 92";
          visible = "1";
-         bitmap = "";
+         icon = "";
          wrap = "0";
 	};
    
@@ -29,5 +29,26 @@ function AchievementDlg::onWake(%this)
 	enableGamepad();
 	moveMap.push();
 	//AchievementFrame.setPosition("70", "0");
-	AchievementFrame.setBitmap("./achievement/" @ $AchievementId, true);
+	AchievementFrame.setHeader($Text::AchievementUnlocked);
+	AchievementFrame.setIcon("./achievement/" @ $AchievementId);
+	%title = "Unknown Achievement";
+	switch$ ($AchievementId)
+	{
+		case 1: %title = $Text::AchievementName01;
+		case 2: %title = $Text::AchievementName02;
+		case 3: %title = $Text::AchievementName03;
+		case 4: %title = $Text::AchievementName04;
+		case 5: %title = $Text::AchievementName05;
+		case 6: %title = $Text::AchievementName06;
+		case 7: %title = $Text::AchievementName07;
+		case 8: %title = $Text::AchievementName08;
+		case 9: %title = $Text::AchievementName09;
+		case 10: %title = $Text::AchievementName10;
+		case 11: %title = $Text::AchievementName11;
+		case 12: %title = $Text::AchievementName12;
+		case 13: %title = $Text::AchievementName13;
+		case 14: %title = $Text::AchievementName14;
+		case 15: %title = $Text::AchievementName15;
+	}
+	AchievementFrame.setTitle(%title);
 }

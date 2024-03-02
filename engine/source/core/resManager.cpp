@@ -779,6 +779,7 @@ ResourceInstance* ResManager::loadInstance(const char* fileName, bool computeCRC
 //------------------------------------------------------------------------------
 
 static const char* alwaysCRCList = ".ter.dif.dts";
+ResourceObject* curResourceObj = NULL;
 
 ResourceInstance* ResManager::loadInstance(ResourceObject* obj, bool computeCRC)
 {
@@ -798,6 +799,7 @@ ResourceInstance* ResManager::loadInstance(ResourceObject* obj, bool computeCRC)
     else
         obj->crc = InvalidCRC;
 
+    curResourceObj = obj;
     RESOURCE_CREATE_FN createFunction = ResourceManager->getCreateFunction(obj->name);
 
     if (!createFunction)

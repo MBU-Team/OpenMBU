@@ -238,7 +238,7 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
     S32 maxLen = 0;
     for (S32 i = 0; i < mRowText.size(); i++)
     {
-        S32 strWidth = mProfile->mFont->getStrWidth(mRowText[i]);
+        S32 strWidth = mProfile->mFonts[0].mFont->getStrWidth(mRowText[i]);
         if (strWidth > maxLen)
             maxLen = strWidth;
     }

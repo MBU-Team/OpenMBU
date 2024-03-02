@@ -30,6 +30,7 @@ public:
     bool openForWrite(const char* fileName, const bool append = false);
     bool openForRead(const char* fileName);
     bool readMemory(const char* fileName);
+    const U8* buffer() { return mFileBuffer; }
     const U8* readLine();
     bool isEOF();
     void writeLine(const U8* line);

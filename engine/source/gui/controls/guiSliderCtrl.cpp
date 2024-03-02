@@ -63,7 +63,7 @@ bool GuiSliderCtrl::onWake()
 
     mValue = mClampF(getFloatVariable(), mRange.x, mRange.y);
 
-    if (mThumbSize.y + mProfile->mFont->getHeight() - 4 <= mBounds.extent.y)
+    if (mThumbSize.y + mProfile->mFonts[0].mFont->getHeight() - 4 <= mBounds.extent.y)
         mDisplayValue = true;
     else
         mDisplayValue = false;
@@ -237,7 +237,7 @@ void GuiSliderCtrl::onRender(Point2I offset, const RectI& updateRect)
 
         Point2I textStart = thumb.point;
 
-        S32 txt_w = mProfile->mFont->getStrWidth((const UTF8*)buf);
+        S32 txt_w = mProfile->mFonts[0].mFont->getStrWidth((const UTF8*)buf);
 
         textStart.x += (S32)((thumb.extent.x / 2.0f));
         textStart.y += thumb.extent.y - 2; //19
@@ -248,7 +248,7 @@ void GuiSliderCtrl::onRender(Point2I offset, const RectI& updateRect)
             textStart.x -= ((textStart.x + txt_w) - (offset.x + mBounds.extent.x));
 
         GFX->setBitmapModulation(mProfile->mFontColor);
-        GFX->drawText(mProfile->mFont, textStart, buf, mProfile->mFontColors);
+        GFX->drawText(mProfile->mFonts[0].mFont, textStart, buf, mProfile->mFontColors);
     }
     renderChildControls(offset, updateRect);
 }

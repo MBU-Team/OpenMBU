@@ -144,7 +144,12 @@ GuiControlProfile::GuiControlProfile(void) :
     mBorderThickness = 1;
     mMouseOverSelected = false;
     mBitmapName = NULL;
-    mFontCharset = TGE_ANSI_CHARSET;
+    mFonts[0].mFontType = "";
+    mFonts[1].mFontType = "";
+    mFonts[0].mFontSize = 0;
+    mFonts[1].mFontSize = 0;
+    mFonts[0].mFontCharset = TGE_ANSI_CHARSET;
+    mFonts[1].mFontCharset = TGE_ANSI_CHARSET;
 
     mSoundButtonDown = NULL;
     mSoundButtonOver = NULL;
@@ -174,9 +179,12 @@ GuiControlProfile::GuiControlProfile(void) :
         mBevelColorLL = def->mBevelColorLL;
 
         // default font
-        mFontType = def->mFontType;
-        mFontSize = def->mFontSize;
-        mFontCharset = def->mFontCharset;
+        mFonts[0].mFontType = def->mFonts[0].mFontType;
+        mFonts[0].mFontSize = def->mFonts[0].mFontSize;
+        mFonts[0].mFontCharset = def->mFonts[0].mFontCharset;
+        mFonts[1].mFontType = def->mFonts[1].mFontType;
+        mFonts[1].mFontSize = def->mFonts[1].mFontSize;
+        mFonts[1].mFontCharset = def->mFonts[1].mFontCharset;
 
         for (U32 i = 0; i < 10; i++)
             mFontColors[i] = def->mFontColors[i];
@@ -234,9 +242,16 @@ void GuiControlProfile::initPersistFields()
     addField("bevelColorHL", TypeColorI, Offset(mBevelColorHL, GuiControlProfile));
     addField("bevelColorLL", TypeColorI, Offset(mBevelColorLL, GuiControlProfile));
 
-    addField("fontType", TypeString, Offset(mFontType, GuiControlProfile));
-    addField("fontSize", TypeS32, Offset(mFontSize, GuiControlProfile));
-    addField("fontCharset", TypeEnum, Offset(mFontCharset, GuiControlProfile), 1, &gCharsetTable);
+    {
+        addField("fontType", TypeString, Offset(mFonts[0].mFontType, GuiControlProfile));
+        addField("fontSize", TypeS32, Offset(mFonts[0].mFontSize, GuiControlProfile));
+        addField("fontCharset", TypeEnum, Offset(mFonts[0].mFontCharset, GuiControlProfile), 1, &gCharsetTable);
+
+        addField("fontType2", TypeString, Offset(mFonts[1].mFontType, GuiControlProfile));
+        addField("fontSize2", TypeS32, Offset(mFonts[1].mFontSize, GuiControlProfile));
+        addField("fontCharset2", TypeEnum, Offset(mFonts[1].mFontCharset, GuiControlProfile), 1, &gCharsetTable);
+    }
+
     addField("fontColors", TypeColorI, Offset(mFontColors, GuiControlProfile), 10);
     addField("fontColor", TypeColorI, Offset(mFontColors[BaseColor], GuiControlProfile));
     addField("fontColorHL", TypeColorI, Offset(mFontColors[ColorHL], GuiControlProfile));
@@ -357,9 +372,13 @@ void GuiControlProfile::incRefCount()
         sFontCacheDirectory = Con::getVariable("$GUI::fontCacheDirectory");
 
         //verify the font
-        mFont = GFont::create(mFontType, mFontSize, sFontCacheDirectory, mFontCharset);
-        if (mFont.isNull())
-            Con::errorf("Failed to load/create profile font (%s/%d)", mFontType, mFontSize);
+        mFonts[0].mFont = GFont::create(mFonts[0].mFontType, mFonts[0].mFontSize, sFontCacheDirectory, mFonts[0].mFontCharset);
+        if (mFonts[0].mFont.isNull())
+            Con::errorf("Failed to load/create profile font (%s/%d)", mFonts[0].mFontType, mFonts[0].mFontSize);
+
+        mFonts[1].mFont = GFont::create(mFonts[1].mFontType, mFonts[1].mFontSize, sFontCacheDirectory, mFonts[1].mFontCharset);
+        if (mFonts[1].mFont.isNull())
+            Con::errorf("Failed to load/create profile font2 (%s/%d)", mFonts[0].mFontType, mFonts[0].mFontSize);
 
         //verify the bitmap
         if (!mTextureObject.set(mBitmapName, &GFXDefaultPersistentProfile))
@@ -375,7 +394,8 @@ void GuiControlProfile::decRefCount()
 
     if (!--mRefCount)
     {
-        mFont = NULL;
+        mFonts[0].mFont = NULL;
+        mFonts[1].mFont = NULL;
         mTextureObject = NULL;
     }
 }

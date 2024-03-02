@@ -108,6 +108,24 @@ function GameConnection::onGhostAlwaysObjectsReceived(%client)
    commandToClient(%client, 'MissionStartPhase3', $missionSequence, $Server::MissionFile);
 }
 
+function GameConnection::onFileChunkSent(%this, %file, %count, %max)
+{
+   if (%this.lastSentFile !$= %file
+      || %this.lastChunkStart $= ""
+      || %count < %this.lastChunkCount
+      || (getSimTime() - %this.lastChunkStart) > 1000)
+   {
+      %this.lastSentFile = %file;
+      %this.lastChunkStartCount = %count;
+      %this.lastChunkStart = getSimTime();
+   }
+   %this.lastChunkCount = %count;
+   %rate = (%count - %this.lastChunkStartCount) / ((getSimTime() - %this.lastChunkStart) / 1000);
+   %rate = (%rate / 1024) @ "kB/s";
+
+   echo(%this.nameBase SPC %file SPC %rate SPC %count SPC %max);
+}
+
 function serverCmdMissionStartPhase3Ack(%client, %seq)
 {
    // Make sure to ignore calls from a previous mission load

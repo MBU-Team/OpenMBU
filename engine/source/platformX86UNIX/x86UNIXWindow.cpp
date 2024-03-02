@@ -980,14 +980,14 @@ ConsoleFunction( isKoreanBuild, bool, 1, 1, "isKoreanBuild()" )
 }
 
 //------------------------------------------------------------------------------
-int main(S32 argc, const char **argv)
+int main(int argc, char *argv[])
 {
    // init platform state
    x86UNIXState = new x86UNIXPlatformState;
 
    // parse the command line for unix-specific params
    Vector<char *> newCommandLine;
-   S32 returnVal = ParseCommandLine(argc, argv, newCommandLine);
+   S32 returnVal = ParseCommandLine(argc, (const char**)argv, newCommandLine);
    if (returnVal != 0)
       return returnVal;
 

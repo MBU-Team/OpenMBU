@@ -361,7 +361,7 @@ void GuiTextListCtrl::onRenderCell(Point2I offset, Point2I cell, bool selected, 
                 dStrncpy(tempStr, text, slen);
                 tempStr[slen] = '\0';
 
-                U32 strWidth = mProfile->mFont->getStrWidth(tempStr);
+                U32 strWidth = mProfile->mFonts[0].mFont->getStrWidth(tempStr);
                 S32 colAligns = mColumnAligns[index];
                 if (colAligns == 1)
                     pos.x += (S32)(extentX - strWidth) / 2;

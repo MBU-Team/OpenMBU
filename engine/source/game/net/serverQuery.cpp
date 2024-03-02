@@ -2437,7 +2437,7 @@ static void handleMasterServerJoinInvite(const NetAddress* address, BitStream* s
     char inv[32];
     readCString(stream, (char*) &inv);
     const char* ourInv = Con::getVariable("Server::InviteCode");
-    if (strcmp(ourInv, inv) == 0) {
+    if (dStrcmp(ourInv, inv) == 0) {
         // RESPOND
         U16 netPort = Con::getIntVariable("pref::Server::Port");
 
@@ -2578,6 +2578,15 @@ void DemoNetInterface::handleInfoPacket(const NetAddress* address, U8 packetType
     case MasterServerJoinInviteResponse:
         handleMasterServerJoinInviteResponse(address, stream);
         break;
+#endif
+#ifdef TORQUE_FAST_FILE_TRANSFER
+    case FileTransferPacket:
+    {
+        NetConnection *connection = NetConnection::lookup(address);
+        if (connection)
+            connection->handleFastFilePacket(stream);
+        break;
+    }
 #endif
     }
 }

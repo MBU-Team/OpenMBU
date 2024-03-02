@@ -44,6 +44,7 @@ public:
 
     DECLARE_CONOBJECT(TSShapeConstructor);
     static void initPersistFields();
+    static TSShapeConstructor* findShapeConstructor(const char* path);
 };
 
 #endif
