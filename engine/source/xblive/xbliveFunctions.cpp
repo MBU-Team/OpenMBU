@@ -3,7 +3,7 @@
 #include "console/consoleInternal.h"
 
 #include "discord/DiscordGame.h"
-#include "core/crc.h"
+#include "core/Guid.hpp"
 
 #ifdef TORQUE_OS_WIN
 #include <Windows.h>
@@ -265,7 +265,8 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         Con::printf("Setting Rich Presence to Menus");
         DiscordGame::get()->setStatus("In Menus");
         DiscordGame::get()->setDetails("");
-        DiscordGame::get()->setPartyDetails(0, 0, nullptr, nullptr);;
+        DiscordGame::get()->setPartyDetails(0, 0, nullptr, nullptr);
+        DiscordGame::get()->setTimer(0, 0);
         //DiscordGame::get()->setSmallImageKey("game_icon");
         DiscordGame::get()->setLevel("MainMenu");
         break;
@@ -274,6 +275,7 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         DiscordGame::get()->setStatus(levelname);
         DiscordGame::get()->setDetails("Playing Singleplayer");
         DiscordGame::get()->setPartyDetails(0, 0, nullptr, nullptr);
+        DiscordGame::get()->setTimer(static_cast<uint64_t>(time(nullptr)));
         //DiscordGame::get()->setSmallImageKey("game_icon");
         DiscordGame::get()->setLevel(levelguid);
         break;
@@ -286,6 +288,18 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         break;
     }
 #endif
+}
+
+ConsoleFunction(XBLivePresenceStartTimer, void, 1, 2, "([stopTime])")
+{
+    int secsRemaining = argc > 1 ? atoi(argv[1]) : 0;
+    uint64_t startTime = static_cast<uint64_t>(time(nullptr));
+    DiscordGame::get()->setTimer(startTime, secsRemaining > 0 ? startTime + secsRemaining : 0);
+}
+
+ConsoleFunction(XBLivePresenceStopTimer, void, 1, 1, "()")
+{
+    DiscordGame::get()->setTimer(0, 0);
 }
 
 ConsoleFunction(XBLiveLoadAchievements, void, 3, 3, "(port, callback)")
@@ -498,14 +512,17 @@ ConsoleFunction(XBLiveCreateHostedMatch, void, 8, 8, "(name, gamemode, mission, 
     StringTableEntry joinSecret = StringTable->insert(argv[6]);
     const char* callback = argv[7];
 
-    U32 partyId = calculateCRC(name, strlen(name));
-    char partybuf[128];
-    dSprintf(partybuf, 128, "%x", partyId);
+
+    auto g = xg::newGuid();
+    std::string guid = g.str();
+    const char* ret = guid.c_str();
+    char* retBuffer = Con::getReturnBuffer(256);
+    dSprintf(retBuffer, 256, "{%s}", ret);
 
     Con::printf(" >> Creating hosted match: %s, %s, %s, %s, %s", name, gamemode, mission, maxplayers, privateslots);
 
 #ifdef TORQUE_DISCORD_RPC
-    DiscordGame::get()->setPartyDetails(1, atoi(maxplayers), joinSecret, StringTable->insert(partybuf, true));
+    DiscordGame::get()->setPartyDetails(1, atoi(maxplayers), joinSecret, StringTable->insert(retBuffer, true));
 #endif
 
     // TODO: Implement

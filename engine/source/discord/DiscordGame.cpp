@@ -172,6 +172,8 @@ void DiscordGame::update()
 		discordPresence.partyMax = mMaxPlayers;
 		discordPresence.partyId = mPartyId;
 		discordPresence.joinSecret = mJoinSecret;
+        discordPresence.startTimestamp = mStartTime;
+        discordPresence.endTimestamp = mStopTime;
 
         //mActivity.GetAssets().SetLargeImage("game_icon");
 

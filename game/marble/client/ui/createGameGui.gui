@@ -367,7 +367,7 @@ function CreateGameGui::createGame(%this)
    // may need to some UI stuff here ("Creating game...") 
 
    // This sets the discord presence details
-   %inv = $Server::IsPrivate ? "" : $Server::InviteCode;
+   %inv = $Server::InviteCode;
    XBLiveCreateHostedMatch($Player::name, $Server::GameModeId, $pref::Server::missionId, $Pref::Server::MaxPlayers, $Pref::Server::PrivateSlots, %inv, "CreateGameGui.onGameCreated();");
    if (!$Client::UseXBLiveMatchMaking)
    {

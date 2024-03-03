@@ -245,6 +245,7 @@ function disconnectedCleanup()
    }
    else if ($Client::connectedMultiplayer)
    {
+      XBLiveSetRichPresence(XBLiveGetSignInPort(), 0, "", "");
       XBLiveDisconnect();
       if (isObject($disconnectGui))
          RootGui.setContent($disconnectGui);
