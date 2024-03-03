@@ -95,13 +95,21 @@ void onDisconnected(int errorCode, const char* message)
 
 void onJoinGame(const char* joinSecret)
 {
-	Con::executef(2, "Discord::joinGame", joinSecret);
+    char* buf = Con::getReturnBuffer(1024);
+    dSprintf(buf, 1024, "Discord::joinGame(\"%s\");", joinSecret);
+    Con::evaluatef(buf);
 }
 
 void onJoinRequest(const DiscordUser* request)
 {
 	int reply = DISCORD_REPLY_IGNORE;
-	reply = atoi(Con::executef(2, "Discord::onJoinRequest", request->username));
+
+    char* buf = Con::getReturnBuffer(1024);
+    char escaped[128];
+    expandEscape(escaped, request->username);
+    dSprintf(buf, 1024, "Discord::onJoinRequest(\"%s\");", escaped);
+
+	reply = atoi(Con::evaluatef(buf));
 	Discord_Respond(request->userId, reply);
 }
 
