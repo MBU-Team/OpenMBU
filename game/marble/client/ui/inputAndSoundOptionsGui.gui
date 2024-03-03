@@ -88,6 +88,15 @@ function inputAndSoundOptionsList::onOptionChange(%this, %increase)
          $pref::Input::MouseSensitivity = mClamp((%val+2) * 0.05, 0.1, 1) * 0.01;
       case 5:
          // analog range
+         // Enforce Unmodded is flawed atm, so skip over that
+         if (%val == 3)
+         {
+            if (%increase)
+               %val = 0;
+            else
+               %val = 2;
+            %this.setOptionIndex(5, %val);
+         }
          $pref::Input::AnalogRange = %val;
       case 6:
          // auto center camera

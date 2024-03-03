@@ -1042,6 +1042,22 @@ void DInputManager::processXInput(void)
                     mXInputStateNew[i].state.Gamepad.sThumbLX = 32767 * lx;
                     mXInputStateNew[i].state.Gamepad.sThumbLY = 32767 * ly;
                     break;
+                case 3:
+                    // Enforce Unmodded
+                    lx = (mXInputStateNew[i].state.Gamepad.sThumbLX / 32767.0f);
+                    ly = (mXInputStateNew[i].state.Gamepad.sThumbLY / 32767.0f);
+
+                    hypot = mSqrt(lx * lx + ly * ly);
+                    if (hypot > 1.0f)
+                    {
+                        ang = mAtan(ly, lx);
+                        lx = mCos(ang);
+                        ly = mSin(ang);
+
+                        mXInputStateNew[i].state.Gamepad.sThumbLX = 32767 * lx;
+                        mXInputStateNew[i].state.Gamepad.sThumbLY = 32767 * ly;
+                    }
+                    break;
                 default:
                     break;
             }
