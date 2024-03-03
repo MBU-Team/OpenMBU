@@ -51,15 +51,6 @@ if(WIN32)
 	addLib(d3d9)
 	addLib(d3dx9)
 	addLib(dxerr)
-    addDef(TORQUE_DISCORD_RPC)
-
-    if( TORQUE_CPU_X64 )
-        #### link_directories("${libDir}/discord/x86_64")
-        addLib("${libDir}/discord/x86_64/discord_game_sdk.dll.lib")
-    else()
-        #### link_directories("${libDir}/discord/x86")
-        addLib("${libDir}/discord/x86/discord_game_sdk.dll.lib")
-    endif()
 
 	
 endif()
@@ -306,6 +297,15 @@ add_subdirectory( ${libDir}/curl ${CMAKE_CURRENT_BINARY_DIR}/curl)
 
 addInclude("${libDir}/curl/include")
 addLib(libcurl)
+
+# discordif(APPLE)
+if(APPLE)
+  import_framework(AppKit)
+endif()
+add_subdirectory(${libDir}/rapidjson ${CMAKE_CURRENT_BINARY_DIR}/rapidjson)
+add_subdirectory(${libDir}/discord-rpc ${CMAKE_CURRENT_BINARY_DIR}/discord-rpc)
+addInclude("${libDir}/discord-rpc/include")
+addLib(discord-rpc)
 
 
 if(WIN32)

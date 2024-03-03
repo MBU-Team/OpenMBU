@@ -12,7 +12,7 @@
 //#include<iostream>
 #include <string>
 
-#include "discord.h"
+#include <discord_rpc.h>
 #include "DiscordGame.h"
 #include "platform/platform.h"
 #include <core/stringTable.h>
@@ -78,52 +78,51 @@ DiscordGame* DiscordGame::get()
     return smInstance;
 }
 
+void onReady(const DiscordUser* request)
+{
+    Con::printf("Starting RPC for user %s", request->username);
+}
+
+void onError(int errorCode, const char* message)
+{
+    Con::errorf("DISCORD RPC ERROR %d %s", errorCode, message);
+}
+
+void onDisconnected(int errorCode, const char* message)
+{
+    Con::errorf("DISCORD RPC ERROR %d %s", errorCode, message);
+}
+
+
 DiscordGame::DiscordGame()
 {
     Con::printf("Initializing Discord Game SDK");
     mActive = false;
 
-    mActivity = {};
     mStatus = nullptr;
     mDetails = nullptr;
     mGUID = nullptr;
     mLargeImageKey = nullptr;
-    //mIcon = nullptr;
-    //mIconText = nullptr;
 
-    mCore = {};
+    DiscordEventHandlers handlers;
+    memset(&handlers, 0, sizeof(handlers));
+    handlers.ready = onReady;
+    handlers.errored = onError;
+    handlers.disconnected = onDisconnected;
+    handlers.joinGame = NULL;
+    handlers.spectateGame = NULL;
+    handlers.joinRequest = NULL;
 
-    //auto result = discord::Core::Create(846933806711046144, DiscordCreateFlags_Default, &core);
-    //auto result = discord::Core::Create(1181357649644769300, DiscordCreateFlags_NoRequireDiscord, &mCore);
-    auto result = discord::Core::Create(846933806711046144, DiscordCreateFlags_NoRequireDiscord, &mCore);
+    // Discord_Initialize(const char* applicationId, DiscordEventHandlers* handlers, int autoRegister, const char* optionalSteamId)
+    Discord_Initialize("846933806711046144", &handlers, 0, nullptr);
 
-    if (!mCore) {
-        Con::printf("Failed to instantiate discord core! (err %i)", static_cast<int>(result));
-        //std::cout << "Failed to instantiate discord core! (err " << static_cast<int>(result)
-        //    << ")\n";
-        //std::exit(-1);
-        return;
-    }
-
-    mCore->SetLogHook(
-        discord::LogLevel::Debug, [](discord::LogLevel level, const char* message) {
-            if (level == discord::LogLevel::Error)
-                Con::printf("DiscordGameSDK::Error: %s", message);
-            else if (level == discord::LogLevel::Warn)
-                Con::printf("DiscordGameSDK::Warning: %s", message);
-            else if (level == discord::LogLevel::Debug)
-                Con::printf("DiscordGameSDK::Debug: %s", message);
-            else
-                Con::printf("DiscordGameSDK::Info: %s", message);
-
-            //std::cerr << "Log(" << static_cast<uint32_t>(level) << "): " << message << "\n";
-        });
     mActive = true;
 }
 
 DiscordGame::~DiscordGame()
 {
-
+    if (mActive)
+        Discord_Shutdown();
 }
 
 void DiscordGame::update()
@@ -136,14 +135,18 @@ void DiscordGame::update()
         mChanged = false;
         if (mStatus == nullptr)
             mStatus = "";
-        mActivity.SetState(mStatus);
+
+        DiscordRichPresence discordPresence;
+        memset(&discordPresence, 0, sizeof(discordPresence));
+        discordPresence.state = mStatus;
+        
 
         if (mDetails == nullptr)
             mDetails = "";
-        mActivity.SetDetails(mDetails);
+        discordPresence.details = mDetails;
+        discordPresence.largeImageText = "OpenMBU";
 
         //mActivity.GetAssets().SetLargeImage("game_icon");
-        mActivity.GetAssets().SetLargeText("OpenMBU");
 
         if (mGUID != nullptr) {
             //Con::printf("DiscordGameSDK::Info: %s", "Setting Large Image Key", mGUID);
@@ -153,16 +156,15 @@ void DiscordGame::update()
             else {
                 mLargeImageKey = DiscordGame::ProcessLevel(mGUID);
             }
+            discordPresence.largeImageKey = mLargeImageKey;
             //Con::printf("DiscordGameSDK::Info: %s %s", "Setting Large Image Key GUID:", mGUID);
-            mActivity.GetAssets().SetLargeImage(mLargeImageKey);
             
         }
         else {
-            mActivity.GetAssets().SetLargeImage("mbu_logo");
+            discordPresence.largeImageKey = "mbu_logo";
         }
             //mImgSm = "loading_icon";
-
-        mActivity.GetAssets().SetSmallImage("game_icon");
+        discordPresence.smallImageKey = "game_icon";
 //        if (mIcon != nullptr)
 //            mActivity.GetAssets().SetSmallImage(mIcon);
 //        else
@@ -176,23 +178,17 @@ void DiscordGame::update()
         //mActivity.GetAssets().SetSmallImage("game_icon");
         //mActivity.GetAssets().SetSmallText("OpenMBU");
 
-        mActivity.SetType(discord::ActivityType::Playing);
+        //discordPresence.
+        //mActivity.SetType(discord::ActivityType::Playing);
         //mActivity.SetInstance(true);
 
-        mCore->ActivityManager().UpdateActivity(mActivity, [](discord::Result result)
-        {
-            if (result == discord::Result::Ok)
-                Con::printf("DiscordGameSDK::Activity updated!");
-            else
-                Con::errorf("DiscordGameSDK::Activity update failed! (err %i)", static_cast<int>(result));
-        });
+        Discord_UpdatePresence(&discordPresence);
     }
 
     // -----------------------
 
-    auto result = mCore->RunCallbacks();
-    if (result != discord::Result::Ok)
-        Con::errorf("DiscordGameSDK::RunCallbacks failed! (err %i)", static_cast<int>(result));
+    Discord_UpdateConnection();
+    Discord_RunCallbacks();
 }
 
 const char* DiscordGame::ProcessLevel(StringTableEntry guid) {

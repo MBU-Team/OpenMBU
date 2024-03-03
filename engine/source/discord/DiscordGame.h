@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
-#include "discord.h"
 
 #include "console/console.h"
 
@@ -60,8 +59,6 @@ private:
     bool mActive;
     bool mChanged;
     std::unordered_map<const char*, const char*> mGuidLookup;
-    discord::Core* mCore;
-    discord::Activity mActivity;
     const char* mStatus;
     const char* mDetails;
     const char* mGUID;
