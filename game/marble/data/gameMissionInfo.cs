@@ -1021,7 +1021,7 @@ function getMissionObject( %missionFile )
 			         (strpos(%line, "name =") != -1 || strpos(%line, "startHelpText =") != -1) &&
 			         strpos(%line, "$Text::") == -1)
 			   {
-			      if (!%isCustom)
+			      if (!%isCustom && $Dev::ShowLocInfo)
                   GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "Bad loc info in" SPC %missionFile @ "\n";
 			   }
 			   
