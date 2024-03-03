@@ -93,6 +93,18 @@ void onDisconnected(int errorCode, const char* message)
     Con::errorf("DISCORD RPC ERROR %d %s", errorCode, message);
 }
 
+void onJoinGame(const char* joinSecret)
+{
+	Con::executef(2, "Discord::joinGame", joinSecret);
+}
+
+void onJoinRequest(const DiscordUser* request)
+{
+	int reply = DISCORD_REPLY_IGNORE;
+	reply = atoi(Con::executef(2, "Discord::onJoinRequest", request->username));
+	Discord_Respond(request->userId, reply);
+}
+
 
 DiscordGame::DiscordGame()
 {
@@ -103,15 +115,17 @@ DiscordGame::DiscordGame()
     mDetails = nullptr;
     mGUID = nullptr;
     mLargeImageKey = nullptr;
+	mJoinSecret = nullptr;
+	mPartyId = nullptr;
 
     DiscordEventHandlers handlers;
     memset(&handlers, 0, sizeof(handlers));
     handlers.ready = onReady;
     handlers.errored = onError;
     handlers.disconnected = onDisconnected;
-    handlers.joinGame = NULL;
+    handlers.joinGame = onJoinGame;
     handlers.spectateGame = NULL;
-    handlers.joinRequest = NULL;
+    handlers.joinRequest = onJoinRequest;
 
     // Discord_Initialize(const char* applicationId, DiscordEventHandlers* handlers, int autoRegister, const char* optionalSteamId)
     Discord_Initialize("846933806711046144", &handlers, 0, nullptr);
@@ -145,6 +159,11 @@ void DiscordGame::update()
             mDetails = "";
         discordPresence.details = mDetails;
         discordPresence.largeImageText = "OpenMBU";
+
+		discordPresence.partySize = mPlayerCount;
+		discordPresence.partyMax = mMaxPlayers;
+		discordPresence.partyId = mPartyId;
+		discordPresence.joinSecret = mJoinSecret;
 
         //mActivity.GetAssets().SetLargeImage("game_icon");
 

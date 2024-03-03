@@ -826,7 +826,8 @@ function clientCmdSetGameState(%state, %data)
    {
       // multiplayer
       %mission = GameMissionInfo.getCurrentMission();
-      XBLiveSetRichPresence(XBLiveGetSignInPort(), 2, MissionInfo.name, %mission.guid);
+      %misName = (ServerConnection.gameState $= "wait") ? LobbyGuiSelection.getSelectedData() : MissionInfo.name;
+      XBLiveSetRichPresence(XBLiveGetSignInPort(), 2, %misName, %mission.guid);
       //echo("Setting Rich Presence GUID: " SPC %mission.guid);
    }
    else if (%isWait)

@@ -54,6 +54,7 @@ new GuiControl(JoinGameGui) {
                text = "1";
                command = "JoinGameGui.textInput(1);";
                visible = "1";
+               accelerator = "1";
             };
 
        	   new GuiXboxButtonCtrl(Numpad2) {
@@ -68,6 +69,7 @@ new GuiControl(JoinGameGui) {
                text = "2";
                command = "JoinGameGui.textInput(2);";
                visible = "1";
+               accelerator = "2";
             };
             
        	   new GuiXboxButtonCtrl(Numpad3) {
@@ -82,6 +84,7 @@ new GuiControl(JoinGameGui) {
                text = "3";
                command = "JoinGameGui.textInput(3);";
                visible = "1";
+               accelerator = "3";
             };
 
        	   new GuiXboxButtonCtrl(Numpad4) {
@@ -96,6 +99,7 @@ new GuiControl(JoinGameGui) {
                text = "4";
                command = "JoinGameGui.textInput(4);";
                visible = "1";
+               accelerator = "4";
             };
 
        	   new GuiXboxButtonCtrl(Numpad5) {
@@ -110,6 +114,7 @@ new GuiControl(JoinGameGui) {
                text = "5";
                command = "JoinGameGui.textInput(5);";
                visible = "1";
+               accelerator = "5";
             };
 
        	   new GuiXboxButtonCtrl(Numpad6) {
@@ -124,6 +129,7 @@ new GuiControl(JoinGameGui) {
                text = "6";
                command = "JoinGameGui.textInput(6);";
                visible = "1";
+               accelerator = "6";
             };
 
        	   new GuiXboxButtonCtrl(Numpad7) {
@@ -138,6 +144,7 @@ new GuiControl(JoinGameGui) {
                text = "7";
                command = "JoinGameGui.textInput(7);";
                visible = "1";
+               accelerator = "7";
             };
 
        	   new GuiXboxButtonCtrl(Numpad8) {
@@ -152,6 +159,7 @@ new GuiControl(JoinGameGui) {
                text = "8";
                command = "JoinGameGui.textInput(8);";
                visible = "1";
+               accelerator = "8";
             };
 
        	   new GuiXboxButtonCtrl(Numpad9) {
@@ -166,6 +174,7 @@ new GuiControl(JoinGameGui) {
                text = "9";
                command = "JoinGameGui.textInput(9);";
                visible = "1";
+               accelerator = "9";
             };
 
        	   new GuiXboxButtonCtrl(Numpad0) {
@@ -180,6 +189,7 @@ new GuiControl(JoinGameGui) {
                text = "0";
                command = "JoinGameGui.textInput(0);";
                visible = "1";
+               accelerator = "0";
             };
 
             new GuiXboxButtonCtrl(NumpadOK) {
@@ -194,6 +204,7 @@ new GuiControl(JoinGameGui) {
                text = "Ok";
                command = "JoinGameGui.joinGame();";
                visible = "1";
+               accelerator = "return";
             };
             
        	   new GuiXboxButtonCtrl(NumpadDel) {
@@ -208,6 +219,7 @@ new GuiControl(JoinGameGui) {
                text = "Delete";
                command = "JoinGameGui.textInput(D);";
                visible = "1";
+               accelerator = "delete";
             };
        };
    };
@@ -292,6 +304,28 @@ function joinGameNotFound()
    echo("Not Found");
    if (RootGui.contentGui == MissionLoadingGui)
       RootGui.setContent(JoinGameGui);
+}
+
+function Discord::joinGame(%inviteCode)
+{
+    if ($Server::Hosting) {
+        error("Cannot join while hosting!");
+        return; // Don't allow in this state
+    }
+    if ($Client::connectedMultiplayer) {
+        error("Already in a match!");
+        return;
+    }
+    if (ServerConnection.gameState !$= "wait") {
+        error("Already in game!");
+        return;
+    }
+
+   echo("Joining game with invite code " @ %inviteCode);
+   joinGameByInvite(%inviteCode, "joinGameFound", "joinGameNotFound");
+   cancel(JoinGameGui.joinTimeout);
+   JoinGameGui.joinTimeout = schedule(5000, 0, "joinGameNotFound");
+   RootGui.setContent(MissionLoadingGui);
 }
 
 function JoinGameGui::textInput(%this, %chr)

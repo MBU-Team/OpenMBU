@@ -115,6 +115,18 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
    return "";
 }
 
+function Discord::onJoinRequest(%username)
+{
+    if (!$Server::Hosting)
+        return 0;
+
+    if ($Server::PlayerCount >= ($pref::Server::MaxPlayers - $Pref::Server::PrivateSlots) || $Server::IsPrivate)
+        return 0;
+
+    return 1;
+
+}
+
 // populate client data fields, send join messages and server param updates, update xblive records.
 // this is pulled out from onConnect() so that the host can update his data after he starts a server
 // without needing to reconnect.

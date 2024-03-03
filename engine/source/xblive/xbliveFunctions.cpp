@@ -3,6 +3,7 @@
 #include "console/consoleInternal.h"
 
 #include "discord/DiscordGame.h"
+#include "core/crc.h"
 
 #ifdef TORQUE_OS_WIN
 #include <Windows.h>
@@ -264,6 +265,7 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         Con::printf("Setting Rich Presence to Menus");
         DiscordGame::get()->setStatus("In Menus");
         DiscordGame::get()->setDetails("");
+        DiscordGame::get()->setPartyDetails(0, 0, nullptr, nullptr);;
         //DiscordGame::get()->setSmallImageKey("game_icon");
         DiscordGame::get()->setLevel("MainMenu");
         break;
@@ -271,6 +273,7 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         Con::printf("Setting Rich Presence to Singleplayer");
         DiscordGame::get()->setStatus(levelname);
         DiscordGame::get()->setDetails("Playing Singleplayer");
+        DiscordGame::get()->setPartyDetails(0, 0, nullptr, nullptr);
         //DiscordGame::get()->setSmallImageKey("game_icon");
         DiscordGame::get()->setLevel(levelguid);
         break;
@@ -483,7 +486,7 @@ ConsoleFunction(XBLiveIsArbRegistered, bool, 1, 1, "()")
     return true;
 }
 
-ConsoleFunction(XBLiveCreateHostedMatch, void, 6, 6, "(name, gamemode, mission, maxplayers, privateslots, callback)")
+ConsoleFunction(XBLiveCreateHostedMatch, void, 8, 8, "(name, gamemode, mission, maxplayers, privateslots, joinSecret, callback)")
 {
     argc;
 
@@ -492,9 +495,43 @@ ConsoleFunction(XBLiveCreateHostedMatch, void, 6, 6, "(name, gamemode, mission, 
     const char* mission = argv[3];
     const char* maxplayers = argv[4];
     const char* privateslots = argv[5];
-    const char* callback = argv[6];
+    StringTableEntry joinSecret = StringTable->insert(argv[6]);
+    const char* callback = argv[7];
+
+    U32 partyId = calculateCRC(name, strlen(name));
+    char partybuf[128];
+    dSprintf(partybuf, 128, "%x", partyId);
 
     Con::printf(" >> Creating hosted match: %s, %s, %s, %s, %s", name, gamemode, mission, maxplayers, privateslots);
+
+#ifdef TORQUE_DISCORD_RPC
+    DiscordGame::get()->setPartyDetails(1, atoi(maxplayers), joinSecret, StringTable->insert(partybuf, true));
+#endif
+
+    // TODO: Implement
+}
+
+ConsoleFunction(XBLiveUpdateHostedMatch, void, 9, 9, "(publicused, publicfree, privateused, privatefree, status, gamemode, mission, disablejip)")
+{
+    argc;
+    
+    int publicused = atoi(argv[1]);
+    int publicfree = atoi(argv[2]);
+    int privateused = atoi(argv[3]);
+    int privatefree = atoi(argv[4]);
+    bool disableJip = dAtob(argv[8]);
+
+    if (disableJip)
+    {
+        publicfree = 0;
+        publicused = 0;
+        privatefree = 0;
+        privateused = 0;
+    }
+
+#ifdef TORQUE_DISCORD_RPC
+    DiscordGame::get()->updatePartyDetails(publicused + privateused, publicfree + privatefree + publicused + privateused);
+#endif
 
     // TODO: Implement
 }

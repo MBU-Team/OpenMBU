@@ -50,6 +50,20 @@ public:
             mImgSm = "loading_icon"; 
         notifyParamsChange();
     }
+    void setPartyDetails(int count, int maxp, StringTableEntry joinSecret, StringTableEntry partyId)
+    {
+        mPlayerCount = count;
+        mMaxPlayers = maxp;
+        mJoinSecret = joinSecret;
+        mPartyId = partyId;
+        notifyParamsChange();
+    }
+    void updatePartyDetails(int count, int maxp)
+    {
+        mPlayerCount = count;
+        mMaxPlayers = maxp;
+        notifyParamsChange();
+    }
     void notifyParamsChange() { mChanged = true; }
     //void setIcon(const char* icon, const char* iconText) { mIcon = icon; if (mIcon == nullptr) mIcon = ""; mIconText = iconText; if (mIconText == nullptr) mIconText = ""; }
 private:
@@ -64,6 +78,10 @@ private:
     const char* mGUID;
     const char* mImgSm;
     const char* mLargeImageKey;
+    int mMaxPlayers;
+    int mPlayerCount;
+    StringTableEntry mJoinSecret;
+    StringTableEntry mPartyId;
     //const char* mIcon;
     //const char* mIconText;
 };

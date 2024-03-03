@@ -365,13 +365,17 @@ function CreateGameGui::createGame(%this)
    }
       
    // may need to some UI stuff here ("Creating game...") 
+
+   // This sets the discord presence details
+   %inv = $Server::IsPrivate ? "" : $Server::InviteCode;
+   XBLiveCreateHostedMatch($Player::name, $Server::GameModeId, $pref::Server::missionId, $Pref::Server::MaxPlayers, $Pref::Server::PrivateSlots, %inv, "CreateGameGui.onGameCreated();");
    if (!$Client::UseXBLiveMatchMaking)
    {
       %this.onGameCreated();
       return;
    }
 
-   %ok = XBLiveCreateHostedMatch($Player::name, $Server::GameModeId, $pref::Server::missionId, $Pref::Server::MaxPlayers, $Pref::Server::PrivateSlots, "CreateGameGui.onGameCreated();");
+   %ok = XBLiveCreateHostedMatch($Player::name, $Server::GameModeId, $pref::Server::missionId, $Pref::Server::MaxPlayers, $Pref::Server::PrivateSlots, $Server::InviteCode, "CreateGameGui.onGameCreated();");
    if (!%ok)
    {
       enterPreviewMode();
