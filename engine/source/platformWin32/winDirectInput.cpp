@@ -22,7 +22,7 @@ bool DInputManager::smKeyboardEnabled = true;
 bool DInputManager::smMouseEnabled = false;
 bool DInputManager::smJoystickEnabled = false;
 bool DInputManager::smXInputEnabled = false;
-bool DInputManager::smModAnalogRange = false;
+int DInputManager::smAnalogRange = 0;
 
 // Type definitions:
 typedef HRESULT(WINAPI* FN_DirectInputCreate)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID* ppvOut, LPUNKNOWN punkOuter);
@@ -43,7 +43,7 @@ void DInputManager::init()
     Con::addVariable("pref::Input::KeyboardEnabled", TypeBool, &smKeyboardEnabled);
     Con::addVariable("pref::Input::MouseEnabled", TypeBool, &smMouseEnabled);
     Con::addVariable("pref::Input::JoystickEnabled", TypeBool, &smJoystickEnabled);
-    Con::addVariable("pref::Input::ModAnalogRange", TypeBool, &smModAnalogRange);
+    Con::addVariable("pref::Input::AnalogRange", TypeS32, &smAnalogRange);
 }
 
 //------------------------------------------------------------------------------
@@ -991,29 +991,41 @@ void DInputManager::processXInput(void)
             mXInputStateNew[i].state.Gamepad.sThumbRX = getMax(mXInputStateNew[i].state.Gamepad.sThumbRX, (short) -32767);
             mXInputStateNew[i].state.Gamepad.sThumbRY = getMax(mXInputStateNew[i].state.Gamepad.sThumbRY, (short) -32767);
 
-            if (smModAnalogRange)
+            float lx, ly, ang, scale;
+            switch (smAnalogRange)
             {
-                // Expand the analog range so an unmodded controller acts as a modded one
-                float lx = (mXInputStateNew[i].state.Gamepad.sThumbLX / 32767.0f);
-                float ly = (mXInputStateNew[i].state.Gamepad.sThumbLY / 32767.0f);
+                case 0:
+                    // Normal range
+                    break;
+                case 1:
+                    // Expand the analog range so an unmodded controller acts as a modded one
+                    lx = (mXInputStateNew[i].state.Gamepad.sThumbLX / 32767.0f);
+                    ly = (mXInputStateNew[i].state.Gamepad.sThumbLY / 32767.0f);
 
-                float ang = mAtan(lx, ly);
+                    ang = mAtan(lx, ly);
 
-                // Wrap to desired range
-                while (ang < M_PI_F / 4.0f)
-                    ang += M_PI_F / 4.0f;
-                while (ang > -M_PI_F / 4.0f)
-                    ang -= M_PI_F / 4.0f;
+                    // Wrap to desired range
+                    while (ang < M_PI_F / 4.0f)
+                        ang += M_PI_F / 4.0f;
+                    while (ang > -M_PI_F / 4.0f)
+                        ang -= M_PI_F / 4.0f;
 
-                float scale = 1 / mCos(ang);
-                lx *= scale;
-                ly *= scale;
+                    scale = 1 / mCos(ang);
+                    lx *= scale;
+                    ly *= scale;
 
-                lx = mClampF(lx, -1.0f, 1.0f);
-                ly = mClampF(ly, -1.0f, 1.0f);
+                    lx = mClampF(lx, -1.0f, 1.0f);
+                    ly = mClampF(ly, -1.0f, 1.0f);
 
-                mXInputStateNew[i].state.Gamepad.sThumbLX = 32767 * lx;
-                mXInputStateNew[i].state.Gamepad.sThumbLY = 32767 * ly;
+                    mXInputStateNew[i].state.Gamepad.sThumbLX = 32767 * lx;
+                    mXInputStateNew[i].state.Gamepad.sThumbLY = 32767 * ly;
+                    break;
+                case 2:
+                    // 8-way
+                    // TODO
+                    break;
+                default:
+                    break;
             }
 
             // this controller was connected or disconnected
