@@ -1002,15 +1002,7 @@ void DInputManager::processXInput(void)
                     lx = (mXInputStateNew[i].state.Gamepad.sThumbLX / 32767.0f);
                     ly = (mXInputStateNew[i].state.Gamepad.sThumbLY / 32767.0f);
 
-                    ang = mAtan(lx, ly);
-
-                    // Wrap to desired range
-                    while (ang < M_PI_F / 4.0f)
-                        ang += M_PI_F / 4.0f;
-                    while (ang > -M_PI_F / 4.0f)
-                        ang -= M_PI_F / 4.0f;
-
-                    scale = 1 / mCos(ang);
+                    scale = M_SQRT2_F;
                     lx *= scale;
                     ly *= scale;
 
