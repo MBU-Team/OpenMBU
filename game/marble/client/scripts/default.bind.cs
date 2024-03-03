@@ -164,61 +164,82 @@ function escapeFromGame(%forcePreviewMode) // its ok for this to be empty, defau
 // Movement Keys
 //------------------------------------------------------------------------------
 
+function setMvExtras()
+{
+   //$mvAutoCenterCamera = $pref::Input::AutoCenterCamera;
+   $mvHorizontalDeadZone = $pref::Input::HorizontalDeadZone;
+   $mvVerticalDeadZone = $pref::Input::VerticalDeadZone;
+   $mvCameraAccelSpeed = $pref::Input::CameraAccelSpeed;
+   $mvCameraSensitivityHorizontal = $pref::Input::CameraSensitivityHorizontal;
+   $mvCameraSensitivityVertical = $pref::Input::CameraSensitivityVertical;
+}
+
 $movementSpeed = 1; // m/s
 
 function setSpeed(%speed)
 {
+   setMvExtras();
    if(%speed)
       $movementSpeed = %speed;
 }
 
 function moveleft(%val)
 {
+   setMvExtras();
    $mvLeftAction = %val;
 }
 
 function moveright(%val)
 {
+   setMvExtras();
    $mvRightAction = %val;
 }
 
 function moveforward(%val)
 {
+   setMvExtras();
    $mvForwardAction = %val;
 }
 
 function movebackward(%val)
 {
+   setMvExtras();
    $mvBackwardAction = %val;
 }
 
 function moveup(%val)
 {
+   setMvExtras();
    $mvUpAction = %val;
 }
 
 function movedown(%val)
 {
+   setMvExtras();
    $mvDownAction = %val;
 }
 
 function turnLeft( %val )
 {
+   setMvExtras();
    $mvYawRightSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
 }
 
 function turnRight( %val )
 {
+   setMvExtras();
    $mvYawLeftSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
 }
 
 function panUp( %val )
 {
+   setMvExtras();
    $mvPitchDownSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
 }
 
 function panDown( %val )
 {
+   setMvExtras();
    $mvPitchUpSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
 }
 
@@ -244,6 +265,8 @@ function gamepadYaw(%val)
    if (%val != 0.0)
       $mvDeviceIsKeyboardMouse = false;
       
+   setMvExtras();
+      
    // stick events come in even when the user isn't using the gamepad, so make 
    // sure we don't slam the move if we don't think the user is using the gamepad
    if (!$mvDeviceIsKeyboardMouse)
@@ -263,6 +286,8 @@ function gamepadPitch(%val)
    // out of keyboard/mouse mode
    if (%val != 0.0)
       $mvDeviceIsKeyboardMouse = false;
+      
+   setMvExtras();
 
    // stick events come in even when the user isn't using the gamepad, so make 
    // sure we don't slam the move if we don't think the user is using the gamepad
@@ -281,6 +306,8 @@ function mouseYaw(%val)
       
    $mvDeviceIsKeyboardMouse = true;
    $mvAutoCenterCamera = false;
+   
+   setMvExtras();
 
    $mvYaw += getMouseAdjustAmount(%val);
 }
@@ -292,12 +319,15 @@ function mousePitch(%val)
       
    $mvDeviceIsKeyboardMouse = true;
    $mvAutoCenterCamera = false;
+   
+   setMvExtras();
       
    $mvPitch += getMouseAdjustAmount(%val);
 }
 
 function jumpOrStart(%val)
 {
+   setMvExtras();
    if (%val)
 	   $mvTriggerCount2 = 1;
 	else
@@ -306,6 +336,7 @@ function jumpOrStart(%val)
 
 function jumpOrPowerup( %val )
 {
+   setMvExtras();
    // LTrigger
    if( %val > 0.0 )
       $mvTriggerCount2++;
@@ -315,6 +346,7 @@ function jumpOrPowerup( %val )
 
 function moveXAxisL(%val)
 {
+   setMvExtras();
    if (%val != 0.0)
       $mvDeviceIsKeyboardMouse = false;
 
@@ -323,6 +355,7 @@ function moveXAxisL(%val)
 
 function moveYAxisL(%val)
 {
+   setMvExtras();
    if (%val != 0.0)
       $mvDeviceIsKeyboardMouse = false;
 
@@ -331,6 +364,7 @@ function moveYAxisL(%val)
 
 function centercam(%val)
 {
+   setMvExtras();
    $mvTriggerCount3++;
 }
 
@@ -350,6 +384,7 @@ function cycleDebugPredTiles()
 
 function mouseFire(%val)
 {
+   setMvExtras();
    if (%val)
    {
       $mvTriggerCount0 = 1;
@@ -362,6 +397,7 @@ function mouseFire(%val)
 
 function altTrigger(%val)
 {
+   setMvExtras();
    if (%val)
    {
       $mvTriggerCount1 = 1;
@@ -378,6 +414,7 @@ function altTrigger(%val)
 
 function toggleFreeLook( %val )
 {
+   setMvExtras();
    if ( %val )
       $mvFreeLook = true;
    else
@@ -386,6 +423,7 @@ function toggleFreeLook( %val )
 
 function toggleFirstPerson(%val)
 {
+   setMvExtras();
    if (%val)
    {
       $firstPerson = !$firstPerson;
@@ -394,12 +432,14 @@ function toggleFirstPerson(%val)
 
 function toggleCamera(%val)
 {
+   setMvExtras();
    if (%val && $testCheats)
       commandToServer('ToggleCamera');
 }
 
 function toggleFPSDisplay(%val)
 {
+   setMvExtras();
    if (%val)
       $showFPS = !$showFPS;
       

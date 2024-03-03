@@ -44,6 +44,12 @@ F32 MoveManager::mYAxis_R = 0;
 U32 MoveManager::mTriggerCount[MaxTriggerKeys] = { 0, };
 U32 MoveManager::mPrevTriggerCount[MaxTriggerKeys] = { 0, };
 
+F32 MoveManager::mHorizontalDeadZone = 0.0f;
+F32 MoveManager::mVerticalDeadZone = 0.0f;
+F32 MoveManager::mCameraAccelSpeed = 0.0f;
+F32 MoveManager::mCameraSensitivityHorizontal = 0.0f;
+F32 MoveManager::mCameraSensitivityVertical = 0.0f;
+
 #define MAX_MOVE_PACKET_SENDS 4
 
 const Move NullMove =
@@ -55,7 +61,14 @@ const Move NullMove =
    0,0,
 
    false,
-   false,false,false,false,false,false
+
+   false,
+   false,
+   false,
+
+   false, false, false, false,false,false,
+
+   0.0f, 0.0f, 0.0f, 0.0f, 0.0f
 };
 
 void MoveManager::init()
@@ -93,6 +106,12 @@ void MoveManager::init()
         dSprintf(varName, sizeof(varName), "mvTriggerCount%d", i);
         Con::addVariable(varName, TypeS32, &mTriggerCount[i]);
     }
+
+    Con::addVariable("mvHorizontalDeadZone", TypeF32, &mHorizontalDeadZone);
+    Con::addVariable("mvVerticalDeadZone", TypeF32, &mVerticalDeadZone);
+    Con::addVariable("mvCameraAccelSpeed", TypeF32, &mCameraAccelSpeed);
+    Con::addVariable("mvCameraSensitivityHorizontal", TypeF32, &mCameraSensitivityHorizontal);
+    Con::addVariable("mvCameraSensitivityVertical", TypeF32, &mCameraSensitivityVertical);
 }
 
 static inline F32 clampFloatWrap(F32 val)
@@ -132,6 +151,12 @@ void Move::unclamp()
     x = (px - 16) / F32(16);
     y = (py - 16) / F32(16);
     z = (pz - 16) / F32(16);
+
+    horizontalDeadZone = IANG2FANG(pHorizontalDeadZone);
+    verticalDeadZone = IANG2FANG(pVerticalDeadZone);
+    cameraAccelSpeed = IANG2FANG(pCameraAccelSpeed);
+    cameraSensitivityHorizontal = IANG2FANG(pCameraSensitivityHorizontal);
+    cameraSensitivityVertical = IANG2FANG(pCameraSensitivityVertical);
 }
 
 void Move::clamp()
@@ -150,6 +175,13 @@ void Move::clamp()
     px = clampRangeClamp(x);
     py = clampRangeClamp(y);
     pz = clampRangeClamp(z);
+
+    pHorizontalDeadZone = FANG2IANG(horizontalDeadZone);
+    pVerticalDeadZone = FANG2IANG(verticalDeadZone);
+    pCameraAccelSpeed = FANG2IANG(cameraAccelSpeed);
+    pCameraSensitivityHorizontal = FANG2IANG(cameraSensitivityHorizontal);
+    pCameraSensitivityVertical = FANG2IANG(cameraSensitivityVertical);
+
     unclamp();
 }
 
@@ -172,6 +204,11 @@ void Move::pack(BitStream* stream, const Move* baseMove)
         px != pBaseMove->px || py != pBaseMove->py || pz != pBaseMove->pz ||
         deviceIsKeyboardMouse != pBaseMove->deviceIsKeyboardMouse || autoCenterCamera != pBaseMove->autoCenterCamera ||
         freeLook != pBaseMove->freeLook ||
+        pHorizontalDeadZone != pBaseMove->pHorizontalDeadZone ||
+        pVerticalDeadZone != pBaseMove->pVerticalDeadZone ||
+        pCameraAccelSpeed != pBaseMove->pCameraAccelSpeed ||
+        pCameraSensitivityHorizontal != pBaseMove->pCameraSensitivityHorizontal ||
+        pCameraSensitivityVertical != pBaseMove->pCameraSensitivityVertical ||
         triggerDifferent)
     {
         somethingDifferent = true;
@@ -201,6 +238,30 @@ void Move::pack(BitStream* stream, const Move* baseMove)
         {
             for (U32 i = 0; i < MaxTriggerKeys; i++)
                 stream->writeFlag(trigger[i]);
+        }
+
+        bool extrasDifferent = false;
+        if (pHorizontalDeadZone != pBaseMove->pHorizontalDeadZone ||
+            pVerticalDeadZone != pBaseMove->pVerticalDeadZone ||
+            pCameraAccelSpeed != pBaseMove->pCameraAccelSpeed ||
+            pCameraSensitivityHorizontal != pBaseMove->pCameraSensitivityHorizontal ||
+            pCameraSensitivityVertical != pBaseMove->pCameraSensitivityVertical)
+        {
+            extrasDifferent = true;
+        }
+
+        if (alwaysWriteAll || stream->writeFlag(extrasDifferent))
+        {
+            if (stream->writeFlag(pHorizontalDeadZone != pBaseMove->pHorizontalDeadZone))
+                stream->writeInt(pHorizontalDeadZone, 16);
+            if (stream->writeFlag(pVerticalDeadZone != pBaseMove->pVerticalDeadZone))
+                stream->writeInt(pVerticalDeadZone, 16);
+            if (stream->writeFlag(pCameraAccelSpeed != pBaseMove->pCameraAccelSpeed))
+                stream->writeInt(pCameraAccelSpeed, 16);
+            if (stream->writeFlag(pCameraSensitivityHorizontal != pBaseMove->pCameraSensitivityHorizontal))
+                stream->writeInt(pCameraSensitivityHorizontal, 16);
+            if (stream->writeFlag(pCameraSensitivityVertical != pBaseMove->pCameraSensitivityVertical))
+                stream->writeInt(pCameraSensitivityVertical, 16);
         }
     }
 }
@@ -255,6 +316,34 @@ void Move::unpack(BitStream* stream, const Move* baseMove)
                 trigger[i] = pBaseMove->trigger[i];
         }
 
+        if (alwaysReadAll || stream->readFlag())
+        {
+            if (stream->readFlag())
+                pHorizontalDeadZone = stream->readInt(16);
+            else
+                pHorizontalDeadZone = pBaseMove->pHorizontalDeadZone;
+
+            if (stream->readFlag())
+                pVerticalDeadZone = stream->readInt(16);
+            else
+                pVerticalDeadZone = pBaseMove->pVerticalDeadZone;
+
+            if (stream->readFlag())
+                pCameraAccelSpeed = stream->readInt(16);
+            else
+                pCameraAccelSpeed = pBaseMove->pCameraAccelSpeed;
+
+            if (stream->readFlag())
+                pCameraSensitivityHorizontal = stream->readInt(16);
+            else
+                pCameraSensitivityHorizontal = pBaseMove->pCameraSensitivityHorizontal;
+
+            if (stream->readFlag())
+                pCameraSensitivityVertical = stream->readInt(16);
+            else
+                pCameraSensitivityVertical = pBaseMove->pCameraSensitivityVertical;
+        }
+
         unclamp();
     } else
     {
@@ -297,6 +386,13 @@ bool GameConnection::getNextMove(Move& curMove)
             curMove.trigger[i] = true;
         MoveManager::mPrevTriggerCount[i] = MoveManager::mTriggerCount[i];
     }
+
+    curMove.horizontalDeadZone = MoveManager::mHorizontalDeadZone;
+    curMove.verticalDeadZone = MoveManager::mVerticalDeadZone;
+    curMove.cameraAccelSpeed = MoveManager::mCameraAccelSpeed;
+    curMove.cameraSensitivityHorizontal = MoveManager::mCameraSensitivityHorizontal;
+    curMove.cameraSensitivityVertical = MoveManager::mCameraSensitivityVertical;
+
     curMove.clamp();  // clamp for net traffic
     return true;
 }

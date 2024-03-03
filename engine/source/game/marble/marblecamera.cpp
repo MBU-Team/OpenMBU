@@ -110,7 +110,23 @@ void Marble::processCameraMove(const Move* move)
 
     pushToSquare(value);
 
-    float moveYaw = applyNonlinearScale2(rescaleDeadZone(value.x, 0.25));
+    F32 horizontalDeadZone = move->horizontalDeadZone;
+    F32 verticalDeadZone = move->verticalDeadZone;
+    F32 cameraAccelSpeed = move->cameraAccelSpeed;
+    F32 cameraSensitivityHorizontal = move->cameraSensitivityHorizontal;
+    F32 cameraSensitivityVertical = move->cameraSensitivityVertical;
+
+    //F32 horizontalDeadZone = 0.25f;
+    //F32 verticalDeadZone = 0.7f;
+    //F32 cameraAccelSpeed = 0.05f;
+    //F32 cameraSensitivityHorizontal = 0.7f;
+    //F32 cameraSensitivityVertical = 0.8f;
+
+    // Old values:
+    //F32 verticalDeadZone = 0.69999999;
+    //F32 cameraAccelSpeed = 0.0544000044465065;
+
+    float moveYaw = applyNonlinearScale2(rescaleDeadZone(value.x, horizontalDeadZone));
     if (fabsf(this->mLastYaw) > fabsf(moveYaw))
         this->mLastYaw = moveYaw;
     else
@@ -128,27 +144,27 @@ void Marble::processCameraMove(const Move* move)
             }
         }
         float deltaYaw = moveYaw - this->mLastYaw;
-        if (fabsf(deltaYaw) <= 0.0544000044465065)
+        if (fabsf(deltaYaw) <= cameraAccelSpeed)
             this->mLastYaw = moveYaw;
         else if (deltaYaw >= 0.0)
-            this->mLastYaw += 0.0544000044465065;
+            this->mLastYaw += cameraAccelSpeed;
         else
-            this->mLastYaw -= 0.0544000044465065;
+            this->mLastYaw -= cameraAccelSpeed;
     }
-    float delta_new = this->mLastYaw * 0.7 * 6.283185307179586 * 0.03200000151991844;
+    float delta_new = this->mLastYaw * cameraSensitivityHorizontal * M_2PI_F * TickSec;
     if ((this->mMode & CameraHoverMode) == 0)
     {
         if (this->mCenteringCamera)
         {
             float yawDiff = fabsf(fabsf(delta_new) - fabsf(this->mRadsLeftToCenter));
             if (yawDiff >= 0.15)
-                yawDiff = sinf(this->mRadsLeftToCenter / this->mRadsStartingToCenter) * 0.15;
+                yawDiff = sinf(this->mRadsLeftToCenter / this->mRadsStartingToCenter) * 0.15f;
             else
             {
                 if (yawDiff >= 0.05)
-                    yawDiff = 0.050000001;
+                    yawDiff = 0.05;
                 else
-                    this->mCenteringCamera = 0;
+                    this->mCenteringCamera = false;
             }
    
             if (this->mRadsLeftToCenter <= (double)delta_new)
@@ -169,15 +185,15 @@ void Marble::processCameraMove(const Move* move)
         }
         else
         {
-            float rescaledY = rescaleDeadZone(value.y, 0.69999999);
+            float rescaledY = rescaleDeadZone(value.y, verticalDeadZone);
             if (move->autoCenterCamera)
             {
                 if (rescaledY <= 0.0)
-                    rescaledY = 0.4 - rescaledY * -0.75;
+                    rescaledY = 0.4f - rescaledY * -0.75f;
                 else
-                    rescaledY = rescaledY * 1.1 + 0.4;
+                    rescaledY = rescaledY * 1.1f + 0.4f;
                 float movePitchDelta = (rescaledY - this->mMouseY);
-                float movePitchSpeed = computePitchSpeedFromDelta(fabsf(movePitchDelta)) * 0.03200000151991844 * 0.8;
+                float movePitchSpeed = computePitchSpeedFromDelta(fabsf(movePitchDelta)) * TickSec * cameraSensitivityVertical;
                 if (movePitchDelta <= 0.0)
                 {
                     movePitchDelta = -movePitchDelta;
@@ -193,8 +209,7 @@ void Marble::processCameraMove(const Move* move)
             }
             else
             {
-                F32 sensitivity = 1.5f;
-                this->mMouseY += rescaledY * TickSec * sensitivity;
+                this->mMouseY += rescaledY * TickSec * (cameraSensitivityVertical * 2.0f);
             }
         }
     }

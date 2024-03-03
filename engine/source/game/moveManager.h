@@ -36,6 +36,14 @@ struct Move
     bool freeLook;
     bool trigger[MaxTriggerKeys];
 
+    // We may want to do this differently in the future, but for now let's do it as part of Move.
+    U32 pHorizontalDeadZone, pVerticalDeadZone, pCameraAccelSpeed, pCameraSensitivityHorizontal, pCameraSensitivityVertical;
+    F32 horizontalDeadZone;
+    F32 verticalDeadZone;
+    F32 cameraAccelSpeed;
+    F32 cameraSensitivityHorizontal;
+    F32 cameraSensitivityVertical;
+
     void pack(BitStream* stream, const Move* baseMove = NULL);
     void unpack(BitStream* stream, const Move* baseMove = NULL);
     void clamp();
@@ -74,6 +82,13 @@ public:
 
     static U32 mTriggerCount[MaxTriggerKeys];
     static U32 mPrevTriggerCount[MaxTriggerKeys];
+
+    // We may want to do this differently in the future, but for now let's do it as part of Move.
+    static F32 mHorizontalDeadZone;
+    static F32 mVerticalDeadZone;
+    static F32 mCameraAccelSpeed;
+    static F32 mCameraSensitivityHorizontal;
+    static F32 mCameraSensitivityVertical;
 
     static void init();
 };
