@@ -129,6 +129,7 @@ public:
         VolumeBlock = BIT(0),
         File = BIT(1),
         Added = BIT(2),
+        Memory = BIT(3),
     };
     S32 flags;  ///< Set from Flags.
 
@@ -146,6 +147,14 @@ public:
     S32 fileOffset;            ///< Offset of data in zip file.
     S32 fileSize;              ///< Size on disk of resource block.
     S32 compressedFileSize;    ///< Actual size of resource data.
+    /// @}
+
+    /// @name Memory Stream
+    /// If the resource is stored in memory, these members are populated
+    /// @{
+
+    class ResizableMemStream* mMemStream;
+
     /// @}
 
     ResourceInstance* mInstance;  ///< Pointer to actual object instance. If the object is not loaded,
