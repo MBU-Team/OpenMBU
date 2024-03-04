@@ -306,7 +306,7 @@ function joinGameNotFound()
       RootGui.setContent(JoinGameGui);
 }
 
-function Discord::joinGame(%inviteCode)
+function onDiscordJoinGame(%inviteCode)
 {
     if ($Server::Hosting) {
         error("Cannot join while hosting!");

@@ -115,7 +115,7 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
    return "";
 }
 
-function Discord::onJoinRequest(%username)
+function onDiscordJoinRequest(%username)
 {
     if (!$Server::Hosting)
         return 0;
