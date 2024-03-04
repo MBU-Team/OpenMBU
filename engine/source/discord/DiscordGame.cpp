@@ -80,36 +80,32 @@ DiscordGame* DiscordGame::get()
 
 void onReady(const DiscordUser* request)
 {
+    DiscordGame::get()->setActive(true);
     Con::printf("Starting RPC for user %s", request->username);
+    DiscordGame::get()->setUsername(request->username);
 }
 
 void onError(int errorCode, const char* message)
 {
+    DiscordGame::get()->setActive(false);
     Con::errorf("DISCORD RPC ERROR %d %s", errorCode, message);
 }
 
 void onDisconnected(int errorCode, const char* message)
 {
-    Con::errorf("DISCORD RPC ERROR %d %s", errorCode, message);
+    DiscordGame::get()->setActive(false);
+    Con::errorf("DISCORD RPC DISCONNECTED %d %s", errorCode, message);
 }
 
 void onJoinGame(const char* joinSecret)
 {
-    char* buf = Con::getReturnBuffer(1024);
-    dSprintf(buf, 1024, "Discord::joinGame(\"%s\");", joinSecret);
-    Con::evaluatef(buf);
+    Con::executef(2, "onDiscordJoinGame", joinSecret);
 }
 
 void onJoinRequest(const DiscordUser* request)
 {
 	int reply = DISCORD_REPLY_IGNORE;
-
-    char* buf = Con::getReturnBuffer(1024);
-    char escaped[128];
-    expandEscape(escaped, request->username);
-    dSprintf(buf, 1024, "Discord::onJoinRequest(\"%s\");", escaped);
-
-	reply = atoi(Con::evaluatef(buf));
+    reply = atoi(Con::executef(4, "onDiscordJoinRequest", request->userId, request->username, request->avatar));
 	Discord_Respond(request->userId, reply);
 }
 
@@ -137,8 +133,6 @@ DiscordGame::DiscordGame()
 
     // Discord_Initialize(const char* applicationId, DiscordEventHandlers* handlers, int autoRegister, const char* optionalSteamId)
     Discord_Initialize("846933806711046144", &handlers, 0, nullptr);
-
-    mActive = true;
 }
 
 DiscordGame::~DiscordGame()
@@ -149,6 +143,9 @@ DiscordGame::~DiscordGame()
 
 void DiscordGame::update()
 {
+    Discord_UpdateConnection();
+    Discord_RunCallbacks();
+
     if (!mActive)
         return;
 
@@ -215,9 +212,6 @@ void DiscordGame::update()
     }
 
     // -----------------------
-
-    Discord_UpdateConnection();
-    Discord_RunCallbacks();
 }
 
 const char* DiscordGame::ProcessLevel(StringTableEntry guid) {

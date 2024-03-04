@@ -5,6 +5,7 @@
 #include <fstream>
 #include <unordered_map>
 
+#include "core/stringTable.h"
 #include "console/console.h"
 
 //constexpr const char* AUTOSPLITTER_FILE_NAME = "autosplitter.txt";
@@ -70,6 +71,25 @@ public:
         mStopTime = stop;
         notifyParamsChange();
     }
+    void setUsername(const char* uname)
+    {
+        mUsername = uname;
+    }
+    StringTableEntry getUsername(int charLimit)
+    {
+        char* buf = new char[charLimit + 1];
+        int minLength = fmin(charLimit, mUsername.length());
+        for (int i = 0; i < minLength; i++)
+            buf[i] = mUsername[i];
+        buf[charLimit] = '\0';
+        StringTableEntry ste = StringTable->insert(buf, true);
+        delete[] buf;
+        return ste;
+    }
+    void setActive(bool a)
+    {
+        mActive = a;
+    }
     void notifyParamsChange() { mChanged = true; }
     //void setIcon(const char* icon, const char* iconText) { mIcon = icon; if (mIcon == nullptr) mIcon = ""; mIconText = iconText; if (mIconText == nullptr) mIconText = ""; }
 private:
@@ -90,6 +110,7 @@ private:
     uint64_t mStopTime;
     StringTableEntry mJoinSecret;
     StringTableEntry mPartyId;
+    std::string mUsername;
     //const char* mIcon;
     //const char* mIconText;
 };
