@@ -275,7 +275,6 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
         DiscordGame::get()->setStatus(levelname);
         DiscordGame::get()->setDetails("Playing Singleplayer");
         DiscordGame::get()->setPartyDetails(0, 0, nullptr, nullptr);
-        DiscordGame::get()->setTimer(static_cast<uint64_t>(time(nullptr)));
         //DiscordGame::get()->setSmallImageKey("game_icon");
         DiscordGame::get()->setLevel(levelguid);
         break;
@@ -292,9 +291,17 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
 
 ConsoleFunction(XBLivePresenceStartTimer, void, 1, 2, "([stopTime])")
 {
-    int secsRemaining = argc > 1 ? atoi(argv[1]) : 0;
     uint64_t startTime = static_cast<uint64_t>(time(nullptr));
-    DiscordGame::get()->setTimer(startTime, secsRemaining > 0 ? startTime + secsRemaining : 0);
+    if (argc > 1)
+    {
+        int secsRemaining = atoi(argv[1]);
+        DiscordGame::get()->setTimer(startTime,  startTime + secsRemaining);
+    }
+    else
+    {
+        DiscordGame::get()->setTimer(startTime);
+    }
+
 }
 
 ConsoleFunction(XBLivePresenceStopTimer, void, 1, 1, "()")

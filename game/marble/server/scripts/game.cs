@@ -1996,6 +1996,10 @@ function setGoState(%client)
       %client.player.setPad($Game::EndPad);
 
    %client.player.setMode(Normal);
+   if ($Game::Duration != 0)
+      XBLivePresenceStartTimer($Game::Duration / 1000);
+   else
+      XBLivePresenceStartTimer();
 
    // Sync with the "first" marble
    if (isObject($timeKeeper) && %client != $timeKeeper)

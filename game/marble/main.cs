@@ -589,3 +589,29 @@ function finishTestMem()
    
    schedule(1000,0,"quit");
 }
+function onFileChunkSent(%file, %count, %max) {
+   if ($lastChunkStart $= "" || %count < $lastChunkCount || (getSimTime() - $lastChunkStart) > 1000)
+   {
+      $lastChunkStartCount = %count;
+      $lastChunkStart = getSimTime();
+   }
+   $lastChunkCount = %count;
+   %rate = (%count - $lastChunkStartCount) / ((getSimTime() - $lastChunkStart) / 1000);
+   %rate = (%rate / 1024) @ "kB/s";
+
+   echo(%file SPC %rate SPC %count SPC %max);
+}
+
+
+function onFileChunkReceived(%file, %count, %max) {
+   if ($lastChunkStart $= "" || %count < $lastChunkCount || (getSimTime() - $lastChunkStart) > 1000)
+   {
+      $lastChunkStartCount = %count;
+      $lastChunkStart = getSimTime();
+   }
+   $lastChunkCount = %count;
+   %rate = (%count - $lastChunkStartCount) / ((getSimTime() - $lastChunkStart) / 1000);
+   %rate = (%rate / 1024) @ "kB/s";
+
+   echo(%file SPC %rate SPC %count SPC %max);
+}
