@@ -68,6 +68,7 @@ function JoinGameInviteDlg::onY(%this)
     %this.responded = true;
     XBLiveRespondJoinRequest(%this.userId, 1);
     JoinGameInviteFrame.setTitle("Accepted join request");
+    cancel(%this.animSchedule);
     cancel(%this.closeSchedule);
     %this.closeSchedule = %this.schedule(2000, "close");
 }

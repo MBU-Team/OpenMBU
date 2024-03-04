@@ -82,7 +82,7 @@ public:
         int minLength = fmin(charLimit, mUsername.length());
         for (int i = 0; i < minLength; i++)
             buf[i] = mUsername[i];
-        buf[charLimit] = '\0';
+        buf[minLength] = '\0';
         StringTableEntry ste = StringTable->insert(buf, true);
         delete[] buf;
         return ste;
