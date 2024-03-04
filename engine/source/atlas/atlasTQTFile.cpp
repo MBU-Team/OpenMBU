@@ -441,7 +441,7 @@ void AtlasTQTFile::merge(AtlasTQTFile* tqt00, AtlasTQTFile* tqt01, AtlasTQTFile*
     dMemset(mOffsets.address(), 0, sizeof(mOffsets[0]) * mOffsets.size());
 
     // Open the file for output.
-    FileStream s;
+    Stream* s;
     if (!ResourceManager->openFileForWrite(s, outFile, File::ReadWrite))
     {
         Con::errorf("AtlasTQTFile::merge - could not open '%s' for generation (read AND write).", outFile);
@@ -449,14 +449,14 @@ void AtlasTQTFile::merge(AtlasTQTFile* tqt00, AtlasTQTFile* tqt01, AtlasTQTFile*
     }
 
     // Write a header. Some parts of this will get rewritten later (ie, the TOC)
-    s.write(4, "tqt\0");
-    s.write(mVersion);
-    s.write(mTreeDepth);
-    s.write(mTileSize);
+    s->write(4, "tqt\0");
+    s->write(mVersion);
+    s->write(mTreeDepth);
+    s->write(mTileSize);
 
-    U32 tocOffset = s.getPosition();
+    U32 tocOffset = s->getPosition();
 
-    s.write(sizeof(mOffsets[0]) * mOffsets.size(), mOffsets.address());
+    s->write(sizeof(mOffsets[0]) * mOffsets.size(), mOffsets.address());
 
     // Ok, copy everything from the children.
     copy(tqt00, s, 0, Point2I(0, 0), 1, Point2I(0, 0));
@@ -469,12 +469,12 @@ void AtlasTQTFile::merge(AtlasTQTFile* tqt00, AtlasTQTFile* tqt01, AtlasTQTFile*
     generateInnerTiles(s);
 
     // Update the TOC.
-    s.setPosition(tocOffset);
+    s->setPosition(tocOffset);
     for (S32 i = 0; i < mOffsets.size(); i++)
-        s.write(mOffsets[i]);
+        s->write(mOffsets[i]);
 
     // Finally, close up.
-    s.close();
+    delete s;
 }
 
 void AtlasTQTFile::createTQT(const char* sourceImage, const char* outputTQT, U32 treeDepth, U32 tileSize)
@@ -511,7 +511,7 @@ void AtlasTQTFile::createTQT(const char* sourceImage, const char* outputTQT, U32
     dMemset(mOffsets.address(), 0, sizeof(mOffsets[0]) * mOffsets.size());
 
     // Open the file for output.
-    FileStream s;
+    Stream* s;
     if (!ResourceManager->openFileForWrite(s, outputTQT, File::ReadWrite))
     {
         Con::errorf("AtlasTQTFile::createTQT - could not open '%s' for generation (read AND write).", outputTQT);
@@ -519,14 +519,14 @@ void AtlasTQTFile::createTQT(const char* sourceImage, const char* outputTQT, U32
     }
 
     // Write a header. Some parts of this will get rewritten later (ie, the TOC)
-    s.write(4, "tqt\0");
-    s.write(mVersion);
-    s.write(mTreeDepth);
-    s.write(mTileSize);
+    s->write(4, "tqt\0");
+    s->write(mVersion);
+    s->write(mTreeDepth);
+    s->write(mTileSize);
 
-    U32 tocOffset = s.getPosition();
+    U32 tocOffset = s->getPosition();
 
-    s.write(sizeof(mOffsets[0]) * mOffsets.size(), mOffsets.address());
+    s->write(sizeof(mOffsets[0]) * mOffsets.size(), mOffsets.address());
 
     // Allocate space for the row working area which is equal to the height of
     // a tile, and also load in the first chunk's worth of data.
@@ -592,14 +592,14 @@ void AtlasTQTFile::createTQT(const char* sourceImage, const char* outputTQT, U32
     delete[] tileWorkspace;
 
     // Update the TOC.
-    s.setPosition(tocOffset);
+    s->setPosition(tocOffset);
     for (S32 i = 0; i < mOffsets.size(); i++)
-        s.write(mOffsets[i]);
+        s->write(mOffsets[i]);
 
     // Finally, close the reader and the TQT file.
 
     reader.close();
-    s.close();
+    delete s;
 }
 
 

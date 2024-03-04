@@ -642,12 +642,13 @@ bool SceneLighting::light(BitSet32 flags)
     // don't light if file is read-only?
     if (!flags.test(ForceAlways))
     {
-        FileStream fileStream;
+        Stream* fileStream;
         if (!ResourceManager->openFileForWrite(fileStream, mFileName))
         {
             Con::errorf(ConsoleLogEntry::General, "SceneLighting::Light: Failed to light mission.  File '%s' cannot be written to.", mFileName);
             return(false);
         }
+        delete fileStream;
     }
 
     // initialize the objects for lighting
@@ -887,7 +888,7 @@ bool SceneLighting::loadPersistInfo(const char* fileName)
 bool SceneLighting::savePersistInfo(const char* fileName)
 {
     // open the file
-    FileStream file;
+    Stream* file;
     if (!ResourceManager->openFileForWrite(file, fileName))
         return(false);
 
@@ -920,10 +921,10 @@ bool SceneLighting::savePersistInfo(const char* fileName)
             return(false);
     }
 
-    if (!persistInfo.write(file))
+    if (!persistInfo.write(*file))
         return(false);
 
-    file.close();
+    delete file;
 
     // open/close the stream to get the fileSize calculated on the resource object
     ResourceManager->closeStream(ResourceManager->openStream(fileName));

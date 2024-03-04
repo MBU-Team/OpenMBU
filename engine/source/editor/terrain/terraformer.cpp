@@ -319,7 +319,7 @@ bool Terraformer::loadGreyscale(U32 r, const char* filename)
 //------------------------------------------------------------------------------
 bool Terraformer::saveHeightField(U32 r, const char* filename)
 {
-    FileStream stream;
+    Stream* stream;
     F32 fmin, fmax, f;
     Heightfield* dst = getRegister(r);
 
@@ -333,9 +333,9 @@ bool Terraformer::saveHeightField(U32 r, const char* filename)
             {
                 f = (dst->val(wrap((S32)(x + mShift.x)), wrap((S32)(y + mShift.y))) - fmin) * scale;
                 U16 test = floatToFixed(f);
-                stream.write(test);
+                stream->write(test);
             }
-        stream.close();
+        delete stream;
     }
 
     return true;

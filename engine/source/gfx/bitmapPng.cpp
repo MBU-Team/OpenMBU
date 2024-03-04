@@ -475,7 +475,7 @@ bool GBitmap::writePNGDebug(char* name) const
         U32 waterMark = FrameAllocator::getWaterMark();
         dSprintf(bitmapNameBuf, sizeof(bitmapNameBuf), "demo/%s_%d.png", name, i);
         Con::printf("Writing texture to : '%s'", bitmapNameBuf);
-        FileStream stream;
+        Stream* stream;
 
         if (ResourceManager->openFileForWrite(stream, bitmapNameBuf))
         {
@@ -502,7 +502,7 @@ bool GBitmap::writePNGDebug(char* name) const
                 return false;
             }
 
-            png_set_write_fn(png_ptr, &stream, pngWriteDataFn, pngFlushDataFn);
+            png_set_write_fn(png_ptr, stream, pngWriteDataFn, pngFlushDataFn);
 
             // Set the compression level, image filters, and compression strategy...
             png_ptr->flags |= PNG_FLAG_ZLIB_CUSTOM_STRATEGY;
@@ -552,7 +552,7 @@ bool GBitmap::writePNGDebug(char* name) const
             png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
 
             // Close stream
-            stream.close();
+            delete stream;
         }
 
         FrameAllocator::setWaterMark(waterMark);

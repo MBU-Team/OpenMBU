@@ -1207,7 +1207,7 @@ void ResManager::freeResource(ResourceObject* ro)
 
 //------------------------------------------------------------------------------
 
-bool ResManager::openFileForWrite(FileStream& stream, const char* fileName, U32 accessMode)
+bool ResManager::openFileForWrite(Stream*& stream, const char* fileName, U32 accessMode)
 {
     if (!isValidWriteFileName(fileName))
         return false;
@@ -1222,8 +1222,14 @@ bool ResManager::openFileForWrite(FileStream& stream, const char* fileName, U32 
 
     if (!Platform::createPath(fileName))   // create directory tree
         return false;
-    if (!stream.open(fileName, (FileStream::AccessMode)accessMode))
+
+    FileStream* fs = new FileStream();
+    if (!fs->open(fileName, (FileStream::AccessMode)accessMode))
+    {
+        delete fs;
         return false;
+    }
+    stream = fs;
 
     // create a resource for the file.
     ResourceObject* ro = createResource(StringTable->insert(path), StringTable->insert(file));

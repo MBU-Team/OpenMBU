@@ -82,7 +82,7 @@ bool LangFile::load(Stream* s)
 
 bool LangFile::save(const UTF8* filename)
 {
-    FileStream fs;
+    Stream* fs;
     bool bRet = false;
 
     if (!isLoaded())
@@ -90,8 +90,8 @@ bool LangFile::save(const UTF8* filename)
 
     if (ResourceManager->openFileForWrite(fs, (const char*)filename))
     {
-        bRet = save(&fs);
-        fs.close();
+        bRet = save(fs);
+        delete fs;
     }
     return bRet;
 }

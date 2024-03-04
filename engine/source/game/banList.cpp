@@ -119,7 +119,7 @@ bool BanList::isTAEq(const char* bannedTA, const char* TA)
 
 void BanList::exportToFile(const char* name)
 {
-    FileStream banlist;
+    Stream* banlist;
 
     char filename[1024];
     Con::expandScriptFilename(filename, sizeof(filename), name);
@@ -130,11 +130,11 @@ void BanList::exportToFile(const char* name)
         for (i = list.begin(); i != list.end(); i++)
         {
             dSprintf(buf, sizeof(buf), "BanList::addAbsolute(%d, \"%s\", %d);\r\n", i->uniqueId, i->transportAddress, i->bannedUntil);
-            banlist.write(dStrlen(buf), buf);
+            banlist->write(dStrlen(buf), buf);
         }
     }
 
-    banlist.close();
+    delete banlist;
 }
 
 // ---------------------------------------------------------

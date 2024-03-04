@@ -216,7 +216,7 @@ struct OldTQTHeader
 ConsoleFunction(importOldAtlasTQT, void, 3, 3, "(oldTQT, newAtlasFile)")
 {
     // Let's open our input files.
-    FileStream tqtFs;
+    Stream* tqtFs;
     if (!ResourceManager->openFileForWrite(tqtFs, argv[1], FileStream::Read))
     {
         Con::errorf("importOldAtlasTQT - could not open tqt file '%s' for read.", argv[1]);
@@ -227,15 +227,15 @@ ConsoleFunction(importOldAtlasTQT, void, 3, 3, "(oldTQT, newAtlasFile)")
 
     // Now do the TQT header.
     OldTQTHeader tqtHeader;
-    tqtFs.read(&tqtHeader.fourCC);
+    tqtFs->read(&tqtHeader.fourCC);
     if (tqtHeader.fourCC != MAKEFOURCC('t', 'q', 't', 0))
     {
         Con::warnf("importOldAtlasTQT - might have invalid tqt fourcc.");
     }
 
-    tqtFs.read(&tqtHeader.version);
-    tqtFs.read(&tqtHeader.treeDepth);
-    tqtFs.read(&tqtHeader.tileSize);
+    tqtFs->read(&tqtHeader.version);
+    tqtFs->read(&tqtHeader.treeDepth);
+    tqtFs->read(&tqtHeader.tileSize);
 
     // Allocate a new AtlasFile and create TOCs with the settings from our
     // source headers.
@@ -248,6 +248,7 @@ ConsoleFunction(importOldAtlasTQT, void, 3, 3, "(oldTQT, newAtlasFile)")
     if (!af.createNew(argv[2]))
     {
         Con::errorf("importOldAtlasTQT - could not create new Atlas file '%s'", argv[2]);
+        delete tqtFs;
         return;
     }
 
@@ -263,7 +264,7 @@ ConsoleFunction(importOldAtlasTQT, void, 3, 3, "(oldTQT, newAtlasFile)")
     tqtOffsets.reserve(tqtCount);
 
     for (S32 i = 0; i < tqtCount; i++)
-        tqtFs.read(&tqtOffsets[i]);
+        tqtFs->read(&tqtOffsets[i]);
 
     Con::printf("importOldAtlasTQT - instating textures...");
 
@@ -283,10 +284,10 @@ ConsoleFunction(importOldAtlasTQT, void, 3, 3, "(oldTQT, newAtlasFile)")
 
                 // Read size, then data into a buffer.
                 U32 chunkSize;
-                tqtFs.read(&chunkSize);
+                tqtFs->read(&chunkSize);
 
                 U8* texBuffer = new U8[chunkSize];
-                tqtFs.read(chunkSize, texBuffer);
+                tqtFs->read(chunkSize, texBuffer);
 
                 // We have a loaded chunk, so let's convert it to our new chunk format.
                 AtlasTexChunk* agt = new AtlasTexChunk;
@@ -309,12 +310,14 @@ ConsoleFunction(importOldAtlasTQT, void, 3, 3, "(oldTQT, newAtlasFile)")
     af.waitForPendingWrites();
 
     Con::printf("importOldAtlasTQT - Done");
+
+    delete tqtFs;
 }
 
 ConsoleFunction(importOldAtlasCHU, void, 3, 3, "(oldCHU, newAtlasFile)")
 {
     // Let's open our input files.
-    FileStream chuFs;
+    Stream* chuFs;
     if (!ResourceManager->openFileForWrite(chuFs, argv[1], FileStream::Read))
     {
         Con::errorf("importOldAtlasCHU - could not open chu file '%s' for read.", argv[1]);
@@ -328,26 +331,28 @@ ConsoleFunction(importOldAtlasCHU, void, 3, 3, "(oldCHU, newAtlasFile)")
     // First do the CHU header.
     OldCHUHeader chuHeader;
 
-    chuFs.read(&chuHeader.fourCC);
+    chuFs->read(&chuHeader.fourCC);
     if (chuHeader.fourCC != MAKEFOURCC('C', 'H', 'U', '3'))
     {
         Con::errorf("importOldAtlasCHU - invalid fourCC on CHU.");
+        delete chuFs;
         return;
     }
 
-    chuFs.read(&chuHeader.version);
+    chuFs->read(&chuHeader.version);
     if (chuHeader.version != 400)
     {
         Con::errorf("importOldAtlasCHU - expected CHU version 400, encountered version %d", chuHeader.version);
+        delete chuFs;
         return;
     }
 
-    chuFs.read(&chuHeader.treeDepth);
-    chuFs.read(&chuHeader.baseMaxError);
-    chuFs.read(&chuHeader.verticalScale);
-    chuFs.read(&chuHeader.leafDimensions);
-    chuFs.read(&chuHeader.chunkCount);
-    chuFs.read(&chuHeader.colTreeDepth);
+    chuFs->read(&chuHeader.treeDepth);
+    chuFs->read(&chuHeader.baseMaxError);
+    chuFs->read(&chuHeader.verticalScale);
+    chuFs->read(&chuHeader.leafDimensions);
+    chuFs->read(&chuHeader.chunkCount);
+    chuFs->read(&chuHeader.colTreeDepth);
 
     // Allocate a new AtlasFile and create TOCs with the settings from our
     // source headers.
@@ -360,6 +365,7 @@ ConsoleFunction(importOldAtlasCHU, void, 3, 3, "(oldCHU, newAtlasFile)")
     if (!af.createNew(argv[2]))
     {
         Con::errorf("importOldAtlasCHU - could not create new Atlas file '%s'", argv[2]);
+        delete chuFs;
         return;
     }
 
@@ -378,25 +384,26 @@ ConsoleFunction(importOldAtlasCHU, void, 3, 3, "(oldCHU, newAtlasFile)")
         chuStubs.increment();
         OldCHUStub& ocs = chuStubs.last();
 
-        chuFs.read(&ocs.sentinel);
+        chuFs->read(&ocs.sentinel);
 
         if (ocs.sentinel != 0xDEADBEEF)
         {
             Con::errorf("importOldAtlasCHU - invalid chunk sentinel in CHU. (chunk #%d)", i);
+            delete chuFs;
             return;
         }
 
-        chuFs.read(&ocs.label);
+        chuFs->read(&ocs.label);
 
         for (S32 i = 0; i < 4; i++)
-            chuFs.read(&ocs.neighbors[i]);
+            chuFs->read(&ocs.neighbors[i]);
 
-        chuFs.read(&ocs.level);
-        chuFs.read(&ocs.x);
-        chuFs.read(&ocs.y);
-        chuFs.read(&ocs.min);
-        chuFs.read(&ocs.max);
-        chuFs.read(&ocs.chunkOffset);
+        chuFs->read(&ocs.level);
+        chuFs->read(&ocs.x);
+        chuFs->read(&ocs.y);
+        chuFs->read(&ocs.min);
+        chuFs->read(&ocs.max);
+        chuFs->read(&ocs.chunkOffset);
     }
 
     Con::printf("importOldAtlasCHU - Headers read, remapping chunks...");
@@ -431,12 +438,13 @@ ConsoleFunction(importOldAtlasCHU, void, 3, 3, "(oldCHU, newAtlasFile)")
                 OldCHUStub* oldStub = chuStubMap[ni];
 
                 // Ok, we have our stubs, so let's do some load and process.
-                chuFs.setPosition(oldStub->chunkOffset);
+                chuFs->setPosition(oldStub->chunkOffset);
                 OldCHUChunk curChunk;
-                if (!curChunk.read(chuFs, argtoc->getNodeCount(chuHeader.colTreeDepth),
+                if (!curChunk.read(*chuFs, argtoc->getNodeCount(chuHeader.colTreeDepth),
                     BIT(chuHeader.colTreeDepth - 1) * BIT(chuHeader.colTreeDepth - 1)))
                 {
                     Con::errorf("importOldAtlasCHU - error reading chunk #%d (%d,%d@%d)!", ni, level, x, y);
+                    delete chuFs;
                     return;
                 }
 
@@ -528,4 +536,6 @@ ConsoleFunction(importOldAtlasCHU, void, 3, 3, "(oldCHU, newAtlasFile)")
     af.waitForPendingWrites();
 
     Con::printf("importOldAtlasCHU - Done");
+
+    delete chuFs;
 }

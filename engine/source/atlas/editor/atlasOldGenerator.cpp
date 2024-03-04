@@ -298,7 +298,7 @@ S8 AtlasOldActivationHeightfield::checkPropagation(Point2I c, S8 level)
 
 bool AtlasOldActivationHeightfield::dumpActivationLevels(const char* filename)
 {
-    FileStream fs;
+    Stream* fs;
 
     if (!ResourceManager->openFileForWrite(fs, filename, File::ReadWrite))
     {
@@ -308,16 +308,16 @@ bool AtlasOldActivationHeightfield::dumpActivationLevels(const char* filename)
 
     for (S32 i = 0; i < size(); i++)
         for (S32 j = 0; j < size(); j++)
-            fs.write(getLevel(Point2I(i, j)));
+            fs->write(getLevel(Point2I(i, j)));
 
-    fs.close();
+    delete fs;
 
     return true;
 }
 
 bool AtlasOldActivationHeightfield::dumpHeightAtLOD(S8 level, const char* filename)
 {
-    FileStream fs;
+    Stream* fs;
 
     if (!ResourceManager->openFileForWrite(fs, filename, File::ReadWrite))
     {
@@ -333,11 +333,11 @@ bool AtlasOldActivationHeightfield::dumpHeightAtLOD(S8 level, const char* filena
             const Point2I pos(i, j);
 
             HeightType h = getHeightAtLOD(pos, level);
-            fs.write(h);
+            fs->write(h);
         }
     }
 
-    fs.close();
+    delete fs;
 
     return true;
 }
@@ -935,7 +935,7 @@ ConsoleFunction(atlasOldGenerateChunkFileFromRaw16, void, 8, 8, "(srcFile, size,
     ResourceManager->closeStream(s);
 
     // Cool, it's loaded, try generating something.
-    FileStream fs;
+    Stream* fs;
 
     // Wipe it first.
     if (!ResourceManager->openFileForWrite(fs, destFile, File::Write))
@@ -944,7 +944,7 @@ ConsoleFunction(atlasOldGenerateChunkFileFromRaw16, void, 8, 8, "(srcFile, size,
         return;
     }
 
-    fs.close();
+    delete fs;
 
     // Now do it for reals.
     if (!ResourceManager->openFileForWrite(fs, destFile, File::ReadWrite))
@@ -953,7 +953,7 @@ ConsoleFunction(atlasOldGenerateChunkFileFromRaw16, void, 8, 8, "(srcFile, size,
         return;
     }
 
-    cahf.generateChunkFile(&fs, treeDepth, error);
+    cahf.generateChunkFile(fs, treeDepth, error);
 
-    fs.close();
+    delete fs;
 }

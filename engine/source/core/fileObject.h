@@ -22,7 +22,7 @@ class FileObject : public SimObject
     U8* mFileBuffer;
     U32 mBufferSize;
     U32 mCurPos;
-    FileStream stream;
+    Stream* mStream;
 public:
     FileObject();
     ~FileObject();

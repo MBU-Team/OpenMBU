@@ -129,7 +129,7 @@ bool AtlasOldHeightfield::saveJpeg(const char* filename)
         }
     }
 
-    FileStream fs;
+    Stream* fs;
 
     if (!ResourceManager->openFileForWrite(fs, filename, File::Write))
     {
@@ -137,8 +137,8 @@ bool AtlasOldHeightfield::saveJpeg(const char* filename)
         return false;
     }
 
-    tmp.writeJPEG(fs);
-    fs.close();
+    tmp.writeJPEG(*fs);
+    delete fs;
 
     return true;
 }

@@ -16,9 +16,6 @@
 #include "core/stringTable.h"
 #endif
 
-#ifndef _FILESTREAM_H_
-#include "core/fileStream.h"
-#endif
 #ifndef _ZIPSUBSTREAM_H_
 #include "core/zipSubStream.h"
 #endif
@@ -33,7 +30,6 @@
 #endif
 
 class Stream;
-class FileStream;
 class ZipSubRStream;
 class ResManager;
 class FindMatch;
@@ -456,7 +452,7 @@ public:
     bool isValidWriteFileName(const char* fn);         ///< Checks to see if the given path is valid for writing.
 
     /// Opens a file for writing!
-    bool openFileForWrite(FileStream& fs, const char* fileName, U32 accessMode = 1);
+    bool openFileForWrite(Stream*& fs, const char* fileName, U32 accessMode = 1);
 
     void startResourceTraverse();
     ResourceObject* getNextResource();

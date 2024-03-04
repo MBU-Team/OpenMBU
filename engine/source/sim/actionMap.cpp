@@ -84,7 +84,7 @@ void ActionMap::dumpActionMap(const char* fileName, const bool append) const
         // Dump the deletion, and creation script commands, followed by all the binds
         //  to a script.
 
-        FileStream iostrm;
+        Stream* iostrm;
         if (!ResourceManager->openFileForWrite(iostrm, fileName, append ? FileStream::WriteAppend : FileStream::Write))
         {
             Con::errorf("Unable to open file '%s' for writing.", fileName);
@@ -93,17 +93,17 @@ void ActionMap::dumpActionMap(const char* fileName, const bool append) const
 
         char lineBuffer[1024];
         if (append)
-            iostrm.setPosition(iostrm.getStreamSize());
+            iostrm->setPosition(iostrm->getStreamSize());
         else
         {
             // IMPORTANT -- do NOT change the following line, it identifies the file as an input map file
             dStrcpy(lineBuffer, "// Torque Input Map File\n");
-            iostrm.write(dStrlen(lineBuffer), lineBuffer);
+            iostrm->write(dStrlen(lineBuffer), lineBuffer);
         }
 
         dSprintf(lineBuffer, 1023, "%s.delete();\n"
             "new ActionMap(%s);\n", getName(), getName());
-        iostrm.write(dStrlen(lineBuffer), lineBuffer);
+        iostrm->write(dStrlen(lineBuffer), lineBuffer);
 
         // Dump all the binds to the console...
         for (S32 i = 0; i < mDeviceMaps.size(); i++) {
@@ -184,11 +184,11 @@ void ActionMap::dumpActionMap(const char* fileName, const bool append) const
                 }
 
                 dStrcat(lineBuffer, ");\n");
-                iostrm.write(dStrlen(lineBuffer), lineBuffer);
+                iostrm->write(dStrlen(lineBuffer), lineBuffer);
             }
         }
 
-        iostrm.close();
+        delete iostrm;
     }
     else {
         // Dump all the binds to the console...
