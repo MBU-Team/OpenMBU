@@ -21,6 +21,7 @@ public:
     //void sendData(const char* data);
     void update();
     const char* ProcessLevel(StringTableEntry guid);
+    void respondJoinRequest(const char* userId, int value);
 
     void setStatus(const char* status) 
     { 

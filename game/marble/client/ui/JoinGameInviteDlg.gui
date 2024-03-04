@@ -1,0 +1,80 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(JoinGameInviteDlg) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+   noCursor = "1";
+   
+   new GuiAchievementPopupCtrl(JoinGameInviteFrame) {
+         profile = "AchievementDlgProfile";
+         horizSizing = "center";
+         vertSizing = "top";
+         position = "0 350";
+         extent =   "507 116";
+         //minExtent = "48 92";
+         visible = "1";
+         icon = "";
+         wrap = "0";
+	};
+   
+};
+//--- OBJECT WRITE END ---
+
+function JoinGameInviteDlg::onWake(%this)
+{
+	enableGamepad();
+	moveMap.push();
+	//AchievementFrame.setPosition("70", "0");
+	AchievementFrame.setHeader($Text::AchievementUnlocked);
+	AchievementFrame.setIcon("./achievement/" @ $AchievementId);
+	AchievementFrame.setTitle(%title);
+}
+
+function JoinGameInviteDlg::show(%userId, %username, %avatar)
+{
+    if (!JoinGameInviteDlg.isShowing) {
+        Canvas.pushDialog(JoinGameInviteDlg);
+        JoinGameInviteDlg.isShowing = true;
+    }
+    JoinGameInviteDlg.responded = false;
+    JoinGameInviteDlg.userId = %userId;
+    JoinGameInviteDlg.username = %username;
+    JoinGameInviteDlg.animState = 0;
+    JoinGameInviteFrame.setHeader("Join Request");
+    JoinGameInviteFrame.setTitle(%username SPC "wants to join");
+    cancel(JoinGameInviteDlg.closeSchedule);
+    JoinGameInviteDlg.closeSchedule = JoinGameInviteDlg.schedule(5000, "close");
+    cancel(JoinGameInviteDlg.animSchedule);
+    JoinGameInviteDlg.animSchedule = JoinGameInviteDlg.schedule(1000, "animate");
+}
+
+function JoinGameInviteDlg::animate(%this)
+{
+    %this.animState = !%this.animState;
+    if (%this.animState)
+        JoinGameInviteFrame.setTitle("Press Y to accept");
+    else
+        JoinGameInviteFrame.setTitle(%this.username SPC "wants to join");
+    %this.animSchedule = %this.schedule(1000, "animate");
+}
+
+function JoinGameInviteDlg::onY(%this)
+{
+    if (%this.responded) return;
+    %this.responded = true;
+    XBLiveRespondJoinRequest(%this.userId, 1);
+    JoinGameInviteFrame.setTitle("Accepted join request");
+    cancel(%this.closeSchedule);
+    %this.closeSchedule = %this.schedule(2000, "close");
+}
+
+function JoinGameInviteDlg::close(%this)
+{
+    cancel(%this.animSchedule);
+    Canvas.popDialog(%this);
+    %this.isShowing = false;
+}

@@ -311,6 +311,11 @@ ConsoleFunction(XBLivePresenceStopTimer, void, 1, 1, "()")
     DiscordGame::get()->setTimer(0, 0);
 }
 
+ConsoleFunction(XBLiveRespondJoinRequest, void, 3, 3, "(userId, reply)")
+{
+    DiscordGame::get()->respondJoinRequest(argv[1], atoi(argv[2]));
+}
+
 ConsoleFunction(XBLiveLoadAchievements, void, 3, 3, "(port, callback)")
 {
     argc;

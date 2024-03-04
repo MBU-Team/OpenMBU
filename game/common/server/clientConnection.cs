@@ -115,16 +115,19 @@ function GameConnection::onConnectRequest( %client, %netAddress, %name, %xbLiveI
    return "";
 }
 
-function onDiscordJoinRequest(%userId, %username, %userAvatar)
+function onDiscordJoinRequest(%userId, %username, %avatar)
 {
-    if (!$Server::Hosting)
-        return 0;
+    if (!$Server::Hosting) {
+        XBLiveRespondJoinRequest(%userId, 0);
+        return;
+    }
 
-    if ($Server::PlayerCount >= ($pref::Server::MaxPlayers - $Pref::Server::PrivateSlots) || $Server::IsPrivate)
-        return 0;
+    if ($Server::PlayerCount >= ($pref::Server::MaxPlayers - $Pref::Server::PrivateSlots) || $Server::IsPrivate) {
+        XBLiveRespondJoinRequest(%userId, 0);
+        return;
+    }
 
-    return 1;
-
+    JoinGameInviteDlg::show(%userId, %username, %avatar);
 }
 
 // populate client data fields, send join messages and server param updates, update xblive records.

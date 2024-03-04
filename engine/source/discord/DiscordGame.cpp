@@ -104,9 +104,7 @@ void onJoinGame(const char* joinSecret)
 
 void onJoinRequest(const DiscordUser* request)
 {
-	int reply = DISCORD_REPLY_IGNORE;
-    reply = atoi(Con::executef(4, "onDiscordJoinRequest", request->userId, request->username, request->avatar));
-	Discord_Respond(request->userId, reply);
+    Con::executef(4, "onDiscordJoinRequest", request->userId, request->username, request->avatar);
 }
 
 
@@ -315,4 +313,9 @@ const char* DiscordGame::ProcessLevel(StringTableEntry guid) {
     else
         return mGuidLookup[mGUID];
     
+}
+
+void DiscordGame::respondJoinRequest(const char* userId, int value)
+{
+    Discord_Respond(userId, value);
 }
