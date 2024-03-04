@@ -1014,12 +1014,11 @@ void DInputManager::processXInput(void)
                     break;
                 case 2:
                     // 8-way
-                    lx = (mXInputStateNew[i].state.Gamepad.sThumbLX / 32767.0f);
-                    ly = (mXInputStateNew[i].state.Gamepad.sThumbLY / 32767.0f);
-                    hypot = mSqrt(lx * lx + ly * ly);
-
-                    if (hypot > 0.4f) // 8-way deadzone
+                    if (mXInputStateNew[i].state.Gamepad.sThumbLX || mXInputStateNew[i].state.Gamepad.sThumbLY)
                     {
+                        lx = (mXInputStateNew[i].state.Gamepad.sThumbLX / 32767.0f);
+                        ly = (mXInputStateNew[i].state.Gamepad.sThumbLY / 32767.0f);
+
                         ang = mAtan(ly, lx);
 
                         // Is there a nicer way to do this?
@@ -1032,15 +1031,10 @@ void DInputManager::processXInput(void)
                         else if (ang < M_PI_F * ( 5.0f / 8.0f)) { lx =  0.0f; ly =  1.0f; }
                         else if (ang < M_PI_F * ( 7.0f / 8.0f)) { lx = -1.0f; ly =  1.0f; }
                         else    /*ang > 7/8 pi*/                { lx = -1.0f; ly =  0.0f; }
-                    }
-                    else
-                    {
-                        lx = 0.0f;
-                        ly = 0.0f;
-                    }
                     
-                    mXInputStateNew[i].state.Gamepad.sThumbLX = 32767 * lx;
-                    mXInputStateNew[i].state.Gamepad.sThumbLY = 32767 * ly;
+                        mXInputStateNew[i].state.Gamepad.sThumbLX = 32767 * lx;
+                        mXInputStateNew[i].state.Gamepad.sThumbLY = 32767 * ly;
+                    }
                     break;
                 case 3:
                     // Enforce Unmodded
