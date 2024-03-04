@@ -22,3 +22,4 @@ build/
 .idea
 *.manifest
 game/marble/data/missions/custom/
+game/screenshot*.png

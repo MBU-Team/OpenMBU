@@ -39,7 +39,7 @@ function inputAndSoundOptionsGui::show(%this, %backGui)
    inputAndSoundOptionsList.addRow($Text::MusicVol, GetOptionListRangeText(0, 100, 5), 8); // "Music"
    inputAndSoundOptionsList.addRow($Text::FXVol, GetOptionListRangeText(0, 100, 5), 8); // "FX"
    inputAndSoundOptionsList.addRow($Text::MouseSensitivity, GetOptionListRangeText(10, 100, 5), 8); // mouse sensitivity
-   inputAndSoundOptionsList.addRow($Text::ModAnalogRange, $Text::ModAnalogRangeOnOff, 8); // mod analog range
+   inputAndSoundOptionsList.addRow($Text::AnalogRange, $Text::AnalogRangeValues, 8); // analog range
    inputAndSoundOptionsList.addRow($Text::CenterCam, $Text::OptionOffOn, 8); // auto center camera
 
    inputAndSoundOptionsList.setOptionIndex(0, $pref::invertYCamera);
@@ -47,7 +47,7 @@ function inputAndSoundOptionsGui::show(%this, %backGui)
    inputAndSoundOptionsList.setOptionIndex(2, ($pref::Option::MusicVolume) / 5 );
    inputAndSoundOptionsList.setOptionIndex(3, ($pref::Option::FXVolume) / 5 );
    inputAndSoundOptionsList.setOptionIndex(4, (($pref::Input::MouseSensitivity * 10000) / 5) - 2);
-   inputAndSoundOptionsList.setOptionIndex(5, $pref::Input::ModAnalogRange);
+   inputAndSoundOptionsList.setOptionIndex(5, $pref::Input::AnalogRange);
    inputAndSoundOptionsList.setOptionIndex(6, $pref::Input::AutoCenterCamera);
 
    RootGui.setA( $Text::OK );
@@ -87,10 +87,17 @@ function inputAndSoundOptionsList::onOptionChange(%this, %increase)
          // mouse sensitivity
          $pref::Input::MouseSensitivity = mClamp((%val+2) * 0.05, 0.1, 1) * 0.01;
       case 5:
-         // mod analog range
-         if (%val != 0 && %val != 1)
-            %val = 0;
-         $pref::Input::ModAnalogRange = %val;
+         // analog range
+         // Enforce Unmodded is flawed atm, so skip over that
+         if (%val == 3)
+         {
+            if (%increase)
+               %val = 0;
+            else
+               %val = 2;
+            %this.setOptionIndex(5, %val);
+         }
+         $pref::Input::AnalogRange = %val;
       case 6:
          // auto center camera
          if (%val != 0 && %val != 1)
