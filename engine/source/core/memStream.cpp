@@ -10,13 +10,11 @@ MemStream::MemStream(const U32 in_bufferSize,
     void* io_pBuffer,
     const bool   in_allowRead,
     const bool   in_allowWrite)
-    : cm_bufferSize(in_bufferSize),
+    : m_bufferSize(in_bufferSize),
     m_pBufferBase(io_pBuffer),
     m_instCaps(0),
     m_currentPosition(0)
 {
-    AssertFatal(io_pBuffer != NULL, "Invalid buffer pointer");
-    AssertFatal(in_bufferSize > 0, "Invalid buffer size");
     AssertFatal(in_allowRead || in_allowWrite, "Either write or read must be allowed");
 
     if (in_allowRead)
@@ -46,7 +44,7 @@ U32 MemStream::getStreamSize()
 {
     AssertFatal(getStatus() != Closed, "Stream not open, size undefined");
 
-    return cm_bufferSize;
+    return m_bufferSize;
 }
 
 bool MemStream::hasCapability(const Capability in_cap) const
@@ -71,16 +69,16 @@ U32 MemStream::getPosition() const
 bool MemStream::setPosition(const U32 in_newPosition)
 {
     AssertFatal(getStatus() != Closed, "SetPosition of a closed stream is not allowed");
-    AssertFatal(in_newPosition <= cm_bufferSize, "Invalid position");
+    AssertFatal(in_newPosition <= m_bufferSize, "Invalid position");
 
     m_currentPosition = in_newPosition;
-    if (m_currentPosition > cm_bufferSize) {
+    if (m_currentPosition > m_bufferSize) {
         // Never gets here in debug version, this is for the release builds...
         //
         setStatus(UnknownError);
         return false;
     }
-    else if (m_currentPosition == cm_bufferSize) {
+    else if (m_currentPosition == m_bufferSize) {
         setStatus(EOS);
     }
     else {
@@ -107,9 +105,9 @@ bool MemStream::_read(const U32 in_numBytes, void* out_pBuffer)
 
     bool success = true;
     U32  actualBytes = in_numBytes;
-    if ((m_currentPosition + in_numBytes) > cm_bufferSize) {
+    if ((m_currentPosition + in_numBytes) > m_bufferSize) {
         success = false;
-        actualBytes = cm_bufferSize - m_currentPosition;
+        actualBytes = m_bufferSize - m_currentPosition;
     }
 
     // Obtain a current pointer, and do the copy
@@ -144,9 +142,9 @@ bool MemStream::_write(const U32 in_numBytes, const void* in_pBuffer)
 
     bool success = true;
     U32  actualBytes = in_numBytes;
-    if ((m_currentPosition + in_numBytes) > cm_bufferSize) {
+    if ((m_currentPosition + in_numBytes) > m_bufferSize) {
         success = false;
-        actualBytes = cm_bufferSize - m_currentPosition;
+        actualBytes = m_bufferSize - m_currentPosition;
     }
 
     // Obtain a current pointer, and do the copy
@@ -156,7 +154,7 @@ bool MemStream::_write(const U32 in_numBytes, const void* in_pBuffer)
     // Advance the stream position
     m_currentPosition += actualBytes;
 
-    if (m_currentPosition == cm_bufferSize)
+    if (m_currentPosition == m_bufferSize)
         setStatus(EOS);
     else
         setStatus(Ok);
@@ -164,3 +162,205 @@ bool MemStream::_write(const U32 in_numBytes, const void* in_pBuffer)
     return success;
 }
 
+
+ResizableMemStream::ResizableMemStream(
+    const U32 in_bufferSize,
+    void* io_pBuffer,
+    const bool in_allowRead,
+    const bool in_allowWrite
+): MemStream(
+    in_bufferSize,
+    io_pBuffer,
+    in_allowRead,
+    in_allowWrite)
+{
+    m_filledSize = 0;
+}
+
+ResizableMemStream::~ResizableMemStream()
+{
+
+}
+
+bool ResizableMemStream::expandToSize(U32 size)
+{
+    if (size < m_bufferSize)
+        return true;
+
+    if (!mOwnsMemory)
+    {
+        mOwnsMemory = true;
+        void* newBuffer = dMalloc(size);
+        if (!newBuffer)
+            return false;
+
+        dMemset(newBuffer, 0, size);
+        dMemcpy(newBuffer, m_pBufferBase, m_bufferSize);
+        m_pBufferBase = newBuffer;
+        m_bufferSize = size;
+        return true;
+    }
+
+    U32 newSize;
+    if (size < 256)
+        newSize = 256;
+    else
+        newSize = getNextPow2(size);
+    void* newBuffer = dRealloc(m_pBufferBase, newSize);
+    if (!newBuffer)
+        return false;
+
+    m_pBufferBase = newBuffer;
+    m_bufferSize = newSize;
+    return true;
+}
+
+U32 ResizableMemStream::getStreamSize()
+{
+    return m_filledSize;
+}
+
+bool ResizableMemStream::setPosition(const U32 in_newPosition)
+{
+    if (!expandToSize(in_newPosition))
+        return false;
+
+    Parent::setPosition(in_newPosition);
+}
+
+bool ResizableMemStream::_write(const U32 in_numBytes, const void* in_pBuffer)
+{
+    if (!expandToSize(m_currentPosition + in_numBytes))
+        return false;
+
+    Parent::_write(in_numBytes, in_pBuffer);
+    m_filledSize = m_currentPosition + in_numBytes;
+}
+
+
+MemSubStream::MemSubStream()
+    : m_pStream(NULL),
+    m_currOffset(0)
+{
+
+}
+
+MemSubStream::~MemSubStream()
+{
+    detachStream();
+}
+
+
+bool MemSubStream::attachStream(Stream* io_pSlaveStream)
+{
+    AssertFatal(io_pSlaveStream != NULL, "NULL Slave stream?");
+    AssertFatal(m_pStream == NULL, "Already attached!");
+
+    m_pStream = io_pSlaveStream;
+    m_currOffset = 0;
+
+    setStatus(Ok);
+    return true;
+}
+
+void MemSubStream::detachStream()
+{
+    m_pStream = NULL;
+    m_currOffset = 0;
+    setStatus(Closed);
+}
+
+Stream* MemSubStream::getStream()
+{
+    return m_pStream;
+}
+
+bool MemSubStream::_read(const U32 in_numBytes, void* out_pBuffer)
+{
+    if (in_numBytes == 0)
+        return true;
+
+    AssertFatal(out_pBuffer != NULL, "NULL output buffer");
+    if (getStatus() == Closed) {
+        AssertFatal(false, "Attempted read from closed stream");
+        return false;
+    }
+
+    if (Ok != getStatus())
+        return false;
+
+    U32 oldPos = m_pStream->getPosition();
+    
+    m_pStream->setPosition(m_currOffset);
+    bool result = m_pStream->read(in_numBytes, out_pBuffer);
+    m_pStream->setPosition(oldPos);
+
+    if (result)
+        m_currOffset = m_currOffset + in_numBytes;
+    else
+        setStatus(EOS);
+
+    return result;
+}
+
+bool MemSubStream::_write(const U32 in_numBytes, const void* in_pBuffer)
+{
+    if (in_numBytes == 0)
+        return true;
+
+    AssertFatal(in_pBuffer != NULL, "NULL output buffer");
+    if (getStatus() == Closed) {
+        AssertFatal(false, "Attempted read from closed stream");
+        return false;
+    }
+
+    if (Ok != getStatus())
+        return false;
+
+    U32 oldPos = m_pStream->getPosition();
+    
+    m_pStream->setPosition(m_currOffset);
+    bool result = m_pStream->write(in_numBytes, in_pBuffer);
+    m_pStream->setPosition(oldPos);
+
+    if (result)
+        m_currOffset = m_currOffset + in_numBytes;
+    else
+        setStatus(EOS);
+
+    return result;
+}
+
+bool MemSubStream::hasCapability(const Capability cap) const
+{
+    if (!m_pStream)
+        return false;
+    return m_pStream->hasCapability(cap);
+}
+
+U32 MemSubStream::getPosition() const
+{
+    return m_currOffset;
+}
+
+bool MemSubStream::setPosition(const U32 in_newPosition)
+{
+    if (!m_pStream)
+        return false;
+
+    U32 oldPos = m_pStream->getPosition();
+    bool result = m_pStream->setPosition(in_newPosition);
+    m_pStream->setPosition(oldPos);
+
+    if (result)
+        m_currOffset = in_newPosition;
+    
+    return result;
+}
+
+U32 MemSubStream::getStreamSize()
+{
+    if (!m_pStream)
+        return 0;
+    return m_pStream->getStreamSize();
+}
