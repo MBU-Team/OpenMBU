@@ -62,6 +62,8 @@ private:
     static int smAnalogRange;
     static F32 smDeadZoneL;
     static F32 smDeadZoneR;
+    static F32 smDeadZoneLT;
+    static F32 smDeadZoneRT;
 
     bool mKeyboardActive;
     bool mMouseActive;
