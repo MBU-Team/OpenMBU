@@ -29,7 +29,8 @@ struct InputEvent;
 typedef DWORD(WINAPI* FN_XInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
 typedef DWORD(WINAPI* FN_XInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 #define XINPUT_MAX_CONTROLLERS 4  // XInput handles up to 4 controllers 
-#define XINPUT_DEADZONE  ( 0.24f * FLOAT(0x7FFF) )  // Default to 24% of the +/- 32767 range.   This is a reasonable default value but can be altered if needed.
+//#define XINPUT_DEADZONE  ( 0.24f * FLOAT(0x7FFF) )  // Default to 24% of the +/- 32767 range.   This is a reasonable default value but can be altered if needed.
+#define XINPUT_DEADZONE_DEFAULT (0.24f)
 struct XINPUT_CONTROLLER_STATE
 {
     XINPUT_STATE    state;
@@ -59,6 +60,8 @@ private:
     static bool smJoystickEnabled;
     static bool smXInputEnabled;
     static int smAnalogRange;
+    static F32 smDeadZoneL;
+    static F32 smDeadZoneR;
 
     bool mKeyboardActive;
     bool mMouseActive;
