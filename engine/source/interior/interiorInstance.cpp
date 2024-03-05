@@ -1428,9 +1428,7 @@ void InteriorInstance::addChildren()
                 {
                     if (dStricmp(entry.name, "angles") == 0)
                     {
-                        // TrenchBroom uses X, -Z, Y. Torque uses X, Y, Z
-                        dSscanf(entry.value, "%g %g %g", &angles.x, &angles.z, &angles.y);
-                        angles.z *= -1; // flipped in trench broom
+                        dSscanf(entry.value, "%g %g %g", &angles.x, &angles.y, &angles.z);
                     }
                     else
                     {
@@ -1446,10 +1444,8 @@ void InteriorInstance::addChildren()
                 angles.y = mDegToRad(angles.y);
                 angles.z = mDegToRad(angles.z);
 
-                MatrixF rotMat(angles);
-
-                //AngAxisF rot(Point3F(0.0f, 0.0f, 1.0f), mDegToRad(angle));
-                //rot.setMatrix(&rotMat);
+                MatrixF rotMat(true);
+                rotMat.setEulerFromTrenchbroom(angles);
 
                 MatrixF trans = this->getTransform();
                 trans.mulP(origin);

@@ -44,6 +44,8 @@ public:
     /// Initialize matrix to rotate about origin by e.
     MatrixF& set(const EulerF& e);
 
+    MatrixF& setEulerFromTrenchbroom(const EulerF& e);
+
     /// Initialize matrix to rotate about p by e.
     MatrixF& set(const EulerF& e, const Point3F& p);
 
@@ -188,6 +190,43 @@ inline MatrixF& MatrixF::set(const EulerF& e)
     return (*this);
 }
 
+inline MatrixF& MatrixF::setEulerFromTrenchbroom(const EulerF& e)
+{
+    auto pitch = e.x;
+    auto yaw = e.y;
+    auto roll = e.z;
+
+    constexpr auto I = 1.0f;
+    constexpr auto O = 0.0f;
+
+    const auto Cr = mCos(roll);
+    const auto Sr = mSin(roll);
+    MatrixF R;
+    R.m[0] = +I; R.m[1] = +O; R.m[2] = +O; R.m[3] = +O;
+    R.m[4] = +O; R.m[5] = +Cr; R.m[6] = -Sr; R.m[7] = +O;
+    R.m[8] = +O; R.m[9] = +Sr; R.m[10] = +Cr; R.m[11] = +O;
+    R.m[12] = +O; R.m[13] = +O; R.m[14] = +O; R.m[15] = +I;
+
+    const auto Cp = mCos(pitch);
+    const auto Sp = mSin(pitch);
+    MatrixF P;
+    P.m[0] = +Cp; P.m[1] = +O; P.m[2] = +Sp; P.m[3] = +O;
+    P.m[4] = +O; P.m[5] = +I; P.m[6] = +O; P.m[7] = +O;
+    P.m[8] = -Sp; P.m[9] = +O; P.m[10] = +Cp; P.m[11] = +O;
+    P.m[12] = +O; P.m[13] = +O; P.m[14] = +O; P.m[15] = +I;
+
+    const auto Cy = mCos(yaw);
+    const auto Sy = mSin(yaw);
+    MatrixF Y;
+    Y.m[0] = +Cy; Y.m[1] = -Sy; Y.m[2] = +O; Y.m[3] = +O;
+    Y.m[4] = +Sy; Y.m[5] = +Cy; Y.m[6] = +O; Y.m[7] = +O;
+    Y.m[8] = +O; Y.m[9] = +O; Y.m[10] = +I; Y.m[11] = +O;
+    Y.m[12] = +O; Y.m[13] = +O; Y.m[14] = +O; Y.m[15] = +I;
+
+    *this = Y * P * R;
+
+    return (*this);
+}
 
 inline MatrixF& MatrixF::set(const EulerF& e, const Point3F& p)
 {
