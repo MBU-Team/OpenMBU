@@ -14,11 +14,47 @@ new GuiControl(JoinGameInviteDlg) {
          horizSizing = "center";
          vertSizing = "top";
          position = "0 350";
-         extent =   "507 116";
+         extent =   "627 136";
          //minExtent = "48 92";
          visible = "1";
          icon = "";
          wrap = "0";
+
+       new GuiBitmapCtrl(JoinGameInviteFrameAvatar) {
+          profile = "GuiDefaultProfile";
+          horizSizing = "right";
+          vertSizing = "bottom";
+          position = "75 35";
+          extent = "64 64";
+          minExtent = "8 2";
+          visible = "1";
+          bitmap = "./xbox/demoLock";
+          wrap = "0";
+       };
+
+       new GuiBitmapCtrl(JoinGameInviteFrameAvatarMask) {
+          profile = "GuiDefaultProfile";
+          horizSizing = "right";
+          vertSizing = "bottom";
+          position = "75 35";
+          extent = "64 64";
+          minExtent = "8 2";
+          visible = "1";
+          bitmap = "./xbox/circlemask";
+          wrap = "0";
+       };
+
+       new GuiTextCtrl(JoinGameInviteTitle) 
+       {
+          profile = JoinGameInviteDlgProfile;
+	       horizSizing = "right";
+	       vertSizing = "bottom";
+		  position = "80 39";
+          extent = "500 80";
+          minExtent = "8 8";
+          visible = "1";
+          text = "GUI TITLE GOES HERE";
+       };
 	};
    
 };
@@ -28,10 +64,6 @@ function JoinGameInviteDlg::onWake(%this)
 {
 	enableGamepad();
 	moveMap.push();
-	//AchievementFrame.setPosition("70", "0");
-	AchievementFrame.setHeader($Text::AchievementUnlocked);
-	AchievementFrame.setIcon("./achievement/" @ $AchievementId);
-	AchievementFrame.setTitle(%title);
 }
 
 function JoinGameInviteDlg::show(%userId, %username, %avatar)
@@ -40,25 +72,28 @@ function JoinGameInviteDlg::show(%userId, %username, %avatar)
         Canvas.pushDialog(JoinGameInviteDlg);
         JoinGameInviteDlg.isShowing = true;
     }
+    serverplay2d(HelpDingSfx);
     JoinGameInviteDlg.responded = false;
     JoinGameInviteDlg.userId = %userId;
     JoinGameInviteDlg.username = %username;
     JoinGameInviteDlg.animState = 0;
     JoinGameInviteFrame.setHeader("Join Request");
-    JoinGameInviteFrame.setTitle(%username SPC "wants to join");
+    JoinGameInviteTitle.setText(%username SPC "wants to join");
     cancel(JoinGameInviteDlg.closeSchedule);
     JoinGameInviteDlg.closeSchedule = JoinGameInviteDlg.schedule(5000, "close");
     cancel(JoinGameInviteDlg.animSchedule);
     JoinGameInviteDlg.animSchedule = JoinGameInviteDlg.schedule(1000, "animate");
+    JoinGameInviteDlg.dlToken++;
+    downloadAvatar(%userId, %avatar, JoinGameInviteDlg.dlToken);
 }
 
 function JoinGameInviteDlg::animate(%this)
 {
     %this.animState = !%this.animState;
     if (%this.animState)
-        JoinGameInviteFrame.setTitle("Press Y to accept");
+        JoinGameInviteTitle.setText("Press Y to accept");
     else
-        JoinGameInviteFrame.setTitle(%this.username SPC "wants to join");
+        JoinGameInviteTitle.setText(%this.username SPC "wants to join");
     %this.animSchedule = %this.schedule(1000, "animate");
 }
 
@@ -67,7 +102,7 @@ function JoinGameInviteDlg::onY(%this)
     if (%this.responded) return;
     %this.responded = true;
     XBLiveRespondJoinRequest(%this.userId, 1);
-    JoinGameInviteFrame.setTitle("Accepted join request");
+    JoinGameInviteTitle.setText("Accepted join request");
     cancel(%this.animSchedule);
     cancel(%this.closeSchedule);
     %this.closeSchedule = %this.schedule(2000, "close");
@@ -78,4 +113,34 @@ function JoinGameInviteDlg::close(%this)
     cancel(%this.animSchedule);
     Canvas.popDialog(%this);
     %this.isShowing = false;
+}
+
+function downloadAvatar(%userId, %avatarHash, %token)
+{
+    JoinGameInviteFrameAvatar.setBitmap("");
+    %baseURL = "https://cdn.discordapp.com";
+    %basePath = %userId @ %avatarHash @ ".png";
+    %downloadPath = "/avatars/" @ %userId @ "/" @ %avatarHash @ ".png";
+    if (isObject(DiscordAvatarDownload))
+        DiscordAvatarDownload.delete(); // Stop
+    new HTTPObject(DiscordAvatarDownload);
+    DiscordAvatarDownload.setDownloadPath("mem/" @ %basePath);
+    DiscordAvatarDownload.token = %token;
+    DiscordAvatarDownload.get(%baseURL, %downloadPath, "size=64");
+}
+
+function DiscordAvatarDownload::onDownload(%this, %path)
+{
+    if (%this.token == JoinGameInviteDlg.dlToken)
+        JoinGameInviteFrameAvatar.setBitmap(%path);
+}
+
+function DiscordAvatarDownload::downloadFailed(%this, %path)
+{
+    %this.delete();
+}
+
+function DiscordAvatarDownload::onDisconnect(%this)
+{
+    %this.delete();
 }

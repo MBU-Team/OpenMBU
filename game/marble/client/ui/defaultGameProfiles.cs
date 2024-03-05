@@ -445,3 +445,11 @@ new GuiControlProfile ("AchievementDlgProfile")
    fontSize2 = 28;
    justify = center;
 };
+
+new GuiControlProfile("JoinGameInviteDlgProfile")
+{
+   fontType = "Arial Bold";
+   fontColor = "16 16 16";
+   fontSize = 24;
+   justify = center;
+};

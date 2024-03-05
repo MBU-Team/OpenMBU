@@ -49,6 +49,7 @@
 #include "core/fileStream.h"
 #include "console/simBase.h"
 #include "console/consoleInternal.h"
+#include "core/resManager.h"
 #include <string.h>
 
 IMPLEMENT_CONOBJECT(HTTPObject);
@@ -201,20 +202,18 @@ void HTTPObject::processLines()
       }
 
       //Write to the output file
-      FileStream *stream = new FileStream();
+      Stream* stream;
 
-      if (!stream->open(path, FileStream::Write)) {
-         Con::errorf("Could not download %s: error opening stream.");
+      if (!ResourceManager->openFileForWrite(stream, path, FileStream::Write)) {
+         Con::errorf("Could not download %s: error opening stream.", path);
          onDownloadFailed(path);
          return;
       }
 
       stream->write(mBufferUsed, mBuffer);
-      stream->close();
+      ResourceManager->closeStream(stream);
 
       onDownload(path);
-
-      delete stream;
    } else {
 
       //Pull all the lines out of mBuffer
