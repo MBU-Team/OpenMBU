@@ -2,14 +2,14 @@
 new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
-         include = "0";
+         include = "1";
          gameMode = "Scrum";
          artist = "Adam deGrandis";
          difficulty = "2";
          time = "180000";
          type = "beginner";
-         level = "68";
-name  =  $Text::LevelNameMP7;
+         level = "91";
+name  =  $Text::LevelNameMP7Classic;
          numgems = "1";
          gameType = "Multiplayer";
          guid = "{D18409B9-AAA3-4260-8129-C477062BF6CA}";
