@@ -727,6 +727,9 @@ function populatePreviewMission()
       
       // Then the glass
       loadObjectsFromMission(%mission, "StaticShape", "glass_18shape");
+      
+      // TSStatics
+      loadObjectsFromMission(%mission, "TSStatic");
    }
    
    for (%i = 0; %i < CustomSinglePlayMissionGroup.getCount(); %i++)
@@ -757,6 +760,9 @@ function populatePreviewMission()
       
       // Then the glass
       loadObjectsFromMission(%mission, "StaticShape", "glass_18shape");
+      
+      // TSStatics
+      loadObjectsFromMission(%mission, "TSStatic");
    }
 
    for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
@@ -787,6 +793,9 @@ function populatePreviewMission()
       
       // Then the glass
       loadObjectsFromMission(%mission, "StaticShape", "glass_18shape");
+      
+      // TSStatics
+      loadObjectsFromMission(%mission, "TSStatic");
    }
    
    for (%i = 0; %i < SpecialMissionGroup.getCount(); %i++)
