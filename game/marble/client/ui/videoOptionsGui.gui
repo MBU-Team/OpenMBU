@@ -39,6 +39,7 @@ function videoOptionsGui::show(%this, %backGui)
    $Option::initialDisplayMode = $pref::Video::fullScreen;
    $Option::initialVsync = $pref::Video::Vsync;
    $Option::initialFramerate = $pref::Video::Framerate;
+   //$Option::initialFSAALevel = $pref::Video::FSAALevel;
    
    $Option::resList = getResolutionList("1280 720");
    
@@ -106,6 +107,8 @@ function videoOptionsGui::show(%this, %backGui)
    
    videoOptionsList.addRow($Text::ReflectionDetailLevel, $Text::ReflectionDetailLevelOptions, 8); // reflection detail level
    
+   //videoOptionsList.addRow($Text::FSAALevel, $Text::FSAALevelOptions, 8); // fsaa level
+   
    videoOptionsList.addRow($Text::Framerate, $Text::FramerateOptions, 8); // framerate limit
 
    for (%i = 0; %i < getFieldCount($Option::resList); %i++)
@@ -133,6 +136,7 @@ function videoOptionsGui::show(%this, %backGui)
       $Option::fullScreen = 1;
       
    $Option::reflection = $pref::Video::ReflectionDetailLevel;
+   //$Option::FSAALevel = $pref::Video::FSAALevel;
    
    if ($pref::Video::VSync) {
       $Option::framerate = 1;
@@ -157,6 +161,7 @@ function videoOptionsGui::show(%this, %backGui)
    videoOptionsList.setOptionIndex(1, $Option::windowedRes);
    videoOptionsList.setOptionIndex(2, $Option::fullScreen);
    videoOptionsList.setOptionIndex(3, $Option::reflection);
+   //videoOptionsList.setOptionIndex(4, $Option::FSAALevel);
    videoOptionsList.setOptionIndex(4, $Option::framerate);
 
    RootGui.setA( $Text::OK );
@@ -196,6 +201,11 @@ function videoOptionsList::onOptionChange(%this, %increase)
          $pref::Video::ReflectionDetailLevel = $Option::reflection;
          
          echo("Reflection Detail Level = " @ $pref::Video::ReflectionDetailLevel);
+      //case 4:
+      //   $Option::FSAALevel = %val;
+      //   $pref::Video::FSAALevel = $Option::FSAALevel;
+         
+      //   echo("FSAA Level = " @ $pref::Video::FSAALevel);
       case 4:
          if (%val == 0 || %val == 7) {
             $pref::Video::VSync = false;
@@ -211,7 +221,7 @@ function videoOptionsList::onOptionChange(%this, %increase)
             }
          } else if (%val == 1) {
             $pref::Video::VSync = true;
-			$pref::Video::Framerate = 0;
+			   $pref::Video::Framerate = 0;
          } else {
             $pref::Video::VSync = false;
          }
@@ -249,6 +259,8 @@ function videoOptionsGui::onA(%this)
       %videoChanged = true;
    if ($pref::Video::VSync !$= $Option::initialVSync)
       %videoChanged = true;
+   //if ($pref::Video::FSAALevel !$= $Option::initialFSAALevel)
+   //   %videoChanged = true;
    
    if (%videoChanged)
    {

@@ -372,6 +372,9 @@ function initVideo()
          
       if ($pref::Video::windowedRes $= "")
          $pref::Video::windowedRes = "1280 720";
+         
+      if ($pref::Video::FSAALevel $= "")
+         $pref::Video::FSAALevel = 0;
    }
 
    $canvasCreated = createCanvas("Marble Blast Ultra!");

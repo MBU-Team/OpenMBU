@@ -1069,12 +1069,15 @@ void Platform::initWindow(const Point2I& initialSize, const char* name)
         d = 32;
     }
 
+    int antialiasLevel = Con::getIntVariable("$pref::Video::FSAALevel", 0);
+
     vm.resolution.x = w;
     vm.resolution.y = h;
     vm.bitDepth = d;
     vm.fullScreen = fullscreenType == 1;
     vm.borderless = fullscreenType == 2;
     vm.refreshRate = 60; //HACK
+    vm.antialiasLevel = antialiasLevel;
 
     winState.videoMode = new GFXVideoMode(vm);
 
