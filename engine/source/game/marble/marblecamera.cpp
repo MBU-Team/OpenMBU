@@ -8,7 +8,7 @@
 
 //----------------------------------------------------------------------------
 
-static U32 sCameraCollisionMask = InteriorObjectType | StaticShapeObjectType;
+static U32 sCameraCollisionMask = InteriorObjectType | StaticShapeObjectType | StaticTSObjectType;
 
 #ifdef MB_GOLD
 #define RADIUS_FOR_CAMERA 0.09f
