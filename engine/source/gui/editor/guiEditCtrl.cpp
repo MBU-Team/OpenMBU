@@ -999,7 +999,7 @@ void GuiEditCtrl::saveSelection(const char* filename)
     if (mSelectedControls.size() == 0)
         return;
 
-    FileStream stream;
+    Stream* stream;
     if (!ResourceManager->openFileForWrite(stream, filename))
         return;
     SimSet* clipboardSet = new SimSet;
@@ -1010,8 +1010,9 @@ void GuiEditCtrl::saveSelection(const char* filename)
     for (i = mSelectedControls.begin(); i != mSelectedControls.end(); i++)
         clipboardSet->addObject(*i);
 
-    clipboardSet->write(stream, 0);
+    clipboardSet->write(*stream, 0);
     clipboardSet->deleteObject();
+    delete stream;
 }
 
 void GuiEditCtrl::selectAll()

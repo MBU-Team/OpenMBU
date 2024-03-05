@@ -1192,14 +1192,14 @@ const char* TerrainFile::getHeightfieldScript()
 //--------------------------------------
 bool TerrainFile::save(const char* filename)
 {
-    FileStream writeFile;
+    Stream* writeFile;
     if (!ResourceManager->openFileForWrite(writeFile, filename))
         return false;
 
     // write the VERSION and HeightField
-    writeFile.write((U8)FILE_VERSION);
+    writeFile->write((U8)FILE_VERSION);
     for (S32 i = 0; i < (TerrainBlock::BlockSize * TerrainBlock::BlockSize); i++)
-        writeFile.write(mHeightMap[i]);
+        writeFile->write(mHeightMap[i]);
 
     // write the material group map, after merging the flags...
     TerrainBlock::Material* materialMap = (TerrainBlock::Material*)mMaterialMap;
@@ -1207,7 +1207,7 @@ bool TerrainFile::save(const char* filename)
     {
         U8 val = mBaseMaterialMap[j];
         val |= materialMap[j].flags & TerrainBlock::Material::PersistMask;
-        writeFile.write(val);
+        writeFile->write(val);
     }
 
     // write the MaterialList Info
@@ -1225,33 +1225,36 @@ bool TerrainFile::save(const char* filename)
             if (n == TerrainBlock::BlockSize * TerrainBlock::BlockSize)
                 mMaterialFileName[k] = 0;
         }
-        writeFile.writeString(mMaterialFileName[k]);
+        writeFile->writeString(mMaterialFileName[k]);
     }
     for (k = 0; k < TerrainBlock::MaterialGroups; k++) {
         if (mMaterialFileName[k] && mMaterialFileName[k][0]) {
             AssertFatal(mMaterialAlphaMap[k] != NULL, "Error, must have a material map here!");
-            writeFile.write(TerrainBlock::BlockSize * TerrainBlock::BlockSize, mMaterialAlphaMap[k]);
+            writeFile->write(TerrainBlock::BlockSize * TerrainBlock::BlockSize, mMaterialAlphaMap[k]);
         }
     }
     if (mTextureScript)
     {
         U32 len = dStrlen(mTextureScript);
-        writeFile.write(len);
-        writeFile.write(len, mTextureScript);
+        writeFile->write(len);
+        writeFile->write(len, mTextureScript);
     }
     else
-        writeFile.write(U32(0));
+        writeFile->write(U32(0));
 
     if (mHeightfieldScript)
     {
         U32 len = dStrlen(mHeightfieldScript);
-        writeFile.write(len);
-        writeFile.write(len, mHeightfieldScript);
+        writeFile->write(len);
+        writeFile->write(len, mHeightfieldScript);
     }
     else
-        writeFile.write(U32(0));
+        writeFile->write(U32(0));
 
-    return (writeFile.getStatus() == FileStream::Ok);
+    bool result = (writeFile->getStatus() == FileStream::Ok);
+    delete writeFile;
+
+    return result;
 }
 
 //--------------------------------------

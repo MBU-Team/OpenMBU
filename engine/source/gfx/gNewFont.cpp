@@ -134,12 +134,12 @@ ConsoleFunction(writeFontCache, void, 1, 1, "() - force all cached fonts to"
         }
 
         // Ok, dump info!
-        FileStream stream;
+        Stream* stream;
         if (ResourceManager->openFileForWrite(stream, curMatch))
         {
             Con::printf("      o Writing '%s' to disk...", curMatch);
-            font->write(stream);
-            stream.close();
+            font->write(*stream);
+            delete stream;
         }
         else
         {
@@ -296,12 +296,12 @@ ConsoleFunction(duplicateCachedFont, void, 4, 4, "(oldFontName, oldFontSize, new
     }
 
     // Ok, dump info!
-    FileStream stream;
+    Stream* stream;
     if (ResourceManager->openFileForWrite(stream, newFontFile))
     {
         Con::printf("      o Writing duplicate font '%s' to disk...", newFontFile);
-        font->write(stream);
-        stream.close();
+        font->write(*stream);
+        delete stream;
     }
     else
     {
@@ -430,11 +430,11 @@ GFont::~GFont()
 
         if (!noBitmap)
         {
-            FileStream stream;
+            Stream* stream;
             if (ResourceManager->openFileForWrite(stream, mGFTFile))
             {
-                write(stream);
-                stream.close();
+                write(*stream);
+                delete stream;
             }
         }
     }*/
@@ -1046,7 +1046,7 @@ void GFont::exportStrip(const char* fileName, U32 padding, U32 kerning)
     }
 
     // Write the image!
-    FileStream fs;
+    Stream* fs;
 
     if (!ResourceManager->openFileForWrite(fs, fileName))
     {
@@ -1055,7 +1055,8 @@ void GFont::exportStrip(const char* fileName, U32 padding, U32 kerning)
     }
 
     // Done!
-    gb.writePNG(fs, false);
+    gb.writePNG(*fs, false);
+    delete fs;
 }
 
 /// Used for repacking in GFont::importStrip.

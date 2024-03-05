@@ -18,7 +18,7 @@ class MemStream : public Stream {
     typedef Stream Parent;
 
 protected:
-    U32 const cm_bufferSize;
+    U32 m_bufferSize;
     void* m_pBufferBase;
     bool mOwnsMemory;
 
@@ -46,9 +46,9 @@ public:
     U32  getStreamSize();
     inline bool checkStatus(U32 bytes)
     {
-        if (m_currentPosition + bytes > cm_bufferSize)
+        if (m_currentPosition + bytes > m_bufferSize)
         {
-            m_currentPosition = cm_bufferSize;
+            m_currentPosition = m_bufferSize;
             setStatus(EOS);
             return false;
         }
@@ -163,6 +163,51 @@ public:
         *dest = temp;
         return ret;
     }
+};
+
+class ResizableMemStream : public MemStream {
+    typedef MemStream Parent;
+
+    U32 m_filledSize;
+    bool expandToSize(U32 size);
+
+public:
+    ResizableMemStream(const U32 in_bufferSize = 0,
+        void* io_pBuffer = NULL,
+        const bool in_allowRead = true,
+        const bool in_allowWrite = true);
+    virtual ~ResizableMemStream();
+
+    virtual U32 getStreamSize();
+    virtual bool setPosition(const U32 in_newPosition);
+    virtual bool _write(const U32 in_numBytes, const void* in_pBuffer);
+};
+
+class MemSubStream : public Stream {
+    typedef Stream Parent;
+
+    Stream* m_pStream;
+    U32 m_currOffset;
+
+public:
+    MemSubStream();
+    ~MemSubStream();
+
+    bool attachStream(Stream* io_pSlaveStream);
+    void detachStream();
+    Stream* getStream();
+
+protected:
+    bool _read(const U32 in_numBytes, void* out_pBuffer);
+    bool _write(const U32 in_numBytes, const void* in_pBuffer);
+
+public:
+    bool hasCapability(const Capability) const;
+
+    U32 getPosition() const;
+    bool setPosition(const U32 in_newPosition);
+
+    U32 getStreamSize();
 };
 
 #endif //_MEMSTREAM_H_

@@ -17,6 +17,7 @@
 #include "gfx/gNewFont.h"
 #include "platform/profiler.h"
 #include "core/unicode.h"
+#include "core/fileStream.h"
 
 Vector<GFXDevice*> GFXDevice::smGFXDevice;
 S32 GFXDevice::smActiveDeviceIndex = -1;
@@ -2133,7 +2134,7 @@ void GFXDevice::_dumpStatesToFile( const char *fileName ) const
    dSprintf( nameBuffer, sizeof(nameBuffer), "demo/%s_%d.gfxstate", fileName, stateDumpNum );
 
 
-   FileStream stream;
+   Stream* stream;
 
    if( ResourceManager->openFileForWrite( stream, nameBuffer ) )
    {
@@ -2144,25 +2145,26 @@ void GFXDevice::_dumpStatesToFile( const char *fileName ) const
       stateDumpNum++;
 
       // Dump render states
-      stream.writeLine( (U8 *)"Render States" );
+      stream->writeLine( (U8 *)"Render States" );
       for( U32 state = GFXRenderState_FIRST; state < GFXRenderState_COUNT; state++ )
-         stream.writeLine( (U8 *)avar( "%s - %s", GFXStringRenderState[state], GFXStringRenderStateValueLookup[state]( mStateTracker[state].newValue ) ) );
+         stream->writeLine( (U8 *)avar( "%s - %s", GFXStringRenderState[state], GFXStringRenderStateValueLookup[state]( mStateTracker[state].newValue ) ) );
 
       // Dump texture stage states
       for( U32 stage = 0; stage < getNumSamplers(); stage++ )
       {
-         stream.writeLine( (U8 *)avar( "Texture Stage: %d", stage ) );
+         stream->writeLine( (U8 *)avar( "Texture Stage: %d", stage ) );
          for( U32 state = GFXTSS_FIRST; state < GFXTSS_COUNT; state++ )
-            stream.writeLine( (U8 *)avar( "::%s - %s", GFXStringTextureStageState[state], GFXStringTextureStageStateValueLookup[state]( mTextureStateTracker[stage][state].newValue ) ) );
+            stream->writeLine( (U8 *)avar( "::%s - %s", GFXStringTextureStageState[state], GFXStringTextureStageStateValueLookup[state]( mTextureStateTracker[stage][state].newValue ) ) );
       }
 
       // Dump sampler states
       for( U32 stage = 0; stage < getNumSamplers(); stage++ )
       {
-         stream.writeLine( (U8 *)avar( "Sampler Stage: %d\n", stage ) );
+         stream->writeLine( (U8 *)avar( "Sampler Stage: %d\n", stage ) );
          for( U32 state = GFXSAMP_FIRST; state < GFXSAMP_COUNT; state++ )
-            stream.writeLine( (U8 *)avar( "::%s - %s", GFXStringSamplerState[state], GFXStringSamplerStateValueLookup[state]( mSamplerStateTracker[stage][state].newValue ) ) );
+            stream->writeLine( (U8 *)avar( "::%s - %s", GFXStringSamplerState[state], GFXStringSamplerStateValueLookup[state]( mSamplerStateTracker[stage][state].newValue ) ) );
       }
+      delete stream;
    }
 #endif
 }

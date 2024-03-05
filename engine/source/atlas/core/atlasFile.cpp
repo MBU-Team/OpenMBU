@@ -82,7 +82,7 @@ bool AtlasFile::createNew(const char* filename)
 {
     // Blank the file if it exists.
     {
-        FileStream fs;
+        Stream* fs;
 
         // Wipe it first.
         if (!ResourceManager->openFileForWrite(fs, filename, File::Write))
@@ -92,7 +92,7 @@ bool AtlasFile::createNew(const char* filename)
             return false;
         }
 
-        fs.close();
+        delete fs;
     }
 
     // Initialize our stream.

@@ -407,12 +407,12 @@ void AssimpShapeLoader::extractTexture(U32 index, aiTexture* pTex)
    if (pTex->mHeight == 0)
    {  // Compressed format, write the data directly to disc
       texPath.setExtension(pTex->achFormatHint);
-      FileStream outputStream;
+      Stream* outputStream;
       if (ResourceManager->openFileForWrite(outputStream, texPath.getFullPath().c_str(), FileStream::Write))
       {
-         outputStream.setPosition(0);
-         outputStream.write(pTex->mWidth, pTex->pcData);
-         outputStream.close();
+         outputStream->setPosition(0);
+         outputStream->write(pTex->mWidth, pTex->pcData);
+         delete outputStream;
       }
    }
    else

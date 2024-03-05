@@ -301,7 +301,7 @@ S8 AtlasActivationHeightfield::checkPropagation(Point2I c, S8 level)
 
 bool AtlasActivationHeightfield::dumpActivationLevels(const char* filename)
 {
-    FileStream fs;
+    Stream* fs;
 
     if (!ResourceManager->openFileForWrite(fs, filename, File::ReadWrite))
     {
@@ -311,16 +311,16 @@ bool AtlasActivationHeightfield::dumpActivationLevels(const char* filename)
 
     for (S32 i = 0; i < size(); i++)
         for (S32 j = 0; j < size(); j++)
-            fs.write(getLevel(Point2I(i, j)));
+            fs->write(getLevel(Point2I(i, j)));
 
-    fs.close();
+    delete fs;
 
     return true;
 }
 
 bool AtlasActivationHeightfield::dumpHeightAtLOD(S8 level, const char* filename)
 {
-    FileStream fs;
+    Stream* fs;
 
     if (!ResourceManager->openFileForWrite(fs, filename, File::ReadWrite))
     {
@@ -336,11 +336,11 @@ bool AtlasActivationHeightfield::dumpHeightAtLOD(S8 level, const char* filename)
             const Point2I pos(i, j);
 
             HeightType h = getHeightAtLOD(pos, level);
-            fs.write(h);
+            fs->write(h);
         }
     }
 
-    fs.close();
+    delete fs;
 
     return true;
 }
@@ -938,7 +938,7 @@ ConsoleFunction(generateChunkFileFromRaw16, void, 8, 8, "(srcFile, size, squareS
     ResourceManager->closeStream(s);
 
     // Cool, it's loaded, try generating something.
-    FileStream fs;
+    Stream* fs;
 
     // Wipe it first.
     if (!ResourceManager->openFileForWrite(fs, destFile, File::Write))
@@ -947,7 +947,7 @@ ConsoleFunction(generateChunkFileFromRaw16, void, 8, 8, "(srcFile, size, squareS
         return;
     }
 
-    fs.close();
+    delete fs;
 
     // Now do it for reals.
     if (!ResourceManager->openFileForWrite(fs, destFile, File::ReadWrite))
@@ -956,9 +956,9 @@ ConsoleFunction(generateChunkFileFromRaw16, void, 8, 8, "(srcFile, size, squareS
         return;
     }
 
-    cahf.generateChunkFile(&fs, treeDepth, error);
+    cahf.generateChunkFile(fs, treeDepth, error);
 
-    fs.close();
+    delete fs;
 }
 
 ConsoleFunction(doChunkGen, void, 1, 1, "Test chunk generation.")
@@ -977,7 +977,7 @@ ConsoleFunction(doChunkGen, void, 1, 1, "Test chunk generation.")
     ResourceManager->closeStream(s);
 
     // Cool, it's loaded, try generating something.
-    FileStream fs;
+    Stream* fs;
 
     dFileDelete("demo/data/terrains/small.chu");
 
@@ -987,7 +987,7 @@ ConsoleFunction(doChunkGen, void, 1, 1, "Test chunk generation.")
         return;
     }
 
-    cahf.generateChunkFile(&fs, 5, 0.5f);
+    cahf.generateChunkFile(fs, 5, 0.5f);
 
-    fs.close();
+    delete fs;
 }

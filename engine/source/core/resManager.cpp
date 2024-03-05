@@ -12,6 +12,7 @@
 #include "core/zipAggregate.h"
 #include "core/zipHeaders.h"
 #include "core/resizeStream.h"
+#include "core/memStream.h"
 #include "core/frameAllocator.h"
 
 #include "core/resManager.h"
@@ -553,7 +554,11 @@ S32 ResManager::getSize(const char* fileName)
     if (!ro)
         return 0;
     else
+    {
+        if (ro->flags & ResourceObject::Memory)
+            return ro->mMemStream->getStreamSize();
         return ro->fileSize;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -902,6 +907,14 @@ Stream* ResManager::openStream(ResourceObject* obj)
         }
     }
 
+    // If memory file
+    if (obj->flags & ResourceObject::Memory)
+    {
+        MemSubStream* memStream = new MemSubStream;
+        memStream->attachStream(obj->mMemStream);
+        return memStream;
+    }
+
     // unknown type
     return NULL;
 }
@@ -932,6 +945,18 @@ ResourceObject* ResManager::find(const char* fileName)
     ResourceObject* ret = dictionary.find(path, file);
     if (!ret)
     {
+        if (path && file && !dStrcmp(path, "mem"))
+        {
+            // Opening memory file
+            ret = createResource(path, file);
+            dictionary.pushBehind(ret, ResourceObject::Memory);
+            
+            ret->flags = ResourceObject::Memory;
+            ret->mMemStream = new ResizableMemStream();
+
+            return ret;
+        }
+
         // Potentially dangerous behavior to have in shipping version but *very* useful
         // in a production environment
 #ifndef TORQUE_SHIPPING
@@ -988,7 +1013,7 @@ bool ResManager::add(const char* name, ResourceInstance* addInstance,
         obj = createResource(path, file);
 
     dictionary.pushBehind(obj,
-        ResourceObject::File | ResourceObject::VolumeBlock);
+        ResourceObject::File | ResourceObject::VolumeBlock | ResourceObject::Memory);
     obj->mInstance = addInstance;
     addInstance->mSourceResource = obj;
     obj->lockCount = extraLock ? 2 : 1;
@@ -1207,7 +1232,7 @@ void ResManager::freeResource(ResourceObject* ro)
 
 //------------------------------------------------------------------------------
 
-bool ResManager::openFileForWrite(FileStream& stream, const char* fileName, U32 accessMode)
+bool ResManager::openFileForWrite(Stream*& stream, const char* fileName, U32 accessMode)
 {
     if (!isValidWriteFileName(fileName))
         return false;
@@ -1220,10 +1245,33 @@ bool ResManager::openFileForWrite(FileStream& stream, const char* fileName, U32 
         return false;      // don't allow storing files in root
     *file++ = 0;
 
+    if (path && file && !dStrnicmp(path, "mem", 3)
+        && path[3] == '/' || path[3] == 0)
+    {
+        // Opening memory file
+        ResourceObject* ret = createResource(StringTable->insert(path), StringTable->insert(file));
+        dictionary.pushBehind(ret, ResourceObject::Memory);
+        
+        ret->flags = ResourceObject::Memory;
+        ret->mMemStream = new ResizableMemStream();
+
+        MemSubStream* memStream = new MemSubStream;
+        memStream->attachStream(ret->mMemStream);
+
+        stream = memStream;
+        return true;
+    }
+
     if (!Platform::createPath(fileName))   // create directory tree
         return false;
-    if (!stream.open(fileName, (FileStream::AccessMode)accessMode))
+
+    FileStream* fs = new FileStream();
+    if (!fs->open(fileName, (FileStream::AccessMode)accessMode))
+    {
+        delete fs;
         return false;
+    }
+    stream = fs;
 
     // create a resource for the file.
     ResourceObject* ro = createResource(StringTable->insert(path), StringTable->insert(file));

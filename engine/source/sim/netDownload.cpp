@@ -1021,7 +1021,7 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
     {
         // this file's done...
         // save it to disk:
-        FileStream stream;
+        Stream* stream;
 
         Con::printf("Saving file %s.", mMissingFileList[0]);
         if (!ResourceManager->openFileForWrite(stream, mMissingFileList[0]))
@@ -1031,8 +1031,8 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
         }
         dFree(mMissingFileList[0]);
         mMissingFileList.pop_front();
-        stream.write(mCurrentFileBufferSize, mCurrentFileBuffer);
-        stream.close();
+        stream->write(mCurrentFileBufferSize, mCurrentFileBuffer);
+        delete stream;
         mNumDownloadedFiles++;
         dFree(mCurrentFileBuffer);
         mCurrentFileBuffer = NULL;

@@ -757,9 +757,9 @@ bool NetConnection::readDemoStartBlock(BitStream* stream)
 
 bool NetConnection::startDemoRecord(const char* fileName)
 {
-    FileStream* fs = new FileStream;
+    Stream* fs;
 
-    if (!ResourceManager->openFileForWrite(*fs, fileName))
+    if (!ResourceManager->openFileForWrite(fs, fileName))
     {
         delete fs;
         return false;

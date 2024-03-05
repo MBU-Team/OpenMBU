@@ -560,7 +560,7 @@ ConsoleMethod(SimObject, save, bool, 3, 4, "obj.save(fileName, <selectedOnly>)")
 {
     static const char* beginMessage = "//--- OBJECT WRITE BEGIN ---";
     static const char* endMessage = "//--- OBJECT WRITE END ---";
-    FileStream stream;
+    Stream* stream;
     FileObject f;
     f.readMemory(argv[2]);
 
@@ -597,14 +597,14 @@ ConsoleMethod(SimObject, save, bool, 3, 4, "obj.save(fileName, <selectedOnly>)")
         buffer = (const char*)f.readLine();
         if (!dStrcmp(buffer, beginMessage))
             break;
-        stream.write(dStrlen(buffer), buffer);
-        stream.write(2, "\r\n");
+        stream->write(dStrlen(buffer), buffer);
+        stream->write(2, "\r\n");
     }
-    stream.write(dStrlen(beginMessage), beginMessage);
-    stream.write(2, "\r\n");
-    object->write(stream, 0, writeFlags);
-    stream.write(dStrlen(endMessage), endMessage);
-    stream.write(2, "\r\n");
+    stream->write(dStrlen(beginMessage), beginMessage);
+    stream->write(2, "\r\n");
+    object->write(*stream, 0, writeFlags);
+    stream->write(dStrlen(endMessage), endMessage);
+    stream->write(2, "\r\n");
     while (!f.isEOF())
     {
         buffer = (const char*)f.readLine();
@@ -614,12 +614,14 @@ ConsoleMethod(SimObject, save, bool, 3, 4, "obj.save(fileName, <selectedOnly>)")
     while (!f.isEOF())
     {
         buffer = (const char*)f.readLine();
-        stream.write(dStrlen(buffer), buffer);
-        stream.write(2, "\r\n");
+        stream->write(dStrlen(buffer), buffer);
+        stream->write(2, "\r\n");
     }
 
     Con::setVariable("$DocRoot", NULL);
     Con::setVariable("$ModRoot", NULL);
+    
+    delete stream;
 
     return true;
 }

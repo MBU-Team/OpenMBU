@@ -129,7 +129,7 @@ void Dictionary::exportVariables(const char* varString, const char* fileName, bo
 
     Vector<Entry*>::iterator s;
     char expandBuffer[1024];
-    FileStream strm;
+    Stream* strm;
 
     if (fileName)
     {
@@ -139,7 +139,7 @@ void Dictionary::exportVariables(const char* varString, const char* fileName, bo
             return;
         }
         if (append)
-            strm.setPosition(strm.getStreamSize());
+            strm->setPosition(strm->getStreamSize());
     }
 
     char buffer[1024];
@@ -196,12 +196,12 @@ void Dictionary::exportVariables(const char* varString, const char* fileName, bo
             break;
         }
         if (fileName)
-            strm.write(dStrlen(buffer), buffer);
+            strm->write(dStrlen(buffer), buffer);
         else
             Con::printf("%s", buffer);
     }
     if (fileName)
-        strm.close();
+        delete strm;
 }
 
 void Dictionary::deleteVariables(const char* varString, bool emptyOnly)

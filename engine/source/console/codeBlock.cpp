@@ -431,10 +431,10 @@ bool CodeBlock::compile(const char* codeFileName, StringTableEntry fileName, con
         return false;
     }
 
-    FileStream st;
+    Stream* st;
     if (!ResourceManager->openFileForWrite(st, codeFileName))
         return false;
-    st.write(U32(Con::DSOVersion));
+    st->write(U32(Con::DSOVersion));
 
     // Reset all our value tables...
     resetTables();
@@ -454,12 +454,12 @@ bool CodeBlock::compile(const char* codeFileName, StringTableEntry fileName, con
     lineBreakPairs = code + codeSize;
 
     // Write string table data...
-    getGlobalStringTable().write(st);
-    getFunctionStringTable().write(st);
+    getGlobalStringTable().write(*st);
+    getFunctionStringTable().write(*st);
 
     // Write float table data...
-    getGlobalFloatTable().write(st);
-    getFunctionFloatTable().write(st);
+    getGlobalFloatTable().write(*st);
+    getFunctionFloatTable().write(*st);
 
     smBreakLineCount = 0;
     U32 lastIp;
@@ -473,30 +473,30 @@ bool CodeBlock::compile(const char* codeFileName, StringTableEntry fileName, con
 
     code[lastIp++] = OP_RETURN;
     U32 totSize = codeSize + smBreakLineCount * 2;
-    st.write(codeSize);
-    st.write(lineBreakPairCount);
+    st->write(codeSize);
+    st->write(lineBreakPairCount);
 
     // Write out our bytecode, doing a bit of compression for low numbers.
     U32 i;
     for (i = 0; i < codeSize; i++)
     {
         if (code[i] < 0xFF)
-            st.write(U8(code[i]));
+            st->write(U8(code[i]));
         else
         {
-            st.write(U8(0xFF));
-            st.write((U32)code[i]);
+            st->write(U8(0xFF));
+            st->write((U32)code[i]);
         }
     }
 
     // Write the break info...
     for (i = codeSize; i < totSize; i++)
-        st.write((U32)code[i]);
+        st->write((U32)code[i]);
 
-    getIdentTable().write(st);
+    getIdentTable().write(*st);
 
     consoleAllocReset();
-    st.close();
+    delete st;
 
     return true;
 }

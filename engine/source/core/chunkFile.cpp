@@ -22,7 +22,7 @@ bool ChunkFile::save(const char* filename)
     gChunkBuffer.reset();
 
     // Get a stream...
-    FileStream s;
+    Stream* s;
     if (!ResourceManager->openFileForWrite(s, filename))
     {
         Con::errorf("ChunkFile::save - cannot open '%s' for write.", filename);
@@ -30,15 +30,17 @@ bool ChunkFile::save(const char* filename)
     }
 
     // write preamble!
-    s.write(csmFileFourCC);
-    s.write(csmFileVersion);
+    s->write(csmFileFourCC);
+    s->write(csmFileVersion);
 
     // Now save out the chunks!
-    saveInner(s, getRoot());
+    saveInner(*s, getRoot());
 
     // Free any memory we had to use for buffering.
     gChunkBuffer.reset();
     gChunkBuffer.compact();
+
+    delete s;
 
     // All done!
     return true;

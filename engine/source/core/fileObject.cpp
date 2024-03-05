@@ -9,11 +9,18 @@ IMPLEMENT_CONOBJECT(FileObject);
 
 bool FileObject::isEOF()
 {
-    return mCurPos == mBufferSize;
+    if (mCurPos == mBufferSize)
+    {
+        if (mStream)
+            return mStream->getPosition() == mStream->getStreamSize();
+        return true;
+    }
+    return false;
 }
 
 FileObject::FileObject()
 {
+    mStream = NULL;
     mFileBuffer = NULL;
     mBufferSize = 0;
     mCurPos = 0;
@@ -21,12 +28,17 @@ FileObject::FileObject()
 
 FileObject::~FileObject()
 {
+    if (mStream)
+        delete mStream;
+    mStream = NULL;
     dFree(mFileBuffer);
 }
 
 void FileObject::close()
 {
-    stream.close();
+    if (mStream)
+        delete mStream;
+    mStream = NULL;
     dFree(mFileBuffer);
     mFileBuffer = NULL;
     mBufferSize = mCurPos = 0;
@@ -40,20 +52,39 @@ bool FileObject::openForWrite(const char* fileName, const bool append)
     close();
 
     if (!append)
-        return(ResourceManager->openFileForWrite(stream, buffer));
+        return(ResourceManager->openFileForWrite(mStream, buffer));
 
     // Use the WriteAppend flag so it doesn't clobber the existing file:
-    if (!ResourceManager->openFileForWrite(stream, buffer, File::WriteAppend))
+    if (!ResourceManager->openFileForWrite(mStream, buffer, File::WriteAppend))
         return(false);
 
-    stream.setPosition(stream.getStreamSize());
+    mStream->setPosition(mStream->getStreamSize());
     return(true);
 }
 
-bool FileObject::openForRead(const char* /*fileName*/)
+bool FileObject::openForRead(const char* fileName)
 {
-    AssertFatal(false, "Error, not yet implemented!");
-    return false;
+    char buffer[1024];
+    Con::expandScriptFilename(buffer, sizeof(buffer), fileName);
+
+    close();
+
+    Stream* s = ResourceManager->openStream(buffer);
+    if (!s)
+        return(false);
+
+    mStream = s;
+    mCurPos = 0;
+
+    mBufferSize = ResourceManager->getSize(buffer);
+    mFileBuffer = (U8*)dMalloc(mBufferSize + 1);
+    if (!mFileBuffer)
+        return false;
+    mFileBuffer[mBufferSize] = 0;
+    s->read(mBufferSize, mFileBuffer);
+    mCurPos = 0;
+
+    return(true);
 }
 
 bool FileObject::readMemory(const char* fileName)
@@ -67,6 +98,8 @@ bool FileObject::readMemory(const char* fileName)
         return false;
     mBufferSize = ResourceManager->getSize(buffer);
     mFileBuffer = (U8*)dMalloc(mBufferSize + 1);
+    if (!mFileBuffer)
+        return false;
     mFileBuffer[mBufferSize] = 0;
     s->read(mBufferSize, mFileBuffer);
     ResourceManager->closeStream(s);
@@ -109,13 +142,13 @@ const U8* FileObject::readLine()
 
 void FileObject::writeLine(const U8* line)
 {
-    stream.write(dStrlen((const char*)line), line);
-    stream.write(2, "\r\n");
+    mStream->write(dStrlen((const char*)line), line);
+    mStream->write(2, "\r\n");
 }
 
 ConsoleMethod(FileObject, openForRead, bool, 3, 3, "(string filename)")
 {
-    return object->readMemory(argv[2]);
+    return object->openForRead(argv[2]);
 }
 
 ConsoleMethod(FileObject, openForWrite, bool, 3, 3, "(string filename)")
