@@ -16,7 +16,7 @@ if (WIN32)
 
       src/connection_win.cpp
       src/discord_register_win.cpp)
-else()
+elseif(APPLE)
     add_library(discord-rpc STATIC
       include/discord_register.h
       include/discord_rpc.h
@@ -32,6 +32,22 @@ else()
 
       src/connection_unix.cpp
       src/discord_register_osx.m)
+else()
+    add_library(discord-rpc STATIC
+      include/discord_register.h
+      include/discord_rpc.h
+      src/backoff.h
+      src/connection.h
+      src/discord_rpc.cpp
+      src/discord_register.h
+      src/msg_queue.h
+      src/rpc_connection.cpp
+      src/rpc_connection.h
+      src/serialization.cpp
+      src/serialization.h
+
+      src/connection_unix.cpp
+      src/discord_register_linux.cpp)
 endif()
 
 target_compile_definitions(discord-rpc
