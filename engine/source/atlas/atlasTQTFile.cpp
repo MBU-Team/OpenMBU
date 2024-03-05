@@ -9,7 +9,7 @@
 #include "console/console.h"
 #include "core/resManager.h"
 #include "core/stream.h"
-#include "core/memStream.h"
+#include "core/memstream.h"
 #include "math/mPoint.h"
 #include "gfx/ddsFile.h"
 #include "core/frameAllocator.h"

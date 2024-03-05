@@ -12,7 +12,7 @@
 #include "core/zipAggregate.h"
 #include "core/zipHeaders.h"
 #include "core/resizeStream.h"
-#include "core/memStream.h"
+#include "core/memstream.h"
 #include "core/frameAllocator.h"
 
 #include "core/resManager.h"
