@@ -668,7 +668,6 @@ $Text::LevelNameMP4 = "Skate Battle Royale";
 $Text::LevelNameMP5 = "Zenith";
 $Text::LevelNameMP6 = "King of the Marble";
 $Text::LevelNameMP7 = "Marble City";
-$Text::LevelNameMP7Classic = "Marble City (Classic)";
 $Text::LevelNameMP8 = "Horizon";
 $Text::LevelNameMP9 = "Gems in the Road";
 $Text::LevelNameMP10 = "Epicenter";

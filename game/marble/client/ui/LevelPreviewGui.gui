@@ -154,7 +154,7 @@ new GuiControl(levelPreviewGui) {
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = isWidescreen()? "bottom" : "top";
       // there can only be two columns; these values are percentages of total extent
-      columns = isWidescreen()? "30 70" : "30 70";
+      columns = isWidescreen()? "25 75" : "25 75";
       // each column can have a left and right margin, specified here.  order is 
       // C1L C1R C2L C2R.  amount is in pixels
       columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
