@@ -23,6 +23,10 @@ bool DInputManager::smMouseEnabled = false;
 bool DInputManager::smJoystickEnabled = false;
 bool DInputManager::smXInputEnabled = false;
 int DInputManager::smAnalogRange = 0;
+F32 DInputManager::smDeadZoneL = XINPUT_DEADZONE_DEFAULT;
+F32 DInputManager::smDeadZoneR = XINPUT_DEADZONE_DEFAULT;
+F32 DInputManager::smDeadZoneLT = 0;
+F32 DInputManager::smDeadZoneRT = 0;
 
 // Type definitions:
 typedef HRESULT(WINAPI* FN_DirectInputCreate)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID* ppvOut, LPUNKNOWN punkOuter);
@@ -44,6 +48,10 @@ void DInputManager::init()
     Con::addVariable("pref::Input::MouseEnabled", TypeBool, &smMouseEnabled);
     Con::addVariable("pref::Input::JoystickEnabled", TypeBool, &smJoystickEnabled);
     Con::addVariable("pref::Input::AnalogRange", TypeS32, &smAnalogRange);
+    Con::addVariable("pref::Input::DeadZoneL", TypeF32, &smDeadZoneL);
+    Con::addVariable("pref::Input::DeadZoneR", TypeF32, &smDeadZoneR);
+    Con::addVariable("pref::Input::DeadZoneLT", TypeF32, &smDeadZoneLT);
+    Con::addVariable("pref::Input::DeadZoneRT", TypeF32, &smDeadZoneRT);
 }
 
 //------------------------------------------------------------------------------
@@ -959,6 +967,11 @@ inline void DInputManager::fireXInputButtonEvent(int controllerID, bool forceFir
 // This function does all of the dirty work associated with reporting the state of all 4 XInput controllers -- jason_cahill
 void DInputManager::processXInput(void)
 {
+    F32 deadZoneL = smDeadZoneL * FLOAT(0x7FFF);
+    F32 deadZoneR = smDeadZoneR * FLOAT(0x7FFF);
+    F32 deadZoneLT = smDeadZoneLT * FLOAT(0xFF);
+    F32 deadZoneRT = smDeadZoneRT * FLOAT(0xFF);
+
     if (mfnXInputGetState)
     {
         for (int i = 0; i < 4; i++)
@@ -970,18 +983,29 @@ void DInputManager::processXInput(void)
             if (mXInputDeadZoneOn)
             {
                 // Zero value if thumbsticks are within the dead zone 
-                if ((mXInputStateNew[i].state.Gamepad.sThumbLX < XINPUT_DEADZONE && mXInputStateNew[i].state.Gamepad.sThumbLX > -XINPUT_DEADZONE) &&
-                    (mXInputStateNew[i].state.Gamepad.sThumbLY < XINPUT_DEADZONE && mXInputStateNew[i].state.Gamepad.sThumbLY > -XINPUT_DEADZONE))
+                if ((mXInputStateNew[i].state.Gamepad.sThumbLX < deadZoneL && mXInputStateNew[i].state.Gamepad.sThumbLX > -deadZoneL) &&
+                    (mXInputStateNew[i].state.Gamepad.sThumbLY < deadZoneL && mXInputStateNew[i].state.Gamepad.sThumbLY > -deadZoneL))
                 {
                     mXInputStateNew[i].state.Gamepad.sThumbLX = 0;
                     mXInputStateNew[i].state.Gamepad.sThumbLY = 0;
                 }
 
-                if ((mXInputStateNew[i].state.Gamepad.sThumbRX < XINPUT_DEADZONE && mXInputStateNew[i].state.Gamepad.sThumbRX > -XINPUT_DEADZONE) &&
-                    (mXInputStateNew[i].state.Gamepad.sThumbRY < XINPUT_DEADZONE && mXInputStateNew[i].state.Gamepad.sThumbRY > -XINPUT_DEADZONE))
+                if ((mXInputStateNew[i].state.Gamepad.sThumbRX < deadZoneR && mXInputStateNew[i].state.Gamepad.sThumbRX > -deadZoneR) &&
+                    (mXInputStateNew[i].state.Gamepad.sThumbRY < deadZoneR && mXInputStateNew[i].state.Gamepad.sThumbRY > -deadZoneR))
                 {
                     mXInputStateNew[i].state.Gamepad.sThumbRX = 0;
                     mXInputStateNew[i].state.Gamepad.sThumbRY = 0;
+                }
+
+                // Triggers
+                if ((mXInputStateNew[i].state.Gamepad.bLeftTrigger < deadZoneLT && mXInputStateNew[i].state.Gamepad.bLeftTrigger > -deadZoneLT))
+                {
+                    mXInputStateNew[i].state.Gamepad.bLeftTrigger = 0;
+                }
+
+                if ((mXInputStateNew[i].state.Gamepad.bRightTrigger < deadZoneRT && mXInputStateNew[i].state.Gamepad.bRightTrigger > -deadZoneRT))
+                {
+                    mXInputStateNew[i].state.Gamepad.bRightTrigger = 0;
                 }
             }
 

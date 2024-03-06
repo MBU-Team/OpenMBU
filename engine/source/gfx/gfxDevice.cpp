@@ -756,7 +756,7 @@ ConsoleFunction(getResolutionList, const char*, 1, 2, "getResolutionList([minimu
     return returnString;
 }
 
-ConsoleFunction(setVideoMode, void, 5, 5, "setVideoMode(width, height, bit depth, fullscreen)")
+ConsoleFunction(setVideoMode, void, 5, 6, "setVideoMode(width, height, bit depth, fullscreen, [antialiasLevel])")
 {
     GFXVideoMode vm = GFX->getVideoMode();
     vm.resolution = Point2I(dAtoi(argv[1]), dAtoi(argv[2]));
@@ -766,6 +766,11 @@ ConsoleFunction(setVideoMode, void, 5, 5, "setVideoMode(width, height, bit depth
 
     vm.fullScreen = fsType == 1;
     vm.borderless = fsType == 2;
+
+    if (argc > 5)
+        vm.antialiasLevel = dAtoi(argv[5]);
+    else
+        vm.antialiasLevel = 0;
         
     GFX->setVideoMode(vm);
 
@@ -833,6 +838,9 @@ ConsoleFunction(updateVideoMode, void, 1, 1, "updateVideoMode()")
     vm.fullScreen = fsType == 1;
     vm.borderless = fsType == 2;
 
+    int antialiasLevel = Con::getIntVariable("$pref::Video::FSAALevel", 0);
+    vm.antialiasLevel = antialiasLevel;
+
     GFX->setVideoMode(vm);
 }
 
@@ -864,6 +872,9 @@ ConsoleFunction(toggleFullScreen, void, 1, 1, "toggles between windowed and full
     vm.resolution.x = w;
     vm.resolution.y = h;
     vm.bitDepth = d;
+
+    int antialiasLevel = Con::getIntVariable("$pref::Video::FSAALevel", 0);
+    vm.antialiasLevel = antialiasLevel;
 
     GFX->setVideoMode(vm);
 }

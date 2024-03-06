@@ -535,6 +535,9 @@ bool TSShapeInstance::castRayOpcode(S32 dl, const Point3F& startPos, const Point
     S32 ss = detail->subShapeNum;
     S32 od = detail->objectDetailNum;
 
+    // set up static data
+    setStatics(dl);
+
     // nothing emitted yet...
     bool emitted = false;
 
@@ -554,7 +557,7 @@ bool TSShapeInstance::castRayOpcode(S32 dl, const Point3F& startPos, const Point
         // run through objects and collide
         for (S32 i = start; i < end; i++)
         {
-            MeshObjectInstance* mesh = &mMeshObjects[i];
+            MeshObjectInstance *mesh = &mMeshObjects[i];
 
             if (od >= mesh->object->numMeshes)
                 continue;
