@@ -6,6 +6,7 @@
 #include "core/tokenizer.h"
 #include "platform/platform.h"
 #include "core/fileStream.h"
+#include "core/resManager.h"
 
 Tokenizer::Tokenizer()
 {
@@ -44,8 +45,10 @@ bool Tokenizer::openFile(const char* pFileName)
 {
     AssertFatal(mFileName[0] == '\0', "Reuse of Tokenizers not allowed!");
 
-    FileStream* pStream = new FileStream;
-    if (pStream->open(pFileName, FileStream::Read) == false)
+    Stream* pStream = ResourceManager->openStream(pFileName);
+    //FileStream* pStream = new FileStream;
+    //if (pStream->open(pFileName, FileStream::Read) == false)
+    if (!pStream || pStream->getStatus() != Stream::Ok)
     {
         delete pStream;
         return false;
@@ -55,7 +58,7 @@ bool Tokenizer::openFile(const char* pFileName)
     mBufferSize = pStream->getStreamSize();
     mpBuffer = new char[mBufferSize];
     pStream->read(mBufferSize, mpBuffer);
-    pStream->close();
+    //pStream->close();
     delete pStream;
 
     // Not really necessary, but couldn't hurt...
