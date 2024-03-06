@@ -306,7 +306,10 @@ add_subdirectory(${libDir}/rapidjson ${CMAKE_CURRENT_BINARY_DIR}/rapidjson)
 add_subdirectory(${libDir}/discord-rpc ${CMAKE_CURRENT_BINARY_DIR}/discord-rpc)
 addInclude("${libDir}/discord-rpc/include")
 addLib(discord-rpc)
-
+set(BUILD_SHARED_LIBS OFF)
+set(BUILD_STATIC_LIBS ON)
+add_subdirectory(${libDir}/jsoncpp ${CMAKE_CURRENT_BINARY_DIR}/jsoncpp)
+addLib(jsoncpp_lib_static)
 
 if(WIN32)
     # copy pasted from T3D build system, some might not be needed
@@ -388,6 +391,7 @@ addInclude("${libDir}/opcode")
 addInclude("${libDir}/collada/include")
 addInclude("${libDir}/collada/include/1.4")
 addInclude("${libDir}/assimp/include")
+addInclude("${libDir}/jsoncpp/include")
 
 if(UNIX AND NOT APPLE)
 	addInclude("/usr/include/freetype2/freetype")

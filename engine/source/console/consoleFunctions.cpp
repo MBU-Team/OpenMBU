@@ -14,6 +14,8 @@
 #include "platform/gameInterface.h"
 #include "platform/platformInput.h"
 #include "core/units.h"
+#include "console/arrayObject.h"
+#include <regex>
 
 // This is a temporary hack to get tools using the library to
 // link in this module which contains no other references.
@@ -1590,4 +1592,52 @@ ConsoleFunction(isShippingBuild, bool, 1, 1, "Returns true if this is a shipping
 #else
     return false;
 #endif
+}
+
+ConsoleFunction(regexMatch, bool, 3, 4, "regexMatch(testString, pattern [, matches]);") {
+    std::string testString(argv[1]);
+    try {
+        std::regex regex(argv[2]);
+        if (argc > 3) {
+            SimObject* potentialArrayObject = Sim::findObject(argv[3]);
+            ArrayObject* result = dynamic_cast<ArrayObject*>(potentialArrayObject);
+
+            std::smatch matches;
+            bool found = std::regex_match(testString, matches, regex);
+
+            if (result != nullptr) {
+                for (const std::string& match : matches) {
+                    result->addEntry(match);
+                }
+            }
+
+            return found;
+        }
+        else {
+            return std::regex_match(testString, regex);
+        }
+    }
+    catch (std::regex_error e) {
+        Con::errorf("regexMatch: %s", e.what());
+        return false;
+    }
+}
+
+ConsoleFunction(regexReplace, const char*, 4, 4, "regexMatch(testString, pattern, replacement);") {
+    std::string testString(argv[1]);
+    std::string replacement(argv[3]);
+
+    try {
+        std::regex regex(argv[2]);
+        std::string replaced = std::regex_replace(testString, regex, replacement);
+
+        char* ret = Con::getReturnBuffer(replaced.length() + 1);
+        strcpy(ret, replaced.data());
+
+        return ret;
+    }
+    catch (std::regex_error e) {
+        Con::errorf("regexReplace: %s", e.what());
+        return argv[1];
+    }
 }

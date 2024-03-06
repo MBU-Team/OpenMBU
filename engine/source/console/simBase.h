@@ -206,11 +206,11 @@ public:
         char* value;
         Entry* next;
     };
-private:
     enum
     {
         HashTableSize = 19
     };
+private:
     Entry* mHashTable[HashTableSize];
 
     static Entry* mFreeList;
