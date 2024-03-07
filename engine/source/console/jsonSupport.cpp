@@ -3,6 +3,8 @@
 #include <json/json.h>
 #include <cmath>
 #include <sstream>
+#include <string>
+#include <limits>
 #ifdef _WIN32
 #include <Shlwapi.h>
 #define strcasecmp _stricmp
