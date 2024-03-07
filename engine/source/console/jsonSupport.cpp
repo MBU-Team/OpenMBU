@@ -71,7 +71,7 @@ const char* toString(Json::Value& value) {
     case Json::stringValue: {
         const char* str = value.asCString();
         //Copy to a torque stack string so we don't have to worry about memory
-        char* tstr = Con::getReturnBuffer(strlen(str) + 1);
+        char* tstr = Con::getReturnBuffer(dStrlen(str) + 1);
         dStrcpy(tstr, str);
         return tstr;
     }
