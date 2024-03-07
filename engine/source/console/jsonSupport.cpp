@@ -72,7 +72,7 @@ const char* toString(Json::Value& value) {
         const char* str = value.asCString();
         //Copy to a torque stack string so we don't have to worry about memory
         char* tstr = Con::getReturnBuffer(strlen(str) + 1);
-        strcpy(tstr, str);
+        dStrcpy(tstr, str);
         return tstr;
     }
     case Json::intValue:
@@ -270,7 +270,7 @@ ConsoleFunction(jsonPrint, const char*, 2, 2, "jsonPrint(value);") {
         //Convert it to something Torque can handle
         std::string str = ss.str();
         char* buffer = Con::getReturnBuffer(str.length() + 1);
-        strcpy(buffer, str.c_str());
+        dStrcpy(buffer, str.c_str());
         delete writer;
         return buffer;
     }
