@@ -1632,7 +1632,7 @@ ConsoleFunction(regexReplace, const char*, 4, 4, "regexMatch(testString, pattern
         std::string replaced = std::regex_replace(testString, regex, replacement);
 
         char* ret = Con::getReturnBuffer(replaced.length() + 1);
-        strcpy(ret, replaced.data());
+        dStrcpy(ret, replaced.data());
 
         return ret;
     }

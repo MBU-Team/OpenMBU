@@ -3,6 +3,8 @@
 #include <json/json.h>
 #include <cmath>
 #include <sstream>
+#include <string>
+#include <limits>
 #ifdef _WIN32
 #include <Shlwapi.h>
 #define strcasecmp _stricmp
@@ -71,8 +73,8 @@ const char* toString(Json::Value& value) {
     case Json::stringValue: {
         const char* str = value.asCString();
         //Copy to a torque stack string so we don't have to worry about memory
-        char* tstr = Con::getReturnBuffer(strlen(str) + 1);
-        strcpy(tstr, str);
+        char* tstr = Con::getReturnBuffer(dStrlen(str) + 1);
+        dStrcpy(tstr, str);
         return tstr;
     }
     case Json::intValue:
@@ -109,7 +111,7 @@ ConsoleFunction(jsonParse, const char*, 2, 2, "jsonParse(string json);") {
     Json::CharReader* reader = builder.newCharReader();
 
     std::string errs;
-    if (reader->parse(json, json + strlen(json), &root, &errs)) {
+    if (reader->parse(json, json + dStrlen(json), &root, &errs)) {
         delete reader;
         return toString(root);
     }
@@ -121,7 +123,7 @@ ConsoleFunction(jsonParse, const char*, 2, 2, "jsonParse(string json);") {
 }
 
 bool toJson(const char* input, bool expandObject, Json::Value& output) {
-    S32 length = strlen(input);
+    S32 length = dStrlen(input);
     if (length == 0) {
         //Null
         output = Json::Value(Json::nullValue);
@@ -135,7 +137,7 @@ bool toJson(const char* input, bool expandObject, Json::Value& output) {
         bool isJsonObject = dynamic_cast<JSONObject*>(obj) != nullptr;
         //Make sure we only do this to ScriptObjects and Arrays. Could probably
         // expand this to add support for generic torque objects but cbf right now
-        if (strcmp(className, "ScriptObject") == 0 || isJsonObject) {
+        if (dStrcmp(className, "ScriptObject") == 0 || isJsonObject) {
             //Generic object
             output = Json::Value(Json::objectValue);
 
@@ -162,7 +164,7 @@ bool toJson(const char* input, bool expandObject, Json::Value& output) {
                 const char* key = walk->slotName;
                 const char* value = walk->value;
 
-                if (strlen(key) > 2 && key[0] == '_' && key[1] == '_') {
+                if (dStrlen(key) > 2 && key[0] == '_' && key[1] == '_') {
                     ++itr;
                     continue;
                 }
@@ -232,7 +234,7 @@ bool toJson(const char* input, bool expandObject, Json::Value& output) {
     const char* numberChars = "0123456789.-+eE";
 
     for (S32 i = 0; i < length; i++) {
-        if (strchr(numberChars, input[i]) == NULL) {
+        if (dStrchr(numberChars, input[i]) == NULL) {
             //It's a string
             output = Json::Value((const char*)input);
             return true;
@@ -240,14 +242,14 @@ bool toJson(const char* input, bool expandObject, Json::Value& output) {
     }
 
     //It's a number. Check if it's floating
-    if (strchr(input, '.') != NULL || strchr(input, 'e') != NULL) {
+    if (dStrchr(input, '.') != NULL || dStrchr(input, 'e') != NULL) {
         //It's a float
-        output = Json::Value(atof(input));
+        output = Json::Value(dAtof(input));
         return true;
     }
 
     //Only thing left to be is an integer
-    output = Json::Value(atol(input));
+    output = Json::Value(dAtoi(input));
     return true;
 }
 
@@ -270,7 +272,7 @@ ConsoleFunction(jsonPrint, const char*, 2, 2, "jsonPrint(value);") {
         //Convert it to something Torque can handle
         std::string str = ss.str();
         char* buffer = Con::getReturnBuffer(str.length() + 1);
-        strcpy(buffer, str.c_str());
+        dStrcpy(buffer, str.c_str());
         delete writer;
         return buffer;
     }

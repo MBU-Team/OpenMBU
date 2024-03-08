@@ -67,7 +67,7 @@ const Move NullMove =
    false,
 
    false, false, false, false,false,false,
-
+   0, 0, 0, 0, 0,
    0.0f, 0.0f, 0.0f, 0.0f, 0.0f
 };
 

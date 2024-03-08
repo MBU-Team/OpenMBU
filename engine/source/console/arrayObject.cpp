@@ -233,6 +233,6 @@ ConsoleMethod(ArrayObject, dumpEntries, void, 2, 2, "()") {
 
 char* copyToReturnBuffer(const std::string& string) {
     char* buffer = Con::getReturnBuffer(string.size() + 1);
-    strcpy(buffer, string.data());
+    dStrcpy(buffer, string.data());
     return buffer;
 }

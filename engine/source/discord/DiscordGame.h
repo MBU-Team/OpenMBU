@@ -66,7 +66,7 @@ public:
         mMaxPlayers = maxp;
         notifyParamsChange();
     }
-    void setTimer(uint64_t start, uint64_t stop = 0)
+    void setTimer(U64 start, U64 stop = 0)
     {
         mStartTime = start;
         mStopTime = stop;
@@ -107,8 +107,8 @@ private:
     const char* mLargeImageKey;
     int mMaxPlayers;
     int mPlayerCount;
-    uint64_t mStartTime;
-    uint64_t mStopTime;
+    U64 mStartTime;
+    U64 mStopTime;
     StringTableEntry mJoinSecret;
     StringTableEntry mPartyId;
     std::string mUsername;
