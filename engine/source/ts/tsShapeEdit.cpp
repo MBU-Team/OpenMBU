@@ -3,15 +3,26 @@
 // Copyright (C) GarageGames.com, Inc.
 //-----------------------------------------------------------------------------
 
-#include <string>
 #include "core/path.h"
+#ifndef _PLATFORM_H_
 #include "platform/platform.h"
-
+#endif
+#ifndef _CONSOLETYPES_H_
 #include "console/consoleTypes.h"
+#endif
+#ifndef _RESMANAGER_H_
 #include "core/resManager.h"
+#endif
+#ifndef _TSSHAPE_H_
 #include "ts/tsShape.h"
+#endif
+#ifndef _TSSHAPEINSTANCE_H_
 #include "ts/tsShapeInstance.h"
+#endif
+#ifndef _FILESTREAM_H_
 #include "core/fileStream.h"
+#endif
+#include <string>
 #include <assimp/SpatialSort.h>
 #include <assimp/qnan.h>
 #include <unordered_map>
