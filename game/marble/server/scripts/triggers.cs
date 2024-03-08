@@ -38,7 +38,6 @@ function OutOfBoundsTrigger::onEnterTrigger(%this,%trigger,%obj)
 }
 
 //-----------------------------------------------------------------------------
-
 datablock TriggerData(HelpTrigger)
 {
    tickPeriodMS = 100;
@@ -72,4 +71,17 @@ function FinishTrigger::onEnterTrigger(%this, %trigger, %obj)
    %obj.getDatablock().onFinishPoint(%obj);
 }
 
+//----------------- Sky Change Trigger
+datablock TriggerData(SkyChangeTrigger)
+{
+   tickPeriodMS = 100;
+};
+
+function SkyChangeTrigger::onEnterTrigger(%this,%trigger,%obj)
+{
+   // Change Sky Material To Trigger Specified One
+   echo("Changing Sky To: " @ %trigger.material);
+   Sky.setSkyMaterial("marble/data/skies/" @ %trigger.material @ ".dml");
+
+}
 
