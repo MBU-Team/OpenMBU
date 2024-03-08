@@ -316,6 +316,25 @@ ConsoleFunction(XBLiveRespondJoinRequest, void, 3, 3, "(userId, reply)")
     DiscordGame::get()->respondJoinRequest(argv[1], atoi(argv[2]));
 }
 
+ConsoleFunction(XBLiveGetPartyId, const char*, 1, 1, "()")
+{
+    StringTableEntry id = DiscordGame::get()->getPartyId();
+    return id != nullptr ? id : "";
+}
+
+ConsoleFunction(XBLiveSetPartyId, void, 2, 2, "(partyId)")
+{
+    const char* partyId = argv[1];
+    if (dStrcmp(partyId, "") == 0) 
+    {
+        DiscordGame::get()->setPartyId(nullptr);
+    }
+    else 
+    {
+        DiscordGame::get()->setPartyId(StringTable->insert(partyId, true));
+    }
+}
+
 ConsoleFunction(XBLiveLoadAchievements, void, 3, 3, "(port, callback)")
 {
     argc;

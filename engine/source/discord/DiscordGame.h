@@ -91,6 +91,15 @@ public:
     {
         mActive = a;
     }
+    StringTableEntry getPartyId()
+    {
+        return mPartyId;
+    }
+    void setPartyId(StringTableEntry e)
+    {
+        mPartyId = e;
+        notifyParamsChange();
+    }
     void notifyParamsChange() { mChanged = true; }
     //void setIcon(const char* icon, const char* iconText) { mIcon = icon; if (mIcon == nullptr) mIcon = ""; mIconText = iconText; if (mIconText == nullptr) mIconText = ""; }
 private:

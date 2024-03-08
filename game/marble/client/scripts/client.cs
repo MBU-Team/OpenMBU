@@ -42,6 +42,11 @@ function GameConnection::prepDemoPlayback(%this)
    $LoadingDone = true;
 }
 
+function clientCmdSetPartyId(%partyId)
+{
+    XBLiveSetPartyId(%partyId);
+}
+
 //----------------------------------------------------------------------------
 // Various client support functions
 //----------------------------------------------------------------------------

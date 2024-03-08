@@ -225,6 +225,8 @@ function GameConnection::updateClientData(%client, %name, %xbLiveId, %xbLiveVoic
          }
       }
    }
+
+    commandToClient(%client, 'SetPartyId', XBLiveGetPartyId());
          
    // update the hosted xbox match
 	updateHostedMatchInfo();
