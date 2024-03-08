@@ -79,7 +79,7 @@ public:
     StringTableEntry getUsername(int charLimit)
     {
         char* buf = new char[charLimit + 1];
-        int minLength = fmin(charLimit, mUsername.length());
+        int minLength = getMin(charLimit, mUsername.length());
         for (int i = 0; i < minLength; i++)
             buf[i] = mUsername[i];
         buf[minLength] = '\0';
