@@ -293,7 +293,7 @@ ConsoleFunction(XBLiveSetRichPresence, void, 4, 5, "(port, presence, levelname, 
 
 ConsoleFunction(XBLivePresenceStartTimer, void, 1, 2, "([stopTime])")
 {
-    uint64_t startTime = static_cast<uint64_t>(time(nullptr));
+    U64 startTime = static_cast<U64>(time(nullptr));
     if (argc > 1)
     {
         int secsRemaining = atoi(argv[1]);
