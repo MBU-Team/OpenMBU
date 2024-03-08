@@ -652,6 +652,11 @@ extern void* dRealloc(void* in_pResize, dsize_t in_size);
 extern void* dRealMalloc(dsize_t);
 extern void  dRealFree(void*);
 
+extern void* dMemcpy(void* dst, const void* src, dsize_t size);
+extern void* dMemmove(void* dst, const void* src, dsize_t size);
+extern void* dMemset(void* dst, int c, dsize_t size);
+extern int   dMemcmp(const void* ptr1, const void* ptr2, dsize_t size);
+
 // Helper function to copy one array into another of different type
 template<class T, class S> void dCopyArray(T* dst, const S* src, dsize_t size)
 {
@@ -664,11 +669,6 @@ template<class T> void dCopyArray(T* dst, const T* src, dsize_t size)
 {
     dMemcpy(dst, src, size * sizeof(T));
 }
-
-extern void* dMemcpy(void* dst, const void* src, dsize_t size);
-extern void* dMemmove(void* dst, const void* src, dsize_t size);
-extern void* dMemset(void* dst, int c, dsize_t size);
-extern int   dMemcmp(const void* ptr1, const void* ptr2, dsize_t size);
 
 //------------------------------------------------------------------------------
 // Graphics functions

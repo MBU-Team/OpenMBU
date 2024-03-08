@@ -387,8 +387,8 @@ template<class T> S32 eraseStates(Vector<T>& vec, const TSIntegerSet& matters, S
    // Erase the values
    if (count)
    {
-      if ((dest + count) < vec.size())
-         dCopyArray(&vec[dest], &vec[dest + count], vec.size() - (dest + count));
+       if ((dest + count) < vec.size())
+           dMemcpy(&vec[dest], &vec[dest + count], (vec.size() - (dest + count)) * sizeof(T));
       vec.decrement(count);
    }
    return count;
@@ -1190,8 +1190,8 @@ bool TSShape::addSequence(const char* path, const char* fromSeq,
       {
          S32 src = srcSeq->baseObjectState + i*srcSeq->numKeyframes + startFrame;
          S32 dest = seq.baseObjectState + objectMap[i]*seq.numKeyframes;
-         dCopyArray(&objectStates[src], &srcShape->objectStates[dest], seq.numKeyframes);
 
+         dMemcpy(&objectStates[src], &srcShape->objectStates[dest], seq.numKeyframes * sizeof(TSShape::ObjectState));
          // @todo:CR: Copy vert and tvert frames from the source shape?
       }
    }
@@ -1275,13 +1275,13 @@ bool TSShape::addSequence(const char* path, const char* fromSeq,
       {
          S32 src = srcSeq->baseTranslation + srcSeq->numKeyframes * srcSeq->translationMatters.count(i) + startFrame;
          S32 dest = seq.baseTranslation + seq.numKeyframes * seq.translationMatters.count(nodeMap[i]);
-         dCopyArray(&nodeTranslations[dest], &srcShape->nodeTranslations[src], seq.numKeyframes);
+         dMemcpy(&nodeTranslations[dest], &srcShape->nodeTranslations[src], seq.numKeyframes * sizeof(Point3F));
       }
       if (seq.rotationMatters.test(nodeMap[i]))
       {
          S32 src = srcSeq->baseRotation + srcSeq->numKeyframes * srcSeq->rotationMatters.count(i) + startFrame;
          S32 dest = seq.baseRotation + seq.numKeyframes * seq.rotationMatters.count(nodeMap[i]);
-         dCopyArray(&nodeRotations[dest], &srcShape->nodeRotations[src], seq.numKeyframes);
+         dMemcpy(&nodeRotations[dest], &srcShape->nodeRotations[src], seq.numKeyframes * sizeof(Quat16));
       }
       if (seq.scaleMatters.test(nodeMap[i]))
       {
@@ -1289,13 +1289,13 @@ bool TSShape::addSequence(const char* path, const char* fromSeq,
          S32 dest = seq.baseScale + seq.numKeyframes * seq.scaleMatters.count(nodeMap[i]);
          if (seq.flags & TSShape::ArbitraryScale)
          {
-            dCopyArray(&nodeArbitraryScaleRots[dest], &srcShape->nodeArbitraryScaleRots[src], seq.numKeyframes);
-            dCopyArray(&nodeArbitraryScaleFactors[dest], &srcShape->nodeArbitraryScaleFactors[src], seq.numKeyframes);
+            dMemcpy(&nodeArbitraryScaleRots[dest], &srcShape->nodeArbitraryScaleRots[src], seq.numKeyframes * sizeof(Quat16));
+            dMemcpy(&nodeArbitraryScaleFactors[dest], &srcShape->nodeArbitraryScaleFactors[src], seq.numKeyframes * sizeof(Point3F));
          }
          else if (seq.flags & TSShape::AlignedScale)
-            dCopyArray(&nodeAlignedScales[dest], &srcShape->nodeAlignedScales[src], seq.numKeyframes);
+            dMemcpy(&nodeAlignedScales[dest], &srcShape->nodeAlignedScales[src], seq.numKeyframes * sizeof(Point3F));
          else
-            dCopyArray(&nodeUniformScales[dest], &srcShape->nodeUniformScales[src], seq.numKeyframes);
+            dMemcpy(&nodeUniformScales[dest], &srcShape->nodeUniformScales[src], seq.numKeyframes * sizeof(F32));
       }
    }
 
