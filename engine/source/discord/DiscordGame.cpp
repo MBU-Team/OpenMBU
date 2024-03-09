@@ -121,7 +121,7 @@ DiscordGame::DiscordGame()
 	mPartyId = nullptr;
 
     DiscordEventHandlers handlers;
-    memset(&handlers, 0, sizeof(handlers));
+    dMemset(&handlers, 0, sizeof(handlers));
     handlers.ready = onReady;
     handlers.errored = onError;
     handlers.disconnected = onDisconnected;
@@ -154,7 +154,7 @@ void DiscordGame::update()
             mStatus = "";
 
         DiscordRichPresence discordPresence;
-        memset(&discordPresence, 0, sizeof(discordPresence));
+        dMemset(&discordPresence, 0, sizeof(discordPresence));
         discordPresence.state = mStatus;
         
 
@@ -174,7 +174,7 @@ void DiscordGame::update()
 
         if (mGUID != nullptr) {
             //Con::printf("DiscordGameSDK::Info: %s", "Setting Large Image Key", mGUID);
-            if (strcmp(mGUID, "MainMenu") == 0) {
+            if (dStrcmp(mGUID, "MainMenu") == 0) {
                 mLargeImageKey = "mbu_logo";
             }
             else {
