@@ -144,6 +144,17 @@ macro(addLib libs)
    endforeach()
 endmacro()
 
+macro(addLinkLib libs)
+    foreach(lib ${libs})
+        # two possibilities: a) target already known, so add it directly, or b) target not yet known, so add it to its cache
+        if(TARGET ${PROJECT_NAME})
+            target_link_libraries(${PROJECT_NAME} "${lib}")
+        else()
+            list(APPEND ${PROJECT_NAME}_libs ${lib})
+        endif()
+    endforeach()
+endmacro()
+
 #addLibRelease will add to only release builds
 macro(addLibRelease libs)
    foreach(lib ${libs})
