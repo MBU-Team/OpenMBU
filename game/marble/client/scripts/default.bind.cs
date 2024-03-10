@@ -7,6 +7,10 @@ if ( isObject( moveMap ) )
    moveMap.delete();
 new ActionMap(moveMap);
 
+if ( isObject( LobbyMap ) )
+   LobbyMap.delete();
+new ActionMap(LobbyMap);
+
 $screenShotMode = true;
 
 function screenShotMode()
@@ -544,7 +548,10 @@ function cycleDebugRenderMode(%val)
 
 function pauseOrEscape()
 {
-	if (isObject(EditorGui) && Canvas.getContent() == EditorGui.getId())
+	if (newMessageHud.isAwake())
+	{
+		Canvas.popDialog(newMessageHud);
+	} else if (isObject(EditorGui) && Canvas.getContent() == EditorGui.getId())
 	{
 		Editor.close("PlayGui");
 		Canvas.setContent(RootGui);
@@ -611,6 +618,10 @@ GlobalActionMap.bindCmd(keyboard, "ctrl 2", "", "setVideoMode(1280,720,32,0);");
 GlobalActionMap.bindCmd(keyboard, "ctrl 3", "", "setVideoMode(1024,768,32,0);");
 GlobalActionMap.bindCmd(keyboard, "ctrl 4", "", "setVideoMode(800,600,32,0);");
 GlobalActionMap.bindCmd(keyboard, "alt t", "", "reloadMaterials();");
+
+// LobbyMap:
+// keyboard
+LobbyMap.bind(keyboard, "t", GlobalChat);
 
 // MoveMap:
 // keyboard

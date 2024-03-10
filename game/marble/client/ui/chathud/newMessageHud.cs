@@ -8,6 +8,9 @@ function newMessageHud::onWake(%this)
 function newMessageHud::onSleep(%this)
 {
 	commandtoserver('stopTalking');
+
+	activateKeyboard();
+	NMH_Type.makeFirstResponder(false);
 }
 
 
