@@ -17,9 +17,12 @@ function loadMaterials()
    }
 
    // load custom material files
-   exec("./interiorMaterials.cs");
-   exec("./shapeMaterials.cs");
-   exec("./sizeMaterials.cs"); //Blue Sizing Materials
+   loadMaterialJson("./interiorMaterials.json");
+   loadMaterialJson("./shapeMaterials.json");
+   loadMaterialJson("./sizeMaterials.json");
+   //exec("./interiorMaterials.cs");
+   //exec("./shapeMaterials.cs");
+   //exec("./sizeMaterials.cs"); //Blue Sizing Materials
    exec("./marbleMat.cs");
 }
 

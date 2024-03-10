@@ -1,0 +1,576 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/MaterialJson",
+    "definitions": {
+        "MaterialJson": {
+            "type": "object",
+            "properties": {
+                "materials": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/Material"
+                            },
+                            {
+                                "$ref": "#/definitions/CustomMaterial"
+                            }
+                        ]
+                    }
+                },
+                "shaders": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/Shader"
+                    }
+                },
+                "cubemaps": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "required": [
+                "materials",
+                "shaders",
+                "cubemaps"
+            ],
+            "additionalProperties": false
+        },
+        "Material": {
+            "type": "object",
+            "properties": {
+                "translucent": {
+                    "type": "boolean"
+                },
+                "translucentBlendOp": {
+                    "$ref": "#/definitions/BlendOp"
+                },
+                "translucentZWrite": {
+                    "type": "boolean"
+                },
+                "alphaTest": {
+                    "type": "boolean"
+                },
+                "alphaRef": {
+                    "type": "integer"
+                },
+                "castsShadow": {
+                    "type": "boolean"
+                },
+                "breakable": {
+                    "type": "boolean"
+                },
+                "doubleSided": {
+                    "type": "boolean"
+                },
+                "attenuateBackFace": {
+                    "type": "boolean"
+                },
+                "preload": {
+                    "type": "boolean"
+                },
+                "renderBin": {
+                    "$ref": "#/definitions/RenderBin"
+                },
+                "cubemap": {
+                    "type": "string"
+                },
+                "dynamicCubemap": {
+                    "type": "boolean"
+                },
+                "planarReflection": {
+                    "type": "boolean"
+                },
+                "mapTo": {
+                    "type": "string"
+                },
+                "friction": {
+                    "type": "number"
+                },
+                "restitution": {
+                    "type": "number"
+                },
+                "force": {
+                    "type": "number"
+                },
+                "sound": {
+                    "type": "integer"
+                },
+                "softwareMipOffset": {
+                    "type": "number"
+                },
+                "noiseTexFileName": {
+                    "type": "string"
+                },
+                "diffuse": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "colorMultiply": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "specular": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "specularPower": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "pixelSpecular": {
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
+                "exposure": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "glow": {
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
+                "emissive": {
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
+                "scrollDir": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "scrollSpeed": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "rotSpeed": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "rotPivotOffset": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "animFlags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "waveType": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/WaveType"
+                    }
+                },
+                "waveFreq": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "waveAmp": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "sequenceFramePerSec": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "sequenceSegmentSize": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "baseTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "detailTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "bumpTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "envTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "texCompression": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Compression"
+                    }
+                },
+                "custom": {
+                    "type": "boolean",
+                    "const": false
+                }
+            },
+            "required": [
+                "mapTo",
+                "custom"
+            ],
+            "additionalProperties": false
+        },
+        "BlendOp": {
+            "type": "string",
+            "enum": [
+                "None",
+                "Mul",
+                "Add",
+                "AddAlpha",
+                "Sub",
+                "LerpAlpha"
+            ]
+        },
+        "RenderBin": {
+            "type": "string",
+            "enum": [
+                "Begin",
+                "Interior",
+                "InteriorDynamicLighting",
+                "Mesh",
+                "MarbleShadow",
+                "Marble",
+                "Sky",
+                "SkyShape",
+                "MiscObject",
+                "Shadow",
+                "Decal",
+                "Refraction",
+                "Water",
+                "TranslucentPreGlow",
+                "Glow",
+                "Foliage",
+                "Translucent"
+            ]
+        },
+        "WaveType": {
+            "type": "string",
+            "enum": [
+                "Sin",
+                "Triangle",
+                "Square"
+            ]
+        },
+        "Compression": {
+            "type": "string",
+            "enum": [
+                "None",
+                "DXT1",
+                "DXT2",
+                "DXT3",
+                "DXT4",
+                "DXT5"
+            ]
+        },
+        "CustomMaterial": {
+            "type": "object",
+            "properties": {
+                "translucent": {
+                    "type": "boolean"
+                },
+                "translucentBlendOp": {
+                    "$ref": "#/definitions/BlendOp"
+                },
+                "translucentZWrite": {
+                    "type": "boolean"
+                },
+                "alphaTest": {
+                    "type": "boolean"
+                },
+                "alphaRef": {
+                    "type": "integer"
+                },
+                "castsShadow": {
+                    "type": "boolean"
+                },
+                "breakable": {
+                    "type": "boolean"
+                },
+                "doubleSided": {
+                    "type": "boolean"
+                },
+                "attenuateBackFace": {
+                    "type": "boolean"
+                },
+                "preload": {
+                    "type": "boolean"
+                },
+                "renderBin": {
+                    "$ref": "#/definitions/RenderBin"
+                },
+                "cubemap": {
+                    "type": "string"
+                },
+                "dynamicCubemap": {
+                    "type": "boolean"
+                },
+                "planarReflection": {
+                    "type": "boolean"
+                },
+                "mapTo": {
+                    "type": "string"
+                },
+                "friction": {
+                    "type": "number"
+                },
+                "restitution": {
+                    "type": "number"
+                },
+                "force": {
+                    "type": "number"
+                },
+                "sound": {
+                    "type": "integer"
+                },
+                "softwareMipOffset": {
+                    "type": "number"
+                },
+                "noiseTexFileName": {
+                    "type": "string"
+                },
+                "diffuse": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "colorMultiply": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "specular": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "specularPower": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "pixelSpecular": {
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
+                "exposure": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "glow": {
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
+                "emissive": {
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
+                "scrollDir": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "scrollSpeed": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "rotSpeed": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "rotPivotOffset": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "animFlags": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "waveType": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/WaveType"
+                    }
+                },
+                "waveFreq": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "waveAmp": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "sequenceFramePerSec": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "sequenceSegmentSize": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "baseTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "detailTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "bumpTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "envTex": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "texCompression": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Compression"
+                    }
+                },
+                "custom": {
+                    "type": "boolean",
+                    "const": true
+                },
+                "texture": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pass": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "version": {
+                    "type": "number"
+                },
+                "blendOp": {
+                    "$ref": "#/definitions/BlendOp"
+                },
+                "refract": {
+                    "type": "boolean"
+                },
+                "shader": {
+                    "type": "string"
+                },
+                "fallback": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "mapTo",
+                "custom"
+            ],
+            "additionalProperties": false
+        },
+        "Shader": {
+            "type": "object",
+            "properties": {
+                "pixVersion": {
+                    "type": "number"
+                },
+                "pixelShader": {
+                    "type": "string"
+                },
+                "vertexShader": {
+                    "type": "string"
+                },
+                "useDevicePixVersion": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "pixelShader",
+                "vertexShader"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

@@ -1,0 +1,71 @@
+{
+    "$schema": "./materials.schema.json",
+    "materials": {
+        "Material_sizer_1024": {
+            "baseTex": ["marble/data/textures/sizer_1024"],
+            "custom": false,
+            "mapTo": "sizer_1024",
+            "pixelSpecular": [true],
+            "specularPower": [12]
+        },
+        "Material_sizer_128": {
+            "baseTex": ["marble/data/textures/edge_white"],
+            "bumpTex": ["marble/data/textures/edge.normal"],
+            "custom": false,
+            "friction": 2,
+            "mapTo": "sizer_128",
+            "pixelSpecular": [true],
+            "specularPower": [12]
+        },
+        "Material_sizer_256": {
+            "custom": 1,
+            "mapTo": "sizer_256",
+            "pixelSpecular": [true],
+            "shader": "NoiseTile",
+            "specularPower": [12],
+            "texture": ["marble/data/textures/sizer_256", "marble/data/textures/sizer_512.bump", "marble/data/textures/noise"],
+            "version": 2
+        },
+        "Material_sizer_32": {
+            "baseTex": ["marble/data/textures/sizer_32"],
+            "custom": false,
+            "mapTo": "sizer_32",
+            "pixelSpecular": [true],
+            "specularPower": [12]
+        },
+        "Material_sizer_64": {
+            "baseTex": ["marble/data/textures/sizer_64"],
+            "custom": false,
+            "mapTo": "sizer_64",
+            "pixelSpecular": [true],
+            "specularPower": [12]
+        },
+        "Material_sizer_circle": {
+            "baseTex": ["marble/data/textures/sizer_circle"],
+            "custom": false,
+            "mapTo": "sizer_circle",
+            "pixelSpecular": [true],
+            "specularPower": [12]
+        },
+        "reflect": {
+            "custom": true,
+            "mapTo": "reflect",
+            "shader": "ReflectTile",
+            "specularPower": [12],
+            "texture": ["marble/data/textures/reflect"],
+            "version": 2
+        },
+        "sizeMaterial": {
+            "custom": false,
+            "pixelSpecular": [true],
+            "specularPower": [12]
+        }
+    },
+    "shaders": {
+        "ReflectTile": {
+            "pixVersion": 2,
+            "pixelShader": "shaders/planarReflectP.hlsl",
+            "vertexShader": "shaders/planarReflectV.hlsl"
+        }
+    }
+}

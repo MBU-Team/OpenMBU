@@ -54,7 +54,6 @@ public:
 
 protected:
     U32            mMaxTex;
-    const char* mShaderDataName;
     S32            mCurPass;
     S32            mCullMode;
     U32            mFlags[MAX_TEX_PER_PASS];
@@ -73,6 +72,7 @@ public:
 
     static void initPersistFields();
     static void updateTime();
+    const char* mShaderDataName;
     ShaderData* mShaderData;
 
     DECLARE_CONOBJECT(CustomMaterial);

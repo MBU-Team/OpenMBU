@@ -1,0 +1,391 @@
+{
+    "$schema": "./materials.schema.json",
+    "materials": {
+        "CementMaterial": {
+            "custom": false,
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "DefaultMaterial": {
+            "custom": false,
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Material_Edge_White": {
+            "baseTex": ["marble/data/textures/edge_white"],
+            "bumpTex": ["marble/data/textures/edge.normal"],
+            "custom": false,
+            "mapTo": "edge_white",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.8 1"],
+            "specularPower": [50]
+        },
+        "Material_Edge_White_shadow": {
+            "baseTex": ["marble/data/textures/edge_white_shadow"],
+            "bumpTex": ["marble/data/textures/edge.normal"],
+            "custom": false,
+            "mapTo": "edge_white_shadow",
+            "pixelSpecular": [true],
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [50]
+        },
+        "Material_HighFriction": {
+            "baseTex": ["marble/data/textures/friction_high"],
+            "bumpTex": ["marble/data/textures/friction_high.normal"],
+            "custom": false,
+            "friction": 4.5,
+            "mapTo": "friction_high",
+            "pixelSpecular": [true],
+            "restitution": 0.5,
+            "specular": ["0.3 0.3 0.35 1"],
+            "specularPower": [10]
+        },
+        "Material_HighFriction_Shadow": {
+            "baseTex": ["marble/data/textures/friction_high_shadow"],
+            "bumpTex": ["marble/data/textures/friction_high.normal"],
+            "custom": false,
+            "friction": 4.5,
+            "mapTo": "friction_high_shadow",
+            "pixelSpecular": [true],
+            "restitution": 0.5,
+            "specular": ["0.15 0.15 0.16 1"],
+            "specularPower": [10]
+        },
+        "Material_LowFriction": {
+            "baseTex": ["marble/data/textures/friction_low"],
+            "bumpTex": ["marble/data/textures/friction_low.normal"],
+            "cubemap": "iceCubemap",
+            "custom": false,
+            "friction": 0.20000000298023224,
+            "mapTo": "friction_low",
+            "pixelSpecular": [true],
+            "specular": ["1 1 1 0.8"],
+            "specularPower": [128]
+        },
+        "Material_LowFriction_Shadow": {
+            "baseTex": ["marble/data/textures/friction_low_shadow"],
+            "bumpTex": ["marble/data/textures/friction_low.normal"],
+            "cubemap": "iceCubemap",
+            "custom": false,
+            "friction": 0.20000000298023224,
+            "mapTo": "friction_low_shadow",
+            "pixelSpecular": [true],
+            "specular": ["0.3 0.3 0.35 1"],
+            "specularPower": [128]
+        },
+        "Material_Plate": {
+            "baseTex": ["marble/data/textures/plate.randomize"],
+            "custom": true,
+            "mapTo": "plate_1",
+            "shader": "HalfTile",
+            "specular": ["1 1 0.8 1"],
+            "texture": ["marble/data/textures/plate.randomize", "marble/data/textures/plate.normal"],
+            "version": 2
+        },
+        "Material_Plate_Small": {
+            "baseTex": ["marble/data/textures/standard/plate.randomize"],
+            "custom": true,
+            "mapTo": "plate_1_small",
+            "shader": "HalfTileSmall",
+            "specular": ["1 1 0.8 1"],
+            "texture": ["marble/data/textures/standard/plate.randomize", "marble/data/textures/standard/plate.normal"],
+            "version": 2
+        },
+        "Material_Tile_Advanced": {
+            "baseTex": ["marble/data/textures/tile_advanced"],
+            "custom": true,
+            "mapTo": "tile_advanced",
+            "noiseTexFileName": "marble/data/textures/noise",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_advanced", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise"],
+            "version": 2
+        },
+        "Material_Tile_Advanced_Blue": {
+            "baseTex": ["marble/data/textures/tile_advanced"],
+            "custom": true,
+            "mapTo": "tile_advanced_blue",
+            "noiseTexFileName": "marble/data/textures/noise_blue",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_advanced", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_blue"],
+            "version": 2
+        },
+        "Material_Tile_Advanced_Blue_shadow": {
+            "baseTex": ["marble/data/textures/tile_advanced"],
+            "custom": true,
+            "mapTo": "tile_advanced_blue_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_blue_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_advanced", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_blue_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Advanced_Green": {
+            "baseTex": ["marble/data/textures/tile_advanced"],
+            "custom": true,
+            "mapTo": "tile_advanced_green",
+            "noiseTexFileName": "marble/data/textures/noise_green",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_advanced", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_green"],
+            "version": 2
+        },
+        "Material_Tile_Advanced_Green_shadow": {
+            "baseTex": ["marble/data/textures/tile_advanced"],
+            "custom": true,
+            "mapTo": "tile_advanced_green_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_green_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_advanced", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_green_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Advanced_shadow": {
+            "baseTex": ["marble/data/textures/tile_advanced"],
+            "custom": true,
+            "mapTo": "tile_advanced_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_advanced", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Beginner": {
+            "baseTex": ["marble/data/textures/tile_beginner"],
+            "custom": true,
+            "mapTo": "tile_beginner",
+            "noiseTexFileName": "marble/data/textures/noise",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_beginner", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise"],
+            "version": 2
+        },
+        "Material_Tile_Beginner_Blue": {
+            "baseTex": ["marble/data/textures/tile_beginner"],
+            "custom": true,
+            "mapTo": "tile_beginner_blue",
+            "noiseTexFileName": "marble/data/textures/noise_blue",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_beginner", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_blue"],
+            "version": 2
+        },
+        "Material_Tile_Beginner_Blue_shadow": {
+            "baseTex": ["marble/data/textures/tile_beginner"],
+            "custom": true,
+            "mapTo": "tile_beginner_blue_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_blue_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_beginner", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_blue_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Beginner_Red": {
+            "baseTex": ["marble/data/textures/tile_beginner"],
+            "custom": true,
+            "mapTo": "tile_beginner_red",
+            "noiseTexFileName": "marble/data/textures/noise_red",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_beginner", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_red"],
+            "version": 2
+        },
+        "Material_Tile_Beginner_Red_shadow": {
+            "baseTex": ["marble/data/textures/tile_beginner"],
+            "custom": true,
+            "mapTo": "tile_beginner_red_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_red_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_beginner", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_red_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Beginner_shadow": {
+            "baseTex": ["marble/data/textures/tile_beginner"],
+            "custom": true,
+            "mapTo": "tile_beginner_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_beginner", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Intermediate": {
+            "baseTex": ["marble/data/textures/tile_intermediate"],
+            "custom": true,
+            "mapTo": "tile_intermediate",
+            "noiseTexFileName": "marble/data/textures/noise",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_intermediate", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise"],
+            "version": 2
+        },
+        "Material_Tile_Intermediate_green": {
+            "baseTex": ["marble/data/textures/tile_intermediate"],
+            "custom": true,
+            "mapTo": "tile_intermediate_green",
+            "noiseTexFileName": "marble/data/textures/noise_green",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_intermediate", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_green"],
+            "version": 2
+        },
+        "Material_Tile_Intermediate_green_shadow": {
+            "baseTex": ["marble/data/textures/tile_intermediate"],
+            "custom": true,
+            "mapTo": "tile_intermediate_green_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_green_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_intermediate", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_green_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Intermediate_red": {
+            "baseTex": ["marble/data/textures/tile_intermediate"],
+            "custom": true,
+            "mapTo": "tile_intermediate_red",
+            "noiseTexFileName": "marble/data/textures/noise_red",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_intermediate", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_red"],
+            "version": 2
+        },
+        "Material_Tile_Intermediate_red_shadow": {
+            "baseTex": ["marble/data/textures/tile_intermediate"],
+            "custom": true,
+            "mapTo": "tile_intermediate_red_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_red_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_intermediate", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_red_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Intermediate_shadow": {
+            "baseTex": ["marble/data/textures/tile_intermediate"],
+            "custom": true,
+            "mapTo": "tile_intermediate_shadow",
+            "noiseTexFileName": "marble/data/textures/noise_shadow",
+            "shader": "NoiseTile",
+            "specular": ["0.2 0.2 0.2 0.2"],
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_intermediate", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise_shadow"],
+            "version": 2
+        },
+        "Material_Tile_Underside": {
+            "baseTex": ["marble/data/textures/tile_underside"],
+            "custom": true,
+            "mapTo": "tile_underside",
+            "noiseTexFileName": "marble/data/textures/noise",
+            "shader": "NoiseTile",
+            "specularPower": [40],
+            "texture": ["marble/data/textures/tile_underside", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise"],
+            "version": 2
+        },
+        "Material_Wall_Beginner": {
+            "baseTex": ["marble/data/textures/wall_beginner"],
+            "custom": false,
+            "mapTo": "wall_beginner",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Material_beam": {
+            "baseTex": ["marble/data/textures/beam"],
+            "bumpTex": ["marble/data/textures/beam.normal"],
+            "custom": false,
+            "mapTo": "beam",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Material_BeamSide": {
+            "baseTex": ["marble/data/textures/beam_side"],
+            "bumpTex": ["marble/data/textures/beam_side.normal"],
+            "custom": false,
+            "mapTo": "beam_side",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Material_stripe_caution": {
+            "baseTex": ["marble/data/textures/stripe_caution"],
+            "custom": false,
+            "mapTo": "stripe_caution",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Tube_Advanced": {
+            "baseTex": ["marble/data/textures/tube_advanced"],
+            "custom": false,
+            "mapTo": "tube_warm",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Tube_beginner": {
+            "baseTex": ["marble/data/textures/tube_beginner"],
+            "custom": false,
+            "mapTo": "tube_neutral",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Tube_intermediate": {
+            "baseTex": ["marble/data/textures/tube_intermediate"],
+            "custom": false,
+            "mapTo": "tube_cool",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "tile_intermediate": {
+            "custom": true,
+            "mapTo": "sizer_512",
+            "pixelSpecular": [true],
+            "shader": "NoiseTile",
+            "specular": ["0.75 0.8 0.8 1"],
+            "specularPower": [12],
+            "texture": ["marble/data/textures/tile_intermediate", "marble/data/textures/tile_intermediate.normal", "marble/data/textures/noise"],
+            "version": 2
+        }
+    },
+    "shaders": {
+        "HalfTile": {
+            "pixVersion": 2,
+            "pixelShader": "shaders/halfTileP.hlsl",
+            "vertexShader": "shaders/halfTileV.hlsl"
+        },
+        "HalfTileSmall": {
+            "pixVersion": 2,
+            "pixelShader": "shaders/halfTileSmallP.hlsl",
+            "vertexShader": "shaders/halfTileSmallV.hlsl"
+        },
+        "NoiseTile": {
+            "pixVersion": 2,
+            "pixelShader": "shaders/noiseTileP.hlsl",
+            "vertexShader": "shaders/noiseTileV.hlsl"
+        }
+    },
+    "cubemaps": {
+        "iceCubemap": [
+            "~/data/textures/acubexpos2",
+            "~/data/textures/acubexneg2",
+            "~/data/textures/acubezneg2",
+            "~/data/textures/acubezpos2",
+            "~/data/textures/acubeypos2",
+            "~/data/textures/acubeyneg2"
+        ]
+    }
+}

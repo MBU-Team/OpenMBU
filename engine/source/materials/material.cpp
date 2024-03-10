@@ -11,6 +11,8 @@
 #include "gfx/cubemapData.h"
 #include "math/mathIO.h"
 #include "materialPropertyMap.h"
+#include "customMaterial.h"
+#include <json/json.h>
 #include <sceneGraph/sceneGraph.h>
 
 //--------------------------------------------------------------------------
@@ -103,6 +105,8 @@ Material::Material()
         diffuse[i].set(1.0, 1.0, 1.0, 1.0);
         specular[i].set(1.0, 1.0, 1.0, 1.0);
         colorMultiply[i].set(0.0f, 0.0f, 0.0f, 0.0f);
+        scrollSpeed[i] = 0.0;
+        scrollDir[i].set(0.0f, 0.0f);
         specularPower[i] = 8;
         pixelSpecular[i] = false;
         vertexSpecular[i] = false;
@@ -437,4 +441,210 @@ LightInfo* Material::getDebugLight()
     smDebugLight.sgTempModelInfo[0] = 0.0f;
 
     return &smDebugLight;
+}
+
+bool loadMaterialsFromJson(const char* path)
+{
+    
+    Stream* fs = ResourceManager->openStream(path);
+    if (fs == NULL) return false;
+
+    char* jsonBuf = new char[fs->getStreamSize() + 1];
+
+    if (!fs->read(fs->getStreamSize(), jsonBuf))
+    {
+        delete[] jsonBuf;
+        return false;
+    }
+    jsonBuf[fs->getStreamSize()] = '\0';
+
+    Json::Value root;
+    Json::CharReaderBuilder builder;
+    Json::CharReader* reader = builder.newCharReader();
+
+    std::string errs;
+    if (!reader->parse(jsonBuf, jsonBuf + fs->getStreamSize(), &root, &errs)) 
+    {
+        delete reader;
+        delete[] jsonBuf;
+        Con::errorf("JSON Parse error: %s", errs.c_str());
+        return false;
+    }
+    else 
+    {
+        delete reader;
+        delete[] jsonBuf;
+
+        Json::Value materialDict = root["materials"];
+        Json::Value shaderDict = root["shaders"];
+        Json::Value cubemapDict = root["cubemaps"];
+
+        // Do shaders first
+        if (!shaderDict.isNull())
+        {
+            for (Json::ValueIterator it = shaderDict.begin(); it != shaderDict.end(); it++) {
+                Json::Value key = it.key();
+                Json::Value val = *it;
+
+                ShaderData* shader = new ShaderData();
+                shader->assignName(key.asCString());
+                shader->pixVersion = val.get("pixVersion", 1.0).asFloat();
+                shader->DXPixelShaderName = StringTable->insert(val.get("pixelShader", "").asCString(), true);
+                shader->DXVertexShaderName = StringTable->insert(val.get("vertexShader", "").asCString(), true);
+                shader->useDevicePixVersion = val.get("useDevicePixVersion", false).asBool();
+                shader->registerObject(); // Finally create the shader
+            }
+        }
+
+        // then cubemaps
+        if (!cubemapDict.isNull())
+        {
+            for (Json::ValueIterator it = cubemapDict.begin(); it != cubemapDict.end(); it++) {
+                Json::Value key = it.key();
+                Json::Value val = *it;
+
+                CubemapData* cubeMap = new CubemapData();
+                cubeMap->assignName(key.asCString());
+                for (int i = 0; i < 6; i++)
+                {
+                    cubeMap->cubeFaceFile[i] = StringTable->insert(val[i].asCString());
+                }
+                cubeMap->registerObject();
+            }
+        }
+
+        // Now do the materials
+        if (!materialDict.isNull())
+        {
+            for (Json::ValueIterator it = materialDict.begin(); it != materialDict.end(); it++) {
+                Json::Value key = it.key();
+                Json::Value val = *it;
+
+                bool isCustom = val.get("custom", false).asBool();
+
+                Material* mat = isCustom ? new CustomMaterial() : new Material();
+                mat->assignName(key.asCString());
+                mat->setModStaticFields(true);
+
+                // Non array members
+                mat->translucent = val.get("translucent", false).asBool();
+                std::string tbo = val.get("translucentBlendOp", "LerpAlpha").asString();
+                for (int i = 0; i < 6; i++)
+                {
+                    if (tbo == gBlendOpEnums[i].label)
+                    {
+                        mat->translucentBlendOp = (Material::BlendOp)gBlendOpEnums[i].index;
+                        break;
+                    }
+                }
+                mat->translucentZWrite = val.get("translucentZWrite", false).asBool();
+                mat->alphaTest = val.get("alphaTest", true).asBool();
+                mat->alphaRef = val.get("alphaRef", 1).asFloat();
+                mat->castsShadow = val.get("castsShadow", true).asBool();
+                mat->breakable = val.get("breakable", false).asBool();
+                mat->doubleSided = val.get("doubleSided", false).asBool();
+                mat->attenuateBackFace = val.get("attenuateBackFace", false).asBool();
+                mat->preload = val.get("preload", false).asBool();
+                std::string renderbin = val.get("renderBin", "Begin").asString();
+                for (int i = 0; i < 17; i++)
+                {
+                    if (renderbin == gRenderBinEnums[i].label)
+                    {
+                        mat->renderBin = (RenderInstManager::RenderBinTypes)gRenderBinEnums[i].index;
+                        break;
+                    }
+                }
+                mat->cubemapName = val["cubemap"].isString() ? StringTable->insert(val["cubemap"].asCString(), false) : NULL;
+                mat->dynamicCubemap = val.get("dynamicCubemap", false).asBool();
+                mat->planarReflection = val.get("planarReflection", false).asBool();
+                mat->mapTo = val["mapTo"].isString() ? StringTable->insert(val["mapTo"].asCString(), false) : NULL;
+                mat->friction = val.get("friction", 1.0).asFloat();
+                mat->restitution = val.get("restitution", 1.0).asFloat();
+                mat->force = val.get("force", 0.0).asFloat();
+                mat->sound = val.get("sound", -1).asInt();
+                mat->softwareMipOffset = val.get("softwareMipOffset", 0.0).asFloat();
+                mat->noiseTexFileName = val["noiseTexFileName"].isString() ? StringTable->insert(val["noiseTexFileName"].asCString(), false) : NULL;
+
+                // Array members
+
+#define READ_ARRAYED_FIELD(fname) \
+{ \
+    Json::Value aval = val[fname]; \
+    if (aval.isArray()) \
+    { \
+        for (int i = 0; i < aval.size(); i++) \
+        { \
+            Json::Value elem = aval[i]; \
+            if (!elem.isNull()) { \
+                char* retBuf = Con::getReturnBuffer(1024); \
+                dSprintf(retBuf, 1024, "%d", i); \
+                mat->setDataField(fname ##_ts, StringTable->insert(retBuf, false), elem.asString().c_str()); \
+            } \
+        } \
+    } \
+}
+                READ_ARRAYED_FIELD("diffuse");
+                READ_ARRAYED_FIELD("colorMultiply");
+                READ_ARRAYED_FIELD("specular");
+                READ_ARRAYED_FIELD("specularPower");
+                READ_ARRAYED_FIELD("pixelSpecular");
+                READ_ARRAYED_FIELD("exposure");
+                READ_ARRAYED_FIELD("glow");
+                READ_ARRAYED_FIELD("emissive");
+                READ_ARRAYED_FIELD("scrollSpeed");
+                READ_ARRAYED_FIELD("scrollDir");
+                READ_ARRAYED_FIELD("rotSpeed");
+                READ_ARRAYED_FIELD("rotPivotOffset");
+                READ_ARRAYED_FIELD("animFlags");
+                READ_ARRAYED_FIELD("waveType");
+                READ_ARRAYED_FIELD("waveFreq");
+                READ_ARRAYED_FIELD("waveAmp");
+                READ_ARRAYED_FIELD("sequenceFramePerSec");
+                READ_ARRAYED_FIELD("sequenceSegmentSize");
+                READ_ARRAYED_FIELD("baseTex");
+                READ_ARRAYED_FIELD("detailTex");
+                READ_ARRAYED_FIELD("bumpTex");
+                READ_ARRAYED_FIELD("envTex");
+                READ_ARRAYED_FIELD("texCompression");
+
+                // Custom non array members
+                if (isCustom)
+                {
+                    CustomMaterial* cmat = dynamic_cast<CustomMaterial*>(mat);
+                    cmat->mVersion = val.get("version", 1.1).asFloat();
+                    std::string bo = val.get("blendOp", "Add").asString();
+                    for (int i = 0; i < 6; i++)
+                    {
+                        if (tbo == gBlendOpEnums[i].label)
+                        {
+                            cmat->blendOp = (Material::BlendOp)gBlendOpEnums[i].index;
+                            break;
+                        }
+                    }
+                    cmat->refract = val.get("refract", false).asBool();
+                    cmat->mShaderDataName = val["shader"].isString() ? StringTable->insert(val["shader"].asCString(), false) : NULL;
+                    const char* fallbackName = val["fallback"].isString() ? val["fallback"].asCString() : NULL;
+                    if (fallbackName != NULL)
+                        cmat->fallback = dynamic_cast<Material*>(Sim::findObject(fallbackName));
+
+                    // Custom array members
+                    READ_ARRAYED_FIELD("texture");
+                    READ_ARRAYED_FIELD("pass");
+                }
+
+                // Create the object
+                mat->setModStaticFields(false);
+                mat->registerObject();
+            }
+
+            return true;
+        }
+    }   
+}
+
+ConsoleFunction(loadMaterialJson, bool, 2, 2, "loadMaterialJson(jsonFile)")
+{
+    char path[1024];
+    Con::expandScriptFilename(path, 1024, argv[1]);
+    return loadMaterialsFromJson(path);
 }
