@@ -24,7 +24,7 @@ StringTableEntry Platform::getUserName(int charLimit)
         charLimit = 1023;
     szBuffer[charLimit] = '\0';
 
-    return StringTable->insert(szBuffer);
+    return StringTable->insert(szBuffer, true);
 }
 
 

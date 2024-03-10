@@ -119,6 +119,10 @@ DiscordGame::DiscordGame()
     mLargeImageKey = nullptr;
 	mJoinSecret = nullptr;
 	mPartyId = nullptr;
+    mStartTime = 0;
+    mStopTime = 0;
+    mMaxPlayers = 0;
+    mPlayerCount = 0;
 
     DiscordEventHandlers handlers;
     memset(&handlers, 0, sizeof(handlers));

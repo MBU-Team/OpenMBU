@@ -44,7 +44,8 @@ function GameConnection::prepDemoPlayback(%this)
 
 function clientCmdSetPartyId(%partyId)
 {
-    XBLiveSetPartyId(%partyId);
+    if (!$Server::Hosting)
+        XBLiveSetPartyId(%partyId);
 }
 
 //----------------------------------------------------------------------------
