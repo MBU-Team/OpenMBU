@@ -380,12 +380,12 @@
     },
     "cubemaps": {
         "iceCubemap": [
-            "~/data/textures/acubexpos2",
-            "~/data/textures/acubexneg2",
-            "~/data/textures/acubezneg2",
-            "~/data/textures/acubezpos2",
-            "~/data/textures/acubeypos2",
-            "~/data/textures/acubeyneg2"
+            "marble/data/textures/acubexpos2",
+            "marble/data/textures/acubexneg2",
+            "marble/data/textures/acubezneg2",
+            "marble/data/textures/acubezpos2",
+            "marble/data/textures/acubeypos2",
+            "marble/data/textures/acubeyneg2"
         ]
     }
 }
