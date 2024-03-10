@@ -78,6 +78,12 @@ function PlayGui::onWake(%this)
    %this.setPowerUp( "" );
    %this.setBlastBar();
    
+   if (newMessageHud.isAwake())
+   {
+      schedule(10, 0, deactivateKeyboard);
+      NMH_Type.schedule(10, makeFirstResponder, true);
+   }
+
    // hack town - pause if system UI is active
    if ($Client::SystemUIActive && !GamePauseGui.isAwake() && !$GameEndNoAllowPause)
    {

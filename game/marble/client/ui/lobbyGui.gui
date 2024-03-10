@@ -179,11 +179,27 @@ function LobbyGui::show(%this)
    %this.checkDemoTime();
 }
 
+function LobbyGui::onWake( %this )
+{
+   LobbyMap.push();
+   
+   newChatHud.resize(
+      0,
+      0,
+      getWord(RootGui.extent, 0),
+      getWord(RootGui.extent, 1)
+   );
+   RootGui.add(newChatHud);
+   RootGui.pushToBack(RootCenterCtrl);
+}
+
 function LobbyGui::onSleep( %this )
 {
    // To fix it so if you have this up when game starts it will be an overlay
    // on the play GUI -pw
    LobbyPopupDlg.hide();
+   LobbyMap.pop();
+   RootGui.remove(newChatHud);
 }
 
 // set the correct game state if we are out of demo time.  return true if we
