@@ -36,4 +36,6 @@ addInclude(${libDir}/collada/include/1.4)
 addInclude(${libDir}/pcre)
 addInclude(${libDir}/tinyxml)
 
+addLinkLib(tinyxml)
+
 finishLibrary()
