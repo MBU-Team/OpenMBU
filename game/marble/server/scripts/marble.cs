@@ -476,10 +476,15 @@ datablock MarbleData(MarbleThirtyFive : DefaultMarble)
    shapeFile = "~/data/shapes/balls/marble35.dts";
 };
 
+datablock MarbleData(MarbleThirtySix : DefaultMarble)
+{
+   shapeFile = "~/data/shapes/balls/marble36.dts";
+};
 
-
-
-
+datablock MarbleData(MarbleThirtySeven : DefaultMarble)
+{
+   shapeFile = "~/data/shapes/balls/marble37.dts";
+};
 
 //-----------------------------------------------------------------------------
 
