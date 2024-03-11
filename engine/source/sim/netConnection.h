@@ -1020,6 +1020,7 @@ public:
     void sendFastFileAcknowledgement(BitStream* stream);
     void handleFastFileAcknowledgement(BitStream* stream);
     void processFastFileAcknowledgement();
+    void addMissingFile(const char* path);
 
 #endif // TORQUE_NET_HOLEPUNCHING
 

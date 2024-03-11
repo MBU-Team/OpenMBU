@@ -1029,10 +1029,11 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
             setLastError("Couldn't open file downloaded by server.");
             return;
         }
-        dFree(mMissingFileList[0]);
-        mMissingFileList.pop_front();
         stream->write(mCurrentFileBufferSize, mCurrentFileBuffer);
         delete stream;
+        Con::executef(2, "onFileDownloaded", mMissingFileList[0]);
+        dFree(mMissingFileList[0]);
+        mMissingFileList.pop_front();
         mNumDownloadedFiles++;
         dFree(mCurrentFileBuffer);
         mCurrentFileBuffer = NULL;
@@ -1044,3 +1045,19 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
     }
 }
 
+void NetConnection::addMissingFile(const char* path)
+{
+    int slen = dStrlen(path);
+    char* buf = new char[slen + 1];
+    dStrcpy(buf, path);
+    buf[slen] = '\0';
+    mMissingFileList.push_back(buf);
+}
+
+ConsoleMethod(NetConnection, requestFileDownload, bool, 3, 3, "(path)")
+{
+    Vector<char*> filePath;
+    filePath.push_back(const_cast<char*>(argv[2]));
+    object->addMissingFile(argv[2]);
+    return object->postNetEvent(new FileDownloadRequestEvent(&filePath));
+}

@@ -320,6 +320,38 @@ void Material::updateTime()
     }
 }
 
+bool Material::preloadTextures()
+{
+    bool found = true;
+    for (int i = 0; i < MAX_STAGES; i++)
+    {
+        found = found && (!baseTexFilename[i] || didFindTexture(baseTexFilename[i]));
+        found =  found && (!detailFilename[i] || didFindTexture(detailFilename[i]));
+        found =  found && (!bumpFilename[i] || didFindTexture(bumpFilename[i]));
+        found =  found && (!envFilename[i] || didFindTexture(envFilename[i]));
+    }
+    found = found && (!noiseTexFileName || didFindTexture(noiseTexFileName));
+    if (mCubemapData != NULL && !dynamicCubemap)
+    {
+        for (int i = 0; i < 6; i++)
+            found = found && (!mCubemapData->cubeFaceFile[i] || didFindTexture(mCubemapData->cubeFaceFile[i]));
+    }
+    return found;
+}
+
+bool Material::didFindTexture(const char* filename)
+{
+    ResourceObject* ro = GBitmap::findBmpResource(filename);
+    if (ro)
+    {
+        return true;
+    }
+
+    // Find and load the texture.
+    GBitmap* bmp = GBitmap::load(filename);
+    return bmp != NULL;
+}
+
 void Material::updateTimeBasedParams()
 {
     if (mLastUpdateTime != mLastTime)
@@ -474,7 +506,7 @@ bool loadMaterialsFromJson(const char* path)
     {
         delete reader;
         delete[] jsonBuf;
-
+        
         Json::Value materialDict = root["materials"];
         Json::Value shaderDict = root["shaders"];
         Json::Value cubemapDict = root["cubemaps"];
@@ -485,6 +517,9 @@ bool loadMaterialsFromJson(const char* path)
             for (Json::ValueIterator it = shaderDict.begin(); it != shaderDict.end(); it++) {
                 Json::Value key = it.key();
                 Json::Value val = *it;
+
+                if (Sim::findObject(key.asCString()) != NULL)
+                    continue; // Don't add
 
                 ShaderData* shader = new ShaderData();
                 shader->assignName(key.asCString());
@@ -503,6 +538,9 @@ bool loadMaterialsFromJson(const char* path)
                 Json::Value key = it.key();
                 Json::Value val = *it;
 
+                if (Sim::findObject(key.asCString()) != NULL)
+                    continue; // Don't add
+
                 CubemapData* cubeMap = new CubemapData();
                 cubeMap->assignName(key.asCString());
                 for (int i = 0; i < 6; i++)
@@ -519,6 +557,9 @@ bool loadMaterialsFromJson(const char* path)
             for (Json::ValueIterator it = materialDict.begin(); it != materialDict.end(); it++) {
                 Json::Value key = it.key();
                 Json::Value val = *it;
+
+                if (Sim::findObject(key.asCString()) != NULL)
+                    continue; // Don't add
 
                 bool isCustom = val.get("custom", false).asBool();
 
