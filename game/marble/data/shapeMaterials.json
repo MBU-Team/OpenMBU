@@ -471,14 +471,6 @@
             "mapTo": "mistyglow",
             "translucent": true
         },
-        "Material_mistyglow_ff": {
-            "baseTex": ["marble/data/shapes/pads/mistyglow"],
-            "custom": false,
-            "mapTo": "mistyglow",
-            "texCompression": ["DXT5"],
-            "translucent": true,
-            "translucentBlendOp": "AddAlpha"
-        },
         "Material_refract": {
             "baseTex": ["marble/data/shapes/images/blast_glow"],
             "custom": false,
