@@ -466,7 +466,7 @@
         "Material_mistyglow_ff": {
             "baseTex": ["marble/data/shapes/pads/mistyglow"],
             "custom": 0,
-            "mapTo": "mistyglow",
+            "mapTo": "mistyglow2",
             "texCompression": ["DXT5"],
             "translucent": 1,
             "translucentBlendOp": "AddAlpha"
