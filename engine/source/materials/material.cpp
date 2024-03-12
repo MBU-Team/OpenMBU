@@ -481,21 +481,24 @@ bool loadMaterialsFromJson(const char* path)
     Stream* fs = ResourceManager->openStream(path);
     if (fs == NULL) return false;
 
-    char* jsonBuf = new char[fs->getStreamSize() + 1];
+    U32 size = fs->getStreamSize();
 
-    if (!fs->read(fs->getStreamSize(), jsonBuf))
+    char* jsonBuf = new char[size + 1];
+
+    if (!fs->read(size, jsonBuf))
     {
         delete[] jsonBuf;
         return false;
     }
-    jsonBuf[fs->getStreamSize()] = '\0';
+    jsonBuf[size] = '\0';
+    ResourceManager->closeStream(fs);
 
     Json::Value root;
     Json::CharReaderBuilder builder;
     Json::CharReader* reader = builder.newCharReader();
 
     std::string errs;
-    if (!reader->parse(jsonBuf, jsonBuf + fs->getStreamSize(), &root, &errs)) 
+    if (!reader->parse(jsonBuf, jsonBuf + size, &root, &errs)) 
     {
         delete reader;
         delete[] jsonBuf;

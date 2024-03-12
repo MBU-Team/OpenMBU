@@ -233,8 +233,11 @@ bool ResizableMemStream::_write(const U32 in_numBytes, const void* in_pBuffer)
     if (!expandToSize(m_currentPosition + in_numBytes))
         return false;
 
+    U32 pastPos = m_currentPosition;
     Parent::_write(in_numBytes, in_pBuffer);
-    m_filledSize = m_currentPosition + in_numBytes;
+    if (pastPos <= m_filledSize && pastPos + in_numBytes >= m_filledSize)
+        m_filledSize = pastPos + in_numBytes;
+    AssertISV(m_filledSize < m_bufferSize, "Invalid buffer size");
 }
 
 
@@ -352,8 +355,10 @@ bool MemSubStream::setPosition(const U32 in_newPosition)
     bool result = m_pStream->setPosition(in_newPosition);
     m_pStream->setPosition(oldPos);
 
-    if (result)
+    if (result) {
         m_currOffset = in_newPosition;
+        setStatus(Ok);
+    }
     
     return result;
 }

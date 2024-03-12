@@ -6,6 +6,7 @@
 #include "shaderGen/shaderGenManager.h"
 #include "core/fileStream.h"
 #include "core/memstream.h"
+#include <core/resManager.h>
 
 Vector<TrackedAutoGenShader> ShaderGenManager::_mTrackedShaders;
 Stream* ShaderGenManager::_mOpenStream = NULL;
@@ -88,9 +89,7 @@ Stream* ShaderGenManager::readShaderStream(const char* fileName)
             }
             else
             {
-                FileStream* fs = new FileStream();
-                fs->open(fileName, FileStream::Read);
-                _mOpenReadStream = fs;
+                _mOpenReadStream = ResourceManager->openStream(fileName);
                 break;
             }
         }

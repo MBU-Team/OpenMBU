@@ -461,7 +461,7 @@ public:
     bool isValidWriteFileName(const char* fn);         ///< Checks to see if the given path is valid for writing.
 
     /// Opens a file for writing!
-    bool openFileForWrite(Stream*& fs, const char* fileName, U32 accessMode = 1);
+    bool openFileForWrite(Stream*& fs, const char* fileName, U32 accessMode = 1, bool forceMemory = false);
 
     void startResourceTraverse();
     ResourceObject* getNextResource();
