@@ -1084,6 +1084,7 @@ function GameConnection::enterWaitState(%this)
 
 function GameConnection::onClientLeaveGame(%this)
 {
+   %this.isReady = true;
    // Check to see if we need to set a new $timeKeeper
    if (%this == $timeKeeper && ClientGroup.getCount() > 1)
    {
@@ -1097,6 +1098,25 @@ function GameConnection::onClientLeaveGame(%this)
             break;
          }
       }
+   }
+
+   if ($Server::ServerType $= "MultiPlayer" && $Game::State $= "start") // We didnt start the game yet somebody left so check if we can start
+   {
+       %allReady = true;
+   
+       for (%i = 0; %i < ClientGroup.getCount(); %i++)
+       {
+           %client = ClientGroup.getObject(%i);
+           if (!%client.isReady) 
+           {
+               %allReady = false;
+               break;
+           }
+       }
+       if (%allReady) {
+           cancel($stateSchedule);
+           $stateSchedule = schedule(500, 0, "setGameState", "ready");
+       }
    }
 
    if (isObject(%this.camera) && %this.camera != $previewCamera)
@@ -2120,7 +2140,7 @@ function setGameState(%state)
    switch$ (%state)
    {
       case "start" :
-         if ($Server::ServerType !$= "Multiplayer")
+         if ($Server::ServerType !$= "Multiplayer" || ClientGroup.getCount() == 1) // Don't do RSG yet unless we are the only one - or we are not MP
             $stateSchedule = schedule(500, 0, "setGameState", "ready");
       case "ready" :
          $stateSchedule = schedule(3000, 0, "setGameState", "go");
