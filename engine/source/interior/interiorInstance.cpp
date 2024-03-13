@@ -28,6 +28,7 @@
 #include "math/mathUtils.h"
 #include "renderInstance/renderInstMgr.h"
 #include "sim/pathManager.h"
+#include "materials/material.h"
 
 //--------------------------------------------------------------------------
 //-------------------------------------- Local classes, data, and functions
@@ -363,6 +364,26 @@ bool InteriorInstance::onAdd()
         return false;
     }
 
+    // Check for materials
+
+    bool foundAllMaterials = true;
+    for (i = 0; i < mInteriorRes->getNumDetailLevels(); i++) {
+        Interior* pInterior = mInteriorRes->getDetailLevel(i);
+        for (int j = 0; j < pInterior->mMaterialList->size(); j++)
+        {
+            Material* mat = pInterior->mMaterialList->getMappedMaterial(j);
+            if (mat != NULL)
+                foundAllMaterials = foundAllMaterials && mat->preloadTextures();
+        }
+    }
+    if (!foundAllMaterials) {
+        Con::errorf(ConsoleLogEntry::General, "Unable to load interior due to missing materials: %s", mInteriorFileName);
+        NetConnection::setLastError("Unable to load interior due to missing materials: %s", mInteriorFileName);
+        return false;
+    }
+ 
+
+
     if (!isClientObject())
         mCRC = mInteriorRes.getCRC();
 
@@ -432,7 +453,7 @@ bool InteriorInstance::onAdd()
             mMaterialMaps.push_back(new MaterialList(pInterior->mMaterialList));
         }
 
-        renewOverlays();
+        // renewOverlays();
     //}
     //else {
     //

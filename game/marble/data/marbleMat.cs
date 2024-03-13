@@ -175,7 +175,8 @@ defineBasicMarbleMaterial("32", "ClassicMarb3", "marble.normal",   "marble32.ski
 defineBasicMarbleMaterial("33", "ClassicMarbMetal", "marble18.normal",   "marble33.skin", "marble33.skin", "0.6 0.6 0.6 0.6", 12 );
 defineBasicMarbleMaterial("34", "ClassicMarb2", "marble.normal",   "marble34.skin", "marble34.skin", "0.6 0.6 0.6 0.6", 12 );
 defineBasicMarbleMaterial("35", "ClassicMarb3", "marble.normal",   "marble35.skin", "marble35.skin", "0.6 0.6 0.6 0.6", 12 );
-
+defineBasicMarbleMaterial("36", "ClassicMarb3", "marble36.normal",   "marble36.skin", "marble36.skin", "0.6 0.6 0.6 0.6", 12 );
+defineBasicMarbleMaterial("37", "ClassicMarbGlassPureSphere", "marble01.normal",   "marble37.skin", "marble37.skin", "0.6 0.6 0.6 0.6", 12 );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // CUSTOM MARBLES
