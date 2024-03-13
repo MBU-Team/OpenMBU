@@ -15,6 +15,7 @@
 #include <renderInstance/renderInstMgr.h>
 
 #include "sceneGraph/lightInfo.h"
+#include "core/tDictionary.h"
 
 class CubemapData;
 struct SceneGraphData;
@@ -241,6 +242,8 @@ public:
     bool isIFL(){ return mIsIFL; }
     bool isTranslucent() { return translucent || subPassTranslucent; }
     char* getPath() { return mPath; }
+    virtual bool preloadTextures();
+    bool didFindTexture(const char* path);
 
     void updateTimeBasedParams();
 

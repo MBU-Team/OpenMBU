@@ -72,6 +72,7 @@ public:
 
     static void initPersistFields();
     static void updateTime();
+    virtual bool preloadTextures();
     const char* mShaderDataName;
     ShaderData* mShaderData;
 

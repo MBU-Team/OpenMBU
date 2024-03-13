@@ -249,6 +249,7 @@ function endGame()
       commandToClient(%client, 'GameEnd');
       commandToClient(%client, 'setTimer',"stop");
       %client.scoreTime = %client.player.getMarbleTime();
+      %client.isReady = false;
       echo("Gameconnection time: " @ %client.scoreTime);
    }
 
@@ -1011,18 +1012,18 @@ function GameConnection::onClientJoinGame(%this)
    if (!isObject(%this.player))
       %this.spawnPlayer();
 
+   %this.isReady = true;
+
    // If this is the first client to join then start the game
    // Otherwise catchthis client up to the current game state
    if ($Game::State $= "wait")
    {
       // Start the game now
       startGame();
-
+      // Flag this client as the time keeper
+      $timeKeeper = LocalClientConnection;
       // Start the game state machine
       setGameState("start");
-
-      // Flag this client as the time keeper
-      $timeKeeper = %this;
    }
    else
       %this.updateGameState();
@@ -1083,6 +1084,7 @@ function GameConnection::enterWaitState(%this)
 
 function GameConnection::onClientLeaveGame(%this)
 {
+   %this.isReady = true;
    // Check to see if we need to set a new $timeKeeper
    if (%this == $timeKeeper && ClientGroup.getCount() > 1)
    {
@@ -1096,6 +1098,25 @@ function GameConnection::onClientLeaveGame(%this)
             break;
          }
       }
+   }
+
+   if ($Server::ServerType $= "MultiPlayer" && $Game::State $= "start") // We didnt start the game yet somebody left so check if we can start
+   {
+       %allReady = true;
+   
+       for (%i = 0; %i < ClientGroup.getCount(); %i++)
+       {
+           %client = ClientGroup.getObject(%i);
+           if (!%client.isReady) 
+           {
+               %allReady = false;
+               break;
+           }
+       }
+       if (%allReady) {
+           cancel($stateSchedule);
+           $stateSchedule = schedule(500, 0, "setGameState", "ready");
+       }
    }
 
    if (isObject(%this.camera) && %this.camera != $previewCamera)
@@ -2083,6 +2104,7 @@ function packRanksForClient()
 // The server maintains the state and transitions to other states
 function setGameState(%state)
 {
+   echo("STATE" SPC %state);
    // Skip out of the current transitions
    if (isEventPending($stateSchedule))
       cancel($stateSchedule);
@@ -2122,7 +2144,8 @@ function setGameState(%state)
    switch$ (%state)
    {
       case "start" :
-         $stateSchedule = schedule(500, 0, "setGameState", "ready");
+         if ($Server::ServerType !$= "Multiplayer" || ClientGroup.getCount() == 1) // Don't do RSG yet unless we are the only one - or we are not MP
+            $stateSchedule = schedule(500, 0, "setGameState", "ready");
       case "ready" :
          $stateSchedule = schedule(3000, 0, "setGameState", "go");
 //      case "set"   :
@@ -2153,6 +2176,23 @@ function setGameState(%state)
 // This is used to "catch up" newly joining clients
 function GameConnection::updateGameState(%this)
 {
+    if ($Server::ServerType $= "MultiPlayer")
+    {
+        %allReady = true;
+    
+        for (%i = 0; %i < ClientGroup.getCount(); %i++)
+        {
+            %client = ClientGroup.getObject(%i);
+            if (!%client.isReady) 
+            {
+                %allReady = false;
+                break;
+            }
+        }
+        if (%allReady)
+            $stateSchedule = schedule(500, 0, "setGameState", "ready");
+    }
+
    switch$ ($Game::State)
    {
       case "wait"  :

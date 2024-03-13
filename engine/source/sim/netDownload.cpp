@@ -152,6 +152,8 @@ void NetConnection::sendFileChunk()
     Con::executef(this, 4, "onFileChunkSent", mCurrentFileName, Con::getIntArg(mCurrentFileBufferOffset), Con::getIntArg(mCurrentFileBufferSize));
 }
 
+void failedToFindFile(NetConnection* conn);
+
 bool NetConnection::startSendingFile(const char* fileName)
 {
     if (!fileName || Con::getBoolVariable("$NetConnection::neverUploadFiles"))
@@ -166,7 +168,8 @@ bool NetConnection::startSendingFile(const char* fileName)
     {
         // the server didn't have the file, so send a 0 byte chunk:
         Con::printf("No such file '%s'.", fileName);
-        postNetEvent(new FileChunkEvent(NULL, 0));
+        // postNetEvent(new FileChunkEvent(NULL, 0));
+        failedToFindFile(this);
         return false;
     }
 
@@ -715,27 +718,35 @@ struct FastFileState
 /// It's all just punting over to NetConnection who punts to FastFileState
 class FastFileRequestEvent : public NetEvent
 {
+    bool mFoundFile;
 public:
-    FastFileRequestEvent()
+    FastFileRequestEvent(bool foundFile = true)
     {
+        mFoundFile = foundFile;
     }
 
     virtual void pack(NetConnection* connection, BitStream *bstream)
     {
         // Sender: Write packet
-        connection->sendFastFileRequest(bstream);
+        if (bstream->writeFlag(mFoundFile))
+            connection->sendFastFileRequest(bstream);
     }
 
     virtual void write(NetConnection* connection, BitStream *bstream)
     {
         // Sender: Write packet (but for demos)
-        connection->sendFastFileRequest(bstream);
+        if (bstream->writeFlag(mFoundFile))
+            connection->sendFastFileRequest(bstream);
     }
 
     virtual void unpack(NetConnection* connection, BitStream *bstream)
     {
         // Receiver: Read packet
-        connection->handleFastFileRequest(bstream);
+        mFoundFile = bstream->readFlag();
+        if (mFoundFile)
+            connection->handleFastFileRequest(bstream);
+        else
+            connection->popMissingFile();
     }
 
     virtual void process(NetConnection* connection)
@@ -1024,15 +1035,16 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
         Stream* stream;
 
         Con::printf("Saving file %s.", mMissingFileList[0]);
-        if (!ResourceManager->openFileForWrite(stream, mMissingFileList[0]))
+        if (!ResourceManager->openFileForWrite(stream, mMissingFileList[0], 1, true))
         {
             setLastError("Couldn't open file downloaded by server.");
             return;
         }
-        dFree(mMissingFileList[0]);
-        mMissingFileList.pop_front();
         stream->write(mCurrentFileBufferSize, mCurrentFileBuffer);
         delete stream;
+        Con::executef(2, "onFileDownloaded", mMissingFileList[0]);
+        dFree(mMissingFileList[0]);
+        mMissingFileList.pop_front();
         mNumDownloadedFiles++;
         dFree(mCurrentFileBuffer);
         mCurrentFileBuffer = NULL;
@@ -1044,3 +1056,33 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
     }
 }
 
+void NetConnection::addMissingFile(const char* path)
+{
+    int slen = dStrlen(path);
+    char* buf = new char[slen + 1];
+    dStrcpy(buf, path);
+    buf[slen] = '\0';
+    mMissingFileList.push_back(buf);
+}
+
+void NetConnection::popMissingFile()
+{
+    if (mMissingFileList.size() > 0)
+    {
+        dFree(mMissingFileList[0]);
+        mMissingFileList.pop_front();
+    }
+}
+
+void failedToFindFile(NetConnection* conn)
+{
+    conn->postNetEvent(new FastFileRequestEvent(false));
+}
+
+ConsoleMethod(NetConnection, requestFileDownload, bool, 3, 3, "(path)")
+{
+    Vector<char*> filePath;
+    filePath.push_back(const_cast<char*>(argv[2]));
+    object->addMissingFile(argv[2]);
+    return object->postNetEvent(new FileDownloadRequestEvent(&filePath));
+}

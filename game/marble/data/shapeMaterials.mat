@@ -463,6 +463,14 @@
             "scrollSpeed": [0.5],
             "translucent": true
         },
+        "Material_mistyglow_ff": {
+            "baseTex": ["marble/data/shapes/pads/mistyglow"],
+            "custom": 0,
+            "mapTo": "mistyglow2",
+            "texCompression": ["DXT5"],
+            "translucent": 1,
+            "translucentBlendOp": "AddAlpha"
+        },
         "Material_mistyglow": {
             "baseTex": ["marble/data/shapes/pads/mistyglow"],
             "custom": false,
