@@ -389,11 +389,11 @@ bool InteriorInstance::onAdd()
 
     if (isClientObject() || gSPMode)
     {
-        if (mCRC != mInteriorRes.getCRC())
-        {
-            NetConnection::setLastError("Local interior file '%s' does not match version on server.", mInteriorFileName);
-            return false;
-        }
+        //if (mCRC != mInteriorRes.getCRC())
+        //{
+        //    NetConnection::setLastError("Local interior file '%s' does not match version on server.", mInteriorFileName);
+        //    return false;
+        //}
         for (i = 0; i < mInteriorRes->getNumDetailLevels(); i++) {
             // ok, if the material list load failed...
             // if this is a local connection, we'll assume that's ok
