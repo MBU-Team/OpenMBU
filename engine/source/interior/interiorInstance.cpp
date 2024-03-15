@@ -369,8 +369,15 @@ bool InteriorInstance::onAdd()
     bool foundAllMaterials = true;
     for (i = 0; i < mInteriorRes->getNumDetailLevels(); i++) {
         Interior* pInterior = mInteriorRes->getDetailLevel(i);
+        HashTable<U32, bool> materialUsages;
+        for (int j = 0; j < pInterior->mSurfaces.size(); j++)
+        {
+            Interior::Surface& surf = pInterior->mSurfaces[j];
+            materialUsages.insertUnique(surf.textureIndex, true);
+        }
         for (int j = 0; j < pInterior->mMaterialList->size(); j++)
         {
+            if (materialUsages.find(j) == materialUsages.end()) continue;
             Material* mat = pInterior->mMaterialList->getMappedMaterial(j);
             if (mat != NULL)
                 foundAllMaterials = foundAllMaterials && mat->preloadTextures();
