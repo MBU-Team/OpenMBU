@@ -7,7 +7,7 @@
 #include <platform/platform.h>
 MemoryStream::MemoryStream()
 {
-    this->buffer = (U8*) dMalloc(256);  new U8[256];
+    this->buffer = (U8*) dMalloc(256);
 	this->bufferSize = 256;
 	this->properSize = 0;
 	this->position = 0;
