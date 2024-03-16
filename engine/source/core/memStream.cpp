@@ -168,76 +168,71 @@ ResizableMemStream::ResizableMemStream(
     void* io_pBuffer,
     const bool in_allowRead,
     const bool in_allowWrite
-): MemStream(
-    in_bufferSize,
-    io_pBuffer,
-    in_allowRead,
-    in_allowWrite)
+)
 {
-    m_filledSize = 0;
+    inner = new MemoryStream();
+    if (io_pBuffer != NULL)
+    {
+        inner->useBuffer(static_cast<U8*>(io_pBuffer), in_bufferSize);
+    }
 }
 
 ResizableMemStream::~ResizableMemStream()
 {
-
-}
-
-bool ResizableMemStream::expandToSize(U32 size)
-{
-    if (size < m_bufferSize)
-        return true;
-
-    if (!mOwnsMemory)
-    {
-        mOwnsMemory = true;
-        void* newBuffer = dMalloc(size);
-        if (!newBuffer)
-            return false;
-
-        dMemset(newBuffer, 0, size);
-        dMemcpy(newBuffer, m_pBufferBase, m_bufferSize);
-        m_pBufferBase = newBuffer;
-        m_bufferSize = size;
-        return true;
-    }
-
-    U32 newSize;
-    if (size < 256)
-        newSize = 256;
-    else
-        newSize = getNextPow2(size);
-    void* newBuffer = dRealloc(m_pBufferBase, newSize);
-    if (!newBuffer)
-        return false;
-
-    m_pBufferBase = newBuffer;
-    m_bufferSize = newSize;
-    return true;
+    delete inner;
 }
 
 U32 ResizableMemStream::getStreamSize()
 {
-    return m_filledSize;
+    return inner->length();
 }
 
 bool ResizableMemStream::setPosition(const U32 in_newPosition)
 {
-    if (!expandToSize(in_newPosition))
-        return false;
-
-    Parent::setPosition(in_newPosition);
+    return inner->seek(in_newPosition);
 }
 
 bool ResizableMemStream::_write(const U32 in_numBytes, const void* in_pBuffer)
 {
-    if (!expandToSize(m_currentPosition + in_numBytes))
-        return false;
+    inner->writeBuffer(static_cast<const char*>(in_pBuffer), in_numBytes);
+    return true;
+}
 
-    U32 pastPos = m_currentPosition;
-    Parent::_write(in_numBytes, in_pBuffer);
-    if (pastPos <= m_filledSize && pastPos + in_numBytes >= m_filledSize)
-        m_filledSize = pastPos + in_numBytes;
-    AssertISV(m_filledSize < m_bufferSize, "Invalid buffer size");
+bool ResizableMemStream::_read(const U32 in_numBytes, void* out_pBuffer)
+{
+    U32 bRead;
+
+    if (inner->tell() + in_numBytes > inner->length())
+    {
+        bRead = (inner->length() - inner->tell());
+        setStatus(EOS);
+    }
+    else
+    {
+        bRead = in_numBytes;
+        setStatus(Ok);
+    }
+    U8* buffer = inner->getBuffer();
+    dMemcpy(out_pBuffer, (buffer + inner->tell()), bRead);
+    try
+    {
+        inner->seek(inner->tell() + bRead);
+    }
+    catch (...)
+    {
+        setStatus(EOS);
+    }
+    return getStatus() != EOS;
+}
+
+bool ResizableMemStream::hasCapability(const Capability) const
+{
+    return true;
+}
+
+U32 ResizableMemStream::getPosition() const
+{
+    return inner->tell();
 }
 
 
