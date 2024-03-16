@@ -156,7 +156,7 @@ bool Tokenizer::advanceToken(const bool crossLine, const bool assertAvail)
                 if (currPosition == 0)
                 {
                     // Haven't started getting token, but we're crossing lines...
-                    while (mpBuffer[mCurrPos] == '\r' || mpBuffer[mCurrPos] == '\n')
+                    while (mCurrPos < mBufferSize && (mpBuffer[mCurrPos] == '\r' || mpBuffer[mCurrPos] == '\n'))
                         mCurrPos++;
 
                     mCurrLine++;

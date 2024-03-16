@@ -120,6 +120,8 @@ public:
     ///
     /// @{
 
+    virtual ~ProcessedMaterial() = default;
+
     /// Sets the textures needed for rendering the current pass
     virtual void setTextureStages( SceneGraphData &sgData, U32 pass ) = 0;
 

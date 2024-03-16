@@ -221,8 +221,8 @@ void NetConnection::sendNextFileDownloadRequest()
 
 #ifdef TORQUE_FAST_FILE_TRANSFER
 
-const U32 MaxFilePacketSize = 1400;
-static U32 FastFilePacketSize = 1380; // ~= 1450 UDP MTU - headers
+const U32 MaxFilePacketSize = 1320;
+static U32 FastFilePacketSize = 1280; // ~= 1450 UDP MTU - headers
 static U32 PacketsAtATime = 512; // Realistically not sure how high this can go before it gets bad
 
 static BitStream gFastFileStream(NULL, 0);
@@ -841,6 +841,9 @@ void NetConnection::sendFastFile()
     mFastFileState->mSend.fileChunks.clear();
     mFastFileState->mSend.acknowledgedChunks.clear();
 
+    if (FastFilePacketSize > 1280)
+        FastFilePacketSize = 1280;
+
     // Load all chunks of file to send
     U32 index = 0;
     for (U32 offset = 0; offset < mCurrentFileBufferSize; offset += FastFilePacketSize)
@@ -1041,7 +1044,7 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
             return;
         }
         stream->write(mCurrentFileBufferSize, mCurrentFileBuffer);
-        delete stream;
+        ResourceManager->closeStream(stream);
         Con::executef(2, "onFileDownloaded", mMissingFileList[0]);
         dFree(mMissingFileList[0]);
         mMissingFileList.pop_front();

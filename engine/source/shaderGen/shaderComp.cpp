@@ -26,7 +26,11 @@ ConnectorStruct::~ConnectorStruct()
 {
     for (U32 i = 0; i < mElementList.size(); i++)
     {
-        delete mElementList[i];
+        if (mElementList[i] != NULL)
+        {
+            // delete mElementList[i];
+            mElementList[i] = NULL;
+        }
     }
 }
 

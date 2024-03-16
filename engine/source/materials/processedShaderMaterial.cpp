@@ -747,8 +747,9 @@ void ProcessedShaderMaterial::addPass( RenderPassData &rpd,
 
     // Copy over features
     dMemcpy( rpd.fData.materialFeatures, fd.features, sizeof( fd.features ) );
-
+    
     // Generate shader
+   //  Con::printf("Current material %s", this->mMaterial->getName());
     rpd.shader = GFX->createShader( rpd.fData, mVertFlags );
 
     // If a pass glows, we glow
