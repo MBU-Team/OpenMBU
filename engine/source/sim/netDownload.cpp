@@ -327,6 +327,7 @@ struct FastFileState
         // Just for progress indicators
         out->write(U32(mSend.totalSize));
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d",
             __func__,
@@ -335,6 +336,7 @@ struct FastFileState
             mSend.fileChunks.size(),
             mSend.totalSize
         );
+#endif
     }
 
     /// [Receiver] Read packet for start of transfer
@@ -348,6 +350,7 @@ struct FastFileState
         stream->read(&chunkCount);
         stream->read(&totalSize);
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d",
             __func__,
@@ -356,6 +359,7 @@ struct FastFileState
             chunkCount,
             totalSize
         );
+#endif
 
         // This is the start of receiving a file, so init recv state here
 
@@ -390,6 +394,7 @@ struct FastFileState
             out->write(U8(mSend.fileChunks[index].bytes[i]));
         }
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %d %d",
             __func__,
@@ -400,6 +405,7 @@ struct FastFileState
             mSend.fileChunks[index].offset,
             mSend.fileChunks[index].bytes.size()
         );
+#endif
     }
 
     /// [Receiver] Read packet for data chunk
@@ -416,6 +422,7 @@ struct FastFileState
         stream->read(&offset);
         stream->read(&size);
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %d",
             __func__,
@@ -425,6 +432,7 @@ struct FastFileState
             offset,
             size
         );
+#endif
 
         // Basic checks to make sure nothing fishy is happening
         if (transferID == 0 || transferID != mRecv.transferID)
@@ -607,7 +615,7 @@ struct FastFileState
         }
         // Null terminate
         debugStr[ackCount] = 0;
-
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %s",
             __func__,
@@ -617,6 +625,7 @@ struct FastFileState
             ackCount,
             debugStr
         );
+#endif
     }
 
     /// [Sender] Read the packet saying which chunks the receiver has received
@@ -660,7 +669,7 @@ struct FastFileState
         {
             return false;
         }
-
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %s",
             __func__,
@@ -670,6 +679,7 @@ struct FastFileState
             ackCount,
             debugStr
         );
+#endif
 
         // Save this state for handleAcknowledgement because NetEvent does this in 2 steps
         mSend.lastAckStart = minNonAcknowledged;
@@ -687,11 +697,13 @@ struct FastFileState
             // Bounds check for sanity
             if (index >= mSend.acknowledgedChunks.size())
             {
+#if TORQUE_DEBUG
                 Con::errorf(
                     "%s @%d Index >= ackChunks.size()",
                     __func__,
                     __LINE__
                 );
+#endif
                 return false;
             }
             mSend.acknowledgedChunks[index] = true;
