@@ -74,6 +74,11 @@ function miscOptionsGui::show(%this, %backGui)
    miscOptionsList.addRow($Text::LobbyHostInviteCode, $Text::InviteVisibilityOptions, 8);
    miscOptionsList.setOptionIndex(2, $pref::Lobby::InviteVisibility);
 
+   // Streamer mode
+   
+   miscOptionsList.addRow($Text::LobbyHostStreamerMode, $Text::StreamerModeOptions, 8);
+   miscOptionsList.setOptionIndex(2, $pref::Lobby::StreamerMode);
+
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOMiscOptions) );
 }
@@ -98,6 +103,9 @@ function miscOptionsList::onOptionChange(%this, %increase)
       case 2:
          $pref::Lobby::InviteVisibility = %val;
          echo("InviteVisibility = " @ $pref::Lobby::InviteVisibility);
+      case 3:
+         $pref::Lobby::StreamerMode = %val;
+         echo("StreamerMode = " @ $pref::Lobby::StreamerMode);
    }  
 }
 

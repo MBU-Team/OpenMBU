@@ -156,7 +156,12 @@ ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
     //dSprintf(ret, 1024, "%s", "Alex");
     //return ret;
     if (DiscordGame::get()->isActive())
-        return DiscordGame::get()->getUsername(15);
+    {
+        const char* res = DiscordGame::get()->getUsername(15);
+        Con::setVariable("Player::DiscordUsername", res);
+        Con::executef(2, "getDiscordUsername", DiscordGame::get()->getUserId());
+        return res;
+    }
 
     // Use platform username until we set up a login system.
     return Platform::getUserName(15); // X360 only supported at max 15 characters.

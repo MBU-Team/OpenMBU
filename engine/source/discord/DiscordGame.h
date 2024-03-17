@@ -87,6 +87,14 @@ public:
         delete[] buf;
         return ste;
     }
+    StringTableEntry getUserId()
+    {
+        return StringTable->insert(mUserId.c_str());
+    }
+    void setUserId(const char* uid)
+    {
+        mUserId = uid;
+    }
     void setActive(bool a)
     {
         mActive = a;
@@ -121,6 +129,7 @@ private:
     StringTableEntry mJoinSecret;
     StringTableEntry mPartyId;
     std::string mUsername;
+    std::string mUserId;
     //const char* mIcon;
     //const char* mIconText;
 };

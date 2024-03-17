@@ -101,7 +101,14 @@ function PlayerListGui::updateClientName(%this,%clientId,%name)
    {
       // if there is a "tag" this code will drop it :(  oh well
       %name = StripMLControlChars(%name);
-      %text = setField(%text, 1, %name);
+
+      %sanitizedText = %name;
+      if ($pref::Lobby::StreamerMode)
+      {
+         %sanitizedText = getSubStr(%name, 0, 1) @ "...";
+      }
+
+      %text = setField(%text, 1, %sanitizedText);
       PlayerListGuiList.setRowById(%clientId,%text);
    }
    
@@ -139,7 +146,13 @@ function PlayerListGui::update(%this,%clientId,%name,%isSuperAdmin,%isAdmin,%isA
    else
       %icon = "";
 
-   %text = %icon TAB %name SPC %tag TAB %score SPC " " TAB %cumScore;
+   %sanitizedText = %name;
+   if ($pref::Lobby::StreamerMode)
+   {
+      %sanitizedText = getSubStr(%name, 0, 1) @ "...";
+   }
+
+   %text = %icon TAB %sanitizedText SPC %tag TAB %score SPC " " TAB %cumScore;
 
    // Update or add the player to the control
    if (PlayerListGuiList.getRowNumById(%clientId) == -1)
