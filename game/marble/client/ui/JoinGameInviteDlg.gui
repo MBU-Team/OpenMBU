@@ -166,12 +166,15 @@ function DiscordIUsernameRequest::onLine(%this, %line)
         %this.success = true;
 
         %username = %resp.realname;
-        if ($pref::Lobby::StreamerMode)
+        if (%username !$= "")
         {
-            %username = getSubStr(%username, 0, 1) @ "...";
-        }
+            if ($pref::Lobby::StreamerMode)
+            {
+                %username = getSubStr(%username, 0, 1) @ "...";
+            }
 
-        JoinGameInviteDlg.username = %username;
+            JoinGameInviteDlg.username = %username;
+        }
     } 
     else
     {
