@@ -155,6 +155,10 @@ ConsoleFunction(XBLiveGetUserName, const char*, 1, 1, "()")
     //char* ret = Con::getReturnBuffer(1024);
     //dSprintf(ret, 1024, "%s", "Alex");
     //return ret;
+    if (Con::getBoolVariable("pref::Player::UsingCustomName"))
+    {
+        return Con::getVariable("pref::Player::Name");
+    }
     if (DiscordGame::get()->isActive())
     {
         const char* res = DiscordGame::get()->getUsername(15);

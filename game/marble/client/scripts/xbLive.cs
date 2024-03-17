@@ -34,14 +34,6 @@ function DiscordUsernameRequest::onDisconnect(%this)
     %this.delete();
 }
 
-if (isPCBuild())
-{
-   // one time setup for these vars
-   $Player::Name = XBLiveGetUserName();
-   $Player::XBLiveId = XBLiveGetUserId();
-}
-
-
 function refreshPDLC()
 {
 	echo(" *** Refreshing PDLC ownership");
