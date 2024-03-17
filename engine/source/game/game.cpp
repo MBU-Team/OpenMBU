@@ -89,7 +89,7 @@ ConsoleFunction(isSinglePlayerMode, bool, 1, 1, "() - Checks if singleplayer onl
     return gSPMode;
 }
 
-ConsoleFunction(loadObjectsFromMission, const char*, 2, 4, "(mission, className, dataBlock) - Loads Objects from a Mission")
+ConsoleFunction(loadObjectsFromMission, const char*, 2, 5, "(mission, className, dataBlock, missionGroup) - Loads Objects from a Mission")
 {
     const char* missionFile = argv[1];
 
@@ -122,11 +122,11 @@ ConsoleFunction(loadObjectsFromMission, const char*, 2, 4, "(mission, className,
     }
 
     StringTableEntry className = StringTable->insert("InteriorInstance");
-    if (argc > 2)
+    if (argc > 2 && dStrlen((argv[2])) > 0)
         className = StringTable->insert(argv[2]);
 
     StringTableEntry dataBlockName = StringTable->insert("");
-    if (argc > 3)
+    if (argc > 3 && dStrlen((argv[3])) > 0)
         dataBlockName = StringTable->insert(argv[3]);
 
     Vector<ItrGameEntity*> gameEntities;
@@ -197,7 +197,11 @@ ConsoleFunction(loadObjectsFromMission, const char*, 2, 4, "(mission, className,
             group->registerObject(buf5);
         }
 
-        SimSet* missionGroup = static_cast<SimSet*>(Sim::findObject("MissionGroup"));
+        StringTableEntry missionGroupName = StringTable->insert("MissionGroup");
+        if (argc > 4 && dStrlen((argv[4])) > 0)
+            missionGroupName = StringTable->insert(argv[4]);
+
+        SimSet* missionGroup = static_cast<SimSet*>(Sim::findObject(missionGroupName));
         if (missionGroup)
             missionGroup->addObject(group);
         else
