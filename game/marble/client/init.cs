@@ -135,6 +135,7 @@ function initClient()
    exec("./ui/StartupErrorGui.gui");
    exec("./ui/controlerDisplayGui.gui");
    exec("./ui/joinGameGui.gui");
+   exec("./ui/enterNameGui.gui");
    
    //exec("./ui/AboutGui.gui");   
    //exec("./ui/LevelScoresGui.gui");
@@ -178,6 +179,14 @@ function initClient()
    exec("./scripts/xbControler.cs");
    
    exec("./scripts/interiorTest.cs");
+
+   if (isPCBuild())
+   {
+      // one time setup for these vars
+      echo("Using custom name " @ $pref::Player::UsingCustomName);
+      $Player::Name = XBLiveGetUserName();
+      $Player::XBLiveId = XBLiveGetUserId();
+   }
    
    if (isObject(MusicPlayer))
       MusicPlayer.activate();

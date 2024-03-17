@@ -83,6 +83,7 @@ void onReady(const DiscordUser* request)
     DiscordGame::get()->setActive(true);
     Con::printf("Starting RPC for user %s", request->username);
     DiscordGame::get()->setUsername(request->username);
+    DiscordGame::get()->setUserId(request->userId);
 }
 
 void onError(int errorCode, const char* message)

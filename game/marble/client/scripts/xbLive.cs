@@ -1,8 +1,36 @@
-if (isPCBuild())
+function getDiscordUsername(%userId)
 {
-   // one time setup for these vars
-   $Player::Name = XBLiveGetUserName();
-   $Player::XBLiveId = XBLiveGetUserId();
+    echo("USER ID: " @ %userId);
+    if (isObject(DiscordUsernameRequest))
+        DiscordUsernameRequest.delete();
+    new HTTPObject(DiscordUsernameRequest);
+    DiscordUsernameRequest.get("https://openmbu.com", "/api/v1/discord/user/" @ %userId, "");
+}
+
+function DiscordUsernameRequest::onLine(%this, %line)
+{
+    %resp = jsonParse(%line);
+    if (%resp.code == 200)
+    { 
+        %this.success = true;
+        if ($Player::Name $= $Player::DiscordUsername && %resp.realname !$= "") // Change only if we haven't changed during the time the HTTP request was occuring
+        {
+            $Player::Name = %resp.realname;
+        }
+    } 
+    else
+    {
+        %this.success = false;
+    }
+    %resp.delete();
+}
+
+function DiscordUsernameRequest::onDisconnect(%this)
+{
+    if (!%this.success) {
+        echo("Failed to fetch discord display name!");
+    }
+    %this.delete();
 }
 
 function refreshPDLC()

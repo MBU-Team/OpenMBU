@@ -72,6 +72,10 @@ function JoinGameInviteDlg::show(%userId, %username, %avatar)
         Canvas.pushDialog(JoinGameInviteDlg);
         JoinGameInviteDlg.isShowing = true;
     }
+    if ($pref::Lobby::StreamerMode)
+    {
+        %username = getSubStr(%username, 0, 1) @ "...";
+    }
     serverplay2d(HelpDingSfx);
     JoinGameInviteDlg.responded = false;
     JoinGameInviteDlg.userId = %userId;
@@ -142,5 +146,47 @@ function DiscordAvatarDownload::downloadFailed(%this, %path)
 
 function DiscordAvatarDownload::onDisconnect(%this)
 {
+    %this.delete();
+}
+
+function getInviteDiscordUsername(%userId)
+{
+    echo("USER ID: " @ %userId);
+    if (isObject(DiscordIUsernameRequest))
+        DiscordIUsernameRequest.delete();
+    new HTTPObject(DiscordIUsernameRequest);
+    DiscordIUsernameRequest.get("https://openmbu.com", "/api/v1/discord/user/" @ %userId, "");
+}
+
+function DiscordIUsernameRequest::onLine(%this, %line)
+{
+    %resp = jsonParse(%line);
+    if (%resp.code == 200)
+    { 
+        %this.success = true;
+
+        %username = %resp.realname;
+        if (%username !$= "")
+        {
+            if ($pref::Lobby::StreamerMode)
+            {
+                %username = getSubStr(%username, 0, 1) @ "...";
+            }
+
+            JoinGameInviteDlg.username = %username;
+        }
+    } 
+    else
+    {
+        %this.success = false;
+    }
+    %resp.delete();
+}
+
+function DiscordIUsernameRequest::onDisconnect(%this)
+{
+    if (!%this.success) {
+        echo("Failed to fetch discord display name!");
+    }
     %this.delete();
 }

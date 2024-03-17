@@ -61,6 +61,8 @@ $pref::OpenGL::forcePalettedTexture = "0";
 $pref::OpenGL::maxHardwareLights = 3;
 $pref::VisibleDistanceMod = 1.0;
 $pref::Lobby::InviteVisibility = true;
+$pref::Lobby::StreamerMode = false;
+$pref::Player::UsingCustomName = false;
 
 /// The sound provider to select at startup.  Typically
 /// this is DirectSound, OpenAL, or XACT.  There is also 
