@@ -9,7 +9,6 @@ function getDiscordUsername(%userId)
 
 function DiscordUsernameRequest::onLine(%this, %line)
 {
-    echo(%line);
     %resp = jsonParse(%line);
     if (%resp.code == 200)
     { 

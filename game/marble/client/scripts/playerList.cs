@@ -132,7 +132,12 @@ function handleClientJoin(%msgType, %msgString, %clientName, %joinData, %isMe)
       // spew about new player
       echo(detag(%clientName) SPC "joined the game");
       sfxPlay(PlayerJoinSfx);
-      %msg = avar($Text::Msg::PlayerJoin, detag(%clientName));
+      %displayName = detag(%clientName);
+      if ($pref::Lobby::StreamerMode)
+      {
+          %displayName = getSubStr(%displayName, 0, 1) @ "...";
+      }
+      %msg = avar($Text::Msg::PlayerJoin, %displayName);
       addChatLine(%msg);
    }
    
@@ -170,7 +175,12 @@ function handleClientDrop(%msgType, %msgString, %clientName, %clientId, %xbLiveI
       // spew about dropping player
       echo(detag(%clientName) SPC "left the game");
       sfxPlay(PlayerDropSfx);
-      %msg = avar($Text::Msg::PlayerDrop, detag(%clientName));
+      %displayName = detag(%clientName);
+      if ($pref::Lobby::StreamerMode)
+      {
+          %displayName = getSubStr(%displayName, 0, 1) @ "...";
+      }
+      %msg = avar($Text::Msg::PlayerDrop, %displayName);
       addChatLine(%msg);
    }
    
@@ -179,6 +189,10 @@ function handleClientDrop(%msgType, %msgString, %clientName, %clientId, %xbLiveI
 function handleMPGameOver(%msgType, %msgString, %tied, %leaderName, %leaderPoints)
 {
    %name = detag(%leaderName);
+   if ($pref::Lobby::StreamerMode)
+   {
+       %name = getSubStr(%name, 0, 1) @ "...";
+   }
    
    %msg = "";
    if (%tied)
