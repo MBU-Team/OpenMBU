@@ -835,6 +835,218 @@ function populatePreviewMission()
    error("Took " @ %diff / 1000 @ " seconds to populate the preview mission");
 }
 
+function getMissionSky(%missionFile)
+{
+   %file = new FileObject();
+   
+   if ( %file.openForRead( %missionFile ) ) {
+		%inInfoBlock = false;
+		
+		while ( !%file.isEOF() ) {
+			%line = %file.readLine();
+			%line = trim( %line );
+			
+			if( %line $= "new ScriptObject(MissionInfo) {" ) {
+				%line = "new ScriptObject() {";
+				%inInfoBlock = true;
+			}
+			else if( %inInfoBlock && %line $= "};" ) {
+				%inInfoBlock = false;
+				break;
+			}
+			
+			if( %inInfoBlock )
+			{
+			   if (strpos(%line, "type =") != -1)
+			   {
+			      %type = eval("%" @ getSubStr(%line, strpos(%line, "type ="), 99));
+			   }
+			   
+			   if (strpos(%line, "customType =") != -1)
+			   {
+			      %customType = eval("%" @ getSubStr(%line, strpos(%line, "customType ="), 99));
+			   }
+			}
+		}
+		
+		%file.close();
+		%file.delete();
+	}
+   
+   if (%type $= "beginner")
+      %sky = $sky_beginner;
+   if (%type $= "intermediate")
+      %sky = $sky_intermediate;
+   if (%type $= "advanced")
+      %sky = $sky_advanced;
+      
+   if (%customType $= "beginner")
+      %sky = $sky_beginner;
+   if (%customType $= "intermediate")
+      %sky = $sky_intermediate;
+   if (%customType $= "advanced")
+      %sky = $sky_advanced;
+      
+   return %sky;
+}
+
+function addTempPreviewMission(%missionFile)
+{
+   %start = getRealTime();
+   
+   %oldInstantGroup = $instantGroup;
+   $instantGroup = MegaMissionGroup;
+   
+   %mission = fileName(%missionFile);
+
+   // First the InteriorInstance's
+   %missionGroup = loadObjectsFromMission(%mission, "", "", "MegaMissionGroup");
+
+   // Then any camera markers
+   loadObjectsFromMission(%mission, "SpawnSphere", "CameraSpawnSphereMarker", "MegaMissionGroup");
+
+   // Then the glass
+   loadObjectsFromMission(%mission, "StaticShape", "glass_3shape", "MegaMissionGroup");
+   
+   // Then the glass
+   loadObjectsFromMission(%mission, "StaticShape", "glass_6shape", "MegaMissionGroup");
+   
+   // Then the glass
+   loadObjectsFromMission(%mission, "StaticShape", "glass_9shape", "MegaMissionGroup");
+   
+   // Then the glass
+   loadObjectsFromMission(%mission, "StaticShape", "glass_12shape", "MegaMissionGroup");
+   
+   // Then the glass
+   loadObjectsFromMission(%mission, "StaticShape", "glass_15shape", "MegaMissionGroup");
+   
+   // Then the glass
+   loadObjectsFromMission(%mission, "StaticShape", "glass_18shape", "MegaMissionGroup");
+   
+   // TSStatics
+   loadObjectsFromMission(%mission, "TSStatic", "", "MegaMissionGroup");
+   
+   $instantGroup = %oldInstantGroup;
+   
+   %diff = getRealTime() - %start;
+   error("Took " @ %diff / 1000 @ " seconds to add mission to preview");
+   
+   return %missionGroup;
+}
+
+function removeTempPreviewMission(%group)
+{
+   %group.delete();
+}
+
+function showTempPreviewMission(%group, %sky)
+{
+   GameMissionInfo.getCurrentMission().missionGroup.setHidden(true);
+   %group.setHidden(false);
+   %cameraPoint = getCameraObject(%group);
+   %cameraPos = getSpawnPosition(%cameraPoint);
+   if (isObject($previewCamera))
+      $previewCamera.setTransform(%cameraPos);
+   
+   if ($curr_sky !$= %sky)
+   {
+      // First hide our clouds
+      if ($curr_sky $= $sky_beginner || $curr_sky $= "")
+         Cloud_Beginner.setHidden(true);
+      if ($curr_sky $= $sky_intermediate || $curr_sky $= "")
+         Cloud_Intermediate.setHidden(true);
+      if ($curr_sky $= $sky_advanced || $curr_sky $= "")
+         Cloud_Advanced.setHidden(true);
+
+      // Then set the material
+      Sky.setSkyMaterial(%sky);
+      $curr_sky = %sky;
+
+      // Now unhide our new clouds
+      if ($curr_sky $= $sky_beginner)
+         Cloud_Beginner.setHidden(false);
+      if ($curr_sky $= $sky_intermediate)
+         Cloud_Intermediate.setHidden(false);
+      if ($curr_sky $= $sky_advanced)
+         Cloud_Advanced.setHidden(false);
+         
+      // Switch our sun properties
+      if ($curr_sky $= $sky_beginner)
+      {
+         Mega_Sun.direction = Beginner_Sun.direction;
+         Mega_Sun.color = Beginner_Sun.color;
+         Mega_Sun.ambient = Beginner_Sun.ambient;
+         Mega_Sun.shadowColor = Beginner_Sun.shadowColor;
+      }
+      if ($curr_sky $= $sky_intermediate)
+      {
+         Mega_Sun.direction = Intermediate_Sun.direction;
+         Mega_Sun.color = Intermediate_Sun.color;
+         Mega_Sun.ambient = Intermediate_Sun.ambient;
+         Mega_Sun.shadowColor = Intermediate_Sun.shadowColor;
+      }
+      if ($curr_sky $= $sky_advanced)
+      {
+         Mega_Sun.direction = Advanced_Sun.direction;
+         Mega_Sun.color = Advanced_Sun.color;
+         Mega_Sun.ambient = Advanced_Sun.ambient;
+         Mega_Sun.shadowColor = Advanced_Sun.shadowColor;
+      }
+   }
+}
+
+function hideTempPreviewMission(%group)
+{
+   GameMissionInfo.getCurrentMission().missionGroup.setHidden(false);
+   %group.setHidden(true);
+   GameMissionInfo.setCamera();
+   if ($curr_sky !$= GameMissionInfo.getCurrentMission().sky)
+   {
+      // First hide our clouds
+      if ($curr_sky $= $sky_beginner || $curr_sky $= "")
+         Cloud_Beginner.setHidden(true);
+      if ($curr_sky $= $sky_intermediate || $curr_sky $= "")
+         Cloud_Intermediate.setHidden(true);
+      if ($curr_sky $= $sky_advanced || $curr_sky $= "")
+         Cloud_Advanced.setHidden(true);
+
+      // Then set the material
+      Sky.setSkyMaterial(GameMissionInfo.getCurrentMission().sky);
+      $curr_sky = GameMissionInfo.getCurrentMission().sky;
+
+      // Now unhide our new clouds
+      if ($curr_sky $= $sky_beginner)
+         Cloud_Beginner.setHidden(false);
+      if ($curr_sky $= $sky_intermediate)
+         Cloud_Intermediate.setHidden(false);
+      if ($curr_sky $= $sky_advanced)
+         Cloud_Advanced.setHidden(false);
+         
+      // Switch our sun properties
+      if ($curr_sky $= $sky_beginner)
+      {
+         Mega_Sun.direction = Beginner_Sun.direction;
+         Mega_Sun.color = Beginner_Sun.color;
+         Mega_Sun.ambient = Beginner_Sun.ambient;
+         Mega_Sun.shadowColor = Beginner_Sun.shadowColor;
+      }
+      if ($curr_sky $= $sky_intermediate)
+      {
+         Mega_Sun.direction = Intermediate_Sun.direction;
+         Mega_Sun.color = Intermediate_Sun.color;
+         Mega_Sun.ambient = Intermediate_Sun.ambient;
+         Mega_Sun.shadowColor = Intermediate_Sun.shadowColor;
+      }
+      if ($curr_sky $= $sky_advanced)
+      {
+         Mega_Sun.direction = Advanced_Sun.direction;
+         Mega_Sun.color = Advanced_Sun.color;
+         Mega_Sun.ambient = Advanced_Sun.ambient;
+         Mega_Sun.shadowColor = Advanced_Sun.shadowColor;
+      }
+   }
+}
+
 function getCameraObject(%missionGroup)
 {
    %spawnObj = 0;
