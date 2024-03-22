@@ -998,7 +998,7 @@ function getMissionObject( %missionFile )
    if ( %file.openForRead( %missionFile ) ) {
 		%inInfoBlock = false;
 
-        %matFilePath = filePath(%missionFile) @ "/" @ fileBase(%missionFile) @ ".mat";
+        %matFilePath = filePath(%missionFile) @ "/" @ fileBase(%missionFile) @ ".mat.json";
         if (isFile(%matFilePath))
         {
             echo("Loaded custom materials from" SPC %matFilePath);

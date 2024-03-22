@@ -31,7 +31,7 @@ function GameConnection::loadMission(%this)
    }
    else
    {
-      %matPath = filePath($Server::MissionFile) @ "/" @ fileBase($Server::MissionFile) @ ".mat";
+      %matPath = filePath($Server::MissionFile) @ "/" @ fileBase($Server::MissionFile) @ ".mat.json";
       commandToClient(%this, 'MissionStartPhase1', $missionSequence,
          $Server::MissionFile, MissionGroup.musicTrack, isFile(%matPath));
       echo("*** Sending mission load to client: " @ $Server::MissionFile);

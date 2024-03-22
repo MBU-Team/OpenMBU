@@ -23,7 +23,7 @@ function onMissionDownloadPhase1(%missionName, %musicTrack, %hasMaterials)
    // This callback happens when phase 1 loading starts
    $LoadingDone = false;
    if (%hasMaterials) {
-        %matPath = filePath(%missionName) @ "/" @ fileBase(%missionName) @ ".mat";
+        %matPath = filePath(%missionName) @ "/" @ fileBase(%missionName) @ ".mat.json";
         $Server::MaterialFilePath = %matPath;
         if (!isFile(%matPath))
 		    ServerConnection.requestFileDownload(%matPath);
