@@ -1,13 +1,13 @@
 //--- OBJECT WRITE BEGIN ---
 new SimGroup(MissionGroup) {
     new ScriptObject(MissionInfo) {
-         level = "94";
+         level = "95";
          numgems = "1";
          type = "Beginner";
          gemGroupRadius = "40";
          include = "1";
          goldTime = "0";
-name = $Text::LevelNameMP25;
+name = $Text::LevelNameMP26;
          difficulty = "4";
          gameType = "MultiPlayer";
          gameMode = "Scrum";
