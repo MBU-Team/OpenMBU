@@ -69,16 +69,41 @@ new GuiControl(RootGui) {
 	   visible = "1";
 	};
 
-   new GuiTextCtrl(FPSDisplay) {
-      Profile = "TextTitleProfile";
-	   horizSizing = "right";
-	   vertSizing = "bottom";
-      position = "5 0";
-      extent = "1120 80";
+   new GuiBitmapCtrl(HUD_FPSBG) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "right";
+      vertSizing = "bottom";
+      position = "0 -10";
+      extent = "200 128";
       minExtent = "8 8";
-      text = "FPS: ";
-      Visible = "0";
+      visible = "0";
+      bitmap = "./fpsbg.png";
+      wrap = "0";
+      helpTag = "0";
+
+         new GuiTextCtrl(FPSDisplay) {
+            Profile = "TextHeadingSmallNoShadeProfile";
+            horizSizing = "relative";
+            vertSizing = "relative";
+            position = "40 -15";
+            extent = "1120 80";
+            minExtent = "8 8";
+            text = "FPS: ";
+            Visible = "0";
+         };
+         new GuiTextCtrl(PingDisplay) {
+            Profile = "TextHeadingSmallNoShadeProfile";
+            horizSizing = "relative";
+            vertSizing = "relative";
+            position = "40 25";
+            extent = "1120 80";
+            minExtent = "8 8";
+            text = "Ping: ";
+            Visible = "0";
+         };
    };
+
+   
 };
 
 new GuiControl(RootCenterCtrl) {
@@ -481,7 +506,9 @@ function RootGui::show(%this)
       RootCenterCtrl.resize(%offsetX,%offsetY,%w,%h);
    }
 
+   HUD_FPSBG.update();
    FPSDisplay.update();
+   PingDisplay.update();
 }
 
 function RootGui::removeContent(%this)
@@ -768,6 +795,22 @@ function RootBackgroundBitmaps::setVisible(%this,%vis)
    RootBackgroundOverlay.setVisible(%vis);
 }
 
+function HUD_FPSBG::update(%this)
+{
+   // make sure periodic event is scheduled
+   if (!isEventPending(%this.periodicUpdate))
+      %this.periodicUpdate = %this.schedule(1000, update);
+
+   if ($showFPS)
+   {
+      %this.setVisible(true);
+   }
+   else
+   {
+      %this.setVisible(false);
+   }
+}
+
 function FPSDisplay::update(%this)
 {
    // make sure periodic event is scheduled
@@ -776,7 +819,25 @@ function FPSDisplay::update(%this)
 
    if ($showFPS)
    {
-      %text = "FPS: " @ $fps::virtual @ " Ping: " @ ServerConnection.getPing();
+      %text = $fps::virtual;
+      %this.setText(%text);
+      %this.setVisible(true);
+   }
+   else
+   {
+      %this.setVisible(false);
+   }
+}
+
+function PingDisplay::update(%this)
+{
+   // make sure periodic event is scheduled
+   if (!isEventPending(%this.periodicUpdate))
+      %this.periodicUpdate = %this.schedule(1000, update);
+
+   if ($showFPS)
+   {
+      %text = ServerConnection.getPing();
       %this.setText(%text);
       %this.setVisible(true);
    }

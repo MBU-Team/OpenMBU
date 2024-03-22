@@ -174,12 +174,13 @@ function onMissionReset()
 
 function initRandomSpawnPoints()
 {
-   $Game::UseDetermSpawn = $Game::SPGemHunt && MissionInfo.gameMode $= "Scrum";
+   $Game::UseDetermSpawn = $Game::SPGemHunt && MissionInfo.gameMode $= "Scrum" && $Game::SPGemHuntSeeded;
+   $Game::DetermSpawnSeed = $Game::SPGemHuntSeed;
 
    if ($Game::UseDetermSpawn)
    {
       $Game::SpawnRandFunction = getDetermRandom;
-      setDetermRandomSeed(100);
+      setDetermRandomSeed($Game::DetermSpawnSeed);
    }
    else
    {
@@ -189,7 +190,7 @@ function initRandomSpawnPoints()
    if ($Game::UseDetermSpawn)
    {
       $Game::PlayerSpawnRandFunction = getDetermRandom2;
-      setDetermRandom2Seed(100);
+      setDetermRandom2Seed($Game::DetermSpawnSeed);
    }
    else
    {

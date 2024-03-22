@@ -47,6 +47,13 @@ function DifficultySelectGui::onA(%this)
       case 4: 
          GameMissionInfo.setMode(GameMissionInfo.SPMode);
          $Game::SPGemHunt = true;
+         $Game::SPGemHuntSeeded = true;
+         $Game::SPGemHuntSeed = 100;
+         RootGui.setContent(LevelPreviewGui);
+      case 5: 
+         GameMissionInfo.setMode(GameMissionInfo.SPMode);
+         $Game::SPGemHunt = true;
+         $Game::SPGemHuntSeeded = false;
          RootGui.setContent(LevelPreviewGui);
    }
       
@@ -75,7 +82,8 @@ function DifficultySelectGui::show(%this, %fromGui)
       DifficultyMenu.addRow($Text::LevelsAdvanced, 2, 20, 2);
    if (%hasCustom)
       DifficultyMenu.addRow($Text::LevelsCustom, 3, 20, 2);
-   DifficultyMenu.addRow($Text::SPGemHunt, 4, 0, 2);
+   DifficultyMenu.addRow($Text::SPGemHunt SPC "(Seeded)", 4, 0, 2);
+   DifficultyMenu.addRow($Text::SPGemHunt SPC "(Random)", 5, 0, 2);
                 
    RootGui.setTitle($Text::DifficultyMenu);
    if ($pref::UI::LegacyUI)
