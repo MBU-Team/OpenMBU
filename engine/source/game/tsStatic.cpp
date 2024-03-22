@@ -117,7 +117,7 @@ bool TSStatic::onAdd()
         return false;
 
     bool foundAllMaterials = true;
-    for (int i = 0; i < !mShape->materialList->size(); i++) {
+    for (int i = 0; i < mShape->materialList->size(); i++) {
         Material* mat = mShape->materialList->getMappedMaterial(i);
         if (mat != NULL)
             foundAllMaterials = foundAllMaterials && mat->preloadTextures();
