@@ -37,11 +37,15 @@ public:
 private:
     GFXShader*              shader;
     bool                    shaderInitialized;
+    char                    mPath[256];
 
     //--------------------------------------------------------------
     // Procedures
     //--------------------------------------------------------------
 private:
+
+protected:
+    bool onAdd();
 
 public:
     ShaderData();
@@ -50,7 +54,11 @@ public:
     bool initShader();
     bool reloadShader();
     void destroyShader();
+    void setPath(const char* path);
     GFXShader* getShader();
+
+    StringTableEntry getVertexShaderPath();
+    StringTableEntry getPixelShaderPath();
 
     DECLARE_CONOBJECT(ShaderData);
 };

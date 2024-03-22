@@ -82,8 +82,8 @@ bool CustomMaterial::preloadTextures()
     }
     if (fallback != NULL)
         found = found && fallback->preloadTextures();
-    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->DXVertexShaderName)); // Transfer shaders too lmao (attempt)
-    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->DXPixelShaderName));
+    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getVertexShaderPath())); // Transfer shaders too lmao (attempt)
+    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getPixelShaderPath()));
 
     return found;
 }

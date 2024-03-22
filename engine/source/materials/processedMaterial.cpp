@@ -52,6 +52,15 @@ void ProcessedMaterial::setBuffers(GFXVertexBufferHandleBase* vertBuffer, GFXPri
 
 GFXTexHandle ProcessedMaterial::createTexture( const char* filename, GFXTextureProfile *profile)
 {
+    if (filename[0] == '.')
+    {
+        // full path pls
+        char fullFilename[128];
+        dStrncpy(fullFilename, mMaterial->getPath(), dStrlen(mMaterial->getPath()) + 1);
+        dStrcat(fullFilename, filename);
+
+        return GFXTexHandle(fullFilename, profile);
+    }
     // if '/', then path is specified, open normally
     if( dStrstr( filename, "/" ) )
     {

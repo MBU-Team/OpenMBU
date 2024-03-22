@@ -227,10 +227,10 @@ void Material::initPersistFields()
     addField("sequenceSegmentSize", TypeF32, Offset(seqSegSize, Material), MAX_STAGES);
 
     // textures
-    addField("baseTex", TypeFilename, Offset(baseTexFilename, Material), MAX_STAGES);
-    addField("detailTex", TypeFilename, Offset(detailFilename, Material), MAX_STAGES);
-    addField("bumpTex", TypeFilename, Offset(bumpFilename, Material), MAX_STAGES);
-    addField("envTex", TypeFilename, Offset(envFilename, Material), MAX_STAGES);
+    addField("baseTex", TypeString, Offset(baseTexFilename, Material), MAX_STAGES);
+    addField("detailTex", TypeString, Offset(detailFilename, Material), MAX_STAGES);
+    addField("bumpTex", TypeString, Offset(bumpFilename, Material), MAX_STAGES);
+    addField("envTex", TypeString, Offset(envFilename, Material), MAX_STAGES);
 
 #ifdef MB_ULTRA
     addField("texCompression", TypeEnum, Offset(texCompression, Material), MAX_STAGES, &mCompressionTypeTable);
@@ -253,7 +253,7 @@ void Material::initPersistFields()
 
 #ifdef MB_ULTRA
     addField("softwareMipOffset", TypeF32, Offset(softwareMipOffset, Material));
-    addField("noiseTexFileName", TypeFilename, Offset(noiseTexFileName, Material));
+    addField("noiseTexFileName", TypeString, Offset(noiseTexFileName, Material));
 #endif
 
 }
@@ -341,14 +341,24 @@ bool Material::preloadTextures()
 
 bool Material::didFindTexture(const char* filename)
 {
-    ResourceObject* ro = GBitmap::findBmpResource(filename);
+    const char* searchFilename = filename;
+
+    if (filename[0] == '.')
+    {
+        char fullFilename[128];
+        dStrncpy(fullFilename, mPath, dStrlen(mPath) + 1);
+        dStrcat(fullFilename, filename);
+        searchFilename = fullFilename;
+    }
+
+    ResourceObject* ro = GBitmap::findBmpResource(searchFilename);
     if (ro)
     {
         return true;
     }
 
     // Find and load the texture.
-    GBitmap* bmp = GBitmap::load(filename);
+    GBitmap* bmp = GBitmap::load(searchFilename);
     return bmp != NULL;
 }
 
@@ -531,6 +541,15 @@ bool loadMaterialsFromJson(const char* path)
                 shader->DXVertexShaderName = StringTable->insert(val.get("vertexShader", "").asCString(), true);
                 shader->useDevicePixVersion = val.get("useDevicePixVersion", false).asBool();
                 shader->registerObject(); // Finally create the shader
+
+                // fix paths
+                char fpath[256];
+                const char* seppath = dStrrchr(path, '/');
+                U32 fileStrLen = seppath - path + 1;
+                dStrncpy(fpath, path, fileStrLen);
+                fpath[fileStrLen] = '\0';
+
+                shader->setPath(fpath);
             }
         }
 
@@ -550,6 +569,15 @@ bool loadMaterialsFromJson(const char* path)
                 {
                     cubeMap->cubeFaceFile[i] = StringTable->insert(val[i].asCString());
                 }
+
+                // fix paths
+                char fpath[256];
+                const char* seppath = dStrrchr(path, '/');
+                U32 fileStrLen = seppath - path + 1;
+                dStrncpy(fpath, path, fileStrLen);
+                fpath[fileStrLen] = '\0';
+                dStrncpy(cubeMap->mPath, fpath, 256);
+
                 cubeMap->registerObject();
             }
         }
@@ -679,6 +707,12 @@ bool loadMaterialsFromJson(const char* path)
                 // Create the object
                 mat->setModStaticFields(false);
                 mat->registerObject();
+
+                // Fix paths
+                const char* seppath = dStrrchr(path, '/');
+                U32 fileStrLen = seppath - path + 1;
+                dStrncpy(mat->getPath(), path, fileStrLen);
+                mat->getPath()[fileStrLen] = '\0';
             }
 
             return true;

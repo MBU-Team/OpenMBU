@@ -55,6 +55,7 @@ void ShaderGen::generateShader(const GFXShaderFeatureData& featureData,
 
     dSprintf(vertShaderName, sizeof(vertShaderName), "%s/shaderV%03d.hlsl", shaderPath, shaderNum);
     dSprintf(pixShaderName, sizeof(pixShaderName), "%s/shaderP%03d.hlsl", shaderPath, shaderNum);
+   // Con::printf("Generating shader %s", vertShaderName);
 
     shaderNum++;
 
