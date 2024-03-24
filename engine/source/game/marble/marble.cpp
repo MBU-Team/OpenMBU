@@ -148,7 +148,7 @@ Marble::Marble()
     mSinglePrecision.mVelocity = mVelocity;
     mSinglePrecision.mOmega = mOmega;
 
-    mPhysics = XNA;
+    mPhysics = MBU;
 }
 
 Marble::~Marble()
