@@ -634,10 +634,10 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
         F64 moveTime = timeStep;
         computeFirstPlatformIntersect(moveTime, smPathItrVec);
-        if (mPhysics == XNA)
-            mPosition += mVelocity * moveTime; // XNA
-        else
-            testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false); // MBU
+        //if (mPhysics == XNA)
+        //    mPosition += mVelocity * moveTime; // XNA
+        //else
+        testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false); // MBU
 
         if (!mMovePathSize && timeStep * 0.99 > moveTime && moveTime > 0.001000000047497451)
         {
