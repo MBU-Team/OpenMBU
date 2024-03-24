@@ -106,18 +106,21 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
         }
     }
 
-    for (S32 i = 0; i < mContacts.size(); i++)
+    if (mPhysics != XNASlopes)
     {
-        Contact* contact = &mContacts[i];
-
-        F64 normalForce = -mDot(contact->normal, A);
-
-        if (normalForce > 0.0 &&
-              (mVelocity.x - contact->surfaceVelocity.x) * contact->normal.x
-            + (mVelocity.y - contact->surfaceVelocity.y) * contact->normal.y
-            + (mVelocity.z - contact->surfaceVelocity.z) * contact->normal.z <= 0.0001)
+        for (S32 i = 0; i < mContacts.size(); i++)
         {
-            A += contact->normal * normalForce;
+            Contact *contact = &mContacts[i];
+
+            F64 normalForce = -mDot(contact->normal, A);
+
+            if (normalForce > 0.0 &&
+                (mVelocity.x - contact->surfaceVelocity.x) * contact->normal.x
+                + (mVelocity.y - contact->surfaceVelocity.y) * contact->normal.y
+                + (mVelocity.z - contact->surfaceVelocity.z) * contact->normal.z <= 0.0001)
+            {
+                A += contact->normal * normalForce;
+            }
         }
     }
 
@@ -634,10 +637,10 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
         F64 moveTime = timeStep;
         computeFirstPlatformIntersect(moveTime, smPathItrVec);
-        //if (mPhysics == XNA)
-        //    mPosition += mVelocity * moveTime; // XNA
-        //else
-        testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false); // MBU
+        if (mPhysics == XNA)
+            mPosition += mVelocity * moveTime; // XNA
+        else
+            testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false); // MBU
 
         if (!mMovePathSize && timeStep * 0.99 > moveTime && moveTime > 0.001000000047497451)
         {

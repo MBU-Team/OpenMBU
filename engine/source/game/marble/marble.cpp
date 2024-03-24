@@ -2262,22 +2262,25 @@ ConsoleMethod(Marble, setMode, void, 3, 3, "(mode)")
 ConsoleMethod(Marble, setPhysics, void, 3, 3, "(physics)")
 {
     const char* physics = argv[2];
-    U32 physicsFlags[3];
-    const char* physicsStrings[3];
+    U32 physicsFlags[Marble::MBPhysics_Count];
+    const char* physicsStrings[Marble::MBPhysics_Count];
 
-    physicsStrings[0] = "MBU";
-    physicsFlags[0] = Marble::MBU;
+    physicsStrings[Marble::MBU] = "MBU";
+    physicsFlags[Marble::MBU] = Marble::MBU;
 
-    physicsStrings[1] = "MBG";
-    physicsFlags[1] = Marble::MBG;
+    physicsStrings[Marble::MBG] = "MBG";
+    physicsFlags[Marble::MBG] = Marble::MBG;
 
-    physicsStrings[2] = "XNA";
-    physicsFlags[2] = Marble::XNA;
+    physicsStrings[Marble::XNA] = "XNA";
+    physicsFlags[Marble::XNA] = Marble::XNA;
+
+    physicsStrings[Marble::XNASlopes] = "XNASlopes";
+    physicsFlags[Marble::XNASlopes] = Marble::XNASlopes;
 
     S32 i = 0;
     while (dStricmp(physicsStrings[i], physics))
     {
-        if (++i >= 3)
+        if (++i >= Marble::MBPhysics_Count)
         {
             Con::errorf("Marble:: Unknown physics mode: %s", physics);
             return;

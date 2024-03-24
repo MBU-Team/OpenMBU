@@ -70,7 +70,9 @@ public:
     {
         MBU,
         MBG,
-        XNA
+        XNA,
+        XNASlopes,
+        MBPhysics_Count
     };
 
     enum UpdateMaskBits
