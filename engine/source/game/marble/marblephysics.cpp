@@ -360,9 +360,9 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
                     contact->surfaceVelocity = otherMarble->getVelocityD();
                 } else
                 {
-                    if (contact->surfaceVelocity.len() == 0.0 && !surfaceSlide && surfaceDot > -mDataBlock->maxDotSlide * velLen)
+                    // XNA has contact->surfaceVelocity.len() > 0.0001f while MBU360 has contact->surfaceVelocity.len() == 0.0
+                    if (((mPhysics == XNA && contact->surfaceVelocity.len() > 0.0001f) || (mPhysics != XNA && contact->surfaceVelocity.len() == 0.0)) && !surfaceSlide && surfaceDot > -mDataBlock->maxDotSlide * velLen)
                     {
-
                         mVelocity -= surfaceVel;
                         m_point3D_normalize(mVelocity);
                         mVelocity *= velLen;
@@ -454,6 +454,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             {
                 Contact* contact = &mContacts[j];
 
+                // TODO: should contactDistance have mRadius added to it in this check? (comparing to XNA)
                 if (mRadius > contact->contactDistance)
                 {
                     Point3F normal = contact->normal;
@@ -633,8 +634,10 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
         F64 moveTime = timeStep;
         computeFirstPlatformIntersect(moveTime, smPathItrVec);
-        testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false);
-        //mPosition += mVelocity * moveTime;
+        if (mPhysics == XNA)
+            mPosition += mVelocity * moveTime; // XNA
+        else
+            testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false); // MBU
 
         if (!mMovePathSize && timeStep * 0.99 > moveTime && moveTime > 0.001000000047497451)
         {

@@ -66,6 +66,13 @@ public:
         FinishMode = 0x40
     };
 
+    enum MBPhysics
+    {
+        MBU,
+        MBG,
+        XNA
+    };
+
     enum UpdateMaskBits
     {
         ActiveModeBits = 0x4,
@@ -216,6 +223,8 @@ private:
     bool mShadowGenerated;
     MatInstance* mStencilMaterial;
 
+    U32 mPhysics;
+
 public:
     DECLARE_CONOBJECT(Marble);
 
@@ -253,6 +262,7 @@ public:
     Point3F& getPosition();
     void victorySequence();
     void setMode(U32 mode);
+    void setPhysics(U32 physics);
     U32 getMode() { return mMode; }
     void setOOB(bool isOOB);
     virtual void interpolateTick(F32 delta);

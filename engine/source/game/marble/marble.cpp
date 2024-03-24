@@ -147,6 +147,8 @@ Marble::Marble()
     mSinglePrecision.mPosition = mPosition;
     mSinglePrecision.mVelocity = mVelocity;
     mSinglePrecision.mOmega = mOmega;
+
+    mPhysics = XNA;
 }
 
 Marble::~Marble()
@@ -407,6 +409,13 @@ void Marble::setMode(U32 mode)
     setMaskBits(PowerUpMask);
 }
 
+void Marble::setPhysics(U32 physics)
+{
+    mPhysics = physics;
+
+    setMaskBits(GravityMask);
+}
+
 void Marble::setOOB(bool isOOB)
 {
     mOOB = isOOB;
@@ -551,6 +560,11 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
     stream->writeFlag(isControl);
     stream->writeFlag(gravityChange);
 
+    if (stream->writeFlag((mask & GravityMask) != 0))
+    {
+        stream->writeInt(mPhysics, 7);
+    }
+
     if (stream->writeFlag((mask & PowerUpMask) != 0))
     {
         stream->writeRangedU32(mPowerUpId, 0, PowerUpData::MaxPowerUps - 1);
@@ -638,6 +652,11 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
 
     bool warp = stream->readFlag();
     bool isGravWarp = stream->readFlag();
+
+    if (stream->readFlag())
+    {
+        setPhysics(stream->readInt(7));
+    }
 
     if (stream->readFlag())
     {
@@ -2238,6 +2257,34 @@ ConsoleMethod(Marble, setMode, void, 3, 3, "(mode)")
     }
 
     object->setMode(newMode | modeFlags[i]);
+}
+
+ConsoleMethod(Marble, setPhysics, void, 3, 3, "(physics)")
+{
+    const char* physics = argv[2];
+    U32 physicsFlags[3];
+    const char* physicsStrings[3];
+
+    physicsStrings[0] = "MBU";
+    physicsFlags[0] = Marble::MBU;
+
+    physicsStrings[1] = "MBG";
+    physicsFlags[1] = Marble::MBG;
+
+    physicsStrings[2] = "XNA";
+    physicsFlags[2] = Marble::XNA;
+
+    S32 i = 0;
+    while (dStricmp(physicsStrings[i], physics))
+    {
+        if (++i >= 3)
+        {
+            Con::errorf("Marble:: Unknown physics mode: %s", physics);
+            return;
+        }
+    }
+
+    object->setPhysics(physicsFlags[i]);
 }
 
 ConsoleMethod(Marble, setPad, void, 3, 3, "(pad)")
