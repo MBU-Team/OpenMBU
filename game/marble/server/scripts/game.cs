@@ -1695,6 +1695,14 @@ function GameConnection::createPlayer(%this, %spawnPoint)
       client = %this;
    };
    MissionCleanup.add(%player);
+   
+   %physics = "MBU";
+   
+   if (MissionInfo.physics !$= "")
+      %physics = MissionInfo.physics;
+      
+   echo ("Using " @ %physics @ " Physics");
+   %player.setPhysics(%physics);
 
    // Player setup...
    %spawnPos = getSpawnPosition(%spawnPoint);
