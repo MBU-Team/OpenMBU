@@ -95,6 +95,8 @@ HTTPObject::HTTPObject()
 
 HTTPObject::~HTTPObject()
 {
+    if (mCurl)
+        curl_easy_cleanup(mCurl);
 }
 
 bool HTTPObject::onAdd()
