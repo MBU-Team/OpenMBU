@@ -71,7 +71,8 @@ public:
         MBU,
         MBG,
         XNA,
-        XNASlopes,
+        MBUSlopes,
+        MBGSlopes,
         MBPhysics_Count
     };
 

@@ -592,19 +592,19 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 
 						if (PlaneD(vertPlane + vertex, vertex, vertex + plane).distToPlane(contactVert) >= 0.0) {
 							if (PlaneD(lastVertex - vertPlane, lastVertex, lastVertex + plane).distToPlane(contactVert) >= 0.0) {
-                                if (mPhysics == MBG)
+                                if (mPhysics == MBG || mPhysics == MBGSlopes)
                                     finalContact = vertPlane.project(contactVert);
                                 else
 								    contactVert = vertPlane.project(contactVert);
 								break;
 							}
-                            if (mPhysics == MBG)
+                            if (mPhysics == MBG || mPhysics == MBGSlopes)
                                 finalContact = lastVertex;
                             else
 							    contactVert = lastVertex;
 						}
 						else {
-                            if (mPhysics == MBG)
+                            if (mPhysics == MBG || mPhysics == MBGSlopes)
 							    finalContact = vertex;
                             else
                                 contactVert = vertex;
@@ -628,7 +628,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 
 			U32 materialId = poly->material;
             Point3D delta;
-            if (mPhysics == MBG)
+            if (mPhysics == MBG || mPhysics == MBGSlopes)
                 delta = *pos - finalContact;
             else
 			    delta = *pos - contactVert;
@@ -655,7 +655,7 @@ void Marble::findContacts(U32 contactMask, const Point3D* inPos, const F32* inRa
 
 			contact.restitution = restitution;
 			contact.normal = normal;
-            if (mPhysics == MBG)
+            if (mPhysics == MBG || mPhysics == MBGSlopes)
                 contact.position = finalContact;
             else
 			    contact.position = contactVert;

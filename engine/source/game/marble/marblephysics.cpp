@@ -106,7 +106,7 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
         }
     }
 
-    if (mPhysics != XNASlopes)
+    if (mPhysics != MBUSlopes && mPhysics != MBGSlopes)
     {
         for (S32 i = 0; i < mContacts.size(); i++)
         {
@@ -265,7 +265,7 @@ bool Marble::computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const M
     Point2F currentVelocity(mDot(sideDir, rollVelocity), mDot(motionDir, rollVelocity));
 
     Point2F mv(move->x, move->y);
-    if (mPhysics != MBG)
+    if (mPhysics != MBG && mPhysics != MBGSlopes)
     {
         // Prevent increasing marble speed with diagonal movement (on the ground)
         mv *= 1.538461565971375;
@@ -677,7 +677,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
         }
 
         it++;
-    } while (mPhysics == MBG || it <= 10);
+    } while (mPhysics == MBG || mPhysics == MBGSlopes || it <= 10);
 
     for (S32 i = 0; i < smPathItrVec.size(); i++)
         smPathItrVec[i]->popTickState();

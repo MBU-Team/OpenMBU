@@ -2274,8 +2274,11 @@ ConsoleMethod(Marble, setPhysics, void, 3, 3, "(physics)")
     physicsStrings[Marble::XNA] = "XNA";
     physicsFlags[Marble::XNA] = Marble::XNA;
 
-    physicsStrings[Marble::XNASlopes] = "XNASlopes";
-    physicsFlags[Marble::XNASlopes] = Marble::XNASlopes;
+    physicsStrings[Marble::MBUSlopes] = "MBUSlopes";
+    physicsFlags[Marble::MBUSlopes] = Marble::MBUSlopes;
+
+    physicsStrings[Marble::MBGSlopes] = "MBGSlopes";
+    physicsFlags[Marble::MBGSlopes] = Marble::MBGSlopes;
 
     S32 i = 0;
     while (dStricmp(physicsStrings[i], physics))
