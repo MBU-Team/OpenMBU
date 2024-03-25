@@ -1690,9 +1690,14 @@ function GameConnection::createPlayer(%this, %spawnPoint)
       error( "Attempting to create an angus ghost!" );
    }
    
+   %size = 1.5;
+   if (MissionInfo.marbleSize !$= "")
+      %size = MissionInfo.marbleSize;
+   
    %player = new Marble() {
       dataBlock = %this.getMarbleChoice();
       client = %this;
+      size = %size;
    };
    MissionCleanup.add(%player);
    

@@ -149,6 +149,8 @@ Marble::Marble()
     mSinglePrecision.mOmega = mOmega;
 
     mPhysics = MBU;
+
+    mSize = 1.5f;
 }
 
 Marble::~Marble()
@@ -177,6 +179,7 @@ void Marble::initPersistFields()
     Parent::initPersistFields();
 
     addField("Controllable", TypeBool, Offset(mControllable, Marble));
+    addField("size", TypeF32, Offset(mSize, Marble));
 }
 
 void Marble::consoleInit()
@@ -416,6 +419,13 @@ void Marble::setPhysics(U32 physics)
     setMaskBits(GravityMask);
 }
 
+//void Marble::setSize(F32 size)
+//{
+//    mSize = size;
+//
+//    setMaskBits(GravityMask);
+//}
+
 void Marble::setOOB(bool isOOB)
 {
     mOOB = isOOB;
@@ -477,7 +487,7 @@ S32 Marble::mountPowerupImage(ShapeBaseImageData* imageData)
 void Marble::updatePowerUpParams()
 {
     mPowerUpParams.init();
-    mPowerUpParams.sizeScale *= mDataBlock->size;
+    mPowerUpParams.sizeScale *= mSize;
     mPowerUpParams.bounce = mDataBlock->bounceRestitution;
     mPowerUpParams.airAccel = mDataBlock->airAcceleration;
 
@@ -563,6 +573,7 @@ U32 Marble::packUpdate(NetConnection* conn, U32 mask, BitStream* stream)
     if (stream->writeFlag((mask & GravityMask) != 0))
     {
         stream->writeInt(mPhysics, 7);
+        //stream->write(mSize);
     }
 
     if (stream->writeFlag((mask & PowerUpMask) != 0))
@@ -655,7 +666,9 @@ void Marble::unpackUpdate(NetConnection* conn, BitStream* stream)
 
     if (stream->readFlag())
     {
-        setPhysics(stream->readInt(7));
+        mPhysics = stream->readInt(7);
+        //stream->read(&mSize);
+        //updatePowerUpParams();
     }
 
     if (stream->readFlag())
@@ -864,6 +877,8 @@ void Marble::writePacketData(GameConnection* conn, BitStream* stream)
 
     if (stream->writeFlag(mBlastTimer != 0))
         stream->writeRangedU32(mBlastTimer >> 5, 1, 16);
+
+    stream->write(mSize);
 }
 
 void Marble::readPacketData(GameConnection* conn, BitStream* stream)
@@ -930,6 +945,8 @@ void Marble::readPacketData(GameConnection* conn, BitStream* stream)
     else
         mBlastTimer = 0;
 
+    stream->read(&mSize);
+
     mPosition = mSinglePrecision.mPosition;
     mVelocity = mSinglePrecision.mVelocity;
     mOmega = mSinglePrecision.mOmega;
@@ -950,7 +967,7 @@ void Marble::prepShadows()
 {
     const U32 circleVerts = 32;
     const U32 numPrims = circleVerts * 2 - 2;
-    const F32 radius = mRadius / mDataBlock->size;
+    const F32 radius = mRadius / mSize;
 
     U16* idx;
     mPrimBuff.set(GFX, numPrims * 3, numPrims, GFXBufferTypeStatic);
@@ -1463,11 +1480,11 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
             mMegaHandle->setVelocity(VectorF(0, 0, 0));
         }
 
-        float scale = mDataBlock->size;
+        float scale = mSize;
 #ifdef MB_FORCE_MARBLE_SIZE
-        float megaAmt = (this->mPowerUpParams.sizeScale - scale) / (mDataBlock->megaSize - scale);
+        float megaAmt = (this->mPowerUpParams.sizeScale - scale) / (mSize * mDataBlock->megaSize - scale);
 #else
-        float megaAmt = (this->mRenderScale.x - scale) / (mDataBlock->megaSize - scale);
+        float megaAmt = (this->mRenderScale.x - scale) / (mSize * mDataBlock->megaSize - scale);
 #endif
         float regAmt = 1.0 - megaAmt;
 
@@ -1521,11 +1538,11 @@ void Marble::playBounceSound(Marble::Contact& contactSurface, F64 contactVel)
     bool mega;
     F32 softBounceSpeed;
 
-    F32 minSize = mDataBlock->size;
+    F32 minSize = mSize;
 #ifdef MB_FORCE_MARBLE_SIZE
-    if ((mPowerUpParams.sizeScale - minSize) / (mDataBlock->megaSize - minSize) <= 0.5f)
+    if ((mPowerUpParams.sizeScale - minSize) / (mSize * mDataBlock->megaSize - minSize) <= 0.5f)
 #else
-    if ((mRenderScale.x - minSize) / (mDataBlock->megaSize - minSize) <= 0.5f)
+    if ((mRenderScale.x - minSize) / (mSize * mDataBlock->megaSize - minSize) <= 0.5f)
 #endif
     {
         softBounceSpeed = mDataBlock->minVelocityBounceSoft;
@@ -2293,6 +2310,11 @@ ConsoleMethod(Marble, setPhysics, void, 3, 3, "(physics)")
     object->setPhysics(physicsFlags[i]);
 }
 
+//ConsoleMethod(Marble, setSize, void, 3, 3, "(size)")
+//{
+//    object->setSize(dAtof(argv[2]));
+//}
+
 ConsoleMethod(Marble, setPad, void, 3, 3, "(pad)")
 {
     U32 padId = dAtoi(argv[2]);
@@ -2459,7 +2481,7 @@ MarbleData::MarbleData()
     angularAcceleration = 18.0f;
     brakingAcceleration = 8.0f;
     gravity = 20.0f;
-    size = 1.0f;
+    //size = 1.0f;
     megaSize = 2.0f;
     staticFriction = 1.0f;
     kineticFriction = 0.89999998f;
@@ -2498,7 +2520,7 @@ void MarbleData::initPersistFields()
     addField("kineticFriction", TypeF32, Offset(kineticFriction, MarbleData));
     addField("bounceKineticFriction", TypeF32, Offset(bounceKineticFriction, MarbleData));
     addField("gravity", TypeF32, Offset(gravity, MarbleData));
-    addField("size", TypeF32, Offset(size, MarbleData));
+    //addField("size", TypeF32, Offset(size, MarbleData));
     addField("megaSize", TypeF32, Offset(megaSize, MarbleData));
     addField("maxDotSlide", TypeF32, Offset(maxDotSlide, MarbleData));
     addField("bounceRestitution", TypeF32, Offset(bounceRestitution, MarbleData));
@@ -2558,7 +2580,7 @@ void MarbleData::packData(BitStream* stream)
     stream->write(angularAcceleration);
     stream->write(brakingAcceleration);
     stream->write(gravity);
-    stream->write(size);
+    //stream->write(size);
     stream->write(staticFriction);
     stream->write(kineticFriction);
     stream->write(bounceKineticFriction);
@@ -2604,7 +2626,7 @@ void MarbleData::unpackData(BitStream* stream)
     stream->read(&angularAcceleration);
     stream->read(&brakingAcceleration);
     stream->read(&gravity);
-    stream->read(&size);
+    //stream->read(&size);
     stream->read(&staticFriction);
     stream->read(&kineticFriction);
     stream->read(&bounceKineticFriction);
