@@ -381,6 +381,9 @@ bool InteriorInstance::onAdd()
             Material* mat = pInterior->mMaterialList->getMappedMaterial(j);
             if (mat != NULL)
                 foundAllMaterials = foundAllMaterials && mat->preloadTextures();
+
+            if (!foundAllMaterials)
+                Con::errorf(ConsoleLogEntry::General, "missing texture for material: %s", pInterior->mMaterialList->getMaterialName(j));
         }
     }
     if (!foundAllMaterials) {
