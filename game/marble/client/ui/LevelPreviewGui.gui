@@ -425,7 +425,7 @@ function levelPreviewGui::populateLevelInfo(%this)
       
       if( %mission.hasEggIndex )
       {
-         if( hasFoundEgg( %mission.hasEggIndex ) )
+         if( hasFoundEgg( %mission.hasEggIndex ) || %mission.difficultySet $= "custom" )
             LP_egg.setVisible( true );
       }
       
