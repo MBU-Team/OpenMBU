@@ -704,7 +704,7 @@ function LobbyGui::updateHostInfo(%this)
    
    // set host info
    %gameMode = GameMissionInfo.getGameModeDisplayName(ServerConnection.gameModeId);
-   %missionName = GameMissionInfo.getMissionDisplayName(ServerConnection.missionId);
+   %missionName = ServerConnection.missionName; //GameMissionInfo.getMissionDisplayName(ServerConnection.missionId);
 
    %sanitizedText = ServerConnection.hostName;
    if ($pref::Lobby::StreamerMode)
@@ -918,6 +918,8 @@ function LobbyGui::onLeft(%this)
       $Server::MissionId = GameMissionInfo.getCurrentMission().level;
       $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
       $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      $Server::MissionGuid = GameMissionInfo.getCurrentMission().guid;
+      $Server::MissionName = GameMissionInfo.getMissionDisplayNameByGuid(GameMissionInfo.getCurrentMission().guid);
       
       onMissionLoaded();
    
@@ -946,6 +948,8 @@ function LobbyGui::onRight(%this)
       $Server::MissionId = GameMissionInfo.getCurrentMission().level;
       $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
       $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      $Server::MissionGuid = GameMissionInfo.getCurrentMission().guid;
+      $Server::MissionName = GameMissionInfo.getMissionDisplayNameByGuid(GameMissionInfo.getCurrentMission().guid);
       
       onMissionLoaded();
       

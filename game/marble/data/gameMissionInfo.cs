@@ -671,6 +671,15 @@ function GameMissionInfo::getMissionDisplayName(%this, %missionId)
       return getMissionNameFromNameVar(%mission);
 }
 
+function GameMissionInfo::getMissionDisplayNameByGuid(%this, %guid)
+{
+   %mission = %this.findMissionByGuid(%guid);
+   if (!isObject(%mission))
+      return "";
+   else
+      return getMissionNameFromNameVar(%mission);
+}
+
 function getMissionNameFromNameVar(%mission)
 {
    %name = %mission.name;   
