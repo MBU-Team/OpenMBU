@@ -621,6 +621,7 @@ $Text::LevelStartHelp97 = "Fai molta attenzione su questa struttura.";
 $Text::LevelName56 = "Punti della bussola";
 $Text::LevelName89 = "Bastioni";
 $Text::LevelStartHelp89 = "Divertiti ad assalire il castello!";
+$Text::TriggerText89_0 = "Attenzione al vento!";
 $Text::LevelName69 = "Intorno al mondo";
 $Text::LevelName21 = "Trabocchetti";
 $Text::LevelStartHelp21 = "Allenati a evitare i buchi nel pavimento!";

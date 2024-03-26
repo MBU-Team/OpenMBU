@@ -739,6 +739,7 @@ new SimGroup(MissionGroup) {
       hidden = "0";
       dataBlock = "HelpTrigger";
       polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
+      text = $Text::TriggerText89_0;
    };
    new Item() {
       position = "-19.3528 30.3085 5.89689";

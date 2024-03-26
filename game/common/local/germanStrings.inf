@@ -622,6 +622,7 @@ $Text::LevelStartHelp97 = "Auf diesen Gerüsten sollten Sie äußerst vorsichtig
 $Text::LevelName56 = "Himmelsrichtungen";
 $Text::LevelName89 = "Zinnen";
 $Text::LevelStartHelp89 = "Viel Spaß beim Sturm auf das Schloss!";
+$Text::TriggerText89_0 = "Vorsicht, Wind!";
 $Text::LevelName69 = "Einmal um die ganze Welt";
 $Text::LevelName21 = "Fallen";
 $Text::LevelStartHelp21 = "Trainieren Sie Ihre Rollfertigkeiten, indem Sie Löcher im Boden meiden!";

@@ -650,6 +650,7 @@ $Text::LevelStartHelp97 = "Be very cautious on this framework.";
 $Text::LevelName56 = "Points of the Compass";
 $Text::LevelName89 = "Battlements";
 $Text::LevelStartHelp89 = "Have fun storming the castle!";
+$Text::TriggerText89_0 = "Beware of the winds!";
 $Text::LevelName69 = "Around the World";
 $Text::LevelName21 = "Pitfalls";
 $Text::LevelStartHelp21 = "Practice your rolling skills by avoiding the gaps in the floor!";
