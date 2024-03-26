@@ -20,7 +20,7 @@
 
 /// Version number is major * 1000 + minor * 100 + revision * 10.
 /// Different engines (TGE, T2D, etc.) will have different version numbers.
-#define TORQUE_VERSION              902 // version 0.9
+#define TORQUE_VERSION              903 // version 0.9
 #define TORQUE_PROTOCOL_VERSION     13  // increment this when we change the protocol
 
 /// What engine are we running? The presence and value of this define are
