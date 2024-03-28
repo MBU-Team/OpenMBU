@@ -3,7 +3,7 @@ new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
          gameMode = "Scrum";
-         level = "88";
+         level = "19";
          difficulty = "7";
          maxGemsPerGroup = "7";
          time = "240000";

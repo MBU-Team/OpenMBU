@@ -4,7 +4,7 @@ new SimGroup(MissionGroup) {
    new ScriptObject(MissionInfo) {
          artist = "Alex Swanson";
          gameType = "MultiPlayer";
-         level = "64";
+         level = "4";
          desc = "Gem Hunt!";
          maxGemsPerGroup = "6";
          include = "1";

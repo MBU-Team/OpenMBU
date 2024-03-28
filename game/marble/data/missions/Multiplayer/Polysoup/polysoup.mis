@@ -6,7 +6,7 @@ new SimGroup(MissionGroup) {
          gameMode = "Scrum";
          desc = "Polysoup";
          guid = "{663167c1-c00d-461d-9a30-01235d0a555a}";
-         level = "95";
+         level = "26";
          physics = "MBUSlopes";
          include = "1";
          goldTime = "0";

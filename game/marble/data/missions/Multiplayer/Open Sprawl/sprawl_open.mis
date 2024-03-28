@@ -7,7 +7,7 @@ new SimGroup(MissionGroup) {
          gemGroupRadius = "25";
          time = "300000";
          type = "advanced";
-         level = "65";
+         level = "5";
 name  =  $Text::LevelNameMP8;
          numgems = "1";
          gameType = "MultiPlayer";

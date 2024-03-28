@@ -2,7 +2,7 @@
 new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
-         level = "70";
+         level = "10";
          maxGemsPerGroup = "7";
          time = "300000";
          type = "intermediate";

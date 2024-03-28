@@ -3,7 +3,7 @@ new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
          numgems = "1";
-         level = "86";
+         level = "17";
          gameType = "MultiPlayer";
          desc = $Text::LevelNameMP17;
          time = "300000";

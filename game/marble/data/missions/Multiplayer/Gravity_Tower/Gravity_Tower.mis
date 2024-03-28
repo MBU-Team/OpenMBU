@@ -6,7 +6,7 @@ new SimGroup(MissionGroup) {
          gemGroupRadius = "25";
          gameMode = "Scrum";
          desc = "Gravity Tower";
-         level = "92";
+         level = "23";
          guid = "{758e4f71-3802-4937-a0ce-4b6791c1ea6d}";
          include = "1";
          time = "300000";

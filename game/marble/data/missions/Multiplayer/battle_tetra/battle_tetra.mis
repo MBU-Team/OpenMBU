@@ -6,7 +6,7 @@ new SimGroup(MissionGroup) {
          desc = "Battle Tetra";
          gemGroupRadius = "25";
          guid = "{7f6d6908-8357-4ffb-bc4f-a66245310cd3}";
-         level = "94";
+         level = "25";
          numGems = "1";
          include = "1";
          goldTime = "0";

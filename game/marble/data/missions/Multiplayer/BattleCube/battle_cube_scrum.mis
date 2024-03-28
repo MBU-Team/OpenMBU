@@ -6,7 +6,7 @@ new SimGroup(MissionGroup) {
          gameMode = "Scrum";
          time = "180000";
          type = "advanced";
-         level = "63";
+         level = "3";
 name  =  $Text::LevelNameMP2;
          numgems = "1";
          gameType = "MultiPlayer";

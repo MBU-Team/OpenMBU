@@ -3,7 +3,7 @@ new SimGroup(MissionGroup) {
 
    new ScriptObject(MissionInfo) {
          gameType = "MultiPlayer";
-         level = "87";
+         level = "18";
          desc = "Marble It Up!";
          maxGemsPerGroup = "6";
          time = "300000";

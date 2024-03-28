@@ -5,7 +5,7 @@ new SimGroup(MissionGroup) {
          maxGemsPerGroup = "5";
          gameType = "MultiPlayer";
          desc = "Marble It Up!";
-         level = "90";
+         level = "21";
          gemGroupRadius = "50";
          include = "1";
          time = "360000";

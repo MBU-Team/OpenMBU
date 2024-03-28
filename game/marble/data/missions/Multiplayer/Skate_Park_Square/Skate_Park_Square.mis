@@ -4,7 +4,7 @@ new SimGroup(MissionGroup) {
          guid = "{d4a795f8-88b8-4b82-b097-ac4a0fb4a492}";
          time = "300000";
          include = "1";
-         level = "93";
+         level = "24";
          goldTime = "0";
          maxGemsPerGroup = "8";
          difficulty = "4";

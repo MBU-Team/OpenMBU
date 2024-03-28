@@ -6,7 +6,7 @@ new SimGroup(MissionGroup) {
          gemGroupRadius = "20";
          time = "300000";
          isInDemoMode = "1";
-         level = "61";
+         level = "1";
          type = "beginner";
 name  =  $Text::LevelNameMP3;
          numgems = "1";
