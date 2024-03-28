@@ -98,7 +98,7 @@ name = $Text::LevelNameMP25;
    };
    new SpawnSphere(CameraObj) {
       position = "-32.2342 -36.2246 46.4727";
-      rotation = "0.643552 -0.270081 0.716169 60.7406";
+      rotation = "0.643552 -0.270081 0.716169 60.7403";
       rotationEuler = "27.5524 -32.1087 53.6048";
       scale = "1 1 1";
       hidden = "0";
@@ -137,7 +137,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -150,7 +149,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -163,7 +161,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -176,7 +173,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -189,7 +185,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -202,7 +197,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -215,7 +209,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -228,7 +221,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -241,7 +233,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -254,7 +245,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -267,7 +257,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -280,7 +269,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -293,7 +281,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -306,7 +293,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -319,7 +305,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -332,7 +317,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -345,7 +329,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -358,7 +341,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -371,7 +353,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -384,7 +365,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -397,7 +377,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -410,7 +389,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -423,7 +401,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -436,7 +413,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -449,7 +425,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -462,7 +437,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -475,7 +449,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -488,7 +461,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -501,7 +473,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -514,7 +485,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -527,7 +497,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -540,7 +509,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -553,7 +521,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -566,7 +533,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -579,7 +545,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -592,7 +557,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -605,7 +569,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -618,7 +581,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -631,7 +593,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -644,7 +605,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -657,7 +617,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -670,7 +629,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -683,7 +641,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -696,7 +653,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -709,7 +665,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -722,7 +677,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -735,7 +689,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -748,7 +701,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -761,7 +713,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -774,7 +725,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -787,7 +737,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -800,7 +749,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -813,7 +761,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -826,7 +773,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -839,7 +785,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -852,7 +797,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -865,7 +809,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -878,7 +821,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -891,7 +833,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -904,7 +845,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -917,7 +857,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -930,7 +869,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -943,7 +881,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -956,7 +893,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -969,7 +905,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -982,7 +917,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -995,7 +929,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1008,7 +941,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1021,7 +953,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1034,7 +965,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1047,7 +977,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1060,7 +989,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1073,7 +1001,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1086,7 +1013,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1099,7 +1025,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1112,7 +1037,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1125,7 +1049,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1138,7 +1061,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1151,7 +1073,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1164,7 +1085,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1177,7 +1097,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1190,7 +1109,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1203,7 +1121,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1216,7 +1133,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1229,7 +1145,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1242,7 +1157,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1255,7 +1169,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1268,7 +1181,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1281,7 +1193,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1294,7 +1205,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1307,7 +1217,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1320,7 +1229,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1333,7 +1241,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1346,7 +1253,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1359,7 +1265,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1372,7 +1277,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1385,7 +1289,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1398,7 +1301,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1411,7 +1313,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1424,7 +1325,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1437,7 +1337,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1450,7 +1349,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1463,7 +1361,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1476,7 +1373,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1489,7 +1385,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1502,7 +1397,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1515,7 +1409,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1528,7 +1421,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1541,7 +1433,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1554,7 +1445,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1567,7 +1457,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1580,7 +1469,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1593,7 +1481,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1606,7 +1493,6 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
       permanent = "1";
    };
    new Item() {
@@ -1619,8 +1505,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-12 11 1";
@@ -1632,8 +1517,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "15 -16 1";
@@ -1645,8 +1529,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-6 -2 -8";
@@ -1658,8 +1541,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "2 -10 -8";
@@ -1671,8 +1553,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-6 20 14";
@@ -1684,8 +1565,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "2 20 22";
@@ -1697,8 +1577,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "24 -2 22";
@@ -1710,8 +1589,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "24 -10 14";
@@ -1723,8 +1601,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-19 -23 -32";
@@ -1736,8 +1613,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "48 -23 35";
@@ -1749,8 +1625,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-19 44 35";
@@ -1762,8 +1637,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-6 -14 -20";
@@ -1775,8 +1649,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 -10 -20";
@@ -1788,8 +1661,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "10 -14 -4";
@@ -1801,8 +1673,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 6 -4";
@@ -1814,8 +1685,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "10 16 26";
@@ -1827,8 +1697,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-6 32 26";
@@ -1840,8 +1709,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "20 6 26";
@@ -1853,8 +1721,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "36 -10 26";
@@ -1866,8 +1733,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 32 22";
@@ -1879,8 +1745,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 16 6";
@@ -1892,8 +1757,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "36 -14 22";
@@ -1905,8 +1769,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "20 -14 6";
@@ -1918,8 +1781,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "8 -6 2";
@@ -1931,8 +1793,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "14 -6 8";
@@ -1944,8 +1805,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-2 4 2";
@@ -1957,8 +1817,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-2 10 8";
@@ -1970,8 +1829,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "14 4 18";
@@ -1983,8 +1841,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "8 10 18";
@@ -1996,8 +1853,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "6 2 4.5";
@@ -2009,8 +1865,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "6 7.5 10";
@@ -2022,8 +1877,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "11.5 2 10";
@@ -2035,8 +1889,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "4 -22 -22";
@@ -2048,8 +1901,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "38 -22 12";
@@ -2061,8 +1913,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "6 -22 -20";
@@ -2074,8 +1925,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "16 -22 -10";
@@ -2087,8 +1937,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "26 -22 0";
@@ -2100,8 +1949,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "36 -22 10";
@@ -2113,8 +1961,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "38 0 34";
@@ -2126,8 +1973,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "36 2 34";
@@ -2139,8 +1985,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "26 12 34";
@@ -2152,8 +1997,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "4 34 34";
@@ -2165,8 +2009,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "6 32 34";
@@ -2178,8 +2021,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "16 22 34";
@@ -2191,8 +2033,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 34 12";
@@ -2204,8 +2045,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 32 10";
@@ -2217,8 +2057,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 22 0";
@@ -2230,8 +2069,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 12 -10";
@@ -2243,8 +2081,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 2 -20";
@@ -2256,8 +2093,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 0 -22";
@@ -2269,8 +2105,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "27 -9 16";
@@ -2282,8 +2117,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-5 23 16";
@@ -2295,8 +2129,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "0 23 21";
@@ -2308,8 +2141,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "0 -9 -11";
@@ -2321,8 +2153,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-5 -4 -11";
@@ -2334,8 +2165,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "27 -4 21";
@@ -2347,8 +2177,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "3 -1 16";
@@ -2360,8 +2189,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "3 -4 13";
@@ -2373,8 +2201,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "0 -1 13";
@@ -2386,8 +2213,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "30 8 34";
@@ -2399,8 +2225,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "12 26 34";
@@ -2412,8 +2237,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "30 -22 4";
@@ -2425,8 +2249,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "12 -22 -14";
@@ -2438,8 +2261,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 8 -14";
@@ -2451,8 +2273,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 26 4";
@@ -2464,8 +2285,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 24 14";
@@ -2477,8 +2297,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 -2 -12";
@@ -2490,8 +2309,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "2 -14 -12";
@@ -2503,8 +2321,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "28 -14 14";
@@ -2516,8 +2333,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "28 -2 26";
@@ -2529,8 +2345,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "2 24 26";
@@ -2542,8 +2357,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "38 -14 28";
@@ -2555,8 +2369,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 34 28";
@@ -2568,8 +2381,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "38 -16 26";
@@ -2581,8 +2393,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-10 -16 -22";
@@ -2594,8 +2405,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-12 -14 -22";
@@ -2607,8 +2417,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-12 34 26";
@@ -2620,8 +2429,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "10 18 28";
@@ -2633,8 +2441,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "22 6 28";
@@ -2646,8 +2453,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "10 -16 -6";
@@ -2659,8 +2465,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "22 -16 6";
@@ -2672,8 +2477,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-12 6 -6";
@@ -2685,8 +2489,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-12 18 6";
@@ -2698,8 +2501,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "22 -22 -4";
@@ -2711,8 +2513,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "20 -22 -6";
@@ -2724,8 +2525,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "22 16 34";
@@ -2737,8 +2537,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "20 18 34";
@@ -2750,8 +2549,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 18 -4";
@@ -2763,8 +2561,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 16 -6";
@@ -2776,8 +2573,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "9 5 16";
@@ -2789,8 +2585,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "9 -4 7";
@@ -2802,8 +2597,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "0 5 7";
@@ -2815,8 +2609,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-7 5 0";
@@ -2828,8 +2621,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "9 -11 0";
@@ -2841,8 +2633,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "16 -11 7";
@@ -2854,8 +2645,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "16 5 23";
@@ -2867,8 +2657,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "9 12 23";
@@ -2880,8 +2669,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-7 12 7";
@@ -2893,8 +2681,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "42 -22 16";
@@ -2906,8 +2693,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "0 -22 -26";
@@ -2919,8 +2705,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 -4 -26";
@@ -2932,8 +2717,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "-18 38 16";
@@ -2945,8 +2729,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "0 38 34";
@@ -2958,8 +2741,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new Item() {
       position = "42 -4 34";
@@ -2971,8 +2753,7 @@ name = $Text::LevelNameMP25;
       collideable = "0";
       static = "1";
       rotate = "1";
-      rotate2 = "0";
-      permanent = "1";
+      permanent = "0";
    };
    new SimGroup(GemSpawns) {
       new SpawnSphere() {
