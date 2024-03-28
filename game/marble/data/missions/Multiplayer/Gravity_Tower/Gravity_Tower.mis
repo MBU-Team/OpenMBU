@@ -1,20 +1,20 @@
 //--- OBJECT WRITE BEGIN ---
 new SimGroup(MissionGroup) {
    new ScriptObject(MissionInfo) {
-         numgems = "1";
-         type = "advanced";
-         gemGroupRadius = "25";
-         gameMode = "Scrum";
-         desc = "Gravity Tower";
-         level = "23";
-         guid = "{758e4f71-3802-4937-a0ce-4b6791c1ea6d}";
          include = "1";
-         time = "300000";
          goldTime = "0";
+         time = "180000";
 name = $Text::LevelNameMP23;
          maxGemsPerGroup = "7";
          difficulty = "5";
          gameType = "MultiPlayer";
+         numgems = "1";
+         gemGroupRadius = "25";
+         gameMode = "Scrum";
+         desc = "Gravity Tower";
+         type = "advanced";
+         level = "23";
+         guid = "{758e4f71-3802-4937-a0ce-4b6791c1ea6d}";
    };
    new MissionArea(MissionArea) {
       Area = "-360 -648 720 1296";
@@ -52,10 +52,10 @@ name = $Text::LevelNameMP23;
       renderBanOffsetHeight = "50";
       skyGlow = "0";
       skyGlowColor = "0 0 0 0";
-         fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
-         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
          fogVolumeColor3 = "128.000000 128.000000 128.000000 14435505.000000";
          windEffectPrecipitation = "0";
+         fogVolumeColor1 = "128.000000 128.000000 128.000000 0.000000";
+         fogVolumeColor2 = "128.000000 128.000000 128.000000 0.000004";
    };
    new Sun() {
       direction = "-0.614021 0.433884 -0.659336";
@@ -100,8 +100,8 @@ name = $Text::LevelNameMP23;
       customAmbientLighting = "0 0 0 1";
    };
    new SpawnSphere(CameraObj) {
-      position = "64.6584 4.28378 -3.27939";
-      rotation = "-0.0171549 -0.0188856 -0.999675 95.5174";
+      position = "64.4405 2.2298 -0.941346";
+      rotation = "0.0131971 0.013754 -0.999818 92.378";
       scale = "1 1 1";
       hidden = "0";
       reanderShadow = "1";
@@ -212,7 +212,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-79 6.75 -7.5";
@@ -225,7 +225,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-79 -7.5 -6.75";
@@ -238,7 +238,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-79 -6.75 7.5";
@@ -251,7 +251,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-90.75 6.75 7.5";
@@ -264,7 +264,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-91 7.5 -6.75";
@@ -277,7 +277,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-91 -6.75 -7.5";
@@ -290,7 +290,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-91 -7.5 6.75";
@@ -303,7 +303,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "79 7.5 -6.75";
@@ -316,7 +316,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "79 -6.75 -7.5";
@@ -329,7 +329,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "79 -7.5 6.75";
@@ -342,7 +342,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "79 6.75 7.5";
@@ -355,7 +355,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "91 7.5 6.75";
@@ -368,7 +368,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "91 6.75 -7.5";
@@ -381,7 +381,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "91 -7.5 -6.75";
@@ -394,7 +394,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "91 -6.75 7.5";
@@ -407,7 +407,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "31 -6.75 -7.5";
@@ -420,7 +420,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "31 -7.5 6.75";
@@ -433,7 +433,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "31 6.75 7.5";
@@ -446,7 +446,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "46 -5.5 -6.75";
@@ -459,7 +459,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "39 6.75 -7.5";
@@ -472,7 +472,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "31 7.5 -6.75";
@@ -485,7 +485,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "39 -6.75 7.5";
@@ -498,7 +498,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "46 5.5 6.75";
@@ -511,7 +511,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-31 -7.5 -6.75";
@@ -524,7 +524,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-31 6.75 -7.5";
@@ -537,7 +537,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-31 7.5 6.75";
@@ -550,7 +550,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-31 -6.75 7.5";
@@ -563,7 +563,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-39 -6.75 -7.5";
@@ -576,7 +576,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-46 7.5 -6.75";
@@ -589,7 +589,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-39 6.75 7.5";
@@ -602,7 +602,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-46 -7.5 6.75";
@@ -615,7 +615,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "3 0 0";
@@ -628,7 +628,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-3 0 0";
@@ -641,7 +641,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-1 7 -6.75";
@@ -654,7 +654,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "5 6.75 -7";
@@ -667,7 +667,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-1 -6.75 -7";
@@ -680,7 +680,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "3 -7.5 -6.75";
@@ -693,7 +693,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "3 7 6.75";
@@ -706,7 +706,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-1 6.75 7";
@@ -719,7 +719,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "1 -6.75 7.5";
@@ -732,7 +732,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-5 -7 6.75";
@@ -745,7 +745,7 @@ name = $Text::LevelNameMP23;
       static = "1";
       rotate = "1";
       rotate2 = "0";
-      permanent = "0";
+      permanent = "1";
    };
    new Item() {
       position = "-88 0 8";
