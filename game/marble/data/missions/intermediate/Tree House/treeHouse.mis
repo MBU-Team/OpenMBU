@@ -14,17 +14,19 @@ new SimGroup(MissionGroup) {
          guid = "{7A7BF863-D4E5-471D-91C3-B4DD7041AA4B}";
    };
    new MissionArea(MissionArea) {
-      area = "-360 -648 720 1296";
+      canSaveDynamicFields = "1";
+      Area = "-360 -648 720 1296";
       flightCeiling = "300";
       flightCeilingRange = "20";
          locked = "true";
    };
-   new Sky(Sky) {
+   new Sky(GlobalSky) {
+      canSaveDynamicFields = "1";
       position = "336 136 0";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
-      materialList = "~/data/skies/sky_intermediate.dml";
+      materialList = "marble/data/skies/sky_intermediate.dml";
       cloudHeightPer[0] = "0";
       cloudHeightPer[1] = "0";
       cloudHeightPer[2] = "0";
@@ -33,7 +35,7 @@ new SimGroup(MissionGroup) {
       cloudSpeed3 = "0.0003";
       visibleDistance = "1500";
       fogDistance = "300";
-      fogColor = "0.600000 0.600000 0.600000 1.000000";
+      fogColor = "0.6 0.6 0.6 1";
       fogStorm1 = "0";
       fogStorm2 = "0";
       fogStorm3 = "0";
@@ -41,54 +43,99 @@ new SimGroup(MissionGroup) {
       fogVolume2 = "-1 0.297545 -0.879715";
       fogVolume3 = "-1 -0.350002 -0.690976";
       windVelocity = "1 0 0";
-      windEffectPrecipitation = "0";
-      SkySolidColor = "0.600000 0.600000 0.600000 1.000000";
+      SkySolidColor = "0.6 0.6 0.6 1";
       useSkyTextures = "1";
       renderBottomTexture = "1";
       noRenderBans = "1";
       renderBanOffsetHeight = "50";
       skyGlow = "0";
       skyGlowColor = "0.496951 -0.601797 0.522919 0.602667";
+         windEffectPrecipitation = "0";
    };
-   new StaticShape(Cloud_Shape) {      position = "0 0 0";      rotation = "1 0 0 0";      scale = "1 1 1";      hidden = "0";      dataBlock = "astrolabeCloudsIntermediateShape";   };   new Sun() {
-      direction = "0.425628 0.59588 -0.681005";
-      color = "1.400000 1.200000 0.400000 1.000000";
-      ambient = "0.440000 0.440000 0.440000 1.000000";
-      shadowColor = "0.000000 0.000000 0.150000 0.350000";
+   new StaticShape(Cloud_Shape) {
+      canSaveDynamicFields = "1";
+      position = "0 0 0";
+      rotation = "1 0 0 0";
+      scale = "1 1 1";
+      hidden = "0";
+      dataBlock = "astrolabeCloudsIntermediateShape";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
+   };
+   new Sun() {
+      canSaveDynamicFields = "1";
+      azimuth = "0";
+      elevation = "35";
+      color = "1 1 0.9 1";
+      ambient = "0.4 0.4 0.5 1";
+      castsShadows = "1";
+      useBloom = "0";
+      useToneMapping = "0";
+      useDynamicRangeLighting = "0";
+      DRLHighDynamicRange = "0";
+      DRLTarget = "0.5";
+      DRLMax = "1.4";
+      DRLMin = "0.5";
+      DRLMultiplier = "1.1";
+      bloomCutOff = "0.8";
+      bloomAmount = "0.25";
+      bloomSeedAmount = "1";
+         direction = "0.573201 0.275357 -0.771764";
+         shadowColor = "0.000000 0.000000 0.150000 0.350000";
    };
    new StaticShape() {
+      canSaveDynamicFields = "1";
       position = "0 0 -600";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
       dataBlock = "astrolabeShape";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
    };
    new InteriorInstance() {
+      canSaveDynamicFields = "1";
       position = "0 0 0";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
-      interiorFile = "./treehouse.dif";
+      interiorFile = "marble/data/missions/intermediate/Tree House/treehouse.dif";
       showTerrainInside = "0";
    };
    new SimGroup(SpawnPoints) {
+      canSaveDynamicFields = "1";
 
       new StaticShape(StartPoint) {
+         canSaveDynamicFields = "1";
          position = "0 -37 -1.5";
          rotation = "1 0 0 0";
          scale = "1 1 1";
          hidden = "0";
          dataBlock = "StartPad";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
       };
    };
    new StaticShape(EndPoint) {
+      canSaveDynamicFields = "1";
       position = "0 141.5 21";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
       dataBlock = "EndPad";
+      receiveSunLight = "1";
+      receiveLMLighting = "1";
+      useCustomAmbientLighting = "0";
+      customAmbientLighting = "0 0 0 1";
    };
    new Item() {
+      canSaveDynamicFields = "1";
       position = "-37 2 19";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -97,9 +144,11 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
+      canSaveDynamicFields = "1";
       position = "37 -16.5 16";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -108,9 +157,11 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
+      canSaveDynamicFields = "1";
       position = "37 0 38.5";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -119,9 +170,11 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
+      canSaveDynamicFields = "1";
       position = "-1 -37 24";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -130,9 +183,11 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
+      canSaveDynamicFields = "1";
       position = "0 37 -1.5";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -141,9 +196,11 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
+      canSaveDynamicFields = "1";
       position = "0 -6 60.5";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -152,9 +209,11 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
+      canSaveDynamicFields = "1";
       position = "-37 0 38.5";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -163,10 +222,12 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
-      position = "-33.5 -5 18.5";
+      canSaveDynamicFields = "1";
+      position = "-33.5 -5 19.1";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
@@ -174,20 +235,11 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new Item() {
-      position = "33.5 37 38.5";
-      rotation = "1 0 0 0";
-      scale = "1 1 1";
-      hidden = "0";
-      dataBlock = "HelicopterItem";
-      collideable = "0";
-      static = "1";
-      rotate = "1";
-      permanent = "0";
-   };
-   new Item() {
+      canSaveDynamicFields = "1";
       position = "37 0 -1.5";
       rotation = "1 0 0 0";
       scale = "1 1 1";
@@ -196,14 +248,18 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
    new SimGroup(MustChange_g) {
+      canSaveDynamicFields = "1";
 
       new Path() {
+         canSaveDynamicFields = "1";
          isLooping = "1";
 
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 1";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -214,6 +270,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Accelerate";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 21";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -224,6 +281,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Linear";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 21";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -234,6 +292,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Spline";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 1";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -245,6 +304,7 @@ new SimGroup(MissionGroup) {
          };
       };
       new PathedInterior(MustChange) {
+         canSaveDynamicFields = "1";
          position = "0 0 0";
          rotation = "1 0 0 0";
          scale = "1 1 1";
@@ -259,11 +319,14 @@ new SimGroup(MissionGroup) {
       };
    };
    new SimGroup(MustChange_g) {
+      canSaveDynamicFields = "1";
 
       new Path() {
+         canSaveDynamicFields = "1";
          isLooping = "1";
 
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 -17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -274,6 +337,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Accelerate";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 -17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -284,6 +348,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Linear";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 -17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -294,6 +359,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Spline";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 -17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -305,6 +371,7 @@ new SimGroup(MissionGroup) {
          };
       };
       new PathedInterior(MustChange) {
+         canSaveDynamicFields = "1";
          position = "0 0 0";
          rotation = "1 0 0 0";
          scale = "1 1 1";
@@ -319,11 +386,14 @@ new SimGroup(MissionGroup) {
       };
    };
    new SimGroup(MustChange_g) {
+      canSaveDynamicFields = "1";
 
       new Path() {
+         canSaveDynamicFields = "1";
          isLooping = "1";
 
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 -17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -334,6 +404,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Accelerate";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 -17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -344,6 +415,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Linear";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 -17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -354,6 +426,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Spline";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 -17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -365,6 +438,7 @@ new SimGroup(MissionGroup) {
          };
       };
       new PathedInterior(MustChange) {
+         canSaveDynamicFields = "1";
          position = "0 0 0";
          rotation = "1 0 0 0";
          scale = "1 1 1";
@@ -379,11 +453,14 @@ new SimGroup(MissionGroup) {
       };
    };
    new SimGroup(MustChange_g) {
+      canSaveDynamicFields = "1";
 
       new Path() {
+         canSaveDynamicFields = "1";
          isLooping = "1";
 
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -394,6 +471,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Accelerate";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -404,6 +482,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Linear";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -414,6 +493,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Spline";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "-17 17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -425,6 +505,7 @@ new SimGroup(MissionGroup) {
          };
       };
       new PathedInterior(MustChange) {
+         canSaveDynamicFields = "1";
          position = "0 0 0";
          rotation = "1 0 0 0";
          scale = "1 1 1";
@@ -439,11 +520,14 @@ new SimGroup(MissionGroup) {
       };
    };
    new SimGroup(MustChange_g) {
+      canSaveDynamicFields = "1";
 
       new Path() {
+         canSaveDynamicFields = "1";
          isLooping = "1";
 
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -454,6 +538,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Accelerate";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -464,6 +549,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Linear";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 17 42.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -474,6 +560,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Spline";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "17 17 22.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -485,6 +572,7 @@ new SimGroup(MissionGroup) {
          };
       };
       new PathedInterior(MustChange) {
+         canSaveDynamicFields = "1";
          position = "0 0 0";
          rotation = "1 0 0 0";
          scale = "1 1 1";
@@ -499,11 +587,14 @@ new SimGroup(MissionGroup) {
       };
    };
    new SimGroup(MustChange_g) {
+      canSaveDynamicFields = "1";
 
       new Path() {
+         canSaveDynamicFields = "1";
          isLooping = "1";
 
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 41";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -514,6 +605,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Accelerate";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 60.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -524,6 +616,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Linear";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 60.5";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -534,6 +627,7 @@ new SimGroup(MissionGroup) {
             smoothingType = "Spline";
          };
          new Marker() {
+            canSaveDynamicFields = "1";
             position = "0 0 41";
             rotation = "1 0 0 0";
             scale = "1 1 1";
@@ -545,6 +639,7 @@ new SimGroup(MissionGroup) {
          };
       };
       new PathedInterior(MustChange) {
+         canSaveDynamicFields = "1";
          position = "0 0 0";
          rotation = "1 0 0 0";
          scale = "1 1 1";
@@ -559,6 +654,7 @@ new SimGroup(MissionGroup) {
       };
    };
    new Trigger(Bounds) {
+      canSaveDynamicFields = "1";
       position = "-44 147.25 -18.25";
       rotation = "1 0 0 0";
       scale = "86.5 189.75 95.75";
@@ -567,7 +663,8 @@ new SimGroup(MissionGroup) {
       polyhedron = "0.0000000 0.0000000 0.0000000 1.0000000 0.0000000 0.0000000 0.0000000 -1.0000000 0.0000000 0.0000000 0.0000000 1.0000000";
    };
    new Item() {
-      position = "7.00343 0.00193542 60.2504";
+      canSaveDynamicFields = "1";
+      position = "7.00343 0.00193542 60.5255";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
@@ -575,23 +672,26 @@ new SimGroup(MissionGroup) {
       collideable = "0";
       static = "1";
       rotate = "1";
+      rotate2 = "0";
       permanent = "0";
    };
-  
    new SpawnSphere() {
+      canSaveDynamicFields = "1";
       position = "-3.1858 -38.3218 39.706";
       rotation = "0.668531 -0.122151 0.733584 27.9724";
       scale = "1 1 1";
       hidden = "0";
       dataBlock = "CameraSpawnSphereMarker";
-      radius = "100";
+      Radius = "100";
       sphereWeight = "100";
       indoorWeight = "100";
       outdoorWeight = "100";
    };
    new SimGroup(check1) {
+      canSaveDynamicFields = "1";
 
       new Trigger(check1) {
+         canSaveDynamicFields = "1";
          position = "19.6164 2.18638 20.8039";
          rotation = "0 0 1 90";
          scale = "5 5 5";
@@ -601,16 +701,23 @@ new SimGroup(MissionGroup) {
             sequence = "1";
       };
       new StaticShape() {
+         canSaveDynamicFields = "1";
          position = "16.0599 -0.967242 21.008";
          rotation = "1 0 0 0";
          scale = "1 1 1";
          hidden = "0";
          dataBlock = "checkPointShape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
       };
    };
    new SimGroup(check2) {
+      canSaveDynamicFields = "1";
 
       new Trigger(check2) {
+         canSaveDynamicFields = "1";
          position = "-19.4285 -2.59271 40.8";
          rotation = "0 0 -1 90";
          scale = "5 5 5";
@@ -620,48 +727,61 @@ new SimGroup(MissionGroup) {
             sequence = "1";
       };
       new StaticShape() {
+         canSaveDynamicFields = "1";
          position = "-18.0075 -1.01227 41.0065";
          rotation = "1 0 0 0";
          scale = "1 1 1";
          hidden = "0";
          dataBlock = "checkPointShape";
+         receiveSunLight = "1";
+         receiveLMLighting = "1";
+         useCustomAmbientLighting = "0";
+         customAmbientLighting = "0 0 0 1";
       };
    };
    new InteriorInstance() {
+      canSaveDynamicFields = "1";
+      class = "interior";
+      className = "interior";
       position = "-1.5 143.25 20.5";
       rotation = "0 0 -1 90";
       scale = "1 1 1";
       hidden = "0";
-      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      interiorFile = "marble/data/missions/parts/arch_2_normal.dif";
       showTerrainInside = "0";
-         className = "interior";
    };
    new InteriorInstance() {
+      canSaveDynamicFields = "1";
+      class = "interior";
+      className = "interior";
       position = "1.5 143.25 20.5";
       rotation = "0 0 -1 90";
       scale = "1 1 1";
       hidden = "0";
-      interiorFile = "~/data/missions/parts/arch_2_normal.dif";
+      interiorFile = "marble/data/missions/parts/arch_2_normal.dif";
       showTerrainInside = "0";
-         className = "interior";
    };
    new InteriorInstance() {
+      canSaveDynamicFields = "1";
+      class = "interior";
+      className = "interior";
       position = "1.5 143.25 16.5";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
-      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      interiorFile = "marble/data/missions/parts/vertical_support.dif";
       showTerrainInside = "0";
-         className = "interior";
    };
    new InteriorInstance() {
+      canSaveDynamicFields = "1";
+      class = "interior";
+      className = "interior";
       position = "-1.5 143.25 16.5";
       rotation = "1 0 0 0";
       scale = "1 1 1";
       hidden = "0";
-      interiorFile = "~/data/missions/parts/vertical_support.dif";
+      interiorFile = "marble/data/missions/parts/vertical_support.dif";
       showTerrainInside = "0";
-         className = "interior";
    };
 };
 //--- OBJECT WRITE END ---
