@@ -49,7 +49,6 @@ static bool sgQueueEvents;
 extern U16  DIK_to_Key(U8 dikCode);
 
 // static helper variables
-static bool windowActive = true;
 static bool windowLocked = false;
 static bool capsLockDown = false;
 
@@ -90,6 +89,7 @@ Win32PlatState::Win32PlatState()
     desktopWidth = NULL;
     desktopHeight = NULL;
     currentTime = NULL;
+    focused = false;
 
     windowManager = NULL;
 
@@ -211,7 +211,7 @@ static bool cursorInWindow()
     if (Win32Window == NULL)
         return false;
 
-    if (!windowActive)
+    if (!winState.focused)
         return false;
 
     if (Win32Window->mBorderless)
@@ -279,7 +279,7 @@ static void updateCursorVisibility()
 static void setMouseClipping()
 {
     ClipCursor(NULL);
-    if (windowActive)
+    if (winState.focused)
     {
         setCursorVisible(false);
 
@@ -485,7 +485,7 @@ static S32 mouseY = 0xFFFFFFFF;
 //--------------------------------------
 static void CheckCursorPos()
 {
-    if (windowLocked && windowActive)
+    if (windowLocked && winState.focused)
     {
         POINT mousePos;
         GetCursorPos(&mousePos);
@@ -592,6 +592,39 @@ static void mouseWheelEvent(S32 delta)
     }
 }
 
+//--------------------------------------
+static void updateWindowFocus(HWND hWnd, bool newFocus, bool setMouseClip)
+{
+    // Ensure the window is actually focused right now
+    bool currentFocus = GetForegroundWindow() == hWnd;
+    if (winState.focused == newFocus || currentFocus != newFocus)
+        return;
+
+    winState.focused = newFocus;
+    Con::printf("Window focused: %d", winState.focused);
+
+    if (winState.focused)
+    {
+        Input::activate();
+    }
+    else
+    {
+        DInputManager* mgr = dynamic_cast<DInputManager*>(Input::getManager());
+        if (!mgr || !mgr->isMouseActive())
+        {
+            // Deactivate all the mouse triggers:
+            for (U32 i = 0; i < 3; i++)
+            {
+                if (mouseButtonState[i])
+                    mouseButtonEvent(SI_BREAK, KEY_BUTTON0 + i);
+            }
+        }
+        Input::deactivate();
+    }
+
+    if (windowLocked && setMouseClip)
+        setMouseClipping();
+}
 
 struct WinMessage
 {
@@ -635,11 +668,9 @@ static LRESULT PASCAL WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
         break;
     case WM_ACTIVATE:
         setCursorVisible(false);
-        windowActive = LOWORD(wParam) != WA_INACTIVE;
-        if (windowActive)
+        if (LOWORD(wParam) != WA_INACTIVE)
         {
             Game->refreshWindow();
-            Input::activate();
 
             if (Win32Window)
             {
@@ -650,22 +681,16 @@ static LRESULT PASCAL WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
                 }
             }
         }
-        else
-        {
-            DInputManager* mgr = dynamic_cast<DInputManager*>(Input::getManager());
-            if (!mgr || !mgr->isMouseActive())
-            {
-                // Deactivate all the mouse triggers:
-                for (U32 i = 0; i < 3; i++)
-                {
-                    if (mouseButtonState[i])
-                        mouseButtonEvent(SI_BREAK, KEY_BUTTON0 + i);
-                }
-            }
-            Input::deactivate();
-        }
-        if (windowLocked)
-            setMouseClipping();
+        updateWindowFocus(hWnd, LOWORD(wParam) != WA_INACTIVE, true);
+        break;
+    case WM_SETFOCUS:
+        updateWindowFocus(hWnd, true, true);
+        break;
+    case WM_KILLFOCUS:
+        updateWindowFocus(hWnd, false, true);
+        break;
+    case WM_NCACTIVATE:
+        updateWindowFocus(hWnd, wParam, false);
         break;
 
     case WM_MOVE:

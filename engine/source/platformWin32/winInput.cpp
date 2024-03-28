@@ -448,7 +448,7 @@ bool Input::isActive()
 //------------------------------------------------------------------------------
 void Input::process()
 {
-    if (smManager && smManager->isEnabled() && smActive)
+    if (smManager && smManager->isEnabled() && smActive && winState.focused)
         smManager->process();
 }
 
