@@ -71,6 +71,7 @@ struct Win32PlatState
     S32 desktopWidth;
     S32 desktopHeight;
     U32 currentTime;
+    bool focused;
 
     Win32WinMgr* windowManager;
     GFXVideoMode* videoMode;
