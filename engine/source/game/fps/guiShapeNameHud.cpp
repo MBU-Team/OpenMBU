@@ -166,7 +166,7 @@ void GuiShapeNameHud::onRender(Point2I, const RectI& updateRect)
 
     // Collision info. We're going to be running LOS tests and we
     // don't want to collide with the control object.
-    static U32 losMask = AtlasObjectType | TerrainObjectType | InteriorObjectType | ShapeBaseObjectType;
+    static U32 losMask = AtlasObjectType | TerrainObjectType | InteriorObjectType | ShapeBaseObjectType | StaticTSObjectType;
     control->disableCollision();
 
 #ifdef MB_ULTRA
