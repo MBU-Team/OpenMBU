@@ -29,7 +29,7 @@ new GuiControlProfile (ChatTextProfile)
    borderColor = "0 0 0";
 
 	fontType = "Arial Bold";
-	fontSize = 16;
+	fontSize = 23;
 	
    opaque = 0;
    fillColor = "0 0 0 80";
@@ -67,7 +67,7 @@ new GuiControlProfile (WhoTalkProfile)
    border = 0;
 
 	fontType = "Arial Bold";
-	fontSize = 16;
+	fontSize = 23;
 };
 
 new GuiControlProfile (ChatTextEditProfile : ChatTextProfile)
