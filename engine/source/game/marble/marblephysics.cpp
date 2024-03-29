@@ -106,18 +106,21 @@ void Marble::applyContactForces(const Move* move, bool isCentered, Point3D& aCon
         }
     }
 
-    for (S32 i = 0; i < mContacts.size(); i++)
+    if (mPhysics != MBUSlopes && mPhysics != MBGSlopes)
     {
-        Contact* contact = &mContacts[i];
-
-        F64 normalForce = -mDot(contact->normal, A);
-
-        if (normalForce > 0.0 &&
-              (mVelocity.x - contact->surfaceVelocity.x) * contact->normal.x
-            + (mVelocity.y - contact->surfaceVelocity.y) * contact->normal.y
-            + (mVelocity.z - contact->surfaceVelocity.z) * contact->normal.z <= 0.0001)
+        for (S32 i = 0; i < mContacts.size(); i++)
         {
-            A += contact->normal * normalForce;
+            Contact *contact = &mContacts[i];
+
+            F64 normalForce = -mDot(contact->normal, A);
+
+            if (normalForce > 0.0 &&
+                (mVelocity.x - contact->surfaceVelocity.x) * contact->normal.x
+                + (mVelocity.y - contact->surfaceVelocity.y) * contact->normal.y
+                + (mVelocity.z - contact->surfaceVelocity.z) * contact->normal.z <= 0.0001)
+            {
+                A += contact->normal * normalForce;
+            }
         }
     }
 
@@ -262,13 +265,14 @@ bool Marble::computeMoveForces(Point3D& aControl, Point3D& desiredOmega, const M
     Point2F currentVelocity(mDot(sideDir, rollVelocity), mDot(motionDir, rollVelocity));
 
     Point2F mv(move->x, move->y);
-#ifndef MBG_PHYSICS
-    // Prevent increasing marble speed with diagonal movement (on the ground)
-    mv *= 1.538461565971375;
+    if (mPhysics != MBG && mPhysics != MBGSlopes)
+    {
+        // Prevent increasing marble speed with diagonal movement (on the ground)
+        mv *= 1.538461565971375;
 
-    if (mv.len() > 1.0f)
-        m_point2F_normalize_f(mv, 1.0f);
-#endif
+        if (mv.len() > 1.0f)
+            m_point2F_normalize_f(mv, 1.0f);
+    }
 
     Point2F desiredVelocity = mv * mDataBlock->maxRollVelocity;
 
@@ -360,9 +364,9 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
                     contact->surfaceVelocity = otherMarble->getVelocityD();
                 } else
                 {
-                    if (contact->surfaceVelocity.len() == 0.0 && !surfaceSlide && surfaceDot > -mDataBlock->maxDotSlide * velLen)
+                    // XNA has contact->surfaceVelocity.len() > 0.0001f while MBU360 has contact->surfaceVelocity.len() == 0.0
+                    if (((mPhysics == XNA && contact->surfaceVelocity.len() > 0.0001f) || (mPhysics != XNA && contact->surfaceVelocity.len() == 0.0)) && !surfaceSlide && surfaceDot > -mDataBlock->maxDotSlide * velLen)
                     {
-
                         mVelocity -= surfaceVel;
                         m_point3D_normalize(mVelocity);
                         mVelocity *= velLen;
@@ -454,6 +458,7 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
             {
                 Contact* contact = &mContacts[j];
 
+                // TODO: should contactDistance have mRadius added to it in this check? (comparing to XNA)
                 if (mRadius > contact->contactDistance)
                 {
                     Point3F normal = contact->normal;
@@ -591,9 +596,7 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
     F32 slipAmount = 0.0;
     F64 contactTime = 0.0;
 
-#ifndef MBG_PHYSICS
     U32 it = 0;
-#endif
     do
     {
         if (timeRemaining == 0.0)
@@ -633,8 +636,10 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
 
         F64 moveTime = timeStep;
         computeFirstPlatformIntersect(moveTime, smPathItrVec);
-        testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false);
-        //mPosition += mVelocity * moveTime;
+        if (mPhysics == XNA)
+            mPosition += mVelocity * moveTime; // XNA
+        else
+            testMove(mVelocity, mPosition, moveTime, mRadius, sCollisionMask, false); // MBU
 
         if (!mMovePathSize && timeStep * 0.99 > moveTime && moveTime > 0.001000000047497451)
         {
@@ -671,12 +676,8 @@ void Marble::advancePhysics(const Move* move, U32 timeDelta)
             pint->advance(timeStep);
         }
 
-#ifdef MBG_PHYSICS
-    } while (true);
-#else
         it++;
-    } while (it <= 10);
-#endif
+    } while (mPhysics == MBG || mPhysics == MBGSlopes || it <= 10);
 
     for (S32 i = 0; i < smPathItrVec.size(); i++)
         smPathItrVec[i]->popTickState();

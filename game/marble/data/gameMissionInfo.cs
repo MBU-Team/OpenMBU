@@ -671,6 +671,15 @@ function GameMissionInfo::getMissionDisplayName(%this, %missionId)
       return getMissionNameFromNameVar(%mission);
 }
 
+function GameMissionInfo::getMissionDisplayNameByGuid(%this, %guid)
+{
+   %mission = %this.findMissionByGuid(%guid);
+   if (!isObject(%mission))
+      return "";
+   else
+      return getMissionNameFromNameVar(%mission);
+}
+
 function getMissionNameFromNameVar(%mission)
 {
    %name = %mission.name;   
@@ -837,14 +846,14 @@ function buildMissionList()
       }
 
       sortByLevel( SinglePlayMissionGroup );
-      sortByLevel( CustomSinglePlayMissionGroup );
-      sortByLevel( MultiPlayMissionGroup );
+      sortByLevel( CustomSinglePlayMissionGroup, true );
+      sortByLevel( MultiPlayMissionGroup, true );
       sortByLevel( SpecialMissionGroup );
       // hack, do this twice to get things into the proper order, don't have time to figure out why a 
       // single sort doesn't work
       sortByLevel( SinglePlayMissionGroup );
-      sortByLevel( CustomSinglePlayMissionGroup );
-      sortByLevel( MultiPlayMissionGroup );
+      sortByLevel( CustomSinglePlayMissionGroup, true );
+      sortByLevel( MultiPlayMissionGroup, true );
       sortByLevel( SpecialMissionGroup );
       
       // verify that level Ids are unique
@@ -884,12 +893,12 @@ function buildMissionList()
       for (%i = 0; %i < MultiPlayMissionGroup.getCount(); %i++)
       {
          %mis = MultiPlayMissionGroup.getObject(%i);
-         if (%levelIds[%mis.level] !$= "")
-         {
-            GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate mission Id for level:" SPC %mis.file @ "\n";
-            GameMissionInfo.dupLevelIds[%mis.level] = true;
-         }
-         %levelIds[%mis.level] = true;
+         //if (%levelIds[%mis.level] !$= "")
+         //{
+            //GameMissionInfo.dupErrors = GameMissionInfo.dupErrors @ "duplicate mission Id for level:" SPC %mis.file @ "\n";
+            //GameMissionInfo.dupLevelIds[%mis.level] = true;
+         //}
+         //%levelIds[%mis.level] = true;
          if (%mis.guid !$= "")
          {
             if (%guids[%mis.guid] !$= "")
@@ -931,8 +940,10 @@ function isDemoMission( %level )
    //return 0;
 }
 
-function sortByLevel(%grp)
+function sortByLevel(%grp, %useLevelNum)
 {
+   if (%useLevelNum $= "")
+      %useLevelNum = false;
    %grp.numAddedMissions = 0;
    %newLevelNum = 0;
    %ngrp = new SimGroup();
@@ -976,7 +987,7 @@ function sortByLevel(%grp)
       //{
          %grp.numAddedMissions++;
          %obj = %ngrp.getObject(%lowestIndex);
-         if (%obj.difficultySet $= "custom")
+         if (%useLevelNum)
             %obj.level = %newLevelNum;
          %grp.add(%obj);
       //}
@@ -997,6 +1008,13 @@ function getMissionObject( %missionFile )
    
    if ( %file.openForRead( %missionFile ) ) {
 		%inInfoBlock = false;
+
+        %matFilePath = filePath(%missionFile) @ "/" @ fileBase(%missionFile) @ ".mat.json";
+        if (isFile(%matFilePath))
+        {
+            echo("Loaded custom materials from" SPC %matFilePath);
+            loadMaterialJson(%matFilePath);
+        }
 		
 		while ( !%file.isEOF() ) {
 			%line = %file.readLine();

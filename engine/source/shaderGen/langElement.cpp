@@ -44,7 +44,10 @@ void LangElement::deleteElements()
 {
     for (U32 i = 0; i < elementList.size(); i++)
     {
-        delete elementList[i];
+        if (elementList[i] != NULL) {
+            delete elementList[i];
+            elementList[i] = NULL;
+        }
     }
 
     elementList.setSize(0);

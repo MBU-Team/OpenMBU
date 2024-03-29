@@ -359,6 +359,8 @@ function CreateGameGui::createGame(%this)
       $Server::MissionId = GameMissionInfo.getCurrentMission().level;
       $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
       $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      $Server::MissionGuid = GameMissionInfo.getCurrentMission().guid;
+      $Server::MissionName = GameMissionInfo.getMissionDisplayNameByGuid(GameMissionInfo.getCurrentMission().guid);
       
       $pref::Server::missionId = $Server::MissionId;
       onMissionLoaded();

@@ -87,6 +87,8 @@ function loadMissionStage2()
    // populate id variables for the mission we loaded
    $Server::MissionId = MissionInfo.level;
    $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(MissionInfo.gameMode);
+   $Server::MissionGuid = MissionInfo.guid;
+   $Server::MissionName = GameMissionInfo.getMissionDisplayNameByGuid(MissionInfo.guid);
 
    // Mission cleanup group
    new SimGroup( MissionCleanup );

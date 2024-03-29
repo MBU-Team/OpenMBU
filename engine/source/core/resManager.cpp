@@ -1232,7 +1232,7 @@ void ResManager::freeResource(ResourceObject* ro)
 
 //------------------------------------------------------------------------------
 
-bool ResManager::openFileForWrite(Stream*& stream, const char* fileName, U32 accessMode)
+bool ResManager::openFileForWrite(Stream*& stream, const char* fileName, U32 accessMode, bool forceMemory)
 {
     if (!isValidWriteFileName(fileName))
         return false;
@@ -1245,8 +1245,7 @@ bool ResManager::openFileForWrite(Stream*& stream, const char* fileName, U32 acc
         return false;      // don't allow storing files in root
     *file++ = 0;
 
-    if (path && file && !dStrnicmp(path, "mem", 3)
-        && path[3] == '/' || path[3] == 0)
+    if (path && file && (forceMemory || !dStrnicmp(path, "mem", 3) && path[3] == '/' || path[3] == 0))
     {
         // Opening memory file
         ResourceObject* ret = createResource(StringTable->insert(path), StringTable->insert(file));

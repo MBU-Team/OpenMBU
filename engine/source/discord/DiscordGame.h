@@ -79,13 +79,21 @@ public:
     StringTableEntry getUsername(int charLimit)
     {
         char* buf = new char[charLimit + 1];
-        int minLength = getMin(charLimit, mUsername.length());
+        int minLength = getMin(charLimit, (int)mUsername.length());
         for (int i = 0; i < minLength; i++)
             buf[i] = mUsername[i];
         buf[minLength] = '\0';
         StringTableEntry ste = StringTable->insert(buf, true);
         delete[] buf;
         return ste;
+    }
+    StringTableEntry getUserId()
+    {
+        return StringTable->insert(mUserId.c_str());
+    }
+    void setUserId(const char* uid)
+    {
+        mUserId = uid;
     }
     void setActive(bool a)
     {
@@ -121,6 +129,7 @@ private:
     StringTableEntry mJoinSecret;
     StringTableEntry mPartyId;
     std::string mUsername;
+    std::string mUserId;
     //const char* mIcon;
     //const char* mIconText;
 };

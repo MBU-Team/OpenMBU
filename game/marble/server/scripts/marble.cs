@@ -252,8 +252,8 @@ datablock MarbleData(DefaultMarble)
    angularAcceleration = 75;
    brakingAcceleration = 30;
    gravity = 20;
-   size = 1.5;
-   megaSize = 1.5 * 2.25;
+   //size = 1.5; moved from MarbleData to Marble
+   megaSize = 2.25; //1.5 * 2.25; // is now multiplied by size automatically
    mass = 1;
    staticFriction = 1.1;
    kineticFriction = 0.7;

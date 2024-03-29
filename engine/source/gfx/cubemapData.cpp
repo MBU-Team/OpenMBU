@@ -18,6 +18,7 @@ CubemapData::CubemapData()
 {
     cubemap = NULL;
     dynamic = false;
+    mPath[0] = '\0';
 
     dMemset(cubeFaceFile, 0, sizeof(cubeFaceFile));
 }
@@ -37,7 +38,7 @@ void CubemapData::initPersistFields()
 {
     Parent::initPersistFields();
 
-    addField("cubeFace", TypeFilename, Offset(cubeFaceFile, CubemapData), 6);
+    addField("cubeFace", TypeString, Offset(cubeFaceFile, CubemapData), 6);
     addField("dynamic", TypeBool, Offset(dynamic, CubemapData));
 }
 
@@ -75,9 +76,19 @@ void CubemapData::createMap()
             {
                 if (cubeFaceFile[i] && cubeFaceFile[i][0])
                 {
-                    if (!cubeFace[i].set(cubeFaceFile[i], &GFXDefaultStaticDiffuseProfile))
+                    StringTableEntry faceFile = cubeFaceFile[i];
+                    if (mPath[0] != '\0' && faceFile[0] == '.')
                     {
-                        Con::errorf("CubemapData::createMap - Failed to load texture '%s'", cubeFaceFile[i]);
+                        // Append path
+                        char fullFilename[128];
+                        dStrncpy(fullFilename, mPath, dStrlen(mPath) + 1);
+                        dStrcat(fullFilename, faceFile);
+                        faceFile = StringTable->insert(fullFilename);
+                    }
+
+                    if (!cubeFace[i].set(faceFile, &GFXDefaultStaticDiffuseProfile))
+                    {
+                        Con::errorf("CubemapData::createMap - Failed to load texture '%s'", faceFile);
                         initSuccess = false;
                     }
                 }

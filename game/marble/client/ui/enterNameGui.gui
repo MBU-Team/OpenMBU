@@ -1,0 +1,277 @@
+new GuiControlProfile (ENG_TypeProfile)
+{
+   fontType = "Arial Bold";
+   fontSize = 24;
+   opaque = true;
+   fillColor = "0 0 0 0";
+   fillColorHL = "255 255 255 40";
+   border = 0;
+   borderThickness = 0;
+   borderColor = "0 0 0";
+   fontColor = "255 255 255";
+   fontColors[0] = "255 255 255";
+   fontColorHL = "255 255 255";
+   fontColorNA = "255 255 255";
+   cursorColor = "255 255 255";
+   textOffset = "0 2";
+   shadow = 1;
+   doFontOutline = true;
+   fontOutlineColor = "0 0 0 30";
+   autoSizeWidth = false;
+   autoSizeHeight = true;
+   tab = true;
+   canKeyFocus = true;
+};
+
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(EnterNameGui) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+
+   new GuiBitmapCtrl(XNMessageBGFrame) {
+     profile = "GuiDefaultProfile";
+      alpha = "0";
+	   horizSizing = "width";
+	   vertSizing = "height";
+   	position = "0 0";
+	   extent = "640 480";
+      bitmap = "./xbox/fade_black";
+      wrap = "1";
+	   visible = "1";
+      
+	   new GuiBitmapCtrl(XNMessagePopFrame) {
+	      profile = "GuiDefaultProfile";
+	      horizSizing = "center";
+	      vertSizing = "center";
+	      position = "70 30";
+	      extent =   "512 400"; 
+	      minExtent = "48 92";
+	      visible = "1";
+	      bitmap = "./xbox/popupGUI";
+	      wrap = "0";
+
+		   new GuiTextEditCtrl(ENG_Type) {
+			  profile = ENG_TypeProfile;
+			  horizSizing = "right";
+			  vertSizing = "bottom";
+			  position = "100 125";
+			  extent = "270 20";
+			  minExtent = "8 2";
+			  visible = "1";
+			  command = "$Thiscontrol.type();";
+			  altCommand = "$Thiscontrol.send();";
+			  maxLength = "1024";
+			  historySize = "10";
+			  password = "0";
+			  tabComplete = "0";
+			  sinkAllKeyEvents = "0";
+		   };
+	            
+	      new GuiMLTextCtrl(XNMessagePopupText) {
+	         profile = "TextHeadingSmallNoShadeProfile";
+				position = "103 85";
+				extent =   "313 186";
+	         minExtent = "8 8";
+	         visible = "1";
+	         lineSpacing = "2";
+	         allowColorChars = "0";
+	         maxChars = "-1";
+	         maxAlpha = "1.0";
+	         minAlpha = "1.0";
+	      };
+	      
+		   new GuiControl(XNMessagePopupBottomNavBarNew) {
+		      profile = "GuiDefaultProfile";
+		      horizSizing = "right";
+		      vertSizing = "bottom";
+		      position = "-119 248";
+		      extent = "640 200";
+		      minExtent = "8 2";
+		      visible = "1";
+		      UIMode = "NewOnly";
+		      
+		      new GuiXboxButtonCtrl(XNMessagePopupABtnNew) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "330 0";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "./xbox/pad_button_a";
+               bitmapAlign = "right";
+               text = "";
+               command = "EnterNameGui.apply();";
+               visible = "1";
+            };
+		      
+		      new GuiXboxButtonCtrl(XNMessagePopupBBtnNew) {
+               profile = "TextMenuButtonProfile";
+               horizSizing = "right";
+               vertSizing = "bottom";
+               position = "440 0";
+               extent = "120 94";
+               minExtent = "8 2";
+               bitmap = "./xbox/pad_button_b";
+               bitmapAlign = "right";
+               text = "";
+               command = "EnterNameGui.cancel();";
+               visible = "1";
+            };
+		      
+		   };
+	      
+		   new GuiControl(XNMessagePopupBottomNavBar) {
+		      profile = "GuiDefaultProfile";
+		      horizSizing = "right";
+		      vertSizing = "bottom";
+		      position = "-119 248";
+		      extent = "640 200";
+		      minExtent = "8 2";
+		      visible = "1";
+		      UIMode = "LegacyOnly";
+		
+		      new GuiControl(XNMessagePopupABtn) {
+		         profile = "GuiDefaultProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+		         position = "34 40";
+		         extent = "500 60";
+		         minExtent = "8 2";
+		         bitmap = "./xbox/roundedBG";
+		         visible = "1";
+		
+		         new GuiBitmapCtrl(XNMessagePopupAButtonImage) {
+		            profile = "GuiDefaultProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "440 0";
+		            extent = "45 45";
+		            minExtent = "8 2";
+		            visible = "1";
+		            bitmap = "./xbox/pad_button_a";
+		            wrap = "0";
+		            onMouseUp = "EnterNameGui.apply();";
+		         };
+		         new GuiTextCtrl(XNMessagePopupABtnTxt) {
+		            profile = "TextAButtonProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "4 5";
+		            extent = "437 34";
+		            minExtent = "50 34";
+		            visible = "1";
+		            text = "";
+		            maxLength = "255";
+		         };
+		      };
+		      new GuiControl(XNMessagePopupBBtn) {
+		         profile = "GuiDefaultProfile";
+		         horizSizing = "right";
+		         vertSizing = "bottom";
+		         position = "67 5";
+		         extent = "500 60";
+		         minExtent = "8 2";
+		         bitmap = "./xbox/roundedBG";
+		         visible = "1";
+		         
+		         new GuiBitmapCtrl(XNMessagePopupBButtonImage) {
+		            profile = "GuiDefaultProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "440 5";
+		            extent = "35 35";
+		            minExtent = "8 2";
+		            visible = "1";
+		            bitmap = "./xbox/pad_smallbutton_b";
+		            wrap = "0";
+		            onMouseUp = "EnterNameGui.cancel();";
+		         };
+		         new GuiTextCtrl(XNMessagePopupBBtnTxt) {
+		            profile = "TextBButtonProfile";
+		            horizSizing = "right";
+		            vertSizing = "bottom";
+		            position = "4 5";
+		            extent = "437 34";
+		            minExtent = "50 34";
+		            visible = "1";
+		            text = "";
+		            maxLength = "255";
+		         };
+		      };
+			};
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+function EnterNameGui::onWake(%this)
+{
+   %this.gamertag = $Player::Name;
+
+   XNMessagePopupABtnTxt.setText($Text::OK);
+   XNMessagePopupBBtnTxt.setText($Text::Cancel);
+   XNMessagePopupABtnNew.setText($Text::Ok);
+   XNMessagePopupBBtnNew.setText($Text::Cancel);
+   XNMessagePopupText.setText("Set Gamertag:");
+
+   // XMessagePopupDlg.show(0, "Set Gamertag:", $Text::OK, "EnterNameGui.apply();", $Text::Cancel, "EnterNameGui.cancel();");
+   // XMessagePopupDlg.add(ENG_Type);
+   %this.schedule(100, fixupText);
+
+   // RootGui.setTitle( "Set Gamertag" );
+}
+
+function EnterNameGui::fixupText(%this)
+{
+   ENG_Type.setValue(%this.gamertag);
+   ENG_Type.setCursorPos(strlen(%this.gamertag));
+   deactivateKeyboard();
+   ENG_Type.makeFirstResponder(true);
+
+   // pls dont ask
+   %pos = VectorAdd(
+      XMessagePopupText.position,
+      VectorAdd(
+         XMessagePopupText.getGroup().position,
+         XMessagePopupText.getGroup().getGroup().position
+      )
+   );
+   %x = getWord(%pos, 0);
+   %y = getWord(%pos, 1) + 36;
+   // ENG_Type.resize(%x, %y, getWord(ENG_Type.extent, 0), getWord(ENG_Type.extent, 1));
+}
+
+function EnterNameGui::hide(%this)
+{
+   XMessagePopupDlg.hide();
+   EnterNameGui.add(ENG_Type);
+   activateKeyboard();
+}
+
+function EnterNameGui::apply(%this)
+{
+   $Player::Name = %this.gamertag;
+   $pref::Player::UsingCustomName = true;
+   $pref::Player::Name = $Player::Name;
+   Canvas.popDialog(%this);
+}
+
+function EnterNameGui::cancel(%this)
+{
+	Canvas.popDialog(%this);
+}
+
+function ENG_Type::type(%this)
+{
+   EnterNameGui.gamertag = %this.getText();  
+}
+
+function ENG_Type::send(%this)
+{
+   EnterNameGui.apply();
+}

@@ -37,6 +37,7 @@ struct LangElement
     U8    name[32];
 
     LangElement();
+    virtual ~LangElement() = default;
     virtual void print(Stream& stream) {};
     void setName(char* newName);
 

@@ -152,6 +152,8 @@ void NetConnection::sendFileChunk()
     Con::executef(this, 4, "onFileChunkSent", mCurrentFileName, Con::getIntArg(mCurrentFileBufferOffset), Con::getIntArg(mCurrentFileBufferSize));
 }
 
+void failedToFindFile(NetConnection* conn);
+
 bool NetConnection::startSendingFile(const char* fileName)
 {
     if (!fileName || Con::getBoolVariable("$NetConnection::neverUploadFiles"))
@@ -166,7 +168,8 @@ bool NetConnection::startSendingFile(const char* fileName)
     {
         // the server didn't have the file, so send a 0 byte chunk:
         Con::printf("No such file '%s'.", fileName);
-        postNetEvent(new FileChunkEvent(NULL, 0));
+        // postNetEvent(new FileChunkEvent(NULL, 0));
+        failedToFindFile(this);
         return false;
     }
 
@@ -218,8 +221,8 @@ void NetConnection::sendNextFileDownloadRequest()
 
 #ifdef TORQUE_FAST_FILE_TRANSFER
 
-const U32 MaxFilePacketSize = 1400;
-static U32 FastFilePacketSize = 1380; // ~= 1450 UDP MTU - headers
+const U32 MaxFilePacketSize = 1320;
+static U32 FastFilePacketSize = 1280; // ~= 1450 UDP MTU - headers
 static U32 PacketsAtATime = 512; // Realistically not sure how high this can go before it gets bad
 
 static BitStream gFastFileStream(NULL, 0);
@@ -324,6 +327,7 @@ struct FastFileState
         // Just for progress indicators
         out->write(U32(mSend.totalSize));
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d",
             __func__,
@@ -332,6 +336,7 @@ struct FastFileState
             mSend.fileChunks.size(),
             mSend.totalSize
         );
+#endif
     }
 
     /// [Receiver] Read packet for start of transfer
@@ -345,6 +350,7 @@ struct FastFileState
         stream->read(&chunkCount);
         stream->read(&totalSize);
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d",
             __func__,
@@ -353,6 +359,7 @@ struct FastFileState
             chunkCount,
             totalSize
         );
+#endif
 
         // This is the start of receiving a file, so init recv state here
 
@@ -387,6 +394,7 @@ struct FastFileState
             out->write(U8(mSend.fileChunks[index].bytes[i]));
         }
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %d %d",
             __func__,
@@ -397,6 +405,7 @@ struct FastFileState
             mSend.fileChunks[index].offset,
             mSend.fileChunks[index].bytes.size()
         );
+#endif
     }
 
     /// [Receiver] Read packet for data chunk
@@ -413,6 +422,7 @@ struct FastFileState
         stream->read(&offset);
         stream->read(&size);
 
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %d",
             __func__,
@@ -422,6 +432,7 @@ struct FastFileState
             offset,
             size
         );
+#endif
 
         // Basic checks to make sure nothing fishy is happening
         if (transferID == 0 || transferID != mRecv.transferID)
@@ -604,7 +615,7 @@ struct FastFileState
         }
         // Null terminate
         debugStr[ackCount] = 0;
-
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %s",
             __func__,
@@ -614,6 +625,7 @@ struct FastFileState
             ackCount,
             debugStr
         );
+#endif
     }
 
     /// [Sender] Read the packet saying which chunks the receiver has received
@@ -657,7 +669,7 @@ struct FastFileState
         {
             return false;
         }
-
+#if TORQUE_DEBUG
         Con::warnf(
             "%s @%d %d %d %d %s",
             __func__,
@@ -667,6 +679,7 @@ struct FastFileState
             ackCount,
             debugStr
         );
+#endif
 
         // Save this state for handleAcknowledgement because NetEvent does this in 2 steps
         mSend.lastAckStart = minNonAcknowledged;
@@ -684,11 +697,13 @@ struct FastFileState
             // Bounds check for sanity
             if (index >= mSend.acknowledgedChunks.size())
             {
+#if TORQUE_DEBUG
                 Con::errorf(
                     "%s @%d Index >= ackChunks.size()",
                     __func__,
                     __LINE__
                 );
+#endif
                 return false;
             }
             mSend.acknowledgedChunks[index] = true;
@@ -715,27 +730,35 @@ struct FastFileState
 /// It's all just punting over to NetConnection who punts to FastFileState
 class FastFileRequestEvent : public NetEvent
 {
+    bool mFoundFile;
 public:
-    FastFileRequestEvent()
+    FastFileRequestEvent(bool foundFile = true)
     {
+        mFoundFile = foundFile;
     }
 
     virtual void pack(NetConnection* connection, BitStream *bstream)
     {
         // Sender: Write packet
-        connection->sendFastFileRequest(bstream);
+        if (bstream->writeFlag(mFoundFile))
+            connection->sendFastFileRequest(bstream);
     }
 
     virtual void write(NetConnection* connection, BitStream *bstream)
     {
         // Sender: Write packet (but for demos)
-        connection->sendFastFileRequest(bstream);
+        if (bstream->writeFlag(mFoundFile))
+            connection->sendFastFileRequest(bstream);
     }
 
     virtual void unpack(NetConnection* connection, BitStream *bstream)
     {
         // Receiver: Read packet
-        connection->handleFastFileRequest(bstream);
+        mFoundFile = bstream->readFlag();
+        if (mFoundFile)
+            connection->handleFastFileRequest(bstream);
+        else
+            connection->popMissingFile();
     }
 
     virtual void process(NetConnection* connection)
@@ -829,6 +852,9 @@ void NetConnection::sendFastFile()
     mFastFileState->mSend.totalSize = mCurrentFileBufferSize;
     mFastFileState->mSend.fileChunks.clear();
     mFastFileState->mSend.acknowledgedChunks.clear();
+
+    if (FastFilePacketSize > 1280)
+        FastFilePacketSize = 1280;
 
     // Load all chunks of file to send
     U32 index = 0;
@@ -1024,15 +1050,16 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
         Stream* stream;
 
         Con::printf("Saving file %s.", mMissingFileList[0]);
-        if (!ResourceManager->openFileForWrite(stream, mMissingFileList[0]))
+        if (!ResourceManager->openFileForWrite(stream, mMissingFileList[0], 1, true))
         {
             setLastError("Couldn't open file downloaded by server.");
             return;
         }
+        stream->write(mCurrentFileBufferSize, mCurrentFileBuffer);
+        ResourceManager->closeStream(stream);
+        Con::executef(2, "onFileDownloaded", mMissingFileList[0]);
         dFree(mMissingFileList[0]);
         mMissingFileList.pop_front();
-        stream->write(mCurrentFileBufferSize, mCurrentFileBuffer);
-        delete stream;
         mNumDownloadedFiles++;
         dFree(mCurrentFileBuffer);
         mCurrentFileBuffer = NULL;
@@ -1044,3 +1071,33 @@ void NetConnection::chunkReceived(U8* chunkData, U32 chunkLen)
     }
 }
 
+void NetConnection::addMissingFile(const char* path)
+{
+    int slen = dStrlen(path);
+    char* buf = new char[slen + 1];
+    dStrcpy(buf, path);
+    buf[slen] = '\0';
+    mMissingFileList.push_back(buf);
+}
+
+void NetConnection::popMissingFile()
+{
+    if (mMissingFileList.size() > 0)
+    {
+        dFree(mMissingFileList[0]);
+        mMissingFileList.pop_front();
+    }
+}
+
+void failedToFindFile(NetConnection* conn)
+{
+    conn->postNetEvent(new FastFileRequestEvent(false));
+}
+
+ConsoleMethod(NetConnection, requestFileDownload, bool, 3, 3, "(path)")
+{
+    Vector<char*> filePath;
+    filePath.push_back(const_cast<char*>(argv[2]));
+    object->addMissingFile(argv[2]);
+    return object->postNetEvent(new FileDownloadRequestEvent(&filePath));
+}

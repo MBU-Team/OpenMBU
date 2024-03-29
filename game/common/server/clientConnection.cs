@@ -36,6 +36,8 @@ function updateServerParams()
    %message = %message @ serverGetPrivateSlotsFree() @ "\n"; //  private slots avail
    %message = %message @ serverGetPrivateSlotsUsed() @ "\n"; //  private slots used
    %message = %message @ (!isPCBuild() && XBLiveIsRanked()) @ "\n"; // ranked?
+   %message = %message @ $Server::MissionGuid  @ "\n"; //  mission guid
+   %message = %message @ $Server::MissionName  @ "\n"; //  mission name
    
    // update the server parameters on all clients
    messageAll('MsgClientSetServerParams', "", %message);

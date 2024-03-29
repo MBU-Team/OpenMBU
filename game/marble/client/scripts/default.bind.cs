@@ -446,8 +446,10 @@ function toggleFPSDisplay(%val)
    setMvExtras();
    if (%val)
       $showFPS = !$showFPS;
-      
+
+   HUD_FPSBG.update();   
    FPSDisplay.update();
+   PingDisplay.update();
 }
 
 //------------------------------------------------------------------------------

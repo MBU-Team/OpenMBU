@@ -158,6 +158,9 @@ function initLanguage()
 {
    echo("Initializing Language...");   
    
+   // Always load english strings first so that if a localization string is missing it isn't blank
+   loadLocaleInf("common/local/englishStrings.inf"); 
+   
    %language = getLanguage();
    if( $platform $= "windows" && $locLanguage !$= "" )
    {

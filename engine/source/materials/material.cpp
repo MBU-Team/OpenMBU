@@ -227,10 +227,10 @@ void Material::initPersistFields()
     addField("sequenceSegmentSize", TypeF32, Offset(seqSegSize, Material), MAX_STAGES);
 
     // textures
-    addField("baseTex", TypeFilename, Offset(baseTexFilename, Material), MAX_STAGES);
-    addField("detailTex", TypeFilename, Offset(detailFilename, Material), MAX_STAGES);
-    addField("bumpTex", TypeFilename, Offset(bumpFilename, Material), MAX_STAGES);
-    addField("envTex", TypeFilename, Offset(envFilename, Material), MAX_STAGES);
+    addField("baseTex", TypeString, Offset(baseTexFilename, Material), MAX_STAGES);
+    addField("detailTex", TypeString, Offset(detailFilename, Material), MAX_STAGES);
+    addField("bumpTex", TypeString, Offset(bumpFilename, Material), MAX_STAGES);
+    addField("envTex", TypeString, Offset(envFilename, Material), MAX_STAGES);
 
 #ifdef MB_ULTRA
     addField("texCompression", TypeEnum, Offset(texCompression, Material), MAX_STAGES, &mCompressionTypeTable);
@@ -253,7 +253,7 @@ void Material::initPersistFields()
 
 #ifdef MB_ULTRA
     addField("softwareMipOffset", TypeF32, Offset(softwareMipOffset, Material));
-    addField("noiseTexFileName", TypeFilename, Offset(noiseTexFileName, Material));
+    addField("noiseTexFileName", TypeString, Offset(noiseTexFileName, Material));
 #endif
 
 }
@@ -318,6 +318,48 @@ void Material::updateTime()
         mLastTime = curTime;
         mAccumTime += mDt;
     }
+}
+
+bool Material::preloadTextures()
+{
+    bool found = true;
+    for (int i = 0; i < MAX_STAGES; i++)
+    {
+        found = found && (!baseTexFilename[i] || didFindTexture(baseTexFilename[i]));
+        found =  found && (!detailFilename[i] || didFindTexture(detailFilename[i]));
+        found =  found && (!bumpFilename[i] || didFindTexture(bumpFilename[i]));
+        found =  found && (!envFilename[i] || didFindTexture(envFilename[i]));
+    }
+    found = found && (!noiseTexFileName || didFindTexture(noiseTexFileName));
+    if (mCubemapData != NULL && !dynamicCubemap)
+    {
+        for (int i = 0; i < 6; i++)
+            found = found && (!mCubemapData->cubeFaceFile[i] || didFindTexture(mCubemapData->cubeFaceFile[i]));
+    }
+    return found;
+}
+
+bool Material::didFindTexture(const char* filename)
+{
+    const char* searchFilename = filename;
+
+    if (filename[0] == '.')
+    {
+        char fullFilename[128];
+        dStrncpy(fullFilename, mPath, dStrlen(mPath) + 1);
+        dStrcat(fullFilename, filename);
+        searchFilename = fullFilename;
+    }
+
+    ResourceObject* ro = GBitmap::findBmpResource(searchFilename);
+    if (ro)
+    {
+        return true;
+    }
+
+    // Find and load the texture.
+    GBitmap* bmp = GBitmap::load(searchFilename);
+    return bmp != NULL;
 }
 
 void Material::updateTimeBasedParams()
@@ -449,21 +491,24 @@ bool loadMaterialsFromJson(const char* path)
     Stream* fs = ResourceManager->openStream(path);
     if (fs == NULL) return false;
 
-    char* jsonBuf = new char[fs->getStreamSize() + 1];
+    U32 size = fs->getStreamSize();
 
-    if (!fs->read(fs->getStreamSize(), jsonBuf))
+    char* jsonBuf = new char[size + 1];
+
+    if (!fs->read(size, jsonBuf))
     {
         delete[] jsonBuf;
         return false;
     }
-    jsonBuf[fs->getStreamSize()] = '\0';
+    jsonBuf[size] = '\0';
+    ResourceManager->closeStream(fs);
 
     Json::Value root;
     Json::CharReaderBuilder builder;
     Json::CharReader* reader = builder.newCharReader();
 
     std::string errs;
-    if (!reader->parse(jsonBuf, jsonBuf + fs->getStreamSize(), &root, &errs)) 
+    if (!reader->parse(jsonBuf, jsonBuf + size, &root, &errs)) 
     {
         delete reader;
         delete[] jsonBuf;
@@ -474,7 +519,7 @@ bool loadMaterialsFromJson(const char* path)
     {
         delete reader;
         delete[] jsonBuf;
-
+        
         Json::Value materialDict = root["materials"];
         Json::Value shaderDict = root["shaders"];
         Json::Value cubemapDict = root["cubemaps"];
@@ -486,6 +531,9 @@ bool loadMaterialsFromJson(const char* path)
                 Json::Value key = it.key();
                 Json::Value val = *it;
 
+                if (Sim::findObject(key.asCString()) != NULL)
+                    continue; // Don't add
+
                 ShaderData* shader = new ShaderData();
                 shader->assignName(key.asCString());
                 shader->pixVersion = val.get("pixVersion", 1.0).asFloat();
@@ -493,6 +541,15 @@ bool loadMaterialsFromJson(const char* path)
                 shader->DXVertexShaderName = StringTable->insert(val.get("vertexShader", "").asCString(), true);
                 shader->useDevicePixVersion = val.get("useDevicePixVersion", false).asBool();
                 shader->registerObject(); // Finally create the shader
+
+                // fix paths
+                char fpath[256];
+                const char* seppath = dStrrchr(path, '/');
+                U32 fileStrLen = seppath - path + 1;
+                dStrncpy(fpath, path, fileStrLen);
+                fpath[fileStrLen] = '\0';
+
+                shader->setPath(fpath);
             }
         }
 
@@ -503,12 +560,24 @@ bool loadMaterialsFromJson(const char* path)
                 Json::Value key = it.key();
                 Json::Value val = *it;
 
+                if (Sim::findObject(key.asCString()) != NULL)
+                    continue; // Don't add
+
                 CubemapData* cubeMap = new CubemapData();
                 cubeMap->assignName(key.asCString());
                 for (int i = 0; i < 6; i++)
                 {
                     cubeMap->cubeFaceFile[i] = StringTable->insert(val[i].asCString());
                 }
+
+                // fix paths
+                char fpath[256];
+                const char* seppath = dStrrchr(path, '/');
+                U32 fileStrLen = seppath - path + 1;
+                dStrncpy(fpath, path, fileStrLen);
+                fpath[fileStrLen] = '\0';
+                dStrncpy(cubeMap->mPath, fpath, 256);
+
                 cubeMap->registerObject();
             }
         }
@@ -519,6 +588,9 @@ bool loadMaterialsFromJson(const char* path)
             for (Json::ValueIterator it = materialDict.begin(); it != materialDict.end(); it++) {
                 Json::Value key = it.key();
                 Json::Value val = *it;
+
+                if (Sim::findObject(key.asCString()) != NULL)
+                    continue; // Don't add
 
                 bool isCustom = val.get("custom", false).asBool();
 
@@ -635,6 +707,12 @@ bool loadMaterialsFromJson(const char* path)
                 // Create the object
                 mat->setModStaticFields(false);
                 mat->registerObject();
+
+                // Fix paths
+                const char* seppath = dStrrchr(path, '/');
+                U32 fileStrLen = seppath - path + 1;
+                dStrncpy(mat->getPath(), path, fileStrLen);
+                mat->getPath()[fileStrLen] = '\0';
             }
 
             return true;

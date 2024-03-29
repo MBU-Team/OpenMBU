@@ -10,11 +10,9 @@
 
 static U32 sCameraCollisionMask = InteriorObjectType | StaticShapeObjectType | StaticTSObjectType;
 
-#ifdef MB_GOLD
-#define RADIUS_FOR_CAMERA 0.09f
-#else
-#define RADIUS_FOR_CAMERA 0.25f
-#endif
+#define RADIUS_FOR_CAMERA_MBG 0.09f
+#define RADIUS_FOR_CAMERA_MBU 0.25f
+#define RADIUS_FOR_CAMERA (mSize < 1.5f ? RADIUS_FOR_CAMERA_MBG : RADIUS_FOR_CAMERA_MBU)
 
 bool Marble::moveCamera(Point3F start, Point3F end, Point3F& result, U32 maxIterations, F32 timeStep)
 {

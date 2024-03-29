@@ -14,6 +14,9 @@
 #ifndef _COLOR_H_
 #include "core/color.h"
 #endif
+
+#include "core/MemoryStream.h"
+
 class MemStream : public Stream {
     typedef Stream Parent;
 
@@ -165,11 +168,10 @@ public:
     }
 };
 
-class ResizableMemStream : public MemStream {
-    typedef MemStream Parent;
+class ResizableMemStream : public Stream {
+    typedef Stream Parent;
 
-    U32 m_filledSize;
-    bool expandToSize(U32 size);
+    MemoryStream* inner;
 
 public:
     ResizableMemStream(const U32 in_bufferSize = 0,
@@ -181,6 +183,10 @@ public:
     virtual U32 getStreamSize();
     virtual bool setPosition(const U32 in_newPosition);
     virtual bool _write(const U32 in_numBytes, const void* in_pBuffer);
+    virtual bool _read(const U32 in_numBytes, void* out_pBuffer);
+
+    bool hasCapability(const Capability) const;
+    U32  getPosition() const;
 };
 
 class MemSubStream : public Stream {

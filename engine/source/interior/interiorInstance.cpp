@@ -28,6 +28,7 @@
 #include "math/mathUtils.h"
 #include "renderInstance/renderInstMgr.h"
 #include "sim/pathManager.h"
+#include "materials/material.h"
 
 //--------------------------------------------------------------------------
 //-------------------------------------- Local classes, data, and functions
@@ -363,16 +364,46 @@ bool InteriorInstance::onAdd()
         return false;
     }
 
+    // Check for materials
+
+    bool foundAllMaterials = true;
+    for (i = 0; i < mInteriorRes->getNumDetailLevels(); i++) {
+        Interior* pInterior = mInteriorRes->getDetailLevel(i);
+        HashTable<U32, bool> materialUsages;
+        for (int j = 0; j < pInterior->mSurfaces.size(); j++)
+        {
+            Interior::Surface& surf = pInterior->mSurfaces[j];
+            materialUsages.insertUnique(surf.textureIndex, true);
+        }
+        for (int j = 0; j < pInterior->mMaterialList->size(); j++)
+        {
+            if (materialUsages.find(j) == materialUsages.end()) continue;
+            Material* mat = pInterior->mMaterialList->getMappedMaterial(j);
+            if (mat != NULL)
+                foundAllMaterials = foundAllMaterials && mat->preloadTextures();
+
+            if (!foundAllMaterials)
+                Con::errorf(ConsoleLogEntry::General, "missing texture for material: %s", pInterior->mMaterialList->getMaterialName(j));
+        }
+    }
+    if (!foundAllMaterials) {
+        Con::errorf(ConsoleLogEntry::General, "Unable to load interior due to missing materials: %s", mInteriorFileName);
+        NetConnection::setLastError("Unable to load interior due to missing materials: %s", mInteriorFileName);
+        return false;
+    }
+ 
+
+
     if (!isClientObject())
         mCRC = mInteriorRes.getCRC();
 
     if (isClientObject() || gSPMode)
     {
-        if (mCRC != mInteriorRes.getCRC())
-        {
-            NetConnection::setLastError("Local interior file '%s' does not match version on server.", mInteriorFileName);
-            return false;
-        }
+        //if (mCRC != mInteriorRes.getCRC())
+        //{
+        //    NetConnection::setLastError("Local interior file '%s' does not match version on server.", mInteriorFileName);
+        //    return false;
+        //}
         for (i = 0; i < mInteriorRes->getNumDetailLevels(); i++) {
             // ok, if the material list load failed...
             // if this is a local connection, we'll assume that's ok
@@ -432,7 +463,7 @@ bool InteriorInstance::onAdd()
             mMaterialMaps.push_back(new MaterialList(pInterior->mMaterialList));
         }
 
-        renewOverlays();
+        // renewOverlays();
     //}
     //else {
     //

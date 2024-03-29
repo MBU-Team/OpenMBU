@@ -16,6 +16,7 @@
 #include "sim/netConnection.h"
 #include "gfx/gfxDevice.h"
 #include "lightingSystem/sgLighting.h"
+#include "materials/material.h"
 
 IMPLEMENT_CO_NETOBJECT_V1(TSStatic);
 
@@ -114,6 +115,18 @@ bool TSStatic::onAdd()
 
     if (!gSPMode && isClientObject() && !mShape->preloadMaterialList() && NetConnection::filesWereDownloaded())
         return false;
+
+    bool foundAllMaterials = true;
+    for (int i = 0; i < mShape->materialList->size(); i++) {
+        Material* mat = mShape->materialList->getMappedMaterial(i);
+        if (mat != NULL)
+            foundAllMaterials = foundAllMaterials && mat->preloadTextures();
+    }
+    if (!foundAllMaterials) {
+        Con::errorf(ConsoleLogEntry::General, "Unable to load TSStatic due to missing materials: %s", mShapeName);
+        NetConnection::setLastError("Unable to load TSStatic due to missing materials: %s", mShapeName);
+        return false;
+    }
 
     mObjBox = mShape->bounds;
     resetWorldBox();

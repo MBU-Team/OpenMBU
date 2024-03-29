@@ -550,7 +550,7 @@ bool DInputManager::enableXInput()
 
     if (mgr->isXInputActive()) return(true);
 
-    if (Input::isActive()) mgr->activateXInput();
+    mgr->activateXInput();
 
     if (smXInputEnabled)
     {
@@ -630,7 +630,7 @@ int DInputManager::getXInputState(int controllerID, int property, bool current)
 //------------------------------------------------------------------------------
 bool DInputManager::activateXInput()
 {
-    if (!mEnabled || !Input::isActive())
+    if (!mEnabled)
         return(false);
 
     mXInputActive = acquire(XInputDeviceType, SI_ANY);

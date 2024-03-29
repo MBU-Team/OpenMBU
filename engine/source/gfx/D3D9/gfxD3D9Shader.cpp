@@ -11,6 +11,7 @@
 #include "shaderGen/shaderGenManager.h"
 #include "core/fileStream.h"
 #include "game/version.h"
+#include "core/resManager.h"
 
 //#define PRINT_SHADER_WARNINGS
 
@@ -72,19 +73,34 @@ HRESULT _gfxD3DXInclude::Open(THIS_ D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileNa
    {
       mIncludeFileName = ste;
 
-      FileStream fs;
-      AssertISV( fs.open( mIncludeFileName, FileStream::Read ), "Something went horribly wrong with the ID3DXInclude stuff" );
+      Stream* fs;
+      fs = ResourceManager->openStream(mIncludeFileName);
+      if (fs == NULL)
+      {
+          // Try the default shaders/ dir
+          char defPath[1024] = "shaders/";
+          dStrcat(defPath, tmpFileName);
+          StringTableEntry ste = StringTable->insert(defPath);
+          mIncludeFileName = ste;
+          fs = ResourceManager->openStream(mIncludeFileName);
+      }
+      if (fs == NULL)
+      {
+          AssertISV(false, "Something went horribly wrong with the ID3DXInclude stuff");
+      }
+      //FileStream fs;
+      // AssertISV( fs.open( mIncludeFileName, FileStream::Read ), "Something went horribly wrong with the ID3DXInclude stuff" );
 
       //SAFE_DELETE_ARRAY( mIncludeData );
 
-      mIncludeDataSize = fs.getStreamSize();
+      mIncludeDataSize = fs->getStreamSize();
       mIncludeData = new U8[mIncludeDataSize];
-      if(!fs.read( mIncludeDataSize, mIncludeData ))
+      if(!fs->read( mIncludeDataSize, mIncludeData ))
       {
          // Read failed, cut our losses.
          mIncludeData[0] = 0;
       }
-      fs.close();
+      ResourceManager->closeStream(fs);
 
       gIncludeAllocs.push_back(mIncludeData);
    }
@@ -217,8 +233,8 @@ void GFXD3D9Shader::initShader( const char *file, const char *target )
       else
       {
          // Ok it's not in the shader gen manager, so ask Torque for it
-         s = new FileStream();
-         if(!static_cast<FileStream *>( s )->open( file, FileStream::Read ))
+         s = ResourceManager->openStream(file);
+         if(!s)
          {
             AssertISV(false, avar("GFXD3D9Shader::initShader - failed to open shader '%s'.", file));
          }
@@ -231,7 +247,7 @@ void GFXD3D9Shader::initShader( const char *file, const char *target )
             res = GFXD3DX.D3DXCompileShader( buffer, s->getStreamSize(), defines, smD3DXInclude, "main", 
                target, flags, &code, &errorBuff, NULL );
 
-            static_cast<FileStream *>( s )->close();
+            ResourceManager->closeStream(s);
          }
          else
          {
@@ -239,8 +255,6 @@ void GFXD3D9Shader::initShader( const char *file, const char *target )
                defines, smD3DXInclude, "main", target, 
                flags, &code, &errorBuff, NULL );
          }
-
-         SAFE_DELETE( s ); 
       }
    }
    else

@@ -25,6 +25,7 @@ public:
     StringTableEntry  cubeFaceFile[6];
     GFXTexHandle      cubeFace[6];
     bool              dynamic;
+    char              mPath[256];
 
     //--------------------------------------------------------------
     // Procedures

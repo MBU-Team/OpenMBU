@@ -17,9 +17,9 @@ function loadMaterials()
    }
 
    // load custom material files
-   loadMaterialJson("./interiorMaterials.json");
-   loadMaterialJson("./shapeMaterials.json");
-   loadMaterialJson("./sizeMaterials.json");
+   loadMaterialJson("./interiorMaterials.mat.json");
+   loadMaterialJson("./shapeMaterials.mat.json");
+   loadMaterialJson("./sizeMaterials.mat.json");
    //exec("./interiorMaterials.cs");
    //exec("./shapeMaterials.cs");
    //exec("./sizeMaterials.cs"); //Blue Sizing Materials

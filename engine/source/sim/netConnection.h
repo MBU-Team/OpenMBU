@@ -697,6 +697,7 @@ public:
 
         PacketNotify* nextPacket;  ///< Next packet sent.
         PacketNotify();
+        virtual ~PacketNotify() = default;
     };
     virtual PacketNotify* allocNotify();
     PacketNotify* mNotifyQueueHead;  ///< Head of packet notify list.
@@ -1020,6 +1021,8 @@ public:
     void sendFastFileAcknowledgement(BitStream* stream);
     void handleFastFileAcknowledgement(BitStream* stream);
     void processFastFileAcknowledgement();
+    void addMissingFile(const char* path);
+    void popMissingFile();
 
 #endif // TORQUE_NET_HOLEPUNCHING
 

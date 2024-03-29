@@ -556,6 +556,11 @@ const U32 dStrlen(const UTF32* unistring)
 
 bool chompUTF8BOM(const char* inString, char** outStringPtr)
 {
+    if (dStrlen(inString) == 0)
+    {
+        *outStringPtr = const_cast<char*>(inString);
+        return true;
+    }
     *outStringPtr = const_cast<char*>(inString);
 
     U8 bom[4];

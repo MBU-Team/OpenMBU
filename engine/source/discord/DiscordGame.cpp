@@ -83,6 +83,7 @@ void onReady(const DiscordUser* request)
     DiscordGame::get()->setActive(true);
     Con::printf("Starting RPC for user %s", request->username);
     DiscordGame::get()->setUsername(request->username);
+    DiscordGame::get()->setUserId(request->userId);
 }
 
 void onError(int errorCode, const char* message)
@@ -291,8 +292,6 @@ const char* DiscordGame::ProcessLevel(StringTableEntry guid) {
             {"{5D7CFB46-1657-4121-BE0A-1BB9D551A17E}"_ts, "level_65"_ts},
             {"{7DEF697A-3F76-43A9-BF7D-A16B2D913250}"_ts, "level_66"_ts},
             {"{49A510A5-E540-40C2-B555-37A37CA5B01A}"_ts, "level_67"_ts},
-            //marble city 1
-            {"{D18409B9-AAA3-4260-8129-C477062BF6CA}"_ts, "level_68"_ts},
             //marble city 2
             {"{241F26A1-D3FA-4583-87DB-611C21278F86}"_ts, "level_68"_ts},
             {"{872E0141-D1EA-4B68-AFA0-C6B9CEF4669B}"_ts, "level_69"_ts},
@@ -308,6 +307,12 @@ const char* DiscordGame::ProcessLevel(StringTableEntry guid) {
             {"{96E7EB66-B551-4E8F-809C-A83780065C05}"_ts, "level_79"_ts},
             {"{F2F59069-4D07-4665-B649-95E018FAAB28}"_ts, "level_80"_ts},
             {"{3DCFC6EE-A2DE-465F-B040-6FC31D5C0B6E}"_ts, "level_81"_ts},
+            //marble city 1
+            {"{D18409B9-AAA3-4260-8129-C477062BF6CA}"_ts, "level_82"_ts},
+            {"{758E4F71-3802-4937-A0CE-4B6791C1EA6D}"_ts, "level_83"_ts},
+            {"{D4A795F8-88B8-4B82-B097-AC4A0FB4A492}"_ts, "level_84"_ts},
+            {"{7F6D6908-8357-4FFB-BC4F-A66245310CD3}"_ts, "level_85"_ts},
+            {"{663167C1-C00D-461D-9A30-01235D0A555A}"_ts, "level_86"_ts},
         };
     }
 

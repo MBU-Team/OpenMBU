@@ -345,8 +345,14 @@ function LobbyGui::update(%this,%clientId,%name,%xbLiveId,%xbLiveSkill,%xbLiveVo
 	   
  	if (isPCBuild()) %xbLiveVoice = getRandom(1) + 1; 
 	
+    %sanitizedText = %name;
+    if ($pref::Lobby::StreamerMode)
+    {
+       %sanitizedText = getSubStr(%name, 0, 1) @ "...";
+    }
+
 	%text = %readyIcon TAB
-	   %name TAB
+	   %sanitizedText TAB
 	   "" TAB // no score is set in this function
 	   %tankIcon TAB
 	   %skillIcon TAB
@@ -698,9 +704,15 @@ function LobbyGui::updateHostInfo(%this)
    
    // set host info
    %gameMode = GameMissionInfo.getGameModeDisplayName(ServerConnection.gameModeId);
-   %missionName = GameMissionInfo.getMissionDisplayName(ServerConnection.missionId);
+   %missionName = ServerConnection.missionName; //GameMissionInfo.getMissionDisplayName(ServerConnection.missionId);
+
+   %sanitizedText = ServerConnection.hostName;
+   if ($pref::Lobby::StreamerMode)
+   {
+      %sanitizedText = getSubStr(ServerConnection.hostName, 0, 1) @ "...";
+   }
    
-   %this.setHostInfo(ServerConnection.hostName, %gameMode, %missionName, 
+   %this.setHostInfo(%sanitizedText, %gameMode, %missionName, 
       ServerConnection.priSlotsUsed, ServerConnection.priSlotsFree, 
       ServerConnection.pubSlotsUsed, ServerConnection.pubSlotsFree);
 }
@@ -906,6 +918,8 @@ function LobbyGui::onLeft(%this)
       $Server::MissionId = GameMissionInfo.getCurrentMission().level;
       $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
       $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      $Server::MissionGuid = GameMissionInfo.getCurrentMission().guid;
+      $Server::MissionName = GameMissionInfo.getMissionDisplayNameByGuid(GameMissionInfo.getCurrentMission().guid);
       
       onMissionLoaded();
    
@@ -934,6 +948,8 @@ function LobbyGui::onRight(%this)
       $Server::MissionId = GameMissionInfo.getCurrentMission().level;
       $Server::GameModeId = GameMissionInfo.getGameModeIdFromString(GameMissionInfo.getCurrentMission().gameMode);
       $Server::MissionFile = GameMissionInfo.getCurrentMission().file;
+      $Server::MissionGuid = GameMissionInfo.getCurrentMission().guid;
+      $Server::MissionName = GameMissionInfo.getMissionDisplayNameByGuid(GameMissionInfo.getCurrentMission().guid);
       
       onMissionLoaded();
       

@@ -1,0 +1,613 @@
+{
+    "$schema": "./materials.schema.json",
+    "materials": {
+        "Mat_Glass_NoRefract": {
+            "baseTex": ["marble/data/shapes/structures/glass"],
+            "blendOp": "LerpAlpha",
+            "custom": true,
+            "shader": "StdTex",
+            "texture": ["marble/data/shapes/structures/glass2"],
+            "translucent": true,
+            "version": 2
+        },
+        "Material_AntiGravGlow": {
+            "baseTex": ["marble/data/shapes/items/antigrav_glow"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "antigrav_glow"
+        },
+        "Material_AntiGravSkin": {
+            "baseTex": ["marble/data/shapes/items/antigrav_skin"],
+            "bumpTex": ["marble/data/shapes/items/antigrav_bump"],
+            "custom": false,
+            "mapTo": "antigrav_skin",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [32]
+        },
+        "Material_ArrowSignArrow": {
+            "baseTex": ["marble/data/shapes/signs/arrowsign_arrow"],
+            "bumpTex": ["marble/data/shapes/items/arrow_bump"],
+            "custom": false,
+            "mapTo": "arrowsign_arrow",
+            "pixelSpecular": [true],
+            "specularPower": [32]
+        },
+        "Material_ArrowSignArrowGlow": {
+            "baseTex": ["marble/data/shapes/signs/arrowsign_arrow"],
+            "custom": false,
+            "glow": [true],
+            "mapTo": "arrowsign_arrow_glow",
+            "pixelSpecular": [true],
+            "specular": ["0.3 0.3 0.3 0.3"],
+            "specularPower": [32]
+        },
+        "Material_ArrowSignChain": {
+            "baseTex": ["marble/data/shapes/signs/arrowsign_chain"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "arrowsign_chain",
+            "translucent": true
+        },
+        "Material_ArrowSignPost": {
+            "baseTex": ["marble/data/shapes/signs/arrowpostUVW"],
+            "custom": false,
+            "mapTo": "arrowpostUVW",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [32]
+        },
+        "Material_ArrowSignPost2": {
+            "baseTex": ["marble/data/shapes/signs/arrowsign_post"],
+            "bumpTex": ["marble/data/shapes/signs/arrowsign_post_bump"],
+            "custom": false,
+            "mapTo": "arrowsign_post",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Material_BaseCautionSign": {
+            "baseTex": ["marble/data/shapes/signs/base.cautionsign"],
+            "custom": false,
+            "mapTo": "base.cautionsign"
+        },
+        "Material_BaseGem": {
+            "baseTex": ["marble/data/shapes/items/red.gem"],
+            "cubemap": "gemCubemap",
+            "custom": false,
+            "mapTo": "base.gem"
+        },
+        "Material_BasePlainSign": {
+            "baseTex": ["marble/data/shapes/signs/base.plainSign"],
+            "custom": false,
+            "mapTo": "base.plainSign"
+        },
+        "Material_BlueGem": {
+            "baseTex": ["marble/data/shapes/items/blue.gem"],
+            "cubemap": "gemCubemap3",
+            "custom": false,
+            "mapTo": "blue.gem"
+        },
+        "Material_Bumper": {
+            "baseTex": ["marble/data/shapes/bumpers/bumper"],
+            "custom": false,
+            "force": 15,
+            "friction": 0.5,
+            "mapTo": "bumper",
+            "pixelSpecular": [true],
+            "restitution": 0,
+            "specular": ["0.8 0.8 0.8 1"],
+            "specularPower": [12]
+        },
+        "Material_CautionCautionSign": {
+            "baseTex": ["marble/data/shapes/signs/caution.cautionsign"],
+            "custom": false,
+            "mapTo": "caution.cautionsign"
+        },
+        "Material_CautionSignPole": {
+            "baseTex": ["marble/data/shapes/signs/cautionsign_pole"],
+            "custom": false,
+            "mapTo": "cautionsign_pole"
+        },
+        "Material_CautionSignWood": {
+            "baseTex": ["marble/data/shapes/signs/cautionsignwood"],
+            "custom": false,
+            "mapTo": "cautionsignwood"
+        },
+        "Material_DangerCautionSign": {
+            "baseTex": ["marble/data/shapes/signs/danger.cautionsign"],
+            "custom": false,
+            "mapTo": "danger.cautionsign"
+        },
+        "Material_DownPlainSign": {
+            "baseTex": ["marble/data/shapes/signs/down.plainSign"],
+            "custom": false,
+            "mapTo": "down.plainSign"
+        },
+        "Material_EasterEgg": {
+            "baseTex": ["marble/data/shapes/items/egg_skin"],
+            "cubemap": "gemCubemap",
+            "custom": false,
+            "mapTo": "egg_skin",
+            "pixelSpecular": [true],
+            "specularPower": [32]
+        },
+        "Material_GemBeam": {
+            "baseTex": ["marble/data/shapes/items/gembeam"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "gembeam",
+            "pixelSpecular": [true],
+            "specular": ["0.5 0.6 0.5 0.6"],
+            "specularPower": [12],
+            "translucent": true
+        },
+        "Material_GemShine": {
+            "baseTex": ["marble/data/shapes/items/gemshine"],
+            "custom": false,
+            "mapTo": "gemshine",
+            "translucent": true,
+            "translucentBlendOp": "Add"
+        },
+        "Material_Grow_Glow": {
+            "baseTex": ["marble/data/shapes/images/grow_glow"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "grow_glow"
+        },
+        "Material_HazardFan": {
+            "baseTex": ["marble/data/shapes/hazards/fan"],
+            "custom": false,
+            "mapTo": "fan",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [12]
+        },
+        "Material_Helicopter": {
+            "baseTex": ["marble/data/shapes/images/copter_skin"],
+            "custom": false,
+            "mapTo": "copter_skin",
+            "pixelSpecular": [true],
+            "specularPower": [32]
+        },
+        "Material_ItemArrow": {
+            "baseTex": ["marble/data/shapes/items/itemArrow"],
+            "custom": false,
+            "mapTo": "itemArrow"
+        },
+        "Material_LeftPlainSign": {
+            "baseTex": ["marble/data/shapes/signs/left.plainSign"],
+            "custom": false,
+            "mapTo": "left.plainSign"
+        },
+        "Material_Marble_BB": {
+            "custom": true,
+            "mapTo": "marble.BB.skin",
+            "refract": true,
+            "shader": "RefractPix",
+            "specularPower": [12],
+            "texture": ["marble/data/shapes/balls/marble.BB.bump", "$backbuff", "marble/data/shapes/balls/marble.BB.skin"],
+            "version": 2
+        },
+        "Material_PlainSignWood": {
+            "baseTex": ["marble/data/shapes/signs/plainsignwood"],
+            "custom": false,
+            "mapTo": "plainsignwood"
+        },
+        "Material_PlainSignWood2": {
+            "baseTex": ["marble/data/shapes/signs/signwood2"],
+            "custom": false,
+            "mapTo": "signwood2"
+        },
+        "Material_RedGem": {
+            "baseTex": ["marble/data/shapes/items/red.gem"],
+            "cubemap": "gemCubemap",
+            "custom": false,
+            "mapTo": "red.gem"
+        },
+        "Material_RightPlainSign": {
+            "baseTex": ["marble/data/shapes/signs/right.plainSign"],
+            "custom": false,
+            "mapTo": "right.plainSign"
+        },
+        "Material_SignWood": {
+            "baseTex": ["marble/data/shapes/signs/signwood"],
+            "custom": false,
+            "mapTo": "signwood"
+        },
+        "Material_SuperJump": {
+            "baseTex": ["marble/data/shapes/items/superJump_skin"],
+            "bumpTex": ["marble/data/shapes/items/superJump_bump"],
+            "custom": false,
+            "mapTo": "superJump_skin",
+            "pixelSpecular": [true],
+            "specularPower": [32]
+        },
+        "Material_SuperSpeed": {
+            "baseTex": ["marble/data/shapes/items/superSpeed_skin"],
+            "custom": false,
+            "mapTo": "superSpeed_skin",
+            "pixelSpecular": [true],
+            "specularPower": [32]
+        },
+        "Material_SuperSpeedStar": {
+            "baseTex": ["marble/data/shapes/items/superSpeed_star"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "superSpeed_star"
+        },
+        "Material_TimeTravelGlass": {
+            "custom": true,
+            "fallback": "TimeTravelGlass_Fallback",
+            "mapTo": "timeTravel_glass",
+            "refract": true,
+            "shader": "RefractPix",
+            "specularPower": [10],
+            "texture": ["marble/data/shapes/structures/time.normal", "$backbuff", "marble/data/shapes/structures/glass"],
+            "version": 2
+        },
+        "Material_TimeTravelSkin": {
+            "baseTex": ["marble/data/shapes/items/timeTravel_skin"],
+            "custom": false,
+            "mapTo": "timeTravel_skin",
+            "pixelSpecular": [true],
+            "specularPower": [32]
+        },
+        "Material_Trapdoor": {
+            "baseTex": ["marble/data/shapes/hazards/trapdoor"],
+            "custom": false,
+            "mapTo": "trapdoor"
+        },
+        "Material_UpPlainSign": {
+            "baseTex": ["marble/data/shapes/signs/up.plainSign"],
+            "custom": false,
+            "mapTo": "up.plainSign"
+        },
+        "Material_YellowGem": {
+            "baseTex": ["marble/data/shapes/items/yellow.gem"],
+            "cubemap": "gemCubemap2",
+            "custom": false,
+            "mapTo": "yellow.gem"
+        },
+        "Material_abyss": {
+            "animFlags": [2],
+            "baseTex": ["marble/data/shapes/pads/abyss"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "abyss",
+            "rotPivotOffset": ["-0.5 -0.5"],
+            "rotSpeed": [1]
+        },
+        "Material_abyss2": {
+            "animFlags": [2],
+            "baseTex": ["marble/data/shapes/pads/abyss2"],
+            "custom": false,
+            "glow": [true],
+            "mapTo": "abyss2",
+            "rotPivotOffset": ["-0.5 -0.5"],
+            "rotSpeed": [1]
+        },
+        "Material_astrolabe": {
+            "baseTex": ["marble/data/shapes/astrolabe/astrolabe_glow"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "astrolabe_glow",
+            "renderBin": "SkyShape",
+            "translucent": true
+        },
+        "Material_astrolabe_solid": {
+            "baseTex": ["marble/data/shapes/astrolabe/astrolabe_solid_glow"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "astrolabe_solid_glow",
+            "renderBin": "SkyShape",
+            "translucent": true
+        },
+        "Material_blastOrbit": {
+            "baseTex": ["marble/data/shapes/images/blast_orbit_skin"],
+            "bumpTex": ["marble/data/shapes/images/blast_orbit_bump"],
+            "custom": false,
+            "mapTo": "blast_orbit_skin",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [32]
+        },
+        "Material_blast_glow": {
+            "baseTex": ["marble/data/shapes/images/blast_glow"],
+            "custom": false,
+            "glow": [true],
+            "mapTo": "blast_glow",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [32]
+        },
+        "Material_blastwave": {
+            "baseTex": ["marble/data/shapes/images/blastwave"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "blastwave",
+            "translucent": true,
+            "translucentBlendOp": "AddAlpha"
+        },
+        "Material_cap": {
+            "baseTex": ["marble/data/shapes/balls/cap"],
+            "bumpTex": ["marble/data/shapes/balls/cap_normal"],
+            "cubemap": "Lobby",
+            "custom": false,
+            "mapTo": "cap",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.8 1"],
+            "specularPower": [12]
+        },
+        "Material_checkpad": {
+            "baseTex": ["marble/data/shapes/pads/checkpad"],
+            "custom": false,
+            "mapTo": "checkpad",
+            "pixelSpecular": [true],
+            "specularPower": [32]
+        },
+        "Material_clouds_advanced": {
+            "baseTex": ["marble/data/shapes/astrolabe/clouds_advanced"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "clouds_advanced",
+            "renderBin": "SkyShape",
+            "translucent": true
+        },
+        "Material_clouds_beginner": {
+            "baseTex": ["marble/data/shapes/astrolabe/clouds_beginner"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "clouds_beginner",
+            "renderBin": "SkyShape",
+            "translucent": true
+        },
+        "Material_clouds_intermediate": {
+            "baseTex": ["marble/data/shapes/astrolabe/clouds_intermediate"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "clouds_intermediate",
+            "renderBin": "SkyShape",
+            "translucent": true
+        },
+        "Material_corona": {
+            "animFlags": [2],
+            "baseTex": ["marble/data/shapes/images/corona"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "corona",
+            "rotPivotOffset": ["-0.5 -0.5"],
+            "rotSpeed": [3],
+            "translucent": true,
+            "translucentBlendOp": "AddAlpha"
+        },
+        "Material_cube_glass": {
+            "custom": true,
+            "friction": 0.80000001192092896,
+            "mapTo": "cube_glass",
+            "pass": ["Mat_Glass_NoRefract"],
+            "refract": true,
+            "restitution": 0.10000000149011612,
+            "shader": "RefractPix",
+            "specularPower": [10],
+            "texture": ["marble/data/shapes/structures/cube_glass.normal", "$backbuff", "marble/data/shapes/structures/cube_glass"],
+            "version": 2
+        },
+        "Material_distort_d": {
+            "custom": true,
+            "mapTo": "distort_d",
+            "refract": true,
+            "shader": "RefractPix",
+            "specularPower": [10],
+            "texture": ["marble/data/shapes/Particles/distort_n", "$backbuff", "marble/data/shapes/Particles/distort_d"],
+            "version": 2
+        },
+        "Material_endpad_glow": {
+            "baseTex": ["marble/data/shapes/pads/endpad_glow"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "endpad_glow",
+            "translucent": true
+        },
+        "Material_glass_fallback": {
+            "baseTex": ["marble/data/shapes/structures/glass2"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "glass2",
+            "texCompression": ["DXT5"],
+            "translucent": true
+        },
+        "Material_glass": {
+            "custom": true,
+            "fallback": "Material_glass_fallback",
+            "mapTo": "glass",
+            "pass": ["Mat_Glass_NoRefract"],
+            "refract": true,
+            "renderBin": "TranslucentPreGlow",
+            "shader": "RefractPix",
+            "specularPower": [12],
+            "texture": ["marble/data/shapes/structures/glass.normal", "$backbuff", "marble/data/shapes/structures/glass"],
+            "version": 2
+        },
+        "Material_grow": {
+            "baseTex": ["marble/data/shapes/images/grow"],
+            "bumpTex": ["marble/data/shapes/images/grow_bump"],
+            "custom": false,
+            "mapTo": "grow",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [32]
+        },
+        "Material_item_glow": {
+            "baseTex": ["marble/data/shapes/items/item_glow"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "item_glow"
+        },
+        "Material_misty": {
+            "animFlags": [1],
+            "baseTex": ["marble/data/shapes/pads/misty"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "misty",
+            "scrollDir": ["0 1"],
+            "scrollSpeed": [0.5],
+            "translucent": true
+        },
+        "Material_mistyglow_ff": {
+            "baseTex": ["marble/data/shapes/pads/mistyglow"],
+            "custom": 0,
+            "mapTo": "mistyglow2",
+            "texCompression": ["DXT5"],
+            "translucent": 1,
+            "translucentBlendOp": "AddAlpha"
+        },
+        "Material_mistyglow": {
+            "baseTex": ["marble/data/shapes/pads/mistyglow"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "mistyglow",
+            "translucent": true
+        },
+        "Material_refract": {
+            "baseTex": ["marble/data/shapes/images/blast_glow"],
+            "custom": false,
+            "glow": [true],
+            "mapTo": "refract",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.6 1"],
+            "specularPower": [32],
+            "texCompression": ["DXT3"]
+        },
+        "Material_ringglass": {
+            "baseTex": ["marble/data/shapes/pads/ringglass"],
+            "bumpTex": ["marble/data/shapes/pads/ringnormal"],
+            "cubemap": "sky_environment",
+            "custom": false,
+            "doubleSided": true,
+            "emissive": [true],
+            "mapTo": "ringglass",
+            "pixelSpecular": [true],
+            "specular": ["0.8 0.8 0.8 1"],
+            "specularPower": [12],
+            "translucent": true
+        },
+        "Material_ringtex": {
+            "baseTex": ["marble/data/shapes/pads/ringtex"],
+            "custom": false,
+            "mapTo": "ringtex",
+            "pixelSpecular": [true],
+            "specular": ["0.3 0.3 0.3 0.7"],
+            "specularPower": [14]
+        },
+        "Material_sigil": {
+            "baseTex": ["marble/data/shapes/pads/sigil"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "sigil",
+            "translucent": true,
+            "translucentBlendOp": "AddAlpha"
+        },
+        "Material_sigil_glow": {
+            "animFlags": [1],
+            "baseTex": ["marble/data/shapes/pads/sigil_glow"],
+            "custom": false,
+            "emissive": [true],
+            "glow": [true],
+            "mapTo": "sigil_glow",
+            "scrollDir": ["1 0"],
+            "scrollSpeed": [0.30000001192092896],
+            "translucent": true,
+            "translucentBlendOp": "Add"
+        },
+        "Material_sigiloff": {
+            "baseTex": ["marble/data/shapes/pads/sigiloff"],
+            "custom": false,
+            "mapTo": "sigiloff",
+            "translucent": true
+        },
+        "TimeTravelGlass_Fallback": {
+            "baseTex": ["marble/data/shapes/structures/glass"],
+            "custom": false,
+            "emissive": [true],
+            "mapTo": "timeTravel_glass_fallback",
+            "texCompression": ["DXT5"],
+            "translucent": true
+        },
+        "lightning1frame1": {
+            "animFlags": [16],
+            "baseTex": ["marble/data/shapes/bumpers/lightning1frame1"],
+            "custom": false,
+            "glow": [true],
+            "mapTo": "lightning1frame1",
+            "sequenceFramePerSec": [4],
+            "sequenceSegmentSize": [0.25],
+            "translucent": true
+        }
+    },
+    "shaders": {
+        "RefractPix": {
+            "pixVersion": 2,
+            "pixelShader": "shaders/refractP.hlsl",
+            "vertexShader": "shaders/refractV.hlsl"
+        },
+        "StdTex": {
+            "pixVersion": 2,
+            "pixelShader": "shaders/standardTexP.hlsl",
+            "vertexShader": "shaders/standardTexV.hlsl"
+        }
+    },
+    "cubemaps": {
+        "sky_environment": [
+            "marble/data/skies/env_SO",
+            "marble/data/skies/env_NO",
+            "marble/data/skies/env_EA",
+            "marble/data/skies/env_WE",
+            "marble/data/skies/env_UP",
+            "marble/data/skies/env_DN"
+        ],
+        "marbleCubemap3": [
+            "marble/data/skies/marbleCubemap3_SO",
+            "marble/data/skies/marbleCubemap3_NO",
+            "marble/data/skies/marbleCubemap3_EA",
+            "marble/data/skies/marbleCubemap3_WE",
+            "marble/data/skies/marbleCubemap3_UP",
+            "marble/data/skies/marbleCubemap3_DN"
+        ],
+        "gemCubemap": [
+            "marble/data/skies/gemCubemapUp",
+            "marble/data/skies/gemCubemapUp",
+            "marble/data/skies/gemCubemapUp",
+            "marble/data/skies/gemCubemapUp",
+            "marble/data/skies/gemCubemapUp",
+            "marble/data/skies/gemCubemapUp"
+        ],
+        "gemCubemap2": [
+            "marble/data/skies/gemCubemapUp2",
+            "marble/data/skies/gemCubemapUp2",
+            "marble/data/skies/gemCubemapUp2",
+            "marble/data/skies/gemCubemapUp2",
+            "marble/data/skies/gemCubemapUp2",
+            "marble/data/skies/gemCubemapUp2"
+        ],
+        "gemCubemap3": [
+            "marble/data/skies/gemCubemapUp3",
+            "marble/data/skies/gemCubemapUp3",
+            "marble/data/skies/gemCubemapUp3",
+            "marble/data/skies/gemCubemapUp3",
+            "marble/data/skies/gemCubemapUp3",
+            "marble/data/skies/gemCubemapUp3"
+        ]
+    }
+}

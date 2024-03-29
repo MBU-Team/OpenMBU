@@ -66,6 +66,16 @@ public:
         FinishMode = 0x40
     };
 
+    enum MBPhysics
+    {
+        MBU,
+        MBG,
+        XNA,
+        MBUSlopes,
+        MBGSlopes,
+        MBPhysics_Count
+    };
+
     enum UpdateMaskBits
     {
         ActiveModeBits = 0x4,
@@ -216,6 +226,10 @@ private:
     bool mShadowGenerated;
     MatInstance* mStencilMaterial;
 
+    U32 mPhysics;
+
+    F32 mSize;
+
 public:
     DECLARE_CONOBJECT(Marble);
 
@@ -253,6 +267,8 @@ public:
     Point3F& getPosition();
     void victorySequence();
     void setMode(U32 mode);
+    void setPhysics(U32 physics);
+    void setSize(F32 size);
     U32 getMode() { return mMode; }
     void setOOB(bool isOOB);
     virtual void interpolateTick(F32 delta);
@@ -389,7 +405,7 @@ private:
     F32 kineticFriction;
     F32 bounceKineticFriction;
     F32 gravity;
-    F32 size;
+    //F32 size;
     F32 megaSize;
     F32 maxDotSlide;
     F32 bounceRestitution;

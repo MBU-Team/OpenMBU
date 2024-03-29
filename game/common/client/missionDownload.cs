@@ -18,14 +18,14 @@
 // Phase 1 
 //----------------------------------------------------------------------------
 
-function clientCmdMissionStartPhase1(%seq, %missionName, %musicTrack)
+function clientCmdMissionStartPhase1(%seq, %missionName, %musicTrack, %hasMaterials)
 {
    $missionDownloadStart = getRealTime();
    
    // These need to come after the cls.
    echo ("*** New Mission: " @ %missionName);
    echo ("*** Phase 1: Download Datablocks & Targets");
-   onMissionDownloadPhase1(%missionName, %musicTrack);
+   onMissionDownloadPhase1(%missionName, %musicTrack, %hasMaterials);
    commandToServer('MissionStartPhase1Ack', %seq);
 }
 
@@ -80,6 +80,12 @@ function onFileChunkReceived(%file, %count, %max)
    %rate = (%rate / 1024) @ "kB/s";
 
    echo(%file SPC %rate SPC %count SPC %max);
+}
+
+function onFileDownloaded(%file)
+{
+    if (%file !$= "" && %file $= $Server::MaterialFilePath)
+        loadMaterialJson($Server::MaterialFilePath);
 }
 
 //----------------------------------------------------------------------------

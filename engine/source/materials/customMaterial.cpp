@@ -69,6 +69,25 @@ void CustomMaterial::initPersistFields()
 
 }
 
+bool CustomMaterial::preloadTextures()
+{
+    bool found = Parent::preloadTextures();
+    for (int i = 0; i < MAX_TEX_PER_PASS; i++)
+    {
+        found = found && (!texFilename[i] || didFindTexture(texFilename[i]));
+    }
+    for (int i = 0; i < MAX_PASSES; i++)
+    {
+        found = found && (!pass[i] || pass[i]->preloadTextures());
+    }
+    if (fallback != NULL)
+        found = found && fallback->preloadTextures();
+    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getVertexShaderPath())); // Transfer shaders too lmao (attempt)
+    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getPixelShaderPath()));
+
+    return found;
+}
+
 //--------------------------------------------------------------------------
 // On add - verify data settings
 //--------------------------------------------------------------------------

@@ -267,9 +267,11 @@ void BitStream::readBits(S32 bitCount, void* bitPtr)
     S32 upShift = 8 - downShift;
 
     U8 curB = *stPtr;
+    const U8* stEnd = dataPtr + bufSize;
     while (byteCount--)
     {
-        U8 nextB = *++stPtr;
+        stPtr++;
+        U8 nextB = stPtr < stEnd ? *stPtr : 0;
         *ptr++ = (curB >> downShift) | (nextB << upShift);
         curB = nextB;
     }

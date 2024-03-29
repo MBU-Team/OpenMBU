@@ -91,8 +91,11 @@ MatInstance::~MatInstance()
         }
     }
 
-    delete mProcessedMaterial;
-    mProcessedMaterial = NULL;
+    if (mProcessedMaterial != NULL)
+    {
+        delete mProcessedMaterial;
+        mProcessedMaterial = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -140,6 +143,8 @@ void MatInstance::processMaterial()
         dStrcpy( mMatName, "Unknown" );
     }
 #endif
+    if (mProcessedMaterial != NULL)
+        return;
     if( dynamic_cast<CustomMaterial*>(mMaterial) )
     {
         F32 pixVersion = GFX->getPixelShaderVersion();

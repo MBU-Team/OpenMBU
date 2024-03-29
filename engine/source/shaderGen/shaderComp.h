@@ -19,6 +19,7 @@ struct Var;
 class ShaderComponent
 {
 public:
+    virtual ~ShaderComponent() = default;
     virtual void print(Stream& stream) {};
 };
 

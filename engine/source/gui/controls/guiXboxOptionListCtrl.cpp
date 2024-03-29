@@ -602,11 +602,15 @@ void GuiXboxOptionListCtrl::onRender(Point2I offset, const RectI& updateRect)
 
 const char* GuiXboxOptionListCtrl::getSelectedText()
 {
+    if (mSelected >= mRowText.size())
+        return StringTable->insert("");
     return mRowText[mSelected];
 }
 
 const char* GuiXboxOptionListCtrl::getSelectedData()
 {
+    if (mSelected >= mRowData.size())
+        return StringTable->insert("");
     return mRowData[mSelected];
 }
 

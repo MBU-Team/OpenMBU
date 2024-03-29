@@ -223,6 +223,9 @@ function levelPreviewGui::onA()
          // Flip out of singlePlayerMode
          setSinglePlayerMode(false);
          
+         // update local client data to fix player name not updating
+         LocalClientConnection.updateClientData($Player::Name, $Player::XBLiveId, XBLiveGetVoiceStatus(), false);
+         
          // Create a new server
          loadMission(GameMissionInfo.getCurrentMission().file, true);
          
@@ -425,7 +428,7 @@ function levelPreviewGui::populateLevelInfo(%this)
       
       if( %mission.hasEggIndex )
       {
-         if( hasFoundEgg( %mission.hasEggIndex ) )
+         if( hasFoundEgg( %mission.hasEggIndex ) || %mission.difficultySet $= "custom" )
             LP_egg.setVisible( true );
       }
       
