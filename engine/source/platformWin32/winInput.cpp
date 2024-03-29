@@ -367,7 +367,7 @@ void Input::activate()
     if (!Con::getBoolVariable("$enableDirectInput"))
         return;
 
-    if (smManager && smManager->isEnabled() && !smActive)
+    if (smManager && smManager->isEnabled() && !smActive && winState.focused)
     {
         Con::printf("Activating DirectInput...");
 #ifdef LOG_INPUT
@@ -448,7 +448,7 @@ bool Input::isActive()
 //------------------------------------------------------------------------------
 void Input::process()
 {
-    if (smManager && smManager->isEnabled() && smActive && winState.focused)
+    if (smManager && smManager->isEnabled() && smActive)
         smManager->process();
 }
 
