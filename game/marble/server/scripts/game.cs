@@ -2203,7 +2203,7 @@ function GameConnection::updateGameState(%this)
                 break;
             }
         }
-        if (%allReady)
+        if (%allReady && $Game::State $= "start")
             $stateSchedule = schedule(500, 0, "setGameState", "ready");
     }
 
