@@ -69,21 +69,45 @@ void CustomMaterial::initPersistFields()
 
 }
 
-bool CustomMaterial::preloadTextures()
+bool CustomMaterial::preloadTextures(Vector<const char*>& errorBuffer)
 {
-    bool found = Parent::preloadTextures();
+    bool found = Parent::preloadTextures(errorBuffer);
     for (int i = 0; i < MAX_TEX_PER_PASS; i++)
     {
-        found = found && (!texFilename[i] || didFindTexture(texFilename[i]));
+        bool foundTex = (!texFilename[i] || didFindTexture(texFilename[i]));
+        if (!foundTex)
+        {
+            errorBuffer.push_back(texFilename[i]);
+            //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find texture: %s", errorBuffer, texFilename[i]);
+        }
+        found = found && foundTex;
     }
     for (int i = 0; i < MAX_PASSES; i++)
     {
-        found = found && (!pass[i] || pass[i]->preloadTextures());
+        found = found && (!pass[i] || pass[i]->preloadTextures(errorBuffer));
     }
     if (fallback != NULL)
-        found = found && fallback->preloadTextures();
-    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getVertexShaderPath())); // Transfer shaders too lmao (attempt)
-    found = found && (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getPixelShaderPath()));
+        found = found && fallback->preloadTextures(errorBuffer);
+
+    bool foundVert = (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getVertexShaderPath())); // Transfer shaders too lmao (attempt)
+    if (!foundVert)
+    {
+        //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find vertex shader: %s", errorBuffer,
+        //         mShaderData->getVertexShaderPath());
+
+        errorBuffer.push_back(mShaderData->getVertexShaderPath());
+    }
+    found = found && foundVert;
+
+    bool foundPixel = (!mShaderData->DXPixelShaderName || ResourceManager->find(mShaderData->getPixelShaderPath()));
+    if (!foundPixel)
+    {
+        //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find pixel shader: %s", errorBuffer,
+        //         mShaderData->getPixelShaderPath());
+
+        errorBuffer.push_back(mShaderData->getPixelShaderPath());
+    }
+    found = found && foundPixel;
 
     return found;
 }

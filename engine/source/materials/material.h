@@ -242,7 +242,7 @@ public:
     bool isIFL(){ return mIsIFL; }
     bool isTranslucent() { return translucent || subPassTranslucent; }
     char* getPath() { return mPath; }
-    virtual bool preloadTextures();
+    virtual bool preloadTextures(Vector<const char*>& errorBuffer);
     bool didFindTexture(const char* path);
 
     void updateTimeBasedParams();

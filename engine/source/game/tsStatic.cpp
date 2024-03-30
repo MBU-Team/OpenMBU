@@ -119,8 +119,29 @@ bool TSStatic::onAdd()
     bool foundAllMaterials = true;
     for (int i = 0; i < mShape->materialList->size(); i++) {
         Material* mat = mShape->materialList->getMappedMaterial(i);
+
         if (mat != NULL)
-            foundAllMaterials = foundAllMaterials && mat->preloadTextures();
+        {
+            //char errorBuff[4096];
+            //errorBuff[0] = '\0';
+
+            Vector<const char*> errorBuff;
+            foundAllMaterials = foundAllMaterials && mat->preloadTextures(errorBuff);
+
+            if (!errorBuff.empty())
+            {
+                Con::errorf(ConsoleLogEntry::General, "Error preloading material(%s):", mShape->materialList->getMaterialName(i));
+                Con::errorf("{");
+                for (U32 k = 0; k < errorBuff.size(); k++)
+                {
+                    Con::errorf("   missing file %s", errorBuff[k]);
+                }
+                Con::errorf("}");
+            }
+
+            //if (dStrlen(errorBuff) > 0)
+            //    Con::errorf(ConsoleLogEntry::General, "Error preloading material(%s):\n{%s\n}", mShape->materialList->getMaterialName(i), errorBuff);
+        }
     }
     if (!foundAllMaterials) {
         Con::errorf(ConsoleLogEntry::General, "Unable to load TSStatic due to missing materials: %s", mShapeName);

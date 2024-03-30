@@ -72,7 +72,7 @@ public:
 
     static void initPersistFields();
     static void updateTime();
-    virtual bool preloadTextures();
+    virtual bool preloadTextures(Vector<const char*>& errorBuffer);
     const char* mShaderDataName;
     ShaderData* mShaderData;
 

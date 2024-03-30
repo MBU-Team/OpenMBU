@@ -380,10 +380,26 @@ bool InteriorInstance::onAdd()
             if (materialUsages.find(j) == materialUsages.end()) continue;
             Material* mat = pInterior->mMaterialList->getMappedMaterial(j);
             if (mat != NULL)
-                foundAllMaterials = foundAllMaterials && mat->preloadTextures();
+            {
+                //char errorBuff[4096];
+                //errorBuff[0] = '\0';
+                Vector<const char*> errorBuff;
+                foundAllMaterials = foundAllMaterials && mat->preloadTextures(errorBuff);
 
-            if (!foundAllMaterials)
-                Con::errorf(ConsoleLogEntry::General, "missing texture for material: %s", pInterior->mMaterialList->getMaterialName(j));
+                if (!errorBuff.empty())
+                {
+                    Con::errorf(ConsoleLogEntry::General, "Error preloading material(%s):", pInterior->mMaterialList->getMaterialName(j));
+                    Con::errorf("{");
+                    for (U32 k = 0; k < errorBuff.size(); k++)
+                    {
+                        Con::errorf("   missing file %s", errorBuff[k]);
+                    }
+                    Con::errorf("}");
+                }
+
+                //if (dStrlen(errorBuff) > 0)
+                //    Con::errorf(ConsoleLogEntry::General, "Error preloading material(%s):\n{%s\n}", pInterior->mMaterialList->getMaterialName(j), errorBuff);
+            }
         }
     }
     if (!foundAllMaterials) {
@@ -391,7 +407,7 @@ bool InteriorInstance::onAdd()
         NetConnection::setLastError("Unable to load interior due to missing materials: %s", mInteriorFileName);
         return false;
     }
- 
+
 
 
     if (!isClientObject())

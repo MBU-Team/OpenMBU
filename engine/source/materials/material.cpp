@@ -320,21 +320,71 @@ void Material::updateTime()
     }
 }
 
-bool Material::preloadTextures()
+bool Material::preloadTextures(Vector<const char*>& errorBuffer)
 {
     bool found = true;
     for (int i = 0; i < MAX_STAGES; i++)
     {
-        found = found && (!baseTexFilename[i] || didFindTexture(baseTexFilename[i]));
-        found =  found && (!detailFilename[i] || didFindTexture(detailFilename[i]));
-        found =  found && (!bumpFilename[i] || didFindTexture(bumpFilename[i]));
-        found =  found && (!envFilename[i] || didFindTexture(envFilename[i]));
+        bool foundBaseTex = (!baseTexFilename[i] || didFindTexture(baseTexFilename[i]));
+        if (!foundBaseTex)
+        {
+            //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find base texture: %s", errorBuffer,
+            //         baseTexFilename[i]);
+
+            errorBuffer.push_back(baseTexFilename[i]);
+        }
+        found = found && foundBaseTex;
+
+        bool foundDetail = (!detailFilename[i] || didFindTexture(detailFilename[i]));
+        if (!foundDetail)
+        {
+            errorBuffer.push_back(detailFilename[i]);
+
+            //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find detail texture: %s", errorBuffer,
+            //         detailFilename[i]);
+        }
+        found = found && foundDetail;
+
+        bool foundBump = (!bumpFilename[i] || didFindTexture(bumpFilename[i]));
+        if (!foundBump)
+        {
+            errorBuffer.push_back(bumpFilename[i]);
+            //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find bump texture: %s", errorBuffer,
+            //         bumpFilename[i]);
+        }
+        found = found && foundBump;
+
+        bool foundEnv = (!envFilename[i] || didFindTexture(envFilename[i]));
+        if (!foundEnv)
+        {
+            errorBuffer.push_back(envFilename[i]);
+            //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find env texture: %s", errorBuffer,
+            //         envFilename[i]);
+        }
+        found = found && foundEnv;
     }
-    found = found && (!noiseTexFileName || didFindTexture(noiseTexFileName));
+    bool foundNoiseTex = (!noiseTexFileName || didFindTexture(noiseTexFileName));
+    if (!foundNoiseTex)
+    {
+        errorBuffer.push_back(noiseTexFileName);
+        //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find noise texture: %s", errorBuffer,
+        //         noiseTexFileName);
+    }
+    found = found && foundNoiseTex;
+
     if (mCubemapData != NULL && !dynamicCubemap)
     {
         for (int i = 0; i < 6; i++)
-            found = found && (!mCubemapData->cubeFaceFile[i] || didFindTexture(mCubemapData->cubeFaceFile[i]));
+        {
+            bool foundCubemap = (!mCubemapData->cubeFaceFile[i] || didFindTexture(mCubemapData->cubeFaceFile[i]));
+            if (!foundCubemap)
+            {
+                errorBuffer.push_back(mCubemapData->cubeFaceFile[i]);
+                //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find cubemap face texture: %s", errorBuffer,
+                //         mCubemapData->cubeFaceFile[i]);
+            }
+            found = found && foundCubemap;
+        }
     }
     return found;
 }
