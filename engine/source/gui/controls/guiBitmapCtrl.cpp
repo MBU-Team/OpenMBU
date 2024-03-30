@@ -16,6 +16,7 @@ GuiBitmapCtrl::GuiBitmapCtrl(void)
     mBitmapName = StringTable->insert("");
     startPoint.set(0, 0);
     mWrap = false;
+    flipY = false;
     mTextureObject = NULL;
     mOnMouseUpCommand = StringTable->insert("");
 }
@@ -28,6 +29,7 @@ void GuiBitmapCtrl::initPersistFields()
     addField("bitmap", TypeFilename, Offset(mBitmapName, GuiBitmapCtrl));
     addField("wrap", TypeBool, Offset(mWrap, GuiBitmapCtrl));
     addField("onMouseUp", TypeString, Offset(mOnMouseUpCommand, GuiBitmapCtrl));
+    addField("flipY", TypeBool, Offset(flipY, GuiBitmapCtrl));
     endGroup("Misc");
 }
 
@@ -143,14 +145,14 @@ void GuiBitmapCtrl::onRender(Point2I offset, const RectI& updateRect)
                         ((texture->mBitmapSize.y * y) + offset.y) - yshift,
                         texture->mBitmapSize.x,
                         texture->mBitmapSize.y);
-                    GFX->drawBitmapStretchSR(texture, dstRegion, srcRegion);
+                    GFX->drawBitmapStretchSR(texture, dstRegion, srcRegion, flipY ? GFXBitmapFlip_Y : GFXBitmapFlip_None);
                 }
 
         }
         else
         {
             RectI rect(offset, mBounds.extent);
-            GFX->drawBitmapStretch(mTextureObject, rect);
+            GFX->drawBitmapStretch(mTextureObject, rect, flipY ? GFXBitmapFlip_Y : GFXBitmapFlip_None);
         }
     }
 

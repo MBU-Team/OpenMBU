@@ -87,7 +87,13 @@ function mainMenuGui::onA(%this)
       case 4:
          RootGui.setContent(HelpAndOptionsGui, MainMenuGui);
       case 5: // upsell
-         clientShowMarketplaceUI();
+         if ($secretMode)
+         {
+            XMessagePopupDlg.show(0, "Sorry, the clowns are sleeping, please try again later...", "lulz", "clientShowMarketplaceUI();", ":(", "clientShowMarketplaceUI();");
+         } else
+         {
+            clientShowMarketplaceUI();
+         }
       case 6: // exit game in demo
          %this.exitGame();
    }
@@ -130,11 +136,31 @@ function MainMenuGui::show(%this)
    
    // add rows
    MainMenu.clear();
-   MainMenu.addRow($Text::SinglePlayer, "", 0, 2);
-   MainMenu.addRow($Text::MultiPlayer, "", 20, 2);
-   MainMenu.addRow($Text::LeaderBoards, "", 0, 6);
-   MainMenu.addRow($Text::Achievements, "", 0, 6);
-   MainMenu.addRow($Text::HelpAndOptions, "", 0, 8);
+   
+   if ($secretMode)
+      MainMenu.addRow("Single Clowns", "", 0, 2);
+   else
+      MainMenu.addRow($Text::SinglePlayer, "", 0, 2);
+   
+   if ($secretMode)
+      MainMenu.addRow("Multiple Clowns", "", 20, 2);
+   else
+      MainMenu.addRow($Text::MultiPlayer, "", 20, 2);
+      
+   if ($secretMode)
+      MainMenu.addRow("Laundry Boards", "", 0, 6);
+   else
+      MainMenu.addRow($Text::LeaderBoards, "", 0, 6);
+      
+   if ($secretMode)
+      MainMenu.addRow("Sports Highlights", "", 0, 6);
+   else
+      MainMenu.addRow($Text::Achievements, "", 0, 6);
+      
+   if ($secretMode)
+      MainMenu.addRow("Help & Op- HELP CLOWNS", "", 0, 8);
+   else
+      MainMenu.addRow($Text::HelpAndOptions, "", 0, 8);
 
    // MarketPlace button always visible:
    if (isDemoLaunch())
@@ -150,9 +176,16 @@ function MainMenuGui::show(%this)
    }
    else
    {
-      MainMenu.addRow($Text::DownloadContent, "", 0, 2);
+      if ($secretMode)
+         MainMenu.addRow("dOwNlOaD MoAr cLoWnS?!", "", 0, 2);
+      else
+         MainMenu.addRow($Text::DownloadContent, "", 0, 2);
    }
-   MainMenu.addRow($Text::RTArcadeMenu, "", 0, 10);
+   
+   if ($secretMode)
+      MainMenu.addRow("Abandon Clowns", "", 0, 10);
+   else
+      MainMenu.addRow($Text::RTArcadeMenu, "", 0, 10);
    
    // disable some stuff
    //MainMenu.setRowEnabled(4,false);
@@ -163,7 +196,13 @@ function MainMenuGui::show(%this)
    //RootGui.setTitle($Text::MainMenu @ $Test::CheatsEnabled);
    RootGui.setTitle("" @ $Test::CheatsEnabled);
    
+   if ($secretMode)
+      RootGui.setTitle("Clown Blast Ultra");
+   
    glogo.visible = 1;
+   
+   if($secretMode)
+      logo.flipY = true;
    
    // Stat up the title music
    //if( xbHasPlaybackControl() && !xbIsPlayingMusic() )

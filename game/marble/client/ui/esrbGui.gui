@@ -57,6 +57,12 @@ function ESRBGui::show(%this)
       ESRBText.visible = true;
    else
       ESRBText.visible = false;
+      
+   if($secretMode)
+      ESRBlogo.flipY = true;
+      
+   if ($secretMode)
+      RootGui.setTitle("Clown Blast Ultra");
    
 //    if (isPCBuild() & isEnglish()) ESRBText.visible = true;
       

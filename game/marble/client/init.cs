@@ -69,6 +69,13 @@ function initClient()
       Canvas.setCursor("DefaultCursor");
    else
       Canvas.hideCursor();
+      
+   $secretMode = false;
+   if(getDayNum() == 1 && getMonthNum() == 4 || $pref::ForceSecretMode)
+      $secretMode = true;
+      
+   if ($Pref::DisableSecretMode && !$pref::ForceSecretMode)
+      $secretMode = false;
      
    // Loadup Misc client functions
    exec("./scripts/client.cs");
@@ -1127,7 +1134,7 @@ function createPreviewServer(%mission)
 {
    %serverType = "SinglePlayer";
    if (%mission $= "")
-      %mission = $pref::Client::AutoStartMission;
+      %mission = $Client::AutoStartMission;
 
    if ($EnableFMS)
    {
@@ -1177,13 +1184,13 @@ function createPreviewServer(%mission)
       if (%missionIndex == -1)
       {
          if (%mission $= "")
-            %mission = $pref::Client::AutoStartMission;
+            %mission = $Client::AutoStartMission;
          
          %missionIndex = GameMissionInfo.findIndexByPath(%mission);
       }
    
       // Teh hak
-      GameMissionInfo.selectMission($pref::Client::AutoStartMissionIndex);
+      GameMissionInfo.selectMission($Client::AutoStartMissionIndex);
       //GameMissionInfo.selectMission(%missionIndex);
    }
    else

@@ -16,6 +16,7 @@
 #include "core/units.h"
 #include "console/arrayObject.h"
 #include <regex>
+#include <ctime>
 
 // This is a temporary hack to get tools using the library to
 // link in this module which contains no other references.
@@ -1640,4 +1641,28 @@ ConsoleFunction(regexReplace, const char*, 4, 4, "regexMatch(testString, pattern
         Con::errorf("regexReplace: %s", e.what());
         return argv[1];
     }
+}
+
+ConsoleFunction(getDayNum, const char*, 1, 1, "getDayNum();") {
+    time_t now = time(0);
+    struct tm* timeinfo = localtime(&now);
+    char* ret = Con::getReturnBuffer(20);
+    dSprintf(ret, 20, "%d", timeinfo->tm_mday);
+    return ret;
+}
+
+ConsoleFunction(getMonthNum, const char*, 1, 1, "getMonthNum();") {
+    time_t now = time(0);
+    struct tm* timeinfo = localtime(&now);
+    char* ret = Con::getReturnBuffer(20);
+    dSprintf(ret, 20, "%d", (timeinfo->tm_mon) + 1);
+    return ret;
+}
+
+ConsoleFunction(getYearNum, const char*, 1, 1, "getYearNum();") {
+    time_t now = time(0);
+    struct tm* timeinfo = localtime(&now);
+    char* ret = Con::getReturnBuffer(20);
+    dSprintf(ret, 20, "%d", (timeinfo->tm_year) + 1900);
+    return ret;
 }

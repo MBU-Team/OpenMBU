@@ -11,7 +11,7 @@
     <Configs>        <Config>            <Name>Debug x86</Name>
             <Executable>MBUltra_DEBUG.exe</Executable>
             <Arguments></Arguments>
-            <HasExports>true</HasExports>
+            <HasExports>false</HasExports>
             <Precompile>true</Precompile>
             <InjectDebugger>true</InjectDebugger>
             <UseSetModPaths>false</UseSetModPaths>
@@ -19,7 +19,7 @@
         <Config>            <Name>Release x86</Name>
             <Executable>MBUltra.exe</Executable>
             <Arguments></Arguments>
-            <HasExports>true</HasExports>
+            <HasExports>false</HasExports>
             <Precompile>true</Precompile>
             <InjectDebugger>true</InjectDebugger>
             <UseSetModPaths>false</UseSetModPaths>

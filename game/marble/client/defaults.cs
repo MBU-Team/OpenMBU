@@ -17,6 +17,8 @@ $pref::HudMessageLogSize = 40;
 $pref::ChatHudLength = 1;
 $pref::useStencilShadows = true;
 $pref::forceDirectConnect = false;
+$pref::ForceSecretMode = false;
+$Pref::DisableSecretMode = false;
 $pref::Input::LinkMouseSensitivity = 1;
 // DInput keyboard, mouse, and joystick prefs
 $pref::displayMPHelpText = false;
@@ -116,8 +118,8 @@ $pref::SFX::channelVolume7 = 0.8;
 $pref::SFX::channelVolume8 = 0.8;
 
 $pref::Client::AutoStart = true;
-$pref::Client::AutoStartMission = "marble/data/missions/intermediate/Urban Jungle/urban.mis";
-$pref::Client::AutoStartMissionIndex = 21;
+$Client::AutoStartMission = "marble/data/missions/intermediate/urban/urban.mis";
+$Client::AutoStartMissionIndex = 21;
 
 $Client::MatchMode = 0; // standard, 1 = ranked
 $Client::UseXBLiveMatchMaking = !isPCBuild();

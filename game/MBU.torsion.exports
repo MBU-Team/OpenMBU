@@ -132,6 +132,54 @@
             <desc>Stop moving.</desc>
         </method>
     </class>
+    <class>        <name>ArrayObject</name>
+        <base>SimObject</base>
+        <method>            <name>addEntry</name>
+            <args>%entry</args>
+        </method>
+        <method>            <name>clear</name>
+        </method>
+        <method>            <name>contains</name>
+            <args>%entry</args>
+        </method>
+        <method>            <name>containsEntry</name>
+            <args>%entry</args>
+        </method>
+        <method>            <name>dumpEntries</name>
+        </method>
+        <method>            <name>getEntry</name>
+            <args>%index</args>
+        </method>
+        <method>            <name>getEntryByIndex</name>
+            <args>%index</args>
+        </method>
+        <method>            <name>getSize</name>
+        </method>
+        <method>            <name>insertEntryBefore</name>
+            <args>%index, %entry</args>
+        </method>
+        <method>            <name>removeEntriesByContents</name>
+            <args>%match</args>
+        </method>
+        <method>            <name>removeEntry</name>
+            <args>%index</args>
+        </method>
+        <method>            <name>removeEntryByIndex</name>
+            <args>%index</args>
+        </method>
+        <method>            <name>removeMatching</name>
+            <args>%match</args>
+        </method>
+        <method>            <name>replaceEntryByIndex</name>
+            <args>%index, %entry</args>
+        </method>
+        <method>            <name>sort</name>
+            <args>%compareFn</args>
+        </method>
+        <method>            <name>swap</name>
+            <args>%index1, %index2</args>
+        </method>
+    </class>
     <class>        <name>BanList</name>
         <base>SimObject</base>
         <method>            <name>add</name>
@@ -241,7 +289,7 @@
     <class>        <name>CubemapData</name>
         <base>SimObject</base>
         <field>            <name>cubeFace</name>
-            <desc>filename cubeFace</desc>
+            <desc>string cubeFace</desc>
         </field>
         <field>            <name>dynamic</name>
             <desc>bool dynamic</desc>
@@ -626,6 +674,10 @@
         <field>            <name>times</name>
             <desc>float times</desc>
         </field>
+    </class>
+    <class>        <name>FastFileAcknowledgeEvent</name>
+    </class>
+    <class>        <name>FastFileRequestEvent</name>
     </class>
     <class>        <name>FileChunkEvent</name>
     </class>
@@ -1541,8 +1593,33 @@
     </class>
     <class>        <name>GuiAchievementPopupCtrl</name>
         <base>GuiControl</base>
-        <field>            <name>bitmap</name>
-            <desc>filename bitmap</desc>
+        <method>            <name>setBackground</name>
+            <args>string filename</args>
+            <desc>Set the background bitmap displayed in the control.</desc>
+        </method>
+        <method>            <name>setHeader</name>
+            <args>string title</args>
+            <desc>Set the title of the achievement.</desc>
+        </method>
+        <method>            <name>setIcon</name>
+            <args>string filename</args>
+            <desc>Set the icon bitmap displayed in the control. Note that it is limited in size, to 256x256.</desc>
+        </method>
+        <method>            <name>setTitle</name>
+            <args>string title</args>
+            <desc>Set the title of the achievement.</desc>
+        </method>
+        <field>            <name>background</name>
+            <desc>filename background</desc>
+        </field>
+        <field>            <name>header</name>
+            <desc>string header</desc>
+        </field>
+        <field>            <name>icon</name>
+            <desc>filename icon</desc>
+        </field>
+        <field>            <name>title</name>
+            <desc>string title</desc>
         </field>
     </class>
     <class>        <name>GuiArrayCtrl</name>
@@ -1956,6 +2033,9 @@
         <field>            <name>fontCharset</name>
             <desc>enumval fontCharset</desc>
         </field>
+        <field>            <name>fontCharset2</name>
+            <desc>enumval fontCharset2</desc>
+        </field>
         <field>            <name>fontColor</name>
             <desc>ColorI fontColor</desc>
         </field>
@@ -1980,8 +2060,14 @@
         <field>            <name>fontSize</name>
             <desc>int fontSize</desc>
         </field>
+        <field>            <name>fontSize2</name>
+            <desc>int fontSize2</desc>
+        </field>
         <field>            <name>fontType</name>
             <desc>string fontType</desc>
+        </field>
+        <field>            <name>fontType2</name>
+            <desc>string fontType2</desc>
         </field>
         <field>            <name>hitArea</name>
             <desc>intList hitArea</desc>
@@ -3329,12 +3415,63 @@ More of a helper function than anything.   If console access to the field list i
         </field>
     </class>
     <class>        <name>HTTPObject</name>
-        <base>TCPObject</base>
+        <base>SimObject</base>
+        <method>            <name>addHeader</name>
+            <args>name, value</args>
+        </method>
         <method>            <name>get</name>
-            <args>TransportAddress addr, string requirstURI, string query=NULL</args>
+            <args>IE: "www.garagegames.com:80"</args>
+            <desc>.
+@param requirstURI Specific location on the server to access (IE: "index.php".)
+@param query Optional. Actual data to transmit to the server. Can be anything required providing it sticks with limitations of the HTTP protocol. If you were building the URL manually, this is the text that follows the question mark.  For example: http://www.google.com/ig/api?&lt;b&gt;weather=Las-Vegas,US&lt;/b&gt;
+@tsexample
+// Create an HTTP object for communications
+%httpObj = new HTTPObject();
+
+// Specify a URL to transmit to
+%url = "www.garagegames.com:80";
+
+// Specify a URI to communicate with
+%URI = "/index.php";
+
+// Specify a query to send.
+%query = "";
+
+// Send the GET command to the server
+%httpObj.get(%url,%URI,%query);
+@endtsexample</desc>
         </method>
         <method>            <name>post</name>
-            <args>TransportAddress addr, string requestURI, string query, string post</args>
+            <args>IE: "www.garagegames.com:80"</args>
+            <desc>.
+@param requirstURI Specific location on the server to access (IE: "index.php".)
+@param query Actual data to transmit to the server. Can be anything required providing it sticks with limitations of the HTTP protocol.
+@param post Submission data to be processed.
+@tsexample
+// Create an HTTP object for communications
+%httpObj = new HTTPObject();
+
+// Specify a URL to transmit to
+%url = "www.garagegames.com:80";
+
+// Specify a URI to communicate with
+%URI = "/index.php";
+
+// Specify a query to send.
+%query = "";
+
+// Specify the submission data.
+%post = "";
+
+// Send the POST command to the server
+%httpObj.POST(%url,%URI,%query,%post);
+@endtsexample</desc>
+        </method>
+        <method>            <name>setDownloadPath</name>
+            <args>path</args>
+        </method>
+        <method>            <name>setOption</name>
+            <args>option, value</args>
         </method>
     </class>
     <class>        <name>InteriorInstance</name>
@@ -3466,6 +3603,9 @@ More of a helper function than anything.   If console access to the field list i
             <desc>bool sticky</desc>
         </field>
     </class>
+    <class>        <name>JSONObject</name>
+        <base>SimObject</base>
+    </class>
     <class>        <name>LangTable</name>
         <base>SimObject</base>
         <method>            <name>addLanguage</name>
@@ -3539,6 +3679,9 @@ More of a helper function than anything.   If console access to the field list i
         <method>            <name>setPad</name>
             <args>pad</args>
         </method>
+        <method>            <name>setPhysics</name>
+            <args>physics</args>
+        </method>
         <method>            <name>setPosition</name>
             <args>transform, mouseY</args>
         </method>
@@ -3555,6 +3698,9 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <field>            <name>Controllable</name>
             <desc>bool Controllable</desc>
+        </field>
+        <field>            <name>size</name>
+            <desc>float size</desc>
         </field>
     </class>
     <class>        <name>MarbleData</name>
@@ -3664,9 +3810,6 @@ More of a helper function than anything.   If console access to the field list i
         <field>            <name>RollMegaSound</name>
             <desc>SFXProfile RollMegaSound</desc>
         </field>
-        <field>            <name>size</name>
-            <desc>float size</desc>
-        </field>
         <field>            <name>SlipSound</name>
             <desc>SFXProfile SlipSound</desc>
         </field>
@@ -3707,13 +3850,13 @@ More of a helper function than anything.   If console access to the field list i
             <desc>bool attenuateBackFace</desc>
         </field>
         <field>            <name>baseTex</name>
-            <desc>filename baseTex</desc>
+            <desc>string baseTex</desc>
         </field>
         <field>            <name>breakable</name>
             <desc>bool breakable</desc>
         </field>
         <field>            <name>bumpTex</name>
-            <desc>filename bumpTex</desc>
+            <desc>string bumpTex</desc>
         </field>
         <field>            <name>castsShadow</name>
             <desc>bool castsShadow</desc>
@@ -3725,7 +3868,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>string cubemap</desc>
         </field>
         <field>            <name>detailTex</name>
-            <desc>filename detailTex</desc>
+            <desc>string detailTex</desc>
         </field>
         <field>            <name>diffuse</name>
             <desc>ColorF diffuse</desc>
@@ -3740,7 +3883,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>bool emissive</desc>
         </field>
         <field>            <name>envTex</name>
-            <desc>filename envTex</desc>
+            <desc>string envTex</desc>
         </field>
         <field>            <name>exposure</name>
             <desc>int exposure</desc>
@@ -3758,7 +3901,7 @@ More of a helper function than anything.   If console access to the field list i
             <desc>string mapTo</desc>
         </field>
         <field>            <name>noiseTexFileName</name>
-            <desc>filename noiseTexFileName</desc>
+            <desc>string noiseTexFileName</desc>
         </field>
         <field>            <name>pixelSpecular</name>
             <desc>bool pixelSpecular</desc>
@@ -3942,6 +4085,9 @@ More of a helper function than anything.   If console access to the field list i
         </method>
         <method>            <name>relayConnection</name>
             <args>ip</args>
+        </method>
+        <method>            <name>requestFileDownload</name>
+            <args>path</args>
         </method>
         <method>            <name>resolveGhostID</name>
             <args> S32 ghostID </args>
@@ -4974,13 +5120,13 @@ More of a helper function than anything.   If console access to the field list i
             <desc>Rebuilds both the vertex and pixel shaders.</desc>
         </method>
         <field>            <name>DXPixelShaderFile</name>
-            <desc>filename DXPixelShaderFile</desc>
+            <desc>string DXPixelShaderFile</desc>
         </field>
         <field>            <name>DXVertexShaderFile</name>
             <desc>string DXVertexShaderFile</desc>
         </field>
         <field>            <name>OGLPixelShaderFile</name>
-            <desc>filename OGLPixelShaderFile</desc>
+            <desc>string OGLPixelShaderFile</desc>
         </field>
         <field>            <name>OGLVertexShaderFile</name>
             <desc>string OGLVertexShaderFile</desc>
@@ -6285,6 +6431,9 @@ More of a helper function than anything.   If console access to the field list i
     </class>
     <class>        <name>TSStatic</name>
         <base>SceneObject</base>
+        <field>            <name>collisionType</name>
+            <desc>enumval collisionType</desc>
+        </field>
         <field>            <name>customAmbientLighting</name>
             <desc>ColorF customAmbientLighting</desc>
         </field>
@@ -6813,6 +6962,9 @@ More of a helper function than anything.   If console access to the field list i
     <function>        <name>allowConnections</name>
         <args>bool</args>
     </function>
+    <function>        <name>Array</name>
+        <args>[name, obj1, ...]</args>
+    </function>
     <function>        <name>backtrace</name>
         <desc>Print the call stack.</desc>
     </function>
@@ -6836,7 +6988,7 @@ More of a helper function than anything.   If console access to the field list i
     <function>        <name>checkForPDLC</name>
     </function>
     <function>        <name>cleanDetailManager</name>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>clearClientPaths</name>
     </function>
@@ -6905,6 +7057,12 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
     <function>        <name>ContentQuery</name>
         <args>[contentCategory]</args>
     </function>
+    <function>        <name>convertAssimp</name>
+        <args>path</args>
+    </function>
+    <function>        <name>convertCollada</name>
+        <args>path</args>
+    </function>
     <function>        <name>countBits</name>
         <desc>count the number of bits in the specified 32 bit integer</desc>
     </function>
@@ -6925,7 +7083,7 @@ If exempt is specified, then it is temporarily excluded from collision checks (F
         <args>packageName</args>
     </function>
     <function>        <name>debug</name>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>deleteDataBlocks</name>
         <desc>Delete all the datablocks we've downloaded. This is usually done in preparation of downloading a new set of datablocks,  such as occurs on a mission change, but it's also good post-mission cleanup.</desc>
@@ -6970,26 +7128,26 @@ If filePath is , this function writes the resource descriptions to the console</
     <function>        <name>dumpMemSnapshot</name>
         <args>string fileName</args>
         <desc>Dump a snapshot of current memory to a file.
-(only exists in Debug x86, Debug x64)</desc>
+(only exists in Debug x64)</desc>
     </function>
     <function>        <name>dumpNetStats</name>
     </function>
     <function>        <name>dumpNetStringTable</name>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>dumpProcessList</name>
     </function>
     <function>        <name>dumpResourceStats</name>
         <desc>Dump information about resources. Debug only!
-(only exists in Debug x86, Debug x64)</desc>
+(only exists in Debug x64)</desc>
     </function>
     <function>        <name>dumpTextureStats</name>
         <desc>Dump texture manager statistics. Debug only!
-(only exists in Debug x86, Debug x64)</desc>
+(only exists in Debug x64)</desc>
     </function>
     <function>        <name>DumpUnflaggedAllocs</name>
         <args>filename [optional, if not specified dumps to console]</args>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>duplicateCachedFont</name>
         <args>oldFontName, oldFontSize, newFontName</args>
@@ -7014,6 +7172,9 @@ If filePath is , this function writes the resource descriptions to the console</
     <function>        <name>endswith</name>
         <args>src string, target string</args>
         <desc>case insensitive</desc>
+    </function>
+    <function>        <name>enumColladaForImport</name>
+        <args>string shapePath, GuiTreeViewCtrl ctrl</args>
     </function>
     <function>        <name>error</name>
         <args>text [, ... ]</args>
@@ -7073,7 +7234,7 @@ If filePath is , this function writes the resource descriptions to the console</
         <args>text</args>
     </function>
     <function>        <name>FlagCurrentAllocs</name>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>flagCurrentGFXResources</name>
     </function>
@@ -7109,6 +7270,8 @@ If filePath is , this function writes the resource descriptions to the console</
     <function>        <name>getCPPVersion</name>
     </function>
     <function>        <name>getCurrentActionMap</name>
+    </function>
+    <function>        <name>getDayNum</name>
     </function>
     <function>        <name>getDesktopResolution</name>
         <desc>Get the width, height, and bitdepth of the screen.</desc>
@@ -7158,10 +7321,12 @@ If filePath is , this function writes the resource descriptions to the console</
     <function>        <name>getLanguage</name>
     </function>
     <function>        <name>getMaxFrameAllocation</name>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>getModPaths</name>
         <desc>Return the mod paths the resource manager is using.</desc>
+    </function>
+    <function>        <name>getMonthNum</name>
     </function>
     <function>        <name>getPixelShaderVersion</name>
         <desc>Get pixel shader version.</desc>
@@ -7330,6 +7495,12 @@ Sim time is time since the game started.</desc>
         <args>inviteCode, acceptCb(%ip</args>
         <desc>, rejectCb)</desc>
     </function>
+    <function>        <name>jsonParse</name>
+        <args>string json</args>
+    </function>
+    <function>        <name>jsonPrint</name>
+        <args>value</args>
+    </function>
     <function>        <name>lightScene</name>
         <args>script_function completeCallback=NULL, string mode=""</args>
         <desc>Relight the scene.
@@ -7343,8 +7514,14 @@ If mode is "forceAlways", the lightmaps will be regenerated regardless of whethe
         <args>Filename file</args>
         <desc>Read a chunk hierarchy from a file.</desc>
     </function>
+    <function>        <name>loadColladaLights</name>
+        <args>string filename, [parentGroup], [baseObject]</args>
+    </function>
+    <function>        <name>loadMaterialJson</name>
+        <args>jsonFile</args>
+    </function>
     <function>        <name>loadObjectsFromMission</name>
-        <args>mission, className, dataBlock</args>
+        <args>mission, className, dataBlock, missionGroup</args>
         <desc>- Loads Objects from a Mission</desc>
     </function>
     <function>        <name>loadZip</name>
@@ -7593,6 +7770,12 @@ Possible parameters are:
     <function>        <name>redbookStop</name>
         <desc>Stop playing.</desc>
     </function>
+    <function>        <name>regexMatch</name>
+        <args>testString, pattern [, matches]</args>
+    </function>
+    <function>        <name>regexReplace</name>
+        <desc>regexMatch(testString, pattern, replacement);</desc>
+    </function>
     <function>        <name>registerLights</name>
     </function>
     <function>        <name>reInitMaterials</name>
@@ -7672,13 +7855,16 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
         <args>fov</args>
         <desc>- Set the FOV of the camera.</desc>
     </function>
+    <function>        <name>setImportSettings</name>
+        <args>...</args>
+    </function>
     <function>        <name>setInteriorFocusedDebug</name>
         <args>bool enable</args>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>setInteriorRenderMode</name>
         <args>int modeNum</args>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>setLogMode</name>
         <args>mode</args>
@@ -7716,7 +7902,7 @@ Valid inputs for xRumble/yRumble are [0 - 1].</desc>
         <args> bool f </args>
     </function>
     <function>        <name>setVideoMode</name>
-        <args>width, height, bit depth, fullscreen</args>
+        <args>width, height, bit depth, fullscreen, [antialiasLevel]</args>
     </function>
     <function>        <name>setWord</name>
         <args>text, index, replace</args>
@@ -7951,7 +8137,7 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>updateVideoMode</name>
     </function>
     <function>        <name>ValidateMemory</name>
-        <desc>(only exists in Debug x86, Debug x64)</desc>
+        <desc>(only exists in Debug x64)</desc>
     </function>
     <function>        <name>variablesExist</name>
         <args>wildCard</args>
@@ -8020,7 +8206,7 @@ Creates a new sound source using a profile or a description and filename and pla
         <args>index, invited, callback</args>
     </function>
     <function>        <name>XBLiveCreateHostedMatch</name>
-        <args>name, gamemode, mission, maxplayers, privateslots, callback</args>
+        <args>name, gamemode, mission, maxplayers, privateslots, joinSecret, callback</args>
     </function>
     <function>        <name>XBLiveEndStatsSession</name>
     </function>
@@ -8035,6 +8221,8 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveGetMatchResultsEntry</name>
         <args>index</args>
+    </function>
+    <function>        <name>XBLiveGetPartyId</name>
     </function>
     <function>        <name>XBLiveGetSignInPort</name>
     </function>
@@ -8074,6 +8262,11 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveLoadLeaderboard</name>
     </function>
+    <function>        <name>XBLivePresenceStartTimer</name>
+        <args>[stopTime]</args>
+    </function>
+    <function>        <name>XBLivePresenceStopTimer</name>
+    </function>
     <function>        <name>XBLiveProbeLocalQoS</name>
         <args>callback</args>
     </function>
@@ -8088,14 +8281,20 @@ Creates a new sound source using a profile or a description and filename and pla
     <function>        <name>XBLiveRegisterRemoteTalker</name>
         <args>xbLiveId, address</args>
     </function>
+    <function>        <name>XBLiveRespondJoinRequest</name>
+        <args>userId, reply</args>
+    </function>
     <function>        <name>XBLiveSearchForMatches</name>
         <args>gamemode, mission, maxplayers, unknown, callback</args>
     </function>
     <function>        <name>XBLiveSetEnabled</name>
         <args>enabled</args>
     </function>
+    <function>        <name>XBLiveSetPartyId</name>
+        <args>partyId</args>
+    </function>
     <function>        <name>XBLiveSetRichPresence</name>
-        <args>port, presence</args>
+        <args>port, presence, levelname, levelguid</args>
     </function>
     <function>        <name>XBLiveSetSignInPort</name>
         <args>port</args>
@@ -8125,6 +8324,9 @@ Creates a new sound source using a profile or a description and filename and pla
     </function>
     <function>        <name>XBLiveUnregisterRemoteTalker</name>
         <args>xbLiveId</args>
+    </function>
+    <function>        <name>XBLiveUpdateHostedMatch</name>
+        <args>publicused, publicfree, privateused, privatefree, status, gamemode, mission, disablejip</args>
     </function>
     <function>        <name>XBLiveUpdateRemoteVoiceStatus</name>
         <args>xbLiveId, xbLiveVoice</args>

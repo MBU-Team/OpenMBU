@@ -22,6 +22,7 @@ protected:
     GFXTexHandle mTextureObject;
     Point2I startPoint;
     bool mWrap;
+    bool flipY;
 
 public:
     //creation methods
