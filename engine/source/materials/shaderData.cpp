@@ -65,24 +65,30 @@ GFXShader* ShaderData::getShader()
 
 StringTableEntry ShaderData::getVertexShaderPath()
 {
-    if (DXVertexShaderName[0] != '.')
-        return DXVertexShaderName;
-    char fullFilename[128];
-    dStrncpy(fullFilename, mPath, dStrlen(mPath) + 1);
-    dStrcat(fullFilename, DXVertexShaderName);
+    if (dStrlen(DXVertexShaderName) > 1 && DXVertexShaderName[0] == '.' && (DXVertexShaderName[1] == '/' || DXVertexShaderName[1] == '\\'))
+    {
+        char fullFilename[128];
+        dStrncpy(fullFilename, mPath, dStrlen(mPath) + 1);
+        dStrcat(fullFilename, DXVertexShaderName + 2);
 
-    return StringTable->insert(fullFilename);
+        return StringTable->insert(fullFilename);
+    }
+
+    return DXVertexShaderName;
 }
 
 StringTableEntry ShaderData::getPixelShaderPath()
 {
-    if (DXPixelShaderName[0] != '.')
-        return DXPixelShaderName;
-    char fullFilename[128];
-    dStrncpy(fullFilename, mPath, dStrlen(mPath) + 1);
-    dStrcat(fullFilename, DXPixelShaderName);
+    if (dStrlen(DXPixelShaderName) > 1 && DXPixelShaderName[0] == '.' && (DXPixelShaderName[1] == '/' || DXPixelShaderName[1] == '\\'))
+    {
+        char fullFilename[128];
+        dStrncpy(fullFilename, mPath, dStrlen(mPath) + 1);
+        dStrcat(fullFilename, DXPixelShaderName + 2);
 
-    return StringTable->insert(fullFilename);
+        return StringTable->insert(fullFilename);
+    }
+
+    return DXPixelShaderName;
 }
 
 bool ShaderData::onAdd()
@@ -123,17 +129,17 @@ bool ShaderData::initShader()
             const char* vtexShaderPath = DXVertexShaderName;
             const char* pixelShaderPath = DXPixelShaderName;
 
-            if (vtexShaderPath != NULL && vtexShaderPath[0] == '.')
+            if (vtexShaderPath != NULL && dStrlen(vtexShaderPath) > 1 && vtexShaderPath[0] == '.' && (vtexShaderPath[1] == '/' || vtexShaderPath[1] == '\\'))
             {
                 dStrncpy(fullFilename1, mPath, dStrlen(mPath) + 1);
-                dStrcat(fullFilename1, vtexShaderPath);
+                dStrcat(fullFilename1, vtexShaderPath + 2);
                 vtexShaderPath = fullFilename1;
             }
 
-            if (pixelShaderPath != NULL && pixelShaderPath[0] == '.')
+            if (pixelShaderPath != NULL && dStrlen(pixelShaderPath) > 1 && pixelShaderPath[0] == '.' && (pixelShaderPath[1] == '/' || pixelShaderPath[1] == '\\'))
             {
                 dStrncpy(fullFilename2, mPath, dStrlen(mPath) + 1);
-                dStrcat(fullFilename2, pixelShaderPath);
+                dStrcat(fullFilename2, pixelShaderPath + 2);
                 pixelShaderPath = fullFilename2;
             }
 
