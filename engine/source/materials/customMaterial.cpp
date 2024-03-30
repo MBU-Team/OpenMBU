@@ -89,7 +89,7 @@ bool CustomMaterial::preloadTextures(Vector<const char*>& errorBuffer)
     if (fallback != NULL)
         found = found && fallback->preloadTextures(errorBuffer);
 
-    bool foundVert = (!mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getVertexShaderPath())); // Transfer shaders too lmao (attempt)
+    bool foundVert = (mShaderData == NULL || !mShaderData->DXVertexShaderName || ResourceManager->find(mShaderData->getVertexShaderPath())); // Transfer shaders too lmao (attempt)
     if (!foundVert)
     {
         //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find vertex shader: %s", errorBuffer,
@@ -99,7 +99,7 @@ bool CustomMaterial::preloadTextures(Vector<const char*>& errorBuffer)
     }
     found = found && foundVert;
 
-    bool foundPixel = (!mShaderData->DXPixelShaderName || ResourceManager->find(mShaderData->getPixelShaderPath()));
+    bool foundPixel = (mShaderData == NULL || !mShaderData->DXPixelShaderName || ResourceManager->find(mShaderData->getPixelShaderPath()));
     if (!foundPixel)
     {
         //dSprintf(errorBuffer, errorBufferSize, "%s\n    Could not find pixel shader: %s", errorBuffer,
