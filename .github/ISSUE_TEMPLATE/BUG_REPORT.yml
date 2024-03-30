@@ -25,6 +25,7 @@ body:
     description: What version are you running?
     multiple: false
     options:
+      - Beta 1.17
       - Beta 1.16
       - Beta 1.15
       - Beta 1.14
