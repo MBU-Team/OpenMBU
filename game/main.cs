@@ -377,7 +377,7 @@ function initVideo()
          $pref::Video::FSAALevel = 0;
    }
 
-   $canvasCreated = createCanvas("Marble Blast Ultra! - 1.17.2");
+   $canvasCreated = createCanvas("Marble Blast Ultra! - 1.17.3");
    
    // We need to set up Gamma Ramp here so that the splash screens are affected.
    
