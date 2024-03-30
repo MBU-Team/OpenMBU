@@ -143,6 +143,22 @@ bool ShaderData::initShader()
                 pixelShaderPath = fullFilename2;
             }
 
+            bool valid = true;
+            if (vtexShaderPath != NULL && !ResourceManager->find(vtexShaderPath))
+            {
+                Con::errorf("ShaderData::initShader - Could not find vertex shader file: %s", vtexShaderPath);
+                valid = false;
+            }
+
+            if (pixelShaderPath != NULL && !ResourceManager->find(pixelShaderPath))
+            {
+                Con::errorf("ShaderData::initShader - Could not find pixel shader file: %s", pixelShaderPath);
+                valid = false;
+            }
+
+            if (!valid)
+                return false;
+
             shader = GFX->createShader( (char*)vtexShaderPath,
                                         (char*)pixelShaderPath,
                                         pixver );
