@@ -187,6 +187,8 @@ if(WIN32)
     addPath("${srcDir}/resources")
     # add windows rc file for the icon
     addFile("${srcDir}/resources/TSE.rc")
+    # set dpi awareness to prevent scaling
+    addFile("${srcDir}/resources/TSE.manifest")
 endif()
 
 if(APPLE)
