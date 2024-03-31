@@ -52,7 +52,7 @@ void CustomMaterial::initPersistFields()
 {
     Parent::initPersistFields();
 
-    addField("texture", TypeFilename, Offset(texFilename, CustomMaterial), MAX_TEX_PER_PASS);
+    addField("texture", TypeString, Offset(texFilename, CustomMaterial), MAX_TEX_PER_PASS);
 
     addField("version", TypeF32, Offset(mVersion, CustomMaterial));
 
