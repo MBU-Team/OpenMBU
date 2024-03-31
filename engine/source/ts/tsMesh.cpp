@@ -3431,7 +3431,7 @@ void TSMesh::assemble(bool skip)
 
     alloc.checkGuard();
 
-    if (alloc.allocShape32(0) && TSShape::smReadVersion < 19)
+    if (alloc.allocShape32(0))// && TSShape::smReadVersion < 19)
         // only do this if we copied the data...
         computeBounds();
 
@@ -3569,7 +3569,7 @@ void TSSkinMesh::assemble(bool skip)
 
     alloc.checkGuard();
 
-    if (alloc.allocShape32(0) && TSShape::smReadVersion < 19)
+    if (alloc.allocShape32(0))// && TSShape::smReadVersion < 19)
         // only do this if we copied the data...
         TSMesh::computeBounds();
 }
