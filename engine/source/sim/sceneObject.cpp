@@ -697,7 +697,7 @@ void SceneObject::initPersistFields()
     addGroup("Transform"); // MM: Added group header.
     addField("position", TypeMatrixPosition, Offset(mObjToWorld, SceneObject));
     addField("rotation", TypeMatrixRotation, Offset(mObjToWorld, SceneObject));
-    addField("rotationEuler", TypeMatrixEulerRotation, Offset(mObjToWorld, SceneObject));
+    //addField("rotationEuler", TypeMatrixEulerRotation, Offset(mObjToWorld, SceneObject));
     addField("scale", TypePoint3F, Offset(mObjScale, SceneObject));
     endGroup("Transform"); // MM: Added group footer.
     addGroup("Visibility");
