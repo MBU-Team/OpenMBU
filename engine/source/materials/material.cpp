@@ -537,6 +537,7 @@ LightInfo* Material::getDebugLight()
 
 bool loadMaterialsFromJson(const char* path)
 {
+    Con::errorf("Loading materials from JSON file: %s", path);
     
     Stream* fs = ResourceManager->openStream(path);
     if (fs == NULL) return false;

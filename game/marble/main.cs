@@ -363,6 +363,7 @@ function onStart()
    // Load the scripts that start it all...
    exec("./client/init.cs");
    exec("./server/init.cs");
+   exec("~/data/init.cs");
    exec("./data/GameMissionInfo.cs");
    // init GameMissionInfo
    GameMissionInfo.init();
@@ -375,7 +376,7 @@ function onStart()
    if ($Server::Dedicated)
    {
       // need to load up the materials so that we have friction properties and what not
-      exec("~/data/init.cs");
+      //exec("~/data/init.cs");
       
       // Load server scripts and resources
       execServerScripts();
