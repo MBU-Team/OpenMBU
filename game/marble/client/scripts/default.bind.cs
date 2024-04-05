@@ -329,6 +329,12 @@ function mousePitch(%val)
    $mvPitch += getMouseAdjustAmount(%val);
 }
 
+function snapYaw(%val)
+{
+	setMvExtras();
+	$mvSnapYaw = mDegToRad(%val);
+}
+
 function jumpOrStart(%val)
 {
    setMvExtras();
@@ -640,6 +646,13 @@ moveMap.bind(keyboard, "alt c", toggleCamera);
 //moveMap.bindCmd( keyboard, o, "", "pauseToggle(0);" );
 //moveMap.bindCmd( keyboard, p, "", "pauseToggle(1);" );
 moveMap.bindCmd( keyboard, y, "togglePlayerListLength();", "" );
+
+moveMap.bindCmd( keyboard, z, "snapYaw(180);", "" );
+moveMap.bindCmd( keyboard, q, "snapYaw(-90);", "" );
+moveMap.bindCmd( keyboard, e, "snapYaw(90);", "" );
+moveMap.bindCmd( xinput, btn_rt, "snapYaw(180);", "" );
+moveMap.bindCmd( xinput, dpadl, "snapYaw(-90);", "" );
+moveMap.bindCmd( xinput, dpadr, "snapYaw(90);", "" );
 
 moveMap.bind(keyboard, "t", GlobalChat);
 moveMap.bind(keyboard, "ENTER", GlobalChat);

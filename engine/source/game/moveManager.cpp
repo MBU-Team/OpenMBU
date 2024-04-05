@@ -28,6 +28,7 @@ bool MoveManager::mFreeLook = false;
 F32 MoveManager::mPitch = 0;
 F32 MoveManager::mYaw = 0;
 F32 MoveManager::mRoll = 0;
+F32 MoveManager::mSnapYaw = 0;
 
 F32 MoveManager::mPitchUpSpeed = 0;
 F32 MoveManager::mPitchDownSpeed = 0;
@@ -86,6 +87,7 @@ void MoveManager::init()
     Con::addVariable("mvPitch", TypeF32, &mPitch);
     Con::addVariable("mvYaw", TypeF32, &mYaw);
     Con::addVariable("mvRoll", TypeF32, &mRoll);
+    Con::addVariable("mvSnapYaw", TypeF32, &mSnapYaw);
     Con::addVariable("mvPitchUpSpeed", TypeF32, &mPitchUpSpeed);
     Con::addVariable("mvPitchDownSpeed", TypeF32, &mPitchDownSpeed);
     Con::addVariable("mvYawLeftSpeed", TypeF32, &mYawLeftSpeed);
@@ -203,7 +205,7 @@ void Move::pack(BitStream* stream, const Move* baseMove)
     if (pyaw != pBaseMove->pyaw || ppitch != pBaseMove->ppitch || proll != pBaseMove->proll ||
         px != pBaseMove->px || py != pBaseMove->py || pz != pBaseMove->pz ||
         deviceIsKeyboardMouse != pBaseMove->deviceIsKeyboardMouse || autoCenterCamera != pBaseMove->autoCenterCamera ||
-        freeLook != pBaseMove->freeLook ||
+        freeLook != pBaseMove->freeLook || snapCamera != pBaseMove->snapCamera ||
         pHorizontalDeadZone != pBaseMove->pHorizontalDeadZone ||
         pVerticalDeadZone != pBaseMove->pVerticalDeadZone ||
         pCameraAccelSpeed != pBaseMove->pCameraAccelSpeed ||
@@ -233,6 +235,7 @@ void Move::pack(BitStream* stream, const Move* baseMove)
         stream->writeFlag(freeLook);
         stream->writeFlag(deviceIsKeyboardMouse);
         stream->writeFlag(autoCenterCamera);
+        stream->writeFlag(snapCamera);
 
         if (stream->writeFlag(triggerDifferent))
         {
@@ -306,6 +309,7 @@ void Move::unpack(BitStream* stream, const Move* baseMove)
         freeLook = stream->readFlag();
         deviceIsKeyboardMouse = stream->readFlag();
         autoCenterCamera = stream->readFlag();
+        snapCamera = stream->readFlag();
 
         bool triggersDiffer = stream->readFlag();
         for (U32 i = 0; i < MaxTriggerKeys; i++)
@@ -364,9 +368,17 @@ bool GameConnection::getNextMove(Move& curMove)
     curMove.yaw = MoveManager::mYaw + yawAdd;
     curMove.roll = MoveManager::mRoll + rollAdd;
 
+    curMove.snapCamera = false;
+    if (MoveManager::mSnapYaw)
+    {
+        curMove.yaw = MoveManager::mSnapYaw;
+        curMove.snapCamera = true;
+    }
+
     MoveManager::mPitch = 0;
     MoveManager::mYaw = 0;
     MoveManager::mRoll = 0;
+    MoveManager::mSnapYaw = 0;
 
 
     curMove.x = MoveManager::mRightAction - MoveManager::mLeftAction + MoveManager::mXAxis_L;

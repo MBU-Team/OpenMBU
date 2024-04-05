@@ -34,6 +34,7 @@ struct Move
     bool deviceIsKeyboardMouse;
     bool autoCenterCamera;
     bool freeLook;
+    bool snapCamera;
     bool trigger[MaxTriggerKeys];
 
     // We may want to do this differently in the future, but for now let's do it as part of Move.
@@ -68,6 +69,7 @@ public:
     static F32 mPitch;
     static F32 mYaw;
     static F32 mRoll;
+    static F32 mSnapYaw;
 
     static F32 mPitchUpSpeed;
     static F32 mPitchDownSpeed;

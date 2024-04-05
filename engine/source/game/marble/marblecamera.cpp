@@ -104,6 +104,16 @@ void Marble::processCameraMove(const Move* move)
     delta.prevMouseX = mMouseX;
     delta.prevMouseY = mMouseY;
 
+    if (move->snapCamera)
+    {
+        mMouseX += move->yaw;
+        if (mMouseX > M_2PI_F)
+            mMouseX -= M_2PI_F;
+        if (mMouseX < 0.0f)
+            mMouseX += M_2PI_F;
+        return;
+    }
+
     Point2F value(move->yaw / M_PI_F, move->pitch / M_PI_F);
 
     pushToSquare(value);
