@@ -1455,6 +1455,8 @@ void InteriorInstance::addChildren()
 {
     if(mInteriorRes)
     {
+        Vector<U32> usedTriggerIds;
+
         SimGroup* group = this->getGroup();
         Con::errorf("There are %d game entities", mInteriorRes->getNumGameEntities());
 
@@ -1469,6 +1471,8 @@ void InteriorInstance::addChildren()
                 if (gbObj)
                     gbObj->setField("dataBlock", entity->mDataBlock);
 
+                const char* name = StringTable->insert("");
+
                 obj->setModStaticFields(true);
                 EulerF angles(0.0f, 0.0f, 0.0f);
                 for (auto& entry : entity->mDictionary)
@@ -1479,6 +1483,8 @@ void InteriorInstance::addChildren()
                     }
                     else
                     {
+                        if (dStricmp(entry.name, "name") == 0)
+                            name = entry.value;
                         obj->setDataField(StringTable->insert(entry.name), nullptr, entry.value);
                     }
                 }
@@ -1507,7 +1513,59 @@ void InteriorInstance::addChildren()
                 if (success)
                 {
                     Con::errorf("Created entity: %s: %s", entity->mGameClass, entity->mDataBlock);
-                    group->addObject(obj);
+
+                    bool found = false;
+                    if (dStricmp(entity->mDataBlock, "checkPointShape") == 0 && dStrlen(name) > 0)
+                    {
+                        for (U32 j = 0; j < mInteriorRes->getNumTriggers(); j++)
+                        {
+                            if (std::find(usedTriggerIds.begin(), usedTriggerIds.end(), j) != usedTriggerIds.end())
+                                continue;
+
+                            InteriorResTrigger* resTrigger = mInteriorRes->getTrigger(j);
+
+                            if (dStricmp(resTrigger->mDataBlock, "checkPointTrigger") != 0)
+                                continue;
+
+                            if (dStricmp(resTrigger->mName, name) != 0)
+                                continue;
+
+                            Trigger* trigger = new Trigger();
+                            trigger->setField("dataBlock", resTrigger->mDataBlock);
+
+                            for (auto& entry : resTrigger->mDictionary)
+                            {
+                                trigger->setDataField(StringTable->insert(entry.name), nullptr, entry.value);
+                            }
+
+                            MatrixF newXForm;
+                            this->createTriggerTransform(resTrigger, &newXForm);
+                            trigger->setTriggerPolyhedron(resTrigger->mPolyhedron);
+                            trigger->setScale(this->mObjScale);
+                            trigger->setTransform(newXForm);
+                            bool success2 = trigger->registerObject();
+                            if (success2)
+                            {
+                                Con::errorf("Created checkpoint trigger: %s", name);
+                                SimGroup* checkpointGroup = new SimGroup();
+                                checkpointGroup->registerObject();
+                                group->addObject(checkpointGroup);
+                                checkpointGroup->assignName(name);
+                                checkpointGroup->addObject(obj);
+                                checkpointGroup->addObject(trigger);
+                                found = true;
+                                usedTriggerIds.push_back(j);
+                            } else {
+                                Con::errorf("Failed to register checkpoint trigger: %s", name);
+                                delete trigger;
+                            }
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        group->addObject(obj);
+                    }
                 } else {
                     Con::errorf("Failed to register entity: %s: %s", entity->mGameClass, entity->mDataBlock);
                     delete obj;
@@ -1517,11 +1575,12 @@ void InteriorInstance::addChildren()
                 delete conObj;
             }
         }
-        this->addDoors(false);
+        this->addDoors(false, usedTriggerIds);
+        this->addTriggers(usedTriggerIds);
     }
 }
 
-void InteriorInstance::addDoors(bool hide)
+void InteriorInstance::addDoors(bool hide, Vector<U32>& usedTriggerIds)
 {
     for (U32 i = 0; i < mInteriorRes->getNumInteriorPathFollowers(); i++)
     {
@@ -1577,7 +1636,12 @@ void InteriorInstance::addDoors(bool hide)
 
         for (U32 k = 0; k < follower->mTriggerIds.size(); k++)
         {
-            InteriorResTrigger* resTrigger = mInteriorRes->getTrigger(follower->mTriggerIds[k]);
+            U32 triggerId = follower->mTriggerIds[k];
+            if (std::find(usedTriggerIds.begin(), usedTriggerIds.end(), triggerId) != usedTriggerIds.end())
+                continue;
+            usedTriggerIds.push_back(triggerId);
+
+            InteriorResTrigger* resTrigger = mInteriorRes->getTrigger(triggerId);
 
             Trigger* trigger = new Trigger();
             trigger->setField("dataBlock", resTrigger->mDataBlock);
@@ -1621,6 +1685,43 @@ void InteriorInstance::addDoors(bool hide)
         {
             Con::warnf("Warning, could not register door.  Door skipped!");
             delete pi;
+        }
+    }
+}
+
+void InteriorInstance::addTriggers(Vector<U32>& usedTriggerIds)
+{
+    SimGroup* group = this->getGroup();
+    Con::errorf("There are %d triggers", mInteriorRes->getNumTriggers() - usedTriggerIds.size());
+
+    for (U32 i = 0; i < mInteriorRes->getNumTriggers(); i++)
+    {
+        if (std::find(usedTriggerIds.begin(), usedTriggerIds.end(), i) != usedTriggerIds.end())
+            continue;
+        usedTriggerIds.push_back(i);
+        InteriorResTrigger* resTrigger = mInteriorRes->getTrigger(i);
+
+        Trigger* trigger = new Trigger();
+        trigger->setField("dataBlock", resTrigger->mDataBlock);
+
+        for (auto& entry : resTrigger->mDictionary)
+        {
+            trigger->setDataField(StringTable->insert(entry.name), nullptr, entry.value);
+        }
+
+        MatrixF newXForm;
+        this->createTriggerTransform(resTrigger, &newXForm);
+        trigger->setTriggerPolyhedron(resTrigger->mPolyhedron);
+        trigger->setScale(this->mObjScale);
+        trigger->setTransform(newXForm);
+        bool success = trigger->registerObject();
+        if (success)
+        {
+            Con::errorf("Created trigger: %s", resTrigger->mDataBlock);
+            group->addObject(trigger);
+        } else {
+            Con::errorf("Failed to register trigger: %s", resTrigger->mDataBlock);
+            delete trigger;
         }
     }
 }

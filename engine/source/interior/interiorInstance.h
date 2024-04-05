@@ -112,7 +112,8 @@ public:
     void setSkinBase(const char* newBase);
 
     void addChildren();
-    void addDoors(bool hide);
+    void addDoors(bool hide, Vector<U32>& usedTriggerIds);
+    void addTriggers(Vector<U32>& usedTriggerIds);
 
 public:
     static bool smDontRestrictOutside;
