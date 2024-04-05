@@ -1639,9 +1639,12 @@ void InteriorInstance::addDoors(bool hide, Vector<U32>& usedTriggerIds)
             U32 triggerId = follower->mTriggerIds[k];
             if (std::find(usedTriggerIds.begin(), usedTriggerIds.end(), triggerId) != usedTriggerIds.end())
                 continue;
-            usedTriggerIds.push_back(triggerId);
 
             InteriorResTrigger* resTrigger = mInteriorRes->getTrigger(triggerId);
+
+            if (dStricmp(resTrigger->mDataBlock, "TriggerGotoTarget") != 0)
+                continue;
+            usedTriggerIds.push_back(triggerId);
 
             Trigger* trigger = new Trigger();
             trigger->setField("dataBlock", resTrigger->mDataBlock);
