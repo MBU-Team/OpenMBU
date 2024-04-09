@@ -226,25 +226,37 @@ function movedown(%val)
 function turnLeft( %val )
 {
    setMvExtras();
-   $mvYawRightSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
+   $mvDeviceIsKeyboardMouse = false;
+   $mvAutoCenterCamera = $pref::Input::AutoCenterCamera;
+   %scale = (ServerConnection.gameState $= "wait") ? -0.1 : 3.14 * 100;
+   $mvYawRightSpeed = %val ? $Pref::Input::KeyboardTurnSpeed * %scale : 0;
 }
 
 function turnRight( %val )
 {
    setMvExtras();
-   $mvYawLeftSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
+   $mvDeviceIsKeyboardMouse = false;
+   $mvAutoCenterCamera = $pref::Input::AutoCenterCamera;
+   %scale = (ServerConnection.gameState $= "wait") ? -0.1 : 3.14 * 100;
+   $mvYawLeftSpeed = %val ? $Pref::Input::KeyboardTurnSpeed * %scale : 0;
 }
 
 function panUp( %val )
 {
    setMvExtras();
-   $mvPitchDownSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
+   $mvDeviceIsKeyboardMouse = false;
+   $mvAutoCenterCamera = $pref::Input::AutoCenterCamera;
+   %scale = (ServerConnection.gameState $= "wait") ? -0.1 : 3.14 * 100;
+   $mvPitchDownSpeed = %val ? $Pref::Input::KeyboardTurnSpeed * %scale : 0;
 }
 
 function panDown( %val )
 {
    setMvExtras();
-   $mvPitchUpSpeed = %val ? $Pref::Input::KeyboardTurnSpeed : 0;
+   $mvDeviceIsKeyboardMouse = false;
+   $mvAutoCenterCamera = $pref::Input::AutoCenterCamera;
+   %scale = (ServerConnection.gameState $= "wait") ? -0.1 : 3.14 * 100;
+   $mvPitchUpSpeed = %val ? $Pref::Input::KeyboardTurnSpeed * %scale : 0;
 }
 
 function getMouseAdjustAmount(%val)
@@ -370,6 +382,19 @@ function centercam(%val)
 {
    setMvExtras();
    $mvTriggerCount3++;
+}
+
+function restartLevelBind(%val)
+{
+   if (%val)
+   {
+      if (!ServerConnection.isMultiplayer && ServerConnection.gameState !$= "wait")
+      {
+         if( $GameEndNoAllowPause )
+            return;
+         restartLevel();
+      }
+   }
 }
 
 function cycleDebugPredTiles()
@@ -644,6 +669,19 @@ moveMap.bindCmd( keyboard, y, "togglePlayerListLength();", "" );
 moveMap.bind(keyboard, "t", GlobalChat);
 moveMap.bind(keyboard, "ENTER", GlobalChat);
 //moveMap.bind(keyboard, "y", TeamChat);
+
+// Extra binds
+// ------------
+moveMap.bind( keyboard, q, mouseFire );
+moveMap.bind( keyboard, e, altTrigger );
+
+moveMap.bind( keyboard, left, turnLeft );
+moveMap.bind( keyboard, right, turnRight );
+moveMap.bind( keyboard, up, panUp );
+moveMap.bind( keyboard, down, panDown );
+
+moveMap.bind( keyboard, r, restartLevelBind );
+// ------------
 
 // mouse
 moveMap.bind( mouse, button0, mouseFire );
