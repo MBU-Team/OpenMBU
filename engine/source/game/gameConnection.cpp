@@ -50,8 +50,13 @@ GameConnection::GameConnection()
     mLastClientMove = 0;
     mFirstMoveIndex = 0;
     mLastSentMove = 0;
+#ifdef MB_DISABLE_INPUT_LAG
+    mTargetMoveListSize = 0;
+    mMaxMoveListSize = 1;
+#else
     mTargetMoveListSize = 3;
     mMaxMoveListSize = 5;
+#endif
 
     mDataBlockModifiedKey = 0;
     mMaxDataBlockModifiedKey = 0;

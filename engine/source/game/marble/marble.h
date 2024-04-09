@@ -314,6 +314,10 @@ public:
     void setPowerUpId(U32 id, bool reset);
     virtual void processTick(const Move* move);
 
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+    virtual void processPhysicsTick(const Move* move, F32 dt);
+#endif
+
     // Marble Physics
     Point3D getVelocityD() const;
     void setVelocityD(const Point3D& vel);

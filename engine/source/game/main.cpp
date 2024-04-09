@@ -70,6 +70,10 @@
 #include "discord/DiscordGame.h"
 //#include "../discord/discordGameSDK.h"
 
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+#include "game/gameConnection.h"
+#endif
+
 #ifndef BUILD_TOOLS
 DemoGame GameObject;
 DemoNetInterface GameNetInterface;
@@ -757,6 +761,11 @@ void DemoGame::processConsoleEvent(ConsoleEvent* event)
     Sim::postCurrentEvent(Sim::getRootGroup(), new SimConsoleEvent(2, const_cast<const char**>(argv), false));
 }
 
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+Move gFirstMove;
+Move gNextMove;
+#endif
+
 /// Process a time event and update all sub-processes
 void DemoGame::processTimeEvent(TimeEvent* event)
 {
@@ -779,6 +788,18 @@ void DemoGame::processTimeEvent(TimeEvent* event)
     bool tickPass;
     if (!gGamePaused)
     {
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+        gFirstMove = gNextMove = NullMove;
+        if (GameConnection::getConnectionToServer() != NULL)
+        {
+            GameConnection* gc = GameConnection::getConnectionToServer();
+            if (gc)
+            {
+                gc->getNextMove2(gFirstMove);
+                gc->getNextMove2(gNextMove);
+            }
+        }
+#endif
         PROFILE_START(ServerProcess);
         tickPass = serverProcess(timeDelta);
         PROFILE_END();

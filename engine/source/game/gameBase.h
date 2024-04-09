@@ -295,6 +295,10 @@ public:
     /// @param  move   Move event corresponding to this tick, or NULL.
     virtual void processTick(const Move* move);
 
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+    virtual void processPhysicsTick(const Move* move, F32 dt);
+#endif
+
     /// Interpolates between tick events.  This takes place on the CLIENT ONLY.
     ///
     /// @param   delta   Time since last call to interpolate

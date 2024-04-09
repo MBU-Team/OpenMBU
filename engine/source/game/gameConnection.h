@@ -290,6 +290,10 @@ public:
 
     void           pushMove(const Move& mv);
     bool           getNextMove(Move& curMove);
+
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+    bool           getNextMove2(Move& curMove);
+#endif
     bool           isBacklogged();
     virtual U32   getMoveList(Move**, U32* numMoves);
     MoveList&      getMoves() { return mMoveList; }

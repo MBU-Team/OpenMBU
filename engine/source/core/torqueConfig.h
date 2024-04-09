@@ -81,6 +81,12 @@
 // Define me to allow switching physics systems in script
 //#define MB_PHYSICS_SWITCHABLE
 
+/// Define me to disable input lag
+//#define MB_DISABLE_INPUT_LAG
+
+// Define me to make client physics run every frame
+//#define MB_CLIENT_PHYSICS_EVERY_FRAME
+
 // Define me to use MBO physics (does nothing if MB_PHYSICS_SWITCHABLE is defined)
 //#define MBO_PHYSICS
 

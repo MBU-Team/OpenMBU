@@ -254,6 +254,11 @@ bool ProcessList::advanceServerTime(SimTime timeDelta)
 
 //----------------------------------------------------------------------------
 
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+extern Move gFirstMove;
+extern Move gNextMove;
+#endif
+
 bool ProcessList::advanceClientTime(SimTime timeDelta)
 {
     PROFILE_START(AdvanceClientTime);
@@ -266,6 +271,11 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
     }
 
     if (mDirty) orderList();
+
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+    Move firstmove = gFirstMove;
+    Move nextmove = gNextMove;
+#endif
 
     SimTime targetTime = mLastTime + timeDelta;
     SimTime targetTick = targetTime - (targetTime & 0x1F);
@@ -332,6 +342,14 @@ bool ProcessList::advanceClientTime(SimTime timeDelta)
             GameBase* gb = getGameBase(pobj);
             gb->advanceTime(dt);
         }
+
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+        for (ProcessObject* pobj = mHead.mProcessLink.next; pobj != &mHead; pobj = pobj->mProcessLink.next)
+        {
+            GameBase* gb = getGameBase(pobj);
+            gb->processPhysicsTick(&firstmove, dt);
+        }
+#endif
     }
     else {
         mSkipAdvanceObjectsMs -= timeDelta;

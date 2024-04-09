@@ -397,6 +397,54 @@ bool GameConnection::getNextMove(Move& curMove)
     return true;
 }
 
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+bool GameConnection::getNextMove2(Move& curMove)
+{
+    if (mMoveList.size() > MaxMoveQueueSize)
+        return false;
+
+    F32 pitchAdd = MoveManager::mPitchUpSpeed - MoveManager::mPitchDownSpeed;
+    F32 yawAdd = MoveManager::mYawLeftSpeed - MoveManager::mYawRightSpeed;
+    F32 rollAdd = MoveManager::mRollRightSpeed - MoveManager::mRollLeftSpeed;
+
+    curMove.pitch = MoveManager::mPitch + pitchAdd;
+    curMove.yaw = MoveManager::mYaw + yawAdd;
+    curMove.roll = MoveManager::mRoll + rollAdd;
+
+    //MoveManager::mPitch = 0;
+    //MoveManager::mYaw = 0;
+    //MoveManager::mRoll = 0;
+
+
+    curMove.x = MoveManager::mRightAction - MoveManager::mLeftAction + MoveManager::mXAxis_L;
+    curMove.y = MoveManager::mForwardAction - MoveManager::mBackwardAction + MoveManager::mYAxis_L;
+    curMove.z = MoveManager::mUpAction - MoveManager::mDownAction;
+
+    curMove.freeLook = MoveManager::mFreeLook;
+    curMove.deviceIsKeyboardMouse = MoveManager::mDeviceIsKeyboardMouse;
+    curMove.autoCenterCamera = MoveManager::mAutoCenterCamera;
+
+    for (U32 i = 0; i < MaxTriggerKeys; i++)
+    {
+        curMove.trigger[i] = false;
+        if (MoveManager::mTriggerCount[i] & 1)
+            curMove.trigger[i] = true;
+        else if (!(MoveManager::mPrevTriggerCount[i] & 1) && MoveManager::mPrevTriggerCount[i] != MoveManager::mTriggerCount[i])
+            curMove.trigger[i] = true;
+        //MoveManager::mPrevTriggerCount[i] = MoveManager::mTriggerCount[i];
+    }
+
+    curMove.horizontalDeadZone = MoveManager::mHorizontalDeadZone;
+    curMove.verticalDeadZone = MoveManager::mVerticalDeadZone;
+    curMove.cameraAccelSpeed = MoveManager::mCameraAccelSpeed;
+    curMove.cameraSensitivityHorizontal = MoveManager::mCameraSensitivityHorizontal;
+    curMove.cameraSensitivityVertical = MoveManager::mCameraSensitivityVertical;
+
+    curMove.clamp();  // clamp for net traffic
+    return true;
+}
+#endif
+
 void GameConnection::pushMove(const Move& mv)
 {
     U32 id = mFirstMoveIndex + mMoveList.size();

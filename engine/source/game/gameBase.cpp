@@ -282,6 +282,13 @@ void GameBase::processTick(const Move* move)
 #endif
 }
 
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+void GameBase::processPhysicsTick(const Move *move, F32 dt)
+{
+
+}
+#endif
+
 void GameBase::interpolateTick(F32 delta)
 {
 }

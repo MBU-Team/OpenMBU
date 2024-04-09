@@ -2030,7 +2030,10 @@ void Marble::processTick(const Move* move)
 {
     Parent::processTick(move);
 
+#ifndef MB_CLIENT_PHYSICS_EVERY_FRAME
     clearMarbleAxis();
+#endif
+
     if ((mMode & TimerMode) != 0)
     {
         U32 bonusTime = mMarbleBonusTime;
@@ -2075,7 +2078,7 @@ void Marble::processTick(const Move* move)
         if (move)
         {
             dMemcpy(&delta.move, move, sizeof(delta.move));
-            newMove = move;  
+            newMove = move;
         }
         else
             newMove = &delta.move;
@@ -2083,9 +2086,12 @@ void Marble::processTick(const Move* move)
     else
         newMove = &NullMove;
 
+#ifndef MB_CLIENT_PHYSICS_EVERY_FRAME
     processMoveTriggers(newMove);
+#endif
     processCameraMove(newMove);
 
+#ifndef MB_CLIENT_PHYSICS_EVERY_FRAME
     Point3F startPos(mPosition.x, mPosition.y, mPosition.z);
 
     advancePhysics(newMove, TickMs);
@@ -2124,7 +2130,7 @@ void Marble::processTick(const Move* move)
             {
                 if (Marble::smEndPadId && Marble::smEndPadId != -1)
                     Marble::smEndPad = dynamic_cast<StaticShape*>(Sim::findObject(Marble::smEndPadId));
-                
+
                 if (Marble::smEndPad.isNull())
                     Marble::smEndPadId = 0;
             }
@@ -2156,7 +2162,109 @@ void Marble::processTick(const Move* move)
     mPosition = mSinglePrecision.mPosition;
     mVelocity = mSinglePrecision.mVelocity;
     mOmega = mSinglePrecision.mOmega;
+#else
+    if (isServerObject())
+    {
+        processPhysicsTick(move, TickSec);
+    }
+#endif
 }
+
+#ifdef MB_CLIENT_PHYSICS_EVERY_FRAME
+void Marble::processPhysicsTick(const Move *move, F32 dt)
+{
+    clearMarbleAxis();
+
+    const Move* newMove;
+    if (mControllable)
+    {
+        if (move)
+        {
+            dMemcpy(&delta.move, move, sizeof(delta.move));
+            newMove = move;
+        }
+        else
+            newMove = &delta.move;
+    }
+    else
+        newMove = &NullMove;
+
+    processMoveTriggers(newMove);
+//    processCameraMove(newMove);
+
+    Point3F startPos(mPosition.x, mPosition.y, mPosition.z);
+
+    //advancePhysics(newMove, TickMs);
+    advancePhysics(newMove, (U32)(dt * 1000.0f));
+
+    Point3F endPos(mPosition.x, mPosition.y, mPosition.z);
+
+    processItemsAndTriggers(startPos, endPos);
+    updatePowerups();
+
+    if (mPadPtr)
+    {
+        bool oldOnPad = mOnPad;
+        updatePadState();
+#ifdef MB_ULTRA_PREVIEWS
+        if (oldOnPad != mOnPad && !(isGhost() || gSPMode))
+#else
+            if (oldOnPad != mOnPad && !isGhost())
+#endif
+        {
+            const char* funcName = "onLeavePad";
+            if (!oldOnPad)
+                funcName = "onEnterPad";
+            Con::executef(mDataBlock, 2, funcName, scriptThis());
+        }
+    }
+
+#ifdef MB_ULTRA_PREVIEWS
+    if (isGhost() || gSPMode)
+#else
+        if (isGhost())
+#endif
+    {
+        if (getControllingClient())
+        {
+            if (Marble::smEndPad.isNull() || Marble::smEndPad->getId() != Marble::smEndPadId)
+            {
+                if (Marble::smEndPadId && Marble::smEndPadId != -1)
+                    Marble::smEndPad = dynamic_cast<StaticShape*>(Sim::findObject(Marble::smEndPadId));
+
+                if (Marble::smEndPad.isNull())
+                    Marble::smEndPadId = 0;
+            }
+        }
+    }
+
+    if (mOmega.len() < 0.000001)
+        mOmega.set(0, 0, 0);
+
+#ifdef MBG_PHYSICS
+#define MB_RESPAWN_TRIGGER_ID 0
+#else
+#define MB_RESPAWN_TRIGGER_ID 2
+#endif
+
+#ifdef MB_ULTRA_PREVIEWS
+    if (!(isGhost() || gSPMode) && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
+#else
+        if (!isGhost() && mOOB && newMove->trigger[MB_RESPAWN_TRIGGER_ID])
+#endif
+        Con::executef(this, 1, "onOOBClick");
+
+    notifyCollision();
+
+    mSinglePrecision.mPosition = mPosition;
+    mSinglePrecision.mVelocity = mVelocity;
+    mSinglePrecision.mOmega = mOmega;
+
+    mPosition = mSinglePrecision.mPosition;
+    mVelocity = mSinglePrecision.mVelocity;
+    mOmega = mSinglePrecision.mOmega;
+}
+#endif
 
 //----------------------------------------------------------------------------
 
