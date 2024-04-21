@@ -48,6 +48,22 @@ new GuiControl(ConsoleDlg) {
             position = "0 0";
          };
       };
+      new GuiConsoleEditCtrl(ConsoleEntry2) {
+         profile = "GuiTextEditProfile";
+         horizSizing = "width";
+         vertSizing = "top";
+         position = "3 278";
+         extent = "494 18";
+         minExtent = "8 2";
+         visible = "1";
+         altCommand = "ConsoleEntry::eval();";
+         maxLength = "255";
+         historySize = "20";
+         password = "0";
+         tabComplete = "0";
+         sinkAllKeyEvents = "1";
+         useSiblingScroller = "1";
+      };
       new GuiConsoleEditCtrl(ConsoleEntry) {
          profile = "GuiTextEditProfile";
          horizSizing = "width";
@@ -135,6 +151,9 @@ function ConsoleEntry::eval()
    if( %text $= "" )
       return;
 
+   $pref::ConsoleHistorySize++;
+   $pref::ConsoleHistory[$pref::ConsoleHistorySize - 1] = %text;
+
    // If it's missing a trailing () and it's not a variable,
    // append the parentheses.
 
@@ -191,6 +210,19 @@ function ConsoleEntry::eval()
    // Check for any pending errors to display
    updateConsoleErrorWindow();
 }
+
+function max(%a, %b) { return (%a > %b ? %a : %b); }
+
+Canvas.pushDialog(ConsoleDlg);
+for (%i = max(0, $pref::ConsoleHistorySize - ConsoleEntry.historySize); %i < $pref::ConsoleHistorySize; %i ++) {
+   ConsoleEntry.makeFirstResponder(true);
+   ConsoleEntry.setText($pref::ConsoleHistory[%i]);
+   ConsoleEntry2.makeFirstResponder(true);
+   ConsoleEntry.makeFirstResponder(true);
+}
+ConsoleEntry.setText("");
+Canvas.popDialog(ConsoleDlg);
+ConsoleEntry2.delete();
 
 function ToggleConsole(%make)
 {
