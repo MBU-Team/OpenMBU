@@ -103,6 +103,7 @@ function PlayGui::onWake(%this)
    }
 
    autosplitterSetIsLoading(false);
+   autosplitterSetLevelStarted(false);
    sendAutosplitterData("loading finished");
 }
 
