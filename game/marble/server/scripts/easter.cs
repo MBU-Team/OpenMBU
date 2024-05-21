@@ -65,6 +65,7 @@ function clientCmdOnEasterEggPickup( %index )
       return;
    }
    
+   autosplitterSetEggFound(true);
    sendAutosplitterData("egg" SPC %index);
    
    if( hasFoundEgg( %index ) )
