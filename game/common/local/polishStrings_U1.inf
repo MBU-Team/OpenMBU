@@ -28,14 +28,14 @@ $Text::AchievementDescription14 = "Zdobądź 40 klejnotów w 3 dowolnych pozioma
 $Text::AchievementDescription15 = "Zbierz 50 klejnotów w na mapie Iglica (pakiet Agorafobia).";
 ;-------------------------------------------------------------------------------                            
 ; Singleplayer Game Strings                                                                                 
-$Text::LevelNameMP11 = "Kulkuj w Górę! (Add-on)";	// Add-on levels
-$Text::LevelNameMP12 = "Plac Zabaw (Add-on)";		// ""
-$Text::LevelNameMP13 = "Miska (Add-on)";			// "" 
-$Text::LevelNameMP14 = "Koncentryczny (Add-on)";        	// "" 
-$Text::LevelNameMP15 = "Efekt Wiru (Add-on)";     	// "" 
-$Text::LevelNameMP16 = "Klub Wybuchów (Add-on)";        	// "" 
-$Text::LevelNameMP17 = "Jądro (Add-on)";              	// "" 
-$Text::LevelNameMP18 = "Triumwirat (Add-on)";       	// "" 
-$Text::LevelNameMP19 = "Zyggurat (Add-on)";          	// "" 
-$Text::LevelNameMP20 = "Cypel (Add-on)";        	// "" 
-$Text::LevelNameMP21 = "Iglica (Add-on)";            	// "" 
+$Text::LevelNameMP11 = "Kulkuj w Górę! (Dodatek)";	// Add-on levels
+$Text::LevelNameMP12 = "Plac Zabaw (Dodatek)";		// ""
+$Text::LevelNameMP13 = "Miska (Dodatek)";			// "" 
+$Text::LevelNameMP14 = "Koncentryczny (Dodatek)";        	// "" 
+$Text::LevelNameMP15 = "Efekt Wiru (Dodatek)";     	// "" 
+$Text::LevelNameMP16 = "Klub Wybuchów (Dodatek)";        	// "" 
+$Text::LevelNameMP17 = "Jądro (Dodatek)";              	// "" 
+$Text::LevelNameMP18 = "Triumwirat (Dodatek)";       	// "" 
+$Text::LevelNameMP19 = "Zyggurat (Dodatek)";          	// "" 
+$Text::LevelNameMP20 = "Cypel (Dodatek)";        	// "" 
+$Text::LevelNameMP21 = "Iglica (Dodatek)";            	// "" 
