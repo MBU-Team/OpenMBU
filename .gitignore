@@ -22,4 +22,5 @@ build/
 .idea
 *.manifest
 game/marble/data/missions/custom/
+game/marble/data/shapes/blends/
 game/screenshot*.png
