@@ -234,6 +234,7 @@ $Text::JoinMatch = "Join Match";
 $Text::Players = "Players";
 $Text::Ready = "Ready";
 $Text::ExitGame = "Exit";
+$Text::Profile = "Profile";
 
 ;-------------------------------------------------------------------------------
 ; Join Game Gui

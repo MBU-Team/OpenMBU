@@ -143,6 +143,7 @@ function initClient()
    exec("./ui/controlerDisplayGui.gui");
    exec("./ui/joinGameGui.gui");
    exec("./ui/enterNameGui.gui");
+   exec("./ui/myProfileGui.gui");
    
    //exec("./ui/AboutGui.gui");   
    //exec("./ui/LevelScoresGui.gui");

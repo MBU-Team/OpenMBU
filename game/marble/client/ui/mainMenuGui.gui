@@ -101,6 +101,11 @@ function mainMenuGui::onA(%this)
    return true;
 }
 
+function mainMenuGui::onX(%this)
+{
+   Canvas.pushDialog(myProfileGui);
+}
+
 // note, some other guis use this callback for upsell functionality, be careful
 // about changing it
 function MainMenuGui::onSignInComplete(%this, %showAchUI, %showMarketplace)
@@ -192,6 +197,12 @@ function MainMenuGui::show(%this)
    
    if ($pref::UI::LegacyUI)
       RootGui.setA($Text::Go);
+
+   if ($secretMode)
+      RootGui.setX("Play PQ Now!");
+   else
+      RootGui.setX($Text::Profile);
+
    // test::Cheatsenabled should be empty normally
    //RootGui.setTitle($Text::MainMenu @ $Test::CheatsEnabled);
    RootGui.setTitle("" @ $Test::CheatsEnabled);
