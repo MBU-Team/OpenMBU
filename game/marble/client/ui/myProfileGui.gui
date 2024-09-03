@@ -49,10 +49,10 @@ new GuiControl(MyProfileGui) {
 	      horizSizing = "center";
 	      vertSizing = "center";
 	      position = "70 30";
-	      extent =   "512 400"; 
+	      extent =   "794 620"; 
 	      minExtent = "48 92";
 	      visible = "1";
-	      bitmap = "./xbox/popupGUI";
+	      bitmap = "./online/profileGUI";
 	      wrap = "0";
 
             new GuiTextCtrl(XNMessagePopupUsernameLabel) {
@@ -149,6 +149,29 @@ new GuiControl(MyProfileGui) {
 		      
 		   };
 	      
+			//new GuiXboxOptionListCtrl(myProfileTitle) {
+			//	profile = isWidescreen()? "TextOptionListInactiveProfile" : "TextOptionListInactiveSmallProfile";
+			//	position = "0 0";
+			//	extent = isWidescreen()? "750 400" : "510 250";
+			//	horizSizing = isWidescreen()? "right" : "left";
+			//	vertSizing = isWidescreen()? "bottom" : "top";
+				// there can only be two columns; these values are percentages of total extent
+			//	columns = "40 60";
+				// each column can have a left and right margin, specified here.  order is 
+				// C1L C1R C2L C2R.  amount is in pixels
+			//	columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
+				// for debugging, show the region update rect and column rects (with margins)
+			//	showRects = 0;
+			//};
+
+			new GuiXboxListCtrl(myProfileTitle) {
+				profile = isWidescreen()? "TextMenuListProfile" : "TextMenuListSmallProfile";
+				horizSizing = "left";
+				vertSizing = "height";
+					position = "20 -10"; // will autocenter vertically
+				extent = "500 125";
+			};
+
 		   new GuiControl(XNMessagePopupBottomNavBar) {
 		      profile = "GuiDefaultProfile";
 		      horizSizing = "right";
@@ -241,13 +264,17 @@ function MyProfileGui::onWake(%this)
    XNMessagePopupBBtnTxt.setText($Text::Cancel);
    XNMessagePopupABtnNew.setText($Text::Ok);
    XNMessagePopupBBtnNew.setText($Text::Cancel);
-   XNMessagePopupText.setText("My Profile:");
+   //XNMessagePopupText.setText("My Profile:");
 
    // XMessagePopupDlg.show(0, "Set Gamertag:", $Text::OK, "EnterNameGui.apply();", $Text::Cancel, "EnterNameGui.cancel();");
    // XMessagePopupDlg.add(ENG_Type);
    %this.schedule(100, fixupText);
 
    // RootGui.setTitle( "Set Gamertag" );
+
+   myProfileTitle.clear();
+   myProfileTitle.addRow("My Profile - Sign In", "", 2);
+   //myProfileTitle.addRow("My Profile", "Sign In", 2);
 }
 
 function MyProfileGui::fixupText(%this)
