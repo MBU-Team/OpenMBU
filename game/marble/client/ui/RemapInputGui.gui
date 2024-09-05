@@ -106,7 +106,7 @@ function RemapInputDlg::show(%this, %action, %key)
 	//Temporarily unbind escape.
 	GlobalActionMap.unbind(keyboard, "escape");
 	RemapInputDlgText.setText("Press a key to rebind.");     
-	RemapInputDlgShowKeyText.setText("Rebinding: " @ %action @ ".\nCurrent Key: " @ (getWord(%key, 0) $= "keyboard" || getWord(%key, 0) $= "mouse0" ? getWord(%key, 1) : "") @ ".");  
+	RemapInputDlgShowKeyText.setText("Rebinding: " @ %action @ ".\nCurrent Key: " @ RemapOptionsGui.formatBinding(getWord(%key, 0) $= "keyboard" || getWord(%key, 0) $= "mouse0" ? getWord(%key, 1) : "") @ ".");  
 
 	RemapInputDlgABtn.setVisible(false);
 	RemapInputDlgBBtn.setVisible(false);
@@ -168,7 +168,7 @@ function RemapInputDlgInputDetection::onInputEvent(%this, %device, %action)
 					RemapInputDlg.tosetCmd = %this.cmd;	
 
 					RemapInputDlgText.setText("Notice!");     
-					RemapInputDlgShowKeyText.setText(%action @ " is already bound to " @ %previousbind @ ". Continue?");  
+					RemapInputDlgShowKeyText.setText(RemapOptionsGui.formatBinding(%action) @ " is already bound to " @ %previousbind @ ". Continue?");  
 					RemapInputDlgABtn.setVisible(true);
 					RemapInputDlgABtn.setText("Yes");
 					RemapInputDlgBBtn.setVisible(true);

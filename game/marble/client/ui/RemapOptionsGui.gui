@@ -233,7 +233,7 @@ function RemapOptionsGui::show(%this, %backGui)
    RootGui.setB("Back");
    RootGui.setY("Save Config");
    RootGui.setX("Restore Defaults");
-   RootGui.setTitle("KEY REMAPPING - KEYBOARD AND MOUSE");
+   RootGui.setTitle("KEY BINDINGS");
 
    $ROptionsGrid[0, 6] = MoveForwardButton;
    $ROptionsGrid[0, 5] = MoveBackwardButton;
@@ -309,19 +309,42 @@ function RemapOptionsGui::onDown(%this, %pressed)
 
 function RemapOptionsGui::rebuildList(%this)
 {
-   MoveForwardButton.setText("Forward - " @ (getWord(moveMap.getBinding("moveforward"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveforward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveforward"), 1) : ""));
-   MoveBackwardButton.setText("Back - " @ (getWord(moveMap.getBinding("movebackward"), 0) $= "keyboard" || getWord(moveMap.getBinding("movebackward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("movebackward"), 1) : ""));
-   MoveLeftButton.setText("Left - " @ (getWord(moveMap.getBinding("moveleft"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveleft"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveleft"), 1) : ""));
-   MoveRightButton.setText("Right - " @ (getWord(moveMap.getBinding("moveright"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveright"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveright"), 1) : ""));
+   MoveForwardButton.setText("Forward - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("moveforward"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveforward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveforward"), 1) : ""));
+   MoveBackwardButton.setText("Back - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("movebackward"), 0) $= "keyboard" || getWord(moveMap.getBinding("movebackward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("movebackward"), 1) : ""));
+   MoveLeftButton.setText("Left - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("moveleft"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveleft"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveleft"), 1) : ""));
+   MoveRightButton.setText("Right - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("moveright"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveright"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveright"), 1) : ""));
    
-   LookupButton.setText("Look Up - " @ (getWord(moveMap.getBinding("panup"), 0) $= "keyboard" || getWord(moveMap.getBinding("panup"), 0) $= "mouse0" ? getWord(moveMap.getBinding("panup"), 1) : ""));
-   LookdownButton.setText("Look Down - " @ (getWord(moveMap.getBinding("pandown"), 0) $= "keyboard" || getWord(moveMap.getBinding("pandown"), 0) $= "mouse0" ? getWord(moveMap.getBinding("pandown"), 1) : ""));
-   LookleftButton.setText("Look Left - " @ (getWord(moveMap.getBinding("turnLeft"), 0) $= "keyboard" || getWord(moveMap.getBinding("turnleft"), 0) $= "mouse0" ? getWord(moveMap.getBinding("turnleft"), 1) : ""));
-   LookrightButton.setText("Look Right - " @ (getWord(moveMap.getBinding("turnright"), 0) $= "keyboard" || getWord(moveMap.getBinding("turnright"), 0) $= "mouse0" ? getWord(moveMap.getBinding("turnright"), 1) : ""));
+   LookupButton.setText("Look Up - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("panup"), 0) $= "keyboard" || getWord(moveMap.getBinding("panup"), 0) $= "mouse0" ? getWord(moveMap.getBinding("panup"), 1) : ""));
+   LookdownButton.setText("Look Down - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("pandown"), 0) $= "keyboard" || getWord(moveMap.getBinding("pandown"), 0) $= "mouse0" ? getWord(moveMap.getBinding("pandown"), 1) : ""));
+   LookleftButton.setText("Look Left - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("turnLeft"), 0) $= "keyboard" || getWord(moveMap.getBinding("turnleft"), 0) $= "mouse0" ? getWord(moveMap.getBinding("turnleft"), 1) : ""));
+   LookrightButton.setText("Look Right - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("turnright"), 0) $= "keyboard" || getWord(moveMap.getBinding("turnright"), 0) $= "mouse0" ? getWord(moveMap.getBinding("turnright"), 1) : ""));
 
-   JumpButton.setText("Jump - " @ (getWord(moveMap.getBinding("jumpOrStart"), 0) $= "keyboard" || getWord(moveMap.getBinding("jumpOrStart"), 0) $= "mouse0" ? getWord(moveMap.getBinding("jumpOrStart"), 1) : ""));
-   UsePowerupButton.setText("Powerup - " @ (getWord(moveMap.getBinding("mouseFire"), 0) $= "keyboard" || getWord(moveMap.getBinding("mouseFire"), 0) $= "mouse0" ? getWord(moveMap.getBinding("mouseFire"), 1) : ""));
-   BlastButton.setText("Blast - " @ (getWord(moveMap.getBinding("altTrigger"), 0) $= "keyboard" || getWord(moveMap.getBinding("altTrigger"), 0) $= "mouse0" ? getWord(moveMap.getBinding("altTrigger"), 1) : ""));
-   GlobalChatButton.setText("Global Chat - " @ (getWord(moveMap.getBinding("GlobalChat"), 0) $= "keyboard" || getWord(moveMap.getBinding("GlobalChat"), 0) $= "mouse0" ? getWord(moveMap.getBinding("GlobalChat"), 1) : ""));
-   RestartLevelButton.setText("Restart Level - " @ (getWord(moveMap.getBinding("restartLevelBind"), 0) $= "keyboard" || getWord(moveMap.getBinding("restartLevelBind"), 0) $= "mouse0" ? getWord(moveMap.getBinding("restartLevelBind"), 1) : ""));
+   JumpButton.setText("Jump - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("jumpOrStart"), 0) $= "keyboard" || getWord(moveMap.getBinding("jumpOrStart"), 0) $= "mouse0" ? getWord(moveMap.getBinding("jumpOrStart"), 1) : ""));
+   UsePowerupButton.setText("Powerup - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("mouseFire"), 0) $= "keyboard" || getWord(moveMap.getBinding("mouseFire"), 0) $= "mouse0" ? getWord(moveMap.getBinding("mouseFire"), 1) : ""));
+   BlastButton.setText("Blast - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("altTrigger"), 0) $= "keyboard" || getWord(moveMap.getBinding("altTrigger"), 0) $= "mouse0" ? getWord(moveMap.getBinding("altTrigger"), 1) : ""));
+   GlobalChatButton.setText("Global Chat - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("GlobalChat"), 0) $= "keyboard" || getWord(moveMap.getBinding("GlobalChat"), 0) $= "mouse0" ? getWord(moveMap.getBinding("GlobalChat"), 1) : ""));
+   RestartLevelButton.setText("Restart Level - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("restartLevelBind"), 0) $= "keyboard" || getWord(moveMap.getBinding("restartLevelBind"), 0) $= "mouse0" ? getWord(moveMap.getBinding("restartLevelBind"), 1) : ""));
+}
+
+function RemapOptionsGui::formatBinding(%this, %maptoget)
+{
+   switch$(%maptoget)
+   {
+      case "button0":
+      return "Left Mouse";
+      case "button1":
+      return "Right Mouse";
+      case "button2":
+      return "Middle Mouse";
+      case "lshift":
+      return "Left Shift";
+      case "rshift":
+      return "Right Shift";
+      case "lcontrol":
+      return "Left Control";
+      case "rcontrol":
+      return "Right Control";
+   }
+
+   return (strupr(getsubstr(%maptoget, 0, 1)) @ getsubstr(%maptoget, 1, strlen(%maptoget)));
 }
