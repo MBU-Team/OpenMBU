@@ -1,0 +1,107 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(RemapOptionsGui) {
+   Profile = "GuiDefaultProfile";
+   HorizSizing = "right";
+   VertSizing = "bottom";
+   position = "0 0";
+   Extent = "640 480";
+   MinExtent = "8 2";
+   Visible = "1";
+   UIMode = "AlwaysShow";
+      backGui = "HelpAndOptionsGui";
+
+   new GuiXboxListCtrl(RemapOptionsList) {
+      Profile = "TextMenuListProfile";
+      HorizSizing = "left";
+      VertSizing = "height";
+      position = "60 -25";
+      Extent = "640 480";
+      MinExtent = "8 2";
+      Visible = "1";
+      UIMode = "AlwaysShow";
+   };
+};
+//--- OBJECT WRITE END ---
+
+function RemapOptionsGui::onA(%this)
+{
+   %idx = RemapOptionsList.getSelectedIndex();
+   
+	sfxPlay( AudioButtonDown );
+      
+   switch( %idx )
+   {
+      case 0:
+         //Change Forward
+         RemapInputDlg.show("moveForward", moveMap.getBinding("moveForward"));
+      case 1: 
+         //Change Back
+         RemapInputDlg.show("moveBackward", moveMap.getBinding("moveBackward"));
+      case 2: 
+         //Change Left
+         RemapInputDlg.show("moveLeft", moveMap.getBinding("moveLeft"));
+      case 3: 
+         //Change Right
+         RemapInputDlg.show("moveRight", moveMap.getBinding("moveRight"));
+      case 4: 
+         //Change Jump
+         RemapInputDlg.show("jumpOrStart", moveMap.getBinding("jumpOrStart"));
+      case 5:
+         //Change Powerup
+         RemapInputDlg.show("mouseFire", moveMap.getBinding("mouseFire"));
+      case 6:
+         //Change Blast
+         RemapInputDlg.show("alttrigger", moveMap.getBinding("alttrigger"));
+      case 7:
+         //Change Global Chat Key
+         RemapInputDlg.show("GlobalChat", moveMap.getBinding("GlobalChat"));
+      case 8:
+         //Restart Level Key
+         RemapInputDlg.show("restartLevelBind", moveMap.getBinding("restartLevelBind"));
+   }
+    
+   return true;
+}
+
+function RemapOptionsGui::onB(%this)
+{
+   RootGui.setContent(%this.backGui);
+}
+
+function RemapOptionsGui::onY(%this)
+{
+   // Save Configs
+   moveMap.save("marble/client/config.cs");
+}
+
+function RemapOptionsGui::onX(%this)
+{
+   // Reset Defaults
+   moveMap.delete();
+   exec("marble/client/scripts/default.bind.cs");
+   RemapOptionsGui.rebuildList();
+}
+
+function RemapOptionsGui::show(%this, %backGui)
+{
+   RemapOptionsGui.rebuildList();
+   RootGui.setB("Back");
+   RootGui.setY("Save Config");
+   RootGui.setX("Restore Defaults");
+   RootGui.setTitle("KEY REMAPPING - KEYBOARD AND MOUSE");
+}
+
+function RemapOptionsGui::rebuildList(%this)
+{
+   RemapOptionsList.clear();
+
+   RemapOptionsList.addRow("Forward - " @ (getWord(moveMap.getBinding("moveforward"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveforward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveforward"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Back - " @ (getWord(moveMap.getBinding("movebackward"), 0) $= "keyboard" || getWord(moveMap.getBinding("movebackward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("movebackward"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Left - " @ (getWord(moveMap.getBinding("moveleft"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveleft"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveleft"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Right - " @ (getWord(moveMap.getBinding("moveright"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveright"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveright"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Jump - " @ (getWord(moveMap.getBinding("jumpOrStart"), 0) $= "keyboard" || getWord(moveMap.getBinding("jumpOrStart"), 0) $= "mouse0" ? getWord(moveMap.getBinding("jumpOrStart"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Powerup - " @ (getWord(moveMap.getBinding("mouseFire"), 0) $= "keyboard" || getWord(moveMap.getBinding("mouseFire"), 0) $= "mouse0" ? getWord(moveMap.getBinding("mouseFire"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Blast - " @ (getWord(moveMap.getBinding("altTrigger"), 0) $= "keyboard" || getWord(moveMap.getBinding("altTrigger"), 0) $= "mouse0" ? getWord(moveMap.getBinding("altTrigger"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Global Chat - " @ (getWord(moveMap.getBinding("GlobalChat"), 0) $= "keyboard" || getWord(moveMap.getBinding("GlobalChat"), 0) $= "mouse0" ? getWord(moveMap.getBinding("GlobalChat"), 1) : ""), "", 0, 8);
+   RemapOptionsList.addRow("Restart Level - " @ (getWord(moveMap.getBinding("restartLevelBind"), 0) $= "keyboard" || getWord(moveMap.getBinding("restartLevelBind"), 0) $= "mouse0" ? getWord(moveMap.getBinding("restartLevelBind"), 1) : ""), "", 0, 8);
+}
