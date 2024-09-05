@@ -1,0 +1,206 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(RemapInputDlg) {
+   profile = "GuiDefaultProfile";
+   horizSizing = "width";
+   vertSizing = "height";
+   position = "0 0";
+   extent = "640 480";
+   minExtent = "8 8";
+   visible = "1";
+
+   new GuiBitmapCtrl(RemapInputDlgFrame) {
+		profile = "GuiDefaultProfile";
+		alpha = "0";
+		horizSizing = "width";
+		vertSizing = "height";
+		position = "0 0";
+		extent = "640 480";
+		bitmap = "./xbox/fade_black";
+		wrap = "1";
+		visible = "1";
+      
+		new GuiBitmapCtrl(RemapInputDlgFrameSub) {
+			profile = "GuiDefaultProfile";
+			horizSizing = "center";
+			vertSizing = "center";
+			position = "70 30";
+			extent =   "512 400"; 
+			minExtent = "48 92";
+			visible = "1";
+			bitmap = "./xbox/popupGUI";
+			wrap = "0";
+					
+			new GuiMLTextCtrl(RemapInputDlgText) {
+				profile = "TextHeadingSmallNoShadeProfile";
+				position = "103 85";
+				extent =   "313 186";
+				minExtent = "8 8";
+				visible = "1";
+				lineSpacing = "2";
+				allowColorChars = "0";
+				maxChars = "-1";
+				maxAlpha = "1.0";
+				minAlpha = "1.0";
+			};
+
+			new GuiMLTextCtrl(RemapInputDlgShowKeyText) {
+				profile = "TextHeadingSmallNoShadeProfile";
+				position = "103 200";
+				extent =   "313 186";
+				minExtent = "8 8";
+				visible = "1";
+				lineSpacing = "2";
+				allowColorChars = "0";
+				maxChars = "-1";
+				maxAlpha = "1.0";
+				minAlpha = "1.0";
+			};
+
+			new GuiControl(RemapInputDlgBottomNavBarNew) {
+				profile = "GuiDefaultProfile";
+				horizSizing = "right";
+				vertSizing = "bottom";
+				position = "-119 248";
+				extent = "640 200";
+				minExtent = "8 2";
+				visible = "1";
+				UIMode = "NewOnly";
+				
+				new GuiXboxButtonCtrl(RemapInputDlgABtn) {
+					profile = "TextMenuButtonProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "330 0";
+					extent = "120 94";
+					minExtent = "8 2";
+					bitmap = "./xbox/pad_button_a";
+					bitmapAlign = "right";
+					text = "";
+					command = "";
+					visible = "1";
+				};
+					
+				new GuiXboxButtonCtrl(RemapInputDlgBBtn) {
+					profile = "TextMenuButtonProfile";
+					horizSizing = "right";
+					vertSizing = "bottom";
+					position = "440 0";
+					extent = "120 94";
+					minExtent = "8 2";
+					bitmap = "./xbox/pad_button_b";
+					bitmapAlign = "right";
+					text = "";
+					command = "";
+					visible = "1";
+				};    
+		   };
+		};
+	};
+};
+//--- OBJECT WRITE END ---
+
+function RemapInputDlg::show(%this, %action, %key)
+{  
+	RemapInputDlg.visible = 1;
+
+	//Temporarily unbind escape.
+	GlobalActionMap.unbind(keyboard, "escape");
+	RemapInputDlgText.setText("Press a key to rebind.");     
+	RemapInputDlgShowKeyText.setText("Rebinding: " @ %action @ ".\nCurrent Key: " @ RemapOptionsGui.formatBinding(getWord(%key, 0) $= "keyboard" || getWord(%key, 0) $= "mouse0" ? getWord(%key, 1) : "") @ ".");  
+
+	RemapInputDlgABtn.setVisible(false);
+	RemapInputDlgBBtn.setVisible(false);
+	
+	RemapInputDlg.add(new GuiInputCtrl(RemapInputDlgInputDetection) {
+		profile = "GuiInputCtrlProfile";
+		horizSizing = "center";
+		vertSizing = "bottom";
+		position = "0 0";
+		extent = "64 64";
+		minExtent = "8 8";
+		visible = "1";
+		helpTag = "0";
+	});
+
+	RemapInputDlgInputDetection.cmd = %action;
+
+	if (!%this.isAwake())
+	{
+		Canvas.pushDialog(RemapInputDlg, 10);   
+	}
+}
+
+function RemapInputDlg::hide(%this)
+{
+	//Rebind escape.
+	GlobalActionMap.bindCmd(keyboard, "escape", "", "pauseOrEscape();");
+
+	RemapInputDlgText.setText("");
+	RemapOptionsGui.rebuildList();
+
+	Canvas.popDialog(RemapInputDlg);   
+}
+
+function RemapInputDlgInputDetection::onInputEvent(%this, %device, %action)
+{
+	if (%device $= "keyboard" || %device $= "mouse0")
+	{
+		//Cancel the rebinding if escape is pressed
+		if (%action $= "escape")
+		{
+			RemapInputDlg.hide();
+		}
+		else
+		{
+			//Check to see if the key is already bound
+			%previousbind = moveMap.getCommand(%device, %action);
+
+			if (%previousbind !$= %this.cmd)
+			{
+				if (%previousbind $= "")
+				{
+					doBindingConfirmation(%device, %action, %this.cmd);
+				}
+				else
+				{
+					RemapInputDlg.tosetDevice = %device;
+					RemapInputDlg.tosetAction = %action;
+					RemapInputDlg.tosetCmd = %this.cmd;	
+
+					RemapInputDlgText.setText("Notice!");     
+					RemapInputDlgShowKeyText.setText(RemapOptionsGui.formatBinding(%action) @ " is already bound to " @ %previousbind @ ". Continue?");  
+					RemapInputDlgABtn.setVisible(true);
+					RemapInputDlgABtn.setText("Yes");
+					RemapInputDlgBBtn.setVisible(true);
+					RemapInputDlgBBtn.setText("No");
+
+					RemapInputDlgABtn.command = "doBindingConfirmation(RemapInputDlg.tosetDevice, RemapInputDlg.tosetAction, RemapInputDlg.tosetCmd);";
+					RemapInputDlgBBtn.command = "RemapInputDlg.hide();";
+				}
+			}
+			else
+			{
+				RemapInputDlg.hide();
+			}
+		}
+	}
+	else
+	{
+		RemapInputDlg.hide();
+	}
+
+	//This will be re-added.
+	RemapInputDlgInputDetection.delete();
+}
+
+function doBindingConfirmation(%device, %action, %cmd)
+{
+	// Do not unbind any non-keyboard/non-mouse keys (seeing as I coded this with only keyb and mouse in mind)
+	if (getWord(moveMap.getBinding(%cmd), 0) $= "keyboard" || getWord(moveMap.getBinding(%cmd), 0) $= "mouse0")
+	{
+		movemap.unbind(getWord(moveMap.getBinding(%cmd), 0), getWord(moveMap.getBinding(%cmd), 1));
+	}
+
+	movemap.bind(%device, %action, %cmd); 
+	RemapInputDlg.hide();
+}
