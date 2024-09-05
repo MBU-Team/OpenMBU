@@ -230,9 +230,14 @@ function RemapOptionsGui::onX(%this)
 function RemapOptionsGui::show(%this, %backGui)
 {
    RemapOptionsGui.rebuildList();
+
+   if ($pref::UI::LegacyUI)
+      RootGui.setA("Select");
+      
    RootGui.setB("Back");
    RootGui.setY("Save Config");
    RootGui.setX("Restore Defaults");
+
    RootGui.setTitle("KEY BINDINGS");
 
    $ROptionsGrid[0, 6] = MoveForwardButton;
