@@ -77,7 +77,7 @@ function miscOptionsGui::show(%this, %backGui)
    // Streamer mode
    
    miscOptionsList.addRow($Text::LobbyHostStreamerMode, $Text::StreamerModeOptions, 8);
-   miscOptionsList.setOptionIndex(2, $pref::Lobby::StreamerMode);
+   miscOptionsList.setOptionIndex(3, $pref::Lobby::StreamerMode);
 
    RootGui.setA( $Text::OK );
    RootGui.setTitle( strupr($Text::HOMiscOptions) );
