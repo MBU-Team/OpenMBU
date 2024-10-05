@@ -9,19 +9,26 @@
 [![CMake on Linux](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml)
 [![CMake on MacOS](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-mac.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-mac.yml)
 
-A reverse engineered version of Marble Blast Ultra that is based on Torque Shader Engine 0.9 (MS4).
+![OpenMBU](https://i.imgur.com/IQYFJku.png)
+
+OpenMBU is a reverse-engineered version of Marble Blast Ultra based on Torque Shader Engine 0.9 (MS4). The game is a puzzle-platformer originally developed by GarageGames and released on January 25, 2006 for the Xbox 360 via Xbox Live Arcade.
+
+Marble Blast Ultra was one of XBLA’s breakout titles, selling over 24,000 copies within the first four days of its launch. It quickly rolled into the [Top Played Xbox Live Games list](https://news.xbox.com/en-us/2006/02/11/marble-blast-rolls-into-the-top-xbox-live-games-list/), sharing the limelight with Halo 2, Call of Duty 2, and Dead or Alive 4.
+
+The game proved popular with Xbox 360 owners early in the console’s life and even throughout it, selling well over 756,000 copies since it was released. Throughout 2006 to 2010, it secured a place in the Top 10 and Top 20 XBLA Top Played Games list. The game was abruptly removed from the Xbox Live Marketplace in February 2011.
+
+OpenMBU is a faithful recreation of the game that brings new features. It includes new controller options, new game modes, fan-made content (levels, skins, mods, etc), Discord Rich Presence, and more.
 
 # Requirements
 - [DirectX 9 Runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=8109)
 
 # Contributors
 - [HumanGamer](https://github.com/HumanGamer) - Leader
-- [NeoTheLynx](https://github.com/neolightning) - Developer & Discord Maintainer
-- [thearst3rd](https://github.com/thearst3rd) - Developer
+- [Hailey Eira](https://github.com/HaileyEira) - Community Manager, Designer, & Contributed Official Dev Builds
 - [RandomityGuy](https://github.com/RandomityGuy) - Developer
+- [thearst3rd](https://github.com/thearst3rd) - Developer
 - [AJ Ferguson](https://github.com/AJ-Ferguson) - Developer
 - [polyrain](https://github.com/polyrain) - Developer
-- [Hailey Eira](https://github.com/HaileyEira) - Designer & Contributed Official Dev Builds
 
 # License
 You may use this to make mods, but your mods must be released for free.
