@@ -9,7 +9,7 @@
 [![CMake on Linux](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml)
 [![CMake on MacOS](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-mac.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-mac.yml)
 
-![OpenMBU](https://i.imgur.com/IQYFJku.png)
+![OpenMBU](https://i.imgur.com/7Ov0mQq.png)
 
 OpenMBU is a reverse-engineered version of Marble Blast Ultra based on Torque Shader Engine 0.9 (MS4). The game is a puzzle-platformer originally developed by GarageGames and released on January 25, 2006 for the Xbox 360 via Xbox Live Arcade.
 
@@ -19,8 +19,15 @@ The game proved popular with Xbox 360 owners early in the console’s life and e
 
 OpenMBU is a faithful recreation of the game that brings new features. It includes new controller options, new game modes, fan-made content (levels, skins, mods, etc), Discord Rich Presence, and more.
 
+# Developers Wanted!
+We are on the lookout for passionate developers to help us grow OpenMBU. If you feel inspired to join us on this journey, please reach out to [Hailey](https://x.com/HaileyEira) on Twitter or get in touch with her [here](https://haileyeira.com/contact/).
+
+# Join our Discord Community
+You can join our Discord server [here](https://discord.gg/SBqT5AxBaY), where you'll find a warm and welcoming community. It's a great place to connect and hang out with other fans and also a great way to keep up to date with the latest news and updates about OpenMBU and all things Marble Blast.
+
 # Requirements
 - [DirectX 9 Runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=8109)
+- [Visual C++ Runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 
 # Contributors
 - [HumanGamer](https://github.com/HumanGamer) - Leader
@@ -29,6 +36,11 @@ OpenMBU is a faithful recreation of the game that brings new features. It includ
 - [thearst3rd](https://github.com/thearst3rd) - Developer
 - [AJ Ferguson](https://github.com/AJ-Ferguson) - Developer
 - [polyrain](https://github.com/polyrain) - Developer
+
+# Links
+- [OpenMBU.com](https://openmbu.com)
+- [MarbleBlastUltra.com](https://marbleblastultra.com)
+- [MBHaxe Port](https://github.com/RandomityGuy/MBHaxe/)
 
 # License
 You may use this to make mods, but your mods must be released for free.
