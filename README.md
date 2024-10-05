@@ -4,6 +4,8 @@
 [![GitHub forks](https://img.shields.io/github/forks/MBU-Team/OpenMBU?label=Forks)](https://GitHub.com/MBU-Team/OpenMBU/network/)
 [![GitHub stars](https://img.shields.io/github/stars/MBU-Team/OpenMBU?label=Stars)](https://GitHub.com/MBU-Team/OpenMBU/stargazers/)
 [![Discord](https://img.shields.io/discord/265605947144142848?color=5865F2&label=Discord&logo=discord&logoColor=white)](https://discord.gg/SBqT5AxBaY)
+[![Twitter](https://img.shields.io/twitter/follow/OpenMBU?style=social)](https://x.com/OpenMBU)
+
 
 [![CMake on Windows](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-windows.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-windows.yml)
 [![CMake on Linux](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/MBU-Team/OpenMBU/actions/workflows/cmake-linux.yml)
@@ -30,16 +32,19 @@ You can join our Discord server [here](https://discord.gg/SBqT5AxBaY), where you
 - [Visual C++ Runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 
 # Contributors
-- [HumanGamer](https://github.com/HumanGamer) - Leader
-- [Hailey Eira](https://github.com/HaileyEira) - Community Manager, Designer, & Contributed Official Dev Builds
-- [RandomityGuy](https://github.com/RandomityGuy) - Developer
-- [thearst3rd](https://github.com/thearst3rd) - Developer
-- [AJ Ferguson](https://github.com/AJ-Ferguson) - Developer
-- [polyrain](https://github.com/polyrain) - Developer
+
+<img src="https://cdn.discordapp.com/emojis/1181352475983356005.webp?size=160&quality=lossless" alt="drawing" width="20"/> [HumanGamer](https://github.com/HumanGamer) - Leader<br>
+<img src="https://cdn.discordapp.com/emojis/1181354802572177448.webp?size=160&quality=lossless" alt="drawing" width="20"/> [Hailey Eira](https://github.com/HaileyEira) - Community Manager, Designer, & Contributed Official Dev Builds<br>
+<img src="https://cdn.discordapp.com/emojis/1181352478181163078.webp?size=160&quality=lossless" alt="drawing" width="20"/> [RandomityGuy](https://github.com/RandomityGuy) - Developer<br>
+<img src="https://cdn.discordapp.com/emojis/1181352485386997862.webp?size=160&quality=lossless" alt="drawing" width="20"/> [thearst3rd](https://github.com/thearst3rd) - Developer<br>
+<img src="https://cdn.discordapp.com/emojis/1181354799778779217.webp?size=160&quality=lossless" alt="drawing" width="20"/> [AJ Ferguson](https://github.com/AJ-Ferguson) - Developer<br>
+<img src="https://cdn.discordapp.com/emojis/1181354800978346166.webp?size=160&quality=lossless" alt="drawing" width="20"/> [polyrain](https://github.com/polyrain) - Developer
 
 # Links
 - [OpenMBU.com](https://openmbu.com)
 - [MarbleBlastUltra.com](https://marbleblastultra.com)
+- [OpenMBU Twitter](https://x.com/OpenMBU)
+- [OpenMBU Discord Server](https://discord.gg/SBqT5AxBaY)
 - [MBHaxe Port](https://github.com/RandomityGuy/MBHaxe/)
 
 # License
