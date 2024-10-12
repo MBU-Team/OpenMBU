@@ -138,7 +138,10 @@ bool Sky::onAdd()
     if (isClientObject() || gSPMode)
     {
         if (!loadDml())
-            return false;
+        {
+            Con::errorf("Failed to load sky material list: %s", mMaterialListName);
+            //return false;
+        }
 
         loadVBPoints();
 
@@ -1419,25 +1422,33 @@ bool Sky::loadDml()
     Stream* stream = ResourceManager->openStream(mMaterialListName);
     if (stream == NULL)
     {
-#if defined(TORQUE_DEBUG)
+//#if defined(TORQUE_DEBUG)
         Con::warnf("Sky material list is missing: %s", mMaterialListName);
-#else
-        // ASSERT?? !!!!!!TBD
-#endif
+//#else
+//        // ASSERT?? !!!!!!TBD
+//#endif
         return false;
     }
     else
     {// !!!!!TBD dhc - there's no fricking error checking here or in materialList.read!!!!
-        mMaterialList.read(*stream);
+        if(!mMaterialList.read(*stream))
+        {
+            Con::warnf("Sky material list is corrupt: %s", mMaterialListName);
+            ResourceManager->closeStream(stream);
+            return false;
+        }
         ResourceManager->closeStream(stream);
         if (!mMaterialList.load(SkyTexture, path))
-            return false;
+        {
+            Con::warnf("Failed to load textures for sky material list: %s", mMaterialListName);
+            //return false;
+        }
 
         for (S32 x = 0; x < 6; ++x)
             mSkyHandle[x] = mMaterialList.getMaterial(x);
 
-        for (S32 x = 0; x < mMaterialList.size() - CloudMaterialOffset; ++x, ++mNumCloudLayers)
-            mCloudLayer[x].setTexture(mMaterialList.getMaterial(x + CloudMaterialOffset));
+        //for (S32 x = 0; x < mMaterialList.size() - CloudMaterialOffset; ++x, ++mNumCloudLayers)
+        //    mCloudLayer[x].setTexture(mMaterialList.getMaterial(x + CloudMaterialOffset));
 
     }
 

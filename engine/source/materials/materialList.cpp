@@ -183,7 +183,10 @@ bool MaterialList::load(const char* path)
         // we need to ignore empty names.
         const char* name = mMaterialNames[i];
         if (name && *name && !mMaterials[i])
+        {
+            //Con::warnf("MaterialList::load - failed to load material: %s", name);
             return false;
+        }
     }
     return true;
 }

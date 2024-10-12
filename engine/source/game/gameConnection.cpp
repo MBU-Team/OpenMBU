@@ -1456,7 +1456,7 @@ void GameConnection::preloadNextDataBlock(bool hadNewFiles)
             // is the one from the last time we tried to add this object
             if (!hadNewFiles)
             {
-                dStrcpy(mErrorBuffer, mLastFileErrorBuffer);
+                //dStrcpy(mErrorBuffer, mLastFileErrorBuffer);
                 ResourceManager->setMissingFileLogging(false);
                 return;
             }
@@ -1472,7 +1472,7 @@ void GameConnection::preloadNextDataBlock(bool hadNewFiles)
             }
 
             // ok, copy the error buffer out to a scratch pad for now
-            dStrcpy(mLastFileErrorBuffer, mErrorBuffer);
+            //dStrcpy(mLastFileErrorBuffer, mErrorBuffer);
             mErrorBuffer[0] = 0;
 
             // request the missing files...
