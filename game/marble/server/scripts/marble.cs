@@ -243,6 +243,34 @@ datablock SFXProfile(SlippingSfx)
    preload = true;
 };
 
+datablock SFXProfile(MediumBounceEmotiveSfx)
+{
+	fileName = "~/data/soundEmotive/mbu_ow1.wav";
+	description = AudioClose3d;
+	preload = 1;
+};
+
+datablock SFXProfile(HardBounceEmotiveSfx)
+{
+	fileName = "~/data/soundEmotive/mbu_ow2.wav";
+	description = AudioClose3d;
+	preload = 1;
+};
+
+datablock SFXProfile(OOBEmotiveSfx)
+{
+	fileName = "~/data/soundEmotive/mbu_oob.wav";
+	description = AudioClose3d;
+	preload = 1;
+};
+
+datablock SFXProfile(SlipEmotiveSfx)
+{
+	fileName = "~/data/soundEmotive/mbu_wee.wav";
+	description = AudioClose3d;
+	preload = 1;
+};
+
 datablock MarbleData(DefaultMarble)
 {
    shapeFile = "~/data/shapes/balls/marble01.dts";
@@ -305,6 +333,8 @@ datablock MarbleData(DefaultMarble)
    mediumBounceImpactShakeDuration = 0.8;
    mediumBounceImpactShakeFalloff = 6;
    mediumBounceImpactShakeFreq = "12 1 1";
+   
+   slipEmotiveThreshold = 4.5;
    
    cameraDecay = 4;
    cameraLag = 0.1;
@@ -626,4 +656,51 @@ function metricsMarble()
 {
    Canvas.pushDialog(FrameOverlayGui, 1000);
    TextOverlayControl.setValue("$MarbleVelocity");
+}
+
+function Marble::onEmotive(%this, %emotive)
+{
+    if (!$Marble::UseEmotives)
+        return;
+
+	if (%emotive $= "Bounce1" || %emotive $= "Bounce2" || %emotive $= "Bounce3" || %emotive $= "Bounce4")
+	{
+		return;
+	}
+
+	if (%emotive $= "Slipping")
+	{
+       // TODO: apparently playAudio doesn't work on client side in OpenMBU?
+       //%this.playAudio(0, SlipEmotiveSfx);
+       //sfxPlay(SlipEmotiveSfx, %this.getPosition());
+	}
+	else if (%emotive $= "OOB")
+	{
+        // TODO: apparently playAudio doesn't work on client side in OpenMBU?
+		//%this.playAudio(0, OOBEmotiveSfx);
+        sfxPlay(OOBEmotiveSfx, %this.getPosition());
+	}
+	else if (%emotive $= "Win")
+	{
+
+	}
+	else if (%emotive $= "SoftBounce")
+	{
+
+	}
+	else if (%emotive $= "MediumBounce")
+	{
+        // TODO: apparently playAudio doesn't work on client side in OpenMBU?
+		//%this.playAudio(0, MediumBounceEmotiveSfx);
+        sfxPlay(MediumBounceEmotiveSfx, %this.getPosition());
+	}
+	else if (%emotive $= "HardBounce")
+	{
+        // MBXP Star Spinning animation:
+		//%this.playRingThread(1, 0.5, 0.1, 300);
+        
+        // TODO: apparently playAudio doesn't work on client side in OpenMBU?
+		//%this.playAudio(0, HardBounceEmotiveSfx);
+        sfxPlay(HardBounceEmotiveSfx, %this.getPosition());
+	}
 }

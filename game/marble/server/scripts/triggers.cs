@@ -21,6 +21,10 @@ function InBoundsTrigger::onLeaveTrigger(%this,%trigger,%obj)
 {
    // Leaving an in bounds area.
    %obj.getDatablock().onOutOfBounds(%obj);
+   if ($Marble::UseEmotives)
+   {
+      %obj.onEmotive("OOB");
+   }
 }
 
 

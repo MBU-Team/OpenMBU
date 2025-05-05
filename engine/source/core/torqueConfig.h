@@ -82,6 +82,9 @@
 // Define me to enable MarbleBlastXP camera shake
 //#define MBXP_CAMERA_SHAKE
 
+// Define me to enable MarbleBlastXP emotives
+//#define MBXP_EMOTIVES
+
 // If Ultra is not defined, define Gold
 #if defined(MARBLE_BLAST) && !defined(MB_ULTRA) && !defined(MB_GOLD)
 #define MB_ULTRA

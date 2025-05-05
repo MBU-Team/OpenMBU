@@ -360,6 +360,10 @@ public:
     static Vector<Marble*> marbles;
     static ConcretePolyList polyList;
 
+#ifdef MBXP_EMOTIVES
+    static bool smUseEmotives;
+#endif
+
 #ifdef MB_PHYSICS_SWITCHABLE
     static bool smTrapLaunch;
 #endif
@@ -457,6 +461,8 @@ private:
     Point3F HardBounceImpactShakeAmp;
     F32 HardBounceImpactShakeDuration;
     F32 HardBounceImpactShakeFalloff;
+
+    F32 slipEmotiveThreshold;
 
 public:
     DECLARE_CONOBJECT(MarbleData);

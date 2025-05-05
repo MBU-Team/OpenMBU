@@ -31,6 +31,9 @@ static U32 sCameraCollisionMask = InteriorObjectType | StaticShapeObjectType;
 IMPLEMENT_CO_NETOBJECT_V1(Marble);
 
 U32 Marble::smEndPadId = 0;
+#ifdef MBXP_EMOTIVES
+bool Marble::smUseEmotives = true;
+#endif
 SimObjectPtr<StaticShape> Marble::smEndPad = NULL;
 Vector<PathedInterior*> Marble::smPathItrVec;
 Vector<Marble*> Marble::marbles;
@@ -1521,6 +1524,21 @@ void Marble::updateRollSound(F32 contactPct, F32 slipAmount)
             if (slipVolume > 1.0)
                 slipVolume = 1.0;
             rollVolume = (1.0 - slipVolume) * rollVolume;
+
+#ifdef MBXP_EMOTIVES
+#ifdef MB_ULTRA_PREVIEWS
+            if (isGhost() || gSPMode)
+#else
+            if (isGhost())
+#endif
+            {
+                if ((mMode & MoveMode) != 0 && mDataBlock->slipEmotiveThreshold <= slipAmount && !mBounceEmitDelay)
+                {
+                    mBounceEmitDelay = 300;
+                    Con::executef(this, 2, "onEmotive", "Slipping");
+                }
+            }
+#endif
         }
         if (mRollHandle)
             mRollHandle->setVolume(rollVolume * regAmt);
@@ -2691,6 +2709,8 @@ MarbleData::MarbleData()
     HardBounceImpactShakeAmp = Point3F(3.0f, 3.0f, 3.0f);
     HardBounceImpactShakeDuration = 0.24f;
     HardBounceImpactShakeFalloff = 6.0f;
+
+    slipEmotiveThreshold = 2.0f;
 }
 
 void MarbleData::initPersistFields()
@@ -2759,6 +2779,11 @@ void MarbleData::initPersistFields()
     addField("HardBounceImpactShakeDuration", TypeF32, Offset(HardBounceImpactShakeDuration, MarbleData));
     addField("HardBounceImpactShakeFalloff", TypeF32, Offset(HardBounceImpactShakeFalloff, MarbleData));
 
+#ifdef MBXP_EMOTIVES
+    Con::addVariable("Marble::UseEmotives", TypeBool, &Marble::smUseEmotives);
+#endif
+
+    addField("slipEmotiveThreshold", TypeF32, Offset(slipEmotiveThreshold, MarbleData));
 
     Parent::initPersistFields();
 }
@@ -2820,6 +2845,8 @@ void MarbleData::packData(BitStream* stream)
     stream->write(MediumBounceImpactShakeFalloff);
     stream->write(HardBounceImpactShakeDuration);
     stream->write(HardBounceImpactShakeFalloff);
+
+    stream->write(slipEmotiveThreshold);
 
     if (stream->writeFlag(bounceEmitter != NULL))
         stream->writeRangedU32(bounceEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
@@ -2884,6 +2911,8 @@ void MarbleData::unpackData(BitStream* stream)
     stream->read(&MediumBounceImpactShakeFalloff);
     stream->read(&HardBounceImpactShakeDuration);
     stream->read(&HardBounceImpactShakeFalloff);
+
+    stream->read(&slipEmotiveThreshold);
 
     if (stream->readFlag())
         Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), bounceEmitter);
