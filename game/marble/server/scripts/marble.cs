@@ -287,6 +287,10 @@ datablock MarbleData(DefaultMarble)
    
    minBounceSpeed = 3;           // Bounce threshold
    bounceEmitter = MarbleBounceEmitter;
+   
+   cameraDecay = 4;
+   cameraLag = 0.1;
+   cameraLagMaxOffset = 2.2;
 
    powerUps = PowerUpDefs;
 

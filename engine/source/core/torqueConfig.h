@@ -73,6 +73,9 @@
 // Define me to enable MarbleBlastGold specific features
 //#define MB_GOLD
 
+// Define me to enable MarbleBlastXP dynamic camera
+//#define MBXP_DYNAMIC_CAMERA
+
 // If Ultra is not defined, define Gold
 #if defined(MARBLE_BLAST) && !defined(MB_ULTRA) && !defined(MB_GOLD)
 #define MB_ULTRA

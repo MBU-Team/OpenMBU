@@ -151,6 +151,8 @@ Marble::Marble()
     mPhysics = MBU;
 
     mSize = 1.5f;
+
+    mCameraPosition = Point3F(0.0f, 0.0f, 0.0f);
 }
 
 Marble::~Marble()
@@ -1877,6 +1879,35 @@ void Marble::advanceTime(F32 dt)
         dMemcpy(mRenderObjToWorld, mObjToWorld, sizeof(MatrixF));
         mRenderObjToWorld.setColumn(3, renderPos);
     }
+
+#ifdef MBXP_DYNAMIC_CAMERA
+    Point3F velLag = mVelocity * mDataBlock->cameraLag;
+    Point3F newVel = mCameraPosition * mDataBlock->cameraDecay + velLag;
+    mCameraPosition -= newVel * dt;
+
+    F32 camLagMaxOffset = mDataBlock->cameraLagMaxOffset;
+
+    F32 x = mCameraPosition.x;
+    if (camLagMaxOffset < x)
+        x = camLagMaxOffset;
+    else if (-camLagMaxOffset >= x)
+        x = -camLagMaxOffset;
+    mCameraPosition.x = x;
+
+    F32 y = mCameraPosition.y;
+    if (camLagMaxOffset < y)
+        y = camLagMaxOffset;
+    else if (-camLagMaxOffset >= y)
+        y = -camLagMaxOffset;
+    mCameraPosition.y = y;
+
+    F32 z = mCameraPosition.z;
+    if (camLagMaxOffset < z)
+        z = camLagMaxOffset;
+    else if (-camLagMaxOffset >= z)
+        z = -camLagMaxOffset;
+    mCameraPosition.z = z;
+#endif
 }
 
 void Marble::computeNetSmooth(F32 backDelta)
@@ -2617,6 +2648,10 @@ MarbleData::MarbleData()
 
     // Enable Shadows
     //shadowEnable = true;
+
+    cameraLag = 0.0f;
+    cameraDecay = 0.0f;
+    cameraLagMaxOffset = 0.0f;
 }
 
 void MarbleData::initPersistFields()
@@ -2640,6 +2675,11 @@ void MarbleData::initPersistFields()
     addField("minBounceVel", TypeF32, Offset(minBounceVel, MarbleData));
     addField("minTrailSpeed", TypeF32, Offset(minTrailSpeed, MarbleData));
     addField("minBounceSpeed", TypeF32, Offset(minBounceSpeed, MarbleData));
+
+    addField("cameraLag", TypeF32, Offset(cameraLag, MarbleData));
+    addField("cameraDecay", TypeF32, Offset(cameraDecay, MarbleData));
+    addField("cameraLagMaxOffset", TypeF32, Offset(cameraLagMaxOffset, MarbleData));
+
     addField("bounceEmitter", TypeParticleEmitterDataPtr, Offset(bounceEmitter, MarbleData));
     addField("trailEmitter", TypeParticleEmitterDataPtr, Offset(trailEmitter, MarbleData));
     addField("mudEmitter", TypeParticleEmitterDataPtr, Offset(mudEmitter, MarbleData));
@@ -2704,6 +2744,9 @@ void MarbleData::packData(BitStream* stream)
     stream->write(minBounceSpeed);
     stream->write(blastRechargeTime);
     stream->write(maxNaturalBlastRecharge);
+    stream->write(cameraDecay);
+    stream->write(cameraLag);
+    stream->write(cameraLagMaxOffset);
 
     if (stream->writeFlag(bounceEmitter != NULL))
         stream->writeRangedU32(bounceEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
@@ -2750,6 +2793,9 @@ void MarbleData::unpackData(BitStream* stream)
     stream->read(&minBounceSpeed);
     stream->read(&blastRechargeTime);
     stream->read(&maxNaturalBlastRecharge);
+    stream->read(&cameraDecay);
+    stream->read(&cameraLag);
+    stream->read(&cameraLagMaxOffset);
 
     if (stream->readFlag())
         Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), bounceEmitter);

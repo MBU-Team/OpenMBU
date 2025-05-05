@@ -230,6 +230,8 @@ private:
 
     F32 mSize;
 
+    Point3F mCameraPosition;
+
 public:
     DECLARE_CONOBJECT(Marble);
 
@@ -433,6 +435,11 @@ private:
     U32 maxNaturalBlastRecharge;
     DecalData* mDecalData;
     S32 mDecalID;
+
+    F32 cameraLag;
+    F32 cameraDecay;
+
+    F32 cameraLagMaxOffset;
 
 public:
     DECLARE_CONOBJECT(MarbleData);
