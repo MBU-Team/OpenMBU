@@ -667,13 +667,16 @@ moveMap.bind(keyboard, "alt c", toggleCamera);
 moveMap.bindCmd( keyboard, y, "togglePlayerListLength();", "" );
 
 moveMap.bind(keyboard, "t", GlobalChat);
-moveMap.bind(keyboard, "ENTER", GlobalChat);
+
+// With my thing, people could just rebind GlobalChat to enter if they want, so I don't think this extra bind is needed anymore. ~Connie
+//moveMap.bind(keyboard, "ENTER", GlobalChat);
 //moveMap.bind(keyboard, "y", TeamChat);
 
 // Extra binds
 // ------------
-moveMap.bind( keyboard, q, mouseFire );
-moveMap.bind( keyboard, e, altTrigger );
+// Ditto from me commenting out the "ENTER" bind to GlobalChat up above. ~Connie
+//moveMap.bind( keyboard, q, mouseFire );
+//moveMap.bind( keyboard, e, altTrigger );
 
 moveMap.bind( keyboard, left, turnLeft );
 moveMap.bind( keyboard, right, turnRight );

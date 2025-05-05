@@ -51,10 +51,12 @@ function HelpAndOptionsGui::onA(%this)
       case 3: 
          RootGui.setContent(miscOptionsGui, %this.backGui);
       case 4: 
-         RootGui.setContent(aboutMenuOptionsGui, %this.backGui);
+         RootGui.setContent(RemapOptionsGui, %this.backGui);
       case 5:
-         RootGui.setContent(helpGui, %this.backGui, 5);
+         RootGui.setContent(aboutMenuOptionsGui, %this.backGui);
       case 6:
+         RootGui.setContent(helpGui, %this.backGui, 5);
+      case 7:
          Canvas.pushDialog(enterNameGui);
    }
     
@@ -75,6 +77,7 @@ function HelpAndOptionsGui::show(%this, %backGui)
    HelpAndOptionsList.addRow($Text::HOOptions, "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOVideoOptions, "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOMiscOptions, "", 0, 8);
+   HelpAndOptionsList.addRow("Reconfigure Keybinds", "", 0, 8);
    HelpAndOptionsList.addRow($Text::HOInstructions, "", 0, 12);
    HelpAndOptionsList.addRow($Text::HOCredits, "", 0, 12);
    HelpAndOptionsList.addRow("Set Gamertag", "", 0, 12);
