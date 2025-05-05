@@ -643,6 +643,10 @@ void NetConnection::checkPacketSend(bool force)
         return;
     }
     sendPacket(stream);
+#ifdef TORQUE_FORCE_PROCESS_ALL_LOCAL_PACKETS
+    if (isLocalConnection() && stream->isFull())
+        checkPacketSend(force);
+#endif
     checkFastFile();
 }
 

@@ -61,6 +61,9 @@
 /// Define to enable new faster file transfer protocol
 #define TORQUE_FAST_FILE_TRANSFER
 
+/// Define me to force process all local packets at once
+#define TORQUE_FORCE_PROCESS_ALL_LOCAL_PACKETS
+
 //-----------------------------------------------------------------------------
 // Marble Blast related configuration defines
 
