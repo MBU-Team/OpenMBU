@@ -5,6 +5,7 @@
 
 #include "marble.h"
 #include "game/gameProcess.h"
+#include "game/fx/cameraFXMgr.h"
 
 //----------------------------------------------------------------------------
 
@@ -510,6 +511,14 @@ void Marble::getCameraTransform(F32* pos, MatrixF* mat)
     mat->setColumn(3, mCameraPosition + position);
 #else
     mat->setColumn(3, position);
+#endif
+
+#ifdef MBXP_CAMERA_SHAKE
+    MatrixF camFX = gCamFXMgr.getTrans();
+    if (!camFX.isIdentity())
+    {
+        mat->mul(camFX);
+    }
 #endif
 }
 

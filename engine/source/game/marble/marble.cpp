@@ -13,6 +13,8 @@
 #include "materials/matInstance.h"
 #include "sceneGraph/sceneGraph.h"
 #include "core/bitStream.h"
+#include "game/fx/cameraFXMgr.h"
+#include "game/gameConnection.h"
 #include "sfx/sfxSystem.h"
 
 //----------------------------------------------------------------------------
@@ -459,6 +461,16 @@ void Marble::interpolateTick(F32 delta)
         Con::executef(playGui, 3, "updateTimer", ftime, bonusTime);
         //Con::evaluatef("PlayGui.updateTimer(%i,%i);", finalMarbleTime, marbleBonusTime != 0);
     }
+
+#ifdef MBXP_CAMERA_SHAKE
+    GameConnection* connection = GameConnection::getConnectionToServer();
+    if( connection && connection->isFirstPerson() && connection->getControlObject() == this)
+    {
+        MatrixF newMat = mRenderObjToWorld;
+        newMat.mul(gCamFXMgr.getTrans());
+        setRenderTransform(newMat);
+    }
+#endif
 }
 
 S32 Marble::mountPowerupImage(ShapeBaseImageData* imageData)
@@ -1908,6 +1920,12 @@ void Marble::advanceTime(F32 dt)
         z = -camLagMaxOffset;
     mCameraPosition.z = z;
 #endif
+
+#ifdef MBXP_CAMERA_SHAKE
+    GameConnection* connection = GameConnection::getConnectionToServer();
+    if( connection && connection->isFirstPerson() && connection->getControlObject() == this)
+        gCamFXMgr.update(dt);
+#endif
 }
 
 void Marble::computeNetSmooth(F32 backDelta)
@@ -1949,6 +1967,10 @@ bool Marble::onAdd()
     }
 
     addToScene();
+
+#ifdef MBXP_CAMERA_SHAKE
+    gCamFXMgr.clear();
+#endif
 
     return true;
 }
@@ -2635,6 +2657,8 @@ MarbleData::MarbleData()
     minBounceVel = 0.1f;
     minTrailSpeed = 10.0f;
     minBounceSpeed = 1.0f;
+    minMediumBounceSpeed = 20.0f;
+    minHardBounceSpeed = 30.0f;
     dMemset(sound, 0, sizeof(sound));
     genericShadowLevel = Player_GenericShadowLevel;
     noShadowLevel = Player_NoShadowLevel;
@@ -2652,6 +2676,21 @@ MarbleData::MarbleData()
     cameraLag = 0.0f;
     cameraDecay = 0.0f;
     cameraLagMaxOffset = 0.0f;
+
+    SoftBounceImpactShakeFreq = Point3F(0.0f, 0.0f, 0.0f);
+    SoftBounceImpactShakeAmp = Point3F(0.0f, 0.0f, 0.0f);
+    SoftBounceImpactShakeDuration = 0.0f;
+    SoftBounceImpactShakeFalloff = 0.0f;
+
+    MediumBounceImpactShakeFreq = Point3F(1.0f, 1.0f, 1.0f);
+    MediumBounceImpactShakeAmp = Point3F(1.0f, 1.0f, 1.0f);
+    MediumBounceImpactShakeDuration = 0.08f;
+    MediumBounceImpactShakeFalloff = 2.0f;
+
+    HardBounceImpactShakeFreq = Point3F(3.0f, 3.0f, 3.0f);
+    HardBounceImpactShakeAmp = Point3F(3.0f, 3.0f, 3.0f);
+    HardBounceImpactShakeDuration = 0.24f;
+    HardBounceImpactShakeFalloff = 6.0f;
 }
 
 void MarbleData::initPersistFields()
@@ -2676,6 +2715,9 @@ void MarbleData::initPersistFields()
     addField("minTrailSpeed", TypeF32, Offset(minTrailSpeed, MarbleData));
     addField("minBounceSpeed", TypeF32, Offset(minBounceSpeed, MarbleData));
 
+    addField("minMediumBounceSpeed", TypeF32, Offset(minMediumBounceSpeed, MarbleData));
+    addField("minHardBounceSpeed", TypeF32, Offset(minHardBounceSpeed, MarbleData));
+
     addField("cameraLag", TypeF32, Offset(cameraLag, MarbleData));
     addField("cameraDecay", TypeF32, Offset(cameraDecay, MarbleData));
     addField("cameraLagMaxOffset", TypeF32, Offset(cameraLagMaxOffset, MarbleData));
@@ -2687,20 +2729,36 @@ void MarbleData::initPersistFields()
     addField("powerUps", TypeGameBaseDataPtr, Offset(powerUps, MarbleData));
     addField("blastRechargeTime", TypeS32, Offset(blastRechargeTime, MarbleData));
     addField("maxNaturalBlastRecharge", TypeS32, Offset(maxNaturalBlastRecharge, MarbleData));
-    addField("RollHardSound", TypeSFXProfilePtr, Offset(sound[0], MarbleData));
-    addField("RollMegaSound", TypeSFXProfilePtr, Offset(sound[1], MarbleData));
-    addField("RollIceSound", TypeSFXProfilePtr, Offset(sound[2], MarbleData));
-    addField("SlipSound", TypeSFXProfilePtr, Offset(sound[3], MarbleData));
-    addField("Bounce1", TypeSFXProfilePtr, Offset(sound[4], MarbleData));
-    addField("Bounce2", TypeSFXProfilePtr, Offset(sound[5], MarbleData));
-    addField("Bounce3", TypeSFXProfilePtr, Offset(sound[6], MarbleData));
-    addField("Bounce4", TypeSFXProfilePtr, Offset(sound[7], MarbleData));
-    addField("MegaBounce1", TypeSFXProfilePtr, Offset(sound[8], MarbleData));
-    addField("MegaBounce2", TypeSFXProfilePtr, Offset(sound[9], MarbleData));
-    addField("MegaBounce3", TypeSFXProfilePtr, Offset(sound[10], MarbleData));
-    addField("MegaBounce4", TypeSFXProfilePtr, Offset(sound[11], MarbleData));
-    addField("JumpSound", TypeSFXProfilePtr, Offset(sound[12], MarbleData));
+    addField("RollHardSound", TypeSFXProfilePtr, Offset(sound[RollHard], MarbleData));
+    addField("RollMegaSound", TypeSFXProfilePtr, Offset(sound[RollMega], MarbleData));
+    addField("RollIceSound", TypeSFXProfilePtr, Offset(sound[RollIce], MarbleData));
+    addField("SlipSound", TypeSFXProfilePtr, Offset(sound[Slip], MarbleData));
+    addField("Bounce1", TypeSFXProfilePtr, Offset(sound[Bounce1], MarbleData));
+    addField("Bounce2", TypeSFXProfilePtr, Offset(sound[Bounce2], MarbleData));
+    addField("Bounce3", TypeSFXProfilePtr, Offset(sound[Bounce3], MarbleData));
+    addField("Bounce4", TypeSFXProfilePtr, Offset(sound[Bounce4], MarbleData));
+    addField("MegaBounce1", TypeSFXProfilePtr, Offset(sound[MegaBounce1], MarbleData));
+    addField("MegaBounce2", TypeSFXProfilePtr, Offset(sound[MegaBounce2], MarbleData));
+    addField("MegaBounce3", TypeSFXProfilePtr, Offset(sound[MegaBounce3], MarbleData));
+    addField("MegaBounce4", TypeSFXProfilePtr, Offset(sound[MegaBounce4], MarbleData));
+    addField("JumpSound", TypeSFXProfilePtr, Offset(sound[Jump], MarbleData));
     Con::addVariable("Game::endPad", TypeS32, &Marble::smEndPadId);
+
+    addField("SoftBounceImpactShakeFreq", TypePoint3F, Offset(SoftBounceImpactShakeFreq, MarbleData));
+    addField("SoftBounceImpactShakeAmp", TypePoint3F, Offset(SoftBounceImpactShakeAmp, MarbleData));
+    addField("SoftBounceImpactShakeDuration", TypeF32, Offset(SoftBounceImpactShakeDuration, MarbleData));
+    addField("SoftBounceImpactShakeFalloff", TypeF32, Offset(SoftBounceImpactShakeFalloff, MarbleData));
+
+    addField("MediumBounceImpactShakeFreq", TypePoint3F, Offset(MediumBounceImpactShakeFreq, MarbleData));
+    addField("MediumBounceImpactShakeAmp", TypePoint3F, Offset(MediumBounceImpactShakeAmp, MarbleData));
+    addField("MediumBounceImpactShakeDuration", TypeF32, Offset(MediumBounceImpactShakeDuration, MarbleData));
+    addField("MediumBounceImpactShakeFalloff", TypeF32, Offset(MediumBounceImpactShakeFalloff, MarbleData));
+
+    addField("HardBounceImpactShakeFreq", TypePoint3F, Offset(HardBounceImpactShakeFreq, MarbleData));
+    addField("HardBounceImpactShakeAmp", TypePoint3F, Offset(HardBounceImpactShakeAmp, MarbleData));
+    addField("HardBounceImpactShakeDuration", TypeF32, Offset(HardBounceImpactShakeDuration, MarbleData));
+    addField("HardBounceImpactShakeFalloff", TypeF32, Offset(HardBounceImpactShakeFalloff, MarbleData));
+
 
     Parent::initPersistFields();
 }
@@ -2742,11 +2800,26 @@ void MarbleData::packData(BitStream* stream)
     stream->write(minBounceVel);
     stream->write(minTrailSpeed);
     stream->write(minBounceSpeed);
+    stream->write(minMediumBounceSpeed);
+    stream->write(minHardBounceSpeed);
     stream->write(blastRechargeTime);
     stream->write(maxNaturalBlastRecharge);
     stream->write(cameraDecay);
     stream->write(cameraLag);
     stream->write(cameraLagMaxOffset);
+
+    mathWrite(*stream, SoftBounceImpactShakeAmp);
+    mathWrite(*stream, SoftBounceImpactShakeFreq);
+    mathWrite(*stream, MediumBounceImpactShakeAmp);
+    mathWrite(*stream, MediumBounceImpactShakeFreq);
+    mathWrite(*stream, HardBounceImpactShakeAmp);
+    mathWrite(*stream, HardBounceImpactShakeFreq);
+    stream->write(SoftBounceImpactShakeDuration);
+    stream->write(SoftBounceImpactShakeFalloff);
+    stream->write(MediumBounceImpactShakeDuration);
+    stream->write(MediumBounceImpactShakeFalloff);
+    stream->write(HardBounceImpactShakeDuration);
+    stream->write(HardBounceImpactShakeFalloff);
 
     if (stream->writeFlag(bounceEmitter != NULL))
         stream->writeRangedU32(bounceEmitter->getId(), DataBlockObjectIdFirst, DataBlockObjectIdLast);
@@ -2791,11 +2864,26 @@ void MarbleData::unpackData(BitStream* stream)
     stream->read(&minBounceVel);
     stream->read(&minTrailSpeed);
     stream->read(&minBounceSpeed);
+    stream->read(&minMediumBounceSpeed);
+    stream->read(&minHardBounceSpeed);
     stream->read(&blastRechargeTime);
     stream->read(&maxNaturalBlastRecharge);
     stream->read(&cameraDecay);
     stream->read(&cameraLag);
     stream->read(&cameraLagMaxOffset);
+
+    mathRead(*stream, &SoftBounceImpactShakeAmp);
+    mathRead(*stream, &SoftBounceImpactShakeFreq);
+    mathRead(*stream, &MediumBounceImpactShakeAmp);
+    mathRead(*stream, &MediumBounceImpactShakeFreq);
+    mathRead(*stream, &HardBounceImpactShakeAmp);
+    mathRead(*stream, &HardBounceImpactShakeFreq);
+    stream->read(&SoftBounceImpactShakeDuration);
+    stream->read(&SoftBounceImpactShakeFalloff);
+    stream->read(&MediumBounceImpactShakeDuration);
+    stream->read(&MediumBounceImpactShakeFalloff);
+    stream->read(&HardBounceImpactShakeDuration);
+    stream->read(&HardBounceImpactShakeFalloff);
 
     if (stream->readFlag())
         Sim::findObject(stream->readRangedU32(DataBlockObjectIdFirst, DataBlockObjectIdLast), bounceEmitter);

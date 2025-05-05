@@ -425,6 +425,8 @@ private:
     U32 startModeTime;
     U32 stopModeTime;
     F32 minBounceSpeed;
+    F32 minMediumBounceSpeed;
+    F32 minHardBounceSpeed;
     F32 minTrailSpeed;
     ParticleEmitterData* bounceEmitter;
     ParticleEmitterData* trailEmitter;
@@ -440,6 +442,21 @@ private:
     F32 cameraDecay;
 
     F32 cameraLagMaxOffset;
+
+    Point3F SoftBounceImpactShakeFreq;
+    Point3F SoftBounceImpactShakeAmp;
+    F32 SoftBounceImpactShakeDuration;
+    F32 SoftBounceImpactShakeFalloff;
+
+    Point3F MediumBounceImpactShakeFreq;
+    Point3F MediumBounceImpactShakeAmp;
+    F32 MediumBounceImpactShakeDuration;
+    F32 MediumBounceImpactShakeFalloff;
+
+    Point3F HardBounceImpactShakeFreq;
+    Point3F HardBounceImpactShakeAmp;
+    F32 HardBounceImpactShakeDuration;
+    F32 HardBounceImpactShakeFalloff;
 
 public:
     DECLARE_CONOBJECT(MarbleData);

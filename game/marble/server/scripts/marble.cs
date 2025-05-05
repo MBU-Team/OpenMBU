@@ -287,6 +287,24 @@ datablock MarbleData(DefaultMarble)
    
    minBounceSpeed = 3;           // Bounce threshold
    bounceEmitter = MarbleBounceEmitter;
+   softBounceImpactShakeAmp = "0.025 0.025 0.025";
+   softBounceImpactShakeDuration = 0.6;
+   softBounceImpactShakeFalloff = 6;
+   softBounceImpactShakeFreq = "13 0 0";
+   
+   minHardBounceSpeed = 9;
+   hardBounceEmitter = MarbleHardBounceEmitter;
+   hardBounceImpactShakeAmp = "0.2 0.2 0.2";
+   hardBounceImpactShakeDuration = 1.1;
+   hardBounceImpactShakeFalloff = 5;
+   hardBounceImpactShakeFreq = "10 3 3";
+   
+   minMediumBounceSpeed = 6;
+   mediumBounceEmitter = MarbleMediumBounceEmitter;
+   mediumBounceImpactShakeAmp = "0.1 0.1 0.1";
+   mediumBounceImpactShakeDuration = 0.8;
+   mediumBounceImpactShakeFalloff = 6;
+   mediumBounceImpactShakeFreq = "12 1 1";
    
    cameraDecay = 4;
    cameraLag = 0.1;
