@@ -397,7 +397,7 @@ private:
         MaxSounds,
     };
 
-    SFXProfile* sound[13];
+    SFXProfile* sound[MaxSounds];
     F32 maxRollVelocity;
     F32 minVelocityBounceSoft;
     F32 minVelocityBounceHard;
