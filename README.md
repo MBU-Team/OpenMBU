@@ -1,4 +1,4 @@
-![OpenMBU](https://i.imgur.com/7Ov0mQq.png)
+<a href="https://marbleblastultra.com/"><img src="https://i.imgur.com/o0XkkgE.gif"></a>
 <br>&nbsp;</br>
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/MBU-Team/OpenMBU?include_prereleases&label=Release)](https://github.com/MBU-Team/OpenMBU/releases)
 [![Github all releases](https://img.shields.io/github/downloads/MBU-Team/OpenMBU/total?color=blue&label=Downloads)](https://GitHub.com/MBU-Team/OpenMBU/releases/)
@@ -22,7 +22,13 @@ OpenMBU is a faithful recreation of the game that brings new features. It includ
 
 ![DevsWanted](https://i.imgur.com/ZI7dFR4.png)
 
-We are on the lookout for passionate developers to help us grow OpenMBU. If you feel inspired to join us on this journey, please reach out to [Hailey](https://x.com/HaileyEira) on Twitter or get in touch with her [here](https://haileyeira.com/contact/).
+We’re looking for passionate developers to help us grow OpenMBU. If you feel inspired to join us and have any of the skills below, please reach out to [Hailey](https://x.com/HaileyEira) on Twitter or contact her [here](https://haileyeira.com/contact/).
+
+- C++
+- PHP
+- JavaScript
+- Fullstack Experience
+- Game Development Experience
 
 ![Discord](https://i.imgur.com/Qc7kc34.png)
 
@@ -32,7 +38,7 @@ You can join our Discord server [here](https://discord.gg/SBqT5AxBaY)! It's a wa
 - [DirectX 9 Runtime](https://www.microsoft.com/en-ca/download/details.aspx?id=8109)
 - [Visual C++ Runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 
-![TheTeam](https://i.imgur.com/C09RY9u.png)
+<a href="https://marbleblastultra.com/the-team/"><img src="https://i.imgur.com/C09RY9u.png"></a>
 
 <img src="https://cdn.discordapp.com/emojis/1181352475983356005.webp?size=160&quality=lossless" alt="drawing" width="20"/> [HumanGamer](https://github.com/HumanGamer) - Leader<br>
 <img src="https://cdn.discordapp.com/emojis/1181354802572177448.webp?size=160&quality=lossless" alt="drawing" width="20"/> [Hailey Eira](https://github.com/HaileyEira) - Community Manager, Designer, & Contributed Official Dev Builds<br>
