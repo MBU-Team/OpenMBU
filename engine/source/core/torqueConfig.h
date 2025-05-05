@@ -77,10 +77,10 @@
 //#define MB_GOLD
 
 // Define me to enable MarbleBlastXP dynamic camera
-#define MBXP_DYNAMIC_CAMERA
+//#define MBXP_DYNAMIC_CAMERA
 
 // Define me to enable MarbleBlastXP camera shake
-#define MBXP_CAMERA_SHAKE
+//#define MBXP_CAMERA_SHAKE
 
 // If Ultra is not defined, define Gold
 #if defined(MARBLE_BLAST) && !defined(MB_ULTRA) && !defined(MB_GOLD)
