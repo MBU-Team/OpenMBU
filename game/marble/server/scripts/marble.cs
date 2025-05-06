@@ -337,8 +337,8 @@ datablock MarbleData(DefaultMarble)
    slipEmotiveThreshold = 4.5;
    
    cameraDecay = 4;
-   cameraLag = 0.1;
-   cameraLagMaxOffset = 2.2;
+   cameraLag = 0.2; //0.1;
+   cameraLagMaxOffset = 4.2; //2.2;
 
    powerUps = PowerUpDefs;
 
