@@ -384,7 +384,6 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 
                         F32 bounceSpeed = sVel.len() * restitution;
                         Point3F bounceNormal = contact->normal;
-                        bounceEmitter(bounceSpeed, bounceNormal);
 #if defined(MBXP_CAMERA_SHAKE) || defined(MBXP_EMOTIVES)
 #ifdef MB_ULTRA_PREVIEWS
                         if (isGhost() || gSPMode)
@@ -400,8 +399,10 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
                             else if (mDataBlock->minBounceSpeed <= bounceSpeed)
                                 bounceType = 1;
 
-                            if (bounceType > 0)
+                            if (bounceType > 0 && !mBounceEmitDelay)
                             {
+                                bounceEmitter(bounceSpeed, bounceNormal);
+                                mBounceEmitDelay = 300;
 #ifdef MBXP_CAMERA_SHAKE
                                 auto cameraShake = new CameraShake;
 #endif
@@ -455,6 +456,8 @@ void Marble::velocityCancel(bool surfaceSlide, bool noBounce, bool& bouncedYet, 
 #endif
                             }
                         }
+#else
+                        bounceEmitter(bounceSpeed, bounceNormal);
 #endif
 
                         vAtC -= contact->normal * mDot(contact->normal, sVel);
