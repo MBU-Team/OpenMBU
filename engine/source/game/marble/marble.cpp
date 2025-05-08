@@ -1890,10 +1890,11 @@ void Marble::advanceTime(F32 dt)
     }
 
     trailEmitter(deltaTime);
-    bool resetBounceEmitDelay = mBounceEmitDelay - deltaTime < 0;
-    mBounceEmitDelay--;
-    if (resetBounceEmitDelay)
+
+    if (mBounceEmitDelay - deltaTime < 0)
         mBounceEmitDelay = 0;
+    else
+        mBounceEmitDelay -= deltaTime;
 
     if (mOmega.len() > 0.000001)
     {
