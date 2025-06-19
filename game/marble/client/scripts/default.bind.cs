@@ -106,6 +106,8 @@ function escapeFromGame(%forcePreviewMode) // its ok for this to be empty, defau
 {  
    $Client::willfullDisconnect = true;
    
+   autosplitterSetQuitToMenu(true);
+
    %killMission = MissionLoadingGui.isAwake();
    // if we are hosting a multiplayer server, we just re-enter preview mode
    // without disconnecting

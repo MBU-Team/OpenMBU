@@ -126,3 +126,12 @@ ConsoleFunction(autosplitterSetEggFound, void, 2, 2, "autosplitterSetEggFound(eg
     else
         autosplitter->data.eggFound = 1;
 }
+
+ConsoleFunction(autosplitterSetQuitToMenu, void, 2, 2, "autosplitterSetQuitToMenu(quitToMenu)")
+{
+    Autosplitter *autosplitter = Autosplitter::get();
+    if (dStrcmp(argv[1], "false") == 0 || dStrcmp(argv[1], "0") == 0)
+        autosplitter->data.quitToMenu = 0;
+    else
+        autosplitter->data.quitToMenu = 1;
+}

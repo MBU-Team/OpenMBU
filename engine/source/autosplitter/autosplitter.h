@@ -16,6 +16,7 @@ struct AutosplitterData {
     U8 levelStarted;  // When a level is started from the menu screen
     U8 levelFinished; // When the finish is entered
     U8 eggFound;      // When an easter egg is collected
+    U8 quitToMenu;    // When the player quits to menu 
 };
 
 class Autosplitter
