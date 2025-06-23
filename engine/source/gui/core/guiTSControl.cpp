@@ -105,8 +105,19 @@ void GuiTSCtrl::onRender(Point2I offset, const RectI& updateRect)
     }
 
     // set up the camera and viewport stuff:
-    F32 wwidth = mLastCameraQuery.nearPlane * mTan(mLastCameraQuery.fov / 2);
-    F32 wheight = F32(mBounds.extent.y) / F32(mBounds.extent.x) * wwidth;
+    F32 wwidth, wheight;
+    const float referenceAspectRatio = 16.0f / 9.0f;
+
+    if (F32(mBounds.extent.x) / F32(mBounds.extent.y) > referenceAspectRatio)
+    {
+        wheight = mLastCameraQuery.nearPlane * mTan(mLastCameraQuery.fov / 2) / referenceAspectRatio;
+        wwidth = F32(mBounds.extent.x) / F32(mBounds.extent.y) * wheight;
+    }
+    else
+    {
+        wwidth = mLastCameraQuery.nearPlane * mTan(mLastCameraQuery.fov / 2);
+        wheight = F32(mBounds.extent.y) / F32(mBounds.extent.x) * wwidth;
+    }
 
     F32 hscale = wwidth * 2 / F32(mBounds.extent.x);
     F32 vscale = wheight * 2 / F32(mBounds.extent.y);
