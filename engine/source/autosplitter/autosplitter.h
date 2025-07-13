@@ -12,11 +12,15 @@ constexpr U32 AUTOSPLITTER_BUF_SIZE = 512;
 struct AutosplitterData {
     char signature[16]; // Header set to "OMBU_ASR_abcdef", entry point for memory scan
     S32 currentLevel;   // The level index of the current loading/loaded level
-    U8 isLoading;     // When a loading screen is active
-    U8 levelStarted;  // When a level is started from the menu screen
-    U8 levelFinished; // When the finish is entered
-    U8 eggFound;      // When an easter egg is collected
-    U8 quitToMenu;    // When the player quits to menu 
+    U32 flags;          // Boolean flags. 32 is probably overkill but is good for future proofing
+};
+
+enum {
+    FLAG_IS_LOADING     = (1 << 0),
+    FLAG_LEVEL_STARTED  = (1 << 1),
+    FLAG_LEVEL_FINISHED = (1 << 2),
+    FLAG_EGG_FOUND      = (1 << 3),
+    FLAG_QUIT_TO_MENU   = (1 << 4),
 };
 
 class Autosplitter

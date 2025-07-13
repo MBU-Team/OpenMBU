@@ -95,43 +95,43 @@ ConsoleFunction(autosplitterSetIsLoading, void, 2, 2, "autosplitterSetIsLoading(
 {
     Autosplitter *autosplitter = Autosplitter::get();
     if (dStrcmp(argv[1], "false") == 0 || dStrcmp(argv[1], "0") == 0)
-        autosplitter->data.isLoading = 0;
+        autosplitter->data.flags &= ~FLAG_IS_LOADING;
     else
-        autosplitter->data.isLoading = 1;
+        autosplitter->data.flags |= FLAG_IS_LOADING;
 }
 
 ConsoleFunction(autosplitterSetLevelStarted, void, 2, 2, "autosplitterSetLevelStarted(levelStarted)")
 {
     Autosplitter *autosplitter = Autosplitter::get();
     if (dStrcmp(argv[1], "false") == 0 || dStrcmp(argv[1], "0") == 0)
-        autosplitter->data.levelStarted = 0;
+        autosplitter->data.flags &= ~FLAG_LEVEL_STARTED;
     else
-        autosplitter->data.levelStarted = 1;
+        autosplitter->data.flags |= FLAG_LEVEL_STARTED;
 }
 
 ConsoleFunction(autosplitterSetLevelFinished, void, 2, 2, "autosplitterSetLevelFinished(levelFinished)")
 {
     Autosplitter *autosplitter = Autosplitter::get();
     if (dStrcmp(argv[1], "false") == 0 || dStrcmp(argv[1], "0") == 0)
-        autosplitter->data.levelFinished = 0;
+        autosplitter->data.flags &= ~FLAG_LEVEL_FINISHED;
     else
-        autosplitter->data.levelFinished = 1;
+        autosplitter->data.flags |= FLAG_LEVEL_FINISHED;
 }
 
 ConsoleFunction(autosplitterSetEggFound, void, 2, 2, "autosplitterSetEggFound(eggFound)")
 {
     Autosplitter *autosplitter = Autosplitter::get();
     if (dStrcmp(argv[1], "false") == 0 || dStrcmp(argv[1], "0") == 0)
-        autosplitter->data.eggFound = 0;
+        autosplitter->data.flags &= ~FLAG_EGG_FOUND;
     else
-        autosplitter->data.eggFound = 1;
+        autosplitter->data.flags |= FLAG_EGG_FOUND;
 }
 
 ConsoleFunction(autosplitterSetQuitToMenu, void, 2, 2, "autosplitterSetQuitToMenu(quitToMenu)")
 {
     Autosplitter *autosplitter = Autosplitter::get();
     if (dStrcmp(argv[1], "false") == 0 || dStrcmp(argv[1], "0") == 0)
-        autosplitter->data.quitToMenu = 0;
+        autosplitter->data.flags &= ~FLAG_QUIT_TO_MENU;
     else
-        autosplitter->data.quitToMenu = 1;
+        autosplitter->data.flags |= FLAG_QUIT_TO_MENU;
 }
