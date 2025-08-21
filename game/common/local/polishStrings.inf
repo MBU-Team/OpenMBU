@@ -16,7 +16,7 @@ $Text::Loading = "Ładowanie";
 $Text::Exit = "Wyjdź";
 $Text::Previous = "Poprzedni";
 $Text::Next = "Następny";
-$Text::Retry = "Spróbuj ponownie";
+$Text::Retry = "Restart";
 $Text::Back = "Wstecz";
 $Text::More = "Więcej";
 $Text::Level = "Poziom";
@@ -39,7 +39,7 @@ $Text::Friends = "Znajomi";
 $Text::Offline = "Offline";
 $Text::PlayOffline = "Graj Offline";
 $Text::ConnectionLost = "Połączenie z usługą Xbox Live zostało utracone. Zaloguj się ponownie.";
-$Text::DupLogin = "Zostałeś wylogowany z usługi Xbox Live, ponieważ inna osoba zalogowała się przy użyciu Twojego konta.";
+$Text::DupLogin = "Zostałeś(-aś) wylogowany(-a) z usługi Xbox Live, ponieważ inna osoba zalogowała się przy użyciu Twojego konta.";
 $Text::ESRBWarning = "Uwaga ESRB: Wrażenia z gry mogą ulec zmianie podczas rozgrywki sieciowej";
 
 ;-------------------------------------------------------------------------------
@@ -114,8 +114,8 @@ $Text::PurchasedThanks = "Thank you for purchasing Marble Blast Ultra!";
 ; Level Time Stuff
 ;-------------------------------------------------------------------------------
 $Text::None = "Brak";
-$Text::BestTime = "Mój najlepszy czas:";
-$Text::BestScore = "Mój najlepszy wynik:";
+$Text::BestTime = "Najlepszy czas:";
+$Text::BestScore = "Najlepszy wynik:";
 $Text::EndTime = "Czas:";
 $Text::EndScore = "Ocena:";
 $Text::EndScore2 = "Wynik:";
@@ -142,7 +142,7 @@ $Text::Difficulty = "Trudność";
 ;-------------------------------------------------------------------------------
 ; Tagged Strings
 ;-------------------------------------------------------------------------------
-$Text::Tagged::Congratulations = '\c0Gratulacje! Zwyciężyłeś\aś!';
+$Text::Tagged::Congratulations = '\c0Gratulacje! Zwyciężyłeś(-aś)!';
 $Text::Tagged::NotAllGems = '\c0Nie możesz ukończyć poziomu bez wszystkich klejnotów!';
 $Text::Tagged::HaveAllGems = '\c0Masz wszystkie klejnoty. Kieruj się w stronę mety!';
 $Text::Tagged::OneGemLeft = '\c0Podniesiono klejnot. Pozostał tylko jeden klejnot!';
@@ -216,11 +216,11 @@ $Text::HelpAndOptions = "Pomoc i Opcje";
 $Text::UnlockFullGame = "Odblokuj pełną wersję";
 $Text::RTArcadeMenu = "Wyjdź z gry";
 $Text::LevelsBeginner = "Łatwe poziomy";
-$Text::LevelsIntermediate = "Normalne poziomy";
-$Text::LevelsAdvanced = "Trudne poziomy";
+$Text::LevelsIntermediate = "Średnie poziomy";
+$Text::LevelsAdvanced = "Zaawansowane poziomy";
 $Text::LevelsCustom = "Niestandardowe poziomy";
 $Text::SPGemHunt = "Polowanie na klejnoty";
-$Text::Go = "Start";
+$Text::Go = "Wybierz";
 $Text::OK = "OK";
 $Text::Cancel = "Anuluj";
 $Text::Yes = "Tak";
@@ -236,6 +236,7 @@ $Text::JoinMatch = "Dołącz do rozgrywki";
 $Text::Players = "Gracze";
 $Text::Ready = "Gotowy";
 $Text::ExitGame = "Wyjdź";
+$Text::StreamerModeOptions = "Nie\tTak";
 
 ;-------------------------------------------------------------------------------
 ; Join Game Gui
@@ -277,8 +278,9 @@ $Text::LobbyHostName = "Gospodarz:";
 $Text::LobbyHostLevel = "Poziom:"; 
 $Text::LobbyHostPrivateSlots = "Prywatne miejsca"; 
 $Text::LobbyHostPublicSlots = "Publiczne miejsca"; 
-$Text::LobbyHostInviteCode = "Kod zaproszenia";
+$Text::LobbyHostInviteCode = "Kod zapro.";
 $Text::LobbyHostInviteVisibility = "Widoczność zaproszeń";
+$Text::LobbyHostStreamerMode = "Streamer";
 
 ; separators
 $Text::Colon  = ":";
@@ -323,18 +325,22 @@ $Text::Adjust = "Dostosuj";
 $Text::Toggle = "Przełącz";
 $Text::MusicVol = "Głośność muzyki";
 $Text::FXVol = "Głośność efektów";
-$Text::InvX = "Oś X Kamery";
-$Text::InvY = "Oś Y Kamery";
+$Text::InvX = "Oś X kamery";
+$Text::InvY = "Oś Y kamery";
 $Text::MouseSensitivity = "Czułość myszki";
 $Text::InvOnOff = "Normalna\tOdwrócona";
-$Text::VideoOptions = "Video Options";
-$Text::FullscreenResolution = "Rozdz. (pełny ekran)";
-$Text::WindowedResolution = "Rozdz. (okno)";
-$Text::DisplayMode = "Tryb wyświetlania";
-$Text::DisplayModeOptions = "Okienkowy\tOkno bez ramek\tPełny ekran";
+$Text::AnalogRange = "Zasięg gałki analogowej";
+$Text::AnalogRangeValues = "Normalny\tModyfikowany\tOśmiostronny\tWymuś normalny";
+$Text::CenterCam = "Auto. centrowanie kamery";
+$Text::OptionOffOn = "Wyłącz\tWłącz";
+$Text::VideoOptions = "Opcje wideo";
+$Text::FullscreenResolution = "Rozdzielczość";
+$Text::WindowedResolution = "Rozdziel. (okno)";
+$Text::DisplayMode = "Tryb wyświetl.";
+$Text::DisplayModeOptions = "Okno\tOkno bez ramek\tPełny ekran";
 $Text::ReflectionDetailLevel = "Detale odbić";
-$Text::ReflectionDetailLevelOptions = "Brak\tNiebo\tNiebo i Poziom\tPrawie Wszystko\tWszystko";
-$Text::Framerate = "Klatki na sekundę";
+$Text::ReflectionDetailLevelOptions = "Brak\tNiebo\tPoziom i Niebo\tPoziom, Niebo i Przedmioty\tWszystko";
+$Text::Framerate = "Klatki na sek.";
 $Text::FramerateOptions = "Nielimitowane\tSynchro. Pionowa\t30\t60\t75\t120\t200\tNiestandardowe";
 $Text::MarbleSkin = "Typ kulki";
 $Text::UIStyle = "Styl interfejsu";
@@ -347,8 +353,8 @@ $Text::InviteVisibilityOptions = "Ukryty\tWidoczny";
 ;-------------------------------------------------------------------------------
 ; Object Strings
 ;-------------------------------------------------------------------------------
-$Text::FoundNewEgg = "Znalazłeś nową znajdźkę! Tak trzymać!";
-$Text::AlreadyFoundEgg = "Już znalazłeś tą znajdźkę!";
+$Text::FoundNewEgg = "Znalazłeś(-aś) nową znajdźkę! Tak trzymać!";
+$Text::AlreadyFoundEgg = "Już znalazłeś(-aś) tą znajdźkę!";
 
 $Text::UseSuperJump = "Ulepszenie: Super Skok";
 $Text::UseSuperSpeed = "Ulepszenie: Super Prędkość";
@@ -376,7 +382,7 @@ $Text::LB_MPScrumSkill = "Ogólnie w rozgrywkach rankingowych";
 ;$Text::CtrlrReconnect = "Podłącz ponownie kontroler do portu %1 i naciśnij START, aby kontynuować.";
 ;$Text::CtrlrDisconnectTitle = "Odłączony kontroler";
 ;$Text::ReconnectAnyPort = "Podłącz ponownie kontroler do dowolnego portu i naciśnij START, aby kontynuować.";
-;$Text::UploadOnlyIfSignedIn = "Możesz przesłać swój najlepszy wynik tylko wtedy, gdy jesteś zalogowany do usługi Xbox Live.";
+;$Text::UploadOnlyIfSignedIn = "Możesz przesłać swój najlepszy wynik tylko wtedy, gdy jesteś zalogowany(-a) do usługi Xbox Live.";
 $Text::Continue = "Kontynuuj";
 ;$Text::UpdateRequired = "Do gry online wymagana jest aktualizacja. Wróć do menu Xbox Live Arcade, zaloguj się do Xbox Live i ponownie wybierz tę grę, aby pobrać aktualizację.";
 ; $Text::ArbRegister = "Registering with Arbitration service"; // using $Text::TestingNetwork for this now
@@ -405,7 +411,7 @@ $Text::ErrorBandwidthWarn   = "Warunki sieciowe mogą mieć wpływ na tę grę, 
 $Text::ErrorClientsNotReady = "Nie można rozpocząć gry, dopóki wszyscy gracze nie będą gotowi.";
 $Text::ErrorClientsWillDrop = "Wyjście z gry spowoduje rozłączenie wszystkich graczy.";
 $Text::ErrorTooFewPlayers   = "Nie można rozpocząć rozgrywki rankingowej z tylko jednym graczem.";
-$Text::ErrorSignedOff       = "Zostałeś wylogowany z Xbox Live.  Powrót do menu głównego.";
+$Text::ErrorSignedOff       = "Zostałeś(-aś) wylogowany(-a) z Xbox Live.  Powrót do menu głównego.";
 $Text::TestingNetwork       = "Proszę czekać";
 ;$Text::ErrorArbFailed       = "Session ended due to failed registration with Arbitration service."; // using $Text::ErrorCannotConnect now
 $Text::ErrorDemoUpgrade     = "Odblokuj pełną wersję, aby wziąć udział w tej rozgrywce!";
