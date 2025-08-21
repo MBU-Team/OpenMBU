@@ -15,7 +15,7 @@ new GuiControl(miscOptionsGui) {
       horizSizing = isWidescreen()? "right" : "left";
       vertSizing = "center";
       // there can only be two columns; these values are percentages of total extent
-      columns = isWidescreen()? "30 70" : "45 55";
+      columns = isWidescreen()? "35 65" : "45 55";
       // each column can have a left and right margin, specified here.  order is 
       // C1L C1R C2L C2R.  amount is in pixels
       columnMargins = isWidescreen()? "0 20 5 50" : "0 0 2 30";
@@ -27,60 +27,37 @@ new GuiControl(miscOptionsGui) {
 };
 //--- OBJECT WRITE END ---
 
+//Note down the menu we're coming from, set the GUI title and button input text, and create the option rows
 function miscOptionsGui::show(%this, %backGui)
 {   
 	if (%backGui !$= "")
       %this.backGui = %backGui;
-      
    miscOptionsList.clear();
+
+   RootGui.setTitle( strupr($Text::HOMiscOptions) );
+   RootGui.setA( $Text::OK );
    
-   // --------
-   // Language
-   // --------
-   
-   $Option::initialLang = $pref::Language;
-   
+   //Record initial language and UI style so we know if we need to update them when closing Misc. Settings
+   $Option::initialLang    = $pref::Language;
+   $Option::initialUIStyle = $pref::UI::LegacyUI;
+
+   miscOptionsList.addRow($Text::LanguageLabel,         getLanguageDisplayList(),       8); //Language
+   miscOptionsList.addRow($Text::UIStyle,               $Text::UIStyleOptions,          8); //UI Style
+   miscOptionsList.addRow($Text::InviteVisibility,      $Text::InviteVisibilityOptions, 8); //Invite Visibility
+   miscOptionsList.addRow($Text::LobbyHostStreamerMode, $Text::StreamerModeOptions,     8); //Streamer Mode
+
+   //Find the index of the language we're currently using
    %langCount = getWordCount(getLanguageDisplayList());
-  
-   miscOptionsList.addRow($Text::LanguageLabel, getLanguageDisplayList(), 8); // language
-   
    for (%i = 0; %i < %langCount; %i++)
    {
-      if (getWord(getLanguageList(), %i) !$= getLanguage())
-         continue;
-         
-      %langIndex = %i;
-      break;
+      if (getWord(getLanguageList(), %i) $= getLanguage())
+         %langIndex = %i;
    }
 
    miscOptionsList.setOptionIndex(0, %langIndex);
-   
-   // --------
-   // UI Style
-   // --------
-   
-   $Option::initialUIStyle = $pref::UI::LegacyUI;
-  
-   miscOptionsList.addRow($Text::UIStyle, $Text::UIStyleOptions, 8); // ui style
-   
-   %uiStyleIndex = 0;
-   if ($pref::UI::LegacyUI)
-      %uiStyleIndex = 1;
-
-   miscOptionsList.setOptionIndex(1, %uiStyleIndex);
-
-   // Invite visibility
-   
-   miscOptionsList.addRow($Text::LobbyHostInviteCode, $Text::InviteVisibilityOptions, 8);
+   miscOptionsList.setOptionIndex(1, $pref::UI::LegacyUI);
    miscOptionsList.setOptionIndex(2, $pref::Lobby::InviteVisibility);
-
-   // Streamer mode
-   
-   miscOptionsList.addRow($Text::LobbyHostStreamerMode, $Text::StreamerModeOptions, 8);
-   miscOptionsList.setOptionIndex(2, $pref::Lobby::StreamerMode);
-
-   RootGui.setA( $Text::OK );
-   RootGui.setTitle( strupr($Text::HOMiscOptions) );
+   miscOptionsList.setOptionIndex(3, $pref::Lobby::StreamerMode);
 }
 
 function miscOptionsList::onOptionChange(%this, %increase)
@@ -111,6 +88,7 @@ function miscOptionsList::onOptionChange(%this, %increase)
 
 function miscOptionsGui::onA(%this)
 {
+   sfxPlay(AudioButtonDown);
    if ($pref::Language !$= $Option::initialLang)
       setLanguage($pref::Language);   
    if ($pref::UI::LegacyUI !$= $Option::initialUIStyle && %this.backGui $= "PlayGui")
