@@ -1,0 +1,355 @@
+//--- OBJECT WRITE BEGIN ---
+new GuiControl(RemapOptionsGui) {
+   Profile = "GuiDefaultProfile";
+   HorizSizing = "right";
+   VertSizing = "bottom";
+   position = "0 0";
+   Extent = "640 480";
+   MinExtent = "8 2";
+   Visible = "1";
+   UIMode = "AlwaysShow";
+      backGui = "HelpAndOptionsGui";
+
+   new GuiControl(RemapOptionsListNew) {
+      profile = "GuiDefaultProfile";
+      horizSizing = "left";
+      VertSizing = "height";
+      extent = "1180 480";
+      minExtent = "8 8";
+      position = "-615 -25";  
+
+      new GuiXboxButtonCtrl(MoveForwardButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "240 150";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"moveForward\", moveMap.getBinding(\"moveForward\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(MoveBackwardButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "240 215";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"moveBackward\", moveMap.getBinding(\"moveBackward\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(MoveLeftButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "240 280";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"moveLeft\", moveMap.getBinding(\"moveLeft\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(MoveRightButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "240 345";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"moveRight\", moveMap.getBinding(\"moveRight\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(JumpButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "240 410";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"jumpOrStart\", moveMap.getBinding(\"jumpOrStart\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(BlastButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "240 475";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"alttrigger\", moveMap.getBinding(\"alttrigger\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(UsePowerupButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "240 540";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"mouseFire\", moveMap.getBinding(\"mouseFire\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(LookupButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "635 150";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"panUp\", moveMap.getBinding(\"panUp\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(LookdownButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "635 215";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"panDown\", moveMap.getBinding(\"panDown\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(LookleftButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "635 280";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"turnLeft\", moveMap.getBinding(\"turnLeft\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(LookRightButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "635 345";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         bitmapAlign = "right";
+         command = "RemapInputDlg.show(\"turnRight\", moveMap.getBinding(\"turnRight\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(GlobalChatButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "635 410";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         command = "RemapInputDlg.show(\"GlobalChat\", moveMap.getBinding(\"GlobalChat\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+
+      new GuiXboxButtonCtrl(RestartLevelButton) {
+         profile = "TextMenuButtonProfile";
+         horizSizing = "right";
+         vertSizing = "bottom";
+         position = "635 475";
+         extent = "400 94";
+         minExtent = "8 2";
+         bitmap = "";
+         command = "RemapInputDlg.show(\"restartLevelBind\", moveMap.getBinding(\"restartLevelBind\"));";
+         visible = "1";
+         accelerator = "1";
+      };
+   };
+};
+//--- OBJECT WRITE END ---
+
+function RemapOptionsGui::onA(%this)
+{
+	sfxPlay(AudioButtonDown);
+   eval($ROptionsCtrl.command);
+   return true;
+}
+
+function RemapOptionsGui::onB(%this)
+{
+   RootGui.setContent(%this.backGui);
+}
+
+function RemapOptionsGui::onY(%this)
+{
+   // Save Configs
+   moveMap.save("marble/client/config.cs");
+}
+
+function RemapOptionsGui::onX(%this)
+{
+   // Reset Defaults
+   moveMap.delete();
+   exec("marble/client/scripts/default.bind.cs");
+   RemapOptionsGui.rebuildList();
+}
+
+function RemapOptionsGui::show(%this, %backGui)
+{
+   RemapOptionsGui.rebuildList();
+
+   if ($pref::UI::LegacyUI)
+      RootGui.setA("Select");
+      
+   RootGui.setB("Back");
+   RootGui.setY("Save Config");
+   RootGui.setX("Restore Defaults");
+
+   RootGui.setTitle("KEY BINDINGS");
+
+   $ROptionsGrid[0, 6] = MoveForwardButton;
+   $ROptionsGrid[0, 5] = MoveBackwardButton;
+   $ROptionsGrid[0, 4] = MoveLeftButton;
+   $ROptionsGrid[0, 3] = MoveRightButton;
+   $ROptionsGrid[0, 2] = JumpButton;
+   $ROptionsGrid[0, 1] = BlastButton;
+   $ROptionsGrid[0, 0] = UsePowerupButton;
+   $ROptionsGrid[1, 6] = LookupButton;
+   $ROptionsGrid[1, 5] = LookdownButton;
+   $ROptionsGrid[1, 4] = LookleftButton;
+   $ROptionsGrid[1, 3] = LookrightButton;
+   $ROptionsGrid[1, 2] = GlobalChatButton;
+   $ROptionsGrid[1, 1] = RestartLevelButton;
+
+   $ROptionCoordX = 0;
+   $ROptionCoordY = 6;
+
+   $ROptionsCtrl = MoveForwardButton;
+}
+
+// Taken from joinGameGui.gui and adapted for this. ~Connie
+function RemapOptionsGui::moveDir(%this, %x, %y)
+{
+   %oldx = $ROptionCoordX;
+   %oldy = $ROptionCoordY;
+
+   $ROptionCoordX += %x;
+   $ROptionCoordY += %y;
+
+   // X
+   if ($ROptionCoordX > 1) $ROptionCoordX = 0;
+   if ($ROptionCoordX < 0) $ROptionCoordX = 1;
+
+   // Y
+   if ($ROptionCoordY > 7) $ROptionCoordY = 0;
+   if ($ROptionCoordY < 0) $ROptionCoordY = 7;
+
+   if (!isObject($ROptionsGrid[$ROptionCoordX, $ROptionCoordY]))
+   {
+      $ROptionCoordX = %oldx;
+      $ROptionCoordY = %oldy;
+   }
+   
+   $ROptionsCtrl.setHover(false);
+   $ROptionsCtrl = $ROptionsGrid[$ROptionCoordX, $ROptionCoordY];
+   $ROptionsCtrl.setHover(true);
+}
+
+function RemapOptionsGui::onLeft(%this, %pressed)
+{
+   RemapOptionsGui.moveDir(-1, 0);
+   return true;
+}
+
+function RemapOptionsGui::onRight(%this, %pressed)
+{
+   RemapOptionsGui.moveDir(1, 0);
+   return true;
+}
+
+function RemapOptionsGui::onUp(%this, %pressed)
+{
+   RemapOptionsGui.moveDir(0, 1);
+   return true;
+}
+
+function RemapOptionsGui::onDown(%this, %pressed)
+{
+   RemapOptionsGui.moveDir(0, -1);
+   return true;
+}
+
+function RemapOptionsGui::rebuildList(%this)
+{
+   MoveForwardButton.setText("Forward - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("moveforward"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveforward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveforward"), 1) : ""));
+   MoveBackwardButton.setText("Back - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("movebackward"), 0) $= "keyboard" || getWord(moveMap.getBinding("movebackward"), 0) $= "mouse0" ? getWord(moveMap.getBinding("movebackward"), 1) : ""));
+   MoveLeftButton.setText("Left - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("moveleft"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveleft"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveleft"), 1) : ""));
+   MoveRightButton.setText("Right - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("moveright"), 0) $= "keyboard" || getWord(moveMap.getBinding("moveright"), 0) $= "mouse0" ? getWord(moveMap.getBinding("moveright"), 1) : ""));
+   
+   LookupButton.setText("Look Up - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("panup"), 0) $= "keyboard" || getWord(moveMap.getBinding("panup"), 0) $= "mouse0" ? getWord(moveMap.getBinding("panup"), 1) : ""));
+   LookdownButton.setText("Look Down - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("pandown"), 0) $= "keyboard" || getWord(moveMap.getBinding("pandown"), 0) $= "mouse0" ? getWord(moveMap.getBinding("pandown"), 1) : ""));
+   LookleftButton.setText("Look Left - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("turnLeft"), 0) $= "keyboard" || getWord(moveMap.getBinding("turnleft"), 0) $= "mouse0" ? getWord(moveMap.getBinding("turnleft"), 1) : ""));
+   LookrightButton.setText("Look Right - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("turnright"), 0) $= "keyboard" || getWord(moveMap.getBinding("turnright"), 0) $= "mouse0" ? getWord(moveMap.getBinding("turnright"), 1) : ""));
+
+   JumpButton.setText("Jump - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("jumpOrStart"), 0) $= "keyboard" || getWord(moveMap.getBinding("jumpOrStart"), 0) $= "mouse0" ? getWord(moveMap.getBinding("jumpOrStart"), 1) : ""));
+   UsePowerupButton.setText("Powerup - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("mouseFire"), 0) $= "keyboard" || getWord(moveMap.getBinding("mouseFire"), 0) $= "mouse0" ? getWord(moveMap.getBinding("mouseFire"), 1) : ""));
+   BlastButton.setText("Blast - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("altTrigger"), 0) $= "keyboard" || getWord(moveMap.getBinding("altTrigger"), 0) $= "mouse0" ? getWord(moveMap.getBinding("altTrigger"), 1) : ""));
+   GlobalChatButton.setText("Global Chat - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("GlobalChat"), 0) $= "keyboard" || getWord(moveMap.getBinding("GlobalChat"), 0) $= "mouse0" ? getWord(moveMap.getBinding("GlobalChat"), 1) : ""));
+   RestartLevelButton.setText("Restart Level - " @ RemapOptionsGui.formatBinding(getWord(moveMap.getBinding("restartLevelBind"), 0) $= "keyboard" || getWord(moveMap.getBinding("restartLevelBind"), 0) $= "mouse0" ? getWord(moveMap.getBinding("restartLevelBind"), 1) : ""));
+}
+
+function RemapOptionsGui::formatBinding(%this, %maptoget)
+{
+   switch$(%maptoget)
+   {
+      case "button0":
+      return "Left Mouse";
+      case "button1":
+      return "Right Mouse";
+      case "button2":
+      return "Middle Mouse";
+      case "lshift":
+      return "Left Shift";
+      case "rshift":
+      return "Right Shift";
+      case "lcontrol":
+      return "Left Control";
+      case "rcontrol":
+      return "Right Control";
+   }
+
+   return (strupr(getsubstr(%maptoget, 0, 1)) @ getsubstr(%maptoget, 1, strlen(%maptoget)));
+}
