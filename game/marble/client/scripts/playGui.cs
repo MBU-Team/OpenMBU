@@ -102,6 +102,8 @@ function PlayGui::onWake(%this)
 	   UpsellGui.displayPDLCUpsell = %isFreeLevel ? false : !%hasLevel;
    }
 
+   autosplitterSetIsLoading(false);
+   autosplitterSetLevelStarted(false);
    sendAutosplitterData("loading finished");
 }
 

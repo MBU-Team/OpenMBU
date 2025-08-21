@@ -230,6 +230,10 @@ function levelPreviewGui::onA()
          loadMission(GameMissionInfo.getCurrentMission().file, true);
          
          // Tell autosplitter to start
+         autosplitterSetIsLoading(true);
+         autosplitterSetLevel(GameMissionInfo.getCurrentMission().level);
+         autosplitterSetLevelStarted(true);
+         autosplitterSetQuitToMenu(false);
          sendAutosplitterData("start" SPC GameMissionInfo.getCurrentMission().level);
          sendAutosplitterData("loading started");
       }
