@@ -320,6 +320,9 @@ function pauseGame()
             $saveTimescale = $timescale;
 
          $timescale = $pauseTimescale;
+
+         //Stop the Discord Timer since the actual in-game Timer isn't running. ~Connie
+         XBLivePresenceStopTimer();
       }
    }
 }
@@ -341,6 +344,11 @@ function resumeGame()
       if ($saveTimescale $= "")
          $saveTimescale = 1.0;
       $timescale = $saveTimescale;
+   }
+
+   //Resume the Discord Timer if it's a Singleplayer game. ~Connie
+   if ($Server::ServerType $= "SinglePlayer" && $Game::Running && serverGetGameMode() $= "scrum" && ($Game::State $= "play" || $Game::State $= "go")) {
+      XBLivePresenceStartTimer(($Game::Duration - PlayGui.elapsedTime) / 1000);
    }
 }
 
