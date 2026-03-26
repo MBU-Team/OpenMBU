@@ -1,4 +1,4 @@
-<a href="https://marbleblastultra.com/"><img src="https://i.imgur.com/o0XkkgE.gif"></a>
+<a href="https://marbleblastultra.com/"><img src="https://i.imgur.com/oCyUghj.gif"></a>
 <br>&nbsp;</br>
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/MBU-Team/OpenMBU?include_prereleases&label=Release)](https://github.com/MBU-Team/OpenMBU/releases)
 [![Github all releases](https://img.shields.io/github/downloads/MBU-Team/OpenMBU/total?color=blue&label=Downloads)](https://GitHub.com/MBU-Team/OpenMBU/releases/)
